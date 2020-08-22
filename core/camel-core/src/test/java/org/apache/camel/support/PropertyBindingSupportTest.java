@@ -337,8 +337,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.build().withMandatory(true).bind(context, foo, "bar.myAge", "33");
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.myAge", e.getPropertyName());
-            assertSame(foo, e.getTarget());
+            assertEquals("myAge", e.getPropertyName());
+            assertSame(foo.getBar(), e.getTarget());
         }
     }
 
@@ -540,7 +540,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
             fail("Should fail");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.unknown", e.getPropertyName());
+            //            assertEquals("bar.unknown", e.getPropertyName());
+            assertEquals("unknown", e.getPropertyName());
         }
     }
 

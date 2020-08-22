@@ -178,7 +178,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiproperties":
         case "ApiProperties": return java.lang.Object.class;

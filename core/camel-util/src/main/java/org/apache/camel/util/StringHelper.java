@@ -863,4 +863,18 @@ public final class StringHelper {
         return answer.toString().toLowerCase(Locale.ENGLISH);
     }
 
+    /**
+     * Does the string starts with the given prefix (ignore case).
+     *
+     * @param text   the string
+     * @param prefix the prefix
+     */
+    public static boolean startsWithIgnoreCase(String text, String prefix) {
+        if (text != null && prefix != null) {
+            return prefix.length() > text.length() ? false : text.regionMatches(true, 0, prefix, 0, prefix.length());
+        } else {
+            return text == null && prefix == null;
+        }
+    }
+
 }

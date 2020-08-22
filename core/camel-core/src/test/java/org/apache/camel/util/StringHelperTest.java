@@ -333,4 +333,19 @@ public class StringHelperTest {
         assertEquals("helloGreatWorld", StringHelper.dashToCamelCase("hello-great-world"));
     }
 
+    public void testStartsWithIgnoreCase() {
+        assertTrue(StringHelper.startsWithIgnoreCase(null, null));
+        assertFalse(StringHelper.startsWithIgnoreCase("foo", null));
+        assertFalse(StringHelper.startsWithIgnoreCase(null, "bar"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "bar"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "Hello"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "hello"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "Helo"));
+        assertFalse(StringHelper.startsWithIgnoreCase("HelloWorld", "HelloWorld"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HelloWorld", "HELLO"));
+        assertTrue(StringHelper.startsWithIgnoreCase("helloworld", "helloWORLD"));
+        assertTrue(StringHelper.startsWithIgnoreCase("HELLOWORLD", "HELLO"));
+    }
+
 }

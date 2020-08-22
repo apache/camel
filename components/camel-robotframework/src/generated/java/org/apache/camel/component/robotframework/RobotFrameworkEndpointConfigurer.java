@@ -99,7 +99,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         case "runMode": target.getConfiguration().setRunMode(property(camelContext, java.lang.String.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
@@ -193,7 +193,7 @@ public class RobotFrameworkEndpointConfigurer extends PropertyConfigurerSupport 
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("runMode", java.lang.String.class);
         answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
+        answer.put("scheduler", java.lang.Object.class);
         answer.put("schedulerProperties", java.util.Map.class);
         answer.put("sendEmptyMessageWhenIdle", boolean.class);
         answer.put("skipTeardownOnExit", boolean.class);

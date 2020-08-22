@@ -43,7 +43,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bars":
         case "Bars": return org.apache.camel.main.MySecondBar.class;

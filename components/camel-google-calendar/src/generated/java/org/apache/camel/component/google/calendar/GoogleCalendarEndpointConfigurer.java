@@ -63,7 +63,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
-        case "scheduler": target.setScheduler(property(camelContext, java.lang.String.class, value)); return true;
+        case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "scopes": target.getConfiguration().setScopes(property(camelContext, java.lang.String.class, value)); return true;
@@ -107,7 +107,7 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         answer.put("repeatCount", long.class);
         answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
         answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.String.class);
+        answer.put("scheduler", java.lang.Object.class);
         answer.put("schedulerProperties", java.util.Map.class);
         answer.put("scopes", java.lang.String.class);
         answer.put("sendEmptyMessageWhenIdle", boolean.class);

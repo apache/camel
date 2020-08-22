@@ -35,6 +35,7 @@ public final class PropertyConfigurerGenerator {
             String pfqn, String psn, boolean hasSuper, boolean component,
             Collection<? extends BaseOptionModel> options, Writer w)
             throws IOException {
+
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
         w.write("package " + pn + ";\n");
         w.write("\n");
@@ -148,7 +149,7 @@ public final class PropertyConfigurerGenerator {
             if (hasNestedTypes) {
                 w.write("\n");
                 w.write("    @Override\n");
-                w.write("    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {\n");
+                w.write("    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {\n");
                 if (!options.isEmpty()) {
                     w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                     for (BaseOptionModel option : options) {
@@ -162,7 +163,7 @@ public final class PropertyConfigurerGenerator {
                         }
                     }
                     if (hasSuper) {
-                        w.write("        default: return super.getOptionNestedType(target, name, ignoreCase);\n");
+                        w.write("        default: return super.getCollectionValueType(target, name, ignoreCase);\n");
                     } else {
                         w.write("        default: return null;\n");
                     }

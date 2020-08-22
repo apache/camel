@@ -83,7 +83,8 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
         WorkdayReportProducer workdayProducer = new WorkdayReportProducer(workdayEndpoint);
         String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
 
-        assertEquals("https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json",
+        assertEquals(
+                "https://camel.myworkday.com/ccx/service/customreport2/camel/ISU_Camel/Custom_Report_Employees?param=test1&format=json",
                 workdayUri);
     }
 }

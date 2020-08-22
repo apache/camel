@@ -148,7 +148,7 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "endpointhttpheaders":
         case "EndpointHttpHeaders": return java.lang.String.class;

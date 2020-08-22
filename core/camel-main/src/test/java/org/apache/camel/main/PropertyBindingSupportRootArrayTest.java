@@ -54,8 +54,8 @@ public class PropertyBindingSupportRootArrayTest {
         assertEquals("a", target.getBars().get(0).getNames().get(0));
         assertEquals("b", target.getBars().get(0).getNames().get(1));
 
-        // no configurer so reflection is in use
-        assertEquals(3, bi.getInvokedCounter());
+        // will auto detect generated configurer so no reflection in use
+        assertEquals(0, bi.getInvokedCounter());
 
         context.stop();
     }

@@ -198,7 +198,7 @@ public class FhirUpdateEndpointConfigurationConfigurer extends org.apache.camel.
     }
 
     @Override
-    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "extraparameters":
         case "ExtraParameters": return java.lang.Object.class;

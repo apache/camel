@@ -137,7 +137,7 @@ public class PropertyBindingSupportMapTest extends ContextTestSupport {
             PropertyBindingSupport.build().bind(context, foo, prop);
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.gold-customer[foo]", e.getPropertyName());
+            assertEquals("gold-customer[foo]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(iae.getMessage().startsWith(
                     "Cannot set property: gold-customer[foo] as either a Map/List/array because target bean is not a Map, List or array type"));

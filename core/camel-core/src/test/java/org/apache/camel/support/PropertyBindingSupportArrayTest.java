@@ -115,8 +115,8 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
         prop.put("bar.age", "33");
         prop.put("bar.{{committer}}", "true");
         prop.put("bar.gold-customer", "true");
-        prop.put("bar.works[0]", "#bean:company1");
         prop.put("bar.works[0].id", "666");
+        prop.put("bar.works[0]", "#bean:company1");
         prop.put("bar.works[1]", "#bean:company2");
         prop.put("bar.works[1].name", "I changed this");
 
@@ -184,7 +184,7 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
             PropertyBindingSupport.build().bind(context, foo, prop);
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
-            assertEquals("bar.gold-customer[]", e.getPropertyName());
+            assertEquals("gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(iae.getMessage().startsWith(
                     "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));

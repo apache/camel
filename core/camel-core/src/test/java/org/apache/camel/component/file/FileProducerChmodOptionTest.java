@@ -34,8 +34,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/data/fileProducerChmodOptionTest/";
@@ -108,7 +107,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
             assertEquals("chmod", pbe.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
-            assertEquals("chmod option [abc] is not valid", iae.getMessage());
+            assertTrue(iae.getMessage().contains("chmod option [abc] is not valid"));
         }
     }
 
