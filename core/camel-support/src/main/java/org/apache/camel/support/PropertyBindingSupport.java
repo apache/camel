@@ -873,7 +873,8 @@ public final class PropertyBindingSupport {
                 str = camelContext.resolvePropertyPlaceholders(str.toString());
             }
             // special for reference (we should not do this for options that are String type)
-            if (reference && isReferenceParameter(str)) {
+            // this is only required for reflection (non configurer as configurer does this automatic in a more safe way)
+            if (configurer == null && reference && isReferenceParameter(str)) {
                 Object bean = CamelContextHelper.lookup(camelContext, str.toString().substring(1));
                 if (bean != null) {
                     str = bean;
