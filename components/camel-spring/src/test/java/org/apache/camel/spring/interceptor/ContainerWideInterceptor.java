@@ -31,8 +31,10 @@ public class ContainerWideInterceptor implements InterceptStrategy {
     private static int count;
 
     @Override
-    public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
-                                                 final Processor target, final Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(
+            final CamelContext context, final NamedNode definition,
+            final Processor target, final Processor nextTarget)
+            throws Exception {
 
         // as this is based on an unit test we are a bit lazy and just create an inlined processor
         // where we implement our interception logic.

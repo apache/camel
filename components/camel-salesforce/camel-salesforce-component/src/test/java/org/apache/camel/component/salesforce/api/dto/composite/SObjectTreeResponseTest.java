@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SObjectTreeResponseTest {
 
     @Test
@@ -64,10 +65,11 @@ public class SObjectTreeResponseTest {
         assertFalse(response.hasErrors(), "`hasErrors` flag should be false");
 
         assertEquals(4, response.getResults().size(), "Should read 4 references");
-        assertThat("4 references should be read as expected", response.getResults(), hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+        assertThat("4 references should be read as expected", response.getResults(),
+                hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
+                        new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
     }
 
     @Test
@@ -95,7 +97,9 @@ public class SObjectTreeResponseTest {
 
         assertEquals(1, response.getResults().size(), "Should read one reference");
         assertThat("The reference should be read as expected", response.getResults(),
-                   hasItems(new ReferenceId("ref2", null, Arrays.asList(new RestError("INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
+                hasItems(new ReferenceId(
+                        "ref2", null, Arrays.asList(new RestError(
+                                "INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
     }
 
     @Test
@@ -123,17 +127,18 @@ public class SObjectTreeResponseTest {
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
-        final SObjectTreeResponse response = (SObjectTreeResponse)xStream.fromXML(xml);
+        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
         assertNotNull(response, "Response should be parsed");
 
         assertFalse(response.hasErrors(), "`hasErrors` flag should be false");
 
         assertEquals(4, response.getResults().size(), "Should read 4 references");
-        assertThat("4 references should be read as expected", response.getResults(), hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
-                                                                                              new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
+        assertThat("4 references should be read as expected", response.getResults(),
+                hasItems(new ReferenceId("ref1", "001D000000K0fXOIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref4", "001D000000K0fXPIAZ", Collections.emptyList()), //
+                        new ReferenceId("ref2", "003D000000QV9n2IAD", Collections.emptyList()), //
+                        new ReferenceId("ref3", "003D000000QV9n3IAD", Collections.emptyList())));
     }
 
     @Test
@@ -152,7 +157,7 @@ public class SObjectTreeResponseTest {
 
         final XStream xStream = XStreamUtils.createXStream(SObjectTreeResponse.class);
 
-        final SObjectTreeResponse response = (SObjectTreeResponse)xStream.fromXML(xml);
+        final SObjectTreeResponse response = (SObjectTreeResponse) xStream.fromXML(xml);
 
         assertNotNull(response, "Response should be parsed");
 
@@ -160,6 +165,8 @@ public class SObjectTreeResponseTest {
 
         assertEquals(1, response.getResults().size(), "Should read one reference");
         assertThat("The reference should be read as expected", response.getResults(),
-                   hasItems(new ReferenceId("ref2", null, Arrays.asList(new RestError("INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
+                hasItems(new ReferenceId(
+                        "ref2", null, Arrays.asList(new RestError(
+                                "INVALID_EMAIL_ADDRESS", "Email: invalid email address: 123", Arrays.asList("Email"))))));
     }
 }

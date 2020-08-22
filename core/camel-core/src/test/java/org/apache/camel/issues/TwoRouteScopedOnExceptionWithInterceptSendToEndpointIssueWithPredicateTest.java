@@ -42,7 +42,8 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
 
     @Test
     public void testIssue() throws Exception {
-        final Predicate fail = PredicateBuilder.or(header(Exchange.REDELIVERY_COUNTER).isNull(), header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
+        final Predicate fail = PredicateBuilder.or(header(Exchange.REDELIVERY_COUNTER).isNull(),
+                header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
@@ -80,16 +81,18 @@ public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredic
                 errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(500));
 
                 from("direct:start")
-                    // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
-                    // send to mock when we are exhausted
-                    .to("mock:exhausted").end().to("seda:foo");
+                        // no redelivery delay for faster unit tests
+                        .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true)
+                        .retryAttemptedLogLevel(LoggingLevel.WARN)
+                        // send to mock when we are exhausted
+                        .to("mock:exhausted").end().to("seda:foo");
 
                 from("direct:start2")
-                    // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(3).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.ERROR)
-                    // send to mock when we are exhausted
-                    .to("mock:exhausted2").end().to("seda:foo2");
+                        // no redelivery delay for faster unit tests
+                        .onException(ConnectException.class).maximumRedeliveries(3).redeliveryDelay(0).logRetryAttempted(true)
+                        .retryAttemptedLogLevel(LoggingLevel.ERROR)
+                        // send to mock when we are exhausted
+                        .to("mock:exhausted2").end().to("seda:foo2");
             }
         };
     }

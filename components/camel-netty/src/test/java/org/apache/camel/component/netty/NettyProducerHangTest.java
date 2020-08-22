@@ -49,7 +49,8 @@ public class NettyProducerHangTest extends CamelTestSupport {
             }
         }).start();
 
-        String response1 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
+        String response1
+                = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
         LOG.info("Received first response <" + response1 + ">");
 
         try {
@@ -59,7 +60,8 @@ public class NettyProducerHangTest extends CamelTestSupport {
             assertStringContains(e.getCause().getMessage(), "No response received from remote server");
         }
 
-        String response2 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
+        String response2
+                = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
         LOG.info("Received 2nd response <" + response2 + ">");
 
         try {
@@ -78,7 +80,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         LOG.info("Open socket and accept data");
         try (InputStream is = soc.getInputStream();
-                OutputStream os = soc.getOutputStream()) {
+             OutputStream os = soc.getOutputStream()) {
             // read first message
             is.read(buf);
 

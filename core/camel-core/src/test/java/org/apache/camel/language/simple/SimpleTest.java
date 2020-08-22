@@ -510,7 +510,8 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]", cause.getMessage());
+            assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]",
+                    cause.getMessage());
         }
     }
 
@@ -520,7 +521,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
+            assertTrue(e.getMessage()
+                    .startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -530,7 +532,8 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
+            assertTrue(e.getMessage()
+                    .startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -992,7 +995,8 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (RuntimeBeanExpressionException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Key: bar not found in bean: abc of type: java.lang.String using OGNL path [[bar]]", cause.getMessage());
+            assertEquals("Key: bar not found in bean: abc of type: java.lang.String using OGNL path [[bar]]",
+                    cause.getMessage());
         }
     }
 
@@ -1049,7 +1053,8 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testExceptionOGNLSimple() throws Exception {
         exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, "myPolicy");
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, new CamelAuthorizationException("The camel authorization exception", exchange));
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT,
+                new CamelAuthorizationException("The camel authorization exception", exchange));
 
         assertExpression("${exception.getPolicyId}", "myPolicy");
     }
@@ -1408,8 +1413,10 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${in.body.getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
-            assertEquals("Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
-                             + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance", e.getMessage());
+            assertEquals(
+                    "Failed to invoke method: .getFriend.getFriend.getName on org.apache.camel.language.simple.SimpleTest.Animal"
+                         + " due last method returned null and therefore cannot continue to invoke method .getName on a null instance",
+                    e.getMessage());
         }
     }
 
@@ -1436,7 +1443,8 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
-                             + " due last method returned null and therefore cannot continue to invoke method .name on a null instance", e.getMessage());
+                         + " due last method returned null and therefore cannot continue to invoke method .name on a null instance",
+                    e.getMessage());
         }
     }
 
@@ -1686,18 +1694,18 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testStringArrayLength() throws Exception {
-        exchange.getIn().setBody(new String[] {"foo", "bar"});
+        exchange.getIn().setBody(new String[] { "foo", "bar" });
         assertExpression("${body[0]}", "foo");
         assertExpression("${body[1]}", "bar");
         assertExpression("${body.length}", 2);
 
-        exchange.getIn().setBody(new String[] {"foo", "bar", "beer"});
+        exchange.getIn().setBody(new String[] { "foo", "bar", "beer" });
         assertExpression("${body.length}", 3);
     }
 
     @Test
     public void testByteArrayLength() throws Exception {
-        exchange.getIn().setBody(new byte[] {65, 66, 67});
+        exchange.getIn().setBody(new byte[] { 65, 66, 67 });
         assertExpression("${body[0]}", 65);
         assertExpression("${body[1]}", 66);
         assertExpression("${body[2]}", 67);
@@ -1706,7 +1714,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testIntArrayLength() throws Exception {
-        exchange.getIn().setBody(new int[] {1, 20, 300});
+        exchange.getIn().setBody(new int[] { 1, 20, 300 });
         assertExpression("${body[0]}", 1);
         assertExpression("${body[1]}", 20);
         assertExpression("${body[2]}", 300);
@@ -1764,9 +1772,9 @@ public class SimpleTest extends LanguageTestSupport {
         data.add("F");
         exchange.getIn().setBody(data);
 
-        Iterator it = (Iterator)evaluateExpression("${collate(3)}", null);
-        List chunk = (List)it.next();
-        List chunk2 = (List)it.next();
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
         assertFalse(it.hasNext());
 
         assertEquals(3, chunk.size());
@@ -1792,10 +1800,10 @@ public class SimpleTest extends LanguageTestSupport {
         data.add("G");
         exchange.getIn().setBody(data);
 
-        Iterator it = (Iterator)evaluateExpression("${collate(3)}", null);
-        List chunk = (List)it.next();
-        List chunk2 = (List)it.next();
-        List chunk3 = (List)it.next();
+        Iterator it = (Iterator) evaluateExpression("${collate(3)}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        List chunk3 = (List) it.next();
         assertFalse(it.hasNext());
 
         assertEquals(3, chunk.size());
@@ -1819,7 +1827,8 @@ public class SimpleTest extends LanguageTestSupport {
         int i = 0;
         for (i = 0; i < iterations; i++) {
             Expression expression = SimpleLanguage.simple("${random(1,10)}", Integer.class);
-            assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
+            assertTrue(
+                    min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
         for (i = 0; i < iterations; i++) {
             Expression expression = SimpleLanguage.simple("${random(10)}", Integer.class);
@@ -2022,7 +2031,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public static class MyClass {
         public Object[] getMyArray() {
-            return new Object[] {"Hallo", "World", "!"};
+            return new Object[] { "Hallo", "World", "!" };
         }
     }
 }

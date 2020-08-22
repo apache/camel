@@ -37,13 +37,13 @@ public class JmsFormatDateHeadersToIso8601Test extends CamelTestSupport {
     @Test
     public void testComponentFormatDateHeaderToIso8601() throws Exception {
         String outDate = template.requestBodyAndHeader("direct:start-isoformat", "body", "date", DATE, String.class);
-        assertEquals(outDate, "2018-02-26T19:12:18Z");
+        assertEquals("2018-02-26T19:12:18Z", outDate);
     }
 
     @Test
     public void testBindingFormatDateHeaderToIso8601() throws Exception {
         String outDate = template.requestBodyAndHeader("direct:start-nonisoformat", "body", "date", DATE, String.class);
-        assertNotEquals(outDate, "2018-02-26T19:12:18Z");
+        assertNotEquals("2018-02-26T19:12:18Z", outDate);
     }
 
     @Override

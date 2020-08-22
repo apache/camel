@@ -263,7 +263,7 @@ public class DelayedMonoPublisherTest {
         Exception ex = new RuntimeException("An exception");
         pub.setException(ex);
         assertThrows(IllegalStateException.class,
-            () -> pub.setData(1));
+                () -> pub.setData(1));
     }
 
     @Test
@@ -272,7 +272,7 @@ public class DelayedMonoPublisherTest {
         pub.setData(1);
         Exception ex = new RuntimeException("An exception");
         assertThrows(IllegalStateException.class,
-            () -> pub.setException(ex));
+                () -> pub.setException(ex));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class DelayedMonoPublisherTest {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setData(1);
         assertThrows(IllegalStateException.class,
-            () -> pub.setData(2));
+                () -> pub.setData(2));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class DelayedMonoPublisherTest {
         DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
         pub.setException(new RuntimeException("An exception"));
         assertThrows(IllegalStateException.class,
-            () -> pub.setException(new RuntimeException("An exception")));
+                () -> pub.setException(new RuntimeException("An exception")));
     }
 
 }

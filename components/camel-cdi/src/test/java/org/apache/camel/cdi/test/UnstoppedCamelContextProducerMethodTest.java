@@ -61,17 +61,19 @@ public class UnstoppedCamelContextProducerMethodTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(SimpleCamelRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test class
+                .addClass(SimpleCamelRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
-    public void sendMessageToInbound(@Uri("direct:start") ProducerTemplate inbound,
-                                     @Uri("mock:result") MockEndpoint outbound) throws InterruptedException {
+    public void sendMessageToInbound(
+            @Uri("direct:start") ProducerTemplate inbound,
+            @Uri("mock:result") MockEndpoint outbound)
+            throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("test");
 

@@ -63,37 +63,32 @@ public class ShardIteratorHandlerTest {
         undertest = new ShardIteratorHandler(endpoint);
 
         lenient().when(amazonDynamoDBStreams.listStreams(any(ListStreamsRequest.class))).thenReturn(
-            new ListStreamsResult()
-                .withStreams(new Stream()
-                        .withStreamArn("arn:aws:dynamodb:region:12345:table/table_name/stream/timestamp")
-                )
-        );
+                new ListStreamsResult()
+                        .withStreams(new Stream()
+                                .withStreamArn("arn:aws:dynamodb:region:12345:table/table_name/stream/timestamp")));
 
         lenient().when(amazonDynamoDBStreams.describeStream(any(DescribeStreamRequest.class))).thenReturn(
-            new DescribeStreamResult()
-                .withStreamDescription(
-                        new StreamDescription()
-                        .withTableName("table_name")
-                        .withShards(
-                                ShardListTest.createShardsWithSequenceNumbers(null,
-                                        "a", "1", "5",
-                                        "b", "8", "15",
-                                        "c", "16", "16",
-                                        "d", "20", null
-                                )
-                        )
-                )
-        );
+                new DescribeStreamResult()
+                        .withStreamDescription(
+                                new StreamDescription()
+                                        .withTableName("table_name")
+                                        .withShards(
+                                                ShardListTest.createShardsWithSequenceNumbers(null,
+                                                        "a", "1", "5",
+                                                        "b", "8", "15",
+                                                        "c", "16", "16",
+                                                        "d", "20", null))));
 
-        lenient().when(amazonDynamoDBStreams.getShardIterator(any(GetShardIteratorRequest.class))).thenAnswer(new Answer<GetShardIteratorResult>() {
-            @Override
-            public GetShardIteratorResult answer(InvocationOnMock invocation) throws Throwable {
-                return new GetShardIteratorResult()
-                        .withShardIterator("shard_iterator_"
-                                + ((GetShardIteratorRequest) invocation.getArguments()[0]).getShardId()
-                                + "_000");
-            }
-        });
+        lenient().when(amazonDynamoDBStreams.getShardIterator(any(GetShardIteratorRequest.class)))
+                .thenAnswer(new Answer<GetShardIteratorResult>() {
+                    @Override
+                    public GetShardIteratorResult answer(InvocationOnMock invocation) throws Throwable {
+                        return new GetShardIteratorResult()
+                                .withShardIterator("shard_iterator_"
+                                                   + ((GetShardIteratorRequest) invocation.getArguments()[0]).getShardId()
+                                                   + "_000");
+                    }
+                });
     }
 
     @Test
@@ -144,11 +139,13 @@ public class ShardIteratorHandlerTest {
 
         ArgumentCaptor<GetShardIteratorRequest> getIteratorCaptor = ArgumentCaptor.forClass(GetShardIteratorRequest.class);
         verify(amazonDynamoDBStreams, times(4)).getShardIterator(getIteratorCaptor.capture());
-        String[] shards = new String[]{"a", "b", "c", "d"};
+        String[] shards = new String[] { "a", "b", "c", "d" };
         for (int i = 0; i < shards.length; ++i) {
             assertEquals(shards[i], getIteratorCaptor.getAllValues().get(i).getShardId());
         }
-        assertArrayEquals(new String[]{"shard_iterator_a_000", "shard_iterator_b_000", "shard_iterator_c_000", "shard_iterator_d_000"}, shardIterators);
+        assertArrayEquals(
+                new String[] { "shard_iterator_a_000", "shard_iterator_b_000", "shard_iterator_c_000", "shard_iterator_d_000" },
+                shardIterators);
 
     }
 

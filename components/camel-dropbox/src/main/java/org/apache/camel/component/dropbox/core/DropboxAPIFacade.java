@@ -66,7 +66,7 @@ public final class DropboxAPIFacade {
     private final Exchange exchange;
 
     /**
-     * @param client the DbxClient performing dropbox low level operations
+     * @param client   the DbxClient performing dropbox low level operations
      * @param exchange the current Exchange
      */
     public DropboxAPIFacade(DbxClientV2 client, Exchange exchange) {
@@ -77,14 +77,12 @@ public final class DropboxAPIFacade {
     /**
      * Put or upload a new file or an entire directory to dropbox
      *
-     * @param localPath the file path or the dir path on the local filesystem
-     * @param remotePath the remote path destination on dropbox
-     * @param mode how a file should be saved on dropbox; in case of "add" the
-     *            new file will be renamed in case a file with the same name
-     *            already exists on dropbox. in case of "force" the file already
-     *            existing with the same name will be overridden.
-     * @return a result object reporting for each remote path the result of the
-     *         operation.
+     * @param  localPath        the file path or the dir path on the local filesystem
+     * @param  remotePath       the remote path destination on dropbox
+     * @param  mode             how a file should be saved on dropbox; in case of "add" the new file will be renamed in
+     *                          case a file with the same name already exists on dropbox. in case of "force" the file
+     *                          already existing with the same name will be overridden.
+     * @return                  a result object reporting for each remote path the result of the operation.
      * @throws DropboxException
      */
     public DropboxFileUploadResult put(String localPath, String remotePath, DropboxUploadMode mode) throws DropboxException {
@@ -105,7 +103,8 @@ public final class DropboxAPIFacade {
         }
     }
 
-    private DropboxFileUploadResult putFile(String localPath, DropboxUploadMode mode, String dropboxPath, boolean isPresent) throws DropboxException {
+    private DropboxFileUploadResult putFile(String localPath, DropboxUploadMode mode, String dropboxPath, boolean isPresent)
+            throws DropboxException {
         File fileLocalPath = new File(localPath);
         // verify uploading of a single file
         if (fileLocalPath.isFile()) {
@@ -180,7 +179,8 @@ public final class DropboxAPIFacade {
         }
     }
 
-    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent) throws DropboxException {
+    private DropboxFileUploadResult putBody(Exchange exchange, DropboxUploadMode mode, String dropboxPath, boolean isPresent)
+            throws DropboxException {
         String name = exchange.getIn().getHeader(HEADER_PUT_FILE_NAME, String.class);
         if (name == null) {
             // fallback to use CamelFileName
@@ -225,7 +225,8 @@ public final class DropboxAPIFacade {
             } else {
                 uploadMode = WriteMode.ADD;
             }
-            uploadedFile = client.files().uploadBuilder(dropboxPath).withMode(uploadMode).uploadAndFinish(inputStream, inputFile.length());
+            uploadedFile = client.files().uploadBuilder(dropboxPath).withMode(uploadMode).uploadAndFinish(inputStream,
+                    inputFile.length());
             return uploadedFile;
         } finally {
             IOHelper.close(inputStream);
@@ -251,13 +252,12 @@ public final class DropboxAPIFacade {
     }
 
     /**
-     * Search inside a remote path including its sub directories. The query
-     * param can be null.
+     * Search inside a remote path including its sub directories. The query param can be null.
      *
-     * @param remotePath the remote path where starting the search from
-     * @param query a space-separated list of substrings to search for. A file
-     *            matches only if it contains all the substrings
-     * @return a result object containing all the files found.
+     * @param  remotePath       the remote path where starting the search from
+     * @param  query            a space-separated list of substrings to search for. A file matches only if it contains
+     *                          all the substrings
+     * @return                  a result object containing all the files found.
      * @throws DropboxException
      */
     public DropboxSearchResult search(String remotePath, String query) throws DropboxException {
@@ -285,11 +285,11 @@ public final class DropboxAPIFacade {
     }
 
     /**
-     * Delete every files and subdirectories inside the remote directory. In
-     * case the remotePath is a file, delete the file.
+     * Delete every files and subdirectories inside the remote directory. In case the remotePath is a file, delete the
+     * file.
      *
-     * @param remotePath the remote location to delete
-     * @return a result object with the result of the delete operation.
+     * @param  remotePath       the remote location to delete
+     * @return                  a result object with the result of the delete operation.
      * @throws DropboxException
      */
     public DropboxDelResult del(String remotePath) throws DropboxException {
@@ -304,9 +304,9 @@ public final class DropboxAPIFacade {
     /**
      * Rename a remote path with the new path location.
      *
-     * @param remotePath the existing remote path to be renamed
-     * @param newRemotePath the new remote path substituting the old one
-     * @return a result object with the result of the move operation.
+     * @param  remotePath       the existing remote path to be renamed
+     * @param  newRemotePath    the new remote path substituting the old one
+     * @return                  a result object with the result of the move operation.
      * @throws DropboxException
      */
     public DropboxMoveResult move(String remotePath, String newRemotePath) throws DropboxException {
@@ -321,9 +321,9 @@ public final class DropboxAPIFacade {
     /**
      * Get the content of every file inside the remote path.
      *
-     * @param remotePath the remote path where to download from
-     * @return a result object with the content (ByteArrayOutputStream) of every
-     *         files inside the remote path.
+     * @param  remotePath       the remote path where to download from
+     * @return                  a result object with the content (ByteArrayOutputStream) of every files inside the
+     *                          remote path.
      * @throws DropboxException
      */
     public DropboxFileDownloadResult get(String remotePath) throws DropboxException {

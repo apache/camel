@@ -131,9 +131,10 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
                 long counter = statistics.getFailureCounter(exception);
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exception", "failures"},
-                        new Object[]{name, counter});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "exception", "failures" },
+                        new Object[] { name, counter });
                 answer.put(data);
             }
             if (empty) {
@@ -142,9 +143,10 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
                 long counter = statistics.getFailureCounter(Exception.class);
 
                 CompositeType ct = CamelOpenMBeanTypes.loadbalancerExceptionsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exception", "failures"},
-                        new Object[]{name, counter});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "exception", "failures" },
+                        new Object[] { name, counter });
                 answer.put(data);
             }
 

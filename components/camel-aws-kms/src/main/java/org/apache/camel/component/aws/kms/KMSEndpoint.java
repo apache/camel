@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Manage keys stored in AWS KMS instances.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS Key Management Service (KMS)", syntax = "aws-kms:label", producerOnly = true, category = {Category.CLOUD, Category.MESSAGING})
+@UriEndpoint(firstVersion = "2.21.0", scheme = "aws-kms", title = "AWS Key Management Service (KMS)", syntax = "aws-kms:label",
+             producerOnly = true, category = { Category.CLOUD, Category.MESSAGING })
 public class KMSEndpoint extends ScheduledPollEndpoint {
 
     private AWSKMS kmsClient;
@@ -101,7 +102,8 @@ public class KMSEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AWSKMSClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AWSKMSClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AWSKMSClientBuilder.standard().withCredentials(credentialsProvider);
             }

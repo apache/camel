@@ -26,18 +26,15 @@ import org.w3c.dom.Document;
 import org.apache.camel.Message;
 
 /**
- * Used in the signature verifier to map the references and objects of the XML
- * signature to the output message.
+ * Used in the signature verifier to map the references and objects of the XML signature to the output message.
  */
 public interface XmlSignature2Message {
 
     /**
      * Maps the references and objects of an XML signature to the camel message.
      * 
-     * @param input
-     *            input
-     * @param output
-     *            output message
+     * @param  input     input
+     * @param  output    output message
      * @throws Exception
      */
     void mapToMessage(Input input, Message output) throws Exception;
@@ -45,16 +42,15 @@ public interface XmlSignature2Message {
     public interface Input {
 
         /**
-         * Returns the references. If there were several signatures then all
-         * references of all signatures are returned.
+         * Returns the references. If there were several signatures then all references of all signatures are returned.
          * 
          * @return list of references, cannot be <code>null</code>
          */
         List<Reference> getReferences();
 
         /**
-         * Returns the objects. If there were several signatures in the XML
-         * document then all objects of all signatures are returned.
+         * Returns the objects. If there were several signatures in the XML document then all objects of all signatures
+         * are returned.
          * 
          * @return objects, cannot be <code>null</code>
          */
@@ -64,36 +60,31 @@ public interface XmlSignature2Message {
         Document getMessageBodyDocument();
 
         /**
-         * Indicator whether XML declaration should be omitted. Configured in
-         * the endpoint URI.
+         * Indicator whether XML declaration should be omitted. Configured in the endpoint URI.
          * 
-         * @return {@link Boolean#TRUE} if the XML declaration shall be omitted
-         *         in the output document.
+         * @return {@link Boolean#TRUE} if the XML declaration shall be omitted in the output document.
          */
         Boolean omitXmlDeclaration();
 
         /**
-         * Output node search value for determining the node from the XML
-         * signature document which shall be set to the output message body.
+         * Output node search value for determining the node from the XML signature document which shall be set to the
+         * output message body.
          */
         Object getOutputNodeSearch();
 
         /**
-         * Search type. Which determines the class and meaning of
-         * {@link #getOutputNodeSearch()}.
+         * Search type. Which determines the class and meaning of {@link #getOutputNodeSearch()}.
          */
         String getOutputNodeSearchType();
 
         /**
-         * Indicator whether the XML signature elements should be removed from
-         * the document set to the output message.
+         * Indicator whether the XML signature elements should be removed from the document set to the output message.
          */
         Boolean getRemoveSignatureElements();
 
         /**
-         * The character encoding of the resulting XML document. Can be
-         * <code>null</code>. If <code>null</code> then the encoding of the
-         * original XML document is used.
+         * The character encoding of the resulting XML document. Can be <code>null</code>. If <code>null</code> then the
+         * encoding of the original XML document is used.
          * 
          */
         String getOutputXmlEncoding();

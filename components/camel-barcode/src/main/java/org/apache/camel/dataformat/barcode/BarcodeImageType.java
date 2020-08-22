@@ -20,5 +20,7 @@ package org.apache.camel.dataformat.barcode;
  * Endings for the supported image types.
  */
 public enum BarcodeImageType {
-    JPG, GIF, PNG
+    JPG,
+    GIF,
+    PNG
 }

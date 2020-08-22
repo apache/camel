@@ -94,7 +94,6 @@ import com.github.dockerjava.api.command.UpdateSwarmNodeCmd;
 import com.github.dockerjava.api.command.VersionCmd;
 import com.github.dockerjava.api.command.WaitContainerCmd;
 import com.github.dockerjava.api.model.Version;
-import com.github.dockerjava.core.DockerClientConfig;
 
 public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
@@ -102,7 +101,7 @@ public class FakeDockerCmdExecFactory implements DockerCmdExecFactory {
 
     public FakeDockerCmdExecFactory() {
     }
-    
+
     @Override
     public VersionCmd.Exec createVersionCmdExec() {
         return new VersionCmd.Exec() {

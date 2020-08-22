@@ -36,9 +36,8 @@ public interface RouteController extends CamelContextAware, StaticService {
     LoggingLevel getRouteStartupLoggingLevel();
 
     /**
-     * Sets the logging level used for logging route startup activity.
-     * By default INFO level is used. You can use this to change the level for example to OFF if
-     * this kind of logging is not wanted.
+     * Sets the logging level used for logging route startup activity. By default INFO level is used. You can use this
+     * to change the level for example to OFF if this kind of logging is not wanted.
      */
     void setRouteStartupLoggingLevel(LoggingLevel loggingLevel);
 
@@ -52,8 +51,8 @@ public interface RouteController extends CamelContextAware, StaticService {
      * <p/>
      * For example to adapt to <tt>SupervisingRouteController</tt>.
      *
-     * @param type the type to adapt to
-     * @return this {@link org.apache.camel.CamelContext} adapted to the given type
+     * @param  type the type to adapt to
+     * @return      this {@link org.apache.camel.CamelContext} adapted to the given type
      */
     <T extends RouteController> T adapt(Class<T> type);
 
@@ -74,8 +73,7 @@ public interface RouteController extends CamelContextAware, StaticService {
     /**
      * Indicates whether current thread is starting route(s).
      * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
-     * they need to react differently.
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case they need to react differently.
      *
      * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
      */
@@ -84,15 +82,15 @@ public interface RouteController extends CamelContextAware, StaticService {
     /**
      * Returns the current status of the given route
      *
-     * @param routeId the route id
-     * @return the status for the route
+     * @param  routeId the route id
+     * @return         the status for the route
      */
     ServiceStatus getRouteStatus(String routeId);
 
     /**
      * Starts the given route if it has been previously stopped
      *
-     * @param routeId the route id
+     * @param  routeId   the route id
      * @throws Exception is thrown if the route could not be started for whatever reason
      */
     void startRoute(String routeId) throws Exception;
@@ -100,34 +98,34 @@ public interface RouteController extends CamelContextAware, StaticService {
     /**
      * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
      *
-     * @param routeId the route id
+     * @param  routeId   the route id
      * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String)
+     * @see              #suspendRoute(String)
      */
     void stopRoute(String routeId) throws Exception;
 
     /**
      * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
      *
-     * @param routeId the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
+     * @param  routeId   the route id
+     * @param  timeout   timeout
+     * @param  timeUnit  the unit to use
      * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String, long, java.util.concurrent.TimeUnit)
+     * @see              #suspendRoute(String, long, java.util.concurrent.TimeUnit)
      */
     void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
-     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout
-     * and optional abortAfterTimeout mode.
+     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout and optional
+     * abortAfterTimeout mode.
      *
-     * @param routeId the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
-     * @param abortAfterTimeout should abort shutdown after timeout
-     * @return <tt>true</tt> if the route is stopped before the timeout
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String, long, java.util.concurrent.TimeUnit)
+     * @param  routeId           the route id
+     * @param  timeout           timeout
+     * @param  timeUnit          the unit to use
+     * @param  abortAfterTimeout should abort shutdown after timeout
+     * @return                   <tt>true</tt> if the route is stopped before the timeout
+     * @throws Exception         is thrown if the route could not be stopped for whatever reason
+     * @see                      #suspendRoute(String, long, java.util.concurrent.TimeUnit)
      */
     boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception;
 
@@ -141,7 +139,7 @@ public interface RouteController extends CamelContextAware, StaticService {
      * <p/>
      * If the route does <b>not</b> support suspension the route will be stopped instead
      *
-     * @param routeId the route id
+     * @param  routeId   the route id
      * @throws Exception is thrown if the route could not be suspended for whatever reason
      */
     void suspendRoute(String routeId) throws Exception;
@@ -156,9 +154,9 @@ public interface RouteController extends CamelContextAware, StaticService {
      * <p/>
      * If the route does <b>not</b> support suspension the route will be stopped instead
      *
-     * @param routeId  the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
+     * @param  routeId   the route id
+     * @param  timeout   timeout
+     * @param  timeUnit  the unit to use
      * @throws Exception is thrown if the route could not be suspended for whatever reason
      */
     void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
@@ -168,7 +166,7 @@ public interface RouteController extends CamelContextAware, StaticService {
      * <p/>
      * If the route does <b>not</b> support suspension the route will be started instead
      *
-     * @param routeId the route id
+     * @param  routeId   the route id
      * @throws Exception is thrown if the route could not be resumed for whatever reason
      */
     void resumeRoute(String routeId) throws Exception;

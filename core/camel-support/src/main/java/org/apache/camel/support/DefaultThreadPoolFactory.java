@@ -59,23 +59,26 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
         return Executors.newCachedThreadPool(threadFactory);
     }
-    
+
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
         // allow core thread timeout is default true if not configured
         boolean allow = profile.getAllowCoreThreadTimeOut() != null ? profile.getAllowCoreThreadTimeOut() : true;
-        return newThreadPool(profile.getPoolSize(), 
-                             profile.getMaxPoolSize(), 
-                             profile.getKeepAliveTime(),
-                             profile.getTimeUnit(),
-                             profile.getMaxQueueSize(),
-                             allow,
-                             profile.getRejectedExecutionHandler(),
-                             factory);
+        return newThreadPool(profile.getPoolSize(),
+                profile.getMaxPoolSize(),
+                profile.getKeepAliveTime(),
+                profile.getTimeUnit(),
+                profile.getMaxQueueSize(),
+                allow,
+                profile.getRejectedExecutionHandler(),
+                factory);
     }
 
-    public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean allowCoreThreadTimeOut,
-                                         RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory) throws IllegalArgumentException {
+    public ExecutorService newThreadPool(
+            int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+            boolean allowCoreThreadTimeOut,
+            RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+            throws IllegalArgumentException {
 
         // the core pool size must be 0 or higher
         if (corePoolSize < 0) {
@@ -84,7 +87,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
 
         // validate max >= core
         if (maxPoolSize < corePoolSize) {
-            throw new IllegalArgumentException("MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
+            throw new IllegalArgumentException(
+                    "MaxPoolSize must be >= corePoolSize, was " + maxPoolSize + " >= " + corePoolSize);
         }
 
         BlockingQueue<Runnable> workQueue;
@@ -102,7 +106,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             workQueue = new LinkedBlockingQueue<>(maxQueueSize);
         }
 
-        ThreadPoolExecutor answer = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
+        ThreadPoolExecutor answer
+                = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
         answer.setThreadFactory(threadFactory);
         answer.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         if (rejectedExecutionHandler == null) {
@@ -111,7 +116,7 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
         answer.setRejectedExecutionHandler(rejectedExecutionHandler);
         return answer;
     }
-    
+
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
         RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
@@ -119,7 +124,8 @@ public class DefaultThreadPoolFactory extends ServiceSupport implements CamelCon
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
 
-        ScheduledThreadPoolExecutor answer = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        ScheduledThreadPoolExecutor answer
+                = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
         answer.setRemoveOnCancelPolicy(true);
 
         // need to wrap the thread pool in a sized to guard against the problem that the

@@ -22,9 +22,8 @@ import org.apache.camel.Producer;
 public class AvroHttpEndpoint extends AvroEndpoint {
 
     /**
-     * Constructs a fully-initialized DefaultEndpoint instance. This is the
-     * preferred method of constructing an object from Java code (as opposed to
-     * Spring beans, etc.).
+     * Constructs a fully-initialized DefaultEndpoint instance. This is the preferred method of constructing an object
+     * from Java code (as opposed to Spring beans, etc.).
      *
      * @param endpointUri the full URI used to create this endpoint
      * @param component   the component that created this endpoint
@@ -36,7 +35,7 @@ public class AvroHttpEndpoint extends AvroEndpoint {
     /**
      * Creates a new producer which is used send messages into the endpoint
      *
-     * @return a newly created producer
+     * @return           a newly created producer
      * @throws Exception can be thrown
      */
     @Override

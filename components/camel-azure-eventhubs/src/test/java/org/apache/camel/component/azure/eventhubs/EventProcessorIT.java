@@ -75,21 +75,25 @@ public class EventProcessorIT {
     @Test
     public void testEventProcessingWithBlobCheckpointStore() {
         final AtomicBoolean doneAsync = new AtomicBoolean(false);
-        final EventHubProducerAsyncClient producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        final EventHubProducerAsyncClient producerAsyncClient
+                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final Consumer<EventContext> onEvent = eventContext -> {
             final String body = eventContext.getEventData().getBodyAsString();
-            if (eventContext.getPartitionContext().getPartitionId().equals("0") && body.contains("Testing Event Consumer With BlobStore")) {
+            if (eventContext.getPartitionContext().getPartitionId().equals("0")
+                    && body.contains("Testing Event Consumer With BlobStore")) {
                 assertTrue(true);
                 doneAsync.set(true);
             }
         };
         final Consumer<ErrorContext> onError = errorContext -> {
         };
-        final EventProcessorClient processorClient = EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError);
+        final EventProcessorClient processorClient
+                = EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError);
 
         processorClient.start();
 
-        producerAsyncClient.send(Collections.singletonList(new EventData("Testing Event Consumer With BlobStore")), new SendOptions().setPartitionId("0")).block();
+        producerAsyncClient.send(Collections.singletonList(new EventData("Testing Event Consumer With BlobStore")),
+                new SendOptions().setPartitionId("0")).block();
 
         Awaitility.await()
                 .timeout(30, TimeUnit.SECONDS)

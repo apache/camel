@@ -43,13 +43,14 @@ public class BeanValidationException extends ValidationException {
 
         buffer.append(" errors: [");
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-            buffer.append("property: " + constraintViolation.getPropertyPath() + "; value: " + constraintViolation.getInvalidValue() + "; constraint: " + constraintViolation.getMessage() + "; ");
+            buffer.append("property: " + constraintViolation.getPropertyPath() + "; value: "
+                          + constraintViolation.getInvalidValue() + "; constraint: " + constraintViolation.getMessage() + "; ");
         }
         buffer.append("]");
 
         return buffer.toString();
     }
-    
+
     public Set<ConstraintViolation<Object>> getConstraintViolations() {
         return constraintViolations;
     }

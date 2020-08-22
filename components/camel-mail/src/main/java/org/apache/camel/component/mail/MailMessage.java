@@ -52,7 +52,7 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage copy() {
-        MailMessage answer = (MailMessage)super.copy();
+        MailMessage answer = (MailMessage) super.copy();
         answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
         return answer;

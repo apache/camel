@@ -87,14 +87,13 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100").routeId("route1")
-                         // let it complete only current task so we shutdown faster
-                         .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                         .delay(1000).to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
+                        .delay(1000).to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }
         };
     }
-
 
 }

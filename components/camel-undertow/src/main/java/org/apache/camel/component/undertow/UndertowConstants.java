@@ -44,6 +44,7 @@ public final class UndertowConstants {
          * Unused in Undertow component. Kept for compatibility with Camel websocket component.
          */
         ONERROR(-1);
+
         private final int code;
 
         EventType(int code) {

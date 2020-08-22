@@ -37,7 +37,8 @@ public class RestServletBindingModeAutoWithXmlTest extends ServletCamelRouterTes
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
 
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/xml");
         WebResponse response = query(req, false);
 
@@ -60,7 +61,7 @@ public class RestServletBindingModeAutoWithXmlTest extends ServletCamelRouterTes
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/xml").type(UserJaxbPojo.class)
+                        .post("new").consumes("application/xml").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

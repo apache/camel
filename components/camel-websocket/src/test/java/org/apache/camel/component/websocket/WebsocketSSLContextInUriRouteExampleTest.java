@@ -105,8 +105,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c;
         AsyncHttpClientConfig config;
 
-        DefaultAsyncHttpClientConfig.Builder builder =
-                new DefaultAsyncHttpClientConfig.Builder();
+        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
 
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
@@ -166,7 +165,8 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                             @Override
                             public void onPongFrame(byte[] payload) {
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         getMockEndpoint("mock:client").expectedBodiesReceived("Hello from WS client");
 
@@ -192,11 +192,11 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
                 websocketComponent.setMinThreads(1);
                 websocketComponent.setMaxThreads(25);
                 from(uri)
-                     .log(">>> Message received from WebSocket Client : ${body}")
-                     .to("mock:client")
-                     .loop(10)
-                         .setBody().constant(">> Welcome on board!")
-                         .to(uri);
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .to("mock:client")
+                        .loop(10)
+                        .setBody().constant(">> Welcome on board!")
+                        .to(uri);
             }
         };
     }

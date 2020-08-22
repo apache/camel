@@ -43,8 +43,8 @@ public class DebeziumMySqlComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium:mysql?name=test_name&offsetStorageFileName=/test&"
-                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                           + "databaseServerName=test&databaseHistoryFileName=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumMySqlComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -53,7 +53,8 @@ public class DebeziumMySqlComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final MySqlConnectorEmbeddedDebeziumConfiguration configuration = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final MySqlConnectorEmbeddedDebeziumConfiguration configuration
+                    = (MySqlConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
@@ -86,7 +87,8 @@ public class DebeziumMySqlComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final MySqlConnectorEmbeddedDebeziumConfiguration actualConfigurations = (MySqlConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final MySqlConnectorEmbeddedDebeziumConfiguration actualConfigurations
+                    = (MySqlConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());

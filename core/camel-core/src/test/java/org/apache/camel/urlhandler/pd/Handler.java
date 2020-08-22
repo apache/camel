@@ -28,9 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class to simulate a change of the XSD document. During the first call of the
- * resource a XSD is returned which does not fit to the XML document. In the
- * second call a XSD fitting to the XML document is returned. Used in
+ * Class to simulate a change of the XSD document. During the first call of the resource a XSD is returned which does
+ * not fit to the XML document. In the second call a XSD fitting to the XML document is returned. Used in
  * org.apache.camel.component.validator.ValidatorEndpointClearCachedSchemaTest
  */
 public class Handler extends URLStreamHandler {

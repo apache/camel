@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
+public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest
+        extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
     @Override
     boolean validatePayload() {
@@ -77,7 +78,8 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends Tc
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
+        mllpClient.sendFramedData(
+                Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
         assertFalse(done.matches(5, TimeUnit.SECONDS), "Exchange should not have completed");
     }
@@ -108,4 +110,3 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends Tc
     }
 
 }
-

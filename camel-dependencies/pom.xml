@@ -71,7 +71,7 @@
     <awaitility-version>4.0.3</awaitility-version>
     <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
     <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-    <aws-java-sdk2-version>2.13.73</aws-java-sdk2-version>
+    <aws-java-sdk2-version>2.14.3</aws-java-sdk2-version>
     <aws-xray-version>2.6.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-eventhubs-checkpointstore-blob-version>1.1.2</azure-eventhubs-checkpointstore-blob-version>
@@ -178,7 +178,7 @@
     <docker-java-version>3.2.5</docker-java-version>
     <dozer-version>6.5.0</dozer-version>
     <drools-version>7.41.0.Final</drools-version>
-    <dropbox-version>3.1.4</dropbox-version>
+    <dropbox-version>3.1.5</dropbox-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <ehcache3-version>3.8.1</ehcache3-version>
     <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
@@ -402,7 +402,6 @@
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
     <maven-archetype-plugin-version>3.0.1</maven-archetype-plugin-version>
     <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
-    <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>3.1.1</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>8.35</maven-checkstyle-version>
     <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
@@ -470,7 +469,7 @@
     <osgi-version>6.0.0</osgi-version>
     <paho-version>1.2.4</paho-version>
     <partial-build-plugin-version>2.7</partial-build-plugin-version>
-    <pdfbox-version>2.0.20</pdfbox-version>
+    <pdfbox-version>2.0.21</pdfbox-version>
     <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
     <pgjdbc-ng-driver-version>0.8.4</pgjdbc-ng-driver-version>
     <powermock-version>2.0.7</powermock-version>
@@ -526,6 +525,8 @@
     <snmp4j-version>2.6.3_1</snmp4j-version>
     <solr-version>8.5.1</solr-version>
     <solr-version-range>[8,9)</solr-version-range>
+    <sourcecheckExcludes></sourcecheckExcludes>
+    <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
     <spring-batch-version>4.2.4.RELEASE</spring-batch-version>

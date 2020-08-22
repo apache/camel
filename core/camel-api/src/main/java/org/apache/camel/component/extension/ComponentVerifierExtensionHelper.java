@@ -24,8 +24,8 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.StandardCode;
 
 /**
- * Package visible helper class holding implementation classes for
- * constant like error code and attributes in {@link  ComponentVerifierExtension.VerificationError}
+ * Package visible helper class holding implementation classes for constant like error code and attributes in
+ * {@link ComponentVerifierExtension.VerificationError}
  */
 final class ComponentVerifierExtensionHelper {
 
@@ -88,7 +88,6 @@ final class ComponentVerifierExtensionHelper {
         public String name() {
             return name;
         }
-
 
         @Override
         public boolean equals(Object o) {

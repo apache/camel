@@ -81,7 +81,8 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
 
                 from("direct:two").bean(MyBean.class, "callA").to("mock:result");
 
-                from("direct:three").setHeader(Exchange.BEAN_METHOD_NAME, constant("callA")).bean(MyBean.class).to("mock:result");
+                from("direct:three").setHeader(Exchange.BEAN_METHOD_NAME, constant("callA")).bean(MyBean.class)
+                        .to("mock:result");
 
                 from("direct:four").bean(MyBean.class, "callA").to("mock:middle").bean(MyBean.class, "callB").to("mock:result");
             }
@@ -90,7 +91,9 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
 
     public static final class MyBean {
 
-        public String callA(@Bean(ref = "GreetingService", method = "english") String greeting, @Bean(ref = "GreetingService", method = "french") String french, String body) {
+        public String callA(
+                @Bean(ref = "GreetingService", method = "english") String greeting,
+                @Bean(ref = "GreetingService", method = "french") String french, String body) {
             return greeting + "/" + french + " " + body;
         }
 

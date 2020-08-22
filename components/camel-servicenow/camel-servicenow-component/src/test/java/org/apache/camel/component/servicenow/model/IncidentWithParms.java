@@ -36,7 +36,6 @@ public class IncidentWithParms {
     public IncidentWithParms() {
     }
 
-
     public String getId() {
         return id;
     }

@@ -61,7 +61,8 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
             fail("Should have thrown exception");
         } catch (Exception e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"), "Actual message: " + iae.getMessage());
+            assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"),
+                    "Actual message: " + iae.getMessage());
         }
     }
 

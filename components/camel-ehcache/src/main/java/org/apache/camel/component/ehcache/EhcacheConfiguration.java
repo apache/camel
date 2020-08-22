@@ -105,8 +105,7 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * Configure if a cache need to be created if it does exist or can't be
-     * pre-configured.
+     * Configure if a cache need to be created if it does exist or can't be pre-configured.
      */
     public void setCreateCacheIfNotExist(boolean createCacheIfNotExist) {
         this.createCacheIfNotExist = createCacheIfNotExist;
@@ -117,8 +116,8 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the default cache action. If an action is set in the message
-     * header, then the operation from the header takes precedence.
+     * To configure the default cache action. If an action is set in the message header, then the operation from the
+     * header takes precedence.
      */
     public void setAction(String action) {
         this.action = action;
@@ -129,8 +128,8 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * To configure the default action key. If a key is set in the message
-     * header, then the key from the header takes precedence.
+     * To configure the default action key. If a key is set in the message header, then the key from the header takes
+     * precedence.
      */
     public void setKey(Object key) {
         this.key = key;
@@ -215,8 +214,8 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     /**
-     * Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED).
-     * You can specify multiple entries separated by comma.
+     * Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple entries
+     * separated by comma.
      */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = eventTypes;
@@ -292,7 +291,7 @@ public class EhcacheConfiguration implements Cloneable {
 
     public EhcacheConfiguration copy() {
         try {
-            return (EhcacheConfiguration)super.clone();
+            return (EhcacheConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

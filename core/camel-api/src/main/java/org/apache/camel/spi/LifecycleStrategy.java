@@ -36,9 +36,21 @@ public interface LifecycleStrategy {
     /**
      * Notification on initializing a {@link CamelContext}.
      *
-     * @param context the camel context
-     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
-     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
+    default void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on initialized {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
      */
     default void onContextInitialized(CamelContext context) throws VetoCamelContextStartException {
     }
@@ -46,18 +58,60 @@ public interface LifecycleStrategy {
     /**
      * Notification on starting a {@link CamelContext}.
      *
-     * @param context the camel context
-     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}.
-     *                                        Any other runtime exceptions will be logged at <tt>WARN</tt> level by Camel will continue starting itself.
+     * @param      context                        the camel context
+     * @throws     VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                            exceptions will be logged at <tt>WARN</tt> level by Camel will
+     *                                            continue starting itself. *
+     * @deprecated                                use {@link #onContextStarting(CamelContext)}.
      */
-    void onContextStart(CamelContext context) throws VetoCamelContextStartException;
+    @Deprecated
+    default void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on starting a {@link CamelContext}.
+     *
+     * @param  context                        the camel context
+     * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
+     *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
+     *                                        starting itself.
+     */
+    default void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+    }
+
+    /**
+     * Notification on started {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStarted(CamelContext context) {
+    }
+
+    /**
+     * Notification on stopping a {@link CamelContext}.
+     *
+     * @param      context the camel context
+     * @deprecated         use {@link #onContextStopping(CamelContext)}.
+     */
+    @Deprecated
+    default void onContextStop(CamelContext context) {
+    }
 
     /**
      * Notification on stopping a {@link CamelContext}.
      *
      * @param context the camel context
      */
-    void onContextStop(CamelContext context);
+    default void onContextStopping(CamelContext context) {
+    }
+
+    /**
+     * Notification on stopped {@link CamelContext}.
+     *
+     * @param context the camel context
+     */
+    default void onContextStopped(CamelContext context) {
+    }
 
     /**
      * Notification on adding an {@link Component}.
@@ -156,8 +210,9 @@ public interface LifecycleStrategy {
      * @param routeId             id of the route for the source (is null if no source)
      * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
      */
-    void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
-                         String sourceId, String routeId, String threadPoolProfileId);
+    void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
+            String sourceId, String routeId, String threadPoolProfileId);
 
     /**
      * Notification on removing a thread pool.

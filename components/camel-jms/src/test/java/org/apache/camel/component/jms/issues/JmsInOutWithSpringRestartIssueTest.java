@@ -28,7 +28,8 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/JmsInOutWithSpringRestartIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jms/issues/JmsInOutWithSpringRestartIssueTest.xml");
     }
 
     @Test

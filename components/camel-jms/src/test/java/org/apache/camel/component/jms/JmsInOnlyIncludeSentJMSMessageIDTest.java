@@ -67,8 +67,8 @@ public class JmsInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("activemq:queue:foo?includeSentJMSMessageID=true")
-                    .to("mock:done");
+                        .to("activemq:queue:foo?includeSentJMSMessageID=true")
+                        .to("mock:done");
             }
         };
     }

@@ -38,7 +38,7 @@ public class MainFaultToleranceTest {
                 .withDelay(500L)
                 .withSuccessThreshold(123)
                 .withTimeoutPoolSize(5)
-            .end();
+                .end();
 
         main.start();
 

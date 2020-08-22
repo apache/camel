@@ -91,11 +91,12 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     /**
      * Creates the {@link CamelCatalog}
      *
-     * @param caching  whether to use cache
+     * @param caching whether to use cache
      */
     public DefaultCamelCatalog(boolean caching) {
         this.caching = caching;
-        setJSonSchemaResolver(new CamelCatalogJSonSchemaResolver(this, extraComponents, extraComponentsJSonSchema, extraDataFormats, extraDataFormatsJSonSchema));
+        setJSonSchemaResolver(new CamelCatalogJSonSchemaResolver(
+                this, extraComponents, extraComponentsJSonSchema, extraDataFormats, extraDataFormatsJSonSchema));
     }
 
     @Override
@@ -205,20 +206,18 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<String> findComponentNames() {
-        return cache("findComponentNames", () ->
-                Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
-                        .flatMap(Collection::stream)
-                        .sorted()
-                        .collect(Collectors.toList()));
+        return cache("findComponentNames", () -> Stream.of(runtimeProvider.findComponentNames(), extraComponents.keySet())
+                .flatMap(Collection::stream)
+                .sorted()
+                .collect(Collectors.toList()));
     }
 
     @Override
     public List<String> findDataFormatNames() {
-        return cache("findDataFormatNames", () ->
-            Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
-                    .flatMap(Collection::stream)
-                    .sorted()
-                    .collect(Collectors.toList()));
+        return cache("findDataFormatNames", () -> Stream.of(runtimeProvider.findDataFormatNames(), extraDataFormats.keySet())
+                .flatMap(Collection::stream)
+                .sorted()
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -272,7 +271,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
         return findNames(filter, this::findOtherNames, this::otherModel);
     }
 
-    private List<String> findNames(String filter, Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> modelLoader) {
+    private List<String> findNames(
+            String filter, Supplier<List<String>> findNames, Function<String, ? extends BaseModel<?>> modelLoader) {
         List<String> answer = new ArrayList<>();
         List<String> names = findNames.get();
         for (String name : names) {
@@ -282,7 +282,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
                 String[] parts = label.split(",");
                 for (String part : parts) {
                     try {
-                        if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
+                        if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter)
+                                || part.matches(filter)) {
                             answer.add(name);
                         }
                     } catch (PatternSyntaxException e) {
@@ -407,7 +408,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private String doComponentAsciiDoc(String componentName) {
         // special for mail component
         String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3") || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
+        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
+                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
             name = "mail";
         } else {
             name = componentName;
@@ -431,7 +433,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private String doComponentHtmlDoc(String componentName) {
         // special for mail component
         String name;
-        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3") || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
+        if (componentName.equals("imap") || componentName.equals("imaps") || componentName.equals("pop3")
+                || componentName.equals("pop3s") || componentName.equals("smtp") || componentName.equals("smtps")) {
             name = "mail";
         } else {
             name = componentName;
@@ -594,52 +597,47 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public String listComponentsAsJson() {
-        return cache("listComponentsAsJson", () ->
-                JsonMapper.serialize(findComponentNames().stream()
-                    .map(this::componentJSonSchema)
-                    .map(JsonMapper::deserialize)
-                    .map(o -> o.get("component"))
-                    .collect(Collectors.toList())));
+        return cache("listComponentsAsJson", () -> JsonMapper.serialize(findComponentNames().stream()
+                .map(this::componentJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("component"))
+                .collect(Collectors.toList())));
     }
 
     @Override
     public String listDataFormatsAsJson() {
-        return cache("listDataFormatsAsJson", () ->
-                JsonMapper.serialize(findDataFormatNames().stream()
-                        .map(this::dataFormatJSonSchema)
-                        .map(JsonMapper::deserialize)
-                        .map(o -> o.get("dataformat"))
-                        .collect(Collectors.toList())));
+        return cache("listDataFormatsAsJson", () -> JsonMapper.serialize(findDataFormatNames().stream()
+                .map(this::dataFormatJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("dataformat"))
+                .collect(Collectors.toList())));
     }
 
     @Override
     public String listLanguagesAsJson() {
-        return cache("listLanguagesAsJson", () ->
-                JsonMapper.serialize(findLanguageNames().stream()
-                        .map(this::languageJSonSchema)
-                        .map(JsonMapper::deserialize)
-                        .map(o -> o.get("language"))
-                        .collect(Collectors.toList())));
+        return cache("listLanguagesAsJson", () -> JsonMapper.serialize(findLanguageNames().stream()
+                .map(this::languageJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("language"))
+                .collect(Collectors.toList())));
     }
 
     @Override
     public String listModelsAsJson() {
-        return cache("listModelsAsJson", () ->
-                JsonMapper.serialize(findModelNames().stream()
-                        .map(this::modelJSonSchema)
-                        .map(JsonMapper::deserialize)
-                        .map(o -> o.get("model"))
-                        .collect(Collectors.toList())));
+        return cache("listModelsAsJson", () -> JsonMapper.serialize(findModelNames().stream()
+                .map(this::modelJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("model"))
+                .collect(Collectors.toList())));
     }
 
     @Override
     public String listOthersAsJson() {
-        return cache("listOthersAsJson", () ->
-                JsonMapper.serialize(findOtherNames().stream()
-                        .map(this::otherJSonSchema)
-                        .map(JsonMapper::deserialize)
-                        .map(o -> o.get("other"))
-                        .collect(Collectors.toList())));
+        return cache("listOthersAsJson", () -> JsonMapper.serialize(findOtherNames().stream()
+                .map(this::otherJSonSchema)
+                .map(JsonMapper::deserialize)
+                .map(o -> o.get("other"))
+                .collect(Collectors.toList())));
     }
 
     @Override
@@ -664,7 +662,8 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
             Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
-            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
+            Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom,
+                    XPathConstants.NUMBER);
             double num = (double) val;
             archetypes = (int) num;
         } catch (Exception e) {

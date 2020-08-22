@@ -56,7 +56,8 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         List<Meter> meters = meterRegistry.getMeters();
         assertEquals(7, meters.size());
 
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MicrometerRoutePolicyService",
+                context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
         String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
@@ -67,11 +68,13 @@ public class ManagedMicrometerRoutePolicyTest extends AbstractMicrometerRoutePol
         assertTrue(json.contains("\"routeId\" : \"foo\""));
 
         // there should be 2 route policy meter mbeans
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelRoutePolicy.*"), null);
+        Set<ObjectName> set
+                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:name=CamelRoutePolicy.*"), null);
         assertEquals(2, set.size());
 
         String camelContextName = context().getName();
-        Long testCount = (Long)getMBeanServer().getAttribute(new ObjectName("org.apache.camel.micrometer:name=test.camelContext." + camelContextName), "Count");
+        Long testCount = (Long) getMBeanServer().getAttribute(
+                new ObjectName("org.apache.camel.micrometer:name=test.camelContext." + camelContextName), "Count");
         assertEquals(count / 2, testCount.longValue());
     }
 

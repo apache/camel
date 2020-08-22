@@ -45,9 +45,9 @@ public class OgnlInvokeMethodTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("name").ognl("request.body.name")
-                    .setHeader("dangerous").ognl("request.body.isDangerous()")
-                    .to("mock:result");
+                        .setHeader("name").ognl("request.body.name")
+                        .setHeader("dangerous").ognl("request.body.isDangerous()")
+                        .to("mock:result");
             }
         };
     }

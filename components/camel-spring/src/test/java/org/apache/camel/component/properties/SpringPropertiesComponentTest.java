@@ -28,7 +28,7 @@ public class SpringPropertiesComponentTest extends BaseSpringPropertiesComponent
     @Test
     public void testResolutionOfPlaceholdersOnFactoryBean() {
         final CamelContextFactoryBean factoryBean = applicationContext.getBean("&camel-1",
-            CamelContextFactoryBean.class);
+                CamelContextFactoryBean.class);
 
         assertEquals("{{autoStartup}}", factoryBean.getAutoStartup());
 

@@ -36,13 +36,14 @@ public class Any23DataFormatMarshalTest extends CamelTestSupport {
     @Test
     public void test() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+        String contenhtml = Any23TestSupport
+                .loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
         template.sendBody("direct:start", contenhtml);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             Model resultingRDF = in.getBody(Model.class);
-            assertEquals(resultingRDF.size(), 28);
+            assertEquals(28, resultingRDF.size());
         }
     }
 

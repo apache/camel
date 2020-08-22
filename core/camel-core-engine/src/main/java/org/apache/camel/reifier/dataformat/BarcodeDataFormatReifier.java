@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.BarcodeDataFormat;
 public class BarcodeDataFormatReifier extends DataFormatReifier<BarcodeDataFormat> {
 
     public BarcodeDataFormatReifier(CamelContext camelContext, DataFormatDefinition definition) {
-        super(camelContext, (BarcodeDataFormat)definition);
+        super(camelContext, (BarcodeDataFormat) definition);
     }
 
     @Override

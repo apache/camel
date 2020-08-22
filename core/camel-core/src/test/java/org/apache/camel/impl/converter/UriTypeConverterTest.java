@@ -34,8 +34,7 @@ public class UriTypeConverterTest {
 
     @Test
     public void shouldComplainOnInvalidStringUrisConvertingToUri() {
-        assertThrows(TypeConversionException.class, () -> 
-            UriTypeConverter.toUri(INVALID));
+        assertThrows(TypeConversionException.class, () -> UriTypeConverter.toUri(INVALID));
     }
 
     @Test

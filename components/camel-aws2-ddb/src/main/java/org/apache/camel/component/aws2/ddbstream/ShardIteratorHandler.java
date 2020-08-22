@@ -56,7 +56,8 @@ class ShardIteratorHandler {
         // either return a cached one or get a new one via a GetShardIterator
         // request.
         if (currentShardIterator == null) {
-            ListStreamsResponse streamsListResult = getClient().listStreams(ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
+            ListStreamsResponse streamsListResult = getClient().listStreams(
+                    ListStreamsRequest.builder().tableName(getEndpoint().getConfiguration().getTableName()).build());
             final String streamArn = streamsListResult.streams().get(0).streamArn(); // XXX
             // assumes
             // there
@@ -64,7 +65,8 @@ class ShardIteratorHandler {
             // only
             // one
             // stream
-            DescribeStreamResponse streamDescriptionResult = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
+            DescribeStreamResponse streamDescriptionResult
+                    = getClient().describeStream(DescribeStreamRequest.builder().streamArn(streamArn).build());
             shardList.addAll(streamDescriptionResult.streamDescription().shards());
 
             LOG.trace("Current shard is: {} (in {})", currentShard, shardList);
@@ -76,15 +78,18 @@ class ShardIteratorHandler {
             shardList.removeOlderThan(currentShard);
             LOG.trace("Next shard is: {} (in {})", currentShard, shardList);
 
-            GetShardIteratorResponse result = getClient().getShardIterator(buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber));
+            GetShardIteratorResponse result
+                    = getClient().getShardIterator(buildGetShardIteratorRequest(streamArn, iteratorType, sequenceNumber));
             currentShardIterator = result.shardIterator();
         }
         LOG.trace("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
     }
 
-    private GetShardIteratorRequest buildGetShardIteratorRequest(final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
-        GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamArn(streamArn).shardId(currentShard.shardId()).shardIteratorType(iteratorType);
+    private GetShardIteratorRequest buildGetShardIteratorRequest(
+            final String streamArn, ShardIteratorType iteratorType, String sequenceNumber) {
+        GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamArn(streamArn)
+                .shardId(currentShard.shardId()).shardIteratorType(iteratorType);
         switch (iteratorType) {
             case AFTER_SEQUENCE_NUMBER:
             case AT_SEQUENCE_NUMBER:
@@ -97,7 +102,9 @@ class ShardIteratorHandler {
                 // because we get a 400 when we use one of the
                 // {at,after}_sequence_number iterator types and don't supply
                 // a sequence number.
-                if (BigIntComparisons.Conditions.LTEQ.matches(new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()), new BigInteger(sequenceNumber))) {
+                if (BigIntComparisons.Conditions.LTEQ.matches(
+                        new BigInteger(currentShard.sequenceNumberRange().startingSequenceNumber()),
+                        new BigInteger(sequenceNumber))) {
                     req.sequenceNumber(sequenceNumber);
                 } else {
                     req.shardIteratorType(ShardIteratorType.TRIM_HORIZON);

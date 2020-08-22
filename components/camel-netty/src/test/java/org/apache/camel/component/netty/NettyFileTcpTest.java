@@ -39,8 +39,8 @@ public class NettyFileTcpTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=false&textline=true")
                         .to("mock:results");
 
-                from("file:src/test/data?noop=true&fileName=message1.txt").
-                        to("netty:tcp://localhost:{{port}}?sync=false&textline=true");
+                from("file:src/test/data?noop=true&fileName=message1.txt")
+                        .to("netty:tcp://localhost:{{port}}?sync=false&textline=true");
             }
         };
     }

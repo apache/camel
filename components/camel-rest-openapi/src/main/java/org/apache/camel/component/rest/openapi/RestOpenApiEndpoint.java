@@ -90,7 +90,8 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * RestProducerFactory interface.
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
-    syntax = "rest-openapi:specificationUri#operationId", category = {Category.OPENAPI, Category.REST, Category.API}, producerOnly = true)
+             syntax = "rest-openapi:specificationUri#operationId", category = { Category.OPENAPI, Category.REST, Category.API },
+             producerOnly = true)
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**
@@ -99,31 +100,33 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     Map<String, Object> parameters = Collections.emptyMap();
 
     @UriParam(
-        description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
-            + " OpenApi specification and in the component configuration.",
-        defaultValue = "", label = "producer")
+              description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
+                            + " OpenApi specification and in the component configuration.",
+              defaultValue = "", label = "producer")
     private String basePath;
 
     @UriParam(description = "Name of the Camel component that will perform the requests. The component must be present"
-        + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
-        + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides"
-        + " component configuration.", label = "producer")
+                            + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
+                            + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides"
+                            + " component configuration.",
+              label = "producer")
     private String componentName;
 
     @UriParam(
-        description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
-            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
-            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
-            + " in the component configuration",
-        label = "producer")
+              description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
+                            + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
+                            + " to the value of `Accept` HTTP header. If set overrides any value found in the OpenApi specification and."
+                            + " in the component configuration",
+              label = "producer")
     private String consumes;
 
     @UriParam(description = "Scheme hostname and port to direct the HTTP requests to in the form of"
-        + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
-        + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
-        + " REST configuration is consulted first, `rest-openapi` next, and global configuration last. If set"
-        + " overrides any value found in the OpenApi specification, RestConfiguration. Overrides all other "
-        + " configuration.", label = "producer")
+                            + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the corresponding"
+                            + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
+                            + " REST configuration is consulted first, `rest-openapi` next, and global configuration last. If set"
+                            + " overrides any value found in the OpenApi specification, RestConfiguration. Overrides all other "
+                            + " configuration.",
+              label = "producer")
     private String host;
 
     @UriPath(description = "ID of the operation from the OpenApi specification.", label = "producer")
@@ -131,21 +134,22 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     private String operationId;
 
     @UriParam(description = "What payload type this component is producing. For example `application/json`"
-        + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
-        + " any value present in the OpenApi specification. Overrides all other configuration.", label = "producer")
+                            + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
+                            + " any value present in the OpenApi specification. Overrides all other configuration.",
+              label = "producer")
     private String produces;
 
     @UriPath(description = "Path to the OpenApi specification file. The scheme, host base path are taken from this"
-        + " specification, but these can be overridden with properties on the component or endpoint level. If not"
-        + " given the component tries to load `openapi.json` resource from the classpath. Note that the `host` defined on the"
-        + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-        + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
-        + " The OpenApi specification can be loaded from different sources by prefixing with file: classpath: http: https:."
-        + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
-        + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
-        + " How to do that consult the JDK documentation for UrlHandler.",
-        defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
-        defaultValueNote = "By default loads `openapi.json` file", label = "producer")
+                           + " specification, but these can be overridden with properties on the component or endpoint level. If not"
+                           + " given the component tries to load `openapi.json` resource from the classpath. Note that the `host` defined on the"
+                           + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
+                           + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
+                           + " The OpenApi specification can be loaded from different sources by prefixing with file: classpath: http: https:."
+                           + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
+                           + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
+                           + " How to do that consult the JDK documentation for UrlHandler.",
+             defaultValue = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI_STR,
+             defaultValueNote = "By default loads `openapi.json` file", label = "producer")
     private URI specificationUri = RestOpenApiComponent.DEFAULT_SPECIFICATION_URI;
 
     public RestOpenApiEndpoint() {
@@ -153,13 +157,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     public RestOpenApiEndpoint(final String uri, final String remaining, final RestOpenApiComponent component,
-        final Map<String, Object> parameters) {
+                               final Map<String, Object> parameters) {
         super(notEmpty(uri, "uri"), notNull(component, "component"));
         this.parameters = parameters;
 
         specificationUri = before(remaining, "#", StringHelper::trimToNull)
-            .map(URI::create)
-            .orElse(ofNullable(component.getSpecificationUri()).orElse(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI));
+                .map(URI::create)
+                .orElse(ofNullable(component.getSpecificationUri()).orElse(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI));
 
         operationId = ofNullable(after(remaining, "#")).orElse(remaining);
 
@@ -176,12 +180,12 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         final CamelContext camelContext = getCamelContext();
         final Document openapiDoc = loadSpecificationFrom(camelContext, specificationUri);
 
-        final OasPaths paths = ((OasDocument)openapiDoc).paths;
+        final OasPaths paths = ((OasDocument) openapiDoc).paths;
 
         for (final OasPathItem path : paths.getItems()) {
             final Optional<Entry<HttpMethod, OasOperation>> maybeOperationEntry = getOperationMap(path).entrySet()
-                .stream().filter(operationEntry -> operationId.equals(operationEntry.getValue().operationId))
-                .findAny();
+                    .stream().filter(operationEntry -> operationId.equals(operationEntry.getValue().operationId))
+                    .findAny();
 
             if (maybeOperationEntry.isPresent()) {
                 final Entry<HttpMethod, OasOperation> operationEntry = maybeOperationEntry.get();
@@ -190,8 +194,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                 Map<String, OasParameter> pathParameters;
                 if (operation.getParameters() != null) {
                     pathParameters = operation.getParameters().stream()
-                        .filter(p -> "path".equals(p.in))
-                        .collect(Collectors.toMap(OasParameter::getName, Function.identity()));
+                            .filter(p -> "path".equals(p.in))
+                            .collect(Collectors.toMap(OasParameter::getName, Function.identity()));
                 } else {
                     pathParameters = new HashMap<>();
                 }
@@ -204,15 +208,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             }
         }
 
-
-
         String supportedOperations = paths.getItems().stream().flatMap(p -> getOperationMap(p).values().stream())
-            .map(p -> p.operationId).collect(Collectors.joining(", "));
-        throw new IllegalArgumentException("The specified operation with ID: `" + operationId
-            + "` cannot be found in the OpenApi specification loaded from `" + specificationUri
-            + "`. Operations defined in the specification are: " + supportedOperations);
+                .map(p -> p.operationId).collect(Collectors.joining(", "));
+        throw new IllegalArgumentException(
+                "The specified operation with ID: `" + operationId
+                                           + "` cannot be found in the OpenApi specification loaded from `" + specificationUri
+                                           + "`. Operations defined in the specification are: " + supportedOperations);
     }
-
 
     private Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
         Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
@@ -307,8 +309,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return (RestOpenApiComponent) getComponent();
     }
 
-    Producer createProducerFor(final Document openapi, final OasOperation operation, final String method,
-        final String uriTemplate) throws Exception {
+    Producer createProducerFor(
+            final Document openapi, final OasOperation operation, final String method,
+            final String uriTemplate)
+            throws Exception {
         final String basePath = determineBasePath(openapi);
         final String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
 
@@ -336,14 +340,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath = getBasePathFromOasDocument((OasDocument)openapi);
+        final String specificationBasePath = getBasePathFromOasDocument((OasDocument) openapi);
 
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
         }
 
         final CamelContext camelContext = getCamelContext();
-        final RestConfiguration restConfiguration = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
+        final RestConfiguration restConfiguration
+                = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String restConfigurationBasePath = restConfiguration.getContextPath();
 
         if (isNotEmpty(restConfigurationBasePath)) {
@@ -356,18 +361,18 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     public static String getBasePathFromOasDocument(final OasDocument openapi) {
         String basePath = null;
         if (openapi instanceof Oas20Document) {
-            basePath = ((Oas20Document)openapi).basePath;
+            basePath = ((Oas20Document) openapi).basePath;
         } else if (openapi instanceof Oas30Document) {
-            if (((Oas30Document)openapi).getServers() != null
-                && ((Oas30Document)openapi).getServers().get(0) != null) {
+            if (((Oas30Document) openapi).getServers() != null
+                    && ((Oas30Document) openapi).getServers().get(0) != null) {
                 try {
-                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    Oas30Server server = (Oas30Server) ((Oas30Document) openapi).getServers().get(0);
                     if (server.variables != null && server.variables.get("basePath") != null) {
                         basePath = server.variables.get("basePath").default_;
                     }
                     if (basePath == null) {
                         // parse server url as fallback
-                        URL serverUrl = new URL(parseVariables(((Oas30Document)openapi).getServers().get(0).url, server));
+                        URL serverUrl = new URL(parseVariables(((Oas30Document) openapi).getServers().get(0).url, server));
                         basePath = serverUrl.getPath();
                         if (basePath.indexOf("//") == 0) {
                             // strip off the first "/" if double "/" exists
@@ -380,7 +385,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
                 } catch (MalformedURLException e) {
                     //not a valid whole url, just the basePath
-                    basePath = ((Oas30Document)openapi).getServers().get(0).url;
+                    basePath = ((Oas30Document) openapi).getServers().get(0).url;
                 }
             }
 
@@ -426,21 +431,21 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         // produces
         List<String> specificationLevelConsumers = new ArrayList<>();
         if (openapi instanceof Oas20Document) {
-            specificationLevelConsumers = ((Oas20Document)openapi).produces;
+            specificationLevelConsumers = ((Oas20Document) openapi).produces;
         }
         List<String> operationLevelConsumers = new ArrayList<>();
         if (operation instanceof Oas20Operation) {
-            operationLevelConsumers = ((Oas20Operation)operation).produces;
+            operationLevelConsumers = ((Oas20Operation) operation).produces;
         } else if (operation instanceof Oas30Operation) {
-            Oas30Operation oas30Operation = (Oas30Operation)operation;
+            Oas30Operation oas30Operation = (Oas30Operation) operation;
             if (oas30Operation.responses != null) {
                 for (OasResponse response : oas30Operation.responses.getResponses()) {
-                    operationLevelConsumers.addAll(((Oas30Response)response).content.keySet());
+                    operationLevelConsumers.addAll(((Oas30Response) response).content.keySet());
                 }
             }
         }
         final String determinedConsumes = determineOption(specificationLevelConsumers, operationLevelConsumers,
-            component.getConsumes(), consumes);
+                component.getConsumes(), consumes);
 
         if (isNotEmpty(determinedConsumes)) {
             parameters.put("consumes", determinedConsumes);
@@ -451,13 +456,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         List<String> specificationLevelProducers = new ArrayList<>();
         if (openapi instanceof Oas20Document) {
-            specificationLevelProducers = ((Oas20Document)openapi).consumes;
+            specificationLevelProducers = ((Oas20Document) openapi).consumes;
         }
         List<String> operationLevelProducers = new ArrayList<>();
         if (operation instanceof Oas20Operation) {
-            operationLevelProducers = ((Oas20Operation)operation).consumes;
+            operationLevelProducers = ((Oas20Operation) operation).consumes;
         } else if (operation instanceof Oas30Operation) {
-            Oas30Operation oas30Operation = (Oas30Operation)operation;
+            Oas30Operation oas30Operation = (Oas30Operation) operation;
             if (oas30Operation.requestBody != null && oas30Operation.requestBody.content != null) {
                 operationLevelProducers.addAll(oas30Operation.requestBody.content.keySet());
             }
@@ -465,14 +470,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         final String determinedProducers = determineOption(specificationLevelProducers, operationLevelProducers,
-            component.getProduces(), produces);
+                component.getProduces(), produces);
 
         if (isNotEmpty(determinedProducers)) {
             parameters.put("produces", determinedProducers);
         }
 
         final String queryParameters = determineQueryParameters(openapi, operation).map(this::queryParameter)
-            .collect(Collectors.joining("&"));
+                .collect(Collectors.joining("&"));
         if (isNotEmpty(queryParameters)) {
             parameters.put("queryParameters", queryParameters);
         }
@@ -511,11 +516,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentHost;
         }
 
-
-
         if (openapi instanceof Oas20Document) {
-            final String openapiScheme = pickBestScheme(specificationUri.getScheme(), ((Oas20Document)openapi).schemes);
-            final String openapiHost = ((Oas20Document)openapi).host;
+            final String openapiScheme = pickBestScheme(specificationUri.getScheme(), ((Oas20Document) openapi).schemes);
+            final String openapiHost = ((Oas20Document) openapi).host;
 
             if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
                 return openapiScheme + "://" + openapiHost;
@@ -524,12 +527,14 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             //In OpenApi 3.0, scheme/host are in servers url section
             //But there could be many servers url(like one for production and one for test)
             //Use first one here
-            Oas30Document oas30Document = (Oas30Document)openapi;
+            Oas30Document oas30Document = (Oas30Document) openapi;
             if (oas30Document.getServers() != null
-                && oas30Document.getServers().get(0) != null) {
+                    && oas30Document.getServers().get(0) != null) {
                 try {
 
-                    URL serverUrl = new URL(parseVariables(oas30Document.getServers().get(0).url, (Oas30Server)oas30Document.getServers().get(0)));
+                    URL serverUrl = new URL(
+                            parseVariables(oas30Document.getServers().get(0).url,
+                                    (Oas30Server) oas30Document.getServers().get(0)));
                     final String openapiScheme = serverUrl.getProtocol();
                     final String openapiHost = serverUrl.getHost();
                     if (isNotEmpty(openapiScheme) && isNotEmpty(openapiHost)) {
@@ -542,7 +547,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         final CamelContext camelContext = getCamelContext();
-        final RestConfiguration globalRestConfiguration = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
+        final RestConfiguration globalRestConfiguration
+                = CamelContextHelper.getRestConfiguration(camelContext, null, determineComponentName());
         final String globalConfigurationHost = hostFrom(globalRestConfiguration);
 
         if (globalConfigurationHost != null) {
@@ -554,18 +560,21 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         String prefix = "http";
         if (specificationUri.isAbsolute() && specificationScheme.regionMatches(true, 0, prefix, 0, prefix.length())) {
             try {
-                return new URI(specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
-                    specificationUri.getPort(), null, null, null).toString();
+                return new URI(
+                        specificationUri.getScheme(), specificationUri.getUserInfo(), specificationUri.getHost(),
+                        specificationUri.getPort(), null, null, null).toString();
             } catch (final URISyntaxException e) {
                 throw new IllegalStateException("Unable to create a new URI from: " + specificationUri, e);
             }
         }
 
-        throw new IllegalStateException("Unable to determine destination host for requests. The OpenApi specification"
-            + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
-            + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
-            + (determineComponentName() != null ? determineComponentName() : "default" + "` component")
-            + " and there is no global RestConfiguration with those properties");
+        throw new IllegalStateException(
+                "Unable to determine destination host for requests. The OpenApi specification"
+                                        + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
+                                        + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
+                                        + (determineComponentName() != null
+                                                ? determineComponentName() : "default" + "` component")
+                                        + " and there is no global RestConfiguration with those properties");
     }
 
     String literalPathParameterValue(final OasParameter parameter) {
@@ -638,8 +647,9 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         return resolved.toString();
     }
 
-    static String determineOption(final List<String> specificationLevel, final List<String> operationLevel,
-        final String componentLevel, final String endpointLevel) {
+    static String determineOption(
+            final List<String> specificationLevel, final List<String> operationLevel,
+            final String componentLevel, final String endpointLevel) {
         if (isNotEmpty(endpointLevel)) {
             return endpointLevel;
         }
@@ -664,15 +674,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         final List<OasParameter> apiKeyQueryParameters = new ArrayList<>();
         if (securityRequirements != null) {
             if (openapi instanceof Oas20Document) {
-                Oas20Document oas20Document = (Oas20Document)openapi;
+                Oas20Document oas20Document = (Oas20Document) openapi;
                 Oas20SecurityDefinitions securityDefinitions = oas20Document.securityDefinitions;
 
                 for (final SecurityRequirement securityRequirement : securityRequirements) {
                     for (final String securityRequirementName : securityRequirement.getSecurityRequirementNames()) {
                         final Oas20SecurityScheme securitySchemeDefinition = securityDefinitions
-                            .getSecurityScheme(securityRequirementName);
+                                .getSecurityScheme(securityRequirementName);
                         if (securitySchemeDefinition.in != null
-                            && securitySchemeDefinition.in.equals("query")) {
+                                && securitySchemeDefinition.in.equals("query")) {
                             Oas20Parameter securityParameter = new Oas20Parameter(securitySchemeDefinition.name);
                             securityParameter.required = true;
                             securityParameter.type = "string";
@@ -683,11 +693,11 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                     }
                 }
             } else if (openapi instanceof Oas30Document) {
-                Oas30Document oas30Document = (Oas30Document)openapi;
+                Oas30Document oas30Document = (Oas30Document) openapi;
                 for (final SecurityRequirement securityRequirement : securityRequirements) {
                     for (final String securityRequirementName : securityRequirement.getSecurityRequirementNames()) {
                         final Oas30SecurityScheme securitySchemeDefinition = oas30Document.components
-                            .getSecurityScheme(securityRequirementName);
+                                .getSecurityScheme(securityRequirementName);
                         if (securitySchemeDefinition.in != null && securitySchemeDefinition.in.equals("query")) {
                             Oas30Parameter securityParameter = new Oas30Parameter(securitySchemeDefinition.name);
                             securityParameter.required = true;
@@ -705,7 +715,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         if (operation.getParameters() != null) {
             return Stream.concat(apiKeyQueryParameters.stream(),
-                                 operation.getParameters().stream().filter(p -> "query".equals(p.in)));
+                    operation.getParameters().stream().filter(p -> "query".equals(p.in)));
         } else {
             return apiKeyQueryParameters.stream();
         }
@@ -726,7 +736,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
         final StringBuilder answer = new StringBuilder(scheme).append("://").append(host);
         if (port > 0 && !("http".equalsIgnoreCase(scheme) && port == 80)
-            && !("https".equalsIgnoreCase(scheme) && port == 443)) {
+                && !("https".equalsIgnoreCase(scheme) && port == 443)) {
             answer.append(':').append(port);
         }
 
@@ -734,17 +744,15 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Loads the OpenApi definition model from the given path. Tries to resolve
-     * the resource using Camel's resource loading support, if it fails uses
-     * OpenApi's resource loading support instead.
+     * Loads the OpenApi definition model from the given path. Tries to resolve the resource using Camel's resource
+     * loading support, if it fails uses OpenApi's resource loading support instead.
      *
-     * @param uri URI of the specification
-     * @param camelContext context to use
-     * @return the specification
+     * @param  uri          URI of the specification
+     * @param  camelContext context to use
+     * @return              the specification
      */
     static Document loadSpecificationFrom(final CamelContext camelContext, final URI uri) {
         final ObjectMapper mapper = new ObjectMapper();
-
 
         final String uriAsString = uri.toString();
 
@@ -754,11 +762,13 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return Library.readDocument(node);
         } catch (final Exception e) {
 
-            throw new IllegalArgumentException("The given OpenApi specification could not be loaded from `" + uri
-                + "`. Tried loading using Camel's resource resolution and using OpenApi's own resource resolution."
-                + " OpenApi tends to swallow exceptions while parsing, try specifying Java system property `debugParser`"
-                + " (e.g. `-DdebugParser=true`), the exception that occurred when loading using Camel's resource"
-                + " loader follows", e);
+            throw new IllegalArgumentException(
+                    "The given OpenApi specification could not be loaded from `" + uri
+                                               + "`. Tried loading using Camel's resource resolution and using OpenApi's own resource resolution."
+                                               + " OpenApi tends to swallow exceptions while parsing, try specifying Java system property `debugParser`"
+                                               + " (e.g. `-DdebugParser=true`), the exception that occurred when loading using Camel's resource"
+                                               + " loader follows",
+                    e);
         }
     }
 

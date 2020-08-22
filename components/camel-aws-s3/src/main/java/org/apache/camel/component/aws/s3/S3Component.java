@@ -58,8 +58,10 @@ public class S3Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
+        if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+            throw new IllegalArgumentException(
+                    "useIAMCredentials is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

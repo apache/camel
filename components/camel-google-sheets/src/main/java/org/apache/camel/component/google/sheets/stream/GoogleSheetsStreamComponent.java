@@ -55,10 +55,10 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
     public Sheets getClient(GoogleSheetsStreamConfiguration endpointConfiguration) {
         if (client == null) {
             client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
-                                                endpointConfiguration.getClientSecret(),
-                                                endpointConfiguration.getApplicationName(),
-                                                endpointConfiguration.getRefreshToken(),
-                                                endpointConfiguration.getAccessToken());
+                    endpointConfiguration.getClientSecret(),
+                    endpointConfiguration.getApplicationName(),
+                    endpointConfiguration.getRefreshToken(),
+                    endpointConfiguration.getAccessToken());
         }
         return client;
     }
@@ -82,8 +82,8 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
     }
 
     /**
-     * To use the GoogleSheetsClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleSheetsClientFactory}
+     * To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleSheetsClientFactory}
      */
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
         this.clientFactory = clientFactory;

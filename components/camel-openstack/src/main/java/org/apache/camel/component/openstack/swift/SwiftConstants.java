@@ -36,6 +36,7 @@ public final class SwiftConstants extends OpenstackConstants {
     public static final String CREATE_UPDATE_METADATA = "createUpdateMetadata";
     public static final String DELETE_METADATA = "deleteMetadata";
 
-    private SwiftConstants() { }
+    private SwiftConstants() {
+    }
 
 }

@@ -87,7 +87,8 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setPasswordAuthenticator((username, password, session) -> true);
             sshd.setPublickeyAuthenticator(getPublickeyAuthenticator());
             if (rootDirMode) {
-                sshd.setFileSystemFactory(new VirtualFileSystemFactory(FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
+                sshd.setFileSystemFactory(new VirtualFileSystemFactory(
+                        FileSystems.getDefault().getPath(System.getProperty("user.dir") + "/target/res")));
             }
             sshd.start();
         } catch (Exception e) {

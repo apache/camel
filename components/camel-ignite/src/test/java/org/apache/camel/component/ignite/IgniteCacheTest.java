@@ -55,7 +55,8 @@ public class IgniteCacheTest extends AbstractIgniteTest {
 
     @Test
     public void testAddEntry() {
-        template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=PUT", "1234", IgniteConstants.IGNITE_CACHE_KEY, "abcd");
+        template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=PUT", "1234",
+                IgniteConstants.IGNITE_CACHE_KEY, "abcd");
 
         Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(1);
         Assertions.assertThat(ignite().cache(resourceUid).get("abcd")).isEqualTo("1234");
@@ -77,8 +78,9 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         String result = template.requestBody("ignite-cache:" + resourceUid + "?operation=GET", "abcd", String.class);
         Assertions.assertThat(result).isEqualTo("1234");
 
-        result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=GET", "this value won't be used", IgniteConstants.IGNITE_CACHE_KEY, "abcd",
-                                               String.class);
+        result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=GET", "this value won't be used",
+                IgniteConstants.IGNITE_CACHE_KEY, "abcd",
+                String.class);
         Assertions.assertThat(result).isEqualTo("1234");
     }
 
@@ -132,7 +134,8 @@ public class IgniteCacheTest extends AbstractIgniteTest {
             }
         });
 
-        List<?> results = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=QUERY", keys, IgniteConstants.IGNITE_CACHE_QUERY, query, List.class);
+        List<?> results = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=QUERY", keys,
+                IgniteConstants.IGNITE_CACHE_QUERY, query, List.class);
         Assertions.assertThat(results.size()).isEqualTo(50);
     }
 
@@ -149,7 +152,8 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         // Also add a cache entry with the entire Set as a key.
         cache.put(keys, "---");
 
-        String result = template.requestBody("ignite-cache:" + resourceUid + "?operation=GET&treatCollectionsAsCacheObjects=true", keys, String.class);
+        String result = template.requestBody(
+                "ignite-cache:" + resourceUid + "?operation=GET&treatCollectionsAsCacheObjects=true", keys, String.class);
         Assertions.assertThat(result).isEqualTo("---");
     }
 
@@ -167,7 +171,8 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         Assertions.assertThat(cache.size(CachePeekMode.ALL)).isEqualTo(1);
         Assertions.assertThat(cache.get("abcd")).isNull();
 
-        template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=REMOVE", "this value won't be used", IgniteConstants.IGNITE_CACHE_KEY, "efgh");
+        template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=REMOVE", "this value won't be used",
+                IgniteConstants.IGNITE_CACHE_KEY, "efgh");
 
         Assertions.assertThat(cache.size(CachePeekMode.ALL)).isEqualTo(0);
         Assertions.assertThat(cache.get("efgh")).isNull();
@@ -195,8 +200,9 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         String result = template.requestBody("ignite-cache:" + resourceUid + "?operation=GET", "abcd", String.class);
         Assertions.assertThat(result).isEqualTo("1234");
 
-        result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=GET", "abcd", IgniteConstants.IGNITE_CACHE_OPERATION, IgniteCacheOperation.REMOVE,
-                                               String.class);
+        result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=GET", "abcd",
+                IgniteConstants.IGNITE_CACHE_OPERATION, IgniteCacheOperation.REMOVE,
+                String.class);
 
         // The body has not changed, but the cache entry is gone.
         Assertions.assertThat(result).isEqualTo("abcd");
@@ -206,9 +212,11 @@ public class IgniteCacheTest extends AbstractIgniteTest {
     @Test
     public void testAddEntryNoCacheCreation() {
         try {
-            template.requestBodyAndHeader("ignite-cache:testcache2?operation=PUT&failIfInexistentCache=true", "1234", IgniteConstants.IGNITE_CACHE_KEY, "abcd");
+            template.requestBodyAndHeader("ignite-cache:testcache2?operation=PUT&failIfInexistentCache=true", "1234",
+                    IgniteConstants.IGNITE_CACHE_KEY, "abcd");
         } catch (Exception e) {
-            Assertions.assertThat(ObjectHelper.getException(CamelException.class, e).getMessage()).startsWith("Ignite cache testcache2 doesn't exist");
+            Assertions.assertThat(ObjectHelper.getException(CamelException.class, e).getMessage())
+                    .startsWith("Ignite cache testcache2 doesn't exist");
             return;
         }
 
@@ -217,8 +225,9 @@ public class IgniteCacheTest extends AbstractIgniteTest {
 
     @Test
     public void testAddEntryDoNotPropagateIncomingBody() {
-        Object result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=PUT&propagateIncomingBodyIfNoReturnValue=false", "1234",
-                                                      IgniteConstants.IGNITE_CACHE_KEY, "abcd", Object.class);
+        Object result = template.requestBodyAndHeader(
+                "ignite-cache:" + resourceUid + "?operation=PUT&propagateIncomingBodyIfNoReturnValue=false", "1234",
+                IgniteConstants.IGNITE_CACHE_KEY, "abcd", Object.class);
 
         Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(1);
         Assertions.assertThat(ignite().cache(resourceUid).get("abcd")).isEqualTo("1234");

@@ -66,12 +66,11 @@ public class LogVerifier extends Verifier {
     private class LogAppender extends AbstractAppender {
         LogAppender(String name) {
             super(
-                name,
-                null,
-                PatternLayout.newBuilder()
-                    .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
-                    .build()
-            );
+                  name,
+                  null,
+                  PatternLayout.newBuilder()
+                          .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
+                          .build());
         }
 
         @Override
@@ -80,7 +79,7 @@ public class LogVerifier extends Verifier {
         }
     }
 
-    private Appender newAppender()  {
+    private Appender newAppender() {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 

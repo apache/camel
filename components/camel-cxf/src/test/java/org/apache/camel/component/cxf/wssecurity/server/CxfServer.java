@@ -24,7 +24,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 
 public class CxfServer {
-    
+
     public CxfServer() throws Exception {
         SpringBusFactory bf = new SpringBusFactory();
         URL busFile = WSSecurityRouteTest.class.getResource("../server/wssec.xml");
@@ -33,5 +33,5 @@ public class CxfServer {
         BusFactory.setDefaultBus(bus);
         BusFactory.setThreadDefaultBus(bus);
     }
-    
+
 }

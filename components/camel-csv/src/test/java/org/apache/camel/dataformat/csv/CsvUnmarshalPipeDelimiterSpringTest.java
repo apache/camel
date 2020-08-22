@@ -55,6 +55,7 @@ public class CsvUnmarshalPipeDelimiterSpringTest extends CamelSpringTestSupport 
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalPipeDelimiterSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalPipeDelimiterSpringTest-context.xml");
     }
 }

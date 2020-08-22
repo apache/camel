@@ -22,8 +22,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
- * Key used in {@link DefaultEndpointRegistry} in {@link AbstractCamelContext},
- * to ensure a consistent lookup.
+ * Key used in {@link DefaultEndpointRegistry} in {@link AbstractCamelContext}, to ensure a consistent lookup.
  */
 public final class EndpointKey extends ValueHolder<String> implements NormalizedEndpointUri {
 

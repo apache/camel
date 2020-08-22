@@ -26,14 +26,15 @@ import org.apache.camel.StaticService;
  * <p/>
  * The registry contains two caches:
  * <ul>
- *     <li>static - which keeps all the endpoints in the cache for the entire lifecycle</li>
- *     <li>dynamic - which keeps the endpoints in a {@link org.apache.camel.support.LRUCache} and may evict endpoints which hasn't been requested recently</li>
+ * <li>static - which keeps all the endpoints in the cache for the entire lifecycle</li>
+ * <li>dynamic - which keeps the endpoints in a {@link org.apache.camel.support.LRUCache} and may evict endpoints which
+ * hasn't been requested recently</li>
  * </ul>
- * The static cache stores all the endpoints that are created as part of setting up and starting routes.
- * The static cache has no upper limit.
+ * The static cache stores all the endpoints that are created as part of setting up and starting routes. The static
+ * cache has no upper limit.
  * <p/>
- * The dynamic cache stores the endpoints that are created and used ad-hoc, such as from custom Java code that creates new endpoints etc.
- * The dynamic cache has an upper limit, that by default is 1000 entries.
+ * The dynamic cache stores the endpoints that are created and used ad-hoc, such as from custom Java code that creates
+ * new endpoints etc. The dynamic cache has an upper limit, that by default is 1000 entries.
  *
  * @param <K> endpoint key
  */
@@ -62,16 +63,16 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
     /**
      * Whether the given endpoint is stored in the static cache
      *
-     * @param key  the endpoint key
-     * @return <tt>true</tt> if in static cache, <tt>false</tt> if not
+     * @param  key the endpoint key
+     * @return     <tt>true</tt> if in static cache, <tt>false</tt> if not
      */
     boolean isStatic(String key);
 
     /**
      * Whether the given endpoint is stored in the dynamic cache
      *
-     * @param key  the endpoint key
-     * @return <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     * @param  key the endpoint key
+     * @return     <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
      */
     boolean isDynamic(String key);
 

@@ -17,9 +17,6 @@
 package org.apache.camel.component.bonita.api;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.util.HashMap;
 
 import javax.ws.rs.client.ClientRequestContext;
@@ -28,10 +25,8 @@ import javax.ws.rs.core.MultivaluedHashMap;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +57,6 @@ public class BonitaAuthFilterConnectionTest {
         Mockito.when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap());
     }
 
-
     @AfterEach
     public void tearDown() {
         wireMockServer.stop();
@@ -75,21 +69,19 @@ public class BonitaAuthFilterConnectionTest {
         stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something")));
 
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(1, requestContext.getHeaders().size());
     }
-    
+
     @Test
     public void testConnectionSupportCSRF() throws Exception {
         String port = wireMockServer.port() + "";
         stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
 
-        BonitaAPIConfig bonitaApiConfig =
-                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(2, requestContext.getHeaders().size());

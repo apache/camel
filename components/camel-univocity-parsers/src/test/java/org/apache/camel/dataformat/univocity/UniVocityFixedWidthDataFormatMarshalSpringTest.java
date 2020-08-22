@@ -45,8 +45,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
     public void shouldMarshalWithDefaultConfiguration() throws Exception {
         template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")
-        ));
+                asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -76,8 +75,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
     public void shouldMarshalAndAddNewColumns() throws Exception {
         template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2"),
-                asMap("C", "three", "A", "one", "B", "two")
-        ));
+                asMap("C", "three", "A", "one", "B", "two")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -93,8 +91,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
     public void shouldMarshalWithSpecificHeaders() throws Exception {
         template.sendBody("direct:header", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")
-        ));
+                asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -110,8 +107,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
         template.sendBody("direct:advanced", Arrays.asList(
                 asMap("A", null, "B", ""),
-                asMap("A", "one", "B", "two")
-        ));
+                asMap("A", "one", "B", "two")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -122,6 +118,7 @@ public final class UniVocityFixedWidthDataFormatMarshalSpringTest extends CamelS
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/univocity/UniVocityFixedWidthDataFormatMarshalSpringTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/univocity/UniVocityFixedWidthDataFormatMarshalSpringTest.xml");
     }
 }

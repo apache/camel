@@ -35,10 +35,11 @@ public class GrpcHeaderInterceptor implements ServerInterceptor {
     public static final Context.Key<String> CONTENT_TYPE_CONTEXT_KEY = Context.key(Exchange.CONTENT_TYPE);
 
     @Override
-    public <ReqT, RespT> Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call, Metadata requestHeaders, ServerCallHandler<ReqT, RespT> next) {
+    public <ReqT, RespT> Listener<ReqT> interceptCall(
+            ServerCall<ReqT, RespT> call, Metadata requestHeaders, ServerCallHandler<ReqT, RespT> next) {
         Context context = Context.current()
-            .withValue(USER_AGENT_CONTEXT_KEY, requestHeaders.get(GrpcUtil.USER_AGENT_KEY))
-            .withValue(CONTENT_TYPE_CONTEXT_KEY, requestHeaders.get(GrpcUtil.CONTENT_TYPE_KEY));
+                .withValue(USER_AGENT_CONTEXT_KEY, requestHeaders.get(GrpcUtil.USER_AGENT_KEY))
+                .withValue(CONTENT_TYPE_CONTEXT_KEY, requestHeaders.get(GrpcUtil.CONTENT_TYPE_KEY));
 
         return Contexts.interceptCall(context, call, requestHeaders, next);
     }

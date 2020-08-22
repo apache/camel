@@ -28,10 +28,8 @@ public class CouchDbTestSupport extends ContainerAwareTestSupport {
 
     @Override
     protected GenericContainer<?> createContainer() {
-        return new GenericContainer<>(CONTAINER_IMAGE).
-            withNetworkAliases(CONTAINER_NAME).
-            withExposedPorts(BROKER_PORT).
-            waitingFor(Wait.forListeningPort());
+        return new GenericContainer<>(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME).withExposedPorts(BROKER_PORT)
+                .waitingFor(Wait.forListeningPort());
     }
 
     public String getCouchDbHost() {

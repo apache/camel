@@ -48,7 +48,8 @@ public class DeleteTableCommandTest {
         command.execute();
 
         assertEquals("DOMAIN1", ddbClient.deleteTableRequest.tableName());
-        assertEquals(ProvisionedThroughputDescription.builder().build(), exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT));
+        assertEquals(ProvisionedThroughputDescription.builder().build(),
+                exchange.getIn().getHeader(Ddb2Constants.PROVISIONED_THROUGHPUT));
         assertEquals(Long.valueOf(10L), exchange.getIn().getHeader(Ddb2Constants.ITEM_COUNT, Long.class));
         assertEquals(Long.valueOf(20L), exchange.getIn().getHeader(Ddb2Constants.TABLE_SIZE, Long.class));
         assertEquals(TableStatus.ACTIVE, exchange.getIn().getHeader(Ddb2Constants.TABLE_STATUS, TableStatus.class));

@@ -60,13 +60,13 @@ import org.apache.maven.project.MavenProjectHelper;
 import static org.apache.camel.tooling.util.PackageHelper.loadText;
 
 /**
- * Prepares the camel catalog to include component, data format, and eip
- * descriptors, and generates a report.
+ * Prepares the camel catalog to include component, data format, and eip descriptors, and generates a report.
  */
 @Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
-    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common"};
+    private static final String[] EXCLUDE_DOC_FILES
+            = { "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common" };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
@@ -79,8 +79,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * Whether to validate if the components, data formats, and languages are
-     * properly documented and have all the needed details.
+     * Whether to validate if the components, data formats, and languages are properly documented and have all the
+     * needed details.
      */
     @Parameter(defaultValue = "true")
     protected Boolean validate;
@@ -212,10 +212,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the
-     *             main class or one of the threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad
-     *             happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -223,13 +222,16 @@ public class PrepareCatalogMojo extends AbstractMojo {
             allJsonFiles = new TreeSet<>();
             allPropertiesFiles = new TreeSet<>();
 
-            Stream.concat(list(componentsDir.toPath()), Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
-                    .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath).filter(dir -> Files.isDirectory(dir.resolve("src")))
+            Stream.concat(list(componentsDir.toPath()),
+                    Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath(), springDir.toPath()))
+                    .filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath)
+                    .filter(dir -> Files.isDirectory(dir.resolve("src")))
                     .map(p -> p.resolve("target/classes")).flatMap(PackageHelper::walk).forEach(p -> {
                         String f = p.getFileName().toString();
                         if (f.endsWith(PackageHelper.JSON_SUFIX)) {
                             allJsonFiles.add(p);
-                        } else if (f.equals("component.properties") || f.equals("dataformat.properties") || f.equals("language.properties") || f.equals("other.properties")) {
+                        } else if (f.equals("component.properties") || f.equals("dataformat.properties")
+                                || f.equals("language.properties") || f.equals("other.properties")) {
                             allPropertiesFiles.add(p);
                         }
                     });
@@ -268,7 +270,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Path coreDirTarget = coreDir.resolve("target/classes/org/apache/camel/model");
         Path springTarget1 = springDir.resolve("target/classes/org/apache/camel/spring");
         Path springTarget2 = springDir.resolve("target/classes/org/apache/camel/core/xml");
-        jsonFiles = allJsonFiles.stream().filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
+        jsonFiles = allJsonFiles.stream()
+                .filter(p -> p.startsWith(coreDirTarget) || p.startsWith(springTarget1) || p.startsWith(springTarget2))
                 .collect(Collectors.toCollection(TreeSet::new));
         getLog().info("Found " + jsonFiles.size() + " model json files");
 
@@ -284,7 +287,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (Path file : jsonFiles) {
             // check if we have a label as we want the eip to include labels
-            EipModel model = (EipModel)allModels.get(file);
+            EipModel model = (EipModel) allModels.get(file);
 
             String name = asComponentName(file);
 
@@ -300,14 +303,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
             }
 
             // check all the properties if they have description
-            if (model.getOptions().stream().filter(option -> !"outputs".equals(option.getName()) && !"transforms".equals(option.getName())).map(BaseOptionModel::getDescription)
+            if (model.getOptions().stream()
+                    .filter(option -> !"outputs".equals(option.getName()) && !"transforms".equals(option.getName()))
+                    .map(BaseOptionModel::getDescription)
                     .anyMatch(Strings::isNullOrEmpty)) {
                 missingJavaDoc.add(file);
             }
         }
 
         Path all = modelsOutDir.resolve("../models.properties");
-        Set<String> modelNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
+        Set<String> modelNames
+                = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
         FileUtil.updateFile(all, String.join("\n", modelNames) + "\n");
 
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
@@ -1081,7 +1087,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
             try {
                 BasicFileAttributes af = Files.readAttributes(file, BasicFileAttributes.class);
                 BasicFileAttributes at = Files.readAttributes(to, BasicFileAttributes.class);
-                if (af.isRegularFile() && at.isRegularFile() && af.size() == at.size() && af.lastModifiedTime().compareTo(at.lastAccessTime()) < 0) {
+                if (af.isRegularFile() && at.isRegularFile() && af.size() == at.size()
+                        && af.lastModifiedTime().compareTo(at.lastAccessTime()) < 0) {
                     // if same size and not modified, assume the same
                     return;
                 }

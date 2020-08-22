@@ -36,7 +36,8 @@ public class RestServletPostJsonJaxbPojoTest extends ServletCamelRouterTestSuppo
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        WebRequest req = new PostMethodWebRequest(contextUrl + "/services/users/new",
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/users/new",
                 new ByteArrayInputStream(body.getBytes()), "application/json");
         WebResponse response = query(req, false);
 
@@ -59,7 +60,7 @@ public class RestServletPostJsonJaxbPojoTest extends ServletCamelRouterTestSuppo
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
+                        .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

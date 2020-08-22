@@ -67,11 +67,11 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                    .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
-                    .to("log:start");
+                        .to("activemq:queue:foo?replyTo=bar&replyToType=Exclusive")
+                        .to("log:start");
 
                 from("activemq:queue:foo").routeId("foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

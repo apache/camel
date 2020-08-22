@@ -26,11 +26,11 @@ public class IntegrationWhiteList implements SerializationWhitelist {
     @Override
     public List<Class<?>> getWhitelist() {
         List list = new ArrayList();
-//        list.add(RSAPublicKeyImpl.class);
-//        list.add(AlgorithmId.class);
-//        list.add(ObjectIdentifier.class);
-//        list.add(BitArray.class);
-//        list.add(BigInteger.class);
+        //        list.add(RSAPublicKeyImpl.class);
+        //        list.add(AlgorithmId.class);
+        //        list.add(ObjectIdentifier.class);
+        //        list.add(BitArray.class);
+        //        list.add(BigInteger.class);
         return list;
     }
 }

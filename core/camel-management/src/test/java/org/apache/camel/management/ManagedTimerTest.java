@@ -39,7 +39,8 @@ public class ManagedTimerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");
+        ObjectName name = ObjectName
+                .getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");
         assertEquals(true, mbeanServer.isRegistered(name), "Should be registered");
 
         Long period = (Long) mbeanServer.getAttribute(name, "Period");
@@ -66,7 +67,7 @@ public class ManagedTimerTest extends ManagementTestSupport {
         // sporadic failure on slower machines.
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(org.apache.camel.ServiceStatus.Started.name(), state, "Should be started");
-        
+
         // start and we should be done in at most 3 second
         mock.expectedMinimumMessageCount(3);
         mock.setResultWaitTime(3900);

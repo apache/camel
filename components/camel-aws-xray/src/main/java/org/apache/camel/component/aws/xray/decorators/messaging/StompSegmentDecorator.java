@@ -31,6 +31,6 @@ public class StompSegmentDecorator extends AbstractMessagingSegmentDecorator {
     @Override
     public String getDestination(Exchange exchange, Endpoint endpoint) {
         String destination = super.getDestination(exchange, endpoint);
-        return destination.startsWith(QUEUE_PREFIX) ? destination.substring(QUEUE_PREFIX.length()) :  destination;
+        return destination.startsWith(QUEUE_PREFIX) ? destination.substring(QUEUE_PREFIX.length()) : destination;
     }
 }

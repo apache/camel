@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
 
 /**
- * Implementation of the {@link SynchronizedExchange} interface that correctly handles all completion
- * synchronisation courtesies for multiple consumers.
+ * Implementation of the {@link SynchronizedExchange} interface that correctly handles all completion synchronisation
+ * courtesies for multiple consumers.
  */
 public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedExchange {
 
@@ -40,12 +40,11 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
         processedConsumers.set(0);
     }
 
-
     @Override
     public void consumed(Exchange result) {
 
-        if (processedConsumers.incrementAndGet() == expectedConsumers || result.getException() != null 
-            && !resultHandled.getAndSet(true)) {
+        if (processedConsumers.incrementAndGet() == expectedConsumers || result.getException() != null
+                && !resultHandled.getAndSet(true)) {
             // all consumers are done processing or an exception occurred
 
             //SEDA Does not configure an aggregator in the internally used MulticastProcessor

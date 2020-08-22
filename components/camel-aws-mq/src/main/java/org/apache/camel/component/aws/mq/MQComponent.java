@@ -32,16 +32,16 @@ import org.apache.camel.support.DefaultComponent;
 @Component("aws-mq")
 public class MQComponent extends DefaultComponent {
 
-    @Metadata  
+    @Metadata
     private MQConfiguration configuration = new MQConfiguration();
-    
+
     public MQComponent() {
         this(null);
     }
-    
+
     public MQComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new MQComponentVerifierExtension());
     }
 
@@ -53,13 +53,14 @@ public class MQComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonMqClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonMQClient or accessKey and secretKey must be specified");
         }
-        
+
         return endpoint;
     }
-    
+
     public MQConfiguration getConfiguration() {
         return configuration;
     }

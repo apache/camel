@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Expose webhook endpoints to receive push notifications for other Camel components.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true, category = {Category.CLOUD}, lenientProperties = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "webhook", title = "Webhook", syntax = "webhook:endpointUri", consumerOnly = true,
+             category = { Category.CLOUD }, lenientProperties = true)
 public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint, AfterPropertiesConfigured {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebhookEndpoint.class);
@@ -65,7 +66,8 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
 
         Processor handler = delegateEndpoint.createWebhookHandler(processor);
 
-        return new MultiRestConsumer(getCamelContext(), factory, this, handler, delegateEndpoint.getWebhookMethods(), url, path,
+        return new MultiRestConsumer(
+                getCamelContext(), factory, this, handler, delegateEndpoint.getWebhookMethods(), url, path,
                 configuration.retrieveRestConfiguration(), this::configureConsumer);
     }
 
@@ -74,7 +76,8 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
         // setup delegate endpoint in constructor
         Endpoint delegate = getCamelContext().getEndpoint(configuration.getEndpointUri());
         if (!(delegate instanceof WebhookCapableEndpoint)) {
-            throw new IllegalArgumentException("The provided endpoint is not capable of being used in webhook mode: " + configuration.getEndpointUri());
+            throw new IllegalArgumentException(
+                    "The provided endpoint is not capable of being used in webhook mode: " + configuration.getEndpointUri());
         }
         delegateEndpoint = (WebhookCapableEndpoint) delegate;
         delegateEndpoint.setWebhookConfiguration(configuration);

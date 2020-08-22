@@ -27,8 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the
- * {@link PollingConsumer}
+ * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the {@link PollingConsumer}
  */
 public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
 
@@ -79,12 +78,12 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Sets a timeout to use with {@link PollingConsumer}.
+     * Sets a timeout to use with {@link PollingConsumer}. <br/>
      * <br/>
-     * <br/>Use <tt>timeout < 0</tt> for {@link PollingConsumer#receive()}.
-     * <br/>Use <tt>timeout == 0</tt> for {@link PollingConsumer#receiveNoWait()}.
-     * <br/>Use <tt>timeout > 0</tt> for {@link PollingConsumer#receive(long)}}.
-     * <br/> The default timeout value is <tt>0</tt>
+     * Use <tt>timeout < 0</tt> for {@link PollingConsumer#receive()}. <br/>
+     * Use <tt>timeout == 0</tt> for {@link PollingConsumer#receiveNoWait()}. <br/>
+     * Use <tt>timeout > 0</tt> for {@link PollingConsumer#receive(long)}}. <br/>
+     * The default timeout value is <tt>0</tt>
      *
      * @param timeout the timeout value
      */

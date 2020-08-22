@@ -24,8 +24,11 @@ import zipkin2.reporter.libthrift.LibthriftSender;
 /**
  * Integration test requires running Zipkin/Scribe running
  *
- * <p>The easiest way to run is locally:
- * <pre>{@code
+ * <p>
+ * The easiest way to run is locally:
+ * 
+ * <pre>
+ * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s io.zipkin.java:zipkin-autoconfigure-collector-scribe:LATEST:module scribe.jar
  * SCRIBE_ENABLED=true \
@@ -34,13 +37,15 @@ import zipkin2.reporter.libthrift.LibthriftSender;
  *     -Dspring.profiles.active=scribe \
  *     -cp zipkin.jar \
  *     org.springframework.boot.loader.PropertiesLauncher
- * }</pre>
+ * }
+ * </pre>
  *
- * <p>Note: the scribe transport is deprecated. Most use out-of-box defaults, such as Http, RabbitMQ
- * or Kafka.
+ * <p>
+ * Note: the scribe transport is deprecated. Most use out-of-box defaults, such as Http, RabbitMQ or Kafka.
  */
 public class ZipkinABCRouteScribe extends ZipkinABCRouteTest {
-    @Override protected void setSpanReporter(ZipkinTracer zipkin) {
+    @Override
+    protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(AsyncReporter.create(LibthriftSender.create("127.0.0.1")));
     }
 }

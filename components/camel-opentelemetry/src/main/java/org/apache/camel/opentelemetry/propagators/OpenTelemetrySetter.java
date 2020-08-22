@@ -22,7 +22,8 @@ import io.opentelemetry.context.propagation.HttpTextFormat;
 import org.apache.camel.tracing.InjectAdapter;
 
 public class OpenTelemetrySetter implements HttpTextFormat.Setter<InjectAdapter> {
-    @Override public void set(@Nullable InjectAdapter adapter, String key, String value) {
+    @Override
+    public void set(@Nullable InjectAdapter adapter, String key, String value) {
         adapter.put(key, value);
     }
 }

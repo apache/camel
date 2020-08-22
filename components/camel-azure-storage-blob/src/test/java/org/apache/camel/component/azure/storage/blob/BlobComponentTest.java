@@ -42,7 +42,8 @@ class BlobComponentTest extends CamelTestSupport {
 
         context.getRegistry().bind("azureBlobClient", serviceClient);
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&serviceClient=#azureBlobClient");
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&serviceClient=#azureBlobClient");
 
         doTestCreateEndpointWithMinConfig(endpoint, true);
     }
@@ -51,7 +52,8 @@ class BlobComponentTest extends CamelTestSupport {
     public void testCreateEndpointWithMinConfigForCredsOnly() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds");
 
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
@@ -81,11 +83,10 @@ class BlobComponentTest extends CamelTestSupport {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
         context.getRegistry().bind("metadata", Collections.emptyMap());
 
-        final BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&blobType=pageblob"
-                                + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
-                                + "&closeStreamAfterRead=false&closeStreamAfterWrite=false");
+        final BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(
+                "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&blobType=pageblob"
+                                                                         + "&fileDir=/tmp&blobOffset=512&operation=clearPageBlob&dataCount=1024"
+                                                                         + "&closeStreamAfterRead=false&closeStreamAfterWrite=false");
 
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
         assertEquals("container", endpoint.getConfiguration().getContainerName());
@@ -106,9 +107,8 @@ class BlobComponentTest extends CamelTestSupport {
     public void testNoBlobNameProducerWithOpThatNeedsBlobName() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        BlobEndpoint endpointWithOp =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
+        BlobEndpoint endpointWithOp = (BlobEndpoint) context.getEndpoint(
+                "azure-storage-blob://camelazure/container?operation=deleteBlob&credentials=#creds");
 
         assertThrows(IllegalArgumentException.class, () -> {
             endpointWithOp.createProducer().process(new DefaultExchange(context));
@@ -119,8 +119,8 @@ class BlobComponentTest extends CamelTestSupport {
     public void testHierarchicalBlobName() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
+        BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint("azure-storage-blob://camelazure/container?blobName=blob/sub&credentials=#creds");
         assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
     }
 
@@ -128,9 +128,8 @@ class BlobComponentTest extends CamelTestSupport {
     public void testNoBlobNameConsumer() throws Exception {
         context.getRegistry().bind("creds", storageSharedKeyCredential());
 
-        BlobEndpoint endpoint =
-                (BlobEndpoint) context.getEndpoint(
-                        "azure-storage-blob://camelazure/container?credentials=#creds");
+        BlobEndpoint endpoint = (BlobEndpoint) context.getEndpoint(
+                "azure-storage-blob://camelazure/container?credentials=#creds");
 
         assertThrows(IllegalArgumentException.class, () -> endpoint.createConsumer(null));
     }

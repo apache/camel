@@ -82,8 +82,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             // START SNIPPET: e1
             public void configure() throws Exception {
                 from(url).routeId("foo").noAutoStartup()
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
             }
             // END SNIPPET: e1
         };

@@ -23,14 +23,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate that if the target type is {@link CamelContextAware}, the
- * context does not need to be mandatory injected during bean post processing but
- * can be injected later on as example during Camel Context configuration.
+ * Used to indicate that if the target type is {@link CamelContextAware}, the context does not need to be mandatory
+ * injected during bean post processing but can be injected later on as example during Camel Context configuration.
  *
  * See <a href="https://issues.apache.org/jira/browse/CAMEL-12087">CAMEL-12087</a> for additional information.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface DeferredContextBinding {
 }

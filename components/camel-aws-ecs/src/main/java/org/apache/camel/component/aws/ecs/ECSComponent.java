@@ -34,14 +34,14 @@ public class ECSComponent extends DefaultComponent {
 
     @Metadata
     private ECSConfiguration configuration = new ECSConfiguration();
-    
+
     public ECSComponent() {
         this(null);
     }
-    
+
     public ECSComponent(CamelContext context) {
         super(context);
-        
+
         registerExtension(new ECSComponentVerifierExtension());
     }
 
@@ -53,13 +53,14 @@ public class ECSComponent extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration);
         }
-        if (configuration.getEcsClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getEcsClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon ecs client or accessKey and secretKey must be specified");
         }
-      
+
         return endpoint;
     }
-    
+
     public ECSConfiguration getConfiguration() {
         return configuration;
     }

@@ -47,8 +47,7 @@ import software.amazon.awssdk.services.mq.model.UpdateBrokerResponse;
 import software.amazon.awssdk.services.mq.model.User;
 
 /**
- * A Producer which sends messages to the Amazon MQ Service
- * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
+ * A Producer which sends messages to the Amazon MQ Service <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQ2Producer extends DefaultProducer {
 
@@ -108,7 +107,7 @@ public class MQ2Producer extends DefaultProducer {
 
     @Override
     public MQ2Endpoint getEndpoint() {
-        return (MQ2Endpoint)super.getEndpoint();
+        return (MQ2Endpoint) super.getEndpoint();
     }
 
     private void listBrokers(MqClient mqClient, Exchange exchange) throws InvalidPayloadException {
@@ -117,7 +116,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof ListBrokersRequest) {
                 ListBrokersResponse result;
                 try {
-                    result = mqClient.listBrokers((ListBrokersRequest)payload);
+                    result = mqClient.listBrokers((ListBrokersRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Brokers command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -157,7 +156,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof CreateBrokerRequest) {
                 CreateBrokerResponse result;
                 try {
-                    result = mqClient.createBroker((CreateBrokerRequest)payload);
+                    result = mqClient.createBroker((CreateBrokerRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -228,7 +227,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof DeleteBrokerRequest) {
                 DeleteBrokerResponse result;
                 try {
-                    result = mqClient.deleteBroker((DeleteBrokerRequest)payload);
+                    result = mqClient.deleteBroker((DeleteBrokerRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -263,7 +262,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof RebootBrokerRequest) {
                 RebootBrokerResponse result;
                 try {
-                    result = mqClient.rebootBroker((RebootBrokerRequest)payload);
+                    result = mqClient.rebootBroker((RebootBrokerRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -299,7 +298,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof UpdateBrokerRequest) {
                 UpdateBrokerResponse result;
                 try {
-                    result = mqClient.updateBroker((UpdateBrokerRequest)payload);
+                    result = mqClient.updateBroker((UpdateBrokerRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -340,7 +339,7 @@ public class MQ2Producer extends DefaultProducer {
             if (payload instanceof DescribeBrokerRequest) {
                 DescribeBrokerResponse result;
                 try {
-                    result = mqClient.describeBroker((DescribeBrokerRequest)payload);
+                    result = mqClient.describeBroker((DescribeBrokerRequest) payload);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;

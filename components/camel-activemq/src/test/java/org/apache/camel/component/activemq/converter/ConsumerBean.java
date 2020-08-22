@@ -87,7 +87,9 @@ public class ConsumerBean implements MessageListener {
         LOG.info("Waiting for (" + maxRemainingMessageCount + ") message(s) to arrive");
         long start = System.currentTimeMillis();
 
-        for (long endTime = start + maxWaitTime; maxRemainingMessageCount > 0L; maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size())) {
+        for (long endTime = start + maxWaitTime;
+             maxRemainingMessageCount > 0L;
+             maxRemainingMessageCount = (long) Math.max(0, messageCount - this.messages.size())) {
             try {
                 synchronized (this.messages) {
                     this.messages.wait(1000L);

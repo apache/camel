@@ -46,8 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon MQ Service
- * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
+ * A Producer which sends messages to the Amazon MQ Service <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
 
@@ -107,7 +106,7 @@ public class MQProducer extends DefaultProducer {
 
     @Override
     public MQEndpoint getEndpoint() {
-        return (MQEndpoint)super.getEndpoint();
+        return (MQEndpoint) super.getEndpoint();
     }
 
     private void listBrokers(AmazonMQ mqClient, Exchange exchange) {

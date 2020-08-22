@@ -35,70 +35,64 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents {@link SSLContext} configuration options used in instantiating an
- * {@code SSLContext} instance.
+ * Represents {@link SSLContext} configuration options used in instantiating an {@code SSLContext} instance.
  */
 public class SSLContextParameters extends BaseSSLContextParameters {
 
     // TODO : switch to TLSv1.3 when we fully upgrade to JDK11
     protected static final String DEFAULT_SECURE_SOCKET_PROTOCOL = "TLSv1.2";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextParameters.class);
 
     /**
-     * The optional key manager configuration for creating the
-     * {@link KeyManager}s used in constructing an {@link SSLContext}.
+     * The optional key manager configuration for creating the {@link KeyManager}s used in constructing an
+     * {@link SSLContext}.
      */
     private KeyManagersParameters keyManagers;
-    
+
     /**
-     * The optional trust manager configuration for creating the
-     * {@link TrustManager}s used in constructing an {@link SSLContext}.
+     * The optional trust manager configuration for creating the {@link TrustManager}s used in constructing an
+     * {@link SSLContext}.
      */
     private TrustManagersParameters trustManagers;
-        
+
     /**
-     * The optional secure random configuration options to use for constructing
-     * the {@link SecureRandom} used in the creation of an {@link SSLContext].
+     * The optional secure random configuration options to use for constructing the {@link SecureRandom} used in the
+     * creation of an {@link SSLContext].
      */
     private SecureRandomParameters secureRandom;
-    
+
     /**
-     * The optional configuration options to be applied purely to the client side settings
-     * of the {@link SSLContext}.  Settings specified here override any duplicate settings
-     * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
-     * produced from this class as well as to the {@code SSLContext} itself.
+     * The optional configuration options to be applied purely to the client side settings of the {@link SSLContext}.
+     * Settings specified here override any duplicate settings provided at the overall level by this class. These
+     * parameters apply to {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext} produced
+     * from this class as well as to the {@code SSLContext} itself.
      */
     private SSLContextClientParameters clientParameters;
-    
+
     /**
-     * The optional configuration options to be applied purely to the server side settings
-     * of the {@link SSLContext}.  Settings specified here override any duplicate settings
-     * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
+     * The optional configuration options to be applied purely to the server side settings of the {@link SSLContext}.
+     * Settings specified here override any duplicate settings provided at the overall level by this class. These
+     * parameters apply to {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      */
     private SSLContextServerParameters serverParameters;
 
     /**
-     * The optional provider identifier for the JSSE implementation to use when
-     * constructing an {@link SSLContext}.
+     * The optional provider identifier for the JSSE implementation to use when constructing an {@link SSLContext}.
      */
     private String provider;
 
     /**
-     * The optional protocol for the secure sockets created by the {@link SSLContext}
-     * represented by this instance's configuration. See Appendix A in the <a
-     * href="http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA"
-     * >Java Secure Socket Extension Reference Guide</a> for information about
-     * standard protocol names.
+     * The optional protocol for the secure sockets created by the {@link SSLContext} represented by this instance's
+     * configuration. See Appendix A in the
+     * <a href="http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA" >Java
+     * Secure Socket Extension Reference Guide</a> for information about standard protocol names.
      */
-    private String secureSocketProtocol;    
-    
+    private String secureSocketProtocol;
+
     /**
-     * An optional certificate alias to use. This is useful when the keystore has multiple 
-     * certificates.
+     * An optional certificate alias to use. This is useful when the keystore has multiple certificates.
      */
     private String certAlias;
 
@@ -107,11 +101,10 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the optional key manager configuration for creating the
-     * {@link KeyManager}s used in constructing an {@link SSLContext}.
+     * Sets the optional key manager configuration for creating the {@link KeyManager}s used in constructing an
+     * {@link SSLContext}.
      * 
-     * @param keyManagers the options or {@code null} to provide no
-     *            {@code KeyManager}s
+     * @param keyManagers the options or {@code null} to provide no {@code KeyManager}s
      */
     public void setKeyManagers(KeyManagersParameters keyManagers) {
         this.keyManagers = keyManagers;
@@ -122,11 +115,10 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the optional trust manager configuration for creating the
-     * {@link TrustManager}s used in constructing an {@link SSLContext}.
+     * Sets the optional trust manager configuration for creating the {@link TrustManager}s used in constructing an
+     * {@link SSLContext}.
      * 
-     * @param trustManagers the options or {@code null} to provide no
-     *            {@code TrustManager}s
+     * @param trustManagers the options or {@code null} to provide no {@code TrustManager}s
      */
     public void setTrustManagers(TrustManagersParameters trustManagers) {
         this.trustManagers = trustManagers;
@@ -137,25 +129,24 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the optional secure random configuration options to use for 
-     * constructing the {@link SecureRandom} used in the creation of an {@link SSLContext}.
+     * Sets the optional secure random configuration options to use for constructing the {@link SecureRandom} used in
+     * the creation of an {@link SSLContext}.
      *
      * @param secureRandom the options or {@code null} to use the default
      */
     public void setSecureRandom(SecureRandomParameters secureRandom) {
         this.secureRandom = secureRandom;
     }
-    
+
     public SSLContextClientParameters getClientParameters() {
         return clientParameters;
     }
 
     /**
-     * The optional configuration options to be applied purely to the client side settings
-     * of the {@link SSLContext}.  Settings specified here override any duplicate settings
-     * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
-     * produced from this class as well as to the {@code SSLContext} itself.
+     * The optional configuration options to be applied purely to the client side settings of the {@link SSLContext}.
+     * Settings specified here override any duplicate settings provided at the overall level by this class. These
+     * parameters apply to {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext} produced
+     * from this class as well as to the {@code SSLContext} itself.
      *
      * @param clientParameters the optional additional client-side parameters
      */
@@ -168,10 +159,9 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * The optional configuration options to be applied purely to the server side settings
-     * of the {@link SSLContext}.  Settings specified here override any duplicate settings
-     * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
+     * The optional configuration options to be applied purely to the server side settings of the {@link SSLContext}.
+     * Settings specified here override any duplicate settings provided at the overall level by this class. These
+     * parameters apply to {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      *
      * @param serverParameters the optional additional client-side parameters
@@ -185,16 +175,13 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the optional provider identifier to use when constructing an
-     * {@link SSLContext}.
+     * Sets the optional provider identifier to use when constructing an {@link SSLContext}.
      * 
-     * @param provider the identifier (from the list of available providers
-     *            returned by {@link Security#getProviders()}) or {@code null}
-     *            to use the highest priority provider implementing the secure
-     *            socket protocol
+     * @param provider the identifier (from the list of available providers returned by {@link Security#getProviders()})
+     *                 or {@code null} to use the highest priority provider implementing the secure socket protocol
      *
-     * @see Security#getProviders(java.util.Map)
-     * @see #setSecureSocketProtocol(String)            
+     * @see            Security#getProviders(java.util.Map)
+     * @see            #setSecureSocketProtocol(String)
      */
     public void setProvider(String provider) {
         this.provider = provider;
@@ -208,48 +195,44 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
 
     /**
-     * Sets the optional protocol for the secure sockets created by the
-     * {@link SSLContext} represented by this instance's configuration. Defaults
-     * to TLS. See Appendix A in the <a href=
-     * "http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA"
-     * >Java Secure Socket Extension Reference Guide</a> for information about
-     * standard protocol names.
+     * Sets the optional protocol for the secure sockets created by the {@link SSLContext} represented by this
+     * instance's configuration. Defaults to TLS. See Appendix A in the
+     * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA" >Java
+     * Secure Socket Extension Reference Guide</a> for information about standard protocol names.
      * 
-     * @param secureSocketProtocol the name of the protocol or {@code null} to
-     *            use the default (TLS)
+     * @param secureSocketProtocol the name of the protocol or {@code null} to use the default (TLS)
      */
     public void setSecureSocketProtocol(String secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol;
     }
-    
+
     public String getCertAlias() {
         return certAlias;
     }
 
     /**
-     * An optional certificate alias to use. This is useful when the keystore has multiple 
-     * certificates.
+     * An optional certificate alias to use. This is useful when the keystore has multiple certificates.
+     * 
      * @param certAlias an optional certificate alias to use
      */
     public void setCertAlias(String certAlias) {
         this.certAlias = certAlias;
     }
-    
+
     ////////////////////////////////////////////
 
     /**
-     * Creates an {@link SSLContext} based on the related configuration options
-     * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
-     * {@link #secureRandom}, but also respecting the chosen provider and secure
-     * socket protocol as well.
+     * Creates an {@link SSLContext} based on the related configuration options of this instance. Namely,
+     * {@link #keyManagers}, {@link #trustManagers}, and {@link #secureRandom}, but also respecting the chosen provider
+     * and secure socket protocol as well.
      *
-     * @param camelContext  The camel context
+     * @param  camelContext             The camel context
      *
-     * @return a newly configured instance
+     * @return                          a newly configured instance
      *
-     * @throws GeneralSecurityException if there is a problem in this instances
-     *             configuration or that of its nested configuration options
-     * @throws IOException if there is an error reading a key/trust store
+     * @throws GeneralSecurityException if there is a problem in this instances configuration or that of its nested
+     *                                  configuration options
+     * @throws IOException              if there is an error reading a key/trust store
      */
     public SSLContext createSSLContext(CamelContext camelContext) throws GeneralSecurityException, IOException {
         if (camelContext != null) {
@@ -273,7 +256,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         }
 
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
-        
+
         LOG.info("Available providers: {}.", Security.getProviders());
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
@@ -285,29 +268,32 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()));
         } else {
             context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
-                                             this.parsePropertyValue(this.getProvider()));
+                    this.parsePropertyValue(this.getProvider()));
         }
-        
+
         if (this.getCertAlias() != null && keyManagers != null) {
             for (int idx = 0; idx < keyManagers.length; idx++) {
                 if (keyManagers[idx] instanceof X509KeyManager) {
                     try {
-                        keyManagers[idx] = new AliasedX509ExtendedKeyManager(this.getCertAlias(),
-                                                                             (X509KeyManager)keyManagers[idx]);
+                        keyManagers[idx] = new AliasedX509ExtendedKeyManager(
+                                this.getCertAlias(),
+                                (X509KeyManager) keyManagers[idx]);
                     } catch (Exception e) {
                         throw new GeneralSecurityException(e);
                     }
                 }
             }
         }
-        
-        LOG.debug("SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
-                 new Object[] {context, this, context.getProvider(), context.getProtocol(), keyManagers, trustManagers, secureRandom});
-        
+
+        LOG.debug(
+                "SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
+                context, this, context.getProvider(), context.getProtocol(), keyManagers, trustManagers,
+                secureRandom);
+
         context.init(keyManagers, trustManagers, secureRandom);
-        
+
         this.configureSSLContext(context);
-        
+
         // Decorate the context.
         context = new SSLContextDecorator(
                 new SSLContextSpiDecorator(
@@ -318,62 +304,62 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         return context;
     }
-    
+
     @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring client and server side SSLContext parameters on SSLContext [{}]...", context);
         super.configureSSLContext(context);
-        
+
         if (this.getClientParameters() != null) {
             LOG.trace("Overriding client-side SSLContext parameters on SSLContext [{}] with configured client parameters.",
-                      context);
+                    context);
             this.getClientParameters().configureSSLContext(context);
         }
 
         if (this.getServerParameters() != null) {
             LOG.trace("Overriding server-side SSLContext parameters on SSLContext [{}] with configured server parameters.",
-                      context);
+                    context);
             this.getServerParameters().configureSSLContext(context);
-        }        
-        
+        }
+
         LOG.trace("Configured client and server side SSLContext parameters on SSLContext [{}].", context);
     }
-    
+
     @Override
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
         LOG.trace("Collecting client and server side SSLEngine configurers on SSLContext [{}]...", context);
         List<Configurer<SSLEngine>> configurers = super.getSSLEngineConfigurers(context);
-        
+
         if (this.getClientParameters() != null) {
             LOG.trace("Augmenting SSLEngine configurers with configurers from client parameters on SSLContext [{}].",
-                      context);
+                    context);
             configurers.addAll(this.getClientParameters().getSSLEngineConfigurers(context));
         }
-        
+
         if (this.getServerParameters() != null) {
             LOG.trace("Augmenting SSLEngine configurers with configurers from server parameters on SSLContext [{}].",
-                      context);
+                    context);
             configurers.addAll(this.getServerParameters().getSSLEngineConfigurers(context));
         }
-        
+
         LOG.trace("Collected client and server side SSLEngine configurers on SSLContext [{}].", context);
-        
+
         return configurers;
     }
-    
+
     @Override
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
         LOG.trace("Collecting SSLSocketFactory configurers on SSLContext [{}]...", context);
         List<Configurer<SSLSocketFactory>> configurers = super.getSSLSocketFactoryConfigurers(context);
-        
+
         if (this.getClientParameters() != null) {
             LOG.trace("Augmenting SSLSocketFactory configurers with configurers from client parameters on SSLContext [{}].",
-                      context);
+                    context);
             configurers.addAll(this.getClientParameters().getSSLSocketFactoryConfigurers(context));
         }
-        
+
         LOG.trace("Collected SSLSocketFactory configurers on SSLContext [{}].", context);
-        
+
         return configurers;
     }
 
@@ -381,15 +367,16 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
         LOG.trace("Collecting SSLServerSocketFactory configurers for SSLContext [{}]...", context);
         List<Configurer<SSLServerSocketFactory>> configurers = super.getSSLServerSocketFactoryConfigurers(context);
-        
+
         if (this.getServerParameters() != null) {
-            LOG.trace("Augmenting SSLServerSocketFactory configurers with configurers from server parameters for SSLContext [{}].",
-                      context);
+            LOG.trace(
+                    "Augmenting SSLServerSocketFactory configurers with configurers from server parameters for SSLContext [{}].",
+                    context);
             configurers.addAll(this.getServerParameters().getSSLServerSocketFactoryConfigurers(context));
         }
-        
+
         LOG.trace("Collected client and server side SSLServerSocketFactory configurers for SSLContext [{}].", context);
-        
+
         return configurers;
     }
 

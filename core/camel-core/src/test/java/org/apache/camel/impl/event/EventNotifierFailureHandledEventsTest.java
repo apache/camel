@@ -99,7 +99,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertFalse(e.isContinued(), "should not be continued");
         Processor fh = e.getFailureHandler();
         if (fh.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
-            fh = ((DelegateProcessor)fh).getProcessor();
+            fh = ((DelegateProcessor) fh).getProcessor();
         }
         SendProcessor send = assertIsInstanceOf(SendProcessor.class, fh);
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
@@ -109,7 +109,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(12));
         // and the last event should be the direct:start
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
-        ExchangeSentEvent sent = (ExchangeSentEvent)events.get(13);
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(13);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
@@ -154,7 +154,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(12));
         // and the last event should be the direct:start
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
-        ExchangeSentEvent sent = (ExchangeSentEvent)events.get(13);
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(13);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 
@@ -163,7 +163,8 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").doTry().throwException(new IllegalArgumentException("Damn")).doCatch(IllegalArgumentException.class).to("mock:dead").end();
+                from("direct:start").doTry().throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class).to("mock:dead").end();
             }
         });
         context.start();
@@ -197,7 +198,7 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(12));
         // and the last event should be the direct:start
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
-        ExchangeSentEvent sent = (ExchangeSentEvent)events.get(13);
+        ExchangeSentEvent sent = (ExchangeSentEvent) events.get(13);
         assertEquals("direct://start", sent.getEndpoint().getEndpointUri());
     }
 

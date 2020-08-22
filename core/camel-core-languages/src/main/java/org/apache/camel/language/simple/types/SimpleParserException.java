@@ -19,8 +19,7 @@ package org.apache.camel.language.simple.types;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Holds information about error parsing the simple expression at a given location
- * in the input.
+ * Holds information about error parsing the simple expression at a given location in the input.
  */
 public class SimpleParserException extends RuntimeCamelException {
     private static final long serialVersionUID = 1L;

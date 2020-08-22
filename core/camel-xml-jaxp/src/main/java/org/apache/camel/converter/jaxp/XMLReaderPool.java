@@ -46,24 +46,20 @@ public class XMLReaderPool {
     /**
      * Creates a new instance.
      *
-     * @param saxParserFactory
-     *            the SAXParserFactory used to create new SAXParser instances
+     * @param saxParserFactory the SAXParserFactory used to create new SAXParser instances
      */
     public XMLReaderPool(SAXParserFactory saxParserFactory) {
         this.saxParserFactory = saxParserFactory;
     }
 
     /**
-     * Returns an XMLReader that can be used exactly once. Calling one of the
-     * {@code parse} methods returns the reader to the pool. This is useful
-     * for e.g. SAXSource which bundles an XMLReader with an InputSource that
-     * can also be consumed just once.
+     * Returns an XMLReader that can be used exactly once. Calling one of the {@code parse} methods returns the reader
+     * to the pool. This is useful for e.g. SAXSource which bundles an XMLReader with an InputSource that can also be
+     * consumed just once.
      *
-     * @return the XMLReader
-     * @throws SAXException
-     *             see {@link SAXParserFactory#newSAXParser()}
-     * @throws ParserConfigurationException
-     *             see {@link SAXParserFactory#newSAXParser()}
+     * @return                              the XMLReader
+     * @throws SAXException                 see {@link SAXParserFactory#newSAXParser()}
+     * @throws ParserConfigurationException see {@link SAXParserFactory#newSAXParser()}
      */
     public XMLReader createXMLReader() throws SAXException, ParserConfigurationException {
         XMLReader xmlReader = null;
@@ -228,7 +224,7 @@ public class XMLReaderPool {
                 release();
             }
         }
-        
+
         private void checkValid() {
             if (readerInvalid) {
                 throw new IllegalStateException("OneTimeXMLReader can only be used once!");

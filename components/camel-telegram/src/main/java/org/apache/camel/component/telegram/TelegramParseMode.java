@@ -21,7 +21,8 @@ package org.apache.camel.component.telegram;
  */
 public enum TelegramParseMode {
 
-    HTML("HTML"), MARKDOWN("Markdown");
+    HTML("HTML"),
+    MARKDOWN("Markdown");
 
     private String code;
 

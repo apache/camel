@@ -48,8 +48,8 @@ public class XmlErrorHandlerTest {
     @Named
     @Produces
     private Processor processor = exchange -> exchange.getIn()
-        .setHeader("header",
-            exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+            .setHeader("header",
+                    exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
 
     @Named
     @Produces
@@ -70,14 +70,14 @@ public class XmlErrorHandlerTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test Camel XML
-            .addAsResource(
-                Paths.get("src/test/resources/camel-context-errorHandler.xml").toFile(),
-                "imported-context.xml")
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test Camel XML
+                .addAsResource(
+                        Paths.get("src/test/resources/camel-context-errorHandler.xml").toFile(),
+                        "imported-context.xml")
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test

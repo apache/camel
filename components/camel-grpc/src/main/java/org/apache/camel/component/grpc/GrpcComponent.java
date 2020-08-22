@@ -38,7 +38,7 @@ public class GrpcComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     /**
      * Parses the configuration
      * 

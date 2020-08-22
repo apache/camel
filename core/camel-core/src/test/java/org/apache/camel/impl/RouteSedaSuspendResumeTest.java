@@ -50,11 +50,12 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Suspended", ((StatefulService)route).getStatus().name());
+            assertEquals("Suspended", ((StatefulService) route).getStatus().name());
         }
 
         // need to give seda consumer thread time to idle
-        await().atMost(1, TimeUnit.SECONDS).until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
+        await().atMost(1, TimeUnit.SECONDS)
+                .until(() -> context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0);
 
         template.sendBody("seda:foo", "B");
 
@@ -71,7 +72,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Started", ((StatefulService)route).getStatus().name());
+            assertEquals("Started", ((StatefulService) route).getStatus().name());
         }
     }
 

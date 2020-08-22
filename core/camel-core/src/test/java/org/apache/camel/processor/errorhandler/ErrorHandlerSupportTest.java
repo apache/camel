@@ -78,7 +78,8 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
     }
 
-    private static void addExceptionPolicy(ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
+    private static void addExceptionPolicy(
+            ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
         new DefaultErrorHandlerReifier<>(route, null).addExceptionPolicy(handlerSupport, exceptionType);
     }
 

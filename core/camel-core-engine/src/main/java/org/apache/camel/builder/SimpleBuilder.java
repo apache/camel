@@ -31,9 +31,8 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 /**
  * Creates an {@link org.apache.camel.language.simple.Simple} language builder.
  * <p/>
- * This builder is available in the Java DSL from the {@link RouteBuilder} which
- * means that using simple language for {@link Expression}s or
- * {@link Predicate}s is very easy with the help of this builder.
+ * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using simple language for
+ * {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
  */
 public class SimpleBuilder implements Predicate, Expression, ExpressionResultTypeAware, PropertyConfigurer {
 
@@ -73,7 +72,8 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "resulttype":
             case "resultType":
-                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value)); return true;
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
             default:
                 return false;
         }
@@ -135,6 +135,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
                         String r = ScriptHelper.resolveOptionalExternalScript(context, exchange, resolve);
                         return simple.createPredicate(r).matches(exchange);
                     }
+
                     @Override
                     public String toString() {
                         return text;
@@ -170,6 +171,7 @@ public class SimpleBuilder implements Predicate, Expression, ExpressionResultTyp
                         Expression exp = simple.createExpression(r);
                         return exp.evaluate(exchange, type);
                     }
+
                     @Override
                     public String toString() {
                         return text;

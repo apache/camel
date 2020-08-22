@@ -34,7 +34,8 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         RouteReifier.adviceWith(testRoute, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda").throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -66,7 +67,8 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("direct:emailSupport").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:emailSupport").routeId("smtpRoute").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("smtp://smtpServer");
+                from("direct:emailSupport").routeId("smtpRoute").errorHandler(deadLetterChannel("log:dead?level=ERROR"))
+                        .to("smtp://smtpServer");
 
                 from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("pollRoute").to("log:level=INFO");
 

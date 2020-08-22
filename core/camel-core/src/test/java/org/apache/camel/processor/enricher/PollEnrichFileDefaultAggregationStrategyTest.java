@@ -65,7 +65,9 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
-                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000).to("mock:result");
+                        .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done",
+                                10000)
+                        .to("mock:result");
             }
         };
     }

@@ -120,16 +120,16 @@ public class SqlProducerOutputTypeStreamListTest extends CamelTestSupport {
                         .to("sql:select * from projects order by id?outputType=StreamList")
                         .to("log:stream")
                         .split(body()).streaming()
-                            .to("log:row")
-                            .to("mock:result")
+                        .to("log:row")
+                        .to("mock:result")
                         .end();
 
                 from("direct:withSplitModel")
                         .to("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel")
                         .to("log:stream")
                         .split(body()).streaming()
-                            .to("log:row")
-                            .to("mock:result")
+                        .to("log:row")
+                        .to("mock:result")
                         .end();
             }
         };

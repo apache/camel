@@ -53,7 +53,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The host that the consumer should bind to or the host of the remote websocket destination that the producer should connect to
+     * The host that the consumer should bind to or the host of the remote websocket destination that the producer
+     * should connect to
      */
     public void setHost(String host) {
         this.host = host;
@@ -64,7 +65,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The port that the consumer should bind to or port of the remote websocket destination that the producer should connect to
+     * The port that the consumer should bind to or port of the remote websocket destination that the producer should
+     * connect to
      */
     public void setPort(int port) {
         this.port = port;
@@ -93,7 +95,8 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The path that the consumer should bind to or path of the remote websocket destination that the producer should connect to
+     * The path that the consumer should bind to or path of the remote websocket destination that the producer should
+     * connect to
      */
     public void setPath(String path) {
         this.path = path;

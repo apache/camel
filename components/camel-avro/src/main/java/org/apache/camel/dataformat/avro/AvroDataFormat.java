@@ -74,7 +74,9 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (schema != null) {
             if (schema instanceof Schema) {
                 actualSchema = (Schema) schema;

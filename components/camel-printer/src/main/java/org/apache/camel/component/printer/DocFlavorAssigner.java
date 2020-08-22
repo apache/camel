@@ -20,7 +20,7 @@ import javax.print.DocFlavor;
 
 public class DocFlavorAssigner {
     private DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-    
+
     public DocFlavor forMimeTypeAUTOSENSE(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
             d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
@@ -29,10 +29,10 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.AUTOSENSE;
         }
-        
+
         return d;
     }
-    
+
     public DocFlavor forMimeTypeGIF(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
             d = DocFlavor.BYTE_ARRAY.GIF;
@@ -41,10 +41,10 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.GIF;
         }
-    
+
         return d;
     }
-    
+
     public DocFlavor forMimeTypeJPEG(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
             d = DocFlavor.BYTE_ARRAY.JPEG;
@@ -53,9 +53,9 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.JPEG;
         }
-    
+
         return d;
-    }    
+    }
 
     public DocFlavor forMimeTypePDF(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -65,10 +65,10 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.PDF;
         }
-    
+
         return d;
-    }     
-    
+    }
+
     public DocFlavor forMimeTypePCL(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
             d = DocFlavor.BYTE_ARRAY.PCL;
@@ -77,10 +77,10 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.PCL;
         }
-    
+
         return d;
-    }        
-    
+    }
+
     public DocFlavor forMimeTypePOSTSCRIPT(String flavor) {
         if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
             d = DocFlavor.BYTE_ARRAY.POSTSCRIPT;
@@ -89,10 +89,10 @@ public class DocFlavorAssigner {
         } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
             d = DocFlavor.URL.POSTSCRIPT;
         }
-    
+
         return d;
-    }     
-    
+    }
+
     public DocFlavor forMimeTypeHOST(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_HOST")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -111,10 +111,10 @@ public class DocFlavorAssigner {
                 d = DocFlavor.URL.TEXT_PLAIN_HOST;
             }
         }
-    
+
         return d;
     }
-    
+
     public DocFlavor forMimeTypeUSASCII(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_US_ASCII")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -123,7 +123,7 @@ public class DocFlavorAssigner {
                 d = DocFlavor.INPUT_STREAM.TEXT_HTML_US_ASCII;
             } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
                 d = DocFlavor.URL.TEXT_HTML_US_ASCII;
-            } 
+            }
         } else {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
                 d = DocFlavor.BYTE_ARRAY.TEXT_PLAIN_US_ASCII;
@@ -133,7 +133,7 @@ public class DocFlavorAssigner {
                 d = DocFlavor.URL.TEXT_PLAIN_US_ASCII;
             }
         }
-    
+
         return d;
     }
 
@@ -145,7 +145,7 @@ public class DocFlavorAssigner {
                 d = DocFlavor.INPUT_STREAM.TEXT_HTML_UTF_16;
             } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
                 d = DocFlavor.URL.TEXT_HTML_UTF_16;
-            } 
+            }
         } else {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
                 d = DocFlavor.BYTE_ARRAY.TEXT_PLAIN_UTF_16;
@@ -155,9 +155,10 @@ public class DocFlavorAssigner {
                 d = DocFlavor.URL.TEXT_PLAIN_UTF_16;
             }
         }
-    
+
         return d;
     }
+
     public DocFlavor forMimeTypeUTF16LE(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16LE")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -166,7 +167,7 @@ public class DocFlavorAssigner {
                 d = DocFlavor.INPUT_STREAM.TEXT_HTML_UTF_16LE;
             } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
                 d = DocFlavor.URL.TEXT_HTML_UTF_16LE;
-            } 
+            }
         } else {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
                 d = DocFlavor.BYTE_ARRAY.TEXT_PLAIN_UTF_16LE;
@@ -176,10 +177,10 @@ public class DocFlavorAssigner {
                 d = DocFlavor.URL.TEXT_PLAIN_UTF_16LE;
             }
         }
-    
+
         return d;
-    }    
-    
+    }
+
     public DocFlavor forMimeTypeUTF16BE(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16BE")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -196,12 +197,12 @@ public class DocFlavorAssigner {
                 d = DocFlavor.INPUT_STREAM.TEXT_PLAIN_UTF_16BE;
             } else if (flavor.equalsIgnoreCase("DocFlavor.URL")) {
                 d = DocFlavor.URL.TEXT_PLAIN_UTF_16BE;
-            }            
+            }
         }
-    
+
         return d;
-    } 
-    
+    }
+
     public DocFlavor forMimeTypeUTF8(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16BE")) {
             if (flavor.equalsIgnoreCase("DocFlavor.BYTE_ARRAY")) {
@@ -220,10 +221,10 @@ public class DocFlavorAssigner {
                 d = DocFlavor.URL.TEXT_PLAIN_UTF_8;
             }
         }
-    
+
         return d;
     }
-    
+
     public DocFlavor forMimeTypeBasic(String flavor, String mimeType) {
         if (mimeType.equalsIgnoreCase("TEXT_HTML_UTF_16BE")) {
             if (flavor.equalsIgnoreCase("DocFlavor.CHAR_ARRAY")) {
@@ -242,14 +243,14 @@ public class DocFlavorAssigner {
                 d = DocFlavor.STRING.TEXT_PLAIN;
             }
         }
-    
+
         return d;
     }
-    
+
     public DocFlavor forMimeTypePAGEABLE(String flavor) {
-        return d = DocFlavor.SERVICE_FORMATTED.PAGEABLE; 
+        return d = DocFlavor.SERVICE_FORMATTED.PAGEABLE;
     }
-    
+
     public DocFlavor forMimeTypePRINTABLE(String flavor) {
         return d = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
     }

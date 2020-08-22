@@ -45,7 +45,6 @@ public class JettyJmsTwowayTest {
         System.setProperty("JettyJmsTwowayTest.port", Integer.toString(port));
     }
 
-
     @Autowired
     protected CamelContext camelContext;
 

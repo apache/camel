@@ -41,11 +41,11 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
-                        + "fromBlock=0&"
-                        + "toBlock=2&"
-                        + "fullTransactionObjects=false")
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + REPLAY_BLOCKS_OBSERVABLE + "&"
+                     + "fromBlock=0&"
+                     + "toBlock=2&"
+                     + "fullTransactionObjects=false")
+                             .to("mock:result");
             }
         };
     }

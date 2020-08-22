@@ -37,58 +37,73 @@ public class Field {
         isPrivate = false;
         return this;
     }
+
     public Field setPrivate() {
         isPublic = false;
         isPrivate = true;
         return this;
     }
+
     public String getName() {
         return null;
     }
+
     public Field setName(String name) {
         this.name = name;
         return this;
     }
+
     public GenericType getType() {
         return type;
     }
+
     public Field setType(Class<?> type) {
         return setType(new GenericType(type));
     }
+
     public Field setType(GenericType type) {
         this.type = type;
         return this;
     }
+
     public Field setStatic(boolean isStatic) {
         this.isStatic = isStatic;
         return this;
     }
+
     public Field setFinal(boolean isFinal) {
         this.isFinal = isFinal;
         return this;
     }
+
     public String getLiteralInitializer() {
         return literalInit;
     }
+
     public Field setLiteralInitializer(String init) {
         this.literalInit = init;
         return this;
     }
+
     public Field setStringInitializer(String init) {
         this.literalInit = Annotation.quote(init);
         return this;
     }
+
     public Annotation addAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
         Annotation ann = new Annotation(clazz);
         this.annotations.add(ann);
         return ann;
     }
+
     public boolean hasAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
         return annotations.stream().anyMatch(a -> Objects.equals(a.getType(), clazz));
     }
+
     public Annotation getAnnotation(Class<? extends java.lang.annotation.Annotation> clazz) {
         return annotations.stream().filter(a -> Objects.equals(a.getType(), clazz)).findAny().orElse(null);
     }
+
     public Javadoc getJavaDoc() {
         return javadoc;
     }

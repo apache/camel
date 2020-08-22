@@ -82,40 +82,39 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
         Message result;
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.SET)
-            .withBody(val1)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.SET)
+                .withBody(val1)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, value.get().join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.COMPARE_AND_SET)
-            .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, val1)
-            .withBody(val2)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.COMPARE_AND_SET)
+                .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, val1)
+                .withBody(val2)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, value.get().join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, result.getBody());
         assertEquals(val2, value.get().join());
 
         result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET_AND_SET)
-            .withBody(val1)
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET_AND_SET)
+                .withBody(val1)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, result.getBody());
         assertEquals(val1, value.get().join());
     }
-
 
     // ************************************
     // Routes
@@ -126,7 +125,7 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .toF("atomix-value:%s", VALUE_NAME);
+                        .toF("atomix-value:%s", VALUE_NAME);
             }
         };
     }

@@ -34,9 +34,8 @@ public abstract class DefaultCryptoCmsConfiguration {
     private KeyStore keyStore;
 
     /**
-     * Keystore containing signer private keys, verifier public keys, encryptor
-     * public keys, decryptor private keys depending on the operation. Use
-     * either this parameter or the parameter 'keystore'.
+     * Keystore containing signer private keys, verifier public keys, encryptor public keys, decryptor private keys
+     * depending on the operation. Use either this parameter or the parameter 'keystore'.
      */
     public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
         this.keyStoreParameters = keyStoreParameters;
@@ -50,9 +49,8 @@ public abstract class DefaultCryptoCmsConfiguration {
     }
 
     /**
-     * Keystore which contains signer private keys, verifier public keys,
-     * encryptor public keys, decryptor private keys depending on the operation.
-     * Use either this parameter or the parameter 'keyStoreParameters'.
+     * Keystore which contains signer private keys, verifier public keys, encryptor public keys, decryptor private keys
+     * depending on the operation. Use either this parameter or the parameter 'keyStoreParameters'.
      */
     public void setKeyStore(KeyStore keyStore) {
         this.keyStore = keyStore;

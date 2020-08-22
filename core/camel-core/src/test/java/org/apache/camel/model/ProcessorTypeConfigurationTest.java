@@ -38,7 +38,8 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown IllegalArgumentException");
         } catch (Exception e) {
-            assertEquals("No bean could be found in the registry for: hello of type: org.apache.camel.Processor", e.getCause().getMessage());
+            assertEquals("No bean could be found in the registry for: hello of type: org.apache.camel.Processor",
+                    e.getCause().getMessage());
         }
     }
 

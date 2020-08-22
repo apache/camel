@@ -49,6 +49,7 @@ public final class ServiceRegistryHelper {
     }
 
     public static ServiceRegistry mandatoryLookupService(CamelContext context, ServiceRegistry.Selector selector) {
-        return lookupService(context, selector).orElseThrow(() -> new IllegalStateException("ServiceRegistry service not found"));
+        return lookupService(context, selector)
+                .orElseThrow(() -> new IllegalStateException("ServiceRegistry service not found"));
     }
 }

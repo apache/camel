@@ -38,7 +38,7 @@ public class JettyValidatorTest extends CamelTestSupport {
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
 
-        assertEquals(response, "<ok/>", "The response should be ok");
+        assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class JettyValidatorTest extends CamelTestSupport {
         assertNotNull(inputStream, "The inputStream should not be null");
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
-        assertEquals(response, "<error/>", "The response should be error");
+        assertEquals("<error/>", response, "The response should be error");
     }
 
     @Override
@@ -57,15 +57,15 @@ public class JettyValidatorTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .convertBodyTo(String.class)
-                    .to("log:in")
-                    .doTry()
+                        .convertBodyTo(String.class)
+                        .to("log:in")
+                        .doTry()
                         .to("validator:OptimizationRequest.xsd")
                         .transform(constant("<ok/>"))
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .transform(constant("<error/>"))
-                    .end()
-                    .to("log:out");
+                        .end()
+                        .to("log:out");
             }
         };
     }

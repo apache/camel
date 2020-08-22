@@ -55,10 +55,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 /**
  * Tests the functionality of the {@link org.apache.camel.component.exec.ExecComponent}, executing<br>
  * <i>java org.apache.camel.component.exec.ExecutableJavaProgram</i> <br>
- * command. <b>Note, that the tests assume, that the JAVA_HOME system variable
- * is set.</b> This is a more credible assumption, than assuming that java is in
- * the path, because the Maven scripts build the path to java with the JAVA_HOME
- * environment variable.
+ * command. <b>Note, that the tests assume, that the JAVA_HOME system variable is set.</b> This is a more credible
+ * assumption, than assuming that java is in the path, because the Maven scripts build the path to java with the
+ * JAVA_HOME environment variable.
  *
  * @see {@link org.apache.camel.component.exec.ExecutableJavaProgram}
  */
@@ -255,11 +254,14 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         return sendExchange(commandArgument, timeout, "testBody", false);
     }
 
-    protected Exchange sendExchange(final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
         return sendExchange("direct:input", commandArgument, timeout, body, useStderrOnEmptyStdout);
     }
 
-    protected Exchange sendExchange(final String endpoint, final Object commandArgument, final long timeout, final String body, final boolean useStderrOnEmptyStdout) {
+    protected Exchange sendExchange(
+            final String endpoint, final Object commandArgument, final long timeout, final String body,
+            final boolean useStderrOnEmptyStdout) {
         final List<String> args = buildArgs(commandArgument);
         final String javaAbsolutePath = buildJavaExecutablePath();
 
@@ -292,10 +294,10 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:input")
-                    .recipientList(header("whereTo")).to("mock:output");
+                        .recipientList(header("whereTo")).to("mock:output");
 
                 from("direct:direct")
-                    .recipientList(header("whereTo"));
+                        .recipientList(header("whereTo"));
             }
         };
     }

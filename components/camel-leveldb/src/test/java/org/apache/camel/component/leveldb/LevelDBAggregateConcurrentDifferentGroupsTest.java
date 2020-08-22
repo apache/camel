@@ -84,7 +84,7 @@ public class LevelDBAggregateConcurrentDifferentGroupsTest extends CamelTestSupp
                 LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionTimeout(1000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

@@ -20,29 +20,30 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 
 /**
- * Access to a repository of keys to implement the
- * <a href="http://camel.apache.org/claim-check.html">Claim Check</a> pattern.
+ * Access to a repository of keys to implement the <a href="http://camel.apache.org/claim-check.html">Claim Check</a>
+ * pattern.
  * <p/>
- * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Map} contract,
- * and the <tt>push</tt> and <tt>pop</tt> methods is operating according to the {@link java.util.Stack} contract.
+ * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Map} contract, and the
+ * <tt>push</tt> and <tt>pop</tt> methods is operating according to the {@link java.util.Stack} contract.
  * <p/>
- * See important details about the Claim Check EIP implementation in Apache Camel at {@link org.apache.camel.processor.ClaimCheckProcessor}.
+ * See important details about the Claim Check EIP implementation in Apache Camel at
+ * {@link org.apache.camel.processor.ClaimCheckProcessor}.
  */
 public interface ClaimCheckRepository extends Service {
 
     /**
      * Adds the exchange to the repository.
      *
-     * @param key the claim check key
-     * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified key
+     * @param  key the claim check key
+     * @return     <tt>true</tt> if this repository did <b>not</b> already contain the specified key
      */
     boolean add(String key, Exchange exchange);
 
     /**
      * Returns <tt>true</tt> if this repository contains the specified key.
      *
-     * @param key the claim check key
-     * @return <tt>true</tt> if this repository contains the specified key
+     * @param  key the claim check key
+     * @return     <tt>true</tt> if this repository contains the specified key
      */
     boolean contains(String key);
 
@@ -56,8 +57,8 @@ public interface ClaimCheckRepository extends Service {
     /**
      * Gets and removes the exchange from the repository.
      *
-     * @param key the claim check key
-     * @return the removed exchange, or <tt>null</tt> if the key did not exists.
+     * @param  key the claim check key
+     * @return     the removed exchange, or <tt>null</tt> if the key did not exists.
      */
     Exchange getAndRemove(String key);
 

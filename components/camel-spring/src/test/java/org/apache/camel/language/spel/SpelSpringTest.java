@@ -37,7 +37,7 @@ public class SpelSpringTest extends LanguageTestSupport {
         assertExpression("#{@myDummy.bar == 789}", true);
         assertExpression("#{@myDummy.bar.toString()}", "789");
     }
-    
+
     @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");

@@ -62,7 +62,7 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
 
         VertxWebsocketHostConfiguration configuration = new VertxWebsocketHostConfiguration(vertx, router, null, null);
         VertxWebsocketHostKey key = new VertxWebsocketHostKey("localhost", 0);
-        VertxWebsocketHost host =  new VertxWebsocketHost(configuration, key);
+        VertxWebsocketHost host = new VertxWebsocketHost(configuration, key);
         host.start();
 
         CamelContext context = new DefaultCamelContext();

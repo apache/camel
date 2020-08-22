@@ -44,7 +44,8 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 /**
  * Transform messages using Chunk templating engine.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -127,7 +128,8 @@ public class ChunkEndpoint extends ResourceEndpoint {
             out.setHeaders(exchange.getIn().getHeaders());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
-            ChunkEndpoint newEndpoint = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
+            ChunkEndpoint newEndpoint
+                    = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
             newEndpoint.onExchange(exchange);
         }
     }
@@ -135,9 +137,9 @@ public class ChunkEndpoint extends ResourceEndpoint {
     /**
      * Create a Chunk template
      *
-     * @param resourceReader Reader used to get template
-     * @param theme The theme
-     * @return Chunk
+     * @param  resourceReader Reader used to get template
+     * @param  theme          The theme
+     * @return                Chunk
      */
     private Chunk createChunk(Reader resourceReader, Theme theme, boolean fromTemplate) throws IOException {
         ClassLoader oldcl = Thread.currentThread().getContextClassLoader();
@@ -255,12 +257,13 @@ public class ChunkEndpoint extends ResourceEndpoint {
     /**
      * Whether to allow to use resource template from header or not (default false).
      *
-     * Enabling this allows to specify dynamic templates via message header. However this can
-     * be seen as a potential security vulnerability if the header is coming from a malicious user, so use this with care.
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
      */
     public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
         this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

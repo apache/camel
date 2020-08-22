@@ -50,7 +50,7 @@ public class OwbGenericArrayTypeImpl implements GenericArrayType {
         if (this == obj) {
             return true;
         } else if (obj instanceof GenericArrayType) {
-            return ((GenericArrayType)obj).getGenericComponentType().equals(componentType);
+            return ((GenericArrayType) obj).getGenericComponentType().equals(componentType);
         } else {
             return false;
         }

@@ -21,9 +21,28 @@ package org.apache.camel.language.simple.types;
  */
 public enum BinaryOperatorType {
 
-    EQ, EQ_IGNORE, GT, GTE, LT, LTE, NOT_EQ, NOT_EQ_IGNORE,
-    CONTAINS, NOT_CONTAINS, CONTAINS_IGNORECASE, NOT_CONTAINS_IGNORECASE,
-    REGEX, NOT_REGEX, IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE, STARTS_WITH, ENDS_WITH;
+    EQ,
+    EQ_IGNORE,
+    GT,
+    GTE,
+    LT,
+    LTE,
+    NOT_EQ,
+    NOT_EQ_IGNORE,
+    CONTAINS,
+    NOT_CONTAINS,
+    CONTAINS_IGNORECASE,
+    NOT_CONTAINS_IGNORECASE,
+    REGEX,
+    NOT_REGEX,
+    IN,
+    NOT_IN,
+    IS,
+    NOT_IS,
+    RANGE,
+    NOT_RANGE,
+    STARTS_WITH,
+    ENDS_WITH;
 
     //CHECKSTYLE:OFF
     public static BinaryOperatorType asOperator(String text) {

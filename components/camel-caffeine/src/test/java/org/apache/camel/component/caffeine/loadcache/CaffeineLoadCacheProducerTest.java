@@ -41,7 +41,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     void testCacheClear() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived((Object)null);
+        mock.expectedBodiesReceived((Object) null);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, false);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
@@ -65,7 +65,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, false);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT).withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT)
+                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
         assertTrue(getTestCache().getIfPresent(key) != null);
         assertEquals(val, getTestCache().getIfPresent(key));
@@ -79,7 +80,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         map.put(3, 3);
         final Set<Integer> keys = map.keySet().stream().limit(2).collect(Collectors.toSet());
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL).withBody(map).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_PUT_ALL).withBody(map)
+                .to("direct://start").send();
 
         MockEndpoint mock1 = getMockEndpoint("mock:result");
         mock1.expectedMinimumMessageCount(1);
@@ -110,7 +112,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET).withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET)
+                .withHeader(CaffeineConstants.KEY, key).withBody(val).to("direct://start").send();
 
         assertMockEndpointsSatisfied();
     }
@@ -131,7 +134,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, true);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET_ALL).withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET_ALL)
+                .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
         assertMockEndpointsSatisfied();
 
@@ -159,7 +163,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, false);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE).withHeader(CaffeineConstants.KEY, key).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE)
+                .withHeader(CaffeineConstants.KEY, key).to("direct://start").send();
 
         assertMockEndpointsSatisfied();
 
@@ -182,7 +187,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_HAS_RESULT, false);
         mock.expectedHeaderReceived(CaffeineConstants.ACTION_SUCCEEDED, true);
 
-        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE_ALL).withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
+        fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_INVALIDATE_ALL)
+                .withHeader(CaffeineConstants.KEYS, keys).to("direct://start").send();
 
         assertMockEndpointsSatisfied();
 
@@ -200,8 +206,9 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").toF("caffeine-loadcache://%s?cache=#cache", "test").to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                from("direct://start").toF("caffeine-loadcache://%s?cache=#cache", "test")
+                        .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
+                        .to("mock:result");
             }
         };
     }

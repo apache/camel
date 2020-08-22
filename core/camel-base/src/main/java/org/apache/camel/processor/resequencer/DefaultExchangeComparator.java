@@ -20,8 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 /**
- * Compares elements of an {@link Exchange} sequence by comparing
- * <code>long</code> values returned by this comparator's
+ * Compares elements of an {@link Exchange} sequence by comparing <code>long</code> values returned by this comparator's
  * <code>expression</code>.
  */
 public class DefaultExchangeComparator implements ExpressionResultComparator {

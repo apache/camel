@@ -44,7 +44,8 @@ public class DropboxSearchProducer extends DropboxProducer {
 
         StringBuilder fileExtracted = new StringBuilder();
         for (SearchMatch entry : result.getFound()) {
-            fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay()).append("\n");
+            fileExtracted.append(entry.getMetadata().getName()).append("-").append(entry.getMetadata().getPathDisplay())
+                    .append("\n");
         }
         exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
         exchange.getIn().setBody(result.getFound());

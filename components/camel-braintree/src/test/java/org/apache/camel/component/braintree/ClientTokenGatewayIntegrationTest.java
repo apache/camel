@@ -38,7 +38,7 @@ public class ClientTokenGatewayIntegrationTest extends AbstractBraintreeTestSupp
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GENERATE")
-                    .to("braintree://" + PATH_PREFIX + "/generate");
+                        .to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

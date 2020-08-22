@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class LevelDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
-   
+
     private LevelDBAggregationRepository repo;
 
     @Override
@@ -75,7 +75,7 @@ public class LevelDBAggregateDiscardOnTimeoutTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .completionSize(3).aggregationRepository(repo)
                         // use a 3 second timeout
                         .completionTimeout(2000)

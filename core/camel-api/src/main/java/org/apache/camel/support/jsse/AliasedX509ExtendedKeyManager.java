@@ -26,8 +26,8 @@ import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509KeyManager;
 
 /**
- * KeyManager to select a key with desired alias while delegating processing to specified KeyManager Can be
- * used both with server and client sockets
+ * KeyManager to select a key with desired alias while delegating processing to specified KeyManager Can be used both
+ * with server and client sockets
  */
 public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
     private String keyAlias;
@@ -36,8 +36,8 @@ public class AliasedX509ExtendedKeyManager extends X509ExtendedKeyManager {
     /**
      * Construct KeyManager instance
      * 
-     * @param keyAlias Alias of the key to be selected
-     * @param keyManager Instance of KeyManager to be wrapped
+     * @param  keyAlias   Alias of the key to be selected
+     * @param  keyManager Instance of KeyManager to be wrapped
      * @throws Exception
      */
     public AliasedX509ExtendedKeyManager(String keyAlias, X509KeyManager keyManager) throws Exception {

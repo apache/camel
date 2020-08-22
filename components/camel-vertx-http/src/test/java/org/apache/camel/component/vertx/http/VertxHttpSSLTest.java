@@ -32,7 +32,8 @@ public class VertxHttpSSLTest extends VertxHttpTestSupport {
 
     @Test
     public void testSSLContextParametersFromRegistry() throws Exception {
-        String result = template.requestBody(getProducerUri() + "?sslContextParameters=#clientSSLParameters", null, String.class);
+        String result
+                = template.requestBody(getProducerUri() + "?sslContextParameters=#clientSSLParameters", null, String.class);
         assertEquals("Hello World", result);
     }
 
@@ -42,7 +43,7 @@ public class VertxHttpSSLTest extends VertxHttpTestSupport {
             @Override
             public void configure() throws Exception {
                 from(getTestServerUri() + "?sslContextParameters=#serverSSLParameters")
-                    .setBody(constant("Hello World"));
+                        .setBody(constant("Hello World"));
             }
         };
     }

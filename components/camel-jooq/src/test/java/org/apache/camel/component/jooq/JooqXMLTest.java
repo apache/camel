@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Only for testing XML DSL. All basic tests are located here: {@link JooqProducerTest}, {@link JooqConsumerTest}.
  */
-@ContextConfiguration(locations = {"/jooq-spring.xml", "/camel-context.xml"})
+@ContextConfiguration(locations = { "/jooq-spring.xml", "/camel-context.xml" })
 public class JooqXMLTest extends BaseJooqTest {
 
     @Autowired
@@ -38,7 +38,8 @@ public class JooqXMLTest extends BaseJooqTest {
     @Test
     public void testInsert() {
         ProducerTemplate producerTemplate = context.createProducerTemplate();
-        UpdatableRecord entity = (UpdatableRecord)producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, "empty");
+        UpdatableRecord entity = (UpdatableRecord) producerTemplate.sendBody(context.getEndpoint("direct:insert"),
+                ExchangePattern.InOut, "empty");
         assertNotNull(entity);
     }
 

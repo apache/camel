@@ -48,9 +48,10 @@ final class ObjectDescriptions {
 
     private final long responseTimeout;
 
-    ObjectDescriptions(final RestClient client, final long responseTimeout, final String[] includes, final String includePattern, final String[] excludes,
+    ObjectDescriptions(final RestClient client, final long responseTimeout, final String[] includes,
+                       final String includePattern, final String[] excludes,
                        final String excludePattern, final Log log)
-        throws MojoExecutionException {
+                                                                   throws MojoExecutionException {
         this.client = client;
         this.responseTimeout = responseTimeout;
 
@@ -105,8 +106,10 @@ final class ObjectDescriptions {
         }
     }
 
-    private void fetchSpecifiedDescriptions(final String[] includes, final String includePattern, final String[] excludes, final String excludePattern, final Log log)
-        throws MojoExecutionException {
+    private void fetchSpecifiedDescriptions(
+            final String[] includes, final String includePattern, final String[] excludes, final String excludePattern,
+            final Log log)
+            throws MojoExecutionException {
         // use Jackson json
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -134,8 +137,9 @@ final class ObjectDescriptions {
         }
 
         // check if we are generating POJOs for all objects or not
-        if (includes != null && includes.length > 0 || excludes != null && excludes.length > 0 || ObjectHelper.isNotEmpty(includePattern)
-            || ObjectHelper.isNotEmpty(excludePattern)) {
+        if (includes != null && includes.length > 0 || excludes != null && excludes.length > 0
+                || ObjectHelper.isNotEmpty(includePattern)
+                || ObjectHelper.isNotEmpty(excludePattern)) {
 
             filterObjectNames(objectNames, includes, includePattern, excludes, excludePattern, log);
 
@@ -149,9 +153,11 @@ final class ObjectDescriptions {
         }
     }
 
-    private static void filterObjectNames(final Set<String> objectNames, final String[] includes, final String includePattern, final String[] excludes, final String excludePattern,
-                                          final Log log)
-        throws MojoExecutionException {
+    private static void filterObjectNames(
+            final Set<String> objectNames, final String[] includes, final String includePattern, final String[] excludes,
+            final String excludePattern,
+            final Log log)
+            throws MojoExecutionException {
         log.info("Looking for matching Object names...");
         // create a list of accepted names
         final Set<String> includedNames = new HashSet<>();
@@ -201,7 +207,8 @@ final class ObjectDescriptions {
         for (final String name : objectNames) {
             // name is included, or matches include pattern
             // and is not excluded and does not match exclude pattern
-            if ((includedNames.contains(name) || incPattern.matcher(name).matches()) && !excludedNames.contains(name) && !excPattern.matcher(name).matches()) {
+            if ((includedNames.contains(name) || incPattern.matcher(name).matches()) && !excludedNames.contains(name)
+                    && !excPattern.matcher(name).matches()) {
                 acceptedNames.add(name);
             }
         }

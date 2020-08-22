@@ -60,7 +60,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
     private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS;
 
     static {
-        Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map = new LinkedHashMap<>();
+        Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
+                = new LinkedHashMap<>();
         map.put(ConstantExpression.class, ExpressionReifier::new);
         map.put(ExchangePropertyExpression.class, ExpressionReifier::new);
         map.put(ExpressionDefinition.class, ExpressionReifier::new);
@@ -90,12 +91,15 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         this.definition = definition;
     }
 
-    public static ExpressionReifier<? extends ExpressionDefinition> reifier(CamelContext camelContext, ExpressionSubElementDefinition definition) {
+    public static ExpressionReifier<? extends ExpressionDefinition> reifier(
+            CamelContext camelContext, ExpressionSubElementDefinition definition) {
         return reifier(camelContext, definition.getExpressionType());
     }
 
-    public static ExpressionReifier<? extends ExpressionDefinition> reifier(CamelContext camelContext, ExpressionDefinition definition) {
-        BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier = EXPRESSIONS.get(definition.getClass());
+    public static ExpressionReifier<? extends ExpressionDefinition> reifier(
+            CamelContext camelContext, ExpressionDefinition definition) {
+        BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> reifier
+                = EXPRESSIONS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(camelContext, definition);
         }
@@ -184,7 +188,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         // configured which may be needed
         // in the various camel components outside camel-core
         if (predicate instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured)predicate).afterPropertiesConfigured(camelContext);
+            ((AfterPropertiesConfigured) predicate).afterPropertiesConfigured(camelContext);
         }
     }
 
@@ -193,7 +197,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         // configured which may be needed
         // in the various camel components outside camel-core
         if (expression instanceof AfterPropertiesConfigured) {
-            ((AfterPropertiesConfigured)expression).afterPropertiesConfigured(camelContext);
+            ((AfterPropertiesConfigured) expression).afterPropertiesConfigured(camelContext);
         }
     }
 

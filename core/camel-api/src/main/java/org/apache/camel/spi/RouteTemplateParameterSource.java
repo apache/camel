@@ -29,8 +29,8 @@ public interface RouteTemplateParameterSource {
     /**
      * The parameters for the given route
      *
-     * @param routeId          the route id
-     * @return the parameters for the route
+     * @param  routeId the route id
+     * @return         the parameters for the route
      */
     Map<String, Object> parameters(String routeId);
 

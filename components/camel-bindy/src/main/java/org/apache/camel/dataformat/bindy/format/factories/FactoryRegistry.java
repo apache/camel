@@ -20,6 +20,8 @@ import org.apache.camel.dataformat.bindy.FormattingOptions;
 
 public interface FactoryRegistry {
     FactoryRegistry register(FormatFactoryInterface... formatFactory);
+
     FactoryRegistry unregister(Class<? extends FormatFactoryInterface> clazz);
+
     FormatFactoryInterface findForFormattingOptions(FormattingOptions formattingOptions);
 }

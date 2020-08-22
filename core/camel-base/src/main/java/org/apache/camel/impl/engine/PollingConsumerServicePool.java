@@ -27,7 +27,8 @@ import org.apache.camel.util.function.ThrowingFunction;
  */
 public class PollingConsumerServicePool extends ServicePool<PollingConsumer> {
 
-    public PollingConsumerServicePool(ThrowingFunction<Endpoint, PollingConsumer, Exception> creator, Function<PollingConsumer, Endpoint> getEndpoint, int capacity) {
+    public PollingConsumerServicePool(ThrowingFunction<Endpoint, PollingConsumer, Exception> creator,
+                                      Function<PollingConsumer, Endpoint> getEndpoint, int capacity) {
         super(creator, getEndpoint, capacity);
     }
 }

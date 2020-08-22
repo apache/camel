@@ -45,8 +45,9 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Sets the keep alive time for inactive threads")
     private String keepAliveTime;
     @XmlAttribute
-    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS", javaType = "java.util.concurrent.TimeUnit",
-            enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS",
+              javaType = "java.util.concurrent.TimeUnit",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
     private String timeUnit = TimeUnit.SECONDS.name();
     @XmlAttribute
     @Metadata(description = "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue")
@@ -56,8 +57,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     private String allowCoreThreadTimeOut;
     @XmlAttribute
     @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.",
-            defaultValue = "CallerRuns", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-            enums = "Abort,CallerRuns,DiscardOldest,Discard")
+              defaultValue = "CallerRuns", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+              enums = "Abort,CallerRuns,DiscardOldest,Discard")
     private String rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns.name();
     @XmlAttribute(required = true)
     @Metadata(description = "To use a custom thread name / pattern")
@@ -89,7 +90,8 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             allow = CamelContextHelper.parseBoolean(getCamelContext(), allowCoreThreadTimeOut);
         }
         TimeUnit tu = CamelContextHelper.parse(getCamelContext(), TimeUnit.class, timeUnit);
-        ThreadPoolRejectedPolicy tp = CamelContextHelper.parse(getCamelContext(), ThreadPoolRejectedPolicy.class, rejectedPolicy);
+        ThreadPoolRejectedPolicy tp
+                = CamelContextHelper.parse(getCamelContext(), ThreadPoolRejectedPolicy.class, rejectedPolicy);
 
         ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
                 .poolSize(size)

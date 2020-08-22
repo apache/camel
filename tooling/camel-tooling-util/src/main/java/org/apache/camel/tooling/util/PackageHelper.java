@@ -42,8 +42,7 @@ public final class PackageHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
@@ -89,8 +88,9 @@ public final class PackageHelper {
 
     /**
      * Parses the text as a map (eg key=value)
-     * @param data the data
-     * @return the map
+     * 
+     * @param  data the data
+     * @return      the map
      */
     public static Map<String, String> parseAsMap(String data) {
         Map<String, String> answer = new HashMap<>();
@@ -117,7 +117,7 @@ public final class PackageHelper {
 
     public static Stream<Path> findJsonFiles(Path rootDir) {
         return walk(rootDir)
-            .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
+                .filter(p -> p.getFileName().toString().endsWith(JSON_SUFIX));
     }
 
     public static Stream<Path> walk(Path rootDir) {
@@ -133,8 +133,7 @@ public final class PackageHelper {
     }
 
     /**
-     * Returns the name of the component, data format or language from the given
-     * json file
+     * Returns the name of the component, data format or language from the given json file
      */
     public static String asName(Path file) {
         String name = file.getFileName().toString();
@@ -160,7 +159,6 @@ public final class PackageHelper {
             return findCamelDirectory(dir.getParentFile(), path);
         }
     }
-
 
     /**
      * Extract the model kind from a given json schema

@@ -111,7 +111,8 @@ public class EventHubsConsumer extends DefaultConsumer {
         try {
             eventContext.updateCheckpoint();
         } catch (Exception ex) {
-            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.", exchange, ex);
+            getExceptionHandler().handleException("Error occurred during updating the checkpoint. This exception is ignored.",
+                    exchange, ex);
         }
     }
 

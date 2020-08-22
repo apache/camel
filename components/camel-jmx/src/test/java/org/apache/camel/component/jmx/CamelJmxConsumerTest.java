@@ -49,9 +49,10 @@ public class CamelJmxConsumerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 String id = getContext().getName();
 
-                fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"", id).routeId("jmxRoute")
-                    .to("log:jmx")
-                    .to("mock:result");
+                fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"", id)
+                        .routeId("jmxRoute")
+                        .to("log:jmx")
+                        .to("mock:result");
 
                 from("direct:foo").routeId("foo").to("log:foo", "mock:foo");
             }

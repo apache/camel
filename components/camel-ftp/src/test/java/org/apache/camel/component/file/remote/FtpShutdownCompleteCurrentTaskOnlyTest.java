@@ -76,8 +76,9 @@ public class FtpShutdownCompleteCurrentTaskOnlyTest extends FtpServerTestSupport
             @Override
             public void configure() throws Exception {
                 from(getFtpUrl()).routeId("route1")
-                    // let it complete only current task so we shutdown faster
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed().to("seda:foo");
+                        // let it complete only current task so we shutdown faster
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly).delay(1000).syncDelayed()
+                        .to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }

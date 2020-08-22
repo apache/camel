@@ -43,9 +43,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Executes the command utilizing the <a
- * href="http://commons.apache.org/exec/">Apache Commons exec library</a>. Adds
- * a shutdown hook for every executed process.
+ * Executes the command utilizing the <a href="http://commons.apache.org/exec/">Apache Commons exec library</a>. Adds a
+ * shutdown hook for every executed process.
  */
 public class DefaultExecCommandExecutor implements ExecCommandExecutor {
 
@@ -126,11 +125,10 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
     }
 
     /**
-     * Transforms an {@link ExecCommand} to a {@link CommandLine}. No quoting fo
-     * the arguments is used.
+     * Transforms an {@link ExecCommand} to a {@link CommandLine}. No quoting fo the arguments is used.
      *
-     * @param execCommand a not-null <code>ExecCommand</code> instance.
-     * @return a {@link CommandLine} object.
+     * @param  execCommand a not-null <code>ExecCommand</code> instance.
+     * @return             a {@link CommandLine} object.
      */
     protected CommandLine toCommandLine(ExecCommand execCommand) {
         notNull(execCommand, "execCommand");

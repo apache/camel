@@ -182,16 +182,15 @@ public class VertxWebsocketHost {
     }
 
     /**
-     * Gets all WebSocket peers connected to the Vert.x HTTP sever together
-     * with their associated connection key
+     * Gets all WebSocket peers connected to the Vert.x HTTP sever together with their associated connection key
      */
     public Map<String, ServerWebSocket> getConnectedPeers() {
         return connectedPeers;
     }
 
     /**
-     * Gets the port that the server is bound to. This could be a random value if 0 was specified
-     * as the initial port number
+     * Gets the port that the server is bound to. This could be a random value if 0 was specified as the initial port
+     * number
      */
     public int getPort() {
         return port;

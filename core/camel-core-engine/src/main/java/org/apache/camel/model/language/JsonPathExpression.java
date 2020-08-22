@@ -118,8 +118,7 @@ public class JsonPathExpression extends ExpressionDefinition {
     }
 
     /**
-     * Whether to write the output of each row/element as a JSON String value
-     * instead of a Map/POJO value.
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
      */
     public void setWriteAsString(String writeAsString) {
         this.writeAsString = writeAsString;

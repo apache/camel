@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 /**
  * This FailOverLoadBalancer will failover to use next processor when an exception occurred
  * <p/>
- * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation
- * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
- * pipeline to ensure it works the same and the async routing engine is flawless.
+ * This implementation mirrors the logic from the {@link org.apache.camel.processor.Pipeline} in the async variation as
+ * the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the pipeline to
+ * ensure it works the same and the async routing engine is flawless.
  */
 public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceable, CamelContextAware {
 
@@ -116,8 +116,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     /**
      * Should the given failed Exchange failover?
      *
-     * @param exchange the exchange that failed
-     * @return <tt>true</tt> to failover
+     * @param  exchange the exchange that failed
+     * @return          <tt>true</tt> to failover
      */
     protected boolean shouldFailOver(Exchange exchange) {
         if (exchange == null) {
@@ -166,7 +166,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
-        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
+        exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor()
+                .schedule(new State(exchange, callback, processors)::run);
         return false;
     }
 
@@ -255,7 +256,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             // process the exchange
             LOG.debug("Processing failover at attempt {} for {}", attempts, copy);
-            processor.process(copy, doneSync -> exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor().schedule(this::run));
+            processor.process(copy, doneSync -> exchange.getContext().adapt(ExtendedCamelContext.class).getReactiveExecutor()
+                    .schedule(this::run));
         }
 
     }
@@ -263,8 +265,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     /**
      * Prepares the exchange for failover
      *
-     * @param exchange the exchange
-     * @return a copy of the exchange to use for failover
+     * @param  exchange the exchange
+     * @return          a copy of the exchange to use for failover
      */
     protected Exchange prepareExchangeForFailover(Exchange exchange) {
         // use a copy of the exchange to avoid side effects on the original exchange

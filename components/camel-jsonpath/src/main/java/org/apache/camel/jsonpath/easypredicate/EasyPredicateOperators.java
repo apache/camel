@@ -36,7 +36,7 @@ public final class EasyPredicateOperators {
     private static final String SIZE = "size";
     private static final String EMPTY = "empty";
 
-    private static final String[] OPS = new String[]{EQ, NE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY};
+    private static final String[] OPS = new String[] { EQ, NE, LT, LE, GT, GE, REG, IN, NIN, SIZE, EMPTY };
 
     private EasyPredicateOperators() {
     }

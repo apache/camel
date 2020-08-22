@@ -36,14 +36,14 @@ public final class XJConstants {
     public static final String NS_PREFIX_XJ = "xj";
 
     /**
-     * Name typehint. Used to instruct xj to write a field with that name when converting to json. On the otherhand
-     * when converting to xml xj writes the json field name in that attribute.
+     * Name typehint. Used to instruct xj to write a field with that name when converting to json. On the otherhand when
+     * converting to xml xj writes the json field name in that attribute.
      */
     public static final String TYPE_HINT_NAME = "name";
 
     /**
-     * JSON-Type hint. Used to instruct xj of which type the output is when converting to json. Otherwise when converting
-     * to xml the attribute holds the type that was in the original json document.
+     * JSON-Type hint. Used to instruct xj of which type the output is when converting to json. Otherwise when
+     * converting to xml the attribute holds the type that was in the original json document.
      */
     public static final String TYPE_HINT_TYPE = "type";
 

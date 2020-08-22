@@ -27,9 +27,9 @@ import org.apache.camel.component.salesforce.api.dto.XStreamFieldOrder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectComposite.Method;
 
 @XStreamAlias("compositeRequest")
-@XStreamFieldOrder({"method", "url", "referenceId", "body"})
+@XStreamFieldOrder({ "method", "url", "referenceId", "body" })
 @JsonInclude(Include.NON_NULL)
-@JsonPropertyOrder({"method", "url", "referenceId", "body"})
+@JsonPropertyOrder({ "method", "url", "referenceId", "body" })
 final class CompositeRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;

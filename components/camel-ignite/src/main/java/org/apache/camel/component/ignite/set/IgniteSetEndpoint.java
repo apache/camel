@@ -37,10 +37,12 @@ import org.apache.ignite.configuration.CollectionConfiguration;
  *
  * This endpoint only supports producers.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", category = {Category.CACHE, Category.COMPUTE}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name",
+             category = { Category.CACHE, Category.COMPUTE }, producerOnly = true)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer")
@@ -49,7 +51,8 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "producer")
     private IgniteSetOperation operation;
 
-    public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteSetComponent igniteComponent) throws Exception {
+    public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters,
+                             IgniteSetComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);
         name = remaining;
 
@@ -110,9 +113,9 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
     }
 
     /**
-     * The operation to invoke on the Ignite Set.
-     * Superseded by the IgniteConstants.IGNITE_SETS_OPERATION header in the IN message.
-     * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY.The set operation to perform.
+     * The operation to invoke on the Ignite Set. Superseded by the IgniteConstants.IGNITE_SETS_OPERATION header in the
+     * IN message. Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY.The set operation to
+     * perform.
      */
     public void setOperation(IgniteSetOperation operation) {
         this.operation = operation;

@@ -48,10 +48,11 @@ public class PubsubEndpointTest extends PubsubTestSupport {
 
         // :1 identifies the first registered endpoint fo a type in the context
         Endpoint endpoint = context.hasEndpoint(String.format("google-pubsub:%s:%s:1", PROJECT_ID, SUBSCRIPTION_URI));
-        assertNotNull(endpoint, String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI));
+        assertNotNull(endpoint,
+                String.format("Endpoint 'google-pubsub:%s:%s' is not found in Camel Context", PROJECT_ID, SUBSCRIPTION_URI));
 
         assertTrue(endpoint instanceof GooglePubsubEndpoint);
-        GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint)endpoint;
+        GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint) endpoint;
 
         assertEquals(ExchangePattern.InOnly, pubsubEndpoint.createExchange().getPattern());
         assertEquals("google-pubsub://" + PROJECT_ID + ":" + SUBSCRIPTION_URI, pubsubEndpoint.getEndpointUri());

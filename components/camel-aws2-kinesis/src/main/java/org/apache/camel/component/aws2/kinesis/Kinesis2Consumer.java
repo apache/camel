@@ -86,8 +86,10 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
                 case silent:
                     break;
                 case fail:
-                    LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
-                    throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                    LOG.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(),
+                            getEndpoint().getConfiguration().getShardId());
+                    throw new ReachedClosedStatusException(
+                            getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
                 default:
                     throw new IllegalArgumentException("Unsupported shard closed strategy");
             }
@@ -120,7 +122,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public Kinesis2Endpoint getEndpoint() {
-        return (Kinesis2Endpoint)super.getEndpoint();
+        return (Kinesis2Endpoint) super.getEndpoint();
     }
 
     private String getShardIterator() {
@@ -132,7 +134,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
             // If ShardId supplied use it, else choose first one
             if (!getEndpoint().getConfiguration().getShardId().isEmpty()) {
                 shardId = getEndpoint().getConfiguration().getShardId();
-                DescribeStreamRequest req1 = DescribeStreamRequest.builder().streamName(getEndpoint().getConfiguration().getStreamName()).build();
+                DescribeStreamRequest req1
+                        = DescribeStreamRequest.builder().streamName(getEndpoint().getConfiguration().getStreamName()).build();
                 DescribeStreamResponse res1 = getClient().describeStream(req1);
                 for (Shard shard : res1.streamDescription().shards()) {
                     if (shard.shardId().equalsIgnoreCase(getEndpoint().getConfiguration().getShardId())) {
@@ -141,7 +144,8 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
                 }
 
             } else {
-                DescribeStreamRequest req1 = DescribeStreamRequest.builder().streamName(getEndpoint().getConfiguration().getStreamName()).build();
+                DescribeStreamRequest req1
+                        = DescribeStreamRequest.builder().streamName(getEndpoint().getConfiguration().getStreamName()).build();
                 DescribeStreamResponse res1 = getClient().describeStream(req1);
 
                 List<Shard> shards = res1.streamDescription().shards();
@@ -156,8 +160,9 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
             }
             LOG.debug("ShardId is: {}", shardId);
 
-            GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder().streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId)
-                .shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
+            GetShardIteratorRequest.Builder req = GetShardIteratorRequest.builder()
+                    .streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId)
+                    .shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
             if (hasSequenceNumber()) {
                 req.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
@@ -180,7 +185,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer {
 
     private boolean hasSequenceNumber() {
         return !getEndpoint().getConfiguration().getSequenceNumber().isEmpty()
-               && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
-                   || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
+                && (getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                        || getEndpoint().getConfiguration().getIteratorType().equals(ShardIteratorType.AT_SEQUENCE_NUMBER));
     }
 }

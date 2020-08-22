@@ -17,8 +17,7 @@
 package org.apache.camel.maven.packaging;
 
 /**
- * Common set of configuration options used by Camel Main, Camel Spring Boot and
- * other runtimes.
+ * Common set of configuration options used by Camel Main, Camel Spring Boot and other runtimes.
  */
 public class MyConfiguration {
 
@@ -81,9 +80,8 @@ public class MyConfiguration {
     }
 
     /**
-     * To specify for how long time in seconds to keep running the JVM before
-     * automatic terminating the JVM. You can use this to run Camel for a short
-     * while.
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use
+     * this to run Camel for a short while.
      */
     public void setDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
@@ -94,9 +92,8 @@ public class MyConfiguration {
     }
 
     /**
-     * To specify for how long time in seconds Camel can be idle before
-     * automatic terminating the JVM. You can use this to run Camel for a short
-     * while.
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this
+     * to run Camel for a short while.
      */
     public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
         this.durationMaxIdleSeconds = durationMaxIdleSeconds;
@@ -107,8 +104,8 @@ public class MyConfiguration {
     }
 
     /**
-     * To specify how many messages to process by Camel before automatic
-     * terminating the JVM. You can use this to run Camel for a short while.
+     * To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run
+     * Camel for a short while.
      */
     public void setDurationMaxMessages(int durationMaxMessages) {
         this.durationMaxMessages = durationMaxMessages;
@@ -130,12 +127,10 @@ public class MyConfiguration {
     }
 
     /**
-     * Whether Camel should try to suppress logging during shutdown and timeout
-     * was triggered, meaning forced shutdown is happening. And during forced
-     * shutdown we want to avoid logging errors/warnings et all in the logs as a
-     * side-effect of the forced timeout. Notice the suppress is a best effort
-     * as there may still be some logs coming from 3rd party libraries and
-     * whatnot, which Camel cannot control. This option is default false.
+     * Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown
+     * is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a
+     * side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming
+     * from 3rd party libraries and whatnot, which Camel cannot control. This option is default false.
      */
     public void setShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
         this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
@@ -146,10 +141,9 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether to force shutdown of all consumers when a timeout occurred
-     * and thus not all consumers was shutdown within that period. You should
-     * have good reasons to set this option to false as it means that the routes
-     * keep running and is halted abruptly when CamelContext has been shutdown.
+     * Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown
+     * within that period. You should have good reasons to set this option to false as it means that the routes keep
+     * running and is halted abruptly when CamelContext has been shutdown.
      */
     public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         this.shutdownNowOnTimeout = shutdownNowOnTimeout;
@@ -160,8 +154,7 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether routes should be shutdown in reverse or the same order as
-     * they where started.
+     * Sets whether routes should be shutdown in reverse or the same order as they where started.
      */
     public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
         this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
@@ -172,9 +165,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether to log information about the inflight Exchanges which are
-     * still running during a shutdown which didn't complete without the given
-     * timeout.
+     * Sets whether to log information about the inflight Exchanges which are still running during a shutdown which
+     * didn't complete without the given timeout.
      */
     public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
         this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
@@ -185,13 +177,10 @@ public class MyConfiguration {
     }
 
     /**
-     * Directory to load additional configuration files that contains
-     * configuration values that takes precedence over any other configuration.
-     * This can be used to refer to files that may have secret configuration
-     * that has been mounted on the file system for containers. You can specify
-     * a pattern to load from sub directories and a name pattern such as
-     * /var/app/secret/*.properties, multiple directories can be separated by
-     * comma.
+     * Directory to load additional configuration files that contains configuration values that takes precedence over
+     * any other configuration. This can be used to refer to files that may have secret configuration that has been
+     * mounted on the file system for containers. You can specify a pattern to load from sub directories and a name
+     * pattern such as /var/app/secret/*.properties, multiple directories can be separated by comma.
      */
     public void setFileConfigurations(String fileConfigurations) {
         this.fileConfigurations = fileConfigurations;
@@ -235,10 +224,9 @@ public class MyConfiguration {
     }
 
     /**
-     * Whether to load custom type converters by scanning classpath. This is
-     * used for backwards compatibility with Camel 2.x. Its recommended to
-     * migrate to use fast type converter loading by setting
-     * <tt>@Converter(loader = true)</tt> on your custom type converter classes.
+     * Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel
+     * 2.x. Its recommended to migrate to use fast type converter loading by setting <tt>@Converter(loader = true)</tt>
+     * on your custom type converter classes.
      */
     public void setLoadTypeConverters(boolean loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
@@ -249,9 +237,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Is used to limit the maximum length of the logging Camel message bodies.
-     * If the message body is longer than the limit, the log message is clipped.
-     * Use -1 to have unlimited length. Use for example 1000 to log at most 1000
+     * Is used to limit the maximum length of the logging Camel message bodies. If the message body is longer than the
+     * limit, the log message is clipped. Use -1 to have unlimited length. Use for example 1000 to log at most 1000
      * characters.
      */
     public void setLogDebugMaxChars(int logDebugMaxChars) {
@@ -274,9 +261,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets the stream caching spool (temporary) directory to use for overflow
-     * and spooling to disk. If no spool directory has been explicit configured,
-     * then a temporary directory is created in the java.io.tmpdir directory.
+     * Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool
+     * directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory.
      */
     public void setStreamCachingSpoolDirectory(String streamCachingSpoolDirectory) {
         this.streamCachingSpoolDirectory = streamCachingSpoolDirectory;
@@ -287,8 +273,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets a stream caching cipher name to use when spooling to disk to write
-     * with encryption. By default the data is not encrypted.
+     * Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is
+     * not encrypted.
      */
     public void setStreamCachingSpoolCipher(String streamCachingSpoolCipher) {
         this.streamCachingSpoolCipher = streamCachingSpoolCipher;
@@ -299,8 +285,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Stream caching threshold in bytes when overflow to disk is activated. The
-     * default threshold is 128kb. Use -1 to disable overflow to disk.
+     * Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to
+     * disable overflow to disk.
      */
     public void setStreamCachingSpoolThreshold(long streamCachingSpoolThreshold) {
         this.streamCachingSpoolThreshold = streamCachingSpoolThreshold;
@@ -311,8 +297,7 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets a percentage (1-99) of used heap memory threshold to activate stream
-     * caching spooling to disk.
+     * Sets a percentage (1-99) of used heap memory threshold to activate stream caching spooling to disk.
      */
     public void setStreamCachingSpoolUsedHeapMemoryThreshold(int streamCachingSpoolUsedHeapMemoryThreshold) {
         this.streamCachingSpoolUsedHeapMemoryThreshold = streamCachingSpoolUsedHeapMemoryThreshold;
@@ -323,8 +308,7 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets what the upper bounds should be when
-     * streamCachingSpoolUsedHeapMemoryThreshold is in use.
+     * Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use.
      */
     public void setStreamCachingSpoolUsedHeapMemoryLimit(String streamCachingSpoolUsedHeapMemoryLimit) {
         this.streamCachingSpoolUsedHeapMemoryLimit = streamCachingSpoolUsedHeapMemoryLimit;
@@ -335,13 +319,10 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether if just any of the
-     * org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true
-     * then shouldSpoolCache(long) returns true, to allow spooling to disk. If
-     * this option is false, then all the
-     * org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true.
-     * The default value is false which means that all the rules must return
-     * true.
+     * Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then
+     * shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the
+     * org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means
+     * that all the rules must return true.
      */
     public void setStreamCachingAnySpoolRules(boolean streamCachingAnySpoolRules) {
         this.streamCachingAnySpoolRules = streamCachingAnySpoolRules;
@@ -352,8 +333,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets the stream caching buffer size to use when allocating in-memory
-     * buffers used for in-memory stream caches. The default size is 4096.
+     * Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches.
+     * The default size is 4096.
      */
     public void setStreamCachingBufferSize(int streamCachingBufferSize) {
         this.streamCachingBufferSize = streamCachingBufferSize;
@@ -364,8 +345,7 @@ public class MyConfiguration {
     }
 
     /**
-     * Whether to remove stream caching temporary directory when stopping. This
-     * option is default true.
+     * Whether to remove stream caching temporary directory when stopping. This option is default true.
      */
     public void setStreamCachingRemoveSpoolDirectoryWhenStopping(boolean streamCachingRemoveSpoolDirectoryWhenStopping) {
         this.streamCachingRemoveSpoolDirectoryWhenStopping = streamCachingRemoveSpoolDirectoryWhenStopping;
@@ -421,8 +401,7 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether to log exhausted message body with message history. Default
-     * is false.
+     * Sets whether to log exhausted message body with message history. Default is false.
      */
     public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
@@ -433,15 +412,11 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether the object should automatically start when Camel starts.
-     * Important: Currently only routes can be disabled, as CamelContext's are
-     * always started. Note: When setting auto startup false on CamelContext
-     * then that takes precedence and no routes is started. You would need to
-     * start CamelContext explicit using the
-     * org.apache.camel.CamelContext.start() method, to start the context, and
-     * then you would need to start the routes manually using
-     * CamelContext.getRouteController().startRoute(String). Default is true to
-     * always start up.
+     * Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be
+     * disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that
+     * takes precedence and no routes is started. You would need to start CamelContext explicit using the
+     * org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes
+     * manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.
      */
     public void setAutoStartup(boolean autoStartup) {
         this.autoStartup = autoStartup;
@@ -452,10 +427,9 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether to allow access to the original message from Camel's error
-     * handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage().
-     * Turning this off can optimize performance, as defensive copy of the
-     * original message is not needed. Default is false.
+     * Sets whether to allow access to the original message from Camel's error handler, or from
+     * org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive
+     * copy of the original message is not needed. Default is false.
      */
     public void setAllowUseOriginalMessage(boolean allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
@@ -466,9 +440,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets whether endpoint runtime statistics is enabled (gathers runtime
-     * usage of each incoming and outgoing endpoints). The default value is
-     * false.
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing
+     * endpoints). The default value is false.
      */
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
@@ -479,9 +452,8 @@ public class MyConfiguration {
     }
 
     /**
-     * Whether to enable using data type on Camel messages. Data type are
-     * automatic turned on if one ore more routes has been explicit configured
-     * with input and output types. Otherwise data type is default off.
+     * Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has
+     * been explicit configured with input and output types. Otherwise data type is default off.
      */
     public void setUseDataType(boolean useDataType) {
         this.useDataType = useDataType;
@@ -503,8 +475,7 @@ public class MyConfiguration {
     }
 
     /**
-     * The naming pattern for creating the CamelContext JMX management name. The
-     * default pattern is #name#
+     * The naming pattern for creating the CamelContext JMX management name. The default pattern is #name#
      */
     public void setJmxManagementNamePattern(String jmxManagementNamePattern) {
         this.jmxManagementNamePattern = jmxManagementNamePattern;
@@ -526,12 +497,10 @@ public class MyConfiguration {
     }
 
     /**
-     * Sets the thread name pattern used for creating the full thread name. The
-     * default pattern is: Camel (#camelId#) thread ##counter# - #name# Where
-     * #camelId# is the name of the CamelContext. and #counter# is a unique
-     * incrementing counter. and #name# is the regular thread name. You can also
-     * use #longName# which is the long thread name which can includes endpoint
-     * parameters etc.
+     * Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#)
+     * thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique
+     * incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread
+     * name which can includes endpoint parameters etc.
      */
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
@@ -542,15 +511,12 @@ public class MyConfiguration {
     }
 
     /**
-     * Used for filtering routes routes matching the given pattern, which
-     * follows the following rules: - Match by route id - Match by route input
-     * endpoint uri The matching is using exact match, by wildcard and regular
-     * expression as documented by PatternHelper#matchPattern(String, String).
-     * For example to only include routes which starts with foo in their route
-     * id's, use: include=foo&#42; And to exclude routes which starts from JMS
-     * endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by
-     * comma, for example to exclude both foo and bar routes, use:
-     * exclude=foo&#42;,bar&#42; Exclude takes precedence over include.
+     * Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route
+     * id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as
+     * documented by PatternHelper#matchPattern(String, String). For example to only include routes which starts with
+     * foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use:
+     * exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes,
+     * use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include.
      */
     public void setRouteFilterIncludePattern(String include) {
         this.routeFilterIncludePattern = include;
@@ -561,15 +527,12 @@ public class MyConfiguration {
     }
 
     /**
-     * Used for filtering routes routes matching the given pattern, which
-     * follows the following rules: - Match by route id - Match by route input
-     * endpoint uri The matching is using exact match, by wildcard and regular
-     * expression as documented by PatternHelper#matchPattern(String, String).
-     * For example to only include routes which starts with foo in their route
-     * id's, use: include=foo&#42; And to exclude routes which starts from JMS
-     * endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by
-     * comma, for example to exclude both foo and bar routes, use:
-     * exclude=foo&#42;,bar&#42; Exclude takes precedence over include.
+     * Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route
+     * id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as
+     * documented by PatternHelper#matchPattern(String, String). For example to only include routes which starts with
+     * foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use:
+     * exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes,
+     * use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include.
      */
     public void setRouteFilterExcludePattern(String exclude) {
         this.routeFilterExcludePattern = exclude;

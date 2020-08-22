@@ -20,17 +20,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
 /**
- * Represents a resolver of components from a URI to be able to auto-load them using some
- * discovery mechanism like {@link org.apache.camel.impl.DefaultComponentResolver}
+ * Represents a resolver of components from a URI to be able to auto-load them using some discovery mechanism like
+ * {@link org.apache.camel.impl.DefaultComponentResolver}
  */
 public interface ComponentResolver {
-    
+
     /**
      * Attempts to resolve the component for the given URI
      *
-     * @param name the component name to resolve
-     * @param context the context to load the component if it can be resolved
-     * @return the component which is added to the context or null if it cannot be resolved
+     * @param  name      the component name to resolve
+     * @param  context   the context to load the component if it can be resolved
+     * @return           the component which is added to the context or null if it cannot be resolved
      * @throws Exception is thrown if the component could not be loaded
      */
     Component resolveComponent(String name, CamelContext context) throws Exception;

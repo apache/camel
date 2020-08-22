@@ -29,7 +29,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Detect and parse documents using Workday.
  */
-@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true, category = {Category.CLOUD, Category.API, Category.HCM})
+@UriEndpoint(firstVersion = "3.1.0", scheme = "workday", title = "Workday", syntax = "workday:entity:path", producerOnly = true,
+             category = { Category.CLOUD, Category.API, Category.HCM })
 public class WorkdayEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -50,7 +51,8 @@ public class WorkdayEndpoint extends DefaultEndpoint {
             case commonAPI:
                 return new WorkdayCommonAPIProducer(this);
             default:
-                throw new UnsupportedOperationException(String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
+                throw new UnsupportedOperationException(
+                        String.format("Workday producer %s is not implemented", workdayConfiguration.getEntity()));
         }
     }
 

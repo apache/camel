@@ -37,7 +37,6 @@ public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCal
 
     private JmsComponent amq;
 
-
     private JmsServiceExtension() throws JMSException {
         LOG.info("Creating a new reusable AMQ component");
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
@@ -46,7 +45,6 @@ public final class JmsServiceExtension implements BeforeAllCallback, AfterAllCal
 
         connectionFactory.createConnection();
     }
-
 
     @Override
     public void afterAll(ExtensionContext extensionContext) throws Exception {

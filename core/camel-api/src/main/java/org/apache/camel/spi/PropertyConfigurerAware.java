@@ -17,15 +17,14 @@
 package org.apache.camel.spi;
 
 /**
- * An interface to represent an object which is capable of configuring
- * via {@link PropertyConfigurer}.
+ * An interface to represent an object which is capable of configuring via {@link PropertyConfigurer}.
  */
 public interface PropertyConfigurerAware {
 
     /**
      * Gets the configurer.
      *
-     * @param instance  the bean instance
+     * @param instance the bean instance
      */
     PropertyConfigurer getPropertyConfigurer(Object instance);
 

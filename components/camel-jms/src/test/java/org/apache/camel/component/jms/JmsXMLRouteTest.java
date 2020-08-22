@@ -131,12 +131,13 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<person user=\"james\">\n"
-                + "  <firstName>James</firstName>\n"
-                + "  <lastName>Strachan</lastName>\n"
-                + "  <city>London</city>\n"
-                + "</person>");
+        Source source = new StringSource(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                         + "<person user=\"james\">\n"
+                                         + "  <firstName>James</firstName>\n"
+                                         + "  <lastName>Strachan</lastName>\n"
+                                         + "  <city>London</city>\n"
+                                         + "</person>");
         assertNotNull(source);
 
         template.sendBody("direct:object", source);
@@ -150,12 +151,13 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<person user=\"james\">\n"
-                + "  <firstName>James</firstName>\n"
-                + "  <lastName>Strachan</lastName>\n"
-                + "  <city>London</city>\n"
-                + "</person>");
+        Source source = new StringSource(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                         + "<person user=\"james\">\n"
+                                         + "  <firstName>James</firstName>\n"
+                                         + "  <lastName>Strachan</lastName>\n"
+                                         + "  <city>London</city>\n"
+                                         + "</person>");
         assertNotNull(source);
 
         template.sendBody("direct:bytes", source);
@@ -169,12 +171,13 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
 
-        Source source = new StringSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<person user=\"james\">\n"
-                + "  <firstName>James</firstName>\n"
-                + "  <lastName>Strachan</lastName>\n"
-                + "  <city>London</city>\n"
-                + "</person>");
+        Source source = new StringSource(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                                         + "<person user=\"james\">\n"
+                                         + "  <firstName>James</firstName>\n"
+                                         + "  <lastName>Strachan</lastName>\n"
+                                         + "  <city>London</city>\n"
+                                         + "</person>");
         assertNotNull(source);
 
         template.sendBody("direct:default", source);
@@ -212,28 +215,28 @@ public class JmsXMLRouteTest extends CamelTestSupport {
                 from("direct:default").to("activemq:queue:default");
 
                 from("activemq:queue:object")
-                    .process(exchange -> {
-                        Object body = exchange.getIn().getBody();
-                        // should preserve the object as Source
-                        assertIsInstanceOf(Source.class, body);
-                    }).to("seda:choice");
+                        .process(exchange -> {
+                            Object body = exchange.getIn().getBody();
+                            // should preserve the object as Source
+                            assertIsInstanceOf(Source.class, body);
+                        }).to("seda:choice");
 
                 from("activemq:queue:bytes")
-                    .process(exchange -> {
-                        Object body = exchange.getIn().getBody();
-                        // should be a byte array by default
-                        assertIsInstanceOf(byte[].class, body);
-                    }).to("seda:choice");
+                        .process(exchange -> {
+                            Object body = exchange.getIn().getBody();
+                            // should be a byte array by default
+                            assertIsInstanceOf(byte[].class, body);
+                        }).to("seda:choice");
 
                 from("activemq:queue:default")
-                    .to("seda:choice");
+                        .to("seda:choice");
 
                 from("seda:choice")
-                    .choice()
+                        .choice()
                         .when().xpath("/person/city = 'London'").to("mock:london")
                         .when().xpath("/person/city = 'Tampa'").to("mock:tampa")
                         .otherwise().to("mock:unknown")
-                    .end();
+                        .end();
             }
         };
     }

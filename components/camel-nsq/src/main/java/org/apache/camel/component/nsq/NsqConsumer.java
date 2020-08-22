@@ -54,7 +54,7 @@ public class NsqConsumer extends DefaultConsumer {
 
     @Override
     public NsqEndpoint getEndpoint() {
-        return (NsqEndpoint)super.getEndpoint();
+        return (NsqEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -67,10 +67,13 @@ public class NsqConsumer extends DefaultConsumer {
         NSQLookup lookup = new DefaultNSQLookup();
 
         for (ServerAddress server : configuration.getServerAddresses()) {
-            lookup.addLookupAddress(server.getHost(), server.getPort() == 0 ? configuration.getLookupServerPort() : server.getPort());
+            lookup.addLookupAddress(server.getHost(),
+                    server.getPort() == 0 ? configuration.getLookupServerPort() : server.getPort());
         }
 
-        consumer = new NSQConsumer(lookup, configuration.getTopic(), configuration.getChannel(), new CamelNsqMessageHandler(), getEndpoint().getNsqConfig());
+        consumer = new NSQConsumer(
+                lookup, configuration.getTopic(), configuration.getChannel(), new CamelNsqMessageHandler(),
+                getEndpoint().getNsqConfig());
         consumer.setLookupPeriod(configuration.getLookupInterval());
         consumer.setExecutor(getEndpoint().createExecutor());
         consumer.start();
@@ -110,12 +113,13 @@ public class NsqConsumer extends DefaultConsumer {
                 if (configuration.getAutoFinish()) {
                     msg.finished();
                 } else {
-                    exchange.adapt(ExtendedExchange.class).addOnCompletion(new NsqSynchronization(msg, (int)configuration.getRequeueInterval()));
+                    exchange.adapt(ExtendedExchange.class)
+                            .addOnCompletion(new NsqSynchronization(msg, (int) configuration.getRequeueInterval()));
                 }
                 processor.process(exchange);
             } catch (Exception e) {
                 if (!configuration.getAutoFinish()) {
-                    msg.requeue((int)configuration.getRequeueInterval());
+                    msg.requeue((int) configuration.getRequeueInterval());
                 }
                 getExceptionHandler().handleException("Error during processing", exchange, e);
             }

@@ -16,7 +16,6 @@
  */
 package org.apache.directory.server.core.integ5;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -59,7 +58,6 @@ import org.apache.directory.server.i18n.I18n;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A Helper class used to create a DS from the annotations
  *
@@ -78,8 +76,8 @@ public final class DSAnnotationProcessor {
     /**
      * Create the DirectoryService
      *
-     * @param dsBuilder The DirectoryService builder
-     * @return an instance of DirectoryService
+     * @param  dsBuilder The DirectoryService builder
+     * @return           an instance of DirectoryService
      * @throws Exception If the DirectoryService cannot be created
      */
     public static DirectoryService createDS(CreateDS dsBuilder)
@@ -221,10 +219,10 @@ public final class DSAnnotationProcessor {
                 // The annotation contains a specific partition type, we use
                 // that type.
                 Class<?>[] partypes = new Class[] {
-                    SchemaManager.class, DnFactory.class };
+                        SchemaManager.class, DnFactory.class };
                 Constructor<?> constructor = createPartition.type().getConstructor(partypes);
                 partition = (Partition) constructor.newInstance(new Object[] {
-                    schemaManager, service.getDnFactory() });
+                        schemaManager, service.getDnFactory() });
                 partition.setId(createPartition.name());
                 partition.setSuffixDn(new Dn(schemaManager, createPartition.suffix()));
 
@@ -232,8 +230,9 @@ public final class DSAnnotationProcessor {
                     AbstractBTreePartition btreePartition = (AbstractBTreePartition) partition;
                     btreePartition.setCacheService(service.getCacheService());
                     btreePartition.setCacheSize(createPartition.cacheSize());
-                    btreePartition.setPartitionPath(new File(service
-                            .getInstanceLayout().getPartitionsDirectory(),
+                    btreePartition.setPartitionPath(new File(
+                            service
+                                    .getInstanceLayout().getPartitionsDirectory(),
                             createPartition.name()).toURI());
 
                     // Process the indexes if any
@@ -278,14 +277,12 @@ public final class DSAnnotationProcessor {
         return service;
     }
 
-
     /**
      * Create a DirectoryService from a Unit test annotation
      *
-     * @param description The annotations containing the info from which we will create
-     *                    the DS
-     * @return A valid DirectoryService
-     * @throws Exception If the DirectoryService instance can't be returned
+     * @param  description The annotations containing the info from which we will create the DS
+     * @return             A valid DirectoryService
+     * @throws Exception   If the DirectoryService instance can't be returned
      */
     public static DirectoryService getDirectoryService(Description description)
             throws Exception {
@@ -299,14 +296,12 @@ public final class DSAnnotationProcessor {
         }
     }
 
-
     /**
-     * Create a DirectoryService from an annotation. The @CreateDS annotation
-     * must be associated with either the method or the encapsulating class. We
-     * will first try to get the annotation from the method, and if there is
-     * none, then we try at the class level.
+     * Create a DirectoryService from an annotation. The @CreateDS annotation must be associated with either the method
+     * or the encapsulating class. We will first try to get the annotation from the method, and if there is none, then
+     * we try at the class level.
      *
-     * @return A valid DS
+     * @return           A valid DS
      * @throws Exception If the DirectoryService instance can't be returned
      */
     public static DirectoryService getDirectoryService() throws Exception {
@@ -323,20 +318,20 @@ public final class DSAnnotationProcessor {
         throw new LdapException(I18n.err(I18n.ERR_114));
     }
 
-
     /**
      * injects an LDIF entry in the given DirectoryService
      *
-     * @param entry   the LdifEntry to be injected
-     * @param service the DirectoryService
+     * @param  entry     the LdifEntry to be injected
+     * @param  service   the DirectoryService
      * @throws Exception If the entry cannot be injected
      */
     private static void injectEntry(LdifEntry entry, DirectoryService service)
             throws LdapException {
         if (entry.isChangeAdd() || entry.isLdifContent()) {
             service.getAdminSession().add(
-                    new DefaultEntry(service.getSchemaManager(), entry
-                            .getEntry()));
+                    new DefaultEntry(
+                            service.getSchemaManager(), entry
+                                    .getEntry()));
         } else if (entry.isChangeModify()) {
             service.getAdminSession().modify(entry.getDn(),
                     entry.getModifications());
@@ -346,24 +341,26 @@ public final class DSAnnotationProcessor {
         }
     }
 
-
     /**
      * injects the LDIF entries present in a LDIF file
      *
-     * @param clazz     The class which classLoaded will be use to retrieve the resources
-     * @param service   the DirectoryService
-     * @param ldifFiles array of LDIF file names (only )
+     * @param  clazz     The class which classLoaded will be use to retrieve the resources
+     * @param  service   the DirectoryService
+     * @param  ldifFiles array of LDIF file names (only )
      * @throws Exception If we weren't able to inject LdifFiles
      */
-    public static void injectLdifFiles(Class<?> clazz,
-                                       DirectoryService service, String[] ldifFiles) throws Exception {
+    public static void injectLdifFiles(
+            Class<?> clazz,
+            DirectoryService service, String[] ldifFiles)
+            throws Exception {
         if ((ldifFiles != null) && (ldifFiles.length > 0)) {
             for (String ldifFile : ldifFiles) {
                 InputStream is = clazz.getClassLoader().getResourceAsStream(
                         ldifFile);
                 if (is == null) {
-                    throw new FileNotFoundException("LDIF file '" + ldifFile
-                            + "' not found.");
+                    throw new FileNotFoundException(
+                            "LDIF file '" + ldifFile
+                                                    + "' not found.");
                 } else {
                     LdifReader ldifReader = new LdifReader(is);
 
@@ -377,12 +374,11 @@ public final class DSAnnotationProcessor {
         }
     }
 
-
     /**
      * Inject an ldif String into the server. Dn must be relative to the root.
      *
-     * @param service the directory service to use
-     * @param ldif    the ldif containing entries to add to the server.
+     * @param  service   the directory service to use
+     * @param  ldif      the ldif containing entries to add to the server.
      * @throws Exception if there is a problem adding the entries from the LDIF
      */
     public static void injectEntries(DirectoryService service, String ldif)
@@ -397,7 +393,6 @@ public final class DSAnnotationProcessor {
         // And close the reader
         reader.close();
     }
-
 
     /**
      * Load the schemas, and enable/disable them.
@@ -422,12 +417,11 @@ public final class DSAnnotationProcessor {
         }
     }
 
-
     /**
      * Apply the LDIF entries to the given service
      *
-     * @param desc    The description
-     * @param service The DirectoryService instance
+     * @param  desc      The description
+     * @param  service   The DirectoryService instance
      * @throws Exception If we can't apply the ldifs
      */
     public static void applyLdifs(Description desc, DirectoryService service)

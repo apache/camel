@@ -103,7 +103,7 @@ public class AtomixSetConsumerTest extends AtomixClientTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-set:%s", SET_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

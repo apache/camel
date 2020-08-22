@@ -26,13 +26,15 @@ import org.apache.kafka.connect.data.Schema;
 /**
  * Capture changes from a MongoDB database.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector", syntax = "debezium-mongodb:name", category = {Category.DATABASE, Category.NOSQL}, consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "debezium-mongodb", title = "Debezium MongoDB Connector",
+             syntax = "debezium-mongodb:name", category = { Category.DATABASE, Category.NOSQL }, consumerOnly = true)
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration> {
 
     @UriParam
     private MongoDbConnectorEmbeddedDebeziumConfiguration configuration;
 
-    public DebeziumMongodbEndpoint(final String uri, final DebeziumMongodbComponent component, final MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
+    public DebeziumMongodbEndpoint(final String uri, final DebeziumMongodbComponent component,
+                                   final MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }

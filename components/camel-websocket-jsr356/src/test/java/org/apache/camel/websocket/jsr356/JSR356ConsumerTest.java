@@ -59,8 +59,8 @@ public class JSR356ConsumerTest extends CamelTestSupport {
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:" + testMethodName);
         mockEndpoint.expectedBodiesReceived(message);
         ExistingServerEndpoint.doSend(); // to avoid lifecycle issue during
-                                              // startup we send the message
-                                              // only here
+                                        // startup we send the message
+                                        // only here
         mockEndpoint.assertIsSatisfied();
         // note that this test leaks a connection
     }
@@ -77,7 +77,8 @@ public class JSR356ConsumerTest extends CamelTestSupport {
             public void onOpen(final Session session, final EndpointConfig config) {
                 // no-op
             }
-        }, ClientEndpointConfig.Builder.create().build(), URI.create("ws://localhost:" + configuration.getHttpPort() + "/test"));
+        }, ClientEndpointConfig.Builder.create().build(),
+                URI.create("ws://localhost:" + configuration.getHttpPort() + "/test"));
         session.getBasicRemote().sendText(message);
         session.close(new CloseReason(CloseReason.CloseCodes.GOING_AWAY, "bye"));
 
@@ -89,10 +90,11 @@ public class JSR356ConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("websocket-jsr356:///test?sessionCount=5").id("camel_consumer_acts_as_server").convertBodyTo(String.class)
-                    .to("mock:ensureServerModeReceiveProperlyExchanges");
+                        .to("mock:ensureServerModeReceiveProperlyExchanges");
 
-                from("websocket-jsr356://ws://localhost:" + configuration.getHttpPort() + "/existingserver?sessionCount=5").id("camel_consumer_acts_as_client")
-                    .convertBodyTo(String.class).to("mock:ensureClientModeReceiveProperlyExchanges");
+                from("websocket-jsr356://ws://localhost:" + configuration.getHttpPort() + "/existingserver?sessionCount=5")
+                        .id("camel_consumer_acts_as_client")
+                        .convertBodyTo(String.class).to("mock:ensureClientModeReceiveProperlyExchanges");
             }
         };
     }
@@ -108,7 +110,8 @@ public class JSR356ConsumerTest extends CamelTestSupport {
         }
 
         static void doSend() throws IOException {
-            session.getBasicRemote().sendText(ExistingServerEndpoint.class.getName() + "#ensureClientModeReceiveProperlyExchanges");
+            session.getBasicRemote()
+                    .sendText(ExistingServerEndpoint.class.getName() + "#ensureClientModeReceiveProperlyExchanges");
         }
     }
 }

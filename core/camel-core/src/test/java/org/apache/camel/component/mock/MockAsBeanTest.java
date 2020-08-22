@@ -64,10 +64,10 @@ public class MockAsBeanTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // send to foo bean
-                    .bean("foo")
-                    // and then to result mock
-                    .to("mock:result");
+                        // send to foo bean
+                        .bean("foo")
+                        // and then to result mock
+                        .to("mock:result");
             }
         };
     }

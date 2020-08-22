@@ -33,10 +33,12 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send and receive messages to/from Vert.x Event Bus.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address", category = {Category.EVENTBUS, Category.REACTIVE})
+@UriEndpoint(firstVersion = "2.12.0", scheme = "vertx", title = "Vert.x", syntax = "vertx:address",
+             category = { Category.EVENTBUS, Category.REACTIVE })
 public class VertxEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String address;
     @UriParam
     private Boolean pubSub;

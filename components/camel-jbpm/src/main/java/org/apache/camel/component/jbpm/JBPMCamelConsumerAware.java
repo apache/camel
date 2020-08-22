@@ -17,12 +17,12 @@
 package org.apache.camel.component.jbpm;
 
 /**
- * Indicates that class implementing this interface should receive (at some point)
- * JBPMConsumer instance that is required to operate.
+ * Indicates that class implementing this interface should receive (at some point) JBPMConsumer instance that is
+ * required to operate.
  */
 public interface JBPMCamelConsumerAware {
 
     void addConsumer(JBPMConsumer consumer);
-    
+
     void removeConsumer(JBPMConsumer consumer);
 }

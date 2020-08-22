@@ -48,36 +48,36 @@ public class HystrixTimeoutWithFallbackTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .circuitBreaker()
-                    // use 2 second timeout
-                    .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
+                        .circuitBreaker()
+                        // use 2 second timeout
+                        .hystrixConfiguration().executionTimeoutInMilliseconds(2000).end()
                         .log("Hystrix processing start: ${threadName}")
                         .toD("direct:${body}")
                         .log("Hystrix processing end: ${threadName}")
-                    .onFallback()
+                        .onFallback()
                         // use fallback if there was an exception or timeout
                         .log("Hystrix fallback start: ${threadName}")
                         .transform().constant("Fallback response")
                         .log("Hystrix fallback end: ${threadName}")
-                    .end()
-                    .log("After Hystrix ${body}")
-                    .transform(simple("A CHANGE"))
-                    .transform(simple("LAST CHANGE"))
-                    .log("End ${body}");
+                        .end()
+                        .log("After Hystrix ${body}")
+                        .transform(simple("A CHANGE"))
+                        .transform(simple("LAST CHANGE"))
+                        .log("End ${body}");
 
                 from("direct:fast")
-                    // this is a fast route and takes 1 second to respond
-                    .log("Fast processing start: ${threadName}")
-                    .delay(1000)
-                    .transform().constant("Fast response")
-                    .log("Fast processing end: ${threadName}");
+                        // this is a fast route and takes 1 second to respond
+                        .log("Fast processing start: ${threadName}")
+                        .delay(1000)
+                        .transform().constant("Fast response")
+                        .log("Fast processing end: ${threadName}");
 
                 from("direct:slow")
-                    // this is a slow route and takes 3 second to respond
-                    .log("Slow processing start: ${threadName}")
-                    .delay(3000)
-                    .transform().constant("Slow response")
-                    .log("Slow processing end: ${threadName}");
+                        // this is a slow route and takes 3 second to respond
+                        .log("Slow processing start: ${threadName}")
+                        .delay(3000)
+                        .transform().constant("Slow response")
+                        .log("Slow processing end: ${threadName}");
             }
         };
     }

@@ -22,8 +22,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.ArangoEdgeCollection;
+import com.arangodb.ArangoGraph;
+import com.arangodb.ArangoVertexCollection;
 import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.BaseEdgeDocument;
 import com.arangodb.model.AqlQueryOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -53,8 +58,15 @@ public class ArangoDbProducer extends DefaultProducer {
         bind(ArangoDbOperation.UPDATE_DOCUMENT, updateDocument());
         bind(ArangoDbOperation.DELETE_DOCUMENT, deleteDocument());
         bind(ArangoDbOperation.AQL_QUERY, aqlQuery());
+        bind(ArangoDbOperation.SAVE_VERTEX, saveVertex());
+        bind(ArangoDbOperation.UPDATE_VERTEX, updateVertex());
+        bind(ArangoDbOperation.DELETE_VERTEX, deleteVertex());
+        bind(ArangoDbOperation.FIND_VERTEX_BY_KEY, findVertexByKey());
+        bind(ArangoDbOperation.SAVE_EDGE, saveEdge());
+        bind(ArangoDbOperation.UPDATE_EDGE, updateEdge());
+        bind(ArangoDbOperation.FIND_EDGE_BY_KEY, findEdgeByKey());
+        bind(ArangoDbOperation.DELETE_EDGE, deleteEdge());
     }
-
 
     public ArangoDbProducer(ArangoDbEndpoint endpoint) {
         super(endpoint);
@@ -101,7 +113,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> saveDocument() {
         return exchange -> {
             try {
-                ArangoCollection collection = calculateCollection();
+                ArangoCollection collection = calculateDocumentCollection();
                 Boolean isMultiInsert = (Boolean) exchange.getMessage().getHeader(MULTI_INSERT, false);
 
                 // save multiple document
@@ -122,7 +134,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> findDocumentByKey() {
         return exchange -> {
             try {
-                ArangoCollection collection = calculateCollection();
+                ArangoCollection collection = calculateDocumentCollection();
                 // key
                 String key = exchange.getIn().getMandatoryBody(String.class);
                 // return type
@@ -139,7 +151,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> updateDocument() {
         return exchange -> {
             try {
-                ArangoCollection collection = calculateCollection();
+                ArangoCollection collection = calculateDocumentCollection();
 
                 Boolean isMultiUpdate = (Boolean) exchange.getMessage().getHeader(MULTI_UPDATE, false);
 
@@ -162,7 +174,7 @@ public class ArangoDbProducer extends DefaultProducer {
     private Function<Exchange, Object> deleteDocument() {
         return exchange -> {
             try {
-                ArangoCollection collection = calculateCollection();
+                ArangoCollection collection = calculateDocumentCollection();
 
                 Boolean isMultiUpdate = (Boolean) exchange.getMessage().getHeader(MULTI_DELETE, false);
                 // if multiple documents to delete
@@ -174,6 +186,114 @@ public class ArangoDbProducer extends DefaultProducer {
                 // if one single document to delete
                 String singleKey = exchange.getMessage().getMandatoryBody(String.class);
                 return collection.deleteDocument(singleKey);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> saveVertex() {
+        return exchange -> {
+            try {
+                ArangoVertexCollection vertexCollection = calculateVertexCollection();
+                Object vertexDocument = exchange.getMessage().getMandatoryBody();
+                return vertexCollection.insertVertex(vertexDocument);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> updateVertex() {
+        return exchange -> {
+            try {
+                ArangoVertexCollection vertexCollection = calculateVertexCollection();
+                String key = (String) exchange.getMessage().getHeader(ARANGO_KEY);
+                Object vertexDocument = exchange.getMessage().getMandatoryBody();
+                return vertexCollection.updateVertex(key, vertexDocument);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> deleteVertex() {
+        return exchange -> {
+            try {
+                ArangoVertexCollection vertexCollection = calculateVertexCollection();
+                String singleKey = exchange.getMessage().getMandatoryBody(String.class);
+                vertexCollection.deleteVertex(singleKey);
+                return true;
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> findVertexByKey() {
+        return exchange -> {
+            try {
+                ArangoVertexCollection vertexCollection = calculateVertexCollection();
+                // key
+                String key = exchange.getIn().getMandatoryBody(String.class);
+                // return type
+                Class<?> resultClassType = (Class<?>) exchange.getIn().getHeader(RESULT_CLASS_TYPE);
+                resultClassType = resultClassType != null ? resultClassType : BaseDocument.class;
+                return vertexCollection.getVertex(key, resultClassType);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> saveEdge() {
+        return exchange -> {
+            try {
+                ArangoEdgeCollection edgeCollection = calculateEdgeCollection();
+                Object edgeDocument = exchange.getMessage().getMandatoryBody();
+                return edgeCollection.insertEdge(edgeDocument);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> updateEdge() {
+        return exchange -> {
+            try {
+                ArangoEdgeCollection edgeCollection = calculateEdgeCollection();
+                String key = (String) exchange.getMessage().getHeader(ARANGO_KEY);
+                Object edgeDocument = exchange.getMessage().getMandatoryBody();
+                return edgeCollection.updateEdge(key, edgeDocument);
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> deleteEdge() {
+        return exchange -> {
+            try {
+                ArangoEdgeCollection edgeCollection = calculateEdgeCollection();
+                String singleKey = exchange.getMessage().getMandatoryBody(String.class);
+                edgeCollection.deleteEdge(singleKey);
+                return true;
+            } catch (InvalidPayloadException e) {
+                throw new RuntimeException("Invalid payload for command", e);
+            }
+        };
+    }
+
+    private Function<Exchange, Object> findEdgeByKey() {
+        return exchange -> {
+            try {
+                ArangoEdgeCollection edgeCollection = calculateEdgeCollection();
+                // key
+                String key = exchange.getIn().getMandatoryBody(String.class);
+                // return type
+                Class<?> resultClassType = (Class<?>) exchange.getIn().getHeader(RESULT_CLASS_TYPE);
+                resultClassType = resultClassType != null ? resultClassType : BaseEdgeDocument.class;
+                return edgeCollection.getEdge(key, resultClassType);
             } catch (InvalidPayloadException e) {
                 throw new RuntimeException("Invalid payload for command", e);
             }
@@ -192,17 +312,19 @@ public class ArangoDbProducer extends DefaultProducer {
                 }
 
                 // parameters to bind :: can be null if nothing to bind
-                Map<String, Object> bindParameters = (Map<String, Object>) exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS);
+                Map<String, Object> bindParameters
+                        = exchange.getMessage().getHeader(AQL_QUERY_BIND_PARAMETERS, Map.class);
 
-                // options :: can be null
+                // options (advanced) :: can be null
                 AqlQueryOptions queryOptions = (AqlQueryOptions) exchange.getMessage().getHeader(AQL_QUERY_OPTIONS);
 
                 // Class Type for cursor in return :: by default BaseDocument
                 Class<?> resultClassType = (Class<?>) exchange.getIn().getHeader(RESULT_CLASS_TYPE);
                 resultClassType = resultClassType != null ? resultClassType : BaseDocument.class;
 
-                // perform query and return ArangoCursor of class Type
-                return database.query(query, bindParameters, queryOptions, resultClassType);
+                // perform query and return Collection
+                ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType);
+                return cursor == null ? null : cursor.asListRemaining();
             } catch (InvalidPayloadException e) {
                 throw new RuntimeException("Invalid payload for command", e);
             }
@@ -210,15 +332,44 @@ public class ArangoDbProducer extends DefaultProducer {
     }
 
     /**
-     * retrieve collection from endpoints params
+     * retrieve document collection from endpoint params
      */
-    private ArangoCollection calculateCollection() {
+    private ArangoCollection calculateDocumentCollection() {
         String database = endpoint.getConfiguration().getDatabase();
-        String collection = endpoint.getConfiguration().getCollection();
+        String collection = endpoint.getConfiguration().getDocumentCollection();
 
         // return collection
         return endpoint.getArango().db(database).collection(collection);
     }
 
+    /**
+     * retrieve graph from endpoint params
+     */
+    private ArangoGraph calculateGraph() {
+        String database = endpoint.getConfiguration().getDatabase();
+        String graph = endpoint.getConfiguration().getGraph();
+        // return vertex collection collection
+        return endpoint.getArango().db(database).graph(graph);
+    }
+
+    /**
+     * retrieve vertex collection from endpoints params
+     */
+    private ArangoVertexCollection calculateVertexCollection() {
+        String vertexCollection = endpoint.getConfiguration().getVertexCollection();
+
+        // return vertex collection collection
+        return calculateGraph().vertexCollection(vertexCollection);
+    }
+
+    /**
+     * retrieve edge collection from endpoints params
+     */
+    private ArangoEdgeCollection calculateEdgeCollection() {
+        String edgeCollection = endpoint.getConfiguration().getEdgeCollection();
+
+        // return edge collection collection
+        return calculateGraph().edgeCollection(edgeCollection);
+    }
 
 }

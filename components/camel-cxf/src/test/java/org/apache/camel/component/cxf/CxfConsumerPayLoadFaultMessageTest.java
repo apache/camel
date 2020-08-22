@@ -31,10 +31,11 @@ import org.apache.cxf.staxutils.StaxUtils;
 // SET the fault message directly on the out message
 public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultTest {
 
-    protected static final String FAULTS = "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode>soap:Server</faultcode>"
-        + "<faultstring>Get the null value of person name</faultstring>"
-        + "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId /></UnknownPersonFault></detail></soap:Fault>";
-    
+    protected static final String FAULTS
+            = "<soap:Fault xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><faultcode>soap:Server</faultcode>"
+              + "<faultstring>Get the null value of person name</faultstring>"
+              + "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId /></UnknownPersonFault></detail></soap:Fault>";
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -48,11 +49,9 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
                         exchange.getOut().setBody(responsePayload);
                     }
                 });
-                
+
             }
         };
     }
-    
+
 }
-
-

@@ -82,8 +82,8 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     /**
      * Applies this interceptor only if the given predicate is true
      *
-     * @param predicate the predicate
-     * @return the builder
+     * @param  predicate the predicate
+     * @return           the builder
      */
     public InterceptDefinition when(@AsPredicate Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
@@ -92,10 +92,8 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     }
 
     /**
-     * This method is <b>only</b> for handling some post configuration that is
-     * needed since this is an interceptor, and we have to do a bit of magic
-     * logic to fixup to handle predicates with or without proceed/stop set as
-     * well.
+     * This method is <b>only</b> for handling some post configuration that is needed since this is an interceptor, and
+     * we have to do a bit of magic logic to fixup to handle predicates with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {
         if (getOutputs().size() == 0) {
@@ -105,7 +103,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
 
         ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition) {
-            WhenDefinition when = (WhenDefinition)first;
+            WhenDefinition when = (WhenDefinition) first;
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {

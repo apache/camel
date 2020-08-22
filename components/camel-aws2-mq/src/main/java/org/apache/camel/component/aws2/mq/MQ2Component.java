@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.mq.MqClient;
 public class MQ2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MQ2Component.class);
-    
+
     @Metadata
     private MQ2Configuration configuration = new MQ2Configuration();
 
@@ -58,7 +58,8 @@ public class MQ2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAmazonMqClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonMqClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonMQClient or accessKey and secretKey must be specified");
         }
 

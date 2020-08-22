@@ -46,13 +46,15 @@ public class CMComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+            throws Exception {
         CMEndpoint endpoint = new CMEndpoint(uri, this);
         endpoint.setHost(remaining);
         setProperties(endpoint, parameters);
 
         // Validate configuration
-        final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(endpoint.getConfiguration());
+        final Set<ConstraintViolation<CMConfiguration>> constraintViolations
+                = getValidator().validate(endpoint.getConfiguration());
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {

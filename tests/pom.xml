@@ -66,6 +66,10 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-format-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

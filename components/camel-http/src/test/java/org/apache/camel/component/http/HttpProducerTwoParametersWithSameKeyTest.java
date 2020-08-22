@@ -41,13 +41,10 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
     @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myapp", (request, response, context) -> {
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myapp", (request, response, context) -> {
                     String uri = request.getRequestLine().getUri();
                     assertEquals("/myapp?from=me&to=foo&to=bar", uri);
 
@@ -74,7 +71,8 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoParametersWithSameKey() throws Exception {
-        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp?from=me&to=foo&to=bar";
+        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                             + "/myapp?from=me&to=foo&to=bar";
 
         Exchange out = template.request(endpointUri, null);
 

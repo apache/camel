@@ -21,46 +21,34 @@ import java.util.Timer;
 import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**
- * Resequences elements based on a given {@link SequenceElementComparator}.
- * This resequencer is designed for resequencing element streams. Stream-based
- * resequencing has the advantage that the number of elements to be resequenced
- * need not be known in advance. Resequenced elements are delivered via a
- * {@link SequenceSender}.
+ * Resequences elements based on a given {@link SequenceElementComparator}. This resequencer is designed for
+ * resequencing element streams. Stream-based resequencing has the advantage that the number of elements to be
+ * resequenced need not be known in advance. Resequenced elements are delivered via a {@link SequenceSender}.
  * <p>
- * The resequencer's behaviour for a given comparator is controlled by the
- * <code>timeout</code> property. This is the timeout (in milliseconds) for a
- * given element managed by this resequencer. An out-of-sequence element can
- * only be marked as <i>ready-for-delivery</i> if it either times out or if it
- * has an immediate predecessor (in that case it is in-sequence). If an
- * immediate predecessor of a waiting element arrives the timeout task for the
- * waiting element will be cancelled (which marks it as <i>ready-for-delivery</i>).
+ * The resequencer's behaviour for a given comparator is controlled by the <code>timeout</code> property. This is the
+ * timeout (in milliseconds) for a given element managed by this resequencer. An out-of-sequence element can only be
+ * marked as <i>ready-for-delivery</i> if it either times out or if it has an immediate predecessor (in that case it is
+ * in-sequence). If an immediate predecessor of a waiting element arrives the timeout task for the waiting element will
+ * be cancelled (which marks it as <i>ready-for-delivery</i>).
  * <p>
- * If the maximum out-of-sequence time difference between elements within a
- * stream is known, the <code>timeout</code> value should be set to this
- * value. In this case it is guaranteed that all elements of a stream will be
- * delivered in sequence via the {@link SequenceSender}. The lower the
- * <code>timeout</code> value is compared to the out-of-sequence time
- * difference between elements within a stream the higher the probability is for
- * out-of-sequence elements delivered by this resequencer. Delivery of elements
- * must be explicitly triggered by applications using the {@link #deliver()} or
- * {@link #deliverNext()} methods. Only elements that are <i>ready-for-delivery</i>
- * are delivered by these methods. The longer an application waits to trigger a
- * delivery the more elements may become <i>ready-for-delivery</i>.
+ * If the maximum out-of-sequence time difference between elements within a stream is known, the <code>timeout</code>
+ * value should be set to this value. In this case it is guaranteed that all elements of a stream will be delivered in
+ * sequence via the {@link SequenceSender}. The lower the <code>timeout</code> value is compared to the out-of-sequence
+ * time difference between elements within a stream the higher the probability is for out-of-sequence elements delivered
+ * by this resequencer. Delivery of elements must be explicitly triggered by applications using the {@link #deliver()}
+ * or {@link #deliverNext()} methods. Only elements that are <i>ready-for-delivery</i> are delivered by these methods.
+ * The longer an application waits to trigger a delivery the more elements may become <i>ready-for-delivery</i>.
  * <p>
- * The resequencer remembers the last-delivered element. If an element arrives
- * which is the immediate successor of the last-delivered element it is
- * <i>ready-for-delivery</i> immediately. After delivery the last-delivered
- * element is adjusted accordingly. If the last-delivered element is
- * <code>null</code> i.e. the resequencer was newly created the first arriving
- * element needs <code>timeout</code> milliseconds in any case for becoming
- * <i>ready-for-delivery</i>.
+ * The resequencer remembers the last-delivered element. If an element arrives which is the immediate successor of the
+ * last-delivered element it is <i>ready-for-delivery</i> immediately. After delivery the last-delivered element is
+ * adjusted accordingly. If the last-delivered element is <code>null</code> i.e. the resequencer was newly created the
+ * first arriving element needs <code>timeout</code> milliseconds in any case for becoming <i>ready-for-delivery</i>.
  * <p>
  */
 public class ResequencerEngine<E> {
 
     /**
-     * The element that most recently hash been delivered or <code>null</code>
-     * if no element has been delivered yet.
+     * The element that most recently hash been delivered or <code>null</code> if no element has been delivered yet.
      */
     private Element<E> lastDelivered;
 
@@ -85,13 +73,13 @@ public class ResequencerEngine<E> {
     private SequenceSender<E> sequenceSender;
 
     /**
-     * Indicates whether an error should be thrown if message older (based on Comparator) than the last delivered message is received.
+     * Indicates whether an error should be thrown if message older (based on Comparator) than the last delivered
+     * message is received.
      */
     private Boolean rejectOld;
 
     /**
-     * Creates a new resequencer instance with a default timeout of 2000
-     * milliseconds.
+     * Creates a new resequencer instance with a default timeout of 2000 milliseconds.
      *
      * @param comparator a sequence element comparator.
      */
@@ -102,7 +90,8 @@ public class ResequencerEngine<E> {
     }
 
     public void start() {
-        timer = new Timer(ThreadHelper.resolveThreadName("Camel Thread ${counter} - ${name}", "Stream Resequencer Timer"), true);
+        timer = new Timer(
+                ThreadHelper.resolveThreadName("Camel Thread ${counter} - ${name}", "Stream Resequencer Timer"), true);
     }
 
     /**
@@ -168,8 +157,7 @@ public class ResequencerEngine<E> {
     /**
      * Returns the last delivered element.
      *
-     * @return the last delivered element or <code>null</code> if no delivery
-     *         has been made yet.
+     * @return the last delivered element or <code>null</code> if no delivery has been made yet.
      */
     E getLastDelivered() {
         if (lastDelivered == null) {
@@ -188,11 +176,10 @@ public class ResequencerEngine<E> {
     }
 
     /**
-     * Inserts the given element into this resequencer. If the element is not
-     * ready for immediate delivery and has no immediate presecessor then it is
-     * scheduled for timing out. After being timed out it is ready for delivery.
+     * Inserts the given element into this resequencer. If the element is not ready for immediate delivery and has no
+     * immediate presecessor then it is scheduled for timing out. After being timed out it is ready for delivery.
      *
-     * @param o an element.
+     * @param  o                        an element.
      * @throws IllegalArgumentException if the element cannot be used with this resequencer engine
      */
     public synchronized void insert(E o) {
@@ -206,8 +193,10 @@ public class ResequencerEngine<E> {
 
         // validate the exchange shouldn't be 'rejected' (if applicable)
         if (rejectOld != null && rejectOld.booleanValue() && beforeLastDelivered(element)) {
-            throw new MessageRejectedException("rejecting message [" + element.getObject()
-                    + "], it should have been sent before the last delivered message [" + lastDelivered.getObject() + "]");
+            throw new MessageRejectedException(
+                    "rejecting message [" + element.getObject()
+                                               + "], it should have been sent before the last delivered message ["
+                                               + lastDelivered.getObject() + "]");
         }
 
         // add element to sequence in proper order
@@ -236,7 +225,7 @@ public class ResequencerEngine<E> {
      *
      * @throws Exception thrown by {@link SequenceSender#sendElement(Object)}.
      *
-     * @see ResequencerEngine#deliverNext() 
+     * @see              ResequencerEngine#deliverNext()
      */
     public synchronized void deliver() throws Exception {
         while (deliverNext()) {
@@ -245,13 +234,11 @@ public class ResequencerEngine<E> {
     }
 
     /**
-     * Attempts to deliver a single element from the head of the resequencer
-     * queue (sequence). Only elements which have not been scheduled for timing
-     * out or which already timed out can be delivered. Elements are delivered via
+     * Attempts to deliver a single element from the head of the resequencer queue (sequence). Only elements which have
+     * not been scheduled for timing out or which already timed out can be delivered. Elements are delivered via
      * {@link SequenceSender#sendElement(Object)}.
      *
-     * @return <code>true</code> if the element has been delivered
-     *         <code>false</code> otherwise.
+     * @return           <code>true</code> if the element has been delivered <code>false</code> otherwise.
      *
      * @throws Exception thrown by {@link SequenceSender#sendElement(Object)}.
      *
@@ -282,12 +269,10 @@ public class ResequencerEngine<E> {
     }
 
     /**
-     * Returns <code>true</code> if the given element is the immediate
-     * successor of the last delivered element.
+     * Returns <code>true</code> if the given element is the immediate successor of the last delivered element.
      *
-     * @param element an element.
-     * @return <code>true</code> if the given element is the immediate
-     *         successor of the last delivered element.
+     * @param  element an element.
+     * @return         <code>true</code> if the given element is the immediate successor of the last delivered element.
      */
     private boolean successorOfLastDelivered(Element<E> element) {
         if (lastDelivered == null) {
@@ -302,8 +287,8 @@ public class ResequencerEngine<E> {
     /**
      * Retuns <code>true</code> if the given element is before the last delivered element.
      *
-     * @param element an element.
-     * @return <code>true</code> if the given element is before the last delivered element.
+     * @param  element an element.
+     * @return         <code>true</code> if the given element is before the last delivered element.
      */
     private boolean beforeLastDelivered(Element<E> element) {
         if (lastDelivered == null) {

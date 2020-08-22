@@ -25,6 +25,7 @@ public class SpringAggregationStrategyBeanAdapterRefMethodNameTest extends Aggre
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregationStrategyBeanAdapterRefMethodNameTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregationStrategyBeanAdapterRefMethodNameTest.xml");
     }
 }

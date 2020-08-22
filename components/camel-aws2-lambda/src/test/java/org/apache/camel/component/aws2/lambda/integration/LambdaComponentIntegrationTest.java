@@ -43,7 +43,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             }
         });
         assertNotNull(exchange.getMessage().getBody(ListFunctionsResponse.class));
-        assertEquals(exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size(), 2);
+        assertEquals(2, exchange.getMessage().getBody(ListFunctionsResponse.class).functions().size());
     }
 
     @Test
@@ -57,8 +57,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
         });
         GetFunctionResponse result = exchange.getMessage().getBody(GetFunctionResponse.class);
         assertNotNull(result);
-        assertEquals(result.configuration().functionName(), "twitterTrends");
-        assertEquals(result.configuration().runtime(), Runtime.JAVA8);
+        assertEquals("twitterTrends", result.configuration().functionName());
+        assertEquals(Runtime.JAVA8, result.configuration().runtime());
 
     }
 
@@ -69,10 +69,10 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:listFunctions")
-                    .to("aws2-lambda://myFunction?operation=listFunctions&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://myFunction?operation=listFunctions&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
                 from("direct:getFunction")
-                    .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey=xxx&secretKey=yyy&region=eu-west-1");
+                        .to("aws2-lambda://twitterTrends?operation=getFunction&accessKey=xxx&secretKey=yyy&region=eu-west-1");
 
             }
         };

@@ -32,7 +32,8 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
 
     private ITopic<Object> topic;
 
-    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName, boolean reliable) {
+    public HazelcastTopicProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String topicName,
+                                  boolean reliable) {
         super(endpoint);
         if (!reliable) {
             this.topic = hazelcastInstance.getTopic(topicName);
@@ -51,7 +52,9 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
                 this.publish(exchange);
                 break;
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the TOPIC cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

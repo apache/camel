@@ -26,7 +26,8 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "The language for the expression")
     String getExpressionLanguage();
 
-    @ManagedAttribute(description = "Expression that returns which endpoints (url) to send the message to (the recipients).", mask = true)
+    @ManagedAttribute(description = "Expression that returns which endpoints (url) to send the message to (the recipients).",
+                      mask = true)
     String getExpression();
 
     @ManagedAttribute(description = "The uri delimiter to use")

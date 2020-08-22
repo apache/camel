@@ -44,8 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Consumer of messages from the Amazon Web Service Simple Storage Service
- * <a href="http://aws.amazon.com/s3/">AWS S3</a>
+ * A Consumer of messages from the Amazon Web Service Simple Storage Service <a href="http://aws.amazon.com/s3/">AWS
+ * S3</a>
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
 
@@ -202,7 +202,8 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
             }
         } catch (AmazonClientException e) {
-            getExceptionHandler().handleException("Error occurred during deleting object. This exception is ignored.", exchange, e);
+            getExceptionHandler().handleException("Error occurred during deleting object. This exception is ignored.", exchange,
+                    e);
         }
     }
 
@@ -230,7 +231,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public S3Endpoint getEndpoint() {
-        return (S3Endpoint)super.getEndpoint();
+        return (S3Endpoint) super.getEndpoint();
     }
 
     @Override

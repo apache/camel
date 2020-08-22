@@ -32,12 +32,13 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalConfiguration() throws Exception {
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
         MinioEndpoint endpoint = (MinioEndpoint) component
-                .createEndpoint("minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
-        assertEquals(endpoint.getConfiguration().getBucketName(), "TestDomain");
-        assertEquals(endpoint.getConfiguration().getAccessKey(), "xxx");
-        assertEquals(endpoint.getConfiguration().getSecretKey(), "yyy");
-        assertEquals(endpoint.getConfiguration().getRegion(), "us-west-1");
-        assertEquals(endpoint.getConfiguration().getEndpoint(), "http://localhost:4572");
+                .createEndpoint(
+                        "minio://TestDomain?accessKey=xxx&secretKey=yyy&region=us-west-1&endpoint=http://localhost:4572");
+        assertEquals("TestDomain", endpoint.getConfiguration().getBucketName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("us-west-1", endpoint.getConfiguration().getRegion());
+        assertEquals("http://localhost:4572", endpoint.getConfiguration().getEndpoint());
     }
 
     @Test
@@ -49,7 +50,8 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
                 .build();
         context.getRegistry().bind("minioClient", client);
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
-        MinioEndpoint endpoint = (MinioEndpoint)component.createEndpoint("minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
+        MinioEndpoint endpoint = (MinioEndpoint) component
+                .createEndpoint("minio://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getMinioClient());

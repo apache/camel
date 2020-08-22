@@ -39,7 +39,8 @@ public class CallableStatementWrapperFactory extends ServiceSupport {
     @SuppressWarnings("unchecked")
     private final Map<String, TemplateStoredProcedure> templateCache = LRUCacheFactory.newLRUCache(TEMPLATE_CACHE_DEFAULT_SIZE);
     @SuppressWarnings("unchecked")
-    private final Map<String, BatchCallableStatementCreatorFactory> batchTemplateCache = LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
+    private final Map<String, BatchCallableStatementCreatorFactory> batchTemplateCache
+            = LRUCacheFactory.newLRUCache(BATCH_TEMPLATE_CACHE_DEFAULT_SIZE);
 
     public CallableStatementWrapperFactory(JdbcTemplate jdbcTemplate, TemplateParser templateParser, boolean function) {
         this.jdbcTemplate = jdbcTemplate;

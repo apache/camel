@@ -40,8 +40,9 @@ public class DelimiterBasedFrameDecoder extends io.netty.handler.codec.Delimiter
         return super.decode(ctx, in);
     }
 
-    /** Returns true if the delimiters are "\n" and "\r\n".
-     * Copied from io.netty.handler.codec.DelimiterBasedFrameDecoder */
+    /**
+     * Returns true if the delimiters are "\n" and "\r\n". Copied from io.netty.handler.codec.DelimiterBasedFrameDecoder
+     */
     private static boolean isLineBased(final ByteBuf[] delimiters) {
         if (delimiters.length != 2) {
             return false;

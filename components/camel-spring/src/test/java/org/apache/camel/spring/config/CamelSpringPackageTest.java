@@ -28,17 +28,17 @@ public class CamelSpringPackageTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/config/routeBuilderPackage.xml"});
+        return new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/spring/config/routeBuilderPackage.xml" });
     }
-    
+
     @Test
     public void testRouteExcluded() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendBody("direct:start", "dropped like a hot rock");
-       
+
         mock.assertIsSatisfied();
     }
-    
+
 }

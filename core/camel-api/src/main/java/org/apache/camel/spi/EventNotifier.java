@@ -26,7 +26,7 @@ public interface EventNotifier {
     /**
      * Notifies the given event
      *
-     * @param event the event
+     * @param  event     the event
      * @throws Exception can be thrown if notification failed
      */
     void notify(CamelEvent event) throws Exception;
@@ -36,8 +36,8 @@ public interface EventNotifier {
      * <p/>
      * If disabled the event will not be sent and silently ignored instead.
      *
-     * @param event the event
-     * @return <tt>true</tt> if the event should be sent, <tt>false</tt> to silently ignore it
+     * @param  event the event
+     * @return       <tt>true</tt> if the event should be sent, <tt>false</tt> to silently ignore it
      */
     boolean isEnabled(CamelEvent event);
 

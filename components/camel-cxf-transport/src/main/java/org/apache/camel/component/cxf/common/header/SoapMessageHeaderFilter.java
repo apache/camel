@@ -36,11 +36,10 @@ import org.slf4j.LoggerFactory;
 public class SoapMessageHeaderFilter implements MessageHeaderFilter {
     private static final Logger LOG = LoggerFactory.getLogger(SoapMessageHeaderFilter.class);
 
-    private static final List<String> ACTIVATION_NS = 
-        Arrays.asList(SoapBindingConstants.SOAP11_BINDING_ID, 
-                      SoapBindingFactory.SOAP_11_BINDING, 
-                      SoapBindingFactory.SOAP_12_BINDING);
-    
+    private static final List<String> ACTIVATION_NS = Arrays.asList(SoapBindingConstants.SOAP11_BINDING_ID,
+            SoapBindingFactory.SOAP_11_BINDING,
+            SoapBindingFactory.SOAP_12_BINDING);
+
     @Override
     public List<String> getActivationNamespaces() {
         return ACTIVATION_NS;
@@ -52,23 +51,23 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
         if (headers == null) {
             return;
         }
-        
+
         Iterator<Header> iterator = headers.iterator();
         while (iterator.hasNext()) {
             Header header = iterator.next();
             LOG.trace("Processing header: {}", header);
-            
+
             if (!(header instanceof SoapHeader)) {
                 LOG.trace("Skipped header: {} since it is not a SoapHeader", header);
                 continue;
             }
-            
+
             SoapHeader soapHeader = SoapHeader.class.cast(header);
             for (Iterator<SoapVersion> itv = SoapVersionFactory.getInstance().getVersions(); itv.hasNext();) {
                 SoapVersion version = itv.next();
 
-                if (soapHeader.getActor() != null 
-                    && soapHeader.getActor().equals(version.getNextRole())) {
+                if (soapHeader.getActor() != null
+                        && soapHeader.getActor().equals(version.getNextRole())) {
                     // dropping headers if actor/role equals to {ns}/role|actor/next
                     // cxf SoapHeader needs to have soap:header@relay attribute, 
                     // then we can check for it here as well

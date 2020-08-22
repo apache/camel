@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
 
@@ -41,7 +40,7 @@ public class MyBatisUnknownStatementTypeTest extends CamelTestSupport {
             }
         });
         Exception e = assertThrows(Exception.class,
-            () -> context.start());
+                () -> context.start());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
         assertEquals("statementType must be specified on: mybatis://selectAllAccounts", e.getCause().getCause().getMessage());
     }

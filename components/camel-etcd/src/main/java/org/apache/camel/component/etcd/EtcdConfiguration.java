@@ -185,19 +185,18 @@ public class EtcdConfiguration implements CamelContextAware, Cloneable {
 
     public EtcdClient createClient() throws Exception {
         return new EtcdClient(
-            new EtcdSecurityContext(
-                sslContextParameters != null
-                    ? sslContextParameters.createSSLContext(context)
-                    : null,
-                userName,
-                password),
-            EtcdHelper.resolveURIs(context, getUris())
-        );
+                new EtcdSecurityContext(
+                        sslContextParameters != null
+                                ? sslContextParameters.createSSLContext(context)
+                                : null,
+                        userName,
+                        password),
+                EtcdHelper.resolveURIs(context, getUris()));
     }
 
     public EtcdConfiguration copy() {
         try {
-            return (EtcdConfiguration)super.clone();
+            return (EtcdConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

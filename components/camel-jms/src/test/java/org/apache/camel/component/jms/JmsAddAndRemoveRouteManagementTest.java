@@ -56,7 +56,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:in").routeId("myNewRoute")
-                    .to("activemq:queue:foo");
+                        .to("activemq:queue:foo");
             }
         });
 

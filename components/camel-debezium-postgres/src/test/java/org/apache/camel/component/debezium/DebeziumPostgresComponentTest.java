@@ -43,8 +43,8 @@ public class DebeziumPostgresComponentTest {
 
         final String remaining = "test_name";
         final String uri = "debezium?name=test_name&offsetStorageFileName=/test&"
-                + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
-                + "databaseServerName=test&databaseHistoryFileName=/test";
+                           + "databaseHostName=localhost&databaseServerId=1234&databaseUser=dbz&databasePassword=pwd&"
+                           + "databaseServerName=test&databaseHistoryFileName=/test";
 
         try (final DebeziumComponent debeziumComponent = new DebeziumPostgresComponent(new DefaultCamelContext())) {
             debeziumComponent.start();
@@ -53,7 +53,8 @@ public class DebeziumPostgresComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // test for config
-            final PostgresConnectorEmbeddedDebeziumConfiguration configuration = (PostgresConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                    = (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
             assertEquals("localhost", configuration.getDatabaseHostname());
@@ -66,7 +67,8 @@ public class DebeziumPostgresComponentTest {
 
     @Test
     void testIfCreatesComponentWithExternalConfiguration() throws Exception {
-        final PostgresConnectorEmbeddedDebeziumConfiguration configuration = new PostgresConnectorEmbeddedDebeziumConfiguration();
+        final PostgresConnectorEmbeddedDebeziumConfiguration configuration
+                = new PostgresConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabasePassword("pwd");
@@ -85,7 +87,8 @@ public class DebeziumPostgresComponentTest {
             assertNotNull(debeziumEndpoint);
 
             // assert configurations
-            final PostgresConnectorEmbeddedDebeziumConfiguration actualConfigurations = (PostgresConnectorEmbeddedDebeziumConfiguration)debeziumEndpoint.getConfiguration();
+            final PostgresConnectorEmbeddedDebeziumConfiguration actualConfigurations
+                    = (PostgresConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertNotNull(actualConfigurations);
             assertEquals(configuration.getName(), actualConfigurations.getName());
             assertEquals(configuration.getDatabaseUser(), actualConfigurations.getDatabaseUser());

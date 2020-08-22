@@ -61,11 +61,10 @@ public class Olingo2Index {
     }
 
     /**
-     * Hash only certain data since other parts change between message
-     * exchanges.
+     * Hash only certain data since other parts change between message exchanges.
      *
-     * @param metadata
-     * @return hashcode of metadata
+     * @param  metadata
+     * @return          hashcode of metadata
      */
     private int hash(EntryMetadata metadata) {
         final int prime = 31;
@@ -76,11 +75,10 @@ public class Olingo2Index {
     }
 
     /**
-     * Hash entry leaving out certain fields that change between exchange
-     * messages
+     * Hash entry leaving out certain fields that change between exchange messages
      *
-     * @param entry
-     * @return hascode of entry
+     * @param  entry
+     * @return       hascode of entry
      */
     private int hash(ODataEntry entry) {
         final int prime = 31;
@@ -188,11 +186,11 @@ public class Olingo2Index {
      */
     public void index(Object result) {
         if (result instanceof ODataFeed) {
-            index((ODataFeed)result);
+            index((ODataFeed) result);
         } else if (result instanceof Iterable) {
-            index((Iterable<?>)result);
+            index((Iterable<?>) result);
         } else if (result instanceof ODataEntry) {
-            index((ODataEntry)result);
+            index((ODataEntry) result);
         } else {
             indexDefault(result);
         }
@@ -201,9 +199,9 @@ public class Olingo2Index {
     @SuppressWarnings("unchecked")
     public Object filterResponse(Object response) {
         if (response instanceof ODataFeed) {
-            response = filter((ODataFeed)response);
+            response = filter((ODataFeed) response);
         } else if (response instanceof Iterable) {
-            response = filter((Iterable<Object>)response);
+            response = filter((Iterable<Object>) response);
         } else if (response.getClass().isArray()) {
             List<Object> result = new ArrayList<>();
             final int size = Array.getLength(response);
@@ -212,7 +210,7 @@ public class Olingo2Index {
             }
             response = filter(result);
         } else if (response instanceof ODataEntry) {
-            response = filter((ODataEntry)response);
+            response = filter((ODataEntry) response);
         } else {
             response = filter(response);
         }

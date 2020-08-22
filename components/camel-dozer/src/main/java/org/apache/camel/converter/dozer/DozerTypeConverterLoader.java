@@ -40,15 +40,13 @@ import org.slf4j.LoggerFactory;
 import static com.github.dozermapper.core.classmap.MappingDirection.ONE_WAY;
 
 /**
- * <code>DozerTypeConverterLoader</code> provides the mechanism for registering
- * a Dozer {@link Mapper} as {@link TypeConverter} for a {@link CamelContext}.
+ * <code>DozerTypeConverterLoader</code> provides the mechanism for registering a Dozer {@link Mapper} as
+ * {@link TypeConverter} for a {@link CamelContext}.
  * <p/>
- * While a mapper can be explicitly supplied as a parameter the
- * {@link CamelContext}'s registry will also be searched for {@link Mapper}
- * instances. A {@link DozerTypeConverter} is created to wrap each
- * {@link Mapper} instance and the mapper is queried for the types it converts.
- * The queried types are used to register the {@link TypeConverter} with the
- * context via its {@link TypeConverterRegistry}.
+ * While a mapper can be explicitly supplied as a parameter the {@link CamelContext}'s registry will also be searched
+ * for {@link Mapper} instances. A {@link DozerTypeConverter} is created to wrap each {@link Mapper} instance and the
+ * mapper is queried for the types it converts. The queried types are used to register the {@link TypeConverter} with
+ * the context via its {@link TypeConverterRegistry}.
  */
 public class DozerTypeConverterLoader extends ServiceSupport implements CamelContextAware {
 
@@ -58,20 +56,17 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     private transient Mapper mapper;
 
     /**
-     * Creates a <code>DozerTypeConverter</code> performing no
-     * {@link TypeConverter} registration.
+     * Creates a <code>DozerTypeConverter</code> performing no {@link TypeConverter} registration.
      */
     public DozerTypeConverterLoader() {
     }
 
     /**
-     * Creates a <code>DozerTypeConverter</code> that will search the given
-     * {@link CamelContext} for instances of {@link Mapper}. Each
-     * discovered instance will be wrapped as a {@link DozerTypeConverter} and
-     * register as a {@link TypeConverter} with the context
+     * Creates a <code>DozerTypeConverter</code> that will search the given {@link CamelContext} for instances of
+     * {@link Mapper}. Each discovered instance will be wrapped as a {@link DozerTypeConverter} and register as a
+     * {@link TypeConverter} with the context
      *
-     * @param camelContext the context to register the
-     *                     {@link DozerTypeConverter} in
+     * @param camelContext the context to register the {@link DozerTypeConverter} in
      */
     public DozerTypeConverterLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -83,11 +78,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     }
 
     /**
-     * Creates a <code>DozerTypeConverter</code> using the given
-     * {@link DozerBeanMapperConfiguration} configuration.
+     * Creates a <code>DozerTypeConverter</code> using the given {@link DozerBeanMapperConfiguration} configuration.
      *
-     * @param camelContext the context to register the
-     *                     {@link DozerTypeConverter} in
+     * @param camelContext  the context to register the {@link DozerTypeConverter} in
      *
      * @param configuration dozer mapping bean configuration.
      */
@@ -115,11 +108,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     }
 
     /**
-     * Doses the actual querying and registration of {@link DozerTypeConverter}s
-     * with the {@link CamelContext}.
+     * Doses the actual querying and registration of {@link DozerTypeConverter}s with the {@link CamelContext}.
      *
-     * @param camelContext the context to register the
-     *                     {@link DozerTypeConverter} in
+     * @param camelContext the context to register the {@link DozerTypeConverter} in
      * @param mapper       the DozerMapperBean to be wrapped as a type converter.
      */
     public void init(CamelContext camelContext, Mapper mapper) {
@@ -174,7 +165,9 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             log.info("Loaded {} Dozer mappers from Camel registry.", mappers.size());
 
             if (mappers.size() == 0) {
-                log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: {}", Mapper.class.getName());
+                log.warn(
+                        "No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: {}",
+                        Mapper.class.getName());
             }
 
             TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
@@ -207,7 +200,8 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         return new HashMap<>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapperConfiguration.class));
     }
 
-    protected void registerClassMaps(TypeConverterRegistry registry, String dozerId, Mapper dozer, List<ClassMappingMetadata> all) {
+    protected void registerClassMaps(
+            TypeConverterRegistry registry, String dozerId, Mapper dozer, List<ClassMappingMetadata> all) {
         DozerTypeConverter converter = new DozerTypeConverter(dozer);
         for (ClassMappingMetadata map : all) {
             addDozerTypeConverter(registry, converter, dozerId, map.getSourceClass(), map.getDestinationClass());
@@ -219,13 +213,14 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         }
     }
 
-    protected void addDozerTypeConverter(TypeConverterRegistry registry, DozerTypeConverter converter,
-                                         String dozerId, Class<?> to, Class<?> from) {
+    protected void addDozerTypeConverter(
+            TypeConverterRegistry registry, DozerTypeConverter converter,
+            String dozerId, Class<?> to, Class<?> from) {
         if (log.isInfoEnabled()) {
             if (dozerId != null) {
-                log.info("Added Dozer: {} as Camel type converter: {} -> {}", new Object[] {dozerId, from, to});
+                log.info("Added Dozer: {} as Camel type converter: {} -> {}", new Object[] { dozerId, from, to });
             } else {
-                log.info("Added Dozer as Camel type converter: {} -> {}", new Object[] {from, to});
+                log.info("Added Dozer as Camel type converter: {} -> {}", new Object[] { from, to });
             }
         }
 
@@ -240,8 +235,8 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
     /**
      * Sets the {@link CamelContext} <b>and also</b> initializes this loader.
      * <p/>
-     * The reason why {@link #init(org.apache.camel.CamelContext, com.github.dozermapper.core.Mapper)} is also called
-     * is because making using Dozer in Spring XML files easier, as no need to use the init-method attribute.
+     * The reason why {@link #init(org.apache.camel.CamelContext, com.github.dozermapper.core.Mapper)} is also called is
+     * because making using Dozer in Spring XML files easier, as no need to use the init-method attribute.
      *
      * @param camelContext the CamelContext
      */

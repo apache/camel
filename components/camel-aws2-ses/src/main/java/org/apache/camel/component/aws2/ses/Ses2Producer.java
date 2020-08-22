@@ -39,8 +39,8 @@ import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendRawEmailResponse;
 
 /**
- * A Producer which sends messages to the Amazon Simple Email Service SDK v2
- * <a href="http://aws.amazon.com/ses/">AWS SES</a>
+ * A Producer which sends messages to the Amazon Simple Email Service SDK v2 <a href="http://aws.amazon.com/ses/">AWS
+ * SES</a>
  */
 public class Ses2Producer extends DefaultProducer {
 
@@ -91,7 +91,8 @@ public class Ses2Producer extends DefaultProducer {
     }
 
     private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
-        software.amazon.awssdk.services.ses.model.Message.Builder message = software.amazon.awssdk.services.ses.model.Message.builder();
+        software.amazon.awssdk.services.ses.model.Message.Builder message
+                = software.amazon.awssdk.services.ses.model.Message.builder();
         Boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         String content = exchange.getIn().getBody(String.class);
         if (isHtmlEmail) {
@@ -104,7 +105,8 @@ public class Ses2Producer extends DefaultProducer {
     }
 
     private software.amazon.awssdk.services.ses.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
-        software.amazon.awssdk.services.ses.model.RawMessage.Builder message = software.amazon.awssdk.services.ses.model.RawMessage.builder();
+        software.amazon.awssdk.services.ses.model.RawMessage.Builder message
+                = software.amazon.awssdk.services.ses.model.RawMessage.builder();
         javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
         OutputStream byteOutput = new ByteArrayOutputStream();
         try {
@@ -113,7 +115,7 @@ public class Ses2Producer extends DefaultProducer {
             LOG.error("Cannot write to byte Array");
             throw e;
         }
-        byte[] messageByteArray = ((ByteArrayOutputStream)byteOutput).toByteArray();
+        byte[] messageByteArray = ((ByteArrayOutputStream) byteOutput).toByteArray();
         message.data(SdkBytes.fromByteBuffer(ByteBuffer.wrap(messageByteArray)));
         return message.build();
     }
@@ -183,7 +185,7 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     public Ses2Endpoint getEndpoint() {
-        return (Ses2Endpoint)super.getEndpoint();
+        return (Ses2Endpoint) super.getEndpoint();
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

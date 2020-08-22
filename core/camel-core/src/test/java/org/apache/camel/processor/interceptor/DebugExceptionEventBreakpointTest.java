@@ -47,7 +47,8 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         breakpoint = new BreakpointSupport() {
             public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 Exception e = event.getExchange().getException();
-                logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
+                logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage()
+                         + "]");
             }
         };
 
@@ -75,7 +76,9 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(1, logs.size());
-        assertEquals("Breakpoint at ThrowException[java.lang.IllegalArgumentException] caused by: IllegalArgumentException[Damn]", logs.get(0));
+        assertEquals(
+                "Breakpoint at ThrowException[java.lang.IllegalArgumentException] caused by: IllegalArgumentException[Damn]",
+                logs.get(0));
     }
 
     @Override
@@ -86,7 +89,8 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
                 // use debugger
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start").to("log:foo").choice().when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
+                from("direct:start").to("log:foo").choice().when(body().contains("Camel"))
+                        .throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
             }
         };
     }

@@ -214,7 +214,7 @@ public class JpaProducer extends DefaultProducer {
             params.forEach((key, value) -> {
                 Object resolvedValue = value;
                 if (value instanceof String) {
-                    resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);
+                    resolvedValue = SimpleLanguage.expression((String) value).evaluate(exchange, Object.class);
                 }
                 query.setParameter(key, resolvedValue);
             });
@@ -258,7 +258,7 @@ public class JpaProducer extends DefaultProducer {
                     }
 
                     if (values.getClass().isArray()) {
-                        Object[] array = (Object[])values;
+                        Object[] array = (Object[]) values;
                         // need to create an array to store returned values as they can be updated
                         // by JPA such as setting auto assigned ids
                         Object[] managedArray = new Object[array.length];
@@ -278,7 +278,7 @@ public class JpaProducer extends DefaultProducer {
                             exchange.getIn().setBody(array);
                         }
                     } else if (values instanceof Collection) {
-                        Collection<?> collection = (Collection<?>)values;
+                        Collection<?> collection = (Collection<?>) values;
                         // need to create a list to store returned values as they can be updated
                         // by JPA such as setting auto assigned ids
                         Collection managedCollection = new ArrayList<>(collection.size());

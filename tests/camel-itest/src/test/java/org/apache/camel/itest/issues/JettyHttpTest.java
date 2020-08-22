@@ -39,12 +39,12 @@ public class JettyHttpTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     void testGetWithRelativePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hi! /someservice/relative");
-        
+
         template.sendBody("direct:relative", "");
         assertMockEndpointsSatisfied();
     }
@@ -55,23 +55,23 @@ public class JettyHttpTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(targetConsumerUri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) {
-                            String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                            exchange.getMessage().setBody("Hi! " + path);
-                        }   
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                String path = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+                                exchange.getMessage().setBody("Hi! " + path);
+                            }
+                        });
 
                 from(sourceUri)
-                    .to(targetProducerUri);
+                        .to(targetProducerUri);
 
                 from("direct:root")
-                    .to(sourceProducerUri)
-                    .to("mock:result");
-                
+                        .to(sourceProducerUri)
+                        .to("mock:result");
+
                 from("direct:relative")
-                    .to(sourceProducerUri + "/relative")
-                    .to("mock:result");
+                        .to(sourceProducerUri + "/relative")
+                        .to("mock:result");
             }
         };
     }

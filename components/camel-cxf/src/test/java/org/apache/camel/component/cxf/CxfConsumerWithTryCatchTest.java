@@ -28,55 +28,55 @@ import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
-   
+
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
-    
+
     // START SNIPPET: example
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SIMPLE_ENDPOINT_URI).choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        Message in = exchange.getIn();
-                        // Get the parameter list
-                        List<?> parameter = in.getBody(List.class);
-                        // Get the operation name
-                        String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
-                        Object result = operation + " " + (String)parameter.get(0);
-                        // Put the result back
-                        exchange.getOut().setBody(result);
-                    }
-                })
-                .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION))
-                .doTry()
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalStateException();
-                    }
-                })
-                .doCatch(IllegalStateException.class).process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        // Get the parameter list
-                        List<?> parameter = in.getBody(List.class);
-                        // Put the result back
-                        exchange.getOut().setBody(parameter.get(0));
-                    }
-                })
-                .end();
+                from(SIMPLE_ENDPOINT_URI).choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION))
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                Message in = exchange.getIn();
+                                // Get the parameter list
+                                List<?> parameter = in.getBody(List.class);
+                                // Get the operation name
+                                String operation = (String) in.getHeader(CxfConstants.OPERATION_NAME);
+                                Object result = operation + " " + (String) parameter.get(0);
+                                // Put the result back
+                                exchange.getOut().setBody(result);
+                            }
+                        })
+                        .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION))
+                        .doTry()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IllegalStateException();
+                            }
+                        })
+                        .doCatch(IllegalStateException.class).process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Message in = exchange.getIn();
+                                // Get the parameter list
+                                List<?> parameter = in.getBody(List.class);
+                                // Put the result back
+                                exchange.getOut().setBody(parameter.get(0));
+                            }
+                        })
+                        .end();
             }
         };
     }
-    
+
     @Override
     @Test
     public void testXmlDeclaration() throws Exception {
         // do nothing here
     }
-
 
 }

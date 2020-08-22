@@ -76,9 +76,8 @@ public class Base64DataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe
-     * is only applied to encode operations. Decoding seamlessly handles both
-     * modes. Is by default false.
+     * Instead of emitting '+' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations.
+     * Decoding seamlessly handles both modes. Is by default false.
      */
     public void setUrlSafe(String urlSafe) {
         this.urlSafe = urlSafe;

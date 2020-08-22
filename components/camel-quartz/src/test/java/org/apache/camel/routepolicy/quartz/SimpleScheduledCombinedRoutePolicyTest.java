@@ -41,7 +41,8 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
         success.expectedMessageCount(1);
 
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
@@ -55,9 +56,9 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStopRepeatInterval(3000);
 
                 from("direct:start")
-                    .routeId("test")
-                    .routePolicy(policy)
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicy(policy)
+                        .to("mock:success");
             }
         });
         context.start();

@@ -29,11 +29,11 @@ public class DeleteDomainCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         DeleteDomainRequest request = new DeleteDomainRequest()
-            .withDomainName(determineDomainName());
+                .withDomainName(determineDomainName());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         this.sdbClient.deleteDomain(request);
-        
+
         log.trace("Request sent");
     }
 }

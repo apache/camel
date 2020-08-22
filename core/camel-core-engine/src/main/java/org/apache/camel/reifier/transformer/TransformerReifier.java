@@ -33,7 +33,8 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
 
     private static final Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> TRANSFORMERS;
     static {
-        Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>>> map
+                = new HashMap<>();
         map.put(CustomTransformerDefinition.class, CustomTransformeReifier::new);
         map.put(DataFormatTransformerDefinition.class, DataFormatTransformerReifier::new);
         map.put(EndpointTransformerDefinition.class, EndpointTransformeReifier::new);
@@ -48,8 +49,10 @@ public abstract class TransformerReifier<T> extends AbstractReifier {
         this.definition = definition;
     }
 
-    public static TransformerReifier<? extends TransformerDefinition> reifier(CamelContext camelContext, TransformerDefinition definition) {
-        BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier = TRANSFORMERS.get(definition.getClass());
+    public static TransformerReifier<? extends TransformerDefinition> reifier(
+            CamelContext camelContext, TransformerDefinition definition) {
+        BiFunction<CamelContext, TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier
+                = TRANSFORMERS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(camelContext, definition);
         }

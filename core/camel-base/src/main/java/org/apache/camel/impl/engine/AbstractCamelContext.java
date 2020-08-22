@@ -164,7 +164,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-
 import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
@@ -178,13 +177,6 @@ public abstract class AbstractCamelContext extends BaseService
     // start auto assigning route ids using numbering 1000 and upwards
     int defaultRouteStartupOrder = 1000;
 
-    public enum Initialization {
-        Eager, Default, Lazy
-    }
-
-    private VetoCamelContextStartException vetoed;
-    private String managementName;
-    private ClassLoader applicationContextClassLoader;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
@@ -193,9 +185,31 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
-    private boolean autoCreateComponents = true;
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
+    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
+    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
+    private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
+    private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
+    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
+    private final Object lock = new Object();
+    private final RouteController internalRouteController = new InternalRouteController(this);
+    private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
+    private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
+    private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory
+            = new DefaultAnnotationBasedProcessorFactory();
+    private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
+    private final StopWatch stopWatch = new StopWatch(false);
+    private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
+        @Override
+        public Set<String> initialValue() {
+            return new HashSet<>();
+        }
+    };
+    private VetoCamelContextStartException vetoed;
+    private String managementName;
+    private ClassLoader applicationContextClassLoader;
+    private boolean autoCreateComponents = true;
     private volatile RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
@@ -203,8 +217,6 @@ public abstract class AbstractCamelContext extends BaseService
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
-    private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
-    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean backlogTrace = Boolean.FALSE;
@@ -227,11 +239,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
     private Map<String, String> globalOptions = new HashMap<>();
-    private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
-    private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
-    private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
-
-    private final Object lock = new Object();
     private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
@@ -274,39 +281,24 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile UuidGenerator uuidGenerator;
     private volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile RouteController routeController;
-    private final RouteController internalRouteController = new InternalRouteController(this);
-    private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
     private volatile ScheduledExecutorService errorHandlerExecutorService;
     private volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
     private volatile boolean eventNotificationApplicable;
-    private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
-    private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
-
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private EndpointRegistry<EndpointKey> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
-
-    private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
-    private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
     private SSLContextParameters sslContextParameters;
-    private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
-        @Override
-        public Set<String> initialValue() {
-            return new HashSet<>();
-        }
-    };
     private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using
-     * {@link org.apache.camel.support.DefaultRegistry} as registry.
+     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
@@ -346,6 +338,25 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
+    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+        try {
+            return context.getRegistry().lookupByNameAndType(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
+    }
+
+    /**
+     * Reset context counter to a preset value. Mostly used for tests to ensure a predictable getName()
+     *
+     * @param value new value for the context counter
+     */
+    public static void setContextCounter(int value) {
+        DefaultCamelContextNameStrategy.setCounter(value);
+        DefaultManagementNameStrategy.setCounter(value);
+    }
+
     public void close() throws IOException {
         try {
             stop();
@@ -361,8 +372,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Whether to eager create {@link TypeConverter} during initialization of CamelContext.
-     * This is enabled by default to optimize camel-core.
+     * Whether to eager create {@link TypeConverter} during initialization of CamelContext. This is enabled by default
+     * to optimize camel-core.
      */
     protected boolean eagerCreateTypeConverter() {
         return true;
@@ -380,10 +391,10 @@ public abstract class AbstractCamelContext extends BaseService
         }
         Object extension = extensions.get(type);
         if (extension instanceof Supplier) {
-            extension = ((Supplier)extension).get();
-            setExtension(type, (T)extension);
+            extension = ((Supplier) extension).get();
+            setExtension(type, (T) extension);
         }
-        return (T)extension;
+        return (T) extension;
     }
 
     @Override
@@ -515,7 +526,8 @@ public abstract class AbstractCamelContext extends BaseService
         // Check if the named component is already being created, that would mean
         // that the initComponent has triggered a new getComponent
         if (componentsInCreation.get().contains(name)) {
-            throw new IllegalStateException("Circular dependency detected, the component " + name + " is already being created");
+            throw new IllegalStateException(
+                    "Circular dependency detected, the component " + name + " is already being created");
         }
 
         try {
@@ -549,8 +561,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Function to initialize a component and auto start. Returns null if the
-     * autoCreateComponents is disabled
+     * Function to initialize a component and auto start. Returns null if the autoCreateComponents is disabled
      */
     private Component initComponent(String name, boolean autoCreateComponents) {
         Component component = null;
@@ -636,6 +647,9 @@ public abstract class AbstractCamelContext extends BaseService
         return answer;
     }
 
+    // Endpoint Management Methods
+    // -----------------------------------------------------------------------
+
     @Override
     public Component removeComponent(String componentName) {
         Component oldComponent = components.remove(componentName);
@@ -651,9 +665,6 @@ public abstract class AbstractCamelContext extends BaseService
         }
         return oldComponent;
     }
-
-    // Endpoint Management Methods
-    // -----------------------------------------------------------------------
 
     @Override
     public EndpointRegistry<EndpointKey> getEndpointRegistry() {
@@ -845,7 +856,8 @@ public abstract class AbstractCamelContext extends BaseService
                     }
 
                     if (answer != null && LOG.isDebugEnabled()) {
-                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,
+                                component);
                     }
                 }
 
@@ -942,6 +954,7 @@ public abstract class AbstractCamelContext extends BaseService
                 }
                 LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
                 Component component = getComponent(scheme);
+                ServiceHelper.initService(component);
 
                 // Ask the component to resolve the endpoint.
                 if (component != null) {
@@ -955,7 +968,8 @@ public abstract class AbstractCamelContext extends BaseService
                     }
 
                     if (answer != null && LOG.isDebugEnabled()) {
-                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
+                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,
+                                component);
                     }
                 }
 
@@ -989,12 +1003,13 @@ public abstract class AbstractCamelContext extends BaseService
             throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint)endpoint).getOriginalEndpoint();
+            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {
-            throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
+            throw new IllegalArgumentException(
+                    "The endpoint is not of type: " + endpointType + " but is: " + endpoint.getClass().getCanonicalName());
         }
     }
 
@@ -1017,9 +1032,9 @@ public abstract class AbstractCamelContext extends BaseService
     /**
      * Strategy to add the given endpoint to the internal endpoint registry
      *
-     * @param uri uri of the endpoint
-     * @param endpoint the endpoint to add
-     * @return the added endpoint
+     * @param  uri      uri of the endpoint
+     * @param  endpoint the endpoint to add
+     * @return          the added endpoint
      */
     protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
         StringHelper.notEmpty(uri, "uri");
@@ -1035,34 +1050,31 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the
-     * {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
      *
-     * @param uri the endpoint uri
-     * @return the key
+     * @param  uri the endpoint uri
+     * @return     the key
      */
     protected EndpointKey getEndpointKey(String uri) {
         return new EndpointKey(uri);
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the
-     * {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
      *
-     * @param uri the endpoint uri which is pre normalized
-     * @return the key
+     * @param  uri the endpoint uri which is pre normalized
+     * @return     the key
      */
     protected EndpointKey getEndpointKeyPreNormalized(String uri) {
         return new EndpointKey(uri, true);
     }
 
     /**
-     * Gets the endpoint key to use for lookup or whe adding endpoints to the
-     * {@link DefaultEndpointRegistry}
+     * Gets the endpoint key to use for lookup or whe adding endpoints to the {@link DefaultEndpointRegistry}
      *
-     * @param uri the endpoint uri
-     * @param endpoint the endpoint
-     * @return the key
+     * @param  uri      the endpoint uri
+     * @param  endpoint the endpoint
+     * @return          the key
      */
     protected EndpointKey getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint != null && !endpoint.isSingleton()) {
@@ -1073,17 +1085,12 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    @Override
-    public GlobalEndpointConfiguration getGlobalEndpointConfiguration() {
-        return globalEndpointConfiguration;
-    }
-
     // Route Management Methods
     // -----------------------------------------------------------------------
 
     @Override
-    public void setRouteController(RouteController routeController) {
-        this.routeController = doAddService(routeController);
+    public GlobalEndpointConfiguration getGlobalEndpointConfiguration() {
+        return globalEndpointConfiguration;
     }
 
     @Override
@@ -1096,6 +1103,11 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         return routeController;
+    }
+
+    @Override
+    public void setRouteController(RouteController routeController) {
+        this.routeController = doAddService(routeController);
     }
 
     @Override
@@ -1242,7 +1254,8 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    public synchronized boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
+    public synchronized boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
+            throws Exception {
         DefaultRouteError.reset(this, routeId);
 
         RouteService routeService = routeServices.get(routeId);
@@ -1276,7 +1289,8 @@ public abstract class AbstractCamelContext extends BaseService
         doShutdownRoute(routeId, timeout, timeUnit, false);
     }
 
-    protected synchronized void doShutdownRoute(String routeId, long timeout, TimeUnit timeUnit, boolean removingRoutes) throws Exception {
+    protected synchronized void doShutdownRoute(String routeId, long timeout, TimeUnit timeUnit, boolean removingRoutes)
+            throws Exception {
         DefaultRouteError.reset(this, routeId);
 
         RouteService routeService = routeServices.get(routeId);
@@ -1380,7 +1394,7 @@ public abstract class AbstractCamelContext extends BaseService
                 suspendRouteService(routeService);
                 // must suspend the route as well
                 if (route instanceof SuspendableService) {
-                    ((SuspendableService)route).suspend();
+                    ((SuspendableService) route).suspend();
                 }
             }
         } catch (Exception e) {
@@ -1426,17 +1440,19 @@ public abstract class AbstractCamelContext extends BaseService
         return object;
     }
 
-    private void internalAddService(Object object, boolean stopOnShutdown,
-                                    boolean forceStart, boolean useLifecycleStrategies) throws Exception {
+    private void internalAddService(
+            Object object, boolean stopOnShutdown,
+            boolean forceStart, boolean useLifecycleStrategies)
+            throws Exception {
 
         // inject CamelContext
         if (object instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware)object;
+            CamelContextAware aware = (CamelContextAware) object;
             aware.setCamelContext(getCamelContextReference());
         }
 
         if (object instanceof Service) {
-            Service service = (Service)object;
+            Service service = (Service) object;
 
             if (useLifecycleStrategies) {
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -1446,7 +1462,7 @@ public abstract class AbstractCamelContext extends BaseService
                     } else {
                         Route route;
                         if (service instanceof RouteAware) {
-                            route = ((RouteAware)service).getRoute();
+                            route = ((RouteAware) service).getRoute();
                         } else {
                             // if the service is added while creating a new route then grab the route from the startup manager
                             route = internalRouteStartupManager.getSetupRoute();
@@ -1467,7 +1483,7 @@ public abstract class AbstractCamelContext extends BaseService
                 // scope endpoints
                 boolean singleton = true; // assume singleton by default
                 if (object instanceof IsSingleton) {
-                    singleton = ((IsSingleton)service).isSingleton();
+                    singleton = ((IsSingleton) service).isSingleton();
                 }
                 // do not add endpoints as they have their own list
                 if (singleton && !(service instanceof Endpoint)) {
@@ -1493,11 +1509,11 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public boolean removeService(Object object) throws Exception {
         if (object instanceof Endpoint) {
-            removeEndpoint((Endpoint)object);
+            removeEndpoint((Endpoint) object);
             return true;
         }
         if (object instanceof Service) {
-            Service service = (Service)object;
+            Service service = (Service) object;
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
@@ -1512,7 +1528,7 @@ public abstract class AbstractCamelContext extends BaseService
             return false;
         }
         if (object instanceof Service) {
-            Service service = (Service)object;
+            Service service = (Service) object;
             return servicesToStop.contains(service);
         }
         return false;
@@ -1540,7 +1556,7 @@ public abstract class AbstractCamelContext extends BaseService
         Set<T> set = new HashSet<>();
         for (Service service : servicesToStop) {
             if (type.isInstance(service)) {
-                set.add((T)service);
+                set.add((T) service);
             }
         }
         return set;
@@ -1553,14 +1569,14 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void deferStartService(Object object, boolean stopOnShutdown, boolean startEarly) throws Exception {
         if (object instanceof Service) {
-            Service service = (Service)object;
+            Service service = (Service) object;
 
             // only add to services to close if its a singleton
             // otherwise we could for example end up with a lot of prototype
             // scope endpoints
             boolean singleton = true; // assume singleton by default
             if (object instanceof IsSingleton) {
-                singleton = ((IsSingleton)service).isSingleton();
+                singleton = ((IsSingleton) service).isSingleton();
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
@@ -1648,7 +1664,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
-        LOG.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
+        LOG.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver,
+                inputStream);
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);
@@ -1686,10 +1703,13 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    // Helper methods
+    // -----------------------------------------------------------------------
+
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
-        String[] subPackages = new String[] {"", "/config", "/dataformat", "/language", "/loadbalancer", "/rest"};
+        String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
             ClassResolver resolver = getClassResolver();
@@ -1706,9 +1726,6 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
-    // Helper methods
-    // -----------------------------------------------------------------------
-
     @Override
     public Language resolveLanguage(String language) {
         Language answer;
@@ -1718,7 +1735,7 @@ public abstract class AbstractCamelContext extends BaseService
             // check if the language is singleton, if so return the shared
             // instance
             if (answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton)answer).isSingleton();
+                boolean singleton = ((IsSingleton) answer).isSingleton();
                 if (singleton) {
                     return answer;
                 }
@@ -1730,11 +1747,11 @@ public abstract class AbstractCamelContext extends BaseService
             // inject CamelContext if aware
             if (answer != null) {
                 if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware)answer).setCamelContext(getCamelContextReference());
+                    ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
                 }
                 if (answer instanceof Service) {
                     try {
-                        startService((Service)answer);
+                        startService((Service) answer);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
@@ -1746,6 +1763,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         return answer;
     }
+
+    // Properties
+    // -----------------------------------------------------------------------
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
@@ -1772,12 +1792,13 @@ public abstract class AbstractCamelContext extends BaseService
         return text;
     }
 
-    // Properties
-    // -----------------------------------------------------------------------
-
     @Override
     public TypeConverter getTypeConverter() {
         return typeConverter;
+    }
+
+    public void setTypeConverter(TypeConverter typeConverter) {
+        this.typeConverter = doAddService(typeConverter);
     }
 
     protected TypeConverter getOrCreateTypeConverter() {
@@ -1789,10 +1810,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
         return typeConverter;
-    }
-
-    public void setTypeConverter(TypeConverter typeConverter) {
-        this.typeConverter = doAddService(typeConverter);
     }
 
     @Override
@@ -1812,7 +1829,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.typeConverterRegistry = doAddService(typeConverterRegistry);
         // some registries are also a type converter implementation
         if (typeConverterRegistry instanceof TypeConverter) {
-            this.typeConverter = (TypeConverter)typeConverterRegistry;
+            this.typeConverter = (TypeConverter) typeConverterRegistry;
         }
     }
 
@@ -1956,6 +1973,14 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setRegistry(Registry registry) {
+        if (registry instanceof CamelContextAware) {
+            ((CamelContextAware) registry).setCamelContext(getCamelContextReference());
+        }
+        this.registry = registry;
+    }
+
+    @Override
     public <T> T getRegistry(Class<T> type) {
         Registry reg = getRegistry();
 
@@ -1963,14 +1988,6 @@ public abstract class AbstractCamelContext extends BaseService
             return type.cast(reg);
         }
         return null;
-    }
-
-    @Override
-    public void setRegistry(Registry registry) {
-        if (registry instanceof CamelContextAware) {
-            ((CamelContextAware)registry).setCamelContext(getCamelContextReference());
-        }
-        this.registry = registry;
     }
 
     @Override
@@ -2214,12 +2231,13 @@ public abstract class AbstractCamelContext extends BaseService
         return errorHandlerExecutorService;
     }
 
-    protected ScheduledExecutorService createErrorHandlerExecutorService() {
-        return getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
-    }
-
     public void setErrorHandlerExecutorService(ScheduledExecutorService errorHandlerExecutorService) {
         this.errorHandlerExecutorService = errorHandlerExecutorService;
+    }
+
+    protected ScheduledExecutorService createErrorHandlerExecutorService() {
+        return getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool",
+                "ErrorHandlerRedeliveryTask");
     }
 
     @Override
@@ -2377,11 +2395,15 @@ public abstract class AbstractCamelContext extends BaseService
 
         watch.taken();
         if (LOG.isInfoEnabled()) {
-            LOG.info("Apache Camel {} ({}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
+            LOG.info("Apache Camel {} ({}) is suspended in {}", getVersion(), getName(),
+                    TimeUtils.printDuration(watch.taken()));
         }
 
         EventHelper.notifyCamelContextSuspended(this);
     }
+
+    // Implementation methods
+    // -----------------------------------------------------------------------
 
     @Override
     protected void doResume() throws Exception {
@@ -2419,9 +2441,6 @@ public abstract class AbstractCamelContext extends BaseService
             throw e;
         }
     }
-
-    // Implementation methods
-    // -----------------------------------------------------------------------
 
     @Override
     protected AutoCloseable doLifecycleChange() {
@@ -2466,6 +2485,17 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            try {
+                strategy.onContextStarted(this);
+            } catch (Throwable e) {
+                LOG.warn("Lifecycle strategy {} failed on CamelContext ({}) due to: {}. This exception will be ignored",
+                        strategy,
+                        getName(),
+                        e.getMessage());
+            }
+        }
+
         // okay the routes has been started so emit event that CamelContext
         // has started (here at the end)
         EventHelper.notifyCamelContextStarted(this);
@@ -2478,6 +2508,23 @@ public abstract class AbstractCamelContext extends BaseService
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public void stop() {
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            try {
+                strategy.onContextStopping(this);
+                strategy.onContextStop(this);
+            } catch (Throwable e) {
+                LOG.warn("Lifecycle strategy {} failed on CamelContext ({}) due to: {}. This exception will be ignored",
+                        strategy,
+                        getName(),
+                        e.getMessage());
+            }
+        }
+
+        super.stop();
     }
 
     @Override
@@ -2551,13 +2598,15 @@ public abstract class AbstractCamelContext extends BaseService
         ServiceHelper.initService(lifecycleStrategies);
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
-                strategy.onContextInitialized(this);
+                strategy.onContextInitializing(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
                 throw e;
             } catch (Exception e) {
-                LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
                 throw e;
             }
         }
@@ -2585,7 +2634,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // optimised to not include runtimeEndpointRegistry unless startServices
         // is enabled or JMX statistics is in extended mode
-        if (runtimeEndpointRegistry == null && getManagementStrategy() != null && getManagementStrategy().getManagementAgent() != null) {
+        if (runtimeEndpointRegistry == null && getManagementStrategy() != null
+                && getManagementStrategy().getManagementAgent() != null) {
             Boolean isEnabled = getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
             boolean isExtended = getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
             // extended mode is either if we use Extended statistics level or
@@ -2597,7 +2647,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier && getManagementStrategy() != null) {
-                getManagementStrategy().addEventNotifier((EventNotifier)runtimeEndpointRegistry);
+                getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
             }
             addService(runtimeEndpointRegistry, true, true);
         }
@@ -2619,7 +2669,8 @@ public abstract class AbstractCamelContext extends BaseService
                 }
                 final String id = templateId != null ? templateId.toString() : null;
                 if (id == null) {
-                    throw new IllegalArgumentException("RouteTemplateParameterSource with routeId: " + routeId + " has no templateId defined");
+                    throw new IllegalArgumentException(
+                            "RouteTemplateParameterSource with routeId: " + routeId + " has no templateId defined");
                 }
                 addRouteFromTemplate(routeId, id, map);
             }
@@ -2627,6 +2678,21 @@ public abstract class AbstractCamelContext extends BaseService
 
         // start the route definitions before the routes is started
         startRouteDefinitions();
+
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            try {
+                strategy.onContextInitialized(this);
+            } catch (VetoCamelContextStartException e) {
+                // okay we should not start Camel since it was vetoed
+                LOG.warn("Lifecycle strategy " + strategy + " vetoed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                LOG.warn("Lifecycle strategy " + strategy + " failed initializing CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
+                throw e;
+            }
+        }
 
         EventHelper.notifyCamelContextInitialized(this);
     }
@@ -2698,7 +2764,8 @@ public abstract class AbstractCamelContext extends BaseService
             if (controlledRoutes.isEmpty()) {
                 LOG.info("Total {} routes, of which {} are started", getRoutes().size(), started);
             } else {
-                LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}", getRoutes().size(), started, controlledRoutes.size(),
+                LOG.info("Total {} routes, of which {} are started, and {} are managed by RouteController: {}",
+                        getRoutes().size(), started, controlledRoutes.size(),
                         getRouteController().getClass().getName());
             }
             LOG.info("Apache Camel {} ({}) started in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
@@ -2707,8 +2774,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected void doStartCamel() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}", getClassResolver(),
-                      getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
+            LOG.debug(
+                    "Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}",
+                    getClassResolver(),
+                    getPackageScanClassResolver(), getApplicationContextClassLoader(), getRouteController());
         }
         if (isStreamCaching()) {
             LOG.info("StreamCaching is enabled on CamelContext: {}", getName());
@@ -2742,13 +2811,16 @@ public abstract class AbstractCamelContext extends BaseService
         ServiceHelper.startService(lifecycleStrategies);
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
+                strategy.onContextStarting(this);
                 strategy.onContextStart(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                LOG.warn("Lifecycle strategy " + strategy + " vetoed starting CamelContext ({}) due to: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy " + strategy + " vetoed starting CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
                 throw e;
             } catch (Exception e) {
-                LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due to: {}", getName(), e.getMessage());
+                LOG.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due to: {}", getName(),
+                        e.getMessage());
                 throw e;
             }
         }
@@ -2764,7 +2836,7 @@ public abstract class AbstractCamelContext extends BaseService
         // start notifiers as services
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
             if (notifier instanceof Service) {
-                startService((Service)notifier);
+                startService((Service) notifier);
             }
         }
 
@@ -2797,11 +2869,13 @@ public abstract class AbstractCamelContext extends BaseService
 
         LOG.debug("Using HeadersMapFactory: {}", getHeadersMapFactory());
         if (isCaseInsensitiveHeaders() && !getHeadersMapFactory().isCaseInsensitive()) {
-            LOG.info("HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
-                     getHeadersMapFactory());
+            LOG.info(
+                    "HeadersMapFactory: {} is case-sensitive which can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.",
+                    getHeadersMapFactory());
         } else if (!isCaseInsensitiveHeaders()) {
             // notify user that the headers are sensitive which can be a problem
-            LOG.info("Case-insensitive headers is not in use. This can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.");
+            LOG.info(
+                    "Case-insensitive headers is not in use. This can cause problems for protocols such as HTTP based, which rely on case-insensitive headers.");
         }
 
         // lets log at INFO level if we are not using the default reactive executor
@@ -2842,7 +2916,6 @@ public abstract class AbstractCamelContext extends BaseService
         if (invokedCounter > 0) {
             LOG.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
         }
-
         // starting will continue in the start method
     }
 
@@ -2850,6 +2923,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStop() throws Exception {
         stopWatch.restart();
         LOG.info("Apache Camel {} ({}) is shutting down", getVersion(), getName());
+
         EventHelper.notifyCamelContextStopping(this);
         EventHelper.notifyCamelContextRoutesStopping(this);
 
@@ -2883,7 +2957,7 @@ public abstract class AbstractCamelContext extends BaseService
         routeStartupOrder.sort(Comparator.comparingInt(RouteStartupOrder::getStartupOrder).reversed());
         List<RouteService> list = new ArrayList<>();
         for (RouteStartupOrder startupOrder : routeStartupOrder) {
-            DefaultRouteStartupOrder order = (DefaultRouteStartupOrder)startupOrder;
+            DefaultRouteStartupOrder order = (DefaultRouteStartupOrder) startupOrder;
             RouteService routeService = order.getRouteService();
             list.add(routeService);
         }
@@ -2928,17 +3002,17 @@ public abstract class AbstractCamelContext extends BaseService
         shutdownServices(languages.values());
         languages.clear();
 
+        // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
+        shutdownServices(servicesToStop);
+        servicesToStop.clear();
+
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
-                strategy.onContextStop(this);
+                strategy.onContextStopped(this);
             }
         } catch (Throwable e) {
             LOG.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
         }
-
-        // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
-        shutdownServices(servicesToStop);
-        servicesToStop.clear();
 
         // must notify that we are stopped before stopping the management strategy
         EventHelper.notifyCamelContextStopped(this);
@@ -2970,7 +3044,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         if (LOG.isInfoEnabled()) {
             LOG.info("Apache Camel {} ({}) uptime {}", getVersion(), getName(), getUptime());
-            LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(), TimeUtils.printDuration(stopWatch.taken()));
+            LOG.info("Apache Camel {} ({}) is shutdown in {}", getVersion(), getName(),
+                    TimeUtils.printDuration(stopWatch.taken()));
         }
 
         // and clear start date
@@ -3008,7 +3083,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (service instanceof Service) {
                 ServiceHelper.stopAndShutdownService(service);
             } else if (service instanceof Collection) {
-                ServiceHelper.stopAndShutdownServices((Collection<?>)service);
+                ServiceHelper.stopAndShutdownServices((Collection<?>) service);
             }
         } catch (Throwable e) {
             LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
@@ -3039,12 +3114,12 @@ public abstract class AbstractCamelContext extends BaseService
         // and register startup aware so they can be notified when
         // camel context has been started
         if (service instanceof StartupListener) {
-            StartupListener listener = (StartupListener)service;
+            StartupListener listener = (StartupListener) service;
             addStartupListener(listener);
         }
 
         if (service instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware)service;
+            CamelContextAware aware = (CamelContextAware) service;
             aware.setCamelContext(getCamelContextReference());
         }
 
@@ -3054,7 +3129,7 @@ public abstract class AbstractCamelContext extends BaseService
     private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
-                startService((Service)element);
+                startService((Service) element);
             }
         }
     }
@@ -3164,8 +3239,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Force some lazy initialization to occur upfront before we start any
-     * components and create routes
+     * Force some lazy initialization to occur upfront before we start any components and create routes
      */
     protected void forceLazyInitialization() {
         initEagerMandatoryServices();
@@ -3180,8 +3254,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Initializes eager some mandatory services which needs to warmup and
-     * be ready as this helps optimize Camel at runtime.
+     * Initializes eager some mandatory services which needs to warmup and be ready as this helps optimize Camel at
+     * runtime.
      */
     protected void initEagerMandatoryServices() {
         if (headersMapFactory == null) {
@@ -3199,7 +3273,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
     }
-
 
     protected void doStartStandardServices() {
         getVersion();
@@ -3271,19 +3344,18 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * A pluggable strategy to allow an endpoint to be created without requiring
-     * a component to be its factory, such as for looking up the URI inside some
-     * {@link Registry}
+     * A pluggable strategy to allow an endpoint to be created without requiring a component to be its factory, such as
+     * for looking up the URI inside some {@link Registry}
      *
-     * @param uri the uri for the endpoint to be created
-     * @return the newly created endpoint or null if it could not be resolved
+     * @param  uri the uri for the endpoint to be created
+     * @return     the newly created endpoint or null if it could not be resolved
      */
     protected Endpoint createEndpoint(String uri) {
         Object value = getRegistry().lookupByName(uri);
         if (value instanceof Endpoint) {
-            return (Endpoint)value;
+            return (Endpoint) value;
         } else if (value instanceof Processor) {
-            return new ProcessorEndpoint(uri, getCamelContextReference(), (Processor)value);
+            return new ProcessorEndpoint(uri, getCamelContextReference(), (Processor) value);
         } else if (value != null) {
             return convertBeanToEndpoint(uri, value);
         }
@@ -3291,14 +3363,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * Strategy method for attempting to convert the bean from a
-     * {@link Registry} to an endpoint using some kind of transformation or
-     * wrapper
+     * Strategy method for attempting to convert the bean from a {@link Registry} to an endpoint using some kind of
+     * transformation or wrapper
      *
-     * @param uri the uri for the endpoint (and name in the registry)
-     * @param bean the bean to be converted to an endpoint, which will be not
-     *            null
-     * @return a new endpoint
+     * @param  uri  the uri for the endpoint (and name in the registry)
+     * @param  bean the bean to be converted to an endpoint, which will be not null
+     * @return      a new endpoint
      */
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         throw new IllegalArgumentException("uri: " + uri + " bean: " + bean + " could not be converted to an Endpoint");
@@ -3491,7 +3561,7 @@ public abstract class AbstractCamelContext extends BaseService
                 if (finder != null) {
                     Object object = finder.newInstance("ManagementStrategyFactory").orElse(null);
                     if (object instanceof ManagementStrategyFactory) {
-                        factory = (ManagementStrategyFactory)object;
+                        factory = (ManagementStrategyFactory) object;
                     }
                 }
             } catch (Exception e) {
@@ -3676,7 +3746,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
-            ((CamelContextAware)answer).setCamelContext(getCamelContextReference());
+            ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
         }
 
         return answer;
@@ -3688,19 +3758,10 @@ public abstract class AbstractCamelContext extends BaseService
 
         // inject CamelContext if aware
         if (answer instanceof CamelContextAware) {
-            ((CamelContextAware)answer).setCamelContext(getCamelContextReference());
+            ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
         }
 
         return answer;
-    }
-
-    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
-        try {
-            return context.getRegistry().lookupByNameAndType(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
-        }
     }
 
     @Override
@@ -3979,13 +4040,13 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
+    public SSLContextParameters getSSLContextParameters() {
+        return this.sslContextParameters;
     }
 
     @Override
-    public SSLContextParameters getSSLContextParameters() {
-        return this.sslContextParameters;
+    public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     @Override
@@ -4125,51 +4186,9 @@ public abstract class AbstractCamelContext extends BaseService
         return routeServices;
     }
 
-    /**
-     * Reset context counter to a preset value. Mostly used for tests to ensure
-     * a predictable getName()
-     *
-     * @param value new value for the context counter
-     */
-    public static void setContextCounter(int value) {
-        DefaultCamelContextNameStrategy.setCounter(value);
-        DefaultManagementNameStrategy.setCounter(value);
-    }
-
     @Override
     public String toString() {
         return "CamelContext(" + getName() + ")";
-    }
-
-    class LifecycleHelper implements AutoCloseable {
-        final Map<String, String> originalContextMap;
-        final ClassLoader tccl;
-
-        LifecycleHelper() {
-            // Using the ApplicationClassLoader as the default for TCCL
-            tccl = Thread.currentThread().getContextClassLoader();
-            if (applicationContextClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
-            }
-            if (isUseMDCLogging()) {
-                originalContextMap = MDC.getCopyOfContextMap();
-                MDC.put(MDC_CAMEL_CONTEXT_ID, getName());
-            } else {
-                originalContextMap = null;
-            }
-        }
-
-        @Override
-        public void close() {
-            if (isUseMDCLogging()) {
-                if (originalContextMap != null) {
-                    MDC.setContextMap(originalContextMap);
-                } else {
-                    MDC.clear();
-                }
-            }
-            Thread.currentThread().setContextClassLoader(tccl);
-        }
     }
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();
@@ -4262,7 +4281,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected RestConfiguration createRestConfiguration() {
         // lookup a global which may have been on a container such spring-boot / CDI / etc.
-        RestConfiguration conf = CamelContextHelper.lookup(this, RestConfiguration.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
+        RestConfiguration conf
+                = CamelContextHelper.lookup(this, RestConfiguration.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
         if (conf == null) {
             conf = CamelContextHelper.findByType(this, RestConfiguration.class);
         }
@@ -4277,5 +4297,41 @@ public abstract class AbstractCamelContext extends BaseService
     public RouteController getInternalRouteController() {
         return internalRouteController;
     }
-}
 
+    public enum Initialization {
+        Eager,
+        Default,
+        Lazy
+    }
+
+    class LifecycleHelper implements AutoCloseable {
+        final Map<String, String> originalContextMap;
+        final ClassLoader tccl;
+
+        LifecycleHelper() {
+            // Using the ApplicationClassLoader as the default for TCCL
+            tccl = Thread.currentThread().getContextClassLoader();
+            if (applicationContextClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(applicationContextClassLoader);
+            }
+            if (isUseMDCLogging()) {
+                originalContextMap = MDC.getCopyOfContextMap();
+                MDC.put(MDC_CAMEL_CONTEXT_ID, getName());
+            } else {
+                originalContextMap = null;
+            }
+        }
+
+        @Override
+        public void close() {
+            if (isUseMDCLogging()) {
+                if (originalContextMap != null) {
+                    MDC.setContextMap(originalContextMap);
+                } else {
+                    MDC.clear();
+                }
+            }
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
+    }
+}

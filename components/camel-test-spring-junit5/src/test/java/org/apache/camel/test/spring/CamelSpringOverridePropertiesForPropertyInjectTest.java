@@ -48,7 +48,7 @@ public class CamelSpringOverridePropertiesForPropertyInjectTest {
 
     @Test
     public void testOverride() {
-        String response = start.requestBody((Object)"ignored", String.class);
+        String response = start.requestBody((Object) "ignored", String.class);
 
         assertThat(response, is(EXPECTED_PROPERTY_VALUE));
     }

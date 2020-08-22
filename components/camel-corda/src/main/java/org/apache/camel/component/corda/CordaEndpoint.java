@@ -31,7 +31,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Perform operations against Corda blockchain platform using corda-rpc library.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node", category = {Category.BLOCKCHAIN, Category.RPC})
+@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node",
+             category = { Category.BLOCKCHAIN, Category.RPC })
 public class CordaEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -26,6 +26,10 @@ import org.apache.camel.spi.Metadata;
 @XmlEnum
 public enum RestBindingMode {
 
-    auto, off, json, xml, json_xml
+    auto,
+    off,
+    json,
+    xml,
+    json_xml
 
 }

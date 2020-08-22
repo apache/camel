@@ -30,10 +30,12 @@ import org.apache.camel.spi.RestConsumerFactory;
 public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb,
-                                   String basePath, String uriTemplate, String consumes,
-                                   String produces, RestConfiguration configuration,
-                                   Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(
+            CamelContext camelContext, Processor processor, String verb,
+            String basePath, String uriTemplate, String consumes,
+            String produces, RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
         String id;
         if (uriTemplate != null) {
@@ -51,9 +53,11 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
     }
 
     @Override
-    public Consumer createApiConsumer(CamelContext camelContext, Processor processor,
-                                      String contextPath, RestConfiguration configuration,
-                                      Map<String, Object> parameters) throws Exception {
+    public Consumer createApiConsumer(
+            CamelContext camelContext, Processor processor,
+            String contextPath, RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
         String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
         // remove leading dash as we add that ourselves

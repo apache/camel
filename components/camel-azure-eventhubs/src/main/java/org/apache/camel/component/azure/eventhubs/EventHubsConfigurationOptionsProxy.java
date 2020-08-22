@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A proxy class for {@link EventHubsConfiguration} and {@link EventHubsConstants}. Ideally this
- * is responsible to obtain the correct configurations options either from configs or exchange headers
+ * A proxy class for {@link EventHubsConfiguration} and {@link EventHubsConstants}. Ideally this is responsible to
+ * obtain the correct configurations options either from configs or exchange headers
  */
 public class EventHubsConfigurationOptionsProxy {
 
@@ -49,9 +49,11 @@ public class EventHubsConfigurationOptionsProxy {
         return configuration;
     }
 
-    private <R> R getOption(final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
+    private <R> R getOption(
+            final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type)) ? fallbackFn.get()
+        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type))
+                ? fallbackFn.get()
                 : getObjectFromHeaders(exchange, headerName, type);
     }
 

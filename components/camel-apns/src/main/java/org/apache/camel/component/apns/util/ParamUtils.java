@@ -32,7 +32,8 @@ public final class ParamUtils {
 
     public static void checkDestination(String host, int port, String paramName) {
         if ((StringUtils.isEmpty(host) && port != 0) || (StringUtils.isNotEmpty(host) && port == 0)) {
-            throw new IllegalArgumentException(paramName + "host and port parameters are not coherent: host=" + host + ", port=" + port);
+            throw new IllegalArgumentException(
+                    paramName + "host and port parameters are not coherent: host=" + host + ", port=" + port);
         }
     }
 

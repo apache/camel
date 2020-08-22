@@ -17,8 +17,8 @@
 package org.apache.camel.component.jdbc;
 
 /**
- * The default {@link BeanRowMapper} will map row names to lower case names,
- * but use a single upper case letter after underscores or dashes (which is skipped).
+ * The default {@link BeanRowMapper} will map row names to lower case names, but use a single upper case letter after
+ * underscores or dashes (which is skipped).
  * <p/>
  * For example <tt>CUST_ID</tt> is mapped as <tt>custId</tt>.
  */

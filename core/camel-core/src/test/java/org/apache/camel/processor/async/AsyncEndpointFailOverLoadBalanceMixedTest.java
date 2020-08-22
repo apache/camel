@@ -57,14 +57,16 @@ public class AsyncEndpointFailOverLoadBalanceMixedTest extends ContextTestSuppor
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
-                    // the last would succeed
-                    // and make it complex by having a direct endpoint which is
-                    // not a real async processor
-                    .to("async:bye:camel?failFirstAttempts=5", "direct:fail", "async:bye:moon?failFirstAttempts=5", "async:bye:world").end().process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:after").to("mock:result");
+                        // the last would succeed
+                        // and make it complex by having a direct endpoint which is
+                        // not a real async processor
+                        .to("async:bye:camel?failFirstAttempts=5", "direct:fail", "async:bye:moon?failFirstAttempts=5",
+                                "async:bye:world")
+                        .end().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
 
                 from("direct:fail").to("log:fail").to("mock:fail").throwException(new IllegalArgumentException("Damn"));
             }

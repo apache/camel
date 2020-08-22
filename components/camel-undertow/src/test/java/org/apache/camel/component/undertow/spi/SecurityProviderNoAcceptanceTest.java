@@ -34,7 +34,7 @@ public class SecurityProviderNoAcceptanceTest extends AbstractSecurityProviderTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext =  super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
         this.securityConfiguration.setAccept(false);
         return camelContext;
     }

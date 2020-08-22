@@ -31,31 +31,25 @@ import org.apache.camel.support.DefaultComponent;
  * <p>
  * dns:///ip <br/>
  * <p/>
- * This will return the IP address associated with the domain passed in
- * the header dns.domain.
+ * This will return the IP address associated with the domain passed in the header dns.domain.
  * </p>
  * <p>
  * dns:///lookup This endpoint accepts three parameters.
  * <ul>
  * <li>dns.name: the lookup name. Usually the domain. Mandatory.</li>
- * <li>dns.type: the type of the lookup. Should match the values of
- * {@see org.xbill.dns.Type}. Optional.</li>
- * <li>dns.class: the DNS class of the lookup. Should match the values
- * of {@see org.xbill.dns.DClass}. Optional.</li>
+ * <li>dns.type: the type of the lookup. Should match the values of {@see org.xbill.dns.Type}. Optional.</li>
+ * <li>dns.class: the DNS class of the lookup. Should match the values of {@see org.xbill.dns.DClass}. Optional.</li>
  * </ul>
  * </p>
  * <p/>
  * <p>
- * dns:///dig This endpoint takes a few parameters, most of them
- * optional :
+ * dns:///dig This endpoint takes a few parameters, most of them optional :
  * <ul>
- * <li>dns.server: the server in particular for the query. If none is
- * given, the default one specified by the OS will be used.</li>
+ * <li>dns.server: the server in particular for the query. If none is given, the default one specified by the OS will be
+ * used.</li>
  * <li>dns.query: the query itself. Mandatory.</li>
- * <li>dns.type: the type of the lookup. Should match the values of
- * {@see org.xbill.dns.Type}. Optional.</li>
- * <li>dns.class: the DNS class of the lookup. Should match the values
- * of {@see org.xbill.dns.DClass}. Optional.</li>
+ * <li>dns.type: the type of the lookup. Should match the values of {@see org.xbill.dns.Type}. Optional.</li>
+ * <li>dns.class: the DNS class of the lookup. Should match the values of {@see org.xbill.dns.DClass}. Optional.</li>
  * </ul>
  * <p/>
  * </p>

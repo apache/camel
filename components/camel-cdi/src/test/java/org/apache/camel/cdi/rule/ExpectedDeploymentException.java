@@ -43,28 +43,28 @@ public final class ExpectedDeploymentException implements TestRule {
 
     private ExpectedDeploymentException() {
         chain = RuleChain
-            .outerRule(log)
-            .around((base, description) -> new Statement() {
-                @Override
-                public void evaluate() throws Throwable {
-                    try {
-                        base.evaluate();
-                    } catch (Throwable exception) {
-                        assertThat(exception, allOf(pecs(exceptions)));
+                .outerRule(log)
+                .around((base, description) -> new Statement() {
+                    @Override
+                    public void evaluate() throws Throwable {
                         try {
-                            // OpenWebBeans logs the deployment exception details
-                            // TODO: OpenWebBeans only log the root cause of exception thrown in producer methods
-                            //assertThat(log.getMessages(), containsInRelativeOrder(pecs(messages)))
+                            base.evaluate();
+                        } catch (Throwable exception) {
+                            assertThat(exception, allOf(pecs(exceptions)));
+                            try {
+                                // OpenWebBeans logs the deployment exception details
+                                // TODO: OpenWebBeans only log the root cause of exception thrown in producer methods
+                                //assertThat(log.getMessages(), containsInRelativeOrder(pecs(messages)))
 
-                            List<String> causeExceptionsMessages = getCauseExceptionsMessages(exception);
-                            assertThat(causeExceptionsMessages, anyOf(hasItems(messages)));
-                        } catch (AssertionError error) {
-                            // Weld stores the deployment exception details in the exception message
-                            assertThat(exception.getMessage(), allOf(pecs(messages)));
+                                List<String> causeExceptionsMessages = getCauseExceptionsMessages(exception);
+                                assertThat(causeExceptionsMessages, anyOf(hasItems(messages)));
+                            } catch (AssertionError error) {
+                                // Weld stores the deployment exception details in the exception message
+                                assertThat(exception.getMessage(), allOf(pecs(messages)));
+                            }
                         }
                     }
-                }
-            });
+                });
     }
 
     private List<String> getCauseExceptionsMessages(Throwable exception) {
@@ -92,7 +92,7 @@ public final class ExpectedDeploymentException implements TestRule {
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private <T> List<Matcher<? super T>> pecs(List<Matcher<T>> matchers) {
         return new ArrayList<>((List) matchers);
     }

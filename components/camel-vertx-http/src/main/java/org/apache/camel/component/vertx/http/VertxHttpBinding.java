@@ -26,7 +26,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 public interface VertxHttpBinding {
 
     /**
-     * Prepares a {@link HttpRequest} by setting up the required host, port & part details specified on the endpoint configuration
+     * Prepares a {@link HttpRequest} by setting up the required host, port & part details specified on the endpoint
+     * configuration
      */
     HttpRequest<Buffer> prepareHttpRequest(VertxHttpEndpoint endpoint, Exchange exchange) throws Exception;
 
@@ -38,21 +39,25 @@ public interface VertxHttpBinding {
     /**
      * Handles the {@link HttpResponse} returned from the HTTP endpoint invocation
      */
-    void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response) throws Exception;
+    void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
+            throws Exception;
 
     /**
-     * Populates response headers on the exchange from the {@link HttpResponse} using the supplied {@link HeaderFilterStrategy}
+     * Populates response headers on the exchange from the {@link HttpResponse} using the supplied
+     * {@link HeaderFilterStrategy}
      */
     void populateResponseHeaders(Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy);
 
     /**
      * Processes the received {@link Buffer} response body
      */
-    Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly) throws Exception;
+    Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly)
+            throws Exception;
 
     /**
      * Handles failures returned in the {@link HttpResponse}
      */
-    Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result) throws Exception;
+    Throwable handleResponseFailure(VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result)
+            throws Exception;
 
 }

@@ -69,4 +69,3 @@ public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
         };
     }
 }
-

@@ -63,9 +63,8 @@ public class SpringLdapProducer extends DefaultProducer {
     }
 
     /**
-     * Performs the LDAP operation defined in SpringLdapEndpoint that created
-     * this producer. The in-message in the exchange must be a map, containing
-     * the following entries:
+     * Performs the LDAP operation defined in SpringLdapEndpoint that created this producer. The in-message in the
+     * exchange must be a map, containing the following entries:
      *
      * <pre>
      * key: "dn" - base DN for the LDAP operation
@@ -93,7 +92,7 @@ public class SpringLdapProducer extends DefaultProducer {
 
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
 
-        String dn = (String)body.get(DN);
+        String dn = (String) body.get(DN);
         if (StringUtils.isBlank(dn)) {
             ContextSource contextSource = ldapTemplate.getContextSource();
             if (contextSource instanceof BaseLdapPathContextSource) {
@@ -106,31 +105,35 @@ public class SpringLdapProducer extends DefaultProducer {
 
         switch (operation) {
             case SEARCH:
-                String filter = (String)body.get(FILTER);
+                String filter = (String) body.get(FILTER);
                 exchange.getIn().setBody(ldapTemplate.search(dn, filter, endpoint.scopeValue(), mapper));
                 break;
             case BIND:
-                Attributes attributes = (Attributes)body.get(ATTRIBUTES);
+                Attributes attributes = (Attributes) body.get(ATTRIBUTES);
                 ldapTemplate.bind(dn, null, attributes);
                 break;
             case UNBIND:
                 ldapTemplate.unbind(dn);
                 break;
             case AUTHENTICATE:
-                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String)body.get(FILTER)), (String)body.get(PASSWORD));
+                ldapTemplate.authenticate(LdapQueryBuilder.query().base(dn).filter((String) body.get(FILTER)),
+                        (String) body.get(PASSWORD));
                 break;
             case MODIFY_ATTRIBUTES:
-                ModificationItem[] modificationItems = (ModificationItem[])body.get(MODIFICATION_ITEMS);
+                ModificationItem[] modificationItems = (ModificationItem[]) body.get(MODIFICATION_ITEMS);
                 ldapTemplate.modifyAttributes(dn, modificationItems);
                 break;
             case FUNCTION_DRIVEN:
-                BiFunction<LdapOperations, Object, ?> ldapOperationFunction = (BiFunction<LdapOperations, Object, ?>)body.get(FUNCTION);
+                BiFunction<LdapOperations, Object, ?> ldapOperationFunction
+                        = (BiFunction<LdapOperations, Object, ?>) body.get(FUNCTION);
                 Object ldapOperationRequest = body.get(REQUEST);
                 exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
                 break;
             default:
-                throw new UnsupportedOperationException("Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '" + operation
-                        + "'");
+                throw new UnsupportedOperationException(
+                        "Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '"
+                                                        + operation
+                                                        + "'");
         }
     }
 }

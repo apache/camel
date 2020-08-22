@@ -47,6 +47,7 @@ public class CamelSWFActivityClientTest {
     public void testScheduleActivity() throws Exception {
         camelSWFActivityClient.scheduleActivity("eventName", "version", "input");
 
-        verify(actClient).scheduleActivity(any(ActivityType.class), ArgumentMatchers.<Promise<?>[]> any(), ArgumentMatchers.isNull(), ArgumentMatchers.<Class<?>> any(), ArgumentMatchers.isNull());
+        verify(actClient).scheduleActivity(any(ActivityType.class), ArgumentMatchers.<Promise<?>[]> any(),
+                ArgumentMatchers.isNull(), ArgumentMatchers.<Class<?>> any(), ArgumentMatchers.isNull());
     }
 }

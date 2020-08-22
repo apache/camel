@@ -41,24 +41,26 @@ public class LockTestServerTest {
         client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
 
         assertThrows(Exception.class,
-            () -> client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done(),
-            "Should have failed for duplicate insert");
+                () -> client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done(),
+                "Should have failed for duplicate insert");
 
-        client.configMaps().withName("xxx").createOrReplaceWithNew().editOrNewMetadata().withName("xxx").addToLabels("a", "b").and().done();
+        client.configMaps().withName("xxx").createOrReplaceWithNew().editOrNewMetadata().withName("xxx").addToLabels("a", "b")
+                .and().done();
 
         ConfigMap map = client.configMaps().withName("xxx").get();
         assertEquals("b", map.getMetadata().getLabels().get("a"));
 
         client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
-            .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("c", "d").and().build());
+                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("c", "d").and().build());
 
         ConfigMap newMap = client.configMaps().withName("xxx").get();
         assertEquals("d", newMap.getMetadata().getLabels().get("c"));
 
-        assertThrows(Exception.class, () ->
-            client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
-                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and().build()),
-            "Should have failed for wrong version");
+        assertThrows(Exception.class,
+                () -> client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
+                        .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and()
+                                .build()),
+                "Should have failed for wrong version");
 
         ConfigMap newMap2 = client.configMaps().withName("xxx").get();
         assertNull(newMap2.getMetadata().getLabels().get("e"));

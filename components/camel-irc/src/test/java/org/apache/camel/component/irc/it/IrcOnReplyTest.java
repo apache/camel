@@ -44,16 +44,14 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
         for (Exchange exchange : list) {
             LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_NUM).isEqualTo(315)).to("mock:result").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri()).choice().when(header(IrcConstants.IRC_NUM).isEqualTo(315)).to("mock:result")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -68,8 +66,8 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
     protected String fromUri() {
         StringBuilder sb = new StringBuilder(super.fromUri());
         return sb.append("&onReply=true").toString();
-    }    
-    
+    }
+
     /**
      * Lets send messages once the consumer has joined
      */

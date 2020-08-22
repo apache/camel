@@ -92,7 +92,7 @@ public class ManagedWireTapTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:${header.whereto}").id("mysend");
+                        .wireTap("direct:${header.whereto}").id("mysend");
 
                 from("direct:foo").to("mock:foo");
 

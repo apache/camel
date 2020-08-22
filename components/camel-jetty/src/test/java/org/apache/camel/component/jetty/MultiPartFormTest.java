@@ -39,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MultiPartFormTest extends BaseJettyTest {
     private HttpEntity createMultipartRequestEntity() throws Exception {
         File file = new File("src/test/resources/log4j2.properties");
-        return MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind").addBinaryBody(file.getName(), file).build();
+        return MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind")
+                .addBinaryBody(file.getName(), file).build();
 
     }
 
@@ -59,7 +60,8 @@ public class MultiPartFormTest extends BaseJettyTest {
 
     @Test
     public void testSendMultiPartFormFromCamelHttpComponnent() throws Exception {
-        String result = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
+        String result
+                = template.requestBody("http://localhost:" + getPort() + "/test", createMultipartRequestEntity(), String.class);
         assertEquals("A binary file of some kind", result, "Get a wrong result");
     }
 
@@ -94,7 +96,8 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("log4j2.properties", data.getName(), "Got the wrong name");
 
-                        assertTrue(data.getDataSource().getInputStream().available() > 0, "We should get the data from the DataHandle");
+                        assertTrue(data.getDataSource().getInputStream().available() > 0,
+                                "We should get the data from the DataHandle");
 
                         // The other form date can be get from the message
                         // header

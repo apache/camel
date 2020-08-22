@@ -19,10 +19,9 @@ package org.apache.camel.component.zookeeper;
 import org.apache.zookeeper.CreateMode;
 
 /**
- * Nodes created with any of Sequential {@link CreateMode}s will have a 10
- * character sequence attached to their node names.
- * <code>SequenceComparator</code> is a Natural comparator used to compare lists
- * of objects with these appended sequences.
+ * Nodes created with any of Sequential {@link CreateMode}s will have a 10 character sequence attached to their node
+ * names. <code>SequenceComparator</code> is a Natural comparator used to compare lists of objects with these appended
+ * sequences.
  */
 public class SequenceComparator extends NaturalSortComparator {
 

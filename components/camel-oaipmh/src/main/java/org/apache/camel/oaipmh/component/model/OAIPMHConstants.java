@@ -31,5 +31,5 @@ public final class OAIPMHConstants {
 
     private OAIPMHConstants() {
     }
-    
+
 }

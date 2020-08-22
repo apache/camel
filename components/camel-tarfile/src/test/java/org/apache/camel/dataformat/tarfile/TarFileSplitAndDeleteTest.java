@@ -46,7 +46,8 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithDataFormat() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithDataFormat");
 
@@ -60,7 +61,8 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter")
+                .whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithSplitter");
 
@@ -71,7 +73,6 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
         // the original file should have been deleted,
         assertFalse(new File(tarFile).exists(), "File should been deleted");
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -84,14 +85,14 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
                 from("file://target/testDeleteTarFileWhenUnmarshalWithDataFormat?delete=true")
                         .unmarshal(dataFormat)
                         .split(bodyAs(Iterator.class)).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
 
                 from("file://target/testDeleteTarFileWhenUnmarshalWithSplitter?delete=true")
                         .split(new TarSplitter()).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
             }
         };

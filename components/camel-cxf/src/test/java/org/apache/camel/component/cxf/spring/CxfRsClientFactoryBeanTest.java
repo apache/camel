@@ -28,19 +28,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     static int port = CXFTestSupport.getPort1();
-    
+
     @Override
-    protected String[] getApplicationContextFiles() {        
-        return new String[]{"org/apache/camel/component/cxf/spring/CxfRsClientFactoryBeans.xml"};
+    protected String[] getApplicationContextFiles() {
+        return new String[] { "org/apache/camel/component/cxf/spring/CxfRsClientFactoryBeans.xml" };
     }
-    
+
     @Test
     public void testCxfRsClientFactoryBean() {
         SpringJAXRSClientFactoryBean cfb = ctx.getBean("rsClient1", SpringJAXRSClientFactoryBean.class);
-        assertEquals(cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router", "Get a wrong address");
-        assertEquals(cfb.getBeanId(), "rsClient1", "Get a wrong beanId");
-        assertEquals(cfb.getPassword(), "passwd", "Get a wrong password");
-        assertEquals(cfb.getUsername(), "username", "Get a wrong user name");
+        assertEquals(cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router",
+                "Get a wrong address");
+        assertEquals("rsClient1", cfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("passwd", cfb.getPassword(), "Get a wrong password");
+        assertEquals("username", cfb.getUsername(), "Get a wrong user name");
         CustomerService customerService = cfb.create(CustomerService.class);
         assertNotNull(customerService, "The customer service should not be null");
         assertEquals(1, cfb.getSchemaLocations().size(), "Got the wrong schemalocations size");
@@ -52,4 +53,3 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     }
 
 }
-

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsSelectorOptionTest extends CamelTestSupport {
-    
+
     protected String componentName = "activemq";
 
     @Test
@@ -39,12 +39,12 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
         MockEndpoint endpointA = getMockEndpoint("mock:a");
         MockEndpoint endpointB = getMockEndpoint("mock:b");
         MockEndpoint endpointC = getMockEndpoint("mock:c");
-        
+
         endpointA.expectedBodiesReceivedInAnyOrder("A blue car!", "A blue car, again!");
         endpointA.expectedHeaderReceived("color", "blue");
         endpointB.expectedHeaderReceived("color", "red");
         endpointB.expectedBodiesReceived("A red car!");
-        
+
         endpointC.expectedBodiesReceived("Message1", "Message2");
         endpointC.expectedMessageCount(2);
 
@@ -56,7 +56,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:hello", "Message2", "SIZE_NUMBER", 1600);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testConsumerTemplate() throws Exception {
         template.sendBodyAndHeader("activemq:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
@@ -71,7 +71,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
                 assertTrue(size < 1500, "The message header SIZE_NUMBER should be less than 1500");
-                assertEquals(message.getBody(), "Message3", "The message body is wrong");
+                assertEquals("Message3", message.getBody(), "The message body is wrong");
             } else {
                 break;
             }

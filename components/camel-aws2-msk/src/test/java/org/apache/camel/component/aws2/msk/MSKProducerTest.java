@@ -54,11 +54,11 @@ public class MSKProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
         assertEquals("test-kafka", resultGet.clusterInfoList().get(0).clusterName());
     }
-    
+
     @Test
     public void mskListKeysPojoTest() throws Exception {
 
@@ -72,7 +72,7 @@ public class MSKProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterInfoList().size());
         assertEquals("test-kafka", resultGet.clusterInfoList().get(0).clusterName());
     }
@@ -94,7 +94,7 @@ public class MSKProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateClusterResponse resultGet = (CreateClusterResponse)exchange.getIn().getBody();
+        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterName());
         assertEquals(ClusterState.CREATING.name(), resultGet.state().toString());
     }
@@ -112,7 +112,7 @@ public class MSKProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DeleteClusterResponse resultGet = (DeleteClusterResponse)exchange.getIn().getBody();
+        DeleteClusterResponse resultGet = (DeleteClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.state().toString());
     }
@@ -130,7 +130,7 @@ public class MSKProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        DescribeClusterResponse resultGet = (DescribeClusterResponse)exchange.getIn().getBody();
+        DescribeClusterResponse resultGet = (DescribeClusterResponse) exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.clusterInfo().clusterArn());
         assertEquals(ClusterState.ACTIVE.name(), resultGet.clusterInfo().state().toString());
     }
@@ -140,11 +140,17 @@ public class MSKProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:listClusters").to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters").to("mock:result");
-                from("direct:listClustersPojo").to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters&pojoRequest=true").to("mock:result");
-                from("direct:createCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster").to("mock:result");
-                from("direct:deleteCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster").to("mock:result");
-                from("direct:describeCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=describeCluster").to("mock:result");
+                from("direct:listClusters").to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters")
+                        .to("mock:result");
+                from("direct:listClustersPojo")
+                        .to("aws2-msk://test?mskClient=#amazonMskClient&operation=listClusters&pojoRequest=true")
+                        .to("mock:result");
+                from("direct:createCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=createCluster")
+                        .to("mock:result");
+                from("direct:deleteCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=deleteCluster")
+                        .to("mock:result");
+                from("direct:describeCluster").to("aws2-msk://test?mskClient=#amazonMskClient&operation=describeCluster")
+                        .to("mock:result");
             }
         };
     }

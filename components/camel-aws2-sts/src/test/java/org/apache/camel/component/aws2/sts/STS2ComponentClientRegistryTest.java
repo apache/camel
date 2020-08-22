@@ -32,7 +32,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain");
+        STS2Endpoint endpoint = (STS2Endpoint) component.createEndpoint("aws2-sts://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getStsClient());
     }
@@ -52,7 +52,8 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        STS2Endpoint endpoint = (STS2Endpoint) component
+                .createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertNotSame(clientMock, endpoint.getConfiguration().getStsClient());
     }
@@ -63,7 +64,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
         STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint)component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy");
+        STS2Endpoint endpoint = (STS2Endpoint) component.createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy");
 
         assertSame(clientMock, endpoint.getConfiguration().getStsClient());
     }

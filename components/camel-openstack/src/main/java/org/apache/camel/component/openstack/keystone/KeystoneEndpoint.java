@@ -31,9 +31,11 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant authorization.
+ * Access OpenStack Keystone for API client authentication, service discovery and distributed multi-tenant
+ * authorization.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", category = {Category.CLOUD, Category.PAAS}, producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-keystone", title = "OpenStack Keystone",
+             syntax = "openstack-keystone:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions,domains,projects,users,groups")
@@ -174,7 +176,7 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;

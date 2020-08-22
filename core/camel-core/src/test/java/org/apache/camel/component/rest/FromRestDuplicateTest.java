@@ -46,7 +46,8 @@ public class FromRestDuplicateTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     restConfiguration().host("localhost");
 
-                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").get("{id}").to("log:foo");
+                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").get("{id}")
+                            .to("log:foo");
 
                 }
             });
@@ -64,7 +65,8 @@ public class FromRestDuplicateTest extends ContextTestSupport {
                 public void configure() throws Exception {
                     restConfiguration().host("localhost");
 
-                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").put().to("log:foo").post().to("log:foo");
+                    rest("/users").get("{id}").to("log:foo").post().to("log:foo").get("").to("log:foo").put().to("log:foo")
+                            .post().to("log:foo");
 
                 }
             });

@@ -56,9 +56,9 @@ public class HttpSyncTest extends HttpAsyncTestSupport {
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
                 fromF("jetty:http://0.0.0.0:%s/myservice", getPort())
-                    .delay(1000)
-                    .transform(constant("Bye World"))
-                    .to("mock:result");
+                        .delay(1000)
+                        .transform(constant("Bye World"))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

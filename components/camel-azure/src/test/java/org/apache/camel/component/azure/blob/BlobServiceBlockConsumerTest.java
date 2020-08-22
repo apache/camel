@@ -38,20 +38,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class BlobServiceBlockConsumerTest extends CamelTestSupport {
     @EndpointInject("direct:start")
     ProducerTemplate templateStart;
-    
+
     @Test
     @Disabled
     public void testGetBlockBlob() throws Exception {
         templateStart.send("direct:start", ExchangePattern.InOnly, exchange -> exchange.getIn().setBody("Block Blob"));
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        
+
         assertMockEndpointsSatisfied();
         File f = mock.getExchanges().get(0).getIn().getBody(File.class);
         assertNotNull(f, "File must be set");
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOHelper.copy(new FileInputStream(f), bos);
             assertEquals("Block Blob", bos.toString("UTF-8"));
         } finally {
@@ -65,8 +65,9 @@ public class BlobServiceBlockConsumerTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("creds",
-            new StorageCredentialsAccountAndKey("camelazure",
-                "base64EncodedValue"));
+                new StorageCredentialsAccountAndKey(
+                        "camelazure",
+                        "base64EncodedValue"));
         return context;
     }
 
@@ -76,11 +77,11 @@ public class BlobServiceBlockConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("azure-blob://camelazure/container1/blobBlock?credentials=#creds&operation=updateBlockBlob");
-                
+                        .to("azure-blob://camelazure/container1/blobBlock?credentials=#creds&operation=updateBlockBlob");
+
                 from("azure-blob://camelazure/container1/blobBlock?credentials=#creds&fileDir="
-                    + System.getProperty("java.io.tmpdir")).to("mock:result");
-                
+                     + System.getProperty("java.io.tmpdir")).to("mock:result");
+
                 //from("azure-blob://camelazure/container1/blobBlock?credentials=#creds")
                 //    .to("file://" + System.getProperty("java.io.tmpdir"));  
             }

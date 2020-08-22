@@ -31,7 +31,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
-public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport implements CamelContextAware {
+public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport
+        implements CamelContextAware {
 
     private final Class<T> eventType;
 

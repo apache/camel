@@ -27,19 +27,18 @@ import static org.mockito.Mockito.mock;
 
 public class CamelSWFTestSupport extends CamelTestSupport {
 
-    protected String options =
-            "accessKey=key"
-                    + "&secretKey=secret"
-                    + "&domainName=testDomain"
-                    + "&activityList=swf-alist"
-                    + "&workflowList=swf-wlist"
-                    + "&version=1.0"
-                    + "&eventName=testEvent"
-                    + "&amazonSWClient=#amazonSWClient";
+    protected String options = "accessKey=key"
+                               + "&secretKey=secret"
+                               + "&domainName=testDomain"
+                               + "&activityList=swf-alist"
+                               + "&workflowList=swf-wlist"
+                               + "&version=1.0"
+                               + "&eventName=testEvent"
+                               + "&amazonSWClient=#amazonSWClient";
 
     @EndpointInject("direct:start")
     protected ProducerTemplate template;
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint result;
 

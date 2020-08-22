@@ -36,7 +36,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
-    S3Client client = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy"))).region(Region.EU_WEST_1).build();
+    S3Client client
+            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+                    .region(Region.EU_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -56,7 +58,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("Test");
             }
         });
-        
+
         template.send("direct:putObject", new Processor() {
 
             @Override
@@ -65,7 +67,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("Test1");
             }
         });
-        
+
         template.send("direct:putObject", new Processor() {
 
             @Override
@@ -88,7 +90,8 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false").startupOrder(2).log("${body}");
+                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false")
+                        .startupOrder(2).log("${body}");
 
             }
         };

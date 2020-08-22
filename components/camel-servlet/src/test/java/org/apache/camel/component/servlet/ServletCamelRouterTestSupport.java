@@ -227,7 +227,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
 
         public String getContentType() {
             String content = con.getContentType();
-            return content != null  && content.contains(";")
+            return content != null && content.contains(";")
                     ? content.substring(0, content.indexOf(";"))
                     : content;
         }

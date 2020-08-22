@@ -28,7 +28,7 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void testTimerInvoked() throws Exception {
         mock.expectedMinimumMessageCount(1);
@@ -41,10 +41,8 @@ public class JdbcAnotherRouteTest extends AbstractJdbcTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // trigger every second
-                from("timer://kickoff?period=1000").
-                    setBody(constant("select * from customer")).
-                    to("jdbc:testdb").
-                    to("mock:result");
+                from("timer://kickoff?period=1000").setBody(constant("select * from customer")).to("jdbc:testdb")
+                        .to("mock:result");
             }
         };
     }

@@ -28,7 +28,8 @@ public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
     @Test
     public void shouldReturnCustomResponseForOptions() throws Exception {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
+        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
+                String.class);
         assertEquals(expectedResponse, response);
     }
 

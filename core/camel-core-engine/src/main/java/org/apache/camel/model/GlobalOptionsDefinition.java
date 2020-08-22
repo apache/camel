@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Models a series of string key/value pairs for configuring some global options
- * on a Camel context such as max debug log length.
+ * Models a series of string key/value pairs for configuring some global options on a Camel context such as max debug
+ * log length.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "globalOptions")

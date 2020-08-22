@@ -47,7 +47,7 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}")
-                    .choice()
+                        .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
             }

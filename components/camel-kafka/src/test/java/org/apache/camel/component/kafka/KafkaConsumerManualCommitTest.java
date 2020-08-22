@@ -94,7 +94,8 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false).count());
+        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                .count());
     }
 
 }

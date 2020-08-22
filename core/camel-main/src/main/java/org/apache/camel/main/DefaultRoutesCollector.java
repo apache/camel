@@ -48,8 +48,9 @@ public class DefaultRoutesCollector implements RoutesCollector {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    public List<RoutesBuilder> collectRoutesFromRegistry(CamelContext camelContext,
-                                                         String excludePattern, String includePattern) {
+    public List<RoutesBuilder> collectRoutesFromRegistry(
+            CamelContext camelContext,
+            String excludePattern, String includePattern) {
         final List<RoutesBuilder> routes = new ArrayList<>();
 
         final AntPathMatcher matcher = new AntPathMatcher();
@@ -110,7 +111,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
     }
 
     @Override
-    public List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory) throws Exception {
+    public List<RouteTemplatesDefinition> collectXmlRouteTemplatesFromDirectory(CamelContext camelContext, String directory)
+            throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
         PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
 
@@ -125,7 +127,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML route templates from location: {}", part);
-                    RouteTemplatesDefinition templates = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRouteTemplatesDefinition(ecc, is);
+                    RouteTemplatesDefinition templates = (RouteTemplatesDefinition) ecc.getXMLRoutesDefinitionLoader()
+                            .loadRouteTemplatesDefinition(ecc, is);
                     if (templates != null) {
                         answer.add(templates);
                         IOHelper.close(is);
@@ -138,7 +141,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
             if (count > 0) {
-                log.info("Loaded {} ({} millis) additional Camel XML route templates from: {}", count, watch.taken(), directory);
+                log.info("Loaded {} ({} millis) additional Camel XML route templates from: {}", count, watch.taken(),
+                        directory);
             } else {
                 log.info("No additional Camel XML route templates discovered from: {}", directory);
             }
@@ -163,7 +167,8 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML routes from location: {}", part);
-                    RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
+                    RoutesDefinition routes
+                            = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     if (routes != null) {
                         answer.add(routes);
                         IOHelper.close(is);

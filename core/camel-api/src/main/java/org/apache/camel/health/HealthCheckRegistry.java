@@ -50,10 +50,10 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
     /**
      * Resolves {@link HealthCheck} or {@link HealthCheckRepository} by id.
      *
-     * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry},
-     * and lastly do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}.
-     * The classpath scanning is attempted first with id-health-check or id-health-check-repository as the key,
-     * and then with id as fallback if not found the first time.
+     * Will first lookup in this {@link HealthCheckRegistry} and then {@link org.apache.camel.spi.Registry}, and lastly
+     * do classpath scanning via {@link org.apache.camel.spi.annotations.ServiceFactory}. The classpath scanning is
+     * attempted first with id-health-check or id-health-check-repository as the key, and then with id as fallback if
+     * not found the first time.
      *
      * @return either {@link HealthCheck} or {@link HealthCheckRepository}, or <tt>null</tt> if none found.
      */
@@ -74,8 +74,8 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      */
     default Collection<String> getCheckIDs() {
         return stream()
-            .map(HealthCheck::getId)
-            .collect(Collectors.toList());
+                .map(HealthCheck::getId)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -83,8 +83,9 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      */
     default Optional<HealthCheck> getCheck(String id) {
         return stream()
-            .filter(r -> ObjectHelper.equal(r.getId(), id) || ObjectHelper.equal(r.getId().replace("-health-check", ""), id))
-            .findFirst();
+                .filter(r -> ObjectHelper.equal(r.getId(), id)
+                        || ObjectHelper.equal(r.getId().replace("-health-check", ""), id))
+                .findFirst();
     }
 
     /**
@@ -93,25 +94,20 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
     Optional<HealthCheckRepository> getRepository(String id);
 
     /**
-     * Returns an optional {@link HealthCheckRegistry}, by default no registry is
-     * present and it must be explicit activated. Components can register/unregister
-     * health checks in response to life-cycle events (i.e. start/stop).
+     * Returns an optional {@link HealthCheckRegistry}, by default no registry is present and it must be explicit
+     * activated. Components can register/unregister health checks in response to life-cycle events (i.e. start/stop).
      *
-     * This registry is not used by the camel context but it is up to the impl to
-     * properly use it, i.e.
+     * This registry is not used by the camel context but it is up to the impl to properly use it, i.e.
      *
-     * - a RouteController could use the registry to decide to restart a route
-     *   with failing health checks
-     * - spring boot could integrate such checks within its health endpoint or
-     *   make it available only as separate endpoint.
+     * - a RouteController could use the registry to decide to restart a route with failing health checks - spring boot
+     * could integrate such checks within its health endpoint or make it available only as separate endpoint.
      */
     static HealthCheckRegistry get(CamelContext context) {
         return context.getExtension(HealthCheckRegistry.class);
     }
 
     /**
-     * Returns a sequential {@code Stream} with the known {@link HealthCheck}
-     * as its source.
+     * Returns a sequential {@code Stream} with the known {@link HealthCheck} as its source.
      */
     Stream<HealthCheck> stream();
 }

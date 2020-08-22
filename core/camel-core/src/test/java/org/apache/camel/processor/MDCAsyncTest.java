@@ -93,7 +93,8 @@ public class MDCAsyncTest extends ContextTestSupport {
 
         @Override
         public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-            AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
             process(exchange, callback);
             return callback.getFuture();
         }
@@ -106,8 +107,7 @@ public class MDCAsyncTest extends ContextTestSupport {
     }
 
     /**
-     * Stores values from the first invocation to compare them with the second
-     * invocation later.
+     * Stores values from the first invocation to compare them with the second invocation later.
      */
     private static class MdcCheckerProcessor implements Processor {
 

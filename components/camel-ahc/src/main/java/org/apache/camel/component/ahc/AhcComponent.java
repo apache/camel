@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
+ * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
 @Component("ahc")
 public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
@@ -194,9 +194,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
-     * Note that configuring this option will override any SSL/TLS configuration options provided through the
-     * clientConfig option at the endpoint or component level.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. Note that configuring this
+     * option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint
+     * or component level.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -209,8 +209,8 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
@@ -238,11 +238,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Creates a new client configuration builder using {@code DefaultAsyncHttpClientConfig} as a template for
-     * the builder.
+     * Creates a new client configuration builder using {@code DefaultAsyncHttpClientConfig} as a template for the
+     * builder.
      *
-     * @param clientConfig the instance to serve as a template for the builder
-     * @return a builder configured with the same options as the supplied config
+     * @param  clientConfig the instance to serve as a template for the builder
+     * @return              a builder configured with the same options as the supplied config
      */
     static DefaultAsyncHttpClientConfig.Builder cloneConfig(AsyncHttpClientConfig clientConfig) {
         DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder(clientConfig);

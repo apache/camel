@@ -22,18 +22,18 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
 public class JMXMonitorTypeGaugeTest extends SimpleBeanFixture {
-    
+
     @Test
     public void gauge() throws Exception {
 
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        
+
         // we should get an event after the number exceeds 100 or drops below 50
         simpleBean.setMonitorNumber(75);
         simpleBean.setMonitorNumber(110);
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/gaugeNotification-high.xml"));
-        
+
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setMonitorNumber(90);
         Thread.sleep(600);
@@ -47,12 +47,12 @@ public class JMXMonitorTypeGaugeTest extends SimpleBeanFixture {
     @Override
     protected JMXUriBuilder buildFromURI() {
         return super.buildFromURI().withMonitorType("gauge")
-                                   .withGranularityPeriod(500)
-                                   .withObservedAttribute("MonitorNumber")
-                                   .withNotifyHigh(true)
-                                   .withNotifyLow(true)
-                                   .withDifferenceMode(false)
-                                   .withThresholdHigh(100)
-                                   .withThresholdLow(50);
+                .withGranularityPeriod(500)
+                .withObservedAttribute("MonitorNumber")
+                .withNotifyHigh(true)
+                .withNotifyLow(true)
+                .withDifferenceMode(false)
+                .withThresholdHigh(100)
+                .withThresholdLow(50);
     }
 }

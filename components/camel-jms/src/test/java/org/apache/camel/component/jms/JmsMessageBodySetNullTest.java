@@ -36,9 +36,9 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("jms:queue:foo")
-                    .to("mock:foo")
-                    .process(exchange -> exchange.getIn().setBody(null))
-                    .to("mock:bar");
+                        .to("mock:foo")
+                        .process(exchange -> exchange.getIn().setBody(null))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -58,9 +58,9 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("jms:queue:foo")
-                    .to("mock:foo")
-                    .process(exchange -> exchange.getIn().setBody(null))
-                    .to("mock:bar");
+                        .to("mock:foo")
+                        .process(exchange -> exchange.getIn().setBody(null))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -82,9 +82,9 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("jms:queue:foo")
-                    .to("mock:foo")
-                    .setBody(constant(null))
-                    .to("mock:bar");
+                        .to("mock:foo")
+                        .setBody(constant(null))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -104,9 +104,9 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("jms:queue:foo")
-                    .to("mock:foo")
-                    .setBody(constant(null))
-                    .to("mock:bar");
+                        .to("mock:foo")
+                        .setBody(constant(null))
+                        .to("mock:bar");
             }
         });
         context.start();
@@ -137,4 +137,3 @@ public class JmsMessageBodySetNullTest extends CamelTestSupport {
         return false;
     }
 }
-

@@ -49,9 +49,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.ObjectHelper.cast;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.cast;
 
 /**
  * A Consumer of messages from the Minio Storage Service.
@@ -88,7 +88,9 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         makeBucket(destinationBucketName);
                         LOG.trace("Destination Bucket created");
                     } else {
-                        throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", destinationBucketName);
+                        throw new InvalidBucketNameException(
+                                "Bucket {} does not exists, set autoCreateBucket option for bucket auto creation",
+                                destinationBucketName);
                     }
                 }
             } else {
@@ -102,7 +104,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private void makeBucket(String bucketName) throws Exception {
-        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        MakeBucketArgs.Builder makeBucketRequest
+                = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
         if (isNotEmpty(getConfiguration().getRegion())) {
             makeBucketRequest.region(getConfiguration().getRegion());
         }
@@ -239,14 +242,17 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     private InputStream getObject(String bucketName, MinioClient minioClient, String objectName) throws Exception {
         GetObjectArgs.Builder getObjectRequest = GetObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), getObjectRequest::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), getObjectRequest::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), getObjectRequest::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), getObjectRequest::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), getObjectRequest::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), getObjectRequest::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), getObjectRequest::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), getObjectRequest::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                getObjectRequest::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, getObjectRequest::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, getObjectRequest::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, getObjectRequest::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, getObjectRequest::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag, getObjectRequest::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                getObjectRequest::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                getObjectRequest::unmodifiedSince);
 
         return minioClient.getObject(getObjectRequest.build());
     }
@@ -316,7 +322,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    private void removeObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void removeObject(String srcBucketName, String srcObjectName)
+            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         RemoveObjectArgs.Builder removeObjectRequest = RemoveObjectArgs.builder()
                 .bucket(srcBucketName)
                 .object(srcObjectName)
@@ -329,7 +336,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         getMinioClient().removeObject(removeObjectRequest.build());
     }
 
-    private void copyObject(String srcBucketName, String srcObjectName) throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
+    private void copyObject(String srcBucketName, String srcObjectName)
+            throws MinioException, IOException, InvalidKeyException, NoSuchAlgorithmException {
         String destinationBucketName = getConfiguration().getDestinationBucketName();
         if (isEmpty(destinationBucketName)) {
             throw new IllegalArgumentException("Destination Bucket name must be specified to copy operation");
@@ -340,27 +348,30 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 ? getConfiguration().getDestinationObjectName()
                 : srcObjectName;
 
-
         LOG.trace("Copying object from bucket {} with objectName {} to bucket {}...",
                 srcBucketName, srcObjectName, destinationBucketName);
 
         CopySource.Builder copySourceBuilder = CopySource.builder().bucket(srcBucketName).object(srcObjectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), copySourceBuilder::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), copySourceBuilder::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), copySourceBuilder::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), copySourceBuilder::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), copySourceBuilder::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), copySourceBuilder::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), copySourceBuilder::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), copySourceBuilder::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                copySourceBuilder::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, copySourceBuilder::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, copySourceBuilder::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, copySourceBuilder::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, copySourceBuilder::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag,
+                copySourceBuilder::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                copySourceBuilder::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                copySourceBuilder::unmodifiedSince);
 
         CopyObjectArgs.Builder copyObjectRequest = CopyObjectArgs.builder()
                 .source(copySourceBuilder.build())
                 .bucket(getConfiguration().getDestinationBucketName())
                 .object(destinationObjectName);
 
-        MinioChecks.checkServerSideEncryptionConfig(getConfiguration(), copyObjectRequest::sse);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryption, copyObjectRequest::sse);
 
         getMinioClient().copyObject(copyObjectRequest.build());
     }

@@ -21,8 +21,8 @@ import javax.servlet.Filter;
 public interface SpringSecurityConfiguration {
 
     /**
-     * Provides security filter gained from configured spring security (5+).
-     * Filter could be obtained for example from DelegatingFilterProxyRegistrationBean.
+     * Provides security filter gained from configured spring security (5+). Filter could be obtained for example from
+     * DelegatingFilterProxyRegistrationBean.
      */
     Filter getSecurityFilter();
 

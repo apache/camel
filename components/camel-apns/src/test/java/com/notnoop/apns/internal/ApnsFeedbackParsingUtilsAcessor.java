@@ -20,7 +20,7 @@ public final class ApnsFeedbackParsingUtilsAcessor {
 
     private ApnsFeedbackParsingUtilsAcessor() {
     }
-    
+
     public static byte[] pack(byte[]... args) {
         return ApnsFeedbackParsingUtils.pack(args);
     }

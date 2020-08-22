@@ -30,25 +30,19 @@ public class XAdESEncapsulatedPKIData {
     /**
      * Constructor
      * 
-     * @param base64Conent
-     *            base64 encoded content
-     * @param encoding
-     *            , can be <code>null</code> or empty; encoding
-     *            http://uri.etsi.org/01903/v1.2.2#DER for denoting that the
-     *            original PKI data were ASN.1 data encoded in DER.
-     *            http://uri.etsi.org/01903/v1.2.2#BER for denoting that the
-     *            original PKI data were ASN.1 data encoded in BER.
-     *            http://uri.etsi.org/01903/v1.2.2#CER for denoting that the
-     *            original PKI data were ASN.1 data encoded in CER.
-     *            http://uri.etsi.org/01903/v1.2.2#PER for denoting that the
-     *            original PKI data were ASN.1 data encoded in PER.
-     *            http://uri.etsi.org/01903/v1.2.2#XER for denoting that the
-     *            original PKI data were ASN.1 data encoded in XER.
+     * @param  base64Conent             base64 encoded content
+     * @param  encoding                 , can be <code>null</code> or empty; encoding
+     *                                  http://uri.etsi.org/01903/v1.2.2#DER for denoting that the original PKI data
+     *                                  were ASN.1 data encoded in DER. http://uri.etsi.org/01903/v1.2.2#BER for
+     *                                  denoting that the original PKI data were ASN.1 data encoded in BER.
+     *                                  http://uri.etsi.org/01903/v1.2.2#CER for denoting that the original PKI data
+     *                                  were ASN.1 data encoded in CER. http://uri.etsi.org/01903/v1.2.2#PER for
+     *                                  denoting that the original PKI data were ASN.1 data encoded in PER.
+     *                                  http://uri.etsi.org/01903/v1.2.2#XER for denoting that the original PKI data
+     *                                  were ASN.1 data encoded in XER.
      * 
-     * @param id
-     *            ID for the Id attribute, can be <code>null</code>
-     * @throws IllegalArgumentException
-     *             if <tt>base64Conent</tt> is <code>null</code> or empty
+     * @param  id                       ID for the Id attribute, can be <code>null</code>
+     * @throws IllegalArgumentException if <tt>base64Conent</tt> is <code>null</code> or empty
      */
     public XAdESEncapsulatedPKIData(String base64Conent, String encoding, String id) {
         if (base64Conent == null || base64Conent.isEmpty()) {
@@ -60,16 +54,14 @@ public class XAdESEncapsulatedPKIData {
     }
 
     /**
-     * Returns the base 64 encoded content. Cannot be <code>null</code> or
-     * empty.
+     * Returns the base 64 encoded content. Cannot be <code>null</code> or empty.
      */
     public String getBase64Conent() {
         return base64Conent;
     }
 
     /**
-     * Returns the character encoding of the content. Cannot be
-     * <code>null</code> or empty.
+     * Returns the character encoding of the content. Cannot be <code>null</code> or empty.
      */
     public String getEncoding() {
         return encoding;

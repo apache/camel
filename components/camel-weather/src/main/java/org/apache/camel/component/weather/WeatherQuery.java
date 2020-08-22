@@ -22,8 +22,7 @@ import static org.apache.camel.component.weather.WeatherMode.JSON;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
- * Logic for determining the query based on the provided
- * configuration.
+ * Logic for determining the query based on the provided configuration.
  */
 public class WeatherQuery {
     private final WeatherConfiguration weatherConfiguration;
@@ -44,10 +43,10 @@ public class WeatherQuery {
         } else if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() != null && weatherConfiguration.getTopLat() != null) {
             location = "bbox=" + weatherConfiguration.getLon() + ","
-                    + weatherConfiguration.getLat() + ","
-                    + weatherConfiguration.getRightLon() + ","
-                    + weatherConfiguration.getTopLat() + ","
-                    + weatherConfiguration.getZoom() + "&cluster=yes";
+                       + weatherConfiguration.getLat() + ","
+                       + weatherConfiguration.getRightLon() + ","
+                       + weatherConfiguration.getTopLat() + ","
+                       + weatherConfiguration.getZoom() + "&cluster=yes";
         } else if (!isEmpty(weatherConfiguration.getZip())) {
             location = "zip=" + weatherConfiguration.getZip();
         } else if (weatherConfiguration.getIds() != null && weatherConfiguration.getIds().size() > 0) {

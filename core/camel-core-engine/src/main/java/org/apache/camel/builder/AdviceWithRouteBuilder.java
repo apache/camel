@@ -36,10 +36,8 @@ import org.apache.camel.util.function.ThrowingConsumer;
  * A {@link RouteBuilder} which has extended capabilities when using the
  * <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  * <p/>
- * <b>Important:</b> It is recommended to only advice a given route once (you
- * can of course advice multiple routes). If you do it multiple times, then it
- * may not work as expected, especially when any kind of error handling is
- * involved.
+ * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes). If
+ * you do it multiple times, then it may not work as expected, especially when any kind of error handling is involved.
  */
 public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
@@ -55,39 +53,36 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Advices this route with the route builder using a lambda expression. It
-     * can be used as following:
+     * Advices this route with the route builder using a lambda expression. It can be used as following:
      * 
      * <pre>
      * AdviceWithRouteBuilder.adviceWith(context, "myRoute", a ->
      *     a.weaveAddLast().to("mock:result");
      * </pre>
      * <p/>
-     * <b>Important:</b> It is recommended to only advice a given route once
-     * (you can of course advice multiple routes). If you do it multiple times,
-     * then it may not work as expected, especially when any kind of error
-     * handling is involved. The Camel team plan for Camel 3.0 to support this
-     * as internal refactorings in the routing engine is needed to support this
-     * properly.
+     * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
+     * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
+     * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
+     * needed to support this properly.
      * <p/>
-     * The advice process will add the interceptors, on exceptions, on
-     * completions etc. configured from the route builder to this route.
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
+     * builder to this route.
      * <p/>
-     * This is mostly used for testing purpose to add interceptors and the likes
-     * to an existing route.
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
      * <p/>
-     * Will stop and remove the old route from camel context and add and start
-     * this new advised route.
+     * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param camelContext the camel context
-     * @param routeId either the route id as a string value, or <tt>null</tt> to
-     *            chose the 1st route, or you can specify a number for the n'th
-     *            route, or provide the route definition instance directly as well.
-     * @param builder the advice with route builder
-     * @return a new route which is this route merged with the route builder
-     * @throws Exception can be thrown from the route builder
+     * @param  camelContext the camel context
+     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
+     *                      specify a number for the n'th route, or provide the route definition instance directly as
+     *                      well.
+     * @param  builder      the advice with route builder
+     * @return              a new route which is this route merged with the route builder
+     * @throws Exception    can be thrown from the route builder
      */
-    public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
+    public static RouteDefinition adviceWith(
+            CamelContext camelContext, Object routeId, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder)
+            throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
         return camelContext.adapt(ModelCamelContext.class).adviceWith(rd, new AdviceWithRouteBuilder() {
             @Override
@@ -98,40 +93,39 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Advices this route with the route builder using a lambda expression. It
-     * can be used as following:
+     * Advices this route with the route builder using a lambda expression. It can be used as following:
      *
      * <pre>
      * AdviceWithRouteBuilder.adviceWith(context, "myRoute", false, a ->
      *     a.weaveAddLast().to("mock:result");
      * </pre>
      * <p/>
-     * <b>Important:</b> It is recommended to only advice a given route once
-     * (you can of course advice multiple routes). If you do it multiple times,
-     * then it may not work as expected, especially when any kind of error
-     * handling is involved. The Camel team plan for Camel 3.0 to support this
-     * as internal refactorings in the routing engine is needed to support this
-     * properly.
+     * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
+     * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
+     * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
+     * needed to support this properly.
      * <p/>
-     * The advice process will add the interceptors, on exceptions, on
-     * completions etc. configured from the route builder to this route.
+     * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
+     * builder to this route.
      * <p/>
-     * This is mostly used for testing purpose to add interceptors and the likes
-     * to an existing route.
+     * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
      * <p/>
-     * Will stop and remove the old route from camel context and add and start
-     * this new advised route.
+     * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param camelContext the camel context
-     * @param routeId either the route id as a string value, or <tt>null</tt> to
-     *            chose the 1st route, or you can specify a number for the n'th
-     *            route, or provide the route definition instance directly as well.
-     * @param logXml whether to log the before and after advices routes as XML to the log (this can be turned off to perform faster)
-     * @param builder the advice with route builder
-     * @return a new route which is this route merged with the route builder
-     * @throws Exception can be thrown from the route builder
+     * @param  camelContext the camel context
+     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
+     *                      specify a number for the n'th route, or provide the route definition instance directly as
+     *                      well.
+     * @param  logXml       whether to log the before and after advices routes as XML to the log (this can be turned off
+     *                      to perform faster)
+     * @param  builder      the advice with route builder
+     * @return              a new route which is this route merged with the route builder
+     * @throws Exception    can be thrown from the route builder
      */
-    public static RouteDefinition adviceWith(CamelContext camelContext, Object routeId, boolean logXml, ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder) throws Exception {
+    public static RouteDefinition adviceWith(
+            CamelContext camelContext, Object routeId, boolean logXml,
+            ThrowingConsumer<AdviceWithRouteBuilder, Exception> builder)
+            throws Exception {
         RouteDefinition rd = findRouteDefinition(camelContext, routeId);
 
         return RouteReifier.adviceWith(rd, camelContext, new AdviceWithRouteBuilder() {
@@ -193,9 +187,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Whether to log the adviced routes before/after as XML. This is usable to
-     * know how the route was adviced and changed. However marshalling the route
-     * model to XML costs CPU resources and you can then turn this off by not
+     * Whether to log the adviced routes before/after as XML. This is usable to know how the route was adviced and
+     * changed. However marshalling the route model to XML costs CPU resources and you can then turn this off by not
      * logging. This is default enabled.
      */
     public boolean isLogRouteAsXml() {
@@ -203,21 +196,19 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Sets whether to log the adviced routes before/after as XML. This is
-     * usable to know how the route was adviced and changed. However marshalling
-     * the route model to XML costs CPU resources and you can then turn this off
-     * by not logging. This is default enabled.
+     * Sets whether to log the adviced routes before/after as XML. This is usable to know how the route was adviced and
+     * changed. However marshalling the route model to XML costs CPU resources and you can then turn this off by not
+     * logging. This is default enabled.
      */
     public void setLogRouteAsXml(boolean logRouteAsXml) {
         this.logRouteAsXml = logRouteAsXml;
     }
 
     /**
-     * Gets a list of additional tasks to execute after the {@link #configure()}
-     * method has been executed during the advice process.
+     * Gets a list of additional tasks to execute after the {@link #configure()} method has been executed during the
+     * advice process.
      *
-     * @return a list of additional {@link AdviceWithTask} tasks to be executed
-     *         during the advice process.
+     * @return a list of additional {@link AdviceWithTask} tasks to be executed during the advice process.
      */
     public List<AdviceWithTask> getAdviceWithTasks() {
         return adviceWithTasks;
@@ -235,10 +226,9 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Mock all endpoints matching the given pattern.
      *
-     * @param pattern the pattern(s).
+     * @param  pattern   the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
-     *      String)
+     * @see              EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpoints(String... pattern) throws Exception {
         for (String s : pattern) {
@@ -247,17 +237,17 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Mock all endpoints matching the given pattern, and <b>skips</b> sending
-     * to the original endpoint (detour messages).
+     * Mock all endpoints matching the given pattern, and <b>skips</b> sending to the original endpoint (detour
+     * messages).
      *
-     * @param pattern the pattern(s).
+     * @param  pattern   the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String,
-     *      String)
+     * @see              EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpointsAndSkip(String... pattern) throws Exception {
         for (String s : pattern) {
-            getContext().adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy(s, true));
+            getContext().adapt(ExtendedCamelContext.class)
+                    .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(s, true));
         }
     }
 
@@ -284,12 +274,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching id of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link PatternHelper#matchPattern(String, String)} matching
-     * algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
-     * @param pattern the pattern
-     * @return the builder
-     * @see PatternHelper#matchPattern(String, String)
+     * @param  pattern the pattern
+     * @return         the builder
+     * @see            PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -297,15 +286,13 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching the to string representation of the nodes in the route
-     * (incl onException etc).
+     * Weaves by matching the to string representation of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link PatternHelper#matchPattern(String, String)} matching
-     * algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
-     * @param pattern the pattern
-     * @return the builder
-     * @see PatternHelper#matchPattern(String, String)
+     * @param  pattern the pattern
+     * @return         the builder
+     * @see            PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -313,15 +300,13 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by matching sending to endpoints with the given uri of the nodes
-     * in the route (incl onException etc).
+     * Weaves by matching sending to endpoints with the given uri of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link PatternHelper#matchPattern(String, String)} matching
-     * algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
-     * @param pattern the pattern
-     * @return the builder
-     * @see PatternHelper#matchPattern(String, String)
+     * @param  pattern the pattern
+     * @return         the builder
+     * @see            PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -331,8 +316,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching type of the nodes in the route (incl onException etc).
      *
-     * @param type the processor type
-     * @return the builder
+     * @param  type the processor type
+     * @return      the builder
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByType(Class<T> type) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -340,8 +325,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by adding the nodes to the start of the route (excl onException
-     * etc).
+     * Weaves by adding the nodes to the start of the route (excl onException etc).
      *
      * @return the builder
      */
@@ -351,8 +335,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Weaves by adding the nodes to the end of the route (excl onException
-     * etc).
+     * Weaves by adding the nodes to the end of the route (excl onException etc).
      *
      * @return the builder
      */

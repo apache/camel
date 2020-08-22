@@ -62,8 +62,7 @@ public final class EntityUtils {
      * The boundary string is composed of the components:
      * "----=_Part_&lt;global_part_number&gt;_&lt;newly_created_object's_hashcode&gt;.&lt;current_time&gt;"
      * <p>
-     * The generated string contains only US-ASCII characters and hence is safe
-     * for use in RFC822 headers.
+     * The generated string contains only US-ASCII characters and hence is safe for use in RFC822 headers.
      *
      * @return The generated boundary string.
      */
@@ -96,7 +95,7 @@ public final class EntityUtils {
             return data;
         }
 
-        switch(encoding.toLowerCase()) {
+        switch (encoding.toLowerCase()) {
             case "base64":
                 return Base64.encode(data);
             case "quoted-printable":
@@ -185,11 +184,14 @@ public final class EntityUtils {
         }
     }
 
-    public static ApplicationEDIEntity createEDIEntity(String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody) throws Exception {
+    public static ApplicationEDIEntity createEDIEntity(
+            String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody)
+            throws Exception {
         Args.notNull(ediMessage, "EDI Message");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
-        String charset = ediMessageContentType.getCharset() == null ? AS2Charset.US_ASCII : ediMessageContentType.getCharset().toString();
-        switch(ediMessageContentType.getMimeType().toLowerCase()) {
+        String charset = ediMessageContentType.getCharset() == null
+                ? AS2Charset.US_ASCII : ediMessageContentType.getCharset().toString();
+        switch (ediMessageContentType.getMimeType().toLowerCase()) {
             case AS2MediaType.APPLICATION_EDIFACT:
                 return new ApplicationEDIFACTEntity(ediMessage, charset, contentTransferEncoding, isMainBody);
             case AS2MediaType.APPLICATION_EDI_X12:
@@ -244,7 +246,7 @@ public final class EntityUtils {
             message.setHeader(contentTypeHeader);
         }
         if (entity instanceof MimeEntity) {
-            Header contentTransferEncodingHeader = ((MimeEntity)entity).getContentTransferEncoding();
+            Header contentTransferEncodingHeader = ((MimeEntity) entity).getContentTransferEncoding();
             if (contentTransferEncodingHeader != null) {
                 message.setHeader(contentTransferEncodingHeader);
             }
@@ -253,9 +255,10 @@ public final class EntityUtils {
         message.setHeader(AS2Header.CONTENT_LENGTH, Long.toString(contentLength));
     }
 
-    public static byte[] decodeTransferEncodingOfBodyPartContent(String bodyPartContent,
-                                                                 ContentType contentType,
-                                                                 String bodyPartTransferEncoding)
+    public static byte[] decodeTransferEncodingOfBodyPartContent(
+            String bodyPartContent,
+            ContentType contentType,
+            String bodyPartTransferEncoding)
             throws Exception {
         Args.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();

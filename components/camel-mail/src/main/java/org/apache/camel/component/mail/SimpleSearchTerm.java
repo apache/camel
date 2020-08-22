@@ -17,13 +17,13 @@
 package org.apache.camel.component.mail;
 
 /**
- * Allows to configure common {@link javax.mail.search.SearchTerm}'s using a POJO style,
- * which can be done from XML DSLs.
+ * Allows to configure common {@link javax.mail.search.SearchTerm}'s using a POJO style, which can be done from XML
+ * DSLs.
  * <p/>
  * This POJO has default <tt>true</tt> for the {@link #isUnseen()} option.
  * <p/>
- * The date options (such as {@link #setFromReceivedDate(String)}) is using
- * the following date pattern <tt>yyyy-MM-dd HH:mm:SS</tt>.
+ * The date options (such as {@link #setFromReceivedDate(String)}) is using the following date pattern
+ * <tt>yyyy-MM-dd HH:mm:SS</tt>.
  */
 public class SimpleSearchTerm {
 

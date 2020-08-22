@@ -29,7 +29,7 @@ public final class Web3jHelper {
     public static DefaultBlockParameter toDefaultBlockParameter(String block) {
         DefaultBlockParameter defaultBlockParameter = null;
         if (block != null) {
-            for (DefaultBlockParameterName defaultBlockParameterName: DefaultBlockParameterName.values()) {
+            for (DefaultBlockParameterName defaultBlockParameterName : DefaultBlockParameterName.values()) {
                 if (block.equalsIgnoreCase(defaultBlockParameterName.getValue())) {
                     defaultBlockParameter = defaultBlockParameterName;
                 }

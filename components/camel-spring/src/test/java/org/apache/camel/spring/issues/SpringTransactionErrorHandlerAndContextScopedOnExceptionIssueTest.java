@@ -45,7 +45,8 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest.xml");
     }
 
     @Test

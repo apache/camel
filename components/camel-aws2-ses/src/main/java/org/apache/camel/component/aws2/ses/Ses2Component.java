@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.ses.SesClient;
 public class Ses2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Ses2Component.class);
-    
+
     @Metadata
     private Ses2Configuration configuration = new Ses2Configuration();
 
@@ -63,7 +63,8 @@ public class Ses2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonSESClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
 

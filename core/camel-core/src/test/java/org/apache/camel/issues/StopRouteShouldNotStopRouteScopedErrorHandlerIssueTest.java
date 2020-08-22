@@ -44,8 +44,9 @@ public class StopRouteShouldNotStopRouteScopedErrorHandlerIssueTest extends Cont
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                    // use context scoped
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)).to("log:start").throwException(new IllegalArgumentException("Forced"));
+                        // use context scoped
+                        .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)).to("log:start")
+                        .throwException(new IllegalArgumentException("Forced"));
 
                 from("direct:foo").routeId("foo").to("log:foo").to("mock:foo");
             }

@@ -37,8 +37,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A {@link Processor} which is used for POJO @Consume where you can have multiple @Consume on the same endpoint/consumer
- * and via predicate's can filter and call different methods.
+ * A {@link Processor} which is used for POJO @Consume where you can have multiple @Consume on the same
+ * endpoint/consumer and via predicate's can filter and call different methods.
  */
 public final class SubscribeMethodProcessor extends AsyncProcessorSupport implements Navigate<Processor> {
 

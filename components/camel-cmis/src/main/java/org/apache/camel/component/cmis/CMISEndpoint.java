@@ -31,7 +31,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Read and write data from to/from a CMIS compliant content repositories.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl", category = {Category.CMS, Category.DATABASE})
+@UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl",
+             category = { Category.CMS, Category.DATABASE })
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to the cmis repository")
@@ -62,8 +63,8 @@ public class CMISEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return this.queryMode
-            ? new CMISQueryProducer(this, sessionFacadeFactory)
-            : new CMISProducer(this, sessionFacadeFactory);
+                ? new CMISQueryProducer(this, sessionFacadeFactory)
+                : new CMISProducer(this, sessionFacadeFactory);
     }
 
     @Override
@@ -79,7 +80,8 @@ public class CMISEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If true, will execute the cmis query from the message body and return result, otherwise will create a node in the cmis repository
+     * If true, will execute the cmis query from the message body and return result, otherwise will create a node in the
+     * cmis repository
      */
     public void setQueryMode(boolean queryMode) {
         this.queryMode = queryMode;

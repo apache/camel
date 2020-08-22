@@ -31,6 +31,10 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
         case "Edm": target.setEdm(property(camelContext, org.apache.olingo.odata2.api.edm.Edm.class, value)); return true;
         case "endpointhttpheaders":
         case "EndpointHttpHeaders": target.setEndpointHttpHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "entityproviderreadproperties":
+        case "EntityProviderReadProperties": target.setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
+        case "entityproviderwriteproperties":
+        case "EntityProviderWriteProperties": target.setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
         case "filteralreadyseen":
         case "FilterAlreadySeen": target.setFilterAlreadySeen(property(camelContext, boolean.class, value)); return true;
         case "httpasyncclientbuilder":
@@ -72,6 +76,8 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
         answer.put("Data", java.lang.Object.class);
         answer.put("Edm", org.apache.olingo.odata2.api.edm.Edm.class);
         answer.put("EndpointHttpHeaders", java.util.Map.class);
+        answer.put("EntityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
+        answer.put("EntityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
         answer.put("FilterAlreadySeen", boolean.class);
         answer.put("HttpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
         answer.put("HttpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
@@ -105,6 +111,10 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
         case "Edm": return target.getEdm();
         case "endpointhttpheaders":
         case "EndpointHttpHeaders": return target.getEndpointHttpHeaders();
+        case "entityproviderreadproperties":
+        case "EntityProviderReadProperties": return target.getEntityProviderReadProperties();
+        case "entityproviderwriteproperties":
+        case "EntityProviderWriteProperties": return target.getEntityProviderWriteProperties();
         case "filteralreadyseen":
         case "FilterAlreadySeen": return target.isFilterAlreadySeen();
         case "httpasyncclientbuilder":
@@ -133,6 +143,19 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
         case "SplitResult": return target.isSplitResult();
         case "sslcontextparameters":
         case "SslContextParameters": return target.getSslContextParameters();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "endpointhttpheaders":
+        case "EndpointHttpHeaders": return java.lang.String.class;
+        case "httpheaders":
+        case "HttpHeaders": return java.lang.String.class;
+        case "queryparams":
+        case "QueryParams": return java.lang.String.class;
         default: return null;
         }
     }

@@ -81,4 +81,3 @@ public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
         };
     }
 }
-

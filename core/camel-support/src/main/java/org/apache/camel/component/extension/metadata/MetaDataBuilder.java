@@ -48,10 +48,9 @@ public final class MetaDataBuilder {
 
     public MetaDataExtension.MetaData build() {
         return new DefaultMetaData(
-            camelContext,
-            attributes == null ? Collections.emptyMap() : attributes,
-            payload
-        );
+                camelContext,
+                attributes == null ? Collections.emptyMap() : attributes,
+                payload);
     }
 
     // *****************************

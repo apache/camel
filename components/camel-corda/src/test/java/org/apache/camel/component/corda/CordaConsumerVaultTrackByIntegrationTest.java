@@ -39,11 +39,11 @@ public class CordaConsumerVaultTrackByIntegrationTest extends CordaConsumerTestS
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY
-                        + "&contractStateClass=#contractStateClass"
-                        + "&queryCriteria=#queryCriteria"
-                        + "&pageSpecification=#pageSpecification"
-                        + "&sort=#sort")
-                        .to("mock:result");
+                     + "&contractStateClass=#contractStateClass"
+                     + "&queryCriteria=#queryCriteria"
+                     + "&pageSpecification=#pageSpecification"
+                     + "&sort=#sort")
+                             .to("mock:result");
             }
         };
     }

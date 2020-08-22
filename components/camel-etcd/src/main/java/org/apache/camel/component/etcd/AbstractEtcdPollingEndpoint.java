@@ -28,7 +28,8 @@ public abstract class AbstractEtcdPollingEndpoint extends DefaultPollingEndpoint
     @UriParam
     private final EtcdConfiguration configuration;
 
-    protected AbstractEtcdPollingEndpoint(String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+    protected AbstractEtcdPollingEndpoint(String uri, AbstractEtcdComponent component, EtcdConfiguration configuration,
+                                          String path) {
         super(uri, component);
 
         this.configuration = configuration;

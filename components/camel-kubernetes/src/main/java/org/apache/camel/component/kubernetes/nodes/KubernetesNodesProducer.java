@@ -45,7 +45,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -95,7 +95,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
     protected void doListNodesByLabels(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
-        NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
+        NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> nodes
+                = getEndpoint().getKubernetesClient().nodes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             nodes.withLabel(entry.getKey(), entry.getValue());
         }
@@ -131,7 +132,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific node require specify a node spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata().withSpec(nodeSpec).build();
+        Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata()
+                .withSpec(nodeSpec).build();
         node = getEndpoint().getKubernetesClient().nodes().create(nodeCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

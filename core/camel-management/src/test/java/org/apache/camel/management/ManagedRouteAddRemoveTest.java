@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
-    
+
     private static final int SERVICES = 11;
 
     @Override
@@ -255,11 +255,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:bar").routeId("bar")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .handled(true)
                         .recipientList(header("error"))
-                    .end().end()
-                    .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
+                        .end().end()
+                        .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -314,12 +314,12 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .handled(true)
-                    .recipientList(header("error"))
-                    .end();
+                        .handled(true)
+                        .recipientList(header("error"))
+                        .end();
 
                 from("direct:bar").routeId("bar")
-                    .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
+                        .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
             }
         });
 
@@ -374,10 +374,10 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:bar").routeId("bar")
-                    .onCompletion()
+                        .onCompletion()
                         .recipientList(header("done"))
-                    .end().end()
-                    .recipientList(header("bar"));
+                        .end().end()
+                        .recipientList(header("bar"));
             }
         });
 
@@ -432,11 +432,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 onCompletion()
-                    .recipientList(header("done"))
-                    .end();
+                        .recipientList(header("done"))
+                        .end();
 
                 from("direct:bar").routeId("bar")
-                    .recipientList(header("bar"));
+                        .recipientList(header("bar"));
             }
         });
 

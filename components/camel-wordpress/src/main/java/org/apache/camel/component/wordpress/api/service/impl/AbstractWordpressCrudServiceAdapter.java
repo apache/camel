@@ -30,7 +30,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @param <A>
  * @param <T>
  */
-abstract class AbstractWordpressCrudServiceAdapter<A, T, S extends SearchCriteria> extends AbstractWordpressServiceAdapter<A> implements WordpressCrudService<T, S> {
+abstract class AbstractWordpressCrudServiceAdapter<A, T, S extends SearchCriteria> extends AbstractWordpressServiceAdapter<A>
+        implements WordpressCrudService<T, S> {
 
     AbstractWordpressCrudServiceAdapter(final String wordpressUrl, final String apiVersion) {
         super(wordpressUrl, apiVersion);

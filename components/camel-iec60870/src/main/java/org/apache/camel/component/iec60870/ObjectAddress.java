@@ -30,12 +30,13 @@ public class ObjectAddress {
     }
 
     public ObjectAddress(final int a1, final int a2, final int a3, final int a4, final int a5) {
-        this.address = new int[] {a1, a2, a3, a4, a5};
+        this.address = new int[] { a1, a2, a3, a4, a5 };
     }
 
     @Override
     public String toString() {
-        return String.format("%02d-%02d-%02d-%02d-%02d", this.address[0], this.address[1], this.address[2], this.address[3], this.address[4]);
+        return String.format("%02d-%02d-%02d-%02d-%02d", this.address[0], this.address[1], this.address[2], this.address[3],
+                this.address[4]);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class ObjectAddress {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ObjectAddress other = (ObjectAddress)obj;
+        final ObjectAddress other = (ObjectAddress) obj;
         if (!Arrays.equals(this.address, other.address)) {
             return false;
         }
@@ -95,7 +96,8 @@ public class ObjectAddress {
             }
 
             if (v < 0 || v > 255) {
-                throw new IllegalArgumentException(String.format("Address segment must be an octet, between 0 and 255 (is %s)", v));
+                throw new IllegalArgumentException(
+                        String.format("Address segment must be an octet, between 0 and 255 (is %s)", v));
             }
 
             a[i] = v;
@@ -105,10 +107,10 @@ public class ObjectAddress {
     }
 
     public ASDUAddress getASDUAddress() {
-        return ASDUAddress.fromArray(new int[] {this.address[0], this.address[1]});
+        return ASDUAddress.fromArray(new int[] { this.address[0], this.address[1] });
     }
 
     public InformationObjectAddress getInformationObjectAddress() {
-        return InformationObjectAddress.fromArray(new int[] {this.address[2], this.address[3], this.address[4]});
+        return InformationObjectAddress.fromArray(new int[] { this.address[2], this.address[3], this.address[4] });
     }
 }

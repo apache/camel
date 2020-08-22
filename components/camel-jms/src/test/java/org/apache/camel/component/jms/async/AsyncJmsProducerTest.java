@@ -73,7 +73,7 @@ public class AsyncJmsProducerTest extends CamelTestSupport {
                         .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .transform(constant("Bye Camel"));
+                        .transform(constant("Bye Camel"));
             }
         };
     }

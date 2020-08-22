@@ -63,7 +63,8 @@ public class QueryCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.SCAN_INDEX_FORWARD, true);
 
         Map<String, Condition> keyConditions = new HashMap<>();
-        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString()).attributeValueList(AttributeValue.builder().n("1985").build());
+        Condition.Builder condition = Condition.builder().comparisonOperator(ComparisonOperator.GT.toString())
+                .attributeValueList(AttributeValue.builder().n("1985").build());
 
         keyConditions.put("1", condition.build());
 
@@ -73,13 +74,13 @@ public class QueryCommandTest {
 
         Map<String, AttributeValue> mapAssert = new HashMap<>();
         mapAssert.put("1", AttributeValue.builder().s("LAST_KEY").build());
-        ConsumedCapacity consumed = (ConsumedCapacity)exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
+        ConsumedCapacity consumed = (ConsumedCapacity) exchange.getIn().getHeader(Ddb2Constants.CONSUMED_CAPACITY);
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(Ddb2Constants.COUNT, Integer.class));
         assertEquals(Double.valueOf(1.0), consumed.capacityUnits());
         assertEquals(mapAssert, exchange.getIn().getHeader(Ddb2Constants.LAST_EVALUATED_KEY, Map.class));
         assertEquals(keyConditions, exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class));
 
-        Map<?, ?> items = (Map<?, ?>)exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
+        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(Ddb2Constants.ITEMS, List.class).get(0);
         assertEquals(AttributeValue.builder().s("attrValue").build(), items.get("attrName"));
     }
 }

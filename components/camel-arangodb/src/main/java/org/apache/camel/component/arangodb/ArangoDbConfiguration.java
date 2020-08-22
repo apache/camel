@@ -32,9 +32,15 @@ public class ArangoDbConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "producer")
-    private String collection;
+    private String documentCollection;
     @UriParam(label = "producer")
     private ArangoDbOperation operation;
+    @UriParam(label = "producer")
+    private String graph;
+    @UriParam(label = "producer")
+    private String vertexCollection;
+    @UriParam(label = "producer")
+    private String edgeCollection;
 
     public ArangoDbConfiguration() {
     }
@@ -57,7 +63,7 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * host if host and/or port different from default
+     * ArangoDB host. If host and port are default, this field is Optional.
      *
      * @param host
      */
@@ -70,7 +76,7 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * port if  host and/or port different from default
+     * ArangoDB exposed port. If host and port are default, this field is Optional.
      *
      * @param port
      */
@@ -83,7 +89,7 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * user if user and/or password different from default
+     * ArangoDB user. If user and password are default, this field is Optional.
      *
      * @param user
      */
@@ -96,7 +102,7 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * password if user and/or password different from default
+     * ArangoDB password. If user and password are default, this field is Optional.
      *
      * @param password
      */
@@ -104,18 +110,19 @@ public class ArangoDbConfiguration implements Cloneable {
         this.password = password;
     }
 
-
-    public String getCollection() {
-        return collection;
+    public String getDocumentCollection() {
+        return documentCollection;
     }
 
     /**
-     * collection in the database
+     * Collection name, when using ArangoDb as a Document Database. Set the documentCollection name when using the CRUD
+     * operation on the document database collections (SAVE_DOCUMENT , FIND_DOCUMENT_BY_KEY, UPDATE_DOCUMENT,
+     * DELETE_DOCUMENT).
      *
-     * @param collection
+     * @param documentCollection
      */
-    public void setCollection(String collection) {
-        this.collection = collection;
+    public void setDocumentCollection(String documentCollection) {
+        this.documentCollection = documentCollection;
     }
 
     public ArangoDbOperation getOperation() {
@@ -123,12 +130,56 @@ public class ArangoDbConfiguration implements Cloneable {
     }
 
     /**
-     * operation to perform
+     * Operations to perform on ArangoDb. For the operation AQL_QUERY, no need to specify a collection or graph.
      *
      * @param operation
      */
     public void setOperation(ArangoDbOperation operation) {
         this.operation = operation;
+    }
+
+    public String getGraph() {
+        return graph;
+    }
+
+    /**
+     * Graph name, when using ArangoDb as a Graph Database. Combine this attribute with one of the two attributes
+     * vertexCollection and edgeCollection.
+     *
+     * @param graph
+     */
+    public void setGraph(String graph) {
+        this.graph = graph;
+    }
+
+    public String getVertexCollection() {
+        return vertexCollection;
+    }
+
+    /**
+     * Collection name of vertices, when using ArangoDb as a Graph Database. Set the vertexCollection name to perform
+     * CRUD operation on vertices using these operations : SAVE_EDGE, FIND_EDGE_BY_KEY, UPDATE_EDGE, DELETE_EDGE. The
+     * graph attribute is mandatory.
+     *
+     * @param vertexCollection
+     */
+    public void setVertexCollection(String vertexCollection) {
+        this.vertexCollection = vertexCollection;
+    }
+
+    public String getEdgeCollection() {
+        return edgeCollection;
+    }
+
+    /**
+     * Collection name of vertices, when using ArangoDb as a Graph Database. Set the edgeCollection name to perform CRUD
+     * operation on edges using these operations : SAVE_VERTEX, FIND_VERTEX_BY_KEY, UPDATE_VERTEX, DELETE_VERTEX. The
+     * graph attribute is mandatory.
+     *
+     * @param edgeCollection
+     */
+    public void setEdgeCollection(String edgeCollection) {
+        this.edgeCollection = edgeCollection;
     }
 
     public ArangoDbConfiguration copy() {

@@ -17,10 +17,10 @@
 package org.apache.camel.component.grape;
 
 public final class GrapeConstants {
-    
+
     public static final String GRAPE_COMMAND = "CamelGrapeCommand";
-    
-    private GrapeConstants() {  
+
+    private GrapeConstants() {
     }
 
 }

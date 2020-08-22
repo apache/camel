@@ -28,7 +28,7 @@ public interface SchedulerInitTask {
     /**
      * The task to run when initializing and starting the scheduler (task is only run once).
      *
-     * @param scheduler  the scheduler
+     * @param  scheduler the scheduler
      * @throws Exception can be thrown if error in the task
      */
     void initializeTask(Scheduler scheduler) throws Exception;

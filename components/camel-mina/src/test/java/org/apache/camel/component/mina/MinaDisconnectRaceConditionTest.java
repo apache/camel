@@ -37,7 +37,8 @@ public class MinaDisconnectRaceConditionTest extends BaseMinaTest {
      */
     @Test
     public void testCloseSessionWhenCompleteManyTimes() throws Exception {
-        final String endpointUri = String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
+        final String endpointUri
+                = String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&disconnect=true&minaLogger=true", getPort());
         MinaProducer producer = (MinaProducer) context.getEndpoint(endpointUri).createProducer();
         // Access session to check that the session is really closed
         Field field = producer.getClass().getDeclaredField("session");

@@ -66,7 +66,6 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
         exchange.getOut().setBody(tag);
     }
 
-
     private void getTag(Exchange exchange) throws Exception {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
@@ -80,7 +79,8 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
 
     private void getTags(Exchange exchange) throws Exception {
         Tags tags = getEndpoint().getDigitalOceanClient().getAvailableTags(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("All Tags : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), tags.getTags());
+        LOG.trace("All Tags : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                tags.getTags());
         exchange.getOut().setBody(tags.getTags());
     }
 

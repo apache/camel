@@ -97,10 +97,12 @@ public class RemoteFileIgnoreDoPollErrorTest {
         }
     }
 
-    private RemoteFileConsumer<Object> getRemoteFileConsumer(final String doPollResult, final boolean ignoreCannotRetrieveFile) {
+    private RemoteFileConsumer<Object> getRemoteFileConsumer(
+            final String doPollResult, final boolean ignoreCannotRetrieveFile) {
         return new RemoteFileConsumer<Object>(remoteFileEndpoint, null, null, null) {
             @Override
-            protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {
+            protected boolean doPollDirectory(
+                    String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {
                 if ("IllegalStateException".equals(doPollResult)) {
                     throw new IllegalStateException("Problem");
                 } else if ("GenericFileOperationFailedException".equals(doPollResult)) {

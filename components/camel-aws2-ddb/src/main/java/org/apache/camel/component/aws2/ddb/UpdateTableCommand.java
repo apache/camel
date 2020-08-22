@@ -30,7 +30,9 @@ public class UpdateTableCommand extends AbstractDdbCommand {
     @Override
     public void execute() {
         ddbClient.updateTable(UpdateTableRequest.builder().tableName(determineTableName())
-            .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(determineReadCapacity()).writeCapacityUnits(determineWriteCapacity()).build()).build());
+                .provisionedThroughput(ProvisionedThroughput.builder().readCapacityUnits(determineReadCapacity())
+                        .writeCapacityUnits(determineWriteCapacity()).build())
+                .build());
     }
 
     private Long determineReadCapacity() {

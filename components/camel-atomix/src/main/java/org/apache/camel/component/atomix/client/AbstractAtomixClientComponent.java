@@ -88,27 +88,27 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
         // Resolve config for named maps
         Map<String, Object> configs = PropertiesHelper.extractProperties(parameters, "resource.config.");
         for (Map.Entry<String, Object> entry : configs.entrySet()) {
-            String ref = (String)entry.getValue();
+            String ref = (String) entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
                 throw new IllegalArgumentException("The option resource.config." + ref + " should be a reference");
             }
 
             configuration.addResourceConfig(
-                entry.getKey(),
-                EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
         }
 
         // Resolve options for named maps
         Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "resource.options.");
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            String ref = (String)entry.getValue();
+            String ref = (String) entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
                 throw new IllegalArgumentException("The option resource.options." + ref + " should be a reference");
             }
 
             configuration.addResourceOption(
-                entry.getKey(),
-                EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
         }
 
         return configuration;
@@ -117,6 +117,6 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     // *****************************************
     // Properties
     // *****************************************
-    
+
     protected abstract C getComponentConfiguration();
 }

@@ -50,7 +50,6 @@ public class DefaultWebsocketTest {
 
     private DefaultWebsocket defaultWebsocket;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         defaultWebsocket = new DefaultWebsocket(sync, null, consumer);

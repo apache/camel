@@ -38,8 +38,8 @@ public class HttpRestProducerGetTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("jetty").host("localhost").port(getPort())
-                    // use camel-http as rest client
-                    .producerComponent("http");
+                        // use camel-http as rest client
+                        .producerComponent("http");
 
                 from("direct:start").to("rest:get:users/{id}/basic");
 

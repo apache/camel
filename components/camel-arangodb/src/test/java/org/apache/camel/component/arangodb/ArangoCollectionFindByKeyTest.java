@@ -18,12 +18,10 @@ package org.apache.camel.component.arangodb;
 
 import java.util.Map;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.velocypack.VPackSlice;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
-    private ArangoCollection collection;
+public class ArangoCollectionFindByKeyTest extends BaseCollectionTest {
 
     private BaseDocument myObject;
 
     @BeforeEach
+    @Override
     public void beforeEach() {
         arangoDatabase.createCollection(COLLECTION_NAME);
         collection = arangoDatabase.collection(COLLECTION_NAME);
@@ -49,18 +47,12 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         collection.insertDocument(myObject);
     }
 
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
-    }
-
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:findDocByKey")
-                        .to("arangodb://dbTest?collection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
+                        .to("arangodb://dbTest?documentCollection={{arangodb.testCollection}}&operation=FIND_DOCUMENT_BY_KEY");
             }
         };
     }
@@ -77,7 +69,7 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
 
     @Test
     public void findDocumentByKey() {
-        // test without header setting type of Message expected
+        // test with header setting type of Message expected
         Exchange result = template.request("direct:findDocByKey", exchange -> {
             exchange.getMessage().setBody(myObject.getKey());
             exchange.getMessage().setHeader(RESULT_CLASS_TYPE, BaseDocument.class);
@@ -87,7 +79,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         BaseDocument docResult = (BaseDocument) result.getMessage().getBody();
         assertEquals("bar", docResult.getAttribute("foo"));
     }
-
 
     @Test
     public void findBeanByKey() {
@@ -102,7 +93,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
 
     }
 
-
     @Test
     public void getMapByKey() {
         Exchange result = template.request("direct:findDocByKey", exchange -> {
@@ -116,7 +106,6 @@ public class ArangoCollectionFindByKeyTest extends AbstractArangoDbTest {
         assertNotNull(docResult.get("foo"));
         assertEquals("bar", String.valueOf(docResult.get("foo")));
     }
-
 
     @Test
     public void getVpackSliceByKey() {

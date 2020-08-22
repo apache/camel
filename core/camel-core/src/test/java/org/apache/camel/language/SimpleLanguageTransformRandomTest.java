@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test routing with simple language using random function which will reuse
- * cached expressions.
+ * Unit test routing with simple language using random function which will reuse cached expressions.
  */
 public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
 

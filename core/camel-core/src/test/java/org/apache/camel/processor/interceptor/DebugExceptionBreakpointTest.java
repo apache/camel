@@ -47,7 +47,8 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
             @Override
             public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
                 Exception e = exchange.getException();
-                logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
+                logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "["
+                         + e.getMessage() + "]");
             }
         };
 
@@ -88,7 +89,8 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
                 // use debugger
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start").to("log:foo").choice().when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
+                from("direct:start").to("log:foo").choice().when(body().contains("Camel"))
+                        .throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
             }
         };
     }

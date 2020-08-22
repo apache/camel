@@ -37,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SdbComponentIntegrationTest extends CamelTestSupport {
-    
+
     @Test
     public void batchDeleteAttributes() {
         final List<DeletableItem> deletableItems = Arrays.asList(new DeletableItem[] {
-            new DeletableItem("ITEM1", null),
-            new DeletableItem("ITEM2", null)});
-        
+                new DeletableItem("ITEM1", null),
+                new DeletableItem("ITEM2", null) });
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchDeleteAttributes);
@@ -51,12 +51,12 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void batchPutAttributes() {
         final List<ReplaceableItem> replaceableItems = Arrays.asList(new ReplaceableItem[] {
-            new ReplaceableItem("ITEM1")});
-        
+                new ReplaceableItem("ITEM1") });
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchPutAttributes);
@@ -64,13 +64,13 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void deleteAttributes() {
         final List<Attribute> attributes = Arrays.asList(new Attribute[] {
-            new Attribute("NAME1", "VALUE1")});
+                new Attribute("NAME1", "VALUE1") });
         final UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
-        
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteAttributes);
@@ -80,7 +80,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void deleteDomain() {
         template.send("direct:start", new Processor() {
@@ -89,7 +89,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void domainMetadata() {
         Exchange exchange = template.send("direct:start", new Processor() {
@@ -97,7 +97,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DomainMetadata);
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));
@@ -106,11 +106,11 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE));
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ITEM_NAME_SIZE));
     }
-    
+
     @Test
     public void getAttributes() {
-        final List<String> attributeNames = Arrays.asList(new String[] {"ATTRIBUTE1"});
-        
+        final List<String> attributeNames = Arrays.asList(new String[] { "ATTRIBUTE1" });
+
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.GetAttributes);
@@ -119,10 +119,10 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(SdbConstants.ATTRIBUTE_NAMES, attributeNames);
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ATTRIBUTES, List.class));
     }
-    
+
     @Test
     public void listDomains() {
         Exchange exchange = template.send("direct:start", new Processor() {
@@ -132,16 +132,16 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(SdbConstants.DOMAIN_NAMES, List.class));
     }
-    
+
     @Test
     public void putAttributes() {
         final List<ReplaceableAttribute> replaceableAttributes = Arrays.asList(new ReplaceableAttribute[] {
-            new ReplaceableAttribute("NAME1", "VALUE1", true)});
+                new ReplaceableAttribute("NAME1", "VALUE1", true) });
         final UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
-        
+
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.PutAttributes);
@@ -151,7 +151,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             }
         });
     }
-    
+
     @Test
     public void select() {
         Exchange exchange = template.send("direct:start", new Processor() {
@@ -159,10 +159,11 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.Select);
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
                 exchange.getIn().setHeader(SdbConstants.CONSISTENT_READ, Boolean.TRUE);
-                exchange.getIn().setHeader(SdbConstants.SELECT_EXPRESSION, "SELECT NAME1 FROM DOMAIN1 WHERE NAME1 LIKE 'VALUE1'");
+                exchange.getIn().setHeader(SdbConstants.SELECT_EXPRESSION,
+                        "SELECT NAME1 FROM DOMAIN1 WHERE NAME1 LIKE 'VALUE1'");
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ITEMS, List.class));
     }
 

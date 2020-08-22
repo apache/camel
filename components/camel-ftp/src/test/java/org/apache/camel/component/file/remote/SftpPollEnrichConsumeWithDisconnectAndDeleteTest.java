@@ -57,14 +57,14 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
         long startFileDeletionCheckTime = System.currentTimeMillis();
         boolean fileExists = true;
         while (System.currentTimeMillis() - startFileDeletionCheckTime < 3000) { // wait
-                                                                                 // up
-                                                                                 // to
-                                                                                 // 3000ms
-                                                                                 // for
-                                                                                 // file
-                                                                                 // to
-                                                                                 // be
-                                                                                 // deleted
+                                                                                // up
+                                                                                // to
+                                                                                // 3000ms
+                                                                                // for
+                                                                                // file
+                                                                                // to
+                                                                                // be
+                                                                                // deleted
             File file = new File(FTP_ROOT_DIR + "/hello.txt");
             fileExists = file.exists();
 
@@ -82,8 +82,10 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:trigger").pollEnrich("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
-                    .routeId("foo").to("mock:result");
+                from("vm:trigger")
+                        .pollEnrich("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                                    + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
+                        .routeId("foo").to("mock:result");
             }
         };
     }

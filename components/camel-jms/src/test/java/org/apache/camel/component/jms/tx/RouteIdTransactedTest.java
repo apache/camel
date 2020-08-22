@@ -28,7 +28,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");
+                "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");
     }
 
     @Test
@@ -63,13 +63,13 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo?transacted=true").id("myCoolRoute")
-                    .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
-                    .transacted()
-                    .choice()
+                        .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
+                        .transacted()
+                        .choice()
                         .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
-                    .otherwise()
+                        .otherwise()
                         .to("mock:result")
-                    .end();
+                        .end();
 
             }
         };

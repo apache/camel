@@ -44,8 +44,10 @@ public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
-                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml", new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml",
+                        new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml",
+                        new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
             }
         });
 
@@ -66,15 +68,16 @@ public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
                 onException(Exception.class).maximumRedeliveries(3).redeliveryDelay(0);
 
                 from("direct:start")
-                    .process(new Processor() {
-                        private int counter;
-                        @Override
-                        public void process(Exchange exchange) {
-                            if (counter++ < 2) {
-                                throw new IllegalArgumentException("Forced");
+                        .process(new Processor() {
+                            private int counter;
+
+                            @Override
+                            public void process(Exchange exchange) {
+                                if (counter++ < 2) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
                             }
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
 
             }
         };

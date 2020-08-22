@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * Java class for OperationEnum.
  * <p/>
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * <p/>
  * 
  * <pre>
@@ -47,12 +46,18 @@ import javax.xml.bind.annotation.XmlType;
 public enum OperationEnum {
 
     @XmlEnumValue("insert")
-    INSERT("insert"), @XmlEnumValue("upsert")
-    UPSERT("upsert"), @XmlEnumValue("update")
-    UPDATE("update"), @XmlEnumValue("delete")
-    DELETE("delete"), @XmlEnumValue("hardDelete")
-    HARD_DELETE("hardDelete"), @XmlEnumValue("query")
+    INSERT("insert"),
+    @XmlEnumValue("upsert")
+    UPSERT("upsert"),
+    @XmlEnumValue("update")
+    UPDATE("update"),
+    @XmlEnumValue("delete")
+    DELETE("delete"),
+    @XmlEnumValue("hardDelete")
+    HARD_DELETE("hardDelete"),
+    @XmlEnumValue("query")
     QUERY("query");
+
     private final String value;
 
     OperationEnum(String v) {

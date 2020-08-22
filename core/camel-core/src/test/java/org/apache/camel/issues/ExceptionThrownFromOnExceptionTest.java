@@ -103,14 +103,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // this time we handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            throw new IOException("Some other IOException");
-                        }
-                    }).to("mock:c");
+                        // this time we handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
@@ -217,14 +217,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // this time we handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            throw new IOException("Some other IOException");
-                        }
-                    }).to("mock:c");
+                        // this time we handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                throw new IOException("Some other IOException");
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 
@@ -336,14 +336,14 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                 // on exception to catch all IO exceptions and handle them
                 // specially
                 onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3)
-                    // we now handle the exception
-                    .handled(true).to("mock:b").process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            // no exception is thrown this time
-                        }
-                    }).to("mock:c");
+                        // we now handle the exception
+                        .handled(true).to("mock:b").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                ON_EXCEPTION_RETRY.incrementAndGet();
+                                // no exception is thrown this time
+                            }
+                        }).to("mock:c");
 
                 from("direct:start").to("direct:intermediate").to("mock:result");
 

@@ -26,8 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests that the redelivery error handler will break out if CamelContext is
- * shutting down.
+ * Tests that the redelivery error handler will break out if CamelContext is shutting down.
  */
 public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTestSupport {
 

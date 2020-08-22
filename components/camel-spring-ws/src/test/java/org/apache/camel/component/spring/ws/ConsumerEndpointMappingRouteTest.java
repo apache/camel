@@ -45,7 +45,8 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
         }
     };
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
     private final String xmlRequestForGoogleStockQuoteNoNamespace = "<GetQuote><symbol>GOOG</symbol></GetQuote>";
     private final String xmlRequestForGoogleStockQuoteNoNamespaceDifferentBody = "<GetQuote><symbol>GRABME</symbol></GetQuote>";
 
@@ -83,7 +84,8 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testSoapAction() throws Exception {
-        webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(), new SoapActionCallback("http://www.stockquotes.edu/GetQuote"), NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(),
+                new SoapActionCallback("http://www.stockquotes.edu/GetQuote"), NOOP_SOURCE_EXTRACTOR);
         resultEndpointSoapAction.expectedMinimumMessageCount(1);
         resultEndpointSoapAction.assertIsSatisfied();
     }
@@ -91,7 +93,8 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     @Test
     public void testWrongSoapAction() throws Exception {
         assertThrows(WebServiceIOException.class, () -> {
-            webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(), new SoapActionCallback("http://this-is-a-wrong-soap-action"), NOOP_SOURCE_EXTRACTOR);
+            webServiceTemplate.sendSourceAndReceive(getDefaultXmlRequestSource(),
+                    new SoapActionCallback("http://this-is-a-wrong-soap-action"), NOOP_SOURCE_EXTRACTOR);
             resultEndpointSoapAction.assertIsNotSatisfied();
         });
     }
@@ -106,27 +109,36 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
     @Test
     public void testUri() throws Exception {
-        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote2", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote2", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
         resultEndpointUri.expectedMinimumMessageCount(1);
         resultEndpointUri.assertIsSatisfied();
     }
 
     @Test
     public void testUriPath() throws Exception {
-        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote3/service", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote3/service", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote3/service", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote3/service", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
         resultEndpointUriPath.expectedMessageCount(2);
         resultEndpointUriPath.assertIsSatisfied();
     }
 
     @Test
     public void testUriPathWildcard() throws Exception {
-        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote4/service", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service/", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote4/service/", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service/test", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
-        webServiceTemplate.sendSourceAndReceive("http://0.0.0.0:11234/stockquote4/service/test", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote4/service", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service/", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost:8080/stockquote4/service/", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://localhost/stockquote4/service/test", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive("http://0.0.0.0:11234/stockquote4/service/test", getDefaultXmlRequestSource(),
+                NOOP_SOURCE_EXTRACTOR);
         resultEndpointUriPath.expectedMessageCount(6);
         resultEndpointUriPath.assertIsSatisfied();
     }
@@ -134,7 +146,8 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     @Test
     public void testWrongUri() throws Exception {
         assertThrows(WebServiceIOException.class, () -> {
-            webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", getDefaultXmlRequestSource(), NOOP_SOURCE_EXTRACTOR);
+            webServiceTemplate.sendSourceAndReceive("http://localhost/wrong", getDefaultXmlRequestSource(),
+                    NOOP_SOURCE_EXTRACTOR);
             resultEndpointUri.assertIsNotSatisfied();
         });
     }
@@ -142,7 +155,7 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                new String[]{"org/apache/camel/component/spring/ws/ConsumerEndpointMappingRouteTest-context.xml"});
+                new String[] { "org/apache/camel/component/spring/ws/ConsumerEndpointMappingRouteTest-context.xml" });
     }
 
     private Source getDefaultXmlRequestSource() {

@@ -147,12 +147,12 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         watch.restart();
         interval.restart();
         String msg = "Downloading from host: " + host + " file: " + file + " starting "; // add
-                                                                                         // extra
-                                                                                         // space
-                                                                                         // to
-                                                                                         // align
-                                                                                         // with
-                                                                                         // completed
+                                                                                        // extra
+                                                                                        // space
+                                                                                        // to
+                                                                                        // align
+                                                                                        // with
+                                                                                        // completed
         if (fileSize > 0) {
             msg += " (size: " + fileSizeText + ")";
         }
@@ -166,9 +166,10 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         resumeOffset = position;
         watch.restart();
         interval.restart();
-        String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position + " bytes/" + StringHelper.humanReadableBytes(position);
+        String msg = "Resume downloading from host: " + host + " file: " + file + " at position: " + position + " bytes/"
+                     + StringHelper.humanReadableBytes(position);
         if (fileSize > 0) {
-            float percent = ((float)resumeOffset / (float)fileSize) * 100L;
+            float percent = ((float) resumeOffset / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
             msg += "/" + num + "% (size: " + fileSizeText + ")";
         }
@@ -181,9 +182,10 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         transferredBytes = totalChunkSize;
 
         String prefix = resume ? "Resume downloading" : "Downloading";
-        String msg = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+        String msg
+                = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            float percent = ((float)totalChunkSize / (float)fileSize) * 100L;
+            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
             // avoid 100.0 as its only done when we get the onDownloadComplete
             if (totalChunkSize < fileSize && "100.0".equals(num)) {
@@ -234,9 +236,10 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     public void onUpload(String host, String file, long chunkSize, long totalChunkSize, long fileSize) {
         transferredBytes = totalChunkSize;
 
-        String msg = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+        String msg
+                = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
         if (fileSize > 0) {
-            float percent = ((float)totalChunkSize / (float)fileSize) * 100L;
+            float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
             // avoid 100.0 as its only done when we get the onUploadComplete
             if (totalChunkSize < fileSize && "100.0".equals(num)) {

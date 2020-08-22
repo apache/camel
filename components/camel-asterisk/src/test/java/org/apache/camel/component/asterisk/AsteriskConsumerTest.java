@@ -58,7 +58,8 @@ public class AsteriskConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("asterisk:myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password).id("route1").transform(body().convertToString()).to("mock:result");
+                from("asterisk:myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password).id("route1")
+                        .transform(body().convertToString()).to("mock:result");
             }
         };
     }

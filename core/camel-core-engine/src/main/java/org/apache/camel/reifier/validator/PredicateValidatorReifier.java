@@ -27,7 +27,7 @@ import org.apache.camel.support.processor.PredicateValidatingProcessor;
 public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidatorDefinition> {
 
     public PredicateValidatorReifier(CamelContext camelContext, ValidatorDefinition definition) {
-        super(camelContext, (PredicateValidatorDefinition)definition);
+        super(camelContext, (PredicateValidatorDefinition) definition);
     }
 
     @Override

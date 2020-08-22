@@ -95,10 +95,10 @@ public final class ZooKeeperClusteredRoutePolicyTest {
                 @Override
                 public void configure() throws Exception {
                     from("timer:zookeeper?delay=1000&period=1000")
-                        .routeId("route-" + id)
-                        .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
-                        .log("From ${routeId}")
-                        .process(e -> contextLatch.countDown());
+                            .routeId("route-" + id)
+                            .routePolicy(ClusteredRoutePolicy.forNamespace("my-ns"))
+                            .log("From ${routeId}")
+                            .process(e -> contextLatch.countDown());
                 }
             });
 

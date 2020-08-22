@@ -19,40 +19,25 @@ package org.apache.camel.component.arangodb;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.arangodb.ArangoCollection;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.DocumentUpdateEntity;
 import com.arangodb.entity.MultiDocumentEntity;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.ARANGO_KEY;
 import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ArangoCollectionUpdateTest extends AbstractArangoDbTest {
-    private ArangoCollection collection;
-
-    @BeforeEach
-    public void beforeEach() {
-        arangoDatabase.createCollection(COLLECTION_NAME);
-        collection = arangoDatabase.collection(COLLECTION_NAME);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        collection.drop();
-    }
+public class ArangoCollectionUpdateTest extends BaseCollectionTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:update")
-                        .to("arangodb:{{arangodb.testDb}}?collection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
+                        .to("arangodb:{{arangodb.testDb}}?documentCollection={{arangodb.testCollection}}&operation=UPDATE_DOCUMENT");
             }
         };
     }
@@ -108,7 +93,8 @@ public class ArangoCollectionUpdateTest extends AbstractArangoDbTest {
             exchange.getMessage().setHeader(MULTI_UPDATE, true);
         });
         assertTrue(result.getMessage().getBody() instanceof MultiDocumentEntity);
-        MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>> updateDocs = (MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>>) result.getMessage().getBody();
+        MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>> updateDocs
+                = (MultiDocumentEntity<DocumentUpdateEntity<TestDocumentEntity>>) result.getMessage().getBody();
         assertFalse(updateDocs.getDocuments().isEmpty());
 
         TestDocumentEntity test1Updated = collection.getDocument(test1.getKey(), TestDocumentEntity.class);

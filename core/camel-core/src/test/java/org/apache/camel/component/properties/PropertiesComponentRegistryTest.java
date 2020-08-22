@@ -39,7 +39,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
+        DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
 
         foo = new MyFooBean();
         bar = new MyDummyBean();
@@ -76,7 +76,8 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                    cause.getMessage());
         }
     }
 
@@ -92,7 +93,8 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}", cause.getMessage());
+            assertEquals("Property with key [bean.unknown] not found in properties from text: {{bean.unknown}}",
+                    cause.getMessage());
         }
     }
 

@@ -88,7 +88,6 @@ public class SocketStub extends Socket {
         return outputStreamStub;
     }
 
-
     @Override
     public void setSoLinger(boolean on, int linger) throws SocketException {
         this.linger = on;
@@ -109,12 +108,10 @@ public class SocketStub extends Socket {
         return connected;
     }
 
-
     @Override
     public boolean isInputShutdown() {
         return inputShutdown;
     }
-
 
     @Override
     public boolean isOutputShutdown() {
@@ -142,7 +139,6 @@ public class SocketStub extends Socket {
         }
     }
 
-
     @Override
     public synchronized void close() throws IOException {
         closed = true;
@@ -150,7 +146,6 @@ public class SocketStub extends Socket {
             throw new IOException("Faking a close failure");
         }
     }
-
 
     @Override
     public synchronized int getReceiveBufferSize() throws SocketException {

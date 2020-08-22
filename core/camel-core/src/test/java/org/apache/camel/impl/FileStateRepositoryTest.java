@@ -42,8 +42,7 @@ public class FileStateRepositoryTest {
 
         // When trying to use the key delimiter in a key
         // Then an exception is thrown
-        assertThrows(IllegalArgumentException.class, () -> 
-            repository.setState("=", "value"));
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("=", "value"));
 
     }
 
@@ -54,8 +53,7 @@ public class FileStateRepositoryTest {
 
         // When trying to use new line in a key
         // Then an exception is thrown
-        assertThrows(IllegalArgumentException.class, () ->
-                repository.setState("=", "value"));
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("=", "value"));
     }
 
     @Test
@@ -65,8 +63,7 @@ public class FileStateRepositoryTest {
 
         // When trying to use new line in a key
         // Then an exception is thrown
-        assertThrows(IllegalArgumentException.class, () ->
-                repository.setState("key", "\n"));
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("key", "\n"));
     }
 
     @Test
@@ -119,7 +116,7 @@ public class FileStateRepositoryTest {
 
         // And content just to this limit (10x10 bytes)
         for (int i = 0; i < 10; i++) {
-            repository.setState("key", "xxxxx".replace('x', (char)('0' + i)));
+            repository.setState("key", "xxxxx".replace('x', (char) ('0' + i)));
         }
         long previousSize = repositoryStore.length();
 

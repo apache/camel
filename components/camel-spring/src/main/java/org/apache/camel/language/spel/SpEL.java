@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
 import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * An annotation for injection of Spring Expression Language (SpEL) expressions
- * into method parameters, fields or properties.
+ * An annotation for injection of Spring Expression Language (SpEL) expressions into method parameters, fields or
+ * properties.
  * 
  * In the context of Camel this annotation serves a similar purpose as Spring's <tt>@Value</tt> annotation.
  */

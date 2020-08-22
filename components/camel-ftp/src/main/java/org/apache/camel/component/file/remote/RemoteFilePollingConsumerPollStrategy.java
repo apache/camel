@@ -21,26 +21,28 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 
 /**
- * Remote file consumer polling strategy that attempts to help recovering from
- * lost connections.
+ * Remote file consumer polling strategy that attempts to help recovering from lost connections.
  */
 public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy {
 
     @Override
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
         if (consumer instanceof RemoteFileConsumer) {
-            RemoteFileConsumer<?> rfc = (RemoteFileConsumer<?>)consumer;
+            RemoteFileConsumer<?> rfc = (RemoteFileConsumer<?>) consumer;
 
             // only try to recover if we are allowed to run
             if (rfc.isRunAllowed()) {
                 // disconnect from the server to force it to re login at next
                 // poll to recover
-                log.warn("Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}", rfc.remoteServer());
+                log.warn("Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}",
+                        rfc.remoteServer());
                 try {
                     rfc.forceDisconnect();
                 } catch (Throwable t) {
                     // ignore the exception
-                    log.debug("Error occurred during force disconnecting from: " + rfc.remoteServer() + ". This exception will be ignored.", t);
+                    log.debug("Error occurred during force disconnecting from: " + rfc.remoteServer()
+                              + ". This exception will be ignored.",
+                            t);
                 }
             }
         }

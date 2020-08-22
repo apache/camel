@@ -42,7 +42,7 @@ public class NatsConsumerTest extends NatsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:send").to("nats:test?flushConnection=true");
-                
+
                 from("nats:test?flushConnection=true").to(mockResultEndpoint);
             }
         };

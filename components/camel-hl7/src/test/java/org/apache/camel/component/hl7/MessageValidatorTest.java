@@ -80,7 +80,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:test5", msg));
+                () -> template.sendBody("direct:test5", msg));
         assertMockEndpointsSatisfied();
     }
 
@@ -99,7 +99,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:test2", msg));
+                () -> template.sendBody("direct:test2", msg));
         assertMockEndpointsSatisfied();
     }
 
@@ -129,7 +129,7 @@ public class MessageValidatorTest extends CamelTestSupport {
         Message msg = createADT01Message();
         msg.setParser(customContext.getPipeParser());
         assertThrows(CamelExecutionException.class,
-            () -> template.sendBody("direct:test6", msg));
+                () -> template.sendBody("direct:test6", msg));
         assertMockEndpointsSatisfied();
     }
 

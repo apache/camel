@@ -41,7 +41,7 @@ public class InfinispanConfigurationIT {
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("misc_cache", (String) null);
         assertNotNull(cache);
     }
-    
+
     @AfterEach
     public void cleanupCache() {
         manager.close();

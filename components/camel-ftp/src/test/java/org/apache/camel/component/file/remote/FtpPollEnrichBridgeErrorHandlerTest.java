@@ -61,14 +61,14 @@ public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
                 errorHandler(deadLetterChannel("mock:dead"));
 
                 from("seda:start")
-                    // the FTP server is not running and therefore we should get
-                    // an exception
-                    // and use 60s timeout
-                    // and turn on aggregation on exception as we have turned on
-                    // bridge error handler,
-                    // so we want to run out custom aggregation strategy for
-                    // exceptions as well
-                    .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
+                        // the FTP server is not running and therefore we should get
+                        // an exception
+                        // and use 60s timeout
+                        // and turn on aggregation on exception as we have turned on
+                        // bridge error handler,
+                        // so we want to run out custom aggregation strategy for
+                        // exceptions as well
+                        .pollEnrich(uri, 60000, new MyAggregationStrategy(), true).to("mock:result");
             }
         };
     }

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SmppCommandTypeTest {
-    
+
     private Exchange exchange;
 
     @BeforeEach
@@ -37,39 +37,39 @@ public class SmppCommandTypeTest {
     public void createSmppSubmitSmCommand() {
         assertSame(SmppCommandType.SUBMIT_SM, SmppCommandType.fromExchange(exchange));
     }
-    
+
     @Test
     public void createSmppSubmitMultiCommand() {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
-        
+
         assertSame(SmppCommandType.SUBMIT_MULTI, SmppCommandType.fromExchange(exchange));
     }
-    
+
     @Test
     public void createSmppDataSmCommand() {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
-        
+
         assertSame(SmppCommandType.DATA_SHORT_MESSAGE, SmppCommandType.fromExchange(exchange));
     }
-    
+
     @Test
     public void createSmppReplaceSmCommand() {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
-        
+
         assertSame(SmppCommandType.REPLACE_SM, SmppCommandType.fromExchange(exchange));
     }
-    
+
     @Test
     public void createSmppQuerySmCommand() {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
-        
+
         assertSame(SmppCommandType.QUERY_SM, SmppCommandType.fromExchange(exchange));
     }
-    
+
     @Test
     public void createSmppCancelSmCommand() {
         exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
-        
+
         assertSame(SmppCommandType.CANCEL_SM, SmppCommandType.fromExchange(exchange));
     }
 }

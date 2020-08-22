@@ -26,6 +26,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ClaimCheckOperation {
 
-    Get, GetAndRemove, Set, Push, Pop
+    Get,
+    GetAndRemove,
+    Set,
+    Push,
+    Pop
 
 }

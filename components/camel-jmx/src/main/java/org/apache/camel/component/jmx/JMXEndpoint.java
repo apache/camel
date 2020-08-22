@@ -50,16 +50,20 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, category = {Category.MONITORING})
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true,
+             category = { Category.MONITORING })
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests
     protected static final String ERR_PLATFORM_SERVER = "Monitor type consumer only supported on platform server.";
     protected static final String ERR_THRESHOLD_LOW = "ThresholdLow must be set when monitoring a gauge attribute.";
     protected static final String ERR_THRESHOLD_HIGH = "ThresholdHigh must be set when monitoring a gauge attribute.";
-    protected static final String ERR_GAUGE_NOTIFY = "One or both of NotifyHigh and NotifyLow must be true when monitoring a gauge attribute.";
-    protected static final String ERR_STRING_NOTIFY = "One or both of NotifyDiffer and NotifyMatch must be true when monitoring a string attribute.";
-    protected static final String ERR_STRING_TO_COMPARE = "StringToCompare must be specified when monitoring a string attribute.";
+    protected static final String ERR_GAUGE_NOTIFY
+            = "One or both of NotifyHigh and NotifyLow must be true when monitoring a gauge attribute.";
+    protected static final String ERR_STRING_NOTIFY
+            = "One or both of NotifyDiffer and NotifyMatch must be true when monitoring a string attribute.";
+    protected static final String ERR_STRING_TO_COMPARE
+            = "StringToCompare must be specified when monitoring a string attribute.";
     protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
 
     /**
@@ -71,11 +75,13 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * The domain for the mbean you're connecting to
      */
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String objectDomain;
 
     /**
-     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
+     * The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that
+     * get passed.
      */
     @UriParam
     private String objectName;
@@ -99,7 +105,8 @@ public class JMXEndpoint extends DefaultEndpoint {
     private String monitorType;
 
     /**
-     * Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor only).
+     * Initial threshold for the monitor. The value must exceed this before notifications are fired (counter monitor
+     * only).
      */
     @UriParam(label = "counter")
     private int initThreshold;
@@ -117,7 +124,8 @@ public class JMXEndpoint extends DefaultEndpoint {
     private int modulus;
 
     /**
-     * If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself (counter and gauge monitor only).
+     * If true, then the value reported in the notification is the difference from the threshold as opposed to the value
+     * itself (counter and gauge monitor only).
      */
     @UriParam(label = "counter,gauge")
     private boolean differenceMode;
@@ -147,28 +155,31 @@ public class JMXEndpoint extends DefaultEndpoint {
     private Double thresholdLow;
 
     /**
-     * If true, will fire a notification when the string attribute differs from the string to compare (string monitor or consumer).
-     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     * If true, will fire a notification when the string attribute differs from the string to compare (string monitor or
+     * consumer). By default the consumer will notify match if observed attribute and string to compare has been
+     * configured.
      */
     @UriParam(label = "consumer,string")
     private boolean notifyDiffer;
 
     /**
-     * If true, will fire a notification when the string attribute matches the string to compare (string monitor or consumer).
-     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     * If true, will fire a notification when the string attribute matches the string to compare (string monitor or
+     * consumer). By default the consumer will notify match if observed attribute and string to compare has been
+     * configured.
      */
     @UriParam(label = "consumer,string")
     private boolean notifyMatch;
 
     /**
-     * Value for attribute to compare (string monitor or consumer).
-     * By default the consumer will notify match if observed attribute and string to compare has been configured.
+     * Value for attribute to compare (string monitor or consumer). By default the consumer will notify match if
+     * observed attribute and string to compare has been configured.
      */
     @UriParam(label = "consumer,string")
     private String stringToCompare;
 
     /**
-     * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
+     * Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then
+     * the raw java object is set as the body.
      */
     @UriParam(defaultValue = "xml", enums = "xml,raw")
     private String format = "xml";
@@ -192,27 +203,31 @@ public class JMXEndpoint extends DefaultEndpoint {
     private NotificationFilter notificationFilter;
 
     /**
-     * Value to handback to the listener when a notification is received. This value will be put in the message header with the key "jmx.handback"
+     * Value to handback to the listener when a notification is received. This value will be put in the message header
+     * with the key "jmx.handback"
      */
     @UriParam(label = "advanced")
     private Object handback;
 
     /**
-     * If true the consumer will throw an exception if unable to establish the JMX connection upon startup.  If false, the consumer will attempt
-     * to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured  reconnectionDelay
+     * If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false,
+     * the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where
+     * 'x' is the configured reconnectionDelay
      */
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean testConnectionOnStartup = true;
 
     /**
-     * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs.  The consumer will attempt
-     * to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured  reconnectionDelay
+     * If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer
+     * will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the
+     * configured reconnectionDelay
      */
     @UriParam(label = "advanced")
     private boolean reconnectOnConnectionFailure;
 
     /**
-     * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
+     * The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to
+     * reconnect a lost connection
      */
     @UriParam(label = "advanced", defaultValue = "10")
     private int reconnectDelay = 10;
@@ -224,7 +239,8 @@ public class JMXEndpoint extends DefaultEndpoint {
     private Map<String, String> objectProperties;
 
     /**
-     * To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications.
+     * To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to
+     * process and route notifications.
      */
     @UriParam(label = "advanced")
     private ExecutorService executorService;
@@ -364,14 +380,14 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Setter for the ObjectProperties is either called by reflection when
-     * processing the URI or manually by the component.
+     * Setter for the ObjectProperties is either called by reflection when processing the URI or manually by the
+     * component.
      * <p/>
-     * If the URI contained a value with a reference like "objectProperties=#myHashtable"
-     * then the Hashtable will be set in place.
+     * If the URI contained a value with a reference like "objectProperties=#myHashtable" then the Hashtable will be set
+     * in place.
      * <p/>
-     * If there are extra properties that begin with "key." then the component will
-     * create a Hashtable with these values after removing the "key." prefix.
+     * If there are extra properties that begin with "key." then the component will create a Hashtable with these values
+     * after removing the "key." prefix.
      */
     public void setObjectProperties(Map<String, String> objectProperties) {
         if (getObjectName() != null) {

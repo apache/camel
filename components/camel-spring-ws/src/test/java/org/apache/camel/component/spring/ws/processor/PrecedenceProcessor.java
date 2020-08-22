@@ -41,12 +41,17 @@ public class PrecedenceProcessor implements Processor {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(is);
 
-        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION, new URI("http://actionPrecedence.com"));
-        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO, new URI("http://replyPrecedence.to"));
-        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO, new URI("http://faultPrecedence.to"));
+        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_ACTION,
+                new URI("http://actionPrecedence.com"));
+        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO,
+                new URI("http://replyPrecedence.to"));
+        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_FAULT_TO,
+                new URI("http://faultPrecedence.to"));
 
-        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION, new URI("http://outputHeader.com"));
-        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION, new URI("http://faultHeader.com"));
+        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION,
+                new URI("http://outputHeader.com"));
+        exchange.getIn().setHeader(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION,
+                new URI("http://faultHeader.com"));
 
         exchange.getOut().copyFrom(exchange.getIn());
         exchange.getOut().setBody(doc);

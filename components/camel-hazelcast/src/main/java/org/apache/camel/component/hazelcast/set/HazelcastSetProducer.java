@@ -72,7 +72,9 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
                 break;
 
             default:
-                throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation, HazelcastConstants.OPERATION));
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers

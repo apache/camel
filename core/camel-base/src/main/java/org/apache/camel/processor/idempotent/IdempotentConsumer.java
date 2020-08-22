@@ -40,14 +40,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a
- * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
+ * An implementation of the <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  * <p/>
- * This implementation supports idempotent repositories implemented as {@link org.apache.camel.spi.IdempotentRepository}.
+ * This implementation supports idempotent repositories implemented as
+ * {@link org.apache.camel.spi.IdempotentRepository}.
  *
  * @see org.apache.camel.spi.IdempotentRepository
  */
-public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
+public class IdempotentConsumer extends AsyncProcessorSupport
+        implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
 
@@ -64,7 +65,8 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
     private final AtomicLong duplicateMessageCount = new AtomicLong();
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
-                              boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
+                              boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure,
+                              Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
@@ -150,7 +152,8 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
                 }
             }
 
-            final Synchronization onCompletion = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
+            final Synchronization onCompletion
+                    = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
             target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
             if (!completionEager) {
                 // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
@@ -259,8 +262,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
     }
 
     /**
-     * A strategy method to allow derived classes to overload the behaviour of
-     * processing a duplicate message
+     * A strategy method to allow derived classes to overload the behaviour of processing a duplicate message
      *
      * @param exchange  the exchange
      * @param messageId the message ID of this exchange
@@ -278,7 +280,8 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
         private final AsyncCallback callback;
         private final boolean completionEager;
 
-        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
+        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback,
+                                   boolean completionEager) {
             this.exchange = exchange;
             this.onCompletion = onCompletion;
             this.callback = callback;

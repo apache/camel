@@ -19,8 +19,8 @@ package org.apache.camel;
 /**
  * Strategy that allows {@link Consumer}s to influence the {@link PollingConsumer}.
  * <p/>
- * For example this is used by schedule based consumers to be able to suspend/resume
- * upon polling using a {@link PollingConsumer}.
+ * For example this is used by schedule based consumers to be able to suspend/resume upon polling using a
+ * {@link PollingConsumer}.
  *
  * @see org.apache.camel.support.EventDrivenPollingConsumer
  */
@@ -36,10 +36,10 @@ public interface PollingConsumerPollingStrategy {
     /**
      * Callback invoked before the poll.
      *
-     * @param timeout the timeout
+     * @param  timeout   the timeout
      * @throws Exception can be thrown if error occurred
-     * @return timeout to be used, this allows returning a higher timeout value
-     * to ensure at least one poll is being performed
+     * @return           timeout to be used, this allows returning a higher timeout value to ensure at least one poll is
+     *                   being performed
      */
     long beforePoll(long timeout) throws Exception;
 

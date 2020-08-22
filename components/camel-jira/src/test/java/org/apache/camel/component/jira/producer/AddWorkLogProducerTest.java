@@ -112,8 +112,8 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("jira://addWorkLog?jiraUrl=" + JIRA_CREDENTIALS)
-                    .to(mockResult);
+                        .to("jira://addWorkLog?jiraUrl=" + JIRA_CREDENTIALS)
+                        .to(mockResult);
             }
         };
     }
@@ -127,12 +127,12 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
         String comment = "A new test comment " + new Date();
 
         when(issueRestClient.addWorklog(any(URI.class), any(WorklogInput.class)))
-            .then((Answer<Void>) inv -> {
-                Collection<Worklog> workLogs = new ArrayList<>();
-                workLogs.add(newWorkLog(backendIssue.getId(), minutesSpent, comment));
-                backendIssue = createIssueWithWorkLogs(backendIssue.getId(), workLogs);
-                return null;
-            });
+                .then((Answer<Void>) inv -> {
+                    Collection<Worklog> workLogs = new ArrayList<>();
+                    workLogs.add(newWorkLog(backendIssue.getId(), minutesSpent, comment));
+                    backendIssue = createIssueWithWorkLogs(backendIssue.getId(), workLogs);
+                    return null;
+                });
 
         template.sendBodyAndHeaders(comment, headers);
 

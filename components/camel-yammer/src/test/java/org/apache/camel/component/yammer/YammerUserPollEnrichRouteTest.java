@@ -32,15 +32,15 @@ public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        
-        template.sendBody("direct:start", "overwrite me");        
-        
+
+        template.sendBody("direct:start", "overwrite me");
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         User user = exchange.getIn().getBody(User.class);
 
-        assertEquals("Joe Camel", user.getFullName());        
+        assertEquals("Joe Camel", user.getFullName());
         assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());
     }
 
@@ -53,7 +53,9 @@ public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").pollEnrich("yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("direct:start").pollEnrich(
+                        "yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+                        .to("mock:result");
             }
         };
     }

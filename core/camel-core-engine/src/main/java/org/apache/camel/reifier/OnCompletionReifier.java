@@ -30,7 +30,7 @@ import org.apache.camel.processor.OnCompletionProcessor;
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
 
     public OnCompletionReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (OnCompletionDefinition)definition);
+        super(route, (OnCompletionDefinition) definition);
     }
 
     @Override
@@ -41,7 +41,8 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         boolean original = parseBoolean(definition.getUseOriginalMessage(), false);
 
         if (isOnCompleteOnly && isOnFailureOnly) {
-            throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
+            throw new IllegalArgumentException(
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
         if (original) {
             // ensure allow original is turned on
@@ -65,10 +66,12 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         ExecutorService threadPool = getConfiguredExecutorService("OnCompletion", definition, isParallelProcessing);
 
         // should be after consumer by default
-        boolean afterConsumer = definition.getMode() == null || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
+        boolean afterConsumer = definition.getMode() == null
+                || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
-        OnCompletionProcessor answer = new OnCompletionProcessor(camelContext, internal, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
-                                                                 original, afterConsumer);
+        OnCompletionProcessor answer = new OnCompletionProcessor(
+                camelContext, internal, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
+                original, afterConsumer);
         return answer;
     }
 

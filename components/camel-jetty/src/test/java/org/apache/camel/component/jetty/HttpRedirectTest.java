@@ -79,8 +79,9 @@ public class HttpRedirectTest extends BaseJettyTest {
                     }
                 });
 
-                from("direct:start").onException(HttpOperationFailedException.class).to("mock:error").end().to("http://localhost:{{port}}/remove?throwExceptionOnFailure=true")
-                    .to("mock:result");
+                from("direct:start").onException(HttpOperationFailedException.class).to("mock:error").end()
+                        .to("http://localhost:{{port}}/remove?throwExceptionOnFailure=true")
+                        .to("mock:result");
 
             }
         };

@@ -29,9 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataFormatTest extends CamelTestSupport {
-    
+
     private MockEndpoint resultEndpoint;
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -45,27 +45,27 @@ public class DataFormatTest extends CamelTestSupport {
         bean.setName("Beer");
         bean.setAmount(23);
         bean.setPrice(2.5);
-       
+
         resultEndpoint.expectedBodiesReceived(bean);
 
         template.sendBody("direct:start", bean);
 
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testMarshalPrettyPrint() throws Exception {
         PersonType person = new PersonType();
         person.setFirstName("Willem");
         person.setLastName("Jiang");
         resultEndpoint.expectedMessageCount(1);
-        
+
         template.sendBody("direct:prettyPrint", person);
-        
+
         resultEndpoint.assertIsSatisfied();
-        
+
         Exchange exchange = resultEndpoint.getExchanges().get(0);
-        
+
         String result = exchange.getIn().getBody(String.class);
         assertNotNull("The result should not be null", result);
         int indexPerson = result.indexOf("<Person>");
@@ -84,18 +84,12 @@ public class DataFormatTest extends CamelTestSupport {
                 JaxbDataFormat example = new JaxbDataFormat("org.apache.camel.example");
                 JaxbDataFormat person = new JaxbDataFormat("org.apache.camel.foo.bar");
                 person.setPrettyPrint(true);
-                
-                from("direct:start").
-                        marshal(example).
-                        to("direct:marshalled");
 
-                from("direct:marshalled").
-                        unmarshal().jaxb("org.apache.camel.example").
-                        to("mock:result");
-                
-                from("direct:prettyPrint").
-                        marshal(person).
-                        to("mock:result");
+                from("direct:start").marshal(example).to("direct:marshalled");
+
+                from("direct:marshalled").unmarshal().jaxb("org.apache.camel.example").to("mock:result");
+
+                from("direct:prettyPrint").marshal(person).to("mock:result");
             }
         };
     }

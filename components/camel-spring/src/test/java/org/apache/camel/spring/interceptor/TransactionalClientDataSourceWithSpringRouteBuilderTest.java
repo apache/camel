@@ -21,18 +21,18 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class TransactionalClientDataSourceWithSpringRouteBuilderTest extends TransactionalClientDataSourceTest {
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
-        super.setUp();        
+        super.setUp();
     }
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/transactionalClientDataSourceWithSpringRouteBuilder.xml");
+                "/org/apache/camel/spring/interceptor/transactionalClientDataSourceWithSpringRouteBuilder.xml");
     }
-   
+
 }

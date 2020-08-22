@@ -53,7 +53,8 @@ public class DeleteItemCommandTest {
         exchange.getIn().setHeader(Ddb2Constants.KEY, key);
 
         Map<String, ExpectedAttributeValue> updateCondition = new HashMap<>();
-        updateCondition.put("name", ExpectedAttributeValue.builder().attributeValueList(AttributeValue.builder().s("expected value").build()).build());
+        updateCondition.put("name", ExpectedAttributeValue.builder()
+                .attributeValueList(AttributeValue.builder().s("expected value").build()).build());
         exchange.getIn().setHeader(Ddb2Constants.UPDATE_CONDITION, updateCondition);
         exchange.getIn().setHeader(Ddb2Constants.RETURN_VALUES, "ALL_OLD");
 
@@ -63,6 +64,7 @@ public class DeleteItemCommandTest {
         assertEquals(key, ddbClient.deleteItemRequest.key());
         assertEquals(updateCondition, ddbClient.deleteItemRequest.expected());
         assertEquals(ReturnValue.ALL_OLD, ddbClient.deleteItemRequest.returnValues());
-        assertEquals(AttributeValue.builder().s("attrValue").build(), exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
+        assertEquals(AttributeValue.builder().s("attrValue").build(),
+                exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTES, Map.class).get("attrName"));
     }
 }

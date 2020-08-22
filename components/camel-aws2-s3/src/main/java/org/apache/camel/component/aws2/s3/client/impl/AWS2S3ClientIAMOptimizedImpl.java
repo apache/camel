@@ -34,9 +34,8 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
 /**
- * Manage an AWS s3 client for all users to use (enabling temporary creds). This
- * implementation is for remote instances to manage the credentials on their own
- * (eliminating credential rotations)
+ * Manage an AWS s3 client for all users to use (enabling temporary creds). This implementation is for remote instances
+ * to manage the credentials on their own (eliminating credential rotations)
  */
 public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3ClientIAMOptimizedImpl.class);
@@ -64,7 +63,8 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -92,8 +92,7 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

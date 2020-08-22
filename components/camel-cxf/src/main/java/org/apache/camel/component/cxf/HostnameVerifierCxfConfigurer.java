@@ -37,6 +37,7 @@ public final class HostnameVerifierCxfConfigurer extends AbstractHostnameVerifie
             return new HostnameVerifierCxfConfigurer(hostnameVerifier);
         }
     }
+
     @Override
     public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
     }

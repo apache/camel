@@ -39,7 +39,7 @@ public class CamelSourceAdapterTest extends CamelSpringTestSupport {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
                 assertEquals("Willem", message.getPayload(), "We should get the message from channelA");
-            }            
+            }
         });
 
         template.sendBody("direct:OneWay", "Willem");

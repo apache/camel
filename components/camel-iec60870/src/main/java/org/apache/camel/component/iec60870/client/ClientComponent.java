@@ -42,12 +42,13 @@ public class ClientComponent extends AbstractIecComponent<ClientConnectionMultip
     @Override
     protected void applyDataModuleOptions(final ClientOptions options, final Map<String, Object> parameters) {
         if (parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS) instanceof DataModuleOptions) {
-            options.setDataModuleOptions((DataModuleOptions)parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
+            options.setDataModuleOptions((DataModuleOptions) parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
         }
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final ClientConnectionMultiplexor connection, final ObjectAddress address) {
+    protected Endpoint createEndpoint(
+            final String uri, final ClientConnectionMultiplexor connection, final ObjectAddress address) {
         return new ClientEndpoint(uri, this, connection, address);
     }
 

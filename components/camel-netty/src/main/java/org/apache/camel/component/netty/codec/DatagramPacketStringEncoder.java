@@ -31,8 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Sharable
-public class DatagramPacketStringEncoder extends
-    MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+public class DatagramPacketStringEncoder
+        extends
+        MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketStringEncoder.class);
 
@@ -56,15 +57,17 @@ public class DatagramPacketStringEncoder extends
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
-                          List<Object> out) throws Exception {
+    protected void encode(
+            ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg,
+            List<Object> out)
+            throws Exception {
         if (msg.content() instanceof CharSequence) {
-            CharSequence payload = (CharSequence)msg.content();
+            CharSequence payload = (CharSequence) msg.content();
             if (payload.length() == 0) {
                 return;
             }
-            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
+            AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = new DefaultAddressedEnvelope<>(
+                    ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
         } else {
             LOG.debug("Ignoring message content as it is not a java.lang.CharSequence instance.");

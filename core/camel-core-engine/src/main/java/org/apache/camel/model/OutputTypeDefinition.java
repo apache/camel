@@ -24,15 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Set the expected data type of the output message. If the actual message type
- * is different at runtime, camel look for a required {@link Transformer} and
- * apply if exists. If validate attribute is true then camel applies
- * {@link Validator} as well. Type name consists of two parts, 'scheme' and
- * 'name' connected with ':'. For Java type 'name' is a fully qualified class
- * name. For example {@code java:java.lang.String}, {@code json:ABCOrder}. It's
- * also possible to specify only scheme part, so that it works like a wildcard.
- * If only 'xml' is specified, all the XML message matches. It's handy to add
- * only one transformer/validator for all the XML-Java transformation.
+ * Set the expected data type of the output message. If the actual message type is different at runtime, camel look for
+ * a required {@link Transformer} and apply if exists. If validate attribute is true then camel applies
+ * {@link Validator} as well. Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type
+ * 'name' is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}. It's also
+ * possible to specify only scheme part, so that it works like a wildcard. If only 'xml' is specified, all the XML
+ * message matches. It's handy to add only one transformer/validator for all the XML-Java transformation.
  * 
  * @see {@link InputTypeDefinition} {@link Transformer} {@link Validator}
  */
@@ -77,8 +74,8 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
     /**
      * Set output type URN.
      * 
-     * @param urn output type URN
-     * @return this OutputTypeDefinition instance
+     * @param  urn output type URN
+     * @return     this OutputTypeDefinition instance
      */
     public void setUrn(String urn) {
         this.urn = urn;

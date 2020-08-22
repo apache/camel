@@ -85,7 +85,7 @@ public class CaffeineIdempotentRepository extends ServiceSupport implements Idem
             cache = builder.build();
         }
     }
-    
+
     protected Cache getCache() {
         return this.cache;
     }

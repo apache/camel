@@ -50,8 +50,7 @@ public class Namespaces {
     }
 
     /**
-     * Returns true if the given namespaceURI is empty or if it matches the
-     * given expected namespace
+     * Returns true if the given namespaceURI is empty or if it matches the given expected namespace
      */
     public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
         return ObjectHelper.isEmpty(namespaceURI) || namespaceURI.equals(expectedNamespace);

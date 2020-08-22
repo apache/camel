@@ -27,24 +27,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <code>ZooKeeperOperation</code> is the base class for wrapping various
- * ZooKeeper API instructions and callbacks into callable and composable operation
- * objects.
+ * <code>ZooKeeperOperation</code> is the base class for wrapping various ZooKeeper API instructions and callbacks into
+ * callable and composable operation objects.
  */
 public abstract class ZooKeeperOperation<ResultType> {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
 
-    protected static final Class<?>[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
+    protected static final Class<?>[] CONSTRUCTOR_ARGS = { ZooKeeper.class, String.class };
 
     protected String node;
 
     protected ZooKeeper connection;
 
     protected Set<Thread> waitingThreads = new CopyOnWriteArraySet<>();
-    
+
     protected OperationResult<ResultType> result;
-    
+
     private boolean producesExchange;
 
     private boolean cancelled;
@@ -60,8 +59,7 @@ public abstract class ZooKeeperOperation<ResultType> {
     }
 
     /**
-     * Gets the result of this zookeeper operation, i.e. some data and the
-     * associated node stats
+     * Gets the result of this zookeeper operation, i.e. some data and the associated node stats
      */
     public abstract OperationResult<ResultType> getResult();
 
@@ -71,7 +69,8 @@ public abstract class ZooKeeperOperation<ResultType> {
         return result;
     }
 
-    public OperationResult<ResultType> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public OperationResult<ResultType> get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
         // TODO perhaps set a timer here
         return get();
     }
@@ -104,6 +103,6 @@ public abstract class ZooKeeperOperation<ResultType> {
 
     // TODO slightly different to a clone as it uses the constructor
     public ZooKeeperOperation<?> createCopy() throws Exception {
-        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node});
+        return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] { connection, node });
     }
 }

@@ -53,7 +53,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete() throws InterruptedException {
+    public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete()
+            throws InterruptedException {
 
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
@@ -61,7 +62,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
         // the used file should contain more than one character in order to be
         // streamed into the file system
-        template.sendBody("direct:a", this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
+        template.sendBody("direct:a",
+                this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
 
         assertMockEndpointsSatisfied();
     }

@@ -18,7 +18,6 @@ package org.apache.camel.itest.greeter;
 
 import java.io.File;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.itest.utils.extensions.GreeterServiceExtension;
@@ -34,8 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     @RegisterExtension
-    public static GreeterServiceExtension greeterServiceExtension =
-            GreeterServiceExtension.createExtension("CamelFileGreeterOneWayTest.port");
+    public static GreeterServiceExtension greeterServiceExtension
+            = GreeterServiceExtension.createExtension("CamelFileGreeterOneWayTest.port");
 
     @Test
     void testFileWithOnewayOperation() throws Exception {
@@ -47,14 +46,14 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
         // Sleep a while and wait for the message whole processing
         Thread.sleep(4000);
         template.stop();
-        
+
         // make sure the greeter is called
         assertEquals(1, greeterServiceExtension.getGreeter().getOneWayCounter(),
                 "The oneway operation of greeter should be called");
 
         File file = new File("target/messages/input/hello.txt");
         assertFalse(file.exists(), "File " + file + " should be deleted");
-    }    
+    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

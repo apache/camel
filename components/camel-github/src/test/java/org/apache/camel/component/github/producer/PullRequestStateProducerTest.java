@@ -49,7 +49,6 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
                         .to("github://pullRequestState?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
 
@@ -76,11 +75,10 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             fail("Commit status sent to service is different from response");
         }
 
-        assertEquals(status.getState(), "success");
+        assertEquals("success", status.getState());
 
         assertEquals(status.getDescription(), text);
     }
-
 
     public class MockPullRequestStateProducerProcessor implements Processor {
         @Override
@@ -90,6 +88,5 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
-
 
 }

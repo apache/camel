@@ -28,8 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JohnzonAttributeOrderTest extends CamelTestSupport {
 
-    final String expectedJson = "{\"bool\":true,\"bg\":123.123,\"doubleNumber\":123.123,\"intNumber\":123,\"floatNumber\":123.0,\"longNumber\":123}";
-    
+    final String expectedJson
+            = "{\"bool\":true,\"bg\":123.123,\"doubleNumber\":123.123,\"intNumber\":123,\"floatNumber\":123.0,\"longNumber\":123}";
+
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
         NumberPojo nc = new NumberPojo();

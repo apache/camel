@@ -47,7 +47,7 @@ public class SipPublishListener implements SipListener {
         // and only receives ACKs from the Presence Agent to satisfy the 
         // Sip handshakeand. Hence any responses are not further processed.
     }
-    
+
     @Override
     public void processTimeout(javax.sip.TimeoutEvent timeoutEvent) {
         if (LOG.isWarnEnabled()) {
@@ -66,7 +66,7 @@ public class SipPublishListener implements SipListener {
     public void processIOException(IOExceptionEvent ioExceptionEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("IOExceptionEvent received at Sip Publish Listener");
-        }       
+        }
     }
 
     @Override

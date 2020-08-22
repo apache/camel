@@ -44,7 +44,8 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"), e.getMessage());
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"),
+                    e.getMessage());
         }
     }
 

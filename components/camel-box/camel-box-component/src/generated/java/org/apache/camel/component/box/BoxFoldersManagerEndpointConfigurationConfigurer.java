@@ -191,5 +191,14 @@ public class BoxFoldersManagerEndpointConfigurationConfigurer extends org.apache
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpparams":
+        case "HttpParams": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

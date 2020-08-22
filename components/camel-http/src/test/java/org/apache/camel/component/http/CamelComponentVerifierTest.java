@@ -56,7 +56,9 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
                 .registerHandler("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/auth", new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), AUTH_USERNAME, AUTH_PASSWORD))
+                .registerHandler("/auth",
+                        new AuthenticationValidationHandler(
+                                GET.name(), null, null, getExpectedContent(), AUTH_USERNAME, AUTH_PASSWORD))
                 .registerHandler("/redirect", redirectTo(HttpStatus.SC_MOVED_PERMANENTLY, "/redirected"))
                 .registerHandler("/redirected", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .create();
@@ -85,12 +87,10 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
     private HttpProcessor getHttpProcessor() {
         return new ImmutableHttpProcessor(
                 Collections.singletonList(
-                        new RequestBasicAuth()
-                ),
+                        new RequestBasicAuth()),
                 Arrays.asList(
                         new ResponseContent(),
-                        new ResponseBasicUnauthorized())
-        );
+                        new ResponseBasicUnauthorized()));
     }
 
     // *************************************************
@@ -99,12 +99,12 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
 
     protected String getLocalServerUri(String contextPath) {
         return "http://"
-                + localServer.getInetAddress().getHostName()
-                + ":"
-                + localServer.getLocalPort()
-                + (contextPath != null
-                        ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
-                        : "");
+               + localServer.getInetAddress().getHostName()
+               + ":"
+               + localServer.getLocalPort()
+               + (contextPath != null
+                       ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
+                       : "");
     }
 
     private HttpRequestHandler redirectTo(int code, String path) {
@@ -229,7 +229,8 @@ public class CamelComponentVerifierTest extends BaseHttpTest {
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
         assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.GENERIC, error.getCode());
-        assertEquals(getLocalServerUri("/redirected"), error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT));
+        assertEquals(getLocalServerUri("/redirected"),
+                error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT));
         assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 }

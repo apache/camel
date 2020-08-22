@@ -29,10 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The default implementation of {@link ComponentResolver} which tries to find
- * components by using the URI scheme prefix and searching for a file of the URI
- * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
- * directory on the classpath.
+ * The default implementation of {@link ComponentResolver} which tries to find components by using the URI scheme prefix
+ * and searching for a file of the URI scheme name in the <b>META-INF/services/org/apache/camel/component/</b> directory
+ * on the classpath.
  */
 public class DefaultComponentResolver implements ComponentResolver {
 
@@ -65,7 +64,8 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(), name);
+            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
+                    name);
         }
 
         // create the component

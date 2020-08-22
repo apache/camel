@@ -45,26 +45,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
- * algorithm implemented by {@link ResequencerEngine} is based on the detection
- * of gaps in a message stream rather than on a fixed batch size. Gap detection
- * in combination with timeouts removes the constraint of having to know the
- * number of messages of a sequence (i.e. the batch size) in advance.
+ * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The algorithm implemented by
+ * {@link ResequencerEngine} is based on the detection of gaps in a message stream rather than on a fixed batch size.
+ * Gap detection in combination with timeouts removes the constraint of having to know the number of messages of a
+ * sequence (i.e. the batch size) in advance.
  * <p>
- * Messages must contain a unique sequence number for which a predecessor and a
- * successor is known. For example a message with the sequence number 3 has a
- * predecessor message with the sequence number 2 and a successor message with
- * the sequence number 4. The message sequence 2,3,5 has a gap because the
- * successor of 3 is missing. The resequencer therefore has to retain message 5
- * until message 4 arrives (or a timeout occurs).
+ * Messages must contain a unique sequence number for which a predecessor and a successor is known. For example a
+ * message with the sequence number 3 has a predecessor message with the sequence number 2 and a successor message with
+ * the sequence number 4. The message sequence 2,3,5 has a gap because the successor of 3 is missing. The resequencer
+ * therefore has to retain message 5 until message 4 arrives (or a timeout occurs).
  * <p>
- * Instances of this class poll for {@link Exchange}s from a given
- * <code>endpoint</code>. Resequencing work and the delivery of messages to
- * the next <code>processor</code> is done within the single polling thread.
+ * Instances of this class poll for {@link Exchange}s from a given <code>endpoint</code>. Resequencing work and the
+ * delivery of messages to the next <code>processor</code> is done within the single polling thread.
  *
  * @see ResequencerEngine
  */
-public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
+public class StreamResequencer extends AsyncProcessorSupport
+        implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
@@ -83,10 +80,11 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     /**
      * Creates a new {@link StreamResequencer} instance.
      * 
-     * @param processor next processor that processes re-ordered exchanges.
+     * @param processor  next processor that processes re-ordered exchanges.
      * @param comparator a sequence element comparator for exchanges.
      */
-    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator, Expression expression) {
+    public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator,
+                             Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
         this.engine = new ResequencerEngine<>(comparator);
@@ -115,11 +113,10 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     }
 
     /**
-     * Returns this resequencer's capacity. The capacity is the maximum number
-     * of exchanges that can be managed by this resequencer at a given point in
-     * time. If the capacity if reached, polling from the endpoint will be
-     * skipped for <code>timeout</code> milliseconds giving exchanges the
-     * possibility to time out and to be delivered after the waiting period.
+     * Returns this resequencer's capacity. The capacity is the maximum number of exchanges that can be managed by this
+     * resequencer at a given point in time. If the capacity if reached, polling from the endpoint will be skipped for
+     * <code>timeout</code> milliseconds giving exchanges the possibility to time out and to be delivered after the
+     * waiting period.
      * 
      * @return this resequencer's capacity.
      */
@@ -128,12 +125,12 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     }
 
     /**
-     * Returns this resequencer's timeout. This sets the resequencer engine's
-     * timeout via {@link ResequencerEngine#setTimeout(long)}. This value is
-     * also used to define the polling timeout from the endpoint.
+     * Returns this resequencer's timeout. This sets the resequencer engine's timeout via
+     * {@link ResequencerEngine#setTimeout(long)}. This value is also used to define the polling timeout from the
+     * endpoint.
      * 
      * @return this resequencer's timeout. (Processor)
-     * @see ResequencerEngine#setTimeout(long)
+     * @see    ResequencerEngine#setTimeout(long)
      */
     public long getTimeout() {
         return engine.getTimeout();
@@ -166,8 +163,8 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     /**
      * Sets whether to ignore invalid exchanges which cannot be used by this stream resequencer.
      * <p/>
-     * Default is <tt>false</tt>, by which an {@link CamelExchangeException} is thrown if the {@link Exchange}
-     * is invalid.
+     * Default is <tt>false</tt>, by which an {@link CamelExchangeException} is thrown if the {@link Exchange} is
+     * invalid.
      */
     public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {
         this.ignoreInvalidExchanges = ignoreInvalidExchanges;
@@ -249,7 +246,8 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
             if (isIgnoreInvalidExchanges()) {
                 LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
             } else {
-                exchange.setException(new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
+                exchange.setException(
+                        new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
             }
         }
 
@@ -276,11 +274,11 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
 
         private Lock deliveryRequestLock = new ReentrantLock();
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
-        
+
         Delivery() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Resequencer Delivery"));
         }
-        
+
         @Override
         public void run() {
             while (isRunAllowed()) {
@@ -306,7 +304,7 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
         public void cancel() {
             interrupt();
         }
-        
+
         public void request() {
             deliveryRequestLock.lock();
             try {
@@ -315,7 +313,7 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
                 deliveryRequestLock.unlock();
             }
         }
-        
+
     }
-    
+
 }

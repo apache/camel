@@ -33,7 +33,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 /**
  * Send notifications to Apple iOS devices.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name", category = {Category.EVENTBUS, Category.MOBILE})
+@UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name",
+             category = { Category.EVENTBUS, Category.MOBILE })
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
     private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<>();
@@ -60,14 +61,15 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
+     * Configure this property in case you want to statically declare tokens related to devices you want to notify.
+     * Tokens are separated by comma.
      */
     public void setTokens(String tokens) {
         this.tokens = tokens;
     }
 
     private ApnsComponent getApnsComponent() {
-        return (ApnsComponent)getComponent();
+        return (ApnsComponent) getComponent();
     }
 
     public ApnsService getApnsService() {

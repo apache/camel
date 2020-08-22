@@ -26,7 +26,8 @@ import org.apache.camel.component.wordpress.api.service.spi.TaxonomySPI;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 
-public class WordpressServiceTaxonomyAdapter extends AbstractWordpressServiceAdapter<TaxonomySPI> implements WordpressServiceTaxonomy {
+public class WordpressServiceTaxonomyAdapter extends AbstractWordpressServiceAdapter<TaxonomySPI>
+        implements WordpressServiceTaxonomy {
 
     public WordpressServiceTaxonomyAdapter(String wordpressUrl, String apiVersion) {
         super(wordpressUrl, apiVersion);

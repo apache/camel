@@ -17,5 +17,6 @@
 package org.apache.camel.component.jsonata;
 
 public enum JsonataInputOutputType {
-    Jackson, JsonString
+    Jackson,
+    JsonString
 }

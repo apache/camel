@@ -33,18 +33,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CamelSpringTest
 @ContextConfiguration
 public class CustomMappingTest {
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
-    
+
     @Produce("direct:start")
     private ProducerTemplate startEndpoint;
-    
+
     @AfterEach
     public void tearDown() {
         resultEndpoint.reset();
     }
-    
+
     @Test
     void testCustomMapping() throws Exception {
         resultEndpoint.expectedMessageCount(1);
@@ -56,7 +56,7 @@ public class CustomMappingTest {
         // check results
         resultEndpoint.assertIsSatisfied();
         XYZOrder result = resultEndpoint.getExchanges().get(0).getIn().getBody(XYZOrder.class);
-        assertEquals(result.getPriority(), "custom2:GOLD");
-        assertEquals(result.getCustId(), "mapCustomer:ACME");
+        assertEquals("custom2:GOLD", result.getPriority());
+        assertEquals("mapCustomer:ACME", result.getCustId());
     }
 }

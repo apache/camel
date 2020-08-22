@@ -73,9 +73,9 @@ public class ZipkinRecipientListRouteTest extends CamelTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .recipientList(constant("seda:b,seda:c"))
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .recipientList(constant("seda:b,seda:c"))
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
                         .log("routing at ${routeId}")

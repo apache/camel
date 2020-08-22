@@ -40,11 +40,14 @@ import org.apache.camel.support.DefaultEndpoint;
  * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, category = {Category.CORE, Category.SCHEDULING})
+@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true,
+             category = { Category.CORE, Category.SCHEDULING })
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String timerName;
-    @UriParam(defaultValue = "1s", description = "If greater than 0, generate periodic events every period.", javaType = "java.time.Duration")
+    @UriParam(defaultValue = "1s", description = "If greater than 0, generate periodic events every period.",
+              javaType = "java.time.Duration")
     private long period = 1000;
     @UriParam(defaultValue = "1s", description = "Delay before first event is triggered.", javaType = "java.time.Duration")
     private long delay = 1000;
@@ -147,7 +150,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option.
+     * The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with
+     * the time option.
      * <p/>
      * The default value is 1000.
      */
@@ -190,10 +194,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Specifies a maximum limit of number of fires.
-     * So if you set it to 1, the timer will only fire once.
-     * If you set it to 5, it will only fire five times.
-     * A value of zero or negative means fire forever.
+     * Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it
+     * to 5, it will only fire five times. A value of zero or negative means fire forever.
      */
     @ManagedAttribute(description = "Repeat Count")
     public void setRepeatCount(long repeatCount) {
@@ -205,7 +207,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
+     * A java.util.Date the first event should be generated. If using the URI, the pattern expected is: yyyy-MM-dd
+     * HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
      */
     public void setTime(Date time) {
         this.time = time;
@@ -247,8 +250,8 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
     }
 
     /**
-     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc.
-     * This information is default included.
+     * Whether to include metadata in the exchange such as fired time, timer name, timer count etc. This information is
+     * default included.
      */
     @ManagedAttribute(description = "Include metadata")
     public void setIncludeMetadata(boolean includeMetadata) {

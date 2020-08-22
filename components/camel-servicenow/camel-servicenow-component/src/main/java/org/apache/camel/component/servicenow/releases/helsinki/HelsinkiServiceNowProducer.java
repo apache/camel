@@ -37,6 +37,7 @@ public class HelsinkiServiceNowProducer extends AbstractServiceNowProducer {
         bind(ServiceNowConstants.RESOURCE_SERVICE_CATALOG, new HelsinkiServiceNowServiceCatalogProcessor(endpoint));
         bind(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_ITEMS, new HelsinkiServiceNowServiceCatalogItemsProcessor(endpoint));
         bind(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_CARTS, new HelsinkiServiceNowServiceCatalogCartsProcessor(endpoint));
-        bind(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_CATEGORIES, new HelsinkiServiceNowServiceCatalogCategoriesProcessor(endpoint));
+        bind(ServiceNowConstants.RESOURCE_SERVICE_CATALOG_CATEGORIES,
+                new HelsinkiServiceNowServiceCatalogCategoriesProcessor(endpoint));
     }
 }

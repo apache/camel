@@ -21,6 +21,12 @@ package org.apache.camel.component.ignite.cache;
  */
 public enum IgniteCacheOperation {
 
-    GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR
+    GET,
+    PUT,
+    REMOVE,
+    SIZE,
+    REBALANCE,
+    QUERY,
+    CLEAR
 
 }

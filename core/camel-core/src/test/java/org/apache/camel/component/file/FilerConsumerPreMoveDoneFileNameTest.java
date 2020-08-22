@@ -70,7 +70,8 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?preMove=work/work-${file:name}&doneFileName=ready&initialDelay=0&delay=10")
+                        .to("mock:result");
             }
         };
     }

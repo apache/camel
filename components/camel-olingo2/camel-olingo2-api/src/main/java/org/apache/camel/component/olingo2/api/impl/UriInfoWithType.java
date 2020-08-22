@@ -101,7 +101,8 @@ public class UriInfoWithType implements UriInfo {
                                     many = lastProperty.getMultiplicity() == EdmMultiplicity.MANY;
                                 } else {
                                     final NavigationSegment lastSegment = segments.get(segments.size() - 1);
-                                    many = lastSegment.getKeyPredicates().isEmpty() && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
+                                    many = lastSegment.getKeyPredicates().isEmpty()
+                                            && lastSegment.getNavigationProperty().getMultiplicity() == EdmMultiplicity.MANY;
                                 }
                                 if (isCount) {
                                     if (many) {

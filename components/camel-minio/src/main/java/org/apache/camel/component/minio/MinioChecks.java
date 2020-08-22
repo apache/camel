@@ -16,70 +16,27 @@
  */
 package org.apache.camel.component.minio;
 
-import java.time.ZonedDateTime;
-
-import io.minio.ServerSideEncryption;
-import io.minio.ServerSideEncryptionCustomerKey;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public final class MinioChecks {
     private MinioChecks() {
         // Prevent instantiation of this factory class.
-        throw new RuntimeException("Do not instantiate a Factory class! Refer to the class to learn how to properly use this factory implementation.");
+        throw new RuntimeException(
+                "Do not instantiate a Factory class! Refer to the class to learn how to properly use this factory implementation.");
     }
 
-    static void checkServerSideEncryptionConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryption> fn) {
-        if (isNotEmpty(configuration.getServerSideEncryption())) {
-            fn.accept(configuration.getServerSideEncryption());
+    static <C> void checkIfConfigIsNotEmptyAndSetAndConfig(final Supplier<C> getterFn, final Consumer<C> setterFn) {
+        if (isNotEmpty(getterFn.get())) {
+            setterFn.accept(getterFn.get());
         }
     }
 
-    static void checkServerSideEncryptionCustomerKeyConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ServerSideEncryptionCustomerKey> fn) {
-        if (isNotEmpty(configuration.getServerSideEncryptionCustomerKey())) {
-            fn.accept(configuration.getServerSideEncryptionCustomerKey());
-        }
-    }
-
-    static void checkOffsetConfig(final MinioConfiguration configuration, final java.util.function.Consumer<Long> fn) {
-        if (configuration.getOffset() > 0) {
-            fn.accept(configuration.getOffset());
-        }
-    }
-
-    static void checkLengthConfig(final MinioConfiguration configuration, final java.util.function.Consumer<Long> fn) {
-        if (configuration.getLength() > 0) {
-            fn.accept(configuration.getLength());
-        }
-    }
-
-    static void checkVersionIdConfig(final MinioConfiguration configuration, final java.util.function.Consumer<String> fn) {
-        if (isNotEmpty(configuration.getVersionId())) {
-            fn.accept(configuration.getVersionId());
-        }
-    }
-
-    static void checkMatchETagConfig(final MinioConfiguration configuration, final java.util.function.Consumer<String> fn) {
-        if (isNotEmpty(configuration.getMatchETag())) {
-            fn.accept(configuration.getMatchETag());
-        }
-    }
-
-    static void checkNotMatchETagConfig(final MinioConfiguration configuration, final java.util.function.Consumer<String> fn) {
-        if (isNotEmpty(configuration.getNotMatchETag())) {
-            fn.accept(configuration.getNotMatchETag());
-        }
-    }
-
-    static void checkModifiedSinceConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
-        if (isNotEmpty(configuration.getModifiedSince())) {
-            fn.accept(configuration.getModifiedSince());
-        }
-    }
-
-    static void checkUnModifiedSinceConfig(final MinioConfiguration configuration, final java.util.function.Consumer<ZonedDateTime> fn) {
-        if (isNotEmpty(configuration.getUnModifiedSince())) {
-            fn.accept(configuration.getUnModifiedSince());
+    static <C extends Number> void checkLengthAndSetConfig(final Supplier<C> getterFn, final Consumer<C> setterFn) {
+        if (getterFn.get().longValue() > 0) {
+            setterFn.accept(getterFn.get());
         }
     }
 }

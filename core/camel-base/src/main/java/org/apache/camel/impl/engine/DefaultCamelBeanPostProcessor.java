@@ -44,25 +44,24 @@ import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
- * A bean post processor which implements the <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- * features in Camel. Features such as the <a href="http://camel.apache.org/bean-injection.html">Bean Injection</a> of objects like
- * {@link org.apache.camel.Endpoint} and
- * {@link org.apache.camel.ProducerTemplate} together with support for
- * <a href="http://camel.apache.org/pojo-consuming.html">POJO Consuming</a> via the
- * {@link org.apache.camel.Consume} annotation along with
- * <a href="http://camel.apache.org/pojo-producing.html">POJO Producing</a> via the
- * {@link org.apache.camel.Produce} annotation along with other annotations such as
- * {@link org.apache.camel.DynamicRouter} for creating <a href="http://camel.apache.org/dynamicrouter-annotation.html">a Dynamic router via annotations</a>.
- * {@link org.apache.camel.RecipientList} for creating <a href="http://camel.apache.org/recipientlist-annotation.html">a Recipient List router via annotations</a>.
- * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a Routing Slip router via annotations</a>.
+ * A bean post processor which implements the <a href="http://camel.apache.org/bean-integration.html">Bean
+ * Integration</a> features in Camel. Features such as the <a href="http://camel.apache.org/bean-injection.html">Bean
+ * Injection</a> of objects like {@link org.apache.camel.Endpoint} and {@link org.apache.camel.ProducerTemplate}
+ * together with support for <a href="http://camel.apache.org/pojo-consuming.html">POJO Consuming</a> via the
+ * {@link org.apache.camel.Consume} annotation along with <a href="http://camel.apache.org/pojo-producing.html">POJO
+ * Producing</a> via the {@link org.apache.camel.Produce} annotation along with other annotations such as
+ * {@link org.apache.camel.DynamicRouter} for creating <a href="http://camel.apache.org/dynamicrouter-annotation.html">a
+ * Dynamic router via annotations</a>. {@link org.apache.camel.RecipientList} for creating
+ * <a href="http://camel.apache.org/recipientlist-annotation.html">a Recipient List router via annotations</a>.
+ * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a
+ * Routing Slip router via annotations</a>.
  * <p/>
- * Components such as <tt>camel-spring</tt>, and <tt>camel-blueprint</tt> can leverage this post processor to hook in Camel
- * bean post processing into their bean processing framework.
+ * Components such as <tt>camel-spring</tt>, and <tt>camel-blueprint</tt> can leverage this post processor to hook in
+ * Camel bean post processing into their bean processing framework.
  */
 public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
@@ -91,7 +90,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         injectSecondPass(bean, beanName, type -> isComplexUserType(type));
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
-            CamelContextAware contextAware = (CamelContextAware)bean;
+            CamelContextAware contextAware = (CamelContextAware) bean;
             DeferredContextBinding deferredBinding = bean.getClass().getAnnotation(DeferredContextBinding.class);
             CamelContext context = getOrLookupCamelContext();
 
@@ -149,8 +148,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     /**
-     * Whether support for the annotation {@link BindToRegistry} is supported.
-     * This is only intended for standalone runtimes such as camel-main, camel-quarkus, etc.
+     * Whether support for the annotation {@link BindToRegistry} is supported. This is only intended for standalone
+     * runtimes such as camel-main, camel-quarkus, etc.
      */
     protected boolean bindToRegistrySupported() {
         return true;
@@ -245,13 +244,15 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         });
     }
 
-    public void injectField(Field field, String endpointUri, String endpointProperty,
-                               Object bean, String beanName) {
+    public void injectField(
+            Field field, String endpointUri, String endpointProperty,
+            Object bean, String beanName) {
         injectField(field, endpointUri, endpointProperty, bean, beanName, true);
     }
 
-    public void injectField(Field field, String endpointUri, String endpointProperty,
-                               Object bean, String beanName, boolean binding) {
+    public void injectField(
+            Field field, String endpointUri, String endpointProperty,
+            Object bean, String beanName, boolean binding) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointProperty,
                         field.getName(), bean, beanName, binding));
@@ -267,7 +268,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 getPostProcessorHelper().getInjectionBeanConfigValue(field.getType(), name));
     }
 
-    public void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
+    public void injectFieldProperty(
+            Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue,
                         field.getName(), bean, beanName));
@@ -319,11 +321,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             // okay then compare so we favour methods that does not use parameter types that are returned from other methods
             boolean usedByOthers1 = false;
             for (Class clazz : types1) {
-                usedByOthers1 |= methods.stream().anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
+                usedByOthers1 |= methods.stream()
+                        .anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
             }
             boolean usedByOthers2 = false;
             for (Class clazz : types2) {
-                usedByOthers2 |= methods.stream().anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
+                usedByOthers2 |= methods.stream()
+                        .anyMatch(m -> m.getParameterCount() > 0 && clazz.isAssignableFrom(m.getReturnType()));
             }
             return Boolean.compare(usedByOthers1, usedByOthers2);
         });
@@ -396,14 +400,16 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
     }
 
-    public void setterPropertyInjection(Method method, String propertyValue, String propertyDefaultValue,
-                                        Object bean, String beanName) {
+    public void setterPropertyInjection(
+            Method method, String propertyValue, String propertyDefaultValue,
+            Object bean, String beanName) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
+            Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue,
+                    propertyDefaultValue, propertyName, bean, beanName);
             invokeMethod(method, bean, value);
         }
     }
@@ -438,8 +444,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
         if (beanPostProcess) {
             try {
-                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(bean, beanName);
-                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(bean, beanName);
+                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                        .postProcessBeforeInitialization(bean, beanName);
+                getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                        .postProcessAfterInitialization(bean, beanName);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
@@ -455,8 +463,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (value != null) {
             if (beanPostProcess) {
                 try {
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                            .postProcessBeforeInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                            .postProcessAfterInitialization(value, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
@@ -471,8 +481,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
         Class<?> returnType = method.getReturnType();
         if (returnType == null || returnType == Void.TYPE) {
-            throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
-                + " method: " + method.getName() + " with void return type is not allowed");
+            throw new IllegalArgumentException(
+                    "@BindToRegistry on class: " + method.getDeclaringClass()
+                                               + " method: " + method.getName() + " with void return type is not allowed");
         }
 
         Object value;
@@ -485,8 +496,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         if (value != null) {
             if (beanPostProcess) {
                 try {
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
-                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                            .postProcessBeforeInitialization(value, beanName);
+                    getOrLookupCamelContext().adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                            .postProcessAfterInitialization(value, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
@@ -518,7 +531,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
-                        Object result = getPostProcessorHelper().getInjectionPropertyValue(type, pi.value(), pi.defaultValue(), null, null, null);
+                        Object result = getPostProcessorHelper().getInjectionPropertyValue(type, pi.value(), pi.defaultValue(),
+                                null, null, null);
                         parameters[i] = result;
                     } else if (ann.annotationType() == BeanConfigInject.class) {
                         BeanConfigInject pi = (BeanConfigInject) ann;
@@ -536,8 +550,10 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                         parameters[i] = instances.iterator().next();
                     } else if (instances.size() > 1) {
                         // there are multiple instances of the same type, so barf
-                        throw new IllegalArgumentException("Multiple beans of the same type: " + type
-                                + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: " + method);
+                        throw new IllegalArgumentException(
+                                "Multiple beans of the same type: " + type
+                                                           + " exists in the Camel registry. Specify the bean name on @BeanInject to bind to a single bean, at the method: "
+                                                           + method);
                     }
                 }
             }

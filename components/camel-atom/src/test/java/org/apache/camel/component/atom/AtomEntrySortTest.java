@@ -57,7 +57,8 @@ public class AtomEntrySortTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
-                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=false&delay=50").to("mock:unsorted");
+                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=false&delay=50")
+                        .to("mock:unsorted");
             }
         };
     }

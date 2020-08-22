@@ -60,8 +60,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
     }
 
     /**
-     * Sets the new exchange pattern of the Exchange to be used from this point
-     * forward
+     * Sets the new exchange pattern of the Exchange to be used from this point forward
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;

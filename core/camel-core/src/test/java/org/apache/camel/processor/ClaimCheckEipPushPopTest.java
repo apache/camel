@@ -39,8 +39,9 @@ public class ClaimCheckEipPushPopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World").to("mock:b").claimCheck(ClaimCheckOperation.Pop)
-                    .to("mock:c");
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
+                        .to("mock:b").claimCheck(ClaimCheckOperation.Pop)
+                        .to("mock:c");
             }
         };
     }

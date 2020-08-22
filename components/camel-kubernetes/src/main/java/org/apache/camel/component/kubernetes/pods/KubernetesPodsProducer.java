@@ -45,7 +45,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -104,7 +104,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get pods by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Pod, PodList, Boolean, Watch, Watcher<Pod>> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
+        FilterWatchListMultiDeletable<Pod, PodList, Boolean, Watch, Watcher<Pod>> pods
+                = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());
         }
@@ -150,7 +151,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific pod require specify a pod spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata().withSpec(podSpec).build();
+        Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata()
+                .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

@@ -73,7 +73,8 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                         LOG.debug("Server got: " + s);
                         exchange.getOut().setBody("Hello " + s);
                         // just make the remote address is there
-                        assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS), "The remote address header should not be Null");
+                        assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),
+                                "The remote address header should not be Null");
                     }
                 });
             }

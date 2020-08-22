@@ -36,8 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StringSourceTest {
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(),
+            new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
     protected String expectedBody = "<hello>world!</hello>";
 
     @BeforeEach
@@ -60,7 +61,7 @@ public class StringSourceTest {
         Object object = in.readObject();
         boolean b = object instanceof StringSource;
         assertTrue(b, "is a StringSource");
-        StringSource actual = (StringSource)object;
+        StringSource actual = (StringSource) object;
 
         assertEquals(expected.getPublicId(), actual.getPublicId(), "source.text");
         assertEquals(expected.getSystemId(), actual.getSystemId(), "source.text");

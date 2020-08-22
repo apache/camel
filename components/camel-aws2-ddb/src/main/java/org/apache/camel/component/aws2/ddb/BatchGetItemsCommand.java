@@ -33,7 +33,8 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        BatchGetItemResponse result = ddbClient.batchGetItem(BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
+        BatchGetItemResponse result
+                = ddbClient.batchGetItem(BatchGetItemRequest.builder().requestItems(determineBatchItems()).build());
 
         HashMap<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.BATCH_RESPONSE, result.responses());

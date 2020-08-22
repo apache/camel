@@ -43,8 +43,7 @@ public class CamelItemProcessorTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setExchangePattern(ExchangePattern.InOut).
-                        setBody().simple("${body}${body}");
+                from("direct:start").setExchangePattern(ExchangePattern.InOut).setBody().simple("${body}${body}");
             }
         };
     }

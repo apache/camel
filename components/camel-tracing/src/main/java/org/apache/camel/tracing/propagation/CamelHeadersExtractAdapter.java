@@ -27,8 +27,8 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
 
     public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
-                this.map.put(e.getKey(), (String) e.getValue()));
+        map.entrySet().stream().filter(e -> e.getValue() instanceof String)
+                .forEach(e -> this.map.put(e.getKey(), (String) e.getValue()));
     }
 
     @Override
@@ -36,7 +36,8 @@ public final class CamelHeadersExtractAdapter implements ExtractAdapter {
         return map.entrySet().iterator();
     }
 
-    @Override public Object get(String key) {
+    @Override
+    public Object get(String key) {
         return this.map.get(key);
     }
 }

@@ -44,11 +44,11 @@ public final class ConverterUtils {
 
     public static byte[] getByteReturn(String returnCharacter) {
         if (returnCharacter.equals("WINDOWS")) {
-            return new byte[] {13, 10};
+            return new byte[] { 13, 10 };
         } else if (returnCharacter.equals("UNIX")) {
-            return new byte[] {10};
+            return new byte[] { 10 };
         } else if (returnCharacter.equals("MAC")) {
-            return new byte[] {13};
+            return new byte[] { 13 };
         } else {
             return returnCharacter.getBytes();
         }
@@ -80,7 +80,8 @@ public final class ConverterUtils {
                 .withGroupingSeparator(dataField.groupingSeparator());
     }
 
-    public static FormattingOptions convert(KeyValuePairField dataField, Class<?> clazz, BindyConverter converter, String locale) {
+    public static FormattingOptions convert(
+            KeyValuePairField dataField, Class<?> clazz, BindyConverter converter, String locale) {
         return new FormattingOptions()
                 .forClazz(clazz)
                 .withPattern(dataField.pattern())

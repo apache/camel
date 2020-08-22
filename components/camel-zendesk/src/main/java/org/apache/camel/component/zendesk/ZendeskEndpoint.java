@@ -39,7 +39,8 @@ import org.zendesk.client.v2.Zendesk;
  * Manage Zendesk tickets, users, organizations, etc.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
-    consumerPrefix = "consumer", category = {Category.CLOUD, Category.API, Category.SUPPORT}, lenientProperties = true)
+             consumerPrefix = "consumer", category = { Category.CLOUD, Category.API, Category.SUPPORT },
+             lenientProperties = true)
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration> {
 
     @UriParam
@@ -48,9 +49,9 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
     private Zendesk apiProxy;
 
     public ZendeskEndpoint(String uri, ZendeskComponent component, ZendeskApiName apiName, String methodName,
-                       ZendeskConfiguration endpointConfiguration) {
+                           ZendeskConfiguration endpointConfiguration) {
         super(uri, component, apiName, methodName, ZendeskApiCollection.getCollection().getHelper(apiName),
-                endpointConfiguration);
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 

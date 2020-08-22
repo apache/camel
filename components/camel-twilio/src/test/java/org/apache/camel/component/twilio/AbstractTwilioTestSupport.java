@@ -45,8 +45,9 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
         try {
             properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
         } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                e);
+            throw new IOException(
+                    String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
+                    e);
         }
 
         Map<String, Object> options = new HashMap<>();
@@ -64,7 +65,7 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
+            throws CamelExecutionException {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 

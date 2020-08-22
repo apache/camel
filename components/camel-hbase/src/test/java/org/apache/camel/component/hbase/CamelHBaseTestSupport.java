@@ -36,31 +36,30 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.GenericContainer;
 
-
 public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
 
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";
 
-    protected String[] key = {"1", "2", "3"};
-    protected final String[] family = {"info", "birthdate", "address"};
+    protected String[] key = { "1", "2", "3" };
+    protected final String[] family = { "info", "birthdate", "address" };
     protected final String[][] column = {
-        {"id", "firstName", "lastName"},
-        {"day", "month", "year"},
-        {"street", "number", "zip"}
+            { "id", "firstName", "lastName" },
+            { "day", "month", "year" },
+            { "street", "number", "zip" }
     };
 
     //body[row][family][column]
     protected final String[][][] body = {
-        {{"1", "Ioannis", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
-        {{"2", "John", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
-        {{"3", "Christian", "Mueller"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
+            { { "1", "Ioannis", "Canellos" }, { "09", "03", "1980" }, { "Awesome Street", "23", "15344" } },
+            { { "2", "John", "Dow" }, { "01", "01", "1979" }, { "Unknown Street", "1", "1010" } },
+            { { "3", "Christian", "Mueller" }, { "09", "01", "1979" }, { "Another Unknown Street", "14", "2020" } }
     };
 
     protected final byte[][] families = {
             family[0].getBytes(),
             family[1].getBytes(),
-            family[2].getBytes()};
+            family[2].getBytes() };
 
     // init container once for a class
     private GenericContainer cont;
@@ -129,7 +128,7 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
     }
 
     protected void createTable(String name, String family) throws IOException {
-        createTable(name, new byte[][]{family.getBytes()});
+        createTable(name, new byte[][] { family.getBytes() });
     }
 
     protected void deleteTable(String name) throws IOException {

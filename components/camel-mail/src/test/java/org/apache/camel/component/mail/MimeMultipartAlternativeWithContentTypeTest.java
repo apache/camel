@@ -43,7 +43,8 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
         Mailbox.clearAll();
 
         // create an exchange with a normal body and attachment to be produced as email
-        MailEndpoint endpoint = context.getEndpoint("smtp://sachin@mymailserver.com?password=secret&contentType=text/html; charset=UTF-8", MailEndpoint.class);
+        MailEndpoint endpoint = context.getEndpoint(
+                "smtp://sachin@mymailserver.com?password=secret&contentType=text/html; charset=UTF-8", MailEndpoint.class);
         endpoint.getConfiguration().setAlternativeBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
@@ -51,7 +52,7 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
         Message in = exchange.getIn();
         in.setBody(htmlBody);
         in.setHeader(MAIL_ALTERNATIVE_BODY, alternativeBody);
-        
+
         // create a producer that can produce the exchange (= send the mail)
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -66,8 +67,8 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
-        ((MailMessage)out.getIn()).getMessage().writeTo(baos);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage) out.getIn()).getMessage().getSize());
+        ((MailMessage) out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue(dumpedMessage.indexOf(expectString) > 0, "There should have the " + expectString);
         log.trace("multipart alternative: \n{}", dumpedMessage);
@@ -89,7 +90,8 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://sachin@mymailserver.com?password=secret&initialDelay=100&delay=100&contentType=text/html; charset=UTF-8").to("mock:result");
+                from("pop3://sachin@mymailserver.com?password=secret&initialDelay=100&delay=100&contentType=text/html; charset=UTF-8")
+                        .to("mock:result");
             }
         };
     }

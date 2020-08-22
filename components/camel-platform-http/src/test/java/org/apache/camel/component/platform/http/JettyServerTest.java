@@ -43,7 +43,7 @@ public class JettyServerTest {
     /**
      * adds a context handler and starts it
      *
-     * @param contextHandler
+     * @param  contextHandler
      * @throws Exception
      */
     public void addHandler(ContextHandler contextHandler) throws Exception {

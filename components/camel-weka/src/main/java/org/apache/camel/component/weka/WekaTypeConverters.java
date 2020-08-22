@@ -31,7 +31,7 @@ public final class WekaTypeConverters {
 
     private WekaTypeConverters() {
     }
-    
+
     @Converter
     public static InputStream toInputStream(Dataset dataset) {
         Instances instances = dataset.getInstances();

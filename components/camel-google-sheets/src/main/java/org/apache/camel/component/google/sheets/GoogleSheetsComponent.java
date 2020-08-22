@@ -30,7 +30,8 @@ import org.apache.camel.support.component.AbstractApiComponent;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets")
-public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
+public class GoogleSheetsComponent
+        extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
 
     @Metadata
     GoogleSheetsConfiguration configuration;
@@ -90,16 +91,17 @@ public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiN
     }
 
     /**
-     * To use the GoogleSheetsClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleSheetsClientFactory}
+     * To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleSheetsClientFactory}
      */
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleSheetsApiName apiName,
-                                      GoogleSheetsConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, GoogleSheetsApiName apiName,
+            GoogleSheetsConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleSheetsEndpoint(uri, this, apiName, methodName, endpointConfiguration);

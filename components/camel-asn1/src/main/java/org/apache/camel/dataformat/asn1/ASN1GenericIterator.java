@@ -40,7 +40,7 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
 
     public ASN1GenericIterator(Class<T> clazz, InputStream inputStream) {
         if (inputStream instanceof ASN1InputStream) {
-            this.asn1InputStream = (ASN1InputStream)inputStream;
+            this.asn1InputStream = (ASN1InputStream) inputStream;
         } else {
             this.asn1InputStream = new ASN1InputStream(inputStream);
         }

@@ -20,5 +20,5 @@ import javax.jws.WebService;
 
 @WebService
 public interface EchoService {
-    String echo(String text) throws Exception;    
+    String echo(String text) throws Exception;
 }

@@ -371,5 +371,14 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "globaloptions":
+        case "GlobalOptions": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

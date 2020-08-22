@@ -97,7 +97,7 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     *  The name you chose for your EventHubs SAS keys
+     * The name you chose for your EventHubs SAS keys
      */
     public String getSharedAccessName() {
         return sharedAccessName;
@@ -119,10 +119,10 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection string
-     * for your eventHub. The connection string for EventHubs already include all the necessary information to connection to
-     * your EventHub. To learn on how to generate the connection string, take a look at this documentation:
-     * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
+     * Instead of supplying namespace, sharedAccessKey, sharedAccessName ... etc, you can just supply the connection
+     * string for your eventHub. The connection string for EventHubs already include all the necessary information to
+     * connection to your EventHub. To learn on how to generate the connection string, take a look at this
+     * documentation: https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string
      */
     public String getConnectionString() {
         return connectionString;
@@ -133,8 +133,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is {@link
-     * AmqpTransportType#AMQP}.
+     * Sets the transport type by which all the communication with Azure Event Hubs occurs. Default value is
+     * {@link AmqpTransportType#AMQP}.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;
@@ -181,10 +181,11 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the {@link EventHubProducerAsyncClient}.An asynchronous producer responsible for transmitting {@link EventData} to a specific Event Hub, grouped
-     * together in batches. Depending on the {@link CreateBatchOptions options} specified when creating an {@linkEventDataBatch},
-     * the events may be automatically routed to an available partition or specific to a partition. Use by this component to produce the data in camel
-     * producer.
+     * Sets the {@link EventHubProducerAsyncClient}.An asynchronous producer responsible for transmitting
+     * {@link EventData} to a specific Event Hub, grouped together in batches. Depending on the
+     * {@link CreateBatchOptions options} specified when creating an {@linkEventDataBatch}, the events may be
+     * automatically routed to an available partition or specific to a partition. Use by this component to produce the
+     * data in camel producer.
      */
     public EventHubProducerAsyncClient getProducerAsyncClient() {
         return producerAsyncClient;
@@ -195,9 +196,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
@@ -224,8 +224,8 @@ public class EventHubsConfiguration implements Cloneable {
      * Sets a hashing key to be provided for the batch of events, which instructs the Event Hubs service to map this key
      * to a specific partition.
      *
-     * The selection of a partition is stable for a given partition hashing key. Should any other batches of events
-     * be sent using the same exact partition hashing key, the Event Hubs service will route them all to the same
+     * The selection of a partition is stable for a given partition hashing key. Should any other batches of events be
+     * sent using the same exact partition hashing key, the Event Hubs service will route them all to the same
      * partition.
      *
      * This should be specified only when there is a need to group events by partition, but there is flexibility into
@@ -250,8 +250,8 @@ public class EventHubsConfiguration implements Cloneable {
      * checkpoint information.
      * </p>
      *
-     * By default it set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which stores
-     * all checkpoint offsets into Azure Blob Storage
+     * By default it set to use {@link com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore} which
+     * stores all checkpoint offsets into Azure Blob Storage
      */
     public CheckpointStore getCheckpointStore() {
         return checkpointStore;
@@ -262,7 +262,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * In case you chose the default BlobCheckpointStore, this sets Azure account name to be used for authentication with azure blob services.
+     * In case you chose the default BlobCheckpointStore, this sets Azure account name to be used for authentication
+     * with azure blob services.
      */
     public String getBlobAccountName() {
         return blobAccountName;
@@ -273,7 +274,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to be used for authentication with azure blob services
+     * In case you chose the default BlobCheckpointStore, this sets access key for the associated azure account name to
+     * be used for authentication with azure blob services
      */
     public String getBlobAccessKey() {
         return blobAccessKey;
@@ -284,8 +286,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * In case you chose the default BlobCheckpointStore, this sets the blob container that shall be used by the BlobCheckpointStore
-     * to store the checkpoint offsets
+     * In case you chose the default BlobCheckpointStore, this sets the blob container that shall be used by the
+     * BlobCheckpointStore to store the checkpoint offsets
      */
     public String getBlobContainerName() {
         return blobContainerName;
@@ -296,7 +298,8 @@ public class EventHubsConfiguration implements Cloneable {
     }
 
     /**
-     * In case you chose the default BlobCheckpointStore, StorageSharedKeyCredential can be injected to create the azure client, this holds the important authentication information
+     * In case you chose the default BlobCheckpointStore, StorageSharedKeyCredential can be injected to create the azure
+     * client, this holds the important authentication information
      */
     public StorageSharedKeyCredential getBlobStorageSharedKeyCredential() {
         return blobStorageSharedKeyCredential;
@@ -308,9 +311,9 @@ public class EventHubsConfiguration implements Cloneable {
 
     /**
      * Sets the map containing the event position to use for each partition if a checkpoint for the partition does not
-     * exist in {@link CheckpointStore}. This map is keyed off of the partition id. If there is no checkpoint in {@link
-     * CheckpointStore} and there is no entry in this map, the processing of the partition will start from {@link
-     * EventPosition#latest() latest} position.
+     * exist in {@link CheckpointStore}. This map is keyed off of the partition id. If there is no checkpoint in
+     * {@link CheckpointStore} and there is no entry in this map, the processing of the partition will start from
+     * {@link EventPosition#latest() latest} position.
      */
     public Map<String, EventPosition> getEventPosition() {
         return eventPosition;

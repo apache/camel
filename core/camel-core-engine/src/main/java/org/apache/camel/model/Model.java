@@ -57,58 +57,50 @@ public interface Model {
     /**
      * Gets the route definition with the given id
      *
-     * @param id id of the route
-     * @return the route definition or <tt>null</tt> if not found
+     * @param  id id of the route
+     * @return    the route definition or <tt>null</tt> if not found
      */
     RouteDefinition getRouteDefinition(String id);
 
     /**
      * Adds a collection of route definitions to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have
-     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
-     * or {@link Model} to add routes, then any new routes which has a route id
-     * that matches an old route, then the old route is replaced by the new
-     * route.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id. If you use
+     * the API from {@link CamelContext} or {@link Model} to add routes, then any new routes which has a route id that
+     * matches an old route, then the old route is replaced by the new route.
      *
-     * @param routeDefinitions the route(s) definition to add
-     * @throws Exception if the route definitions could not be added for
-     *             whatever reason
+     * @param  routeDefinitions the route(s) definition to add
+     * @throws Exception        if the route definitions could not be added for whatever reason
      */
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
      * Add a route definition to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have
-     * an <b>unique</b> route id. If you use the API from {@link CamelContext}
-     * or {@link Model} to add routes, then any new routes which has a route id
-     * that matches an old route, then the old route is replaced by the new
-     * route.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route id. If you use
+     * the API from {@link CamelContext} or {@link Model} to add routes, then any new routes which has a route id that
+     * matches an old route, then the old route is replaced by the new route.
      *
-     * @param routeDefinition the route definition to add
-     * @throws Exception if the route definition could not be added for whatever
-     *             reason
+     * @param  routeDefinition the route definition to add
+     * @throws Exception       if the route definition could not be added for whatever reason
      */
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
-     * Removes a collection of route definitions from the context - stopping any
-     * previously running routes if any of them are actively running
+     * Removes a collection of route definitions from the context - stopping any previously running routes if any of
+     * them are actively running
      *
-     * @param routeDefinitions route(s) definitions to remove
-     * @throws Exception if the route definitions could not be removed for
-     *             whatever reason
+     * @param  routeDefinitions route(s) definitions to remove
+     * @throws Exception        if the route definitions could not be removed for whatever reason
      */
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
-     * Removes a route definition from the context - stopping any previously
-     * running routes if any of them are actively running
+     * Removes a route definition from the context - stopping any previously running routes if any of them are actively
+     * running
      *
-     * @param routeDefinition route definition to remove
-     * @throws Exception if the route definition could not be removed for
-     *             whatever reason
+     * @param  routeDefinition route definition to remove
+     * @throws Exception       if the route definition could not be removed for whatever reason
      */
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
@@ -122,61 +114,55 @@ public interface Model {
     /**
      * Gets the route template definition with the given id
      *
-     * @param id id of the route template
-     * @return the route template definition or <tt>null</tt> if not found
+     * @param  id id of the route template
+     * @return    the route template definition or <tt>null</tt> if not found
      */
     RouteTemplateDefinition getRouteTemplateDefinition(String id);
 
     /**
      * Adds a collection of route template definitions to the context
      * <p/>
-     * <b>Important: </b> Each route in the same {@link CamelContext} must have
-     * an <b>unique</b> route template id.
+     * <b>Important: </b> Each route in the same {@link CamelContext} must have an <b>unique</b> route template id.
      *
-     * @param routeTemplateDefinitions the route template(s) definition to add
-     * @throws Exception if the route template definitions could not be added for
-     *             whatever reason
+     * @param  routeTemplateDefinitions the route template(s) definition to add
+     * @throws Exception                if the route template definitions could not be added for whatever reason
      */
     void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
 
     /**
      * Add a route definition to the context
      * <p/>
-     * <b>Important: </b> Each route template in the same {@link CamelContext} must have
-     * an <b>unique</b> route id.
+     * <b>Important: </b> Each route template in the same {@link CamelContext} must have an <b>unique</b> route id.
      *
-     * @param routeTemplateDefinition the route template definition to add
-     * @throws Exception if the route template definition could not be added for whatever
-     *             reason
+     * @param  routeTemplateDefinition the route template definition to add
+     * @throws Exception               if the route template definition could not be added for whatever reason
      */
     void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
      * Removes a collection of route template definitions from the context
      *
-     * @param routeTemplateDefinitions route template(s) definitions to remove
-     * @throws Exception if the route template definitions could not be removed for
-     *             whatever reason
+     * @param  routeTemplateDefinitions route template(s) definitions to remove
+     * @throws Exception                if the route template definitions could not be removed for whatever reason
      */
     void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
 
     /**
      * Removes a route template definition from the context
      *
-     * @param routeTemplateDefinition route template definition to remove
-     * @throws Exception if the route template definition could not be removed for
-     *             whatever reason
+     * @param  routeTemplateDefinition route template definition to remove
+     * @throws Exception               if the route template definition could not be removed for whatever reason
      */
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
      * Adds a new route from a given route template
      *
-     * @param routeId  the id of the new route to add (optional)
-     * @param routeTemplateId   the id of the route template (mandatory)
-     * @param parameters  parameters to use for the route template when creating the new route
-     * @return the id of the route added (for example when an id was auto assigned)
-     * @throws Exception is thrown if error creating and adding the new route
+     * @param  routeId         the id of the new route to add (optional)
+     * @param  routeTemplateId the id of the route template (mandatory)
+     * @param  parameters      parameters to use for the route template when creating the new route
+     * @return                 the id of the route added (for example when an id was auto assigned)
+     * @throws Exception       is thrown if error creating and adding the new route
      */
     String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
 
@@ -190,11 +176,9 @@ public interface Model {
     /**
      * Adds a collection of rest definitions to the context
      *
-     * @param restDefinitions the rest(s) definition to add
-     * @param addToRoutes whether the rests should also automatically be added
-     *            as routes
-     * @throws Exception if the rest definitions could not be created for
-     *             whatever reason
+     * @param  restDefinitions the rest(s) definition to add
+     * @param  addToRoutes     whether the rests should also automatically be added as routes
+     * @throws Exception       if the rest definitions could not be created for whatever reason
      */
     void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception;
 
@@ -215,29 +199,25 @@ public interface Model {
     /**
      * Resolve a data format definition given its name
      *
-     * @param name the data format definition name or a reference to it in the
-     *            {@link org.apache.camel.spi.Registry}
-     * @return the resolved data format definition, or <tt>null</tt> if not
-     *         found
+     * @param  name the data format definition name or a reference to it in the {@link org.apache.camel.spi.Registry}
+     * @return      the resolved data format definition, or <tt>null</tt> if not found
      */
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**
-     * Gets the processor definition from any of the routes which with the given
-     * id
+     * Gets the processor definition from any of the routes which with the given id
      *
-     * @param id id of the processor definition
-     * @return the processor definition or <tt>null</tt> if not found
+     * @param  id id of the processor definition
+     * @return    the processor definition or <tt>null</tt> if not found
      */
     ProcessorDefinition<?> getProcessorDefinition(String id);
 
     /**
-     * Gets the processor definition from any of the routes which with the given
-     * id
+     * Gets the processor definition from any of the routes which with the given id
      *
-     * @param id id of the processor definition
-     * @param type the processor definition type
-     * @return the processor definition or <tt>null</tt> if not found
+     * @param  id                 id of the processor definition
+     * @param  type               the processor definition type
+     * @return                    the processor definition or <tt>null</tt> if not found
      * @throws ClassCastException is thrown if the type is not correct type
      */
     <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type);
@@ -250,13 +230,11 @@ public interface Model {
     void setValidators(List<ValidatorDefinition> validators);
 
     /**
-     * Gets the Hystrix configuration by the given name. If no name is given the
-     * default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     * Gets the Hystrix configuration by the given name. If no name is given the default configuration is returned, see
+     * <tt>setHystrixConfiguration</tt>
      *
-     * @param id id of the configuration, or <tt>null</tt> to return the default
-     *            configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been
-     *         registered
+     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
      */
     HystrixConfigurationDefinition getHystrixConfiguration(String id);
 
@@ -277,19 +255,17 @@ public interface Model {
     /**
      * Adds the Hystrix configuration
      *
-     * @param id name of the configuration
+     * @param id            name of the configuration
      * @param configuration the configuration
      */
     void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
 
     /**
-     * Gets the Resilience4j configuration by the given name. If no name is given the
-     * default configuration is returned, see <tt>setResilience4jConfiguration</tt>
+     * Gets the Resilience4j configuration by the given name. If no name is given the default configuration is returned,
+     * see <tt>setResilience4jConfiguration</tt>
      *
-     * @param id id of the configuration, or <tt>null</tt> to return the default
-     *            configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been
-     *         registered
+     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
      */
     Resilience4jConfigurationDefinition getResilience4jConfiguration(String id);
 
@@ -310,19 +286,17 @@ public interface Model {
     /**
      * Adds the Resilience4j configuration
      *
-     * @param id name of the configuration
+     * @param id            name of the configuration
      * @param configuration the configuration
      */
     void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration);
 
     /**
-     * Gets the MicroProfile Fault Tolerance configuration by the given name. If no name is given the
-     * default configuration is returned, see <tt>setFaultToleranceConfigurationDefinition</tt>
+     * Gets the MicroProfile Fault Tolerance configuration by the given name. If no name is given the default
+     * configuration is returned, see <tt>setFaultToleranceConfigurationDefinition</tt>
      *
-     * @param id id of the configuration, or <tt>null</tt> to return the default
-     *            configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been
-     *         registered
+     * @param  id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return    the configuration, or <tt>null</tt> if no configuration has been registered
      */
     FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id);
 
@@ -343,7 +317,7 @@ public interface Model {
     /**
      * Adds the MicroProfile Fault Tolerance configuration
      *
-     * @param id name of the configuration
+     * @param id            name of the configuration
      * @param configuration the configuration
      */
     void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration);
@@ -370,14 +344,11 @@ public interface Model {
     List<TransformerDefinition> getTransformers();
 
     /**
-     * Gets the service call configuration by the given name. If no name is
-     * given the default configuration is returned, see
-     * <tt>setServiceCallConfiguration</tt>
+     * Gets the service call configuration by the given name. If no name is given the default configuration is returned,
+     * see <tt>setServiceCallConfiguration</tt>
      *
-     * @param serviceName name of service, or <tt>null</tt> to return the
-     *            default configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been
-     *         registered
+     * @param  serviceName name of service, or <tt>null</tt> to return the default configuration
+     * @return             the configuration, or <tt>null</tt> if no configuration has been registered
      */
     ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
 
@@ -398,20 +369,17 @@ public interface Model {
     /**
      * Adds the service call configuration
      *
-     * @param serviceName name of the service
+     * @param serviceName   name of the service
      * @param configuration the configuration
      */
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
-     * Used for filtering routes routes matching the given pattern, which
-     * follows the following rules: - Match by route id - Match by route input
-     * endpoint uri The matching is using exact match, by wildcard and regular
-     * expression as documented by
-     * {@link PatternHelper#matchPattern(String, String)}. For example to only
-     * include routes which starts with foo in their route id's, use:
-     * include=foo&#42; And to exclude routes which starts from JMS endpoints,
-     * use: exclude=jms:&#42; Exclude takes precedence over include.
+     * Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route
+     * id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as
+     * documented by {@link PatternHelper#matchPattern(String, String)}. For example to only include routes which starts
+     * with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use:
+     * exclude=jms:&#42; Exclude takes precedence over include.
      *
      * @param include the include pattern
      * @param exclude the exclude pattern
@@ -419,8 +387,7 @@ public interface Model {
     void setRouteFilterPattern(String include, String exclude);
 
     /**
-     * Sets a custom route filter to use for filtering unwanted routes when
-     * routes are added.
+     * Sets a custom route filter to use for filtering unwanted routes when routes are added.
      *
      * @param filter the filter
      */
@@ -429,8 +396,7 @@ public interface Model {
     /**
      * Gets the current route filter
      *
-     * @return the filter, or <tt>null</tt> if no custom filter has been
-     *         configured.
+     * @return the filter, or <tt>null</tt> if no custom filter has been configured.
      */
     Function<RouteDefinition, Boolean> getRouteFilter();
 

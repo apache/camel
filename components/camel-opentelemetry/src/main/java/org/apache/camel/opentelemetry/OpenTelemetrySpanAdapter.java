@@ -51,7 +51,6 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         tagMap.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
     }
 
-
     io.opentelemetry.trace.Span span;
 
     OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span) {
@@ -69,35 +68,43 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
         return this.span;
     }
 
-    @Override public void setComponent(String component) {
+    @Override
+    public void setComponent(String component) {
         this.span.setAttribute("component", component);
     }
 
-    @Override public void setError(boolean error) {
+    @Override
+    public void setError(boolean error) {
         this.span.setAttribute("error", error);
     }
 
-    @Override public void setTag(Tag key, String value) {
+    @Override
+    public void setTag(Tag key, String value) {
         this.span.setAttribute(tagMap.get(key), value);
     }
 
-    @Override public void setTag(Tag key, Number value) {
+    @Override
+    public void setTag(Tag key, Number value) {
         this.span.setAttribute(tagMap.get(key), value.intValue());
     }
 
-    @Override public void setTag(String key, String value) {
+    @Override
+    public void setTag(String key, String value) {
         this.span.setAttribute(key, value);
     }
 
-    @Override public void setTag(String key, Number value) {
+    @Override
+    public void setTag(String key, Number value) {
         this.span.setAttribute(key, value.intValue());
     }
 
-    @Override public void setTag(String key, Boolean value) {
+    @Override
+    public void setTag(String key, Boolean value) {
         this.span.setAttribute(key, value);
     }
 
-    @Override public void log(Map<String, String> fields) {
+    @Override
+    public void log(Map<String, String> fields) {
         span.addEvent(getEventNameFromFields(fields), convertToAttributes(fields));
     }
 
@@ -120,9 +127,9 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
                 continue;
             }
             if (value instanceof Byte
-                || value instanceof Short
-                || value instanceof Integer
-                || value instanceof Long) {
+                    || value instanceof Short
+                    || value instanceof Integer
+                    || value instanceof Long) {
                 attributesBuilder.setAttribute(key, AttributeValue.longAttributeValue(((Number) value).longValue()));
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.setAttribute(key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));

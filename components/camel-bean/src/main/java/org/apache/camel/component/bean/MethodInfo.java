@@ -105,7 +105,8 @@ public class MethodInfo {
         }
     }
 
-    public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
+    public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters,
+                      List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;
         this.type = type;
@@ -123,10 +124,11 @@ public class MethodInfo {
             pattern = oneway.value();
         }
 
-        org.apache.camel.RoutingSlip routingSlipAnnotation =
-            (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
+        org.apache.camel.RoutingSlip routingSlipAnnotation
+                = (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null) {
-            routingSlip = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createRoutingSlip(camelContext, routingSlipAnnotation);
+            routingSlip = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+                    .createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
                 camelContext.addService(routingSlip);
@@ -135,10 +137,11 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.DynamicRouter dynamicRouterAnnotation =
-            (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation
+                = (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null) {
-            dynamicRouter = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createDynamicRouter(camelContext, dynamicRouterAnnotation);
+            dynamicRouter = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+                    .createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
                 camelContext.addService(dynamicRouter);
@@ -147,10 +150,11 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.RecipientList recipientListAnnotation =
-            (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
+        org.apache.camel.RecipientList recipientListAnnotation
+                = (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null) {
-            recipientList = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory().createRecipientList(camelContext, recipientListAnnotation);
+            recipientList = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+                    .createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {
                 camelContext.addService(recipientList);
@@ -237,7 +241,8 @@ public class MethodInfo {
 
                 // invoke pojo
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", method, pojo, asString(arguments), exchange);
+                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", method, pojo,
+                            asString(arguments), exchange);
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
 
@@ -346,8 +351,8 @@ public class MethodInfo {
 
     /**
      * Returns the {@link org.apache.camel.ExchangePattern} that should be used when invoking this method. This value
-     * defaults to {@link org.apache.camel.ExchangePattern#InOut} unless some {@link org.apache.camel.Pattern} annotation is used
-     * to override the message exchange pattern.
+     * defaults to {@link org.apache.camel.ExchangePattern#InOut} unless some {@link org.apache.camel.Pattern}
+     * annotation is used to override the message exchange pattern.
      *
      * @return the exchange pattern to use for invoking this method.
      */
@@ -405,24 +410,27 @@ public class MethodInfo {
     }
 
     /**
-     * Returns true if this method is covariant with the specified method
-     * (this method may above or below the specified method in the class hierarchy)
+     * Returns true if this method is covariant with the specified method (this method may above or below the specified
+     * method in the class hierarchy)
      */
     public boolean isCovariantWith(MethodInfo method) {
-        return
-            method.getMethod().getName().equals(this.getMethod().getName())
-            && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
-            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
-            && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
+        return method.getMethod().getName().equals(this.getMethod().getName())
+                && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
+                        || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
+                && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
     }
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws InvocationTargetException {
         try {
             return ObjectHelper.invokeMethodSafe(mth, pojo, arguments);
         } catch (IllegalAccessException e) {
-            throw new RuntimeExchangeException("IllegalAccessException occurred invoking method: " + mth + " using arguments: " + asList(arguments), exchange, e);
+            throw new RuntimeExchangeException(
+                    "IllegalAccessException occurred invoking method: " + mth + " using arguments: " + asList(arguments),
+                    exchange, e);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeExchangeException("IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments), exchange, e);
+            throw new RuntimeExchangeException(
+                    "IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + asList(arguments),
+                    exchange, e);
         }
     }
 
@@ -445,11 +453,11 @@ public class MethodInfo {
     }
 
     /**
-     * Finds the oneway annotation in priority order; look for method level annotations first, then the class level annotations,
-     * then super class annotations then interface annotations
+     * Finds the oneway annotation in priority order; look for method level annotations first, then the class level
+     * annotations, then super class annotations then interface annotations
      *
-     * @param method the method on which to search
-     * @return the first matching annotation or none if it is not available
+     * @param  method the method on which to search
+     * @return        the first matching annotation or none if it is not available
      */
     protected Pattern findOneWayAnnotation(Method method) {
         Pattern answer = getPatternAnnotation(method);
@@ -474,23 +482,23 @@ public class MethodInfo {
     }
 
     /**
-     * Returns the pattern annotation on the given annotated element; either as a direct annotation or
-     * on an annotation which is also annotated
+     * Returns the pattern annotation on the given annotated element; either as a direct annotation or on an annotation
+     * which is also annotated
      *
-     * @param annotatedElement the element to look for the annotation
-     * @return the first matching annotation or null if none could be found
+     * @param  annotatedElement the element to look for the annotation
+     * @return                  the first matching annotation or null if none could be found
      */
     protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement) {
         return getPatternAnnotation(annotatedElement, 2);
     }
 
     /**
-     * Returns the pattern annotation on the given annotated element; either as a direct annotation or
-     * on an annotation which is also annotated
+     * Returns the pattern annotation on the given annotated element; either as a direct annotation or on an annotation
+     * which is also annotated
      *
-     * @param annotatedElement the element to look for the annotation
-     * @param depth the current depth
-     * @return the first matching annotation or null if none could be found
+     * @param  annotatedElement the element to look for the annotation
+     * @param  depth            the current depth
+     * @return                  the first matching annotation or null if none could be found
      */
     protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement, int depth) {
         Pattern answer = annotatedElement.getAnnotation(Pattern.class);
@@ -509,7 +517,8 @@ public class MethodInfo {
                         if (answer == null) {
                             answer = another;
                         } else {
-                            LOG.warn("Duplicate pattern annotation: {} found on annotation: {} which will be ignored", another, annotation);
+                            LOG.warn("Duplicate pattern annotation: {} found on annotation: {} which will be ignored", another,
+                                    annotation);
                         }
                     }
                 }
@@ -544,7 +553,6 @@ public class MethodInfo {
         }
         return null;
     }
-
 
     /**
      * Finds the first annotation on the given list of classes
@@ -653,9 +661,10 @@ public class MethodInfo {
          * <p/>
          * This methods returns accordingly:
          * <ul>
-         *     <li><tt>null</tt> - if not a parameter value</li>
-         *     <li><tt>Void.TYPE</tt> - if an explicit null, forcing Camel to pass in <tt>null</tt> for that given parameter</li>
-         *     <li>a non <tt>null</tt> value - if the parameter was a parameter value, and to be used</li>
+         * <li><tt>null</tt> - if not a parameter value</li>
+         * <li><tt>Void.TYPE</tt> - if an explicit null, forcing Camel to pass in <tt>null</tt> for that given
+         * parameter</li>
+         * <li>a non <tt>null</tt> value - if the parameter was a parameter value, and to be used</li>
          * </ul>
          *
          * @since 2.9
@@ -672,7 +681,8 @@ public class MethodInfo {
                 if (!valid) {
                     // it may be a parameter type instead, and if so, then we should return null,
                     // as this method is only for evaluating parameter values
-                    Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp, parameterType);
+                    Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp,
+                            parameterType);
                     // the method will return a non null value if exp is a class
                     if (isClass != null) {
                         return null;
@@ -689,8 +699,10 @@ public class MethodInfo {
                         parameterValue = "null";
                     }
                 } catch (Exception e) {
-                    throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
-                            + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
+                    throw new ExpressionEvaluationException(
+                            expression, "Cannot create/evaluate simple expression: " + exp
+                                        + " to be bound to parameter at index: " + index + " on method: " + getMethod(),
+                            exchange, e);
                 }
 
                 // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
@@ -721,13 +733,16 @@ public class MethodInfo {
                     if (parameterValue != null) {
                         try {
                             // its a valid parameter value, so convert it to the expected type of the parameter
-                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange,
+                                    parameterValue);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
+                                LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
+                                        org.apache.camel.util.ObjectHelper.type(answer));
                             }
                         } catch (Exception e) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
+                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
+                                        org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
                             }
                             throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                         }
@@ -756,11 +771,13 @@ public class MethodInfo {
                         answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
+                        LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
+                                org.apache.camel.util.ObjectHelper.type(answer));
                     }
                 } catch (NoTypeConversionAvailableException e) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(result), parameterType, index);
+                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
+                                org.apache.camel.util.ObjectHelper.type(result), parameterType, index);
                     }
                     throw new ParameterBindingException(e, method, index, parameterType, result);
                 }

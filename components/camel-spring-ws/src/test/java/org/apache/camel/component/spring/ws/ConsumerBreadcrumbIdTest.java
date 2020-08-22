@@ -61,7 +61,7 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
         registry.bind("webServiceTemplate", this.webServiceTemplate);
         return registry;
     }
-    
+
     @Test
     public void consumeWebServiceWithPojoRequestWhichIsWithBreadcrumb() throws Exception {
         QuoteRequest request = new QuoteRequest();
@@ -70,11 +70,10 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange.getIn().getHeader("breadcrumbId"));
-                assertEquals(exchange.getIn().getHeader("breadcrumbId"), "ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5");
+                assertEquals("ID-Ralfs-MacBook-Pro-local-50523-1423553069254-0-5", exchange.getIn().getHeader("breadcrumbId"));
             }
         });
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -89,8 +88,9 @@ public class ConsumerBreadcrumbIdTest extends CamelTestSupport {
                         .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
                 // provide web service
-                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsIn?endpointMapping=#endpointMapping").setHeader("setin", constant("true"))
-                                                                                                                         .process(new StockQuoteResponseProcessor());
+                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsIn?endpointMapping=#endpointMapping")
+                        .setHeader("setin", constant("true"))
+                        .process(new StockQuoteResponseProcessor());
             }
         };
     }

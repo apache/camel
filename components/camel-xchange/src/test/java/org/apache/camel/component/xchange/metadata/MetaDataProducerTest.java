@@ -38,18 +38,18 @@ public class MetaDataProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                
+
                 from("direct:currencies")
-                    .to("xchange:binance?service=metadata&method=currencies");
-                
+                        .to("xchange:binance?service=metadata&method=currencies");
+
                 from("direct:currencyMetaData")
-                    .to("xchange:binance?service=metadata&method=currencyMetaData");
-                
+                        .to("xchange:binance?service=metadata&method=currencyMetaData");
+
                 from("direct:currencyPairs")
-                    .to("xchange:binance?service=metadata&method=currencyPairs");
-                
+                        .to("xchange:binance?service=metadata&method=currencyPairs");
+
                 from("direct:currencyPairMetaData")
-                    .to("xchange:binance?service=metadata&method=currencyPairMetaData");
+                        .to("xchange:binance?service=metadata&method=currencyPairMetaData");
             }
         };
     }
@@ -57,7 +57,7 @@ public class MetaDataProducerTest extends CamelTestSupport {
     @Test
     @SuppressWarnings("unchecked")
     void testCurrencies() {
-        
+
         List<Currency> currencies = template.requestBody("direct:currencies", null, List.class);
         assertNotNull(currencies, "Currencies not null");
         assertTrue(currencies.contains(Currency.ETH), "Contains ETH");
@@ -65,18 +65,19 @@ public class MetaDataProducerTest extends CamelTestSupport {
 
     @Test
     void testCurrencyMetaData() {
-        
+
         CurrencyMetaData metadata = template.requestBody("direct:currencyMetaData", Currency.ETH, CurrencyMetaData.class);
         assertNotNull(metadata, "CurrencyMetaData not null");
-        
-        metadata = template.requestBodyAndHeader("direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH, CurrencyMetaData.class);
+
+        metadata = template.requestBodyAndHeader("direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH,
+                CurrencyMetaData.class);
         assertNotNull(metadata, "CurrencyMetaData not null");
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void testCurrencyPairs() {
-        
+
         List<CurrencyPair> pairs = template.requestBody("direct:currencyPairs", null, List.class);
         assertNotNull(pairs, "Pairs not null");
         assertTrue(pairs.contains(CurrencyPair.EOS_ETH), "Contains EOS/ETH");
@@ -84,12 +85,13 @@ public class MetaDataProducerTest extends CamelTestSupport {
 
     @Test
     void testCurrencyPairMetaData() {
-        
-        CurrencyPairMetaData metadata = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+
+        CurrencyPairMetaData metadata
+                = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
-        
-        metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+
+        metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR,
+                CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
         assertNotNull(metadata, "CurrencyPairMetaData not null");
     }
 }
-

@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Based on end user on forum how to get the 404 error code in his enrich
- * aggregator
+ * Based on end user on forum how to get the 404 error code in his enrich aggregator
  */
 public class JettyHandle404Test extends BaseJettyTest {
 
@@ -54,7 +53,8 @@ public class JettyHandle404Test extends BaseJettyTest {
 
     @Test
     public void testCustomerErrorHandler() throws Exception {
-        String response = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
+        String response
+                = template.requestBody("http://localhost:{{port}}/myserver1?throwExceptionOnFailure=false", null, String.class);
         // look for the error message which is sent by MyErrorHandler
         LOG.info("Response: {}", response);
         assertTrue(response.indexOf("MyErrorHandler") > 0, "Get a wrong error message");
@@ -66,7 +66,7 @@ public class JettyHandle404Test extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // setup the jetty component with the customx error handler
-                JettyHttpComponent jettyComponent = (JettyHttpComponent)context.getComponent("jetty");
+                JettyHttpComponent jettyComponent = (JettyHttpComponent) context.getComponent("jetty");
                 jettyComponent.setErrorHandler(new MyErrorHandler());
 
                 // disable error handling
@@ -85,17 +85,19 @@ public class JettyHandle404Test extends BaseJettyTest {
                 // HttpOperationFailedException
                 // and set the data back as data on the exchange to not cause
                 // the exception to be thrown
-                from("direct:tohttp").doTry().to(getProducerUrl()).doCatch(HttpOperationFailedException.class).process(new Processor() {
-                    public void process(Exchange exchange) {
-                        // copy the caused exception values to the exchange as
-                        // we want the response in the regular exchange
-                        // instead as an exception that will get thrown and thus
-                        // the route breaks
-                        HttpOperationFailedException cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
-                        exchange.getOut().setBody(cause.getResponseBody());
-                    }
-                }).end();
+                from("direct:tohttp").doTry().to(getProducerUrl()).doCatch(HttpOperationFailedException.class)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) {
+                                // copy the caused exception values to the exchange as
+                                // we want the response in the regular exchange
+                                // instead as an exception that will get thrown and thus
+                                // the route breaks
+                                HttpOperationFailedException cause
+                                        = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
+                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
+                                exchange.getOut().setBody(cause.getResponseBody());
+                            }
+                        }).end();
 
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {

@@ -56,8 +56,7 @@ public class ProcessClause<T> implements Processor {
     // *******************************
 
     /**
-     * Define a {@link Processor} which targets the Exchange In Message.
-     * <blockquote>
+     * Define a {@link Processor} which targets the Exchange In Message. <blockquote>
      * 
      * <pre>
      * {@code
@@ -79,8 +78,7 @@ public class ProcessClause<T> implements Processor {
     // *******************************
 
     /**
-     * Define a {@link Processor} which targets the Exchange In Body.
-     * <blockquote>
+     * Define a {@link Processor} which targets the Exchange In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -98,8 +96,7 @@ public class ProcessClause<T> implements Processor {
     }
 
     /**
-     * Define a {@link Processor} which targets the typed Exchange In Body.
-     * <blockquote>
+     * Define a {@link Processor} which targets the typed Exchange In Body. <blockquote>
      * 
      * <pre>
      * {@code
@@ -117,8 +114,7 @@ public class ProcessClause<T> implements Processor {
     }
 
     /**
-     * Define a {@link Processor} which targets the Exchange In Body and its
-     * Headers. <blockquote>
+     * Define a {@link Processor} which targets the Exchange In Body and its Headers. <blockquote>
      * 
      * <pre>
      * {@code
@@ -136,8 +132,7 @@ public class ProcessClause<T> implements Processor {
     }
 
     /**
-     * Define a {@link Processor} which targets the typed Exchange In Body and
-     * its Headers. <blockquote>
+     * Define a {@link Processor} which targets the typed Exchange In Body and its Headers. <blockquote>
      * 
      * <pre>
      * {@code

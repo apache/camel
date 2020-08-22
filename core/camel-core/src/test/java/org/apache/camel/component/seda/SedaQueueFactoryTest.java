@@ -52,7 +52,8 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testArrayBlockingQueueFactoryAndSize() throws Exception {
-        SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue100?queueFactory=#arrayQueueFactory&size=100", SedaEndpoint.class);
+        SedaEndpoint endpoint
+                = resolveMandatoryEndpoint("seda:arrayQueue100?queueFactory=#arrayQueueFactory&size=100", SedaEndpoint.class);
 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         ArrayBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(ArrayBlockingQueue.class, queue);

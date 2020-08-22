@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestSupport {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
 
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
@@ -44,7 +45,8 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-        expectedResponse = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/stockquote-response.xml"));
+        expectedResponse = context.getTypeConverter().convertTo(String.class,
+                getClass().getResourceAsStream("/stockquote-response.xml"));
     }
 
     @Test
@@ -59,7 +61,8 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
     }
 
 }

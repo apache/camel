@@ -29,7 +29,8 @@ import org.apache.gora.store.DataStore;
 /**
  * Access NoSQL databases using the Apache Gora framework.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name", category = {Category.DATABASE, Category.NOSQL, Category.BIGDATA})
+@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name",
+             category = { Category.DATABASE, Category.NOSQL, Category.BIGDATA })
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**

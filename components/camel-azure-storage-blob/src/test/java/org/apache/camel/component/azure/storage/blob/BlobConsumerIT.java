@@ -122,7 +122,6 @@ public class BlobConsumerIT extends CamelTestSupport {
         containerClient.delete();
     }
 
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -139,13 +138,13 @@ public class BlobConsumerIT extends CamelTestSupport {
                         .to("azure-storage-blob://cameldev?credentials=#creds&operation=uploadBlockBlob");
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName + "&credentials=#creds&fileDir="
-                        + testDir.toString()).to("mock:result");
+                     + testDir.toString()).to("mock:result");
 
-                from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName2 + "&credentials=#creds").to("mock:resultOutputStream");
+                from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName2 + "&credentials=#creds")
+                        .to("mock:resultOutputStream");
             }
         };
     }
-
 
     private StorageSharedKeyCredential storageSharedKeyCredential() throws Exception {
         final Properties properties = BlobTestUtils.loadAzureAccessFromJvmEnv();

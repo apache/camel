@@ -156,7 +156,8 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         if (!td.getLogMessages().isEmpty()) {
             assertEquals(td.getLogMessages().size(), span.getEvents().size(), td.getLabel());
             for (int i = 0; i < td.getLogMessages().size(); i++) {
-                assertEquals(td.getLogMessages().get(i), span.getEvents().get(i).getAttributes().get("message").getStringValue());
+                assertEquals(td.getLogMessages().get(i),
+                        span.getEvents().get(i).getAttributes().get("message").getStringValue());
             }
         }
 
@@ -172,8 +173,8 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     }
 
     protected void verifySameTrace() {
-        assertEquals(1, inMemorytracing.getSpanExporter().getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
+        assertEquals(1,
+                inMemorytracing.getSpanExporter().getFinishedSpanItems().stream().map(s -> s.getTraceId()).distinct().count());
     }
-
 
 }

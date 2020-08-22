@@ -29,9 +29,9 @@ public class SqlProducerWhereIssueClasspathTest extends SqlProducerWhereIssueTes
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:query")
-                    .to("sql:classpath:sql/projectsRowCount.sql")
-                    .to("log:query")
-                    .to("mock:query");
+                        .to("sql:classpath:sql/projectsRowCount.sql")
+                        .to("log:query")
+                        .to("mock:query");
             }
         };
     }

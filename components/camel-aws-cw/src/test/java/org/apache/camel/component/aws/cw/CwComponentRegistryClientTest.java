@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class CwComponentRegistryClientTest extends CamelTestSupport {
-    
+
     @BindToRegistry("now")
     private static final Date NOW = new Date();
 
@@ -39,7 +39,8 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
+        CwEndpoint endpoint = (CwEndpoint) component
+                .createEndpoint("aws-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertEquals("testMetric", endpoint.getConfiguration().getName());
@@ -47,31 +48,33 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
         assertEquals("Count", endpoint.getConfiguration().getUnit());
         assertEquals(NOW, endpoint.getConfiguration().getTimestamp());
     }
-    
+
     @Test
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         assertThrows(IllegalArgumentException.class,
-            () -> component.createEndpoint("aws-cw://camel.apache.org/test"));
+                () -> component.createEndpoint("aws-cw://camel.apache.org/test"));
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
         AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+        CwEndpoint endpoint = (CwEndpoint) component
+                .createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertNotSame(cloudWatchClient, endpoint.getConfiguration().getAmazonCwClient());
     }
-    
+
     @Test
     public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
         AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         CwComponent component = context.getComponent("aws-cw", CwComponent.class);
-        CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy");
+        CwEndpoint endpoint
+                = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
         assertSame(cloudWatchClient, endpoint.getConfiguration().getAmazonCwClient());

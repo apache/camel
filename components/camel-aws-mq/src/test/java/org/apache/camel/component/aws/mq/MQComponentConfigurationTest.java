@@ -25,26 +25,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MQComponentConfigurationTest extends CamelTestSupport {
 
-    
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
-        MQEndpoint endpoint = (MQEndpoint)component.createEndpoint("aws-mq://MyQueue");
-        
+        MQEndpoint endpoint = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue");
+
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         MQComponent component = context.getComponent("aws-mq", MQComponent.class);
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        MQEndpoint endpoint = (MQEndpoint)component.createEndpoint("aws-mq://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+        MQEndpoint endpoint
+                = (MQEndpoint) component.createEndpoint("aws-mq://MyQueue?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
@@ -56,8 +56,9 @@ public class MQComponentConfigurationTest extends CamelTestSupport {
         component.getConfiguration().setAccessKey("XXX");
         component.getConfiguration().setSecretKey("YYY");
         component.getConfiguration().setRegion(Regions.US_WEST_1.toString());
-        MQEndpoint endpoint = (MQEndpoint)component.createEndpoint("aws-mq://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
-        
+        MQEndpoint endpoint = (MQEndpoint) component.createEndpoint(
+                "aws-mq://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());

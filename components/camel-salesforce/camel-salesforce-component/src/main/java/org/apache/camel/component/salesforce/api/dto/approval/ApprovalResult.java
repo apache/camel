@@ -46,7 +46,8 @@ public final class ApprovalResult implements Serializable, Iterable<Result> {
         };
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JsonProcessingException {
+        public Object deserialize(final JsonParser parser, final DeserializationContext context)
+                throws IOException, JsonProcessingException {
             final List<Result> results = parser.readValueAs(RESULTS_TYPE);
 
             return new ApprovalResult(results);

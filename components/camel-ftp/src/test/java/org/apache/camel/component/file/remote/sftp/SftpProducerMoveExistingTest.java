@@ -45,7 +45,8 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
         assertFileNotExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
@@ -57,14 +58,18 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World",
+                Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+        assertEquals("Bye World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
 
         assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
     }
 
     @Test
@@ -77,11 +82,13 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+        assertEquals("Bye World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
 
         // would move into sub directory and keep existing name as is
         assertFileExists(FTP_ROOT_DIR + "/move/backup/hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/backup/hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/backup/hello.txt")));
     }
 
     @Test
@@ -90,21 +97,29 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file", Exchange.FILE_NAME,
-                                   "renamed-hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
+                Exchange.FILE_NAME,
+                "renamed-hello.txt");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Hello World", Exchange.FILE_NAME,
-                                   "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Hello World",
+                Exchange.FILE_NAME,
+                "hello.txt");
         // we should be okay as we will just delete any existing file
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Bye World",
+                Exchange.FILE_NAME, "hello.txt");
 
         // we could write the new file so the old context should be there
         assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
-        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+        assertEquals("Bye World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
 
         // and the renamed file should be overridden
         assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
     }
 
     @Test
@@ -113,27 +128,36 @@ public class SftpProducerMoveExistingTest extends SftpServerTestSupport {
             return;
         }
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file", Exchange.FILE_NAME,
-                                   "renamed-hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=true", "Old file",
+                Exchange.FILE_NAME,
+                "renamed-hello.txt");
 
-        template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false", "Hello World", Exchange.FILE_NAME,
-                                   "hello.txt");
+        template.sendBodyAndHeader(
+                getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
+                "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
         try {
-            template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false", "Bye World", Exchange.FILE_NAME,
-                                       "hello.txt");
+            template.sendBodyAndHeader(
+                    getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
+                    "Bye World", Exchange.FILE_NAME,
+                    "hello.txt");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
         }
 
         // we could not write the new file so the previous context should be
         // there
         assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+        assertEquals("Hello World",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
 
         // and the renamed file should be untouched
         assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
-        assertEquals("Old file", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
+        assertEquals("Old file",
+                context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
     }
 }

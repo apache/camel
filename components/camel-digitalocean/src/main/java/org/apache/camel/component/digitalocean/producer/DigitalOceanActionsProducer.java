@@ -49,7 +49,6 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
 
     }
 
-
     private void getAction(Exchange exchange) throws Exception {
         Integer actionId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
@@ -62,8 +61,10 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     }
 
     private void getActions(Exchange exchange) throws Exception {
-        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableActions(configuration.getPage(), configuration.getPerPage());
-        LOG.trace("All Actions : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), actions.getActions());
+        Actions actions = getEndpoint().getDigitalOceanClient().getAvailableActions(configuration.getPage(),
+                configuration.getPerPage());
+        LOG.trace("All Actions : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                actions.getActions());
         exchange.getOut().setBody(actions.getActions());
     }
 }

@@ -30,11 +30,10 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * HTTP based {@link SendDynamicAware} which allows to optimise HTTP components
- * with the toD (dynamic to) DSL in Camel. This implementation optimises by allowing
- * to provide dynamic parameters via {@link Exchange#HTTP_PATH} and {@link Exchange#HTTP_QUERY} headers
- * instead of the endpoint uri. That allows to use a static endpoint and its producer to service
- * dynamic requests.
+ * HTTP based {@link SendDynamicAware} which allows to optimise HTTP components with the toD (dynamic to) DSL in Camel.
+ * This implementation optimises by allowing to provide dynamic parameters via {@link Exchange#HTTP_PATH} and
+ * {@link Exchange#HTTP_QUERY} headers instead of the endpoint uri. That allows to use a static endpoint and its
+ * producer to service dynamic requests.
  */
 public class HttpSendDynamicAware implements SendDynamicAware {
 
@@ -152,15 +151,15 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                         host = scheme + "://" + host;
                     }
                 }
-                return new String[]{host, path};
+                return new String[] { host, path };
             }
         } catch (URISyntaxException e) {
             // ignore
-            return new String[]{u, null};
+            return new String[] { u, null };
         }
 
         // no context path
-        return new String[]{u, null};
+        return new String[] { u, null };
     }
-    
+
 }

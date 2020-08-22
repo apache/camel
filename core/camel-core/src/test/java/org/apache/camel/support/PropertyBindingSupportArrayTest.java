@@ -138,17 +138,15 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
         Foo foo = new Foo();
 
         PropertyBindingSupport.build().bind(context, foo, mapOf(
-            "bar.works[0].id", "666",
-            "bar.works[1].name", "I changed this"
-        ));
+                "bar.works[0].id", "666",
+                "bar.works[1].name", "I changed this"));
 
         assertEquals(666, foo.bar.works[0].getId());
         assertEquals("I changed this", foo.bar.works[1].getName());
 
         PropertyBindingSupport.build().bind(context, foo, mapOf(
-            "bar.works[0].id", "999",
-            "bar.works[1].name", "I changed this again"
-        ));
+                "bar.works[0].id", "999",
+                "bar.works[1].name", "I changed this again"));
 
         assertEquals(999, foo.bar.works[0].getId());
         assertEquals("I changed this again", foo.bar.works[1].getName());
@@ -188,7 +186,8 @@ public class PropertyBindingSupportArrayTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("bar.gold-customer[]", e.getPropertyName());
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().startsWith("Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
+            assertTrue(iae.getMessage().startsWith(
+                    "Cannot set property: gold-customer[] as either a Map/List/array because target bean is not a Map, List or array type"));
         }
     }
 

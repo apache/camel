@@ -98,7 +98,8 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
                                 disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
                         }).to("mock:result");
-                from("ftp://admin@localhost:" + getPort() + "?password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
+                from("ftp://admin@localhost:" + getPort() + "?password=admin&noop=false&move=.camel").routeId("bar")
+                        .noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

@@ -66,7 +66,8 @@ public class PutProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @Test
     void testOut() throws InterruptedException, IOException {
         final Endpoint endpoint = context.getEndpoint("beanstalk:" + tubeName);
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
+        final Exchange exchange
+                = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
 
         final Message out = exchange.getMessage();
         assertNotNull(out, "Out message");

@@ -34,6 +34,10 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "entityproviderreadproperties":
+        case "entityProviderReadProperties": target.getConfiguration().setEntityProviderReadProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class, value)); return true;
+        case "entityproviderwriteproperties":
+        case "entityProviderWriteProperties": target.getConfiguration().setEntityProviderWriteProperties(property(camelContext, org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -97,6 +101,8 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         answer.put("connectTimeout", int.class);
         answer.put("contentType", java.lang.String.class);
         answer.put("delay", long.class);
+        answer.put("entityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
+        answer.put("entityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("filterAlreadySeen", boolean.class);
@@ -145,6 +151,10 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
         case "delay": return target.getDelay();
+        case "entityproviderreadproperties":
+        case "entityProviderReadProperties": return target.getConfiguration().getEntityProviderReadProperties();
+        case "entityproviderwriteproperties":
+        case "entityProviderWriteProperties": return target.getConfiguration().getEntityProviderWriteProperties();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

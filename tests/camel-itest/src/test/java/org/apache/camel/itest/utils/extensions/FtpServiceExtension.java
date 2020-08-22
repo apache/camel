@@ -76,7 +76,6 @@ public class FtpServiceExtension implements BeforeAllCallback, AfterAllCallback 
         return "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
     }
 
-
     private void initFtpServer() {
         FtpServerFactory serverFactory = new FtpServerFactory();
 

@@ -57,41 +57,42 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
         AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/echo").execute(
-            new WebSocketUpgradeHandler.Builder()
-                .addWebSocketListener(new WebSocketListener() {
+                new WebSocketUpgradeHandler.Builder()
+                        .addWebSocketListener(new WebSocketListener() {
 
-                    @Override
-                    public void onOpen(WebSocket websocket) {
-                    }
+                            @Override
+                            public void onOpen(WebSocket websocket) {
+                            }
 
-                    @Override
-                    public void onClose(WebSocket websocket, int code, String reason) {
-                    }
+                            @Override
+                            public void onClose(WebSocket websocket, int code, String reason) {
+                            }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        t.printStackTrace();
-                    }
+                            @Override
+                            public void onError(Throwable t) {
+                                t.printStackTrace();
+                            }
 
-                    @Override
-                    public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
-                    }
+                            @Override
+                            public void onBinaryFrame(byte[] payload, boolean finalFragment, int rsv) {
+                            }
 
-                    @Override
-                    public void onTextFrame(String payload, boolean finalFragment, int rsv) {
-                        received.add(payload);
-                        log.info("received --> " + payload);
-                        latch.countDown();
-                    }
+                            @Override
+                            public void onTextFrame(String payload, boolean finalFragment, int rsv) {
+                                received.add(payload);
+                                log.info("received --> " + payload);
+                                latch.countDown();
+                            }
 
-                    @Override
-                    public void onPingFrame(byte[] payload) {
-                    }
+                            @Override
+                            public void onPingFrame(byte[] payload) {
+                            }
 
-                    @Override
-                    public void onPongFrame(byte[] payload) {
-                    }
-                }).build()).get();
+                            @Override
+                            public void onPongFrame(byte[] payload) {
+                            }
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -115,9 +116,9 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
                 websocketComponent.setMinThreads(1);
 
                 from("websocket://echo")
-                    .log(">>> Message received from WebSocket Client : ${body}")
-                    .transform().simple("${body}${body}")
-                    .to("websocket://echo");
+                        .log(">>> Message received from WebSocket Client : ${body}")
+                        .transform().simple("${body}${body}")
+                        .to("websocket://echo");
 
             }
         };

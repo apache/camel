@@ -66,14 +66,15 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
         MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMinimumMessageCount(size - 10);
 
-        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.getComponent("quartz", QuartzComponent.class)
+                .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(url)
-                    .routeId("test")
-                    .routePolicyRef("startPolicy, throttlePolicy")
-                    .to("log:foo?groupSize=10")
-                    .to("mock:success");
+                        .routeId("test")
+                        .routePolicyRef("startPolicy, throttlePolicy")
+                        .to("log:foo?groupSize=10")
+                        .to("mock:success");
             }
         });
         context.start();

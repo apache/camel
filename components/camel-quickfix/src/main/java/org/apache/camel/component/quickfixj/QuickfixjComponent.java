@@ -83,11 +83,13 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     } else {
                         settings = QuickfixjEngine.loadSettings(remaining);
                     }
-                    Boolean lazyCreateEngineForEndpoint = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
+                    Boolean lazyCreateEngineForEndpoint
+                            = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
                     if (lazyCreateEngineForEndpoint == null) {
                         lazyCreateEngineForEndpoint = isLazyCreateEngines();
                     }
-                    engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory,
+                    engine = new QuickfixjEngine(
+                            uri, settings, messageStoreFactory, logFactory, messageFactory,
                             lazyCreateEngineForEndpoint);
 
                     // only start engine if CamelContext is already started, otherwise the engines gets started
@@ -206,8 +208,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     /**
-     * If set to <code>true</code>, the engines will be created and started when needed (when first message
-     * is send)
+     * If set to <code>true</code>, the engines will be created and started when needed (when first message is send)
      */
     public void setLazyCreateEngines(boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;

@@ -77,7 +77,7 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .loadBalance().custom("myBalancer").id("mysend")
+                        .loadBalance().custom("myBalancer").id("mysend")
                         .to("mock:foo", "mock:bar");
             }
         };

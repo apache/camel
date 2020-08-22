@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextConfiguration
 public class CamelGreeterTest {
     @RegisterExtension
-    public static GreeterServiceExtension greeterServiceExtension =
-            GreeterServiceExtension.createExtension("CamelGreeterTest.port");
+    public static GreeterServiceExtension greeterServiceExtension
+            = GreeterServiceExtension.createExtension("CamelGreeterTest.port");
 
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
@@ -50,7 +50,6 @@ public class CamelGreeterTest {
 
     @EndpointInject("mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
-
 
     @Test
     void testMocksAreValid() throws Exception {
@@ -66,10 +65,10 @@ public class CamelGreeterTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals(list.size(), 1, "Should get one message");
+        assertEquals(1, list.size(), "Should get one message");
         for (Exchange exchange : list) {
             String result = (String) exchange.getIn().getBody();
-            assertEquals(result, "Hello Willem", "Get the wrong result ");
+            assertEquals("Hello Willem", result, "Get the wrong result ");
         }
     }
 

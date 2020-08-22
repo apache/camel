@@ -103,7 +103,7 @@ public class RabbitMQComponentTest extends CamelTestSupport {
 
         RabbitMQComponent comp = context.getComponent("rabbitmq", RabbitMQComponent.class);
         comp.setAutoDetectConnectionFactory(false);
-        return (RabbitMQEndpoint)comp.createEndpoint(uri, params);
+        return (RabbitMQEndpoint) comp.createEndpoint(uri, params);
     }
 
     @Test
@@ -117,7 +117,8 @@ public class RabbitMQComponentTest extends CamelTestSupport {
         Map<String, Object> params = new HashMap<>();
         params.put("connectionFactory", "#connectionFactoryMock");
 
-        RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", params);
+        RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange",
+                "localhost/exchange", params);
 
         assertSame(connectionFactoryMock, endpoint.getConnectionFactory());
 

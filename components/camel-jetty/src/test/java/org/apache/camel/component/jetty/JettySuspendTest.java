@@ -38,7 +38,7 @@ public class JettySuspendTest extends BaseJettyTest {
         assertEquals("Bye World", reply);
 
         // now suspend jetty
-        HttpConsumer consumer = (HttpConsumer)context.getRoute("route1").getConsumer();
+        HttpConsumer consumer = (HttpConsumer) context.getRoute("route1").getConsumer();
         assertNotNull(consumer);
 
         // suspend

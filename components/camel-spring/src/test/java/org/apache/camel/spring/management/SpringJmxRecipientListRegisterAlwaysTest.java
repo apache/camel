@@ -36,7 +36,8 @@ public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport 
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxRecipientListTestRegisterAlways.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringJmxRecipientListTestRegisterAlways.xml");
     }
 
     protected MBeanServer getMBeanServer() {

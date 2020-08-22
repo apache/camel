@@ -39,7 +39,8 @@ public class QuartzRouteTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
+                from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute")
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

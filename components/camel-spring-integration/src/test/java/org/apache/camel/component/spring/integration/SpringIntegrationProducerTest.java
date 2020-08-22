@@ -28,7 +28,7 @@ public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
     public void testSendingTwoWayMessage() throws Exception {
         String result = template.requestBody("direct:twowayMessage", "Willem", String.class);
 
-        assertEquals(result, "Hello Willem", "Can't get the right response");
+        assertEquals("Hello Willem", result, "Can't get the right response");
     }
 
     @Test
@@ -36,7 +36,7 @@ public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
         template.sendBody("direct:onewayMessage", "Greet");
 
         HelloWorldService service = getMandatoryBean(HelloWorldService.class, "helloService");
-        assertEquals(service.getGreetName(), "Greet", "We should call the service");
+        assertEquals("Greet", service.getGreetName(), "We should call the service");
     }
 
     @Override

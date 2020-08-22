@@ -85,7 +85,7 @@ public class JooqConfiguration implements Cloneable {
 
     public JooqConfiguration copy() {
         try {
-            return (JooqConfiguration)super.clone();
+            return (JooqConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

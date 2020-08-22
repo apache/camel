@@ -54,7 +54,8 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 MyProcessor myProcessor = context.getRegistry().lookupByNameAndType("myProcessor", MyProcessor.class);
 
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0).onExceptionOccurred(myProcessor));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(3).redeliveryDelay(0)
+                        .onExceptionOccurred(myProcessor));
 
                 from("direct:start").to("log:a").to("direct:foo").to("log:b");
 

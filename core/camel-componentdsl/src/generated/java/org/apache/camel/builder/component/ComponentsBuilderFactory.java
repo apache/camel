@@ -96,10 +96,11 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * ArangoDb (camel-arangodb)
-     * Perform operations on ArangoDb documents, collections and graphs.
+     * Perform operations on ArangoDb when used as a Document Database, or as a
+     * Graph Database
      * 
      * Category: database,nosql
-     * Since: 3.5.0-SNAPSHOT
+     * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
      */
     static org.apache.camel.builder.component.dsl.ArangodbComponentBuilderFactory.ArangodbComponentBuilder arangodb() {
@@ -1030,6 +1031,7 @@ public interface ComponentsBuilderFactory {
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,nosql
      * Since: 2.15

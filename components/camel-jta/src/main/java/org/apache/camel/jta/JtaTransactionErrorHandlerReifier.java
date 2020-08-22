@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTransactionErrorHandlerBuilder> {
 
-    public static final String ROLLBACK_LOGGING_LEVEL_PROPERTY =
-            JtaTransactionErrorHandlerBuilder.class.getName() + "#rollbackLoggingLevel";
+    public static final String ROLLBACK_LOGGING_LEVEL_PROPERTY
+            = JtaTransactionErrorHandlerBuilder.class.getName() + "#rollbackLoggingLevel";
 
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
 
@@ -60,9 +60,11 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
                 final Policy policy = new TransactedReifier(camelContext, transactedDefinition).resolvePolicy();
                 if (policy != null) {
                     if (!(policy instanceof JtaTransactionPolicy)) {
-                        throw new RuntimeCamelException("The configured policy '" + definition.getPolicyRef()
-                                + "' is of type '" + policy.getClass().getName() + "' but an instance of '"
-                                + JtaTransactionPolicy.class.getName() + "' is required!");
+                        throw new RuntimeCamelException(
+                                "The configured policy '" + definition.getPolicyRef()
+                                                        + "' is of type '" + policy.getClass().getName()
+                                                        + "' but an instance of '"
+                                                        + JtaTransactionPolicy.class.getName() + "' is required!");
                     }
                     transactionPolicy = (JtaTransactionPolicy) policy;
                 }
@@ -72,7 +74,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         // try to lookup default policy
         if (transactionPolicy == null) {
             LOG.debug("No transaction policy configured on TransactionErrorHandlerBuilder. "
-                    + "Will try find it in the registry.");
+                      + "Will try find it in the registry.");
 
             Map<String, TransactedPolicy> mapPolicy = findByTypeWithName(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
@@ -102,7 +104,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }
 
-        JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(camelContext,
+        JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
+                camelContext,
                 processor,
                 definition.getLogger(),
                 definition.getOnRedelivery(),
@@ -132,7 +135,8 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
                     executorService = manager.newScheduledThreadPool(this, definition.getExecutorServiceRef(), profile);
                 }
                 if (executorService == null) {
-                    throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry.");
+                    throw new IllegalArgumentException(
+                            "ExecutorServiceRef " + definition.getExecutorServiceRef() + " not found in registry.");
                 }
             } else {
                 // no explicit configured thread pool, so leave it up to the

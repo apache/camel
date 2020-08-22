@@ -29,7 +29,8 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
     private void sendFile(String uri) throws Exception {
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, new File("src/test/resources/test.txt"));
+                byte[] buffer = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class,
+                        new File("src/test/resources/test.txt"));
                 exchange.setProperty(Exchange.CHARSET_NAME, "ASCII");
                 exchange.getIn().setBody(buffer);
             }
@@ -53,8 +54,8 @@ public class NettyUDPAsyncTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:udp://localhost:{{port}}?sync=false")
-                    .to("mock:result")
-                    .to("log:Message");
+                        .to("mock:result")
+                        .to("log:Message");
             }
         };
     }

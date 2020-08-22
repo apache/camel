@@ -93,7 +93,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             String url = getDestination();
             long hits = processor.getCounter();
 
-            CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+            CompositeData data = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
             answer.put(data);
             return answer;
         } catch (Exception e) {

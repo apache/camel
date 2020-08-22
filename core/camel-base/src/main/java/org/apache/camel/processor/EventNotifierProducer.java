@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Ensures a {@link Producer} do send {@link org.apache.camel.spi.EventNotifier} notifications when
- * sending.
+ * Ensures a {@link Producer} do send {@link org.apache.camel.spi.EventNotifier} notifications when sending.
  */
 public final class EventNotifierProducer extends DefaultAsyncProducer {
 

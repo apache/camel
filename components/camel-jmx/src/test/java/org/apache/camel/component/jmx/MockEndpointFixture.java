@@ -36,20 +36,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class MockEndpointFixture {
     MockEndpoint mMockEndpoint;
-    
+
     public MockEndpointFixture(MockEndpoint aMockEndpoint) {
         setMockEndpoint(aMockEndpoint);
     }
-    
+
     protected void waitForMessages() throws InterruptedException {
         waitForMessages(mMockEndpoint);
     }
 
     protected void waitForMessages(MockEndpoint aMockEndpoint) throws InterruptedException {
         mMockEndpoint.await(10, TimeUnit.SECONDS);
-        assertEquals(aMockEndpoint.getExpectedCount(), aMockEndpoint.getReceivedCounter(), "Expected number of messages didn't arrive before timeout");
+        assertEquals(aMockEndpoint.getExpectedCount(), aMockEndpoint.getReceivedCounter(),
+                "Expected number of messages didn't arrive before timeout");
     }
-    
+
     protected MockEndpoint getMockEndpoint() {
         return mMockEndpoint;
     }
@@ -88,8 +89,7 @@ public class MockEndpointFixture {
     }
 
     /**
-     * Resets the mock endpoint so we can run another test. This will clear out any
-     * previously received messages.
+     * Resets the mock endpoint so we can run another test. This will clear out any previously received messages.
      */
     protected void resetMockEndpoint() {
         getMockEndpoint().reset();

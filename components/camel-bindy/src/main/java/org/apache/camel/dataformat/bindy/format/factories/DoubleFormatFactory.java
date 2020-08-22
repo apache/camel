@@ -39,7 +39,8 @@ public class DoubleFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new DoubleFormat(formattingOptions.isImpliedDecimalSeparator(),
+        return new DoubleFormat(
+                formattingOptions.isImpliedDecimalSeparator(),
                 formattingOptions.getPrecision(),
                 formattingOptions.getLocale());
     }

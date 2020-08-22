@@ -163,9 +163,9 @@ public class FtpInitialConnectTimeoutTest extends CamelTestSupport {
                 // this is a test to ensure we have fixed that
                 from("direct:start")
                         .to("ftp://localhost:" + fakeFtpServer.getServerControlPort()
-                                + "?ftpClient=#mocked"
-                                + "&soTimeout=0&"
-                                + "connectTimeout=" + CONNECT_TIMEOUT)
+                            + "?ftpClient=#mocked"
+                            + "&soTimeout=0&"
+                            + "connectTimeout=" + CONNECT_TIMEOUT)
                         .to("mock:done");
             }
         };

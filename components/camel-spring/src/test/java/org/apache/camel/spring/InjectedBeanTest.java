@@ -44,13 +44,16 @@ public class InjectedBeanTest extends SpringTestSupport {
         assertNotNull(bean.getPropertyInjectedProducer(), "No Producer injected for getPropertyInjectedProducer()");
 
         assertNotNull(bean.getFieldInjectedCamelTemplate(), "No CamelTemplate injected for getFieldInjectedCamelTemplate()");
-        assertNotNull(bean.getPropertyInjectedCamelTemplate(), "No CamelTemplate injected for getPropertyInjectedCamelTemplate()");
+        assertNotNull(bean.getPropertyInjectedCamelTemplate(),
+                "No CamelTemplate injected for getPropertyInjectedCamelTemplate()");
 
         assertNotNull(bean.getInjectByFieldName(), "No ProducerTemplate injected for getInjectByFieldName()");
         assertNotNull(bean.getInjectByPropertyName(), "No ProducerTemplate injected for getInjectByPropertyName()");
 
-        assertNotNull(bean.getFieldInjectedPollingConsumer(), "No PollingConsumer injected for getFieldInjectedPollingConsumer()");
-        assertNotNull(bean.getPropertyInjectedPollingConsumer(), "No PollingConsumer injected for getPropertyInjectedPollingConsumer()");
+        assertNotNull(bean.getFieldInjectedPollingConsumer(),
+                "No PollingConsumer injected for getFieldInjectedPollingConsumer()");
+        assertNotNull(bean.getPropertyInjectedPollingConsumer(),
+                "No PollingConsumer injected for getPropertyInjectedPollingConsumer()");
     }
 
     @Test

@@ -118,7 +118,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (is == null) {
             throw new XmlSignatureException(
                     "XML Signature component is wrongly configured: No XML schema found for specified schema resource URI "
-                            + schemaResourceUri);
+                                            + schemaResourceUri);
         }
         byte[] bytes;
         try {
@@ -129,8 +129,9 @@ public abstract class XmlSignatureProcessor implements Processor {
         }
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        schemaFactory.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), getConfiguration()
-                .getSchemaResourceUri()));
+        schemaFactory.setResourceResolver(new DefaultLSResourceResolver(
+                getCamelContext(), getConfiguration()
+                        .getSchemaResourceUri()));
         LOG.debug("Instantiating schema for validation");
         return schemaFactory.newSchema(new BytesSource(bytes));
     }

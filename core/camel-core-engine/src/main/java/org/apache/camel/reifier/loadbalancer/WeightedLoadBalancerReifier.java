@@ -31,7 +31,7 @@ import org.apache.camel.processor.loadbalancer.WeightedRoundRobinLoadBalancer;
 public class WeightedLoadBalancerReifier extends LoadBalancerReifier<WeightedLoadBalancerDefinition> {
 
     public WeightedLoadBalancerReifier(Route route, LoadBalancerDefinition definition) {
-        super(route, (WeightedLoadBalancerDefinition)definition);
+        super(route, (WeightedLoadBalancerDefinition) definition);
     }
 
     @Override

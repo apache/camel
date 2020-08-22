@@ -61,18 +61,23 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private EventLoopGroup workerGroup;
 
     public SingleUDPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
+        this.allChannels = new DefaultChannelGroup(
+                SingleUDPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     @Override
-    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
     @Override
-    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -175,10 +180,12 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             ChannelFuture channelFuture = bootstrap.bind(configuration.getPort()).sync();
             channel = channelFuture.channel();
             DatagramChannel datagramChannel = (DatagramChannel) channel;
-            String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
+            String networkInterface
+                    = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
-            LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName());
+            LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", configuration.getHost(),
+                    configuration.getPort(), multicastNetworkInterface.getName());
             datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
             allChannels.add(datagramChannel);
         } else {

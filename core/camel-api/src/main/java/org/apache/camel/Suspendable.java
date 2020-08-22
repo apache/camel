@@ -19,13 +19,13 @@ package org.apache.camel;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Marker interface to indicate a custom component has custom implementation for suspending the {@link SuspendableService} service.
- * <br/>
+ * Marker interface to indicate a custom component has custom implementation for suspending the
+ * {@link SuspendableService} service. <br/>
  * This is needed to let Camel know if there is special code happening during a suspension.
  * <p/>
- * The {@link ServiceSupport} implementation that most Camel components / endpoints etc use
- * as base class is a {@link SuspendableService} but the actual implementation may not have special logic for suspend.
- * Therefore this marker interface is introduced to indicate when the implementation has special code for suspension.
+ * The {@link ServiceSupport} implementation that most Camel components / endpoints etc use as base class is a
+ * {@link SuspendableService} but the actual implementation may not have special logic for suspend. Therefore this
+ * marker interface is introduced to indicate when the implementation has special code for suspension.
  * <p/>
  * It is assumed that a service having a custom logic for suspension implements also a custom logic for resuming.
  *

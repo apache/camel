@@ -27,16 +27,17 @@ import org.apache.camel.spi.Metadata;
  */
 public abstract class HeaderFilterStrategyComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
-    @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
+    @Metadata(label = "filter",
+              description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-    
+
     public HeaderFilterStrategyComponent() {
     }
 
     public HeaderFilterStrategyComponent(CamelContext context) {
         super(context);
     }
-    
+
     @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
@@ -51,11 +52,12 @@ public abstract class HeaderFilterStrategyComponent extends DefaultComponent imp
     }
 
     /**
-     * Sets the header filter strategy to use from the given endpoint if the endpoint is a {@link HeaderFilterStrategyAware} type.
+     * Sets the header filter strategy to use from the given endpoint if the endpoint is a
+     * {@link HeaderFilterStrategyAware} type.
      */
     public void setEndpointHeaderFilterStrategy(Endpoint endpoint) {
         if (headerFilterStrategy != null && endpoint instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)endpoint).setHeaderFilterStrategy(headerFilterStrategy);
+            ((HeaderFilterStrategyAware) endpoint).setHeaderFilterStrategy(headerFilterStrategy);
         }
     }
 }

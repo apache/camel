@@ -35,26 +35,24 @@ public class DdbComponentTest extends CamelTestSupport {
         assertNull(amazonDDBClient.createTableRequest);
     }
 
-
     @Test
     public void whenTableIsMissingThenCreateItOnStart() throws Exception {
         DefaultProducerTemplate.newInstance(context,
                 "aws-ddb://creatibleTable?amazonDDBClient=#amazonDDBClient");
         assertEquals("creatibleTable", amazonDDBClient.createTableRequest.getTableName());
     }
-    
+
     @Test
     public void createEndpointWithOnlySecretKeyConfiguration() throws Exception {
         DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?secretKey=xxx");
     }
-    
+
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         DdbComponent component = context.getComponent("aws-ddb", DdbComponent.class);
         component.createEndpoint("aws-ddb://activeTable?amazonDDBClient=#amazonDDBClient");
     }
-
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {

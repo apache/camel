@@ -91,12 +91,12 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
     private String createBody() throws Exception {
         return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.component.camel.apache.org/\">\n"
-                + "   <soapenv:Header/>\n"
-                + "   <soapenv:Body>\n"
-                + "      <cxf:echo>\n"
-                + "          <cxf:arg0>Camel</cxf:arg0>\n"
-                + "      </cxf:echo>\n"
-                + "   </soapenv:Body>\n"
-                + "</soapenv:Envelope>";
+               + "   <soapenv:Header/>\n"
+               + "   <soapenv:Body>\n"
+               + "      <cxf:echo>\n"
+               + "          <cxf:arg0>Camel</cxf:arg0>\n"
+               + "      </cxf:echo>\n"
+               + "   </soapenv:Body>\n"
+               + "</soapenv:Envelope>";
     }
 }

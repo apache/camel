@@ -53,7 +53,8 @@ public class JettyChuckedFalseTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
 
-                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false").to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
+                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false")
+                        .to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
 
                 from("jetty:http://localhost:{{port2}}/other").process(new Processor() {
 

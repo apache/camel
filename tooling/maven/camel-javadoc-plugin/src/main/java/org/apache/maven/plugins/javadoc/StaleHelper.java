@@ -35,15 +35,15 @@ import org.codehaus.plexus.util.cli.Commandline;
  * Helper class to compute and write data used to detect a stale javadoc.
  */
 public final class StaleHelper {
-    
+
     private StaleHelper() {
     }
 
     /**
      * Compute the data used to detect a stale javadoc
      *
-     * @param cmd the command line
-     * @return the stale data
+     * @param  cmd                  the command line
+     * @return                      the stale data
      * @throws MavenReportException if an error occurs
      */
     public static String getStaleData(Commandline cmd) throws MavenReportException {
@@ -99,8 +99,8 @@ public final class StaleHelper {
     /**
      * Write the data used to detect a stale javadoc
      *
-     * @param cmd the command line
-     * @param path the stale data path
+     * @param  cmd                  the command line
+     * @param  path                 the stale data path
      * @throws MavenReportException if an error occurs
      */
     public static void writeStaleData(Commandline cmd, Path path) throws MavenReportException {

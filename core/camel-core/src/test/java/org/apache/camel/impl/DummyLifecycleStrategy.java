@@ -101,7 +101,9 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
     }
 
     @Override
-    public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
+    public void onThreadPoolAdd(
+            CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId,
+            String threadPoolProfileId) {
         events.add("onThreadPoolAdd");
     }
 

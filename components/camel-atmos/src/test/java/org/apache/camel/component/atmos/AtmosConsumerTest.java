@@ -38,14 +38,15 @@ public class AtmosConsumerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 fromF("atmos:foo/get?remotePath=/path&fullTokenId=fakeToken&secretKey=%s&uri=https://fake/uri", fake)
-                    .to("mock:test");
+                        .to("mock:test");
             }
         };
     }
 
     @Test
     public void shouldCreateGetConsumer() throws Exception {
-        AtmosEndpoint endpoint = (AtmosEndpoint) context.getEndpoints().stream().filter(e -> e instanceof AtmosEndpoint).findFirst().orElse(null);
+        AtmosEndpoint endpoint = (AtmosEndpoint) context.getEndpoints().stream().filter(e -> e instanceof AtmosEndpoint)
+                .findFirst().orElse(null);
         assertNotNull(endpoint);
 
         Consumer consumer = endpoint.createConsumer(null);

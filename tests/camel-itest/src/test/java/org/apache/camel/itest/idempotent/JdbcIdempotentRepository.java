@@ -42,7 +42,8 @@ public class JdbcIdempotentRepository implements IdempotentRepository {
 
     @Override
     public boolean contains(String key) {
-        int numMatches = jdbc.queryForObject("SELECT count(0) FROM ProcessedPayments where paymentIdentifier = ?", Integer.class, key);
+        int numMatches
+                = jdbc.queryForObject("SELECT count(0) FROM ProcessedPayments where paymentIdentifier = ?", Integer.class, key);
         return numMatches > 0;
     }
 
@@ -56,7 +57,7 @@ public class JdbcIdempotentRepository implements IdempotentRepository {
     public boolean confirm(String key) {
         return true;
     }
-    
+
     @Override
     public void clear() {
         jdbc.update("DELETE * FROM ProcessedPayments");
@@ -72,4 +73,3 @@ public class JdbcIdempotentRepository implements IdempotentRepository {
         // noop
     }
 }
-

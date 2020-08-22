@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 public class Cw2Component extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(Cw2Component.class);
-    
+
     @Metadata
     private Cw2Configuration configuration = new Cw2Configuration();
 
@@ -66,7 +66,8 @@ public class Cw2Component extends DefaultComponent {
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
             checkAndSetRegistryClient(configuration, endpoint);
         }
-        if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
+        if (configuration.getAmazonCwClient() == null
+                && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
 

@@ -98,16 +98,14 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo'
-     * header.
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
      */
     public void setTo(List<String> to) {
         this.to = to;
     }
 
     /**
-     * List of destination email address. Can be overriden with 'CamelAwsSesTo'
-     * header.
+     * List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
      */
     public void setTo(String to) {
         this.to = Arrays.asList(to.split(","));
@@ -129,8 +127,7 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * The subject which is used if the message header 'CamelAwsSesSubject' is
-     * not present.
+     * The subject which is used if the message header 'CamelAwsSesSubject' is not present.
      */
     public void setSubject(String subject) {
         this.subject = subject;
@@ -141,8 +138,8 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * The email address to which bounce notifications are to be forwarded,
-     * override it using 'CamelAwsSesReturnPath' header.
+     * The email address to which bounce notifications are to be forwarded, override it using 'CamelAwsSesReturnPath'
+     * header.
      */
     public void setReturnPath(String returnPath) {
         this.returnPath = returnPath;
@@ -153,8 +150,7 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * List of reply-to email address(es) for the message, override it using
-     * 'CamelAwsSesReplyToAddresses' header.
+     * List of reply-to email address(es) for the message, override it using 'CamelAwsSesReplyToAddresses' header.
      */
     public void setReplyToAddresses(List<String> replyToAddresses) {
         this.replyToAddresses = replyToAddresses;
@@ -202,15 +198,13 @@ public class Ses2Configuration implements Cloneable {
     }
 
     /**
-     * The region in which SES client needs to work. When using this
-     * parameter, the configuration will expect the lowercase name of the
-     * region (for example ap-east-1) You'll need to use the name
-     * Region.EU_WEST_1.id()
+     * The region in which SES client needs to work. When using this parameter, the configuration will expect the
+     * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     public boolean isTrustAllCertificates() {
         return trustAllCertificates;
     }
@@ -221,15 +215,14 @@ public class Ses2Configuration implements Cloneable {
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
     }
-    
+
     public boolean isAutoDiscoverClient() {
         return autoDiscoverClient;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will
-     * look for a client instance in the registry automatically otherwise it
-     * will skip that checking.
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
      */
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
@@ -241,7 +234,7 @@ public class Ses2Configuration implements Cloneable {
 
     public Ses2Configuration copy() {
         try {
-            return (Ses2Configuration)super.clone();
+            return (Ses2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

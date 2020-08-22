@@ -62,7 +62,7 @@ public class JdbcAggregateConcurrentDifferentGroupsTest extends AbstractJdbcAggr
         assertMockEndpointsSatisfied();
         executor.shutdownNow();
     }
-    
+
     @Override
     long getCompletionInterval() {
         return 1000;

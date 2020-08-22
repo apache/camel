@@ -96,7 +96,7 @@ public class ManagedSendDynamicProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toD("direct:${header.whereto}").id("mysend");
+                        .toD("direct:${header.whereto}").id("mysend");
 
                 from("direct:foo").to("mock:foo");
 

@@ -57,8 +57,8 @@ public class DynamicRouterTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
+                        // use a bean as the dynamic router
+                        .dynamicRouter(method(DynamicRouterTest.class, "slip"));
                 // END SNIPPET: e1
 
                 from("direct:foo").transform(constant("Bye World"));
@@ -70,8 +70,8 @@ public class DynamicRouterTest extends ContextTestSupport {
     /**
      * Use this method to compute dynamic where we should route next.
      *
-     * @param body the message body
-     * @return endpoints to go, or <tt>null</tt> to indicate the end
+     * @param  body the message body
+     * @return      endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body) {
         bodies.add(body);

@@ -49,7 +49,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived(bean);
 
-        template.sendBodyAndHeader(getProducerUri() + "/serialized", bean, Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+        template.sendBodyAndHeader(getProducerUri() + "/serialized", bean, Exchange.CONTENT_TYPE,
+                CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -57,7 +58,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
     @Test
     public void testSerializeRequestBodyNotSerializable() throws InterruptedException {
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getProducerUri() + "/serialized", new NotSerializableBean(), Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+            template.sendBodyAndHeader(getProducerUri() + "/serialized", new NotSerializableBean(), Exchange.CONTENT_TYPE,
+                    CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
         });
     }
 
@@ -66,7 +68,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
         VertxHttpComponent component = context.getComponent("vertx-http", VertxHttpComponent.class);
         component.setAllowJavaSerializedObject(false);
         assertThrows(CamelExecutionException.class, () -> {
-            template.sendBodyAndHeader(getProducerUri() + "/serialized", new SerializedBean(), Exchange.CONTENT_TYPE, CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+            template.sendBodyAndHeader(getProducerUri() + "/serialized", new SerializedBean(), Exchange.CONTENT_TYPE,
+                    CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
         });
     }
 
@@ -107,7 +110,8 @@ public class VertxHttpSerializedBodyTest extends VertxHttpTestSupport {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 // camel-undertow does not (yet) support object deserialization so we do it manually
-                                InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange.getIn().getBody());
+                                InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class,
+                                        exchange.getIn().getBody());
                                 if (inputStream != null) {
                                     try {
                                         Object object = VertxHttpHelper.deserializeJavaObjectFromStream(inputStream);

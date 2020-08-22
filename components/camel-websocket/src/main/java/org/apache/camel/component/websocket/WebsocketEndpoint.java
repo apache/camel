@@ -37,7 +37,8 @@ import org.eclipse.jetty.server.Handler;
 /**
  * Expose websocket endpoints using Jetty.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", category = {Category.WEBSOCKET})
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket",
+             syntax = "websocket:host:port/resourceUri", category = { Category.WEBSOCKET })
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private WebsocketComponent component;
@@ -48,7 +49,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private String host;
     @UriPath(defaultValue = "9292")
     private Integer port;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String resourceUri;
 
     @UriParam(label = "producer")
@@ -139,16 +141,16 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The hostname. The default value is <tt>0.0.0.0</tt>.
-     * Setting this option on the component will use the component configured value as default.
+     * The hostname. The default value is <tt>0.0.0.0</tt>. Setting this option on the component will use the component
+     * configured value as default.
      */
     public void setHost(String host) {
         this.host = host;
     }
 
     /**
-     * The port number. The default value is <tt>9292</tt>.
-     * Setting this option on the component will use the component configured value as default.
+     * The port number. The default value is <tt>9292</tt>. Setting this option on the component will use the component
+     * configured value as default.
      */
     public void setPort(int port) {
         this.port = port;
@@ -161,11 +163,10 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     /**
      * Set a resource path for static resources (such as .html files etc).
      * <p/>
-     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>,
-     * otherwise the resources is loaded from file system or from JAR files.
+     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>, otherwise the resources is
+     * loaded from file system or from JAR files.
      * <p/>
-     * For example to load from root classpath use <tt>classpath:.</tt>, or
-     * <tt>classpath:WEB-INF/static</tt>
+     * For example to load from root classpath use <tt>classpath:.</tt>, or <tt>classpath:WEB-INF/static</tt>
      * <p/>
      * If not configured (eg <tt>null</tt>) then no static resource is in use.
      */
@@ -178,7 +179,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the WebsocketConstants.SEND_TO_ALL header on the message.
+     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the
+     * WebsocketConstants.SEND_TO_ALL header on the message.
      */
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
@@ -189,8 +191,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Timeout in millis when sending to a websocket channel.
-     * The default timeout is 30000 (30 seconds).
+     * Timeout in millis when sending to a websocket channel. The default timeout is 30000 (30 seconds).
      */
     public void setSendTimeout(Integer sendTimeout) {
         this.sendTimeout = sendTimeout;
@@ -231,7 +232,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Set the time in ms that the websocket created by the websocketServlet may be idle before closing. (default is 300000)
+     * Set the time in ms that the websocket created by the websocketServlet may be idle before closing. (default is
+     * 300000)
      */
     public void setMaxIdleTime(Integer maxIdleTime) {
         this.maxIdleTime = maxIdleTime;
@@ -242,7 +244,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Can be used to set the size in characters that the websocket created by the websocketServlet may be accept before closing.
+     * Can be used to set the size in characters that the websocket created by the websocketServlet may be accept before
+     * closing.
      */
     public void setMaxTextMessageSize(Integer maxTextMessageSize) {
         this.maxTextMessageSize = maxTextMessageSize;
@@ -253,7 +256,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited)
+     * Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before
+     * closing. (Default is -1 - or unlimited)
      */
     public void setMaxBinaryMessageSize(Integer maxBinaryMessageSize) {
         this.maxBinaryMessageSize = maxBinaryMessageSize;
@@ -264,7 +268,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Can be used to set the minimum protocol version accepted for the websocketServlet. (Default 13 - the RFC6455 version)
+     * Can be used to set the minimum protocol version accepted for the websocketServlet. (Default 13 - the RFC6455
+     * version)
      */
     public void setMinVersion(Integer minVersion) {
         this.minVersion = minVersion;
@@ -294,7 +299,8 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more
+     * details.
      */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;

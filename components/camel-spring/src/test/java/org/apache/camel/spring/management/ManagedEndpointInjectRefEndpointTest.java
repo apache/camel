@@ -39,7 +39,8 @@ public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/ManagedEndpointInjectRefEndpointTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/ManagedEndpointInjectRefEndpointTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {
@@ -84,7 +85,8 @@ public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
             assertEquals(true, registered, "Should be registered");
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result") || uri.equals("ref://foo"), uri);
+            assertTrue(uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result")
+                    || uri.equals("ref://foo"), uri);
         }
     }
 

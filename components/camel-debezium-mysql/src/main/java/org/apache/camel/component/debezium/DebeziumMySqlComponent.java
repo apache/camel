@@ -53,7 +53,8 @@ public final class DebeziumMySqlComponent extends DebeziumComponent<MySqlConnect
     }
 
     @Override
-    protected DebeziumEndpoint initializeDebeziumEndpoint(String uri, MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
-        return new DebeziumMySqlEndpoint(uri, this,  configuration);
+    protected DebeziumEndpoint initializeDebeziumEndpoint(
+            String uri, MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
+        return new DebeziumMySqlEndpoint(uri, this, configuration);
     }
 }

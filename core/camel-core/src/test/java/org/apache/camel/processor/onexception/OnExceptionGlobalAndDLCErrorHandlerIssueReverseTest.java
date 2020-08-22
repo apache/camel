@@ -57,8 +57,9 @@ public class OnExceptionGlobalAndDLCErrorHandlerIssueReverseTest extends Context
 
                 from("direct:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local").end().to("mock:bar")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bar").routeId("bar").onException(IllegalArgumentException.class).handled(true).to("mock:local")
+                        .end().to("mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

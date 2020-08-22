@@ -37,19 +37,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
-    
+
     private static final String TEST_DESTINATION_NAME = "in.out.queue.producer.test";
     private MessageConsumer mc1;
     private MessageConsumer mc2;
 
     public InOutQueueProducerSyncLoadTest() {
     }
-    
+
     @Override
     protected boolean useJmx() {
         return false;
     }
-    
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -59,22 +59,21 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
         mc1.setMessageListener(new MyMessageListener());
         mc2.setMessageListener(new MyMessageListener());
     }
-    
+
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        MyMessageListener l1 = (MyMessageListener)mc1.getMessageListener();
+        MyMessageListener l1 = (MyMessageListener) mc1.getMessageListener();
         l1.close();
         mc1.close();
-        MyMessageListener l2 = (MyMessageListener)mc2.getMessageListener();
+        MyMessageListener l2 = (MyMessageListener) mc2.getMessageListener();
         l2.close();
         mc2.close();
         super.tearDown();
     }
 
     /**
-     * Test to verify that when using the consumer listener for the InOut
-     * producer we get the correct message back.
+     * Test to verify that when using the consumer listener for the InOut producer we get the correct message back.
      * 
      * @throws Exception
      */
@@ -123,11 +122,11 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
-                    .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
+                        .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
                                + TEST_DESTINATION_NAME
                                + ".response&consumerCount=20&producerCount=40&synchronous=true")
-                    .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
+                        .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }
         };
     }
@@ -138,7 +137,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
         @Override
         public void onMessage(Message message) {
             try {
-                TextMessage request = (TextMessage)message;
+                TextMessage request = (TextMessage) message;
                 String text = request.getText();
 
                 TextMessage response = getSession().createTextMessage();

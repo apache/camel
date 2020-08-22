@@ -35,7 +35,7 @@ public class FacebookEndpointTest extends CamelFacebookTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         template().requestBodyAndHeader("direct:testNoArgs", null,
-            FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "userId", "me");
+                FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "userId", "me");
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -55,8 +55,8 @@ public class FacebookEndpointTest extends CamelFacebookTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:testNoArgs")
-                    .to("facebook:getuserlikes")
-                    .to("mock://testNoArgs");
+                        .to("facebook:getuserlikes")
+                        .to("mock://testNoArgs");
             }
         };
     }

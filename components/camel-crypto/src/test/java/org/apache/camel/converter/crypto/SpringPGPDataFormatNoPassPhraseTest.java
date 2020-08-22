@@ -25,14 +25,15 @@ public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml"), true);
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml"), true);
     }
 
     @Test
     void testEncryption() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
-    
+
     @Test
     void testEncryptionWithKeyRingByteArray() throws Exception {
         doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array");

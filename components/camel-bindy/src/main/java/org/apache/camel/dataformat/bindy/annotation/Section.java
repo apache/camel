@@ -21,8 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation allows to define during the marshaling process how a message
- * must be reconstruct
+ * This annotation allows to define during the marshaling process how a message must be reconstruct
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

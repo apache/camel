@@ -34,9 +34,10 @@ public class DatagramPacketEncoder extends MessageToMessageEncoder<AddressedEnve
     private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketEncoder.class);
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out)
+            throws Exception {
         if (msg.content() instanceof ByteBuf) {
-            ByteBuf payload = (ByteBuf)msg.content();
+            ByteBuf payload = (ByteBuf) msg.content();
             // Just wrap the message as DatagramPacket, need to make sure the message content is ByteBuf
             DatagramPacket dp = new DatagramPacket(payload.retain(), msg.recipient());
             out.add(dp);

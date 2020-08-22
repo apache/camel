@@ -60,9 +60,9 @@ public class SqsFilterMessagesWithNoDeleteTest {
             @Override
             public void configure() throws Exception {
                 from(sqsURI)
-                    // try to filter using a non-existent header... should not
-                    // go through
-                    .filter(simple("${header.login} == true")).to("mock:result");
+                        // try to filter using a non-existent header... should not
+                        // go through
+                        .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });
@@ -81,7 +81,7 @@ public class SqsFilterMessagesWithNoDeleteTest {
         // left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
-        assertEquals(response, "Message: hello, world!");
+        assertEquals("Message: hello, world!", response);
 
         ctx.stop();
         clientMock.shutdown();
@@ -107,8 +107,8 @@ public class SqsFilterMessagesWithNoDeleteTest {
             public void configure() throws Exception {
                 from(sqsURI).setHeader("login", constant(true))
 
-                    // this filter should allow the message to pass..
-                    .filter(simple("${header.login} == true")).to("mock:result");
+                        // this filter should allow the message to pass..
+                        .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });

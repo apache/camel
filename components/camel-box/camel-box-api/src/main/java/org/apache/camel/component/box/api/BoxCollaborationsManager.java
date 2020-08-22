@@ -42,11 +42,9 @@ public class BoxCollaborationsManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create collaborations manager to manage the comments of Box connection's
-     * authenticated user.
+     * Create collaborations manager to manage the comments of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxCollaborationsManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -55,10 +53,9 @@ public class BoxCollaborationsManager {
     /**
      * Get information about all of the collaborations for folder.
      * 
-     * @param folderId
-     *            - the id of folder to get collaborations information on.
+     * @param  folderId - the id of folder to get collaborations information on.
      * 
-     * @return The collection of collaboration information for folder.
+     * @return          The collection of collaboration information for folder.
      */
     public Collection<BoxCollaboration.Info> getFolderCollaborations(String folderId) {
         try {
@@ -77,28 +74,24 @@ public class BoxCollaborationsManager {
     /**
      * Add a collaboration to this folder.
      * 
-     * @param folderId
-     *            - the id of folder to add collaboration to.
-     * @param collaborator
-     *            - the collaborator to add.
-     * @param role
-     *            - the role of the collaborator.
+     * @param  folderId     - the id of folder to add collaboration to.
+     * @param  collaborator - the collaborator to add.
+     * @param  role         - the role of the collaborator.
      * 
-     * @return The new collaboration.
+     * @return              The new collaboration.
      */
-    @SuppressWarnings("unused") // compiler for some reason thinks 'if
-                                // (collaborator == null)' clause is dead code.
-    public BoxCollaboration addFolderCollaboration(String folderId, BoxCollaborator collaborator,
+    public BoxCollaboration addFolderCollaboration(
+            String folderId, BoxCollaborator collaborator,
             BoxCollaboration.Role role) {
         try {
-            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
-                    + collaborator.getID() + ")");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
             if (collaborator == null) {
                 throw new IllegalArgumentException("Parameter 'collaborator' can not be null");
             }
+            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
+                      + collaborator.getID() + ")");
             if (role == null) {
                 throw new IllegalArgumentException("Parameter 'role' can not be null");
             }
@@ -112,17 +105,14 @@ public class BoxCollaborationsManager {
     }
 
     /**
-     * Add a collaboration to this folder. An email will be sent to the
-     * collaborator if they don't already have a Box account.
+     * Add a collaboration to this folder. An email will be sent to the collaborator if they don't already have a Box
+     * account.
      * 
-     * @param folderId
-     *            - the id of folder to add collaboration to.
-     * @param email
-     *            - the email address of the collaborator to add.
-     * @param role
-     *            - the role of the collaborator.
+     * @param  folderId - the id of folder to add collaboration to.
+     * @param  email    - the email address of the collaborator to add.
+     * @param  role     - the role of the collaborator.
      * 
-     * @return The new collaboration.
+     * @return          The new collaboration.
      */
     public BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, BoxCollaboration.Role role) {
         try {
@@ -148,9 +138,8 @@ public class BoxCollaborationsManager {
     /**
      * Get collaboration information.
      * 
-     * @param collaborationId
-     *            - the id of collaboration.
-     * @return The collaboration information.
+     * @param  collaborationId - the id of collaboration.
+     * @return                 The collaboration information.
      */
     public BoxCollaboration.Info getCollaborationInfo(String collaborationId) {
         try {
@@ -171,9 +160,8 @@ public class BoxCollaborationsManager {
     /**
      * Update collaboration information.
      * 
-     * @param collaborationId
-     *            - the id of collaboration.
-     * @return The collaboration with updated information.
+     * @param  collaborationId - the id of collaboration.
+     * @return                 The collaboration with updated information.
      */
     public BoxCollaboration updateCollaborationInfo(String collaborationId, BoxCollaboration.Info info) {
         try {
@@ -195,8 +183,7 @@ public class BoxCollaborationsManager {
     /**
      * Delete collaboration.
      * 
-     * @param collaborationId
-     *            - the id of comment to change.
+     * @param collaborationId - the id of comment to change.
      */
     public void deleteCollaboration(String collaborationId) {
         try {

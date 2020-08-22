@@ -39,25 +39,23 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the
-     * children as well.
+     * Looks for the given type in the list of outputs and recurring all the children as well.
      *
-     * @param outputs list of outputs, can be null or empty.
-     * @param type the type to look for
-     * @return the found definitions, or <tt>null</tt> if not found
+     * @param  outputs list of outputs, can be null or empty.
+     * @param  type    the type to look for
+     * @return         the found definitions, or <tt>null</tt> if not found
      */
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         return filterTypeInOutputs(outputs, type, -1);
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the
-     * children as well.
+     * Looks for the given type in the list of outputs and recurring all the children as well.
      *
-     * @param outputs list of outputs, can be null or empty.
-     * @param type the type to look for
-     * @param maxDeep maximum levels deep to traverse
-     * @return the found definitions, or <tt>null</tt> if not found
+     * @param  outputs list of outputs, can be null or empty.
+     * @param  type    the type to look for
+     * @param  maxDeep maximum levels deep to traverse
+     * @return         the found definitions, or <tt>null</tt> if not found
      */
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type, int maxDeep) {
         List<T> found = new ArrayList<>();
@@ -66,12 +64,12 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Looks for the given type in the list of outputs and recurring all the
-     * children as well. Will stop at first found and return it.
+     * Looks for the given type in the list of outputs and recurring all the children as well. Will stop at first found
+     * and return it.
      *
-     * @param outputs list of outputs, can be null or empty.
-     * @param type the type to look for
-     * @return the first found type, or <tt>null</tt> if not found
+     * @param  outputs list of outputs, can be null or empty.
+     * @param  type    the type to look for
+     * @return         the first found type, or <tt>null</tt> if not found
      */
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition<?>> outputs, Class<T> type) {
         List<T> found = new ArrayList<>();
@@ -85,9 +83,9 @@ public final class ProcessorDefinitionHelper {
     /**
      * Is the given child the first in the outputs from the parent?
      *
-     * @param parentType the type the parent must be
-     * @param node the node
-     * @return <tt>true</tt> if first child, <tt>false</tt> otherwise
+     * @param  parentType the type the parent must be
+     * @param  node       the node
+     * @return            <tt>true</tt> if first child, <tt>false</tt> otherwise
      */
     public static boolean isFirstChildOfType(Class<?> parentType, ProcessorDefinition<?> node) {
         if (node == null || node.getParent() == null) {
@@ -108,26 +106,26 @@ public final class ProcessorDefinitionHelper {
     /**
      * Is the given node parent(s) of the given type
      *
-     * @param parentType the parent type
-     * @param node the current node
-     * @param recursive whether or not to check grand parent(s) as well
-     * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt>
-     *         otherwise
+     * @param  parentType the parent type
+     * @param  node       the current node
+     * @param  recursive  whether or not to check grand parent(s) as well
+     * @return            <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
      */
-    public static boolean isParentOfType(Class<? extends ProcessorDefinition> parentType, ProcessorDefinition<?> node, boolean recursive) {
+    public static boolean isParentOfType(
+            Class<? extends ProcessorDefinition> parentType, ProcessorDefinition<?> node, boolean recursive) {
         return findFirstParentOfType(parentType, node, recursive) != null;
     }
 
     /**
      * Is the given node parent(s) of the given type
      *
-     * @param parentType the parent type
-     * @param node the current node
-     * @param recursive whether or not to check grand parent(s) as well
-     * @return <tt>true</tt> if parent(s) is of given type, <tt>false</tt>
-     *         otherwise
+     * @param  parentType the parent type
+     * @param  node       the current node
+     * @param  recursive  whether or not to check grand parent(s) as well
+     * @return            <tt>true</tt> if parent(s) is of given type, <tt>false</tt> otherwise
      */
-    public static <T extends ProcessorDefinition> T findFirstParentOfType(Class<T> parentType, ProcessorDefinition<?> node, boolean recursive) {
+    public static <T extends ProcessorDefinition> T findFirstParentOfType(
+            Class<T> parentType, ProcessorDefinition<?> node, boolean recursive) {
         if (node == null || node.getParent() == null) {
             return null;
         }
@@ -146,22 +144,22 @@ public final class ProcessorDefinitionHelper {
     /**
      * Gets the route definition the given node belongs to.
      *
-     * @param node the node
-     * @return the route, or <tt>null</tt> if not possible to find
+     * @param  node the node
+     * @return      the route, or <tt>null</tt> if not possible to find
      */
     public static RouteDefinition getRoute(NamedNode node) {
         if (node == null) {
             return null;
         }
 
-        ProcessorDefinition<?> def = (ProcessorDefinition)node;
+        ProcessorDefinition<?> def = (ProcessorDefinition) node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
         }
 
         if (def instanceof RouteDefinition) {
-            return (RouteDefinition)def;
+            return (RouteDefinition) def;
         } else {
             // not found
             return null;
@@ -171,8 +169,8 @@ public final class ProcessorDefinitionHelper {
     /**
      * Gets the route id the given node belongs to.
      *
-     * @param node the node
-     * @return the route id, or <tt>null</tt> if not possible to find
+     * @param  node the node
+     * @return      the route id, or <tt>null</tt> if not possible to find
      */
     public static String getRouteId(NamedNode node) {
         RouteDefinition route = getRoute(node);
@@ -180,18 +178,18 @@ public final class ProcessorDefinitionHelper {
     }
 
     /**
-     * Traverses the node, including its children (recursive), and gathers all
-     * the node ids.
+     * Traverses the node, including its children (recursive), and gathers all the node ids.
      *
-     * @param node the target node
-     * @param set set to store ids, if <tt>null</tt> a new set will be created
-     * @param onlyCustomId whether to only store custom assigned ids (ie.
-     *            {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
-     * @param includeAbstract whether to include abstract nodes (ie.
-     *            {@link org.apache.camel.model.ProcessorDefinition#isAbstract()}
-     * @return the set with the found ids.
+     * @param  node            the target node
+     * @param  set             set to store ids, if <tt>null</tt> a new set will be created
+     * @param  onlyCustomId    whether to only store custom assigned ids (ie.
+     *                         {@link org.apache.camel.model.OptionalIdentifiedDefinition#hasCustomIdAssigned()}
+     * @param  includeAbstract whether to include abstract nodes (ie.
+     *                         {@link org.apache.camel.model.ProcessorDefinition#isAbstract()}
+     * @return                 the set with the found ids.
      */
-    public static Set<String> gatherAllNodeIds(ProcessorDefinition<?> node, Set<String> set, boolean onlyCustomId, boolean includeAbstract) {
+    public static Set<String> gatherAllNodeIds(
+            ProcessorDefinition<?> node, Set<String> set, boolean onlyCustomId, boolean includeAbstract) {
         if (node == null) {
             return set;
         }
@@ -242,8 +240,9 @@ public final class ProcessorDefinitionHelper {
         doFindType(outputs, type, found, 1, maxDeep);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static <
+            T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int current, int maxDeep) {
         if (outputs == null || outputs.isEmpty()) {
             return;
         }
@@ -257,18 +256,18 @@ public final class ProcessorDefinitionHelper {
 
             // send is much common
             if (out instanceof SendDefinition) {
-                SendDefinition send = (SendDefinition)out;
+                SendDefinition send = (SendDefinition) out;
                 List<ProcessorDefinition<?>> children = send.getOutputs();
                 doFindType(children, type, found, ++current, maxDeep);
             }
 
             // special for choice
             if (out instanceof ChoiceDefinition) {
-                ChoiceDefinition choice = (ChoiceDefinition)out;
+                ChoiceDefinition choice = (ChoiceDefinition) out;
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(choice)) {
-                    found.add((T)choice);
+                    found.add((T) choice);
                 }
 
                 // only look at when/otherwise if current < maxDeep (or max deep
@@ -276,7 +275,7 @@ public final class ProcessorDefinitionHelper {
                 if (maxDeep < 0 || current < maxDeep) {
                     for (WhenDefinition when : choice.getWhenClauses()) {
                         if (type.isInstance(when)) {
-                            found.add((T)when);
+                            found.add((T) when);
                         }
                         List<ProcessorDefinition<?>> children = when.getOutputs();
                         doFindType(children, type, found, ++current, maxDeep);
@@ -295,11 +294,11 @@ public final class ProcessorDefinitionHelper {
 
             // special for try ... catch ... finally
             if (out instanceof TryDefinition) {
-                TryDefinition doTry = (TryDefinition)out;
+                TryDefinition doTry = (TryDefinition) out;
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(doTry)) {
-                    found.add((T)doTry);
+                    found.add((T) doTry);
                 }
 
                 // only look at children if current < maxDeep (or max deep is
@@ -324,11 +323,11 @@ public final class ProcessorDefinitionHelper {
 
             // special for some types which has special outputs
             if (out instanceof OutputDefinition) {
-                OutputDefinition outDef = (OutputDefinition)out;
+                OutputDefinition outDef = (OutputDefinition) out;
 
                 // ensure to add ourself if we match also
                 if (type.isInstance(outDef)) {
-                    found.add((T)outDef);
+                    found.add((T) outDef);
                 }
 
                 List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
@@ -339,7 +338,7 @@ public final class ProcessorDefinitionHelper {
             }
 
             if (type.isInstance(out)) {
-                found.add((T)out);
+                found.add((T) out);
             }
 
             // try children as well

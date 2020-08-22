@@ -50,15 +50,15 @@ public class JpaWireTapTest extends AbstractJpaTest {
             public void configure() {
 
                 from("direct:start")
-                    .to("jpa://" + SendEmail.class.getName())
-                    .wireTap("direct:tap")
-                    .to("mock:result");
+                        .to("jpa://" + SendEmail.class.getName())
+                        .wireTap("direct:tap")
+                        .to("mock:result");
 
                 from("direct:tap")
-                    .delay(constant("1000"))
-                    .setBody(constant(new SendEmail("me@you.org")))
-                    .to("jpa://" + SendEmail.class.getName())
-                    .to("mock:result");
+                        .delay(constant("1000"))
+                        .setBody(constant(new SendEmail("me@you.org")))
+                        .to("jpa://" + SendEmail.class.getName())
+                        .to("mock:result");
             }
         };
     }

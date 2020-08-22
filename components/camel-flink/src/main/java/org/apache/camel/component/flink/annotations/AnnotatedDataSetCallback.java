@@ -67,7 +67,8 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
 
             if (camelContext != null) {
                 for (int i = 1; i < arguments.size(); i++) {
-                    arguments.set(i, camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
+                    arguments.set(i,
+                            camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
                 }
             }
 

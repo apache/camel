@@ -64,8 +64,8 @@ public class PolicyPerRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // wraps the entire route in the same policy
-                    .policy("foo").to("mock:foo").to("mock:bar").to("mock:result");
+                        // wraps the entire route in the same policy
+                        .policy("foo").to("mock:foo").to("mock:bar").to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:send").to("direct:start").to("mock:response");

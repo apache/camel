@@ -30,14 +30,14 @@ public class SpringBeanInjectRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("direct:start")
-            .process(new Processor() {
-                @Override
-                public void process(Exchange exchange) throws Exception {
-                    String out = greeting.hello(exchange.getIn().getBody(String.class));
-                    exchange.getIn().setBody(out);
-                }
-            })
-            .to("mock:result");
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String out = greeting.hello(exchange.getIn().getBody(String.class));
+                        exchange.getIn().setBody(out);
+                    }
+                })
+                .to("mock:result");
     }
 
 }

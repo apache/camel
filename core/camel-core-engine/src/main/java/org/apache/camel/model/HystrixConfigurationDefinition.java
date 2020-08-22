@@ -60,8 +60,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Sets the thread pool key to use. Will by default use the same value as
-     * groupKey has been configured to use.
+     * Sets the thread pool key to use. Will by default use the same value as groupKey has been configured to use.
      */
     public HystrixConfigurationDefinition threadPoolKey(String threadPoolKey) {
         setThreadPoolKey(threadPoolKey);
@@ -69,12 +68,11 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Whether to use a HystrixCircuitBreaker or not. If false no
-     * circuit-breaker logic will be used and all requests permitted.
+     * Whether to use a HystrixCircuitBreaker or not. If false no circuit-breaker logic will be used and all requests
+     * permitted.
      * <p>
-     * This is similar in effect to circuitBreakerForceClosed() except that
-     * continues tracking metrics and knowing whether it should be open/closed,
-     * this property results in not even instantiating a circuit-breaker.
+     * This is similar in effect to circuitBreakerForceClosed() except that continues tracking metrics and knowing
+     * whether it should be open/closed, this property results in not even instantiating a circuit-breaker.
      */
     public HystrixConfigurationDefinition circuitBreakerEnabled(boolean circuitBreakerEnabled) {
         setCircuitBreakerEnabled(Boolean.toString(circuitBreakerEnabled));
@@ -82,14 +80,12 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Error percentage threshold (as whole number such as 50) at which point
-     * the circuit breaker will trip open and reject requests.
+     * Error percentage threshold (as whole number such as 50) at which point the circuit breaker will trip open and
+     * reject requests.
      * <p>
-     * It will stay tripped for the duration defined in
-     * circuitBreakerSleepWindowInMilliseconds;
+     * It will stay tripped for the duration defined in circuitBreakerSleepWindowInMilliseconds;
      * <p>
-     * The error percentage this is compared against comes from
-     * HystrixCommandMetrics.getHealthCounts().
+     * The error percentage this is compared against comes from HystrixCommandMetrics.getHealthCounts().
      */
     public HystrixConfigurationDefinition circuitBreakerErrorThresholdPercentage(int circuitBreakerErrorThresholdPercentage) {
         setCircuitBreakerErrorThresholdPercentage(Integer.toString(circuitBreakerErrorThresholdPercentage));
@@ -97,12 +93,10 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * If true the HystrixCircuitBreaker.allowRequest() will always return true
-     * to allow requests regardless of the error percentage from
-     * HystrixCommandMetrics.getHealthCounts().
+     * If true the HystrixCircuitBreaker.allowRequest() will always return true to allow requests regardless of the
+     * error percentage from HystrixCommandMetrics.getHealthCounts().
      * <p>
-     * The circuitBreakerForceOpen() property takes precedence so if it set to
-     * true this property does nothing.
+     * The circuitBreakerForceOpen() property takes precedence so if it set to true this property does nothing.
      */
     public HystrixConfigurationDefinition circuitBreakerForceClosed(boolean circuitBreakerForceClosed) {
         setCircuitBreakerForceClosed(Boolean.toString(circuitBreakerForceClosed));
@@ -110,8 +104,8 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * If true the HystrixCircuitBreaker.allowRequest() will always return
-     * false, causing the circuit to be open (tripped) and reject all requests.
+     * If true the HystrixCircuitBreaker.allowRequest() will always return false, causing the circuit to be open
+     * (tripped) and reject all requests.
      * <p>
      * This property takes precedence over circuitBreakerForceClosed();
      */
@@ -121,12 +115,10 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Minimum number of requests in the
-     * metricsRollingStatisticalWindowInMilliseconds() that must exist before
-     * the HystrixCircuitBreaker will trip.
+     * Minimum number of requests in the metricsRollingStatisticalWindowInMilliseconds() that must exist before the
+     * HystrixCircuitBreaker will trip.
      * <p>
-     * If below this number the circuit will not trip regardless of error
-     * percentage.
+     * If below this number the circuit will not trip regardless of error percentage.
      */
     public HystrixConfigurationDefinition circuitBreakerRequestVolumeThreshold(int circuitBreakerRequestVolumeThreshold) {
         setCircuitBreakerRequestVolumeThreshold(Integer.toString(circuitBreakerRequestVolumeThreshold));
@@ -134,8 +126,8 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * The time in milliseconds after a HystrixCircuitBreaker trips open that it
-     * should wait before trying requests again.
+     * The time in milliseconds after a HystrixCircuitBreaker trips open that it should wait before trying requests
+     * again.
      */
     public HystrixConfigurationDefinition circuitBreakerSleepWindowInMilliseconds(int circuitBreakerSleepWindowInMilliseconds) {
         setCircuitBreakerSleepWindowInMilliseconds(Integer.toString(circuitBreakerSleepWindowInMilliseconds));
@@ -143,12 +135,13 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Number of concurrent requests permitted to HystrixCommand.run(). Requests
-     * beyond the concurrent limit will be rejected.
+     * Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond the concurrent limit will be
+     * rejected.
      * <p>
      * Applicable only when executionIsolationStrategy is SEMAPHORE.
      */
-    public HystrixConfigurationDefinition executionIsolationSemaphoreMaxConcurrentRequests(int executionIsolationSemaphoreMaxConcurrentRequests) {
+    public HystrixConfigurationDefinition executionIsolationSemaphoreMaxConcurrentRequests(
+            int executionIsolationSemaphoreMaxConcurrentRequests) {
         setExecutionIsolationSemaphoreMaxConcurrentRequests(Integer.toString(executionIsolationSemaphoreMaxConcurrentRequests));
         return this;
     }
@@ -156,11 +149,11 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     /**
      * What isolation strategy HystrixCommand.run() will be executed with.
      * <p>
-     * If THREAD then it will be executed on a separate thread and concurrent
-     * requests limited by the number of threads in the thread-pool.
+     * If THREAD then it will be executed on a separate thread and concurrent requests limited by the number of threads
+     * in the thread-pool.
      * <p>
-     * If SEMAPHORE then it will be executed on the calling thread and
-     * concurrent requests limited by the semaphore count.
+     * If SEMAPHORE then it will be executed on the calling thread and concurrent requests limited by the semaphore
+     * count.
      */
     public HystrixConfigurationDefinition executionIsolationStrategy(String executionIsolationStrategy) {
         setExecutionIsolationStrategy(executionIsolationStrategy);
@@ -168,24 +161,22 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Whether the execution thread should attempt an interrupt (using Future
-     * cancel) when a thread times out.
+     * Whether the execution thread should attempt an interrupt (using Future cancel) when a thread times out.
      * <p>
      * Applicable only when executionIsolationStrategy() is set to THREAD.
      */
-    public HystrixConfigurationDefinition executionIsolationThreadInterruptOnTimeout(boolean executionIsolationThreadInterruptOnTimeout) {
+    public HystrixConfigurationDefinition executionIsolationThreadInterruptOnTimeout(
+            boolean executionIsolationThreadInterruptOnTimeout) {
         setExecutionIsolationThreadInterruptOnTimeout(Boolean.toString(executionIsolationThreadInterruptOnTimeout));
         return this;
     }
 
     /**
-     * Time in milliseconds at which point the command will timeout and halt
-     * execution.
+     * Time in milliseconds at which point the command will timeout and halt execution.
      * <p>
-     * If executionIsolationThreadInterruptOnTimeout is true and the command is
-     * thread-isolated, the executing thread will be interrupted. If the command
-     * is semaphore-isolated and a HystrixObservableCommand, that command will
-     * get unsubscribed.
+     * If executionIsolationThreadInterruptOnTimeout is true and the command is thread-isolated, the executing thread
+     * will be interrupted. If the command is semaphore-isolated and a HystrixObservableCommand, that command will get
+     * unsubscribed.
      */
     public HystrixConfigurationDefinition executionTimeoutInMilliseconds(int executionTimeoutInMilliseconds) {
         setExecutionTimeoutInMilliseconds(Integer.toString(executionTimeoutInMilliseconds));
@@ -201,18 +192,17 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Number of concurrent requests permitted to HystrixCommand.getFallback().
-     * Requests beyond the concurrent limit will fail-fast and not attempt
-     * retrieving a fallback.
+     * Number of concurrent requests permitted to HystrixCommand.getFallback(). Requests beyond the concurrent limit
+     * will fail-fast and not attempt retrieving a fallback.
      */
-    public HystrixConfigurationDefinition fallbackIsolationSemaphoreMaxConcurrentRequests(int fallbackIsolationSemaphoreMaxConcurrentRequests) {
+    public HystrixConfigurationDefinition fallbackIsolationSemaphoreMaxConcurrentRequests(
+            int fallbackIsolationSemaphoreMaxConcurrentRequests) {
         setFallbackIsolationSemaphoreMaxConcurrentRequests(Integer.toString(fallbackIsolationSemaphoreMaxConcurrentRequests));
         return this;
     }
 
     /**
-     * Whether HystrixCommand.getFallback() should be attempted when failure
-     * occurs.
+     * Whether HystrixCommand.getFallback() should be attempted when failure occurs.
      */
     public HystrixConfigurationDefinition fallbackEnabled(boolean fallbackEnabled) {
         setFallbackEnabled(Boolean.toString(fallbackEnabled));
@@ -220,22 +210,21 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Time in milliseconds to wait between allowing health snapshots to be
-     * taken that calculate success and error percentages and affect
-     * HystrixCircuitBreaker.isOpen() status.
+     * Time in milliseconds to wait between allowing health snapshots to be taken that calculate success and error
+     * percentages and affect HystrixCircuitBreaker.isOpen() status.
      * <p>
-     * On high-volume circuits the continual calculation of error percentage can
-     * become CPU intensive thus this controls how often it is calculated.
+     * On high-volume circuits the continual calculation of error percentage can become CPU intensive thus this controls
+     * how often it is calculated.
      */
-    public HystrixConfigurationDefinition metricsHealthSnapshotIntervalInMilliseconds(int metricsHealthSnapshotIntervalInMilliseconds) {
+    public HystrixConfigurationDefinition metricsHealthSnapshotIntervalInMilliseconds(
+            int metricsHealthSnapshotIntervalInMilliseconds) {
         setMetricsHealthSnapshotIntervalInMilliseconds(Integer.toString(metricsHealthSnapshotIntervalInMilliseconds));
         return this;
     }
 
     /**
-     * Maximum number of values stored in each bucket of the rolling percentile.
-     * This is passed into HystrixRollingPercentile inside
-     * HystrixCommandMetrics.
+     * Maximum number of values stored in each bucket of the rolling percentile. This is passed into
+     * HystrixRollingPercentile inside HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingPercentileBucketSize(int metricsRollingPercentileBucketSize) {
         setMetricsRollingPercentileBucketSize(Integer.toString(metricsRollingPercentileBucketSize));
@@ -243,8 +232,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Whether percentile metrics should be captured using
-     * HystrixRollingPercentile inside HystrixCommandMetrics.
+     * Whether percentile metrics should be captured using HystrixRollingPercentile inside HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingPercentileEnabled(boolean metricsRollingPercentileEnabled) {
         setMetricsRollingPercentileEnabled(Boolean.toString(metricsRollingPercentileEnabled));
@@ -252,17 +240,18 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Duration of percentile rolling window in milliseconds. This is passed
-     * into HystrixRollingPercentile inside HystrixCommandMetrics.
+     * Duration of percentile rolling window in milliseconds. This is passed into HystrixRollingPercentile inside
+     * HystrixCommandMetrics.
      */
-    public HystrixConfigurationDefinition metricsRollingPercentileWindowInMilliseconds(int metricsRollingPercentileWindowInMilliseconds) {
+    public HystrixConfigurationDefinition metricsRollingPercentileWindowInMilliseconds(
+            int metricsRollingPercentileWindowInMilliseconds) {
         setMetricsRollingPercentileWindowInMilliseconds(Integer.toString(metricsRollingPercentileWindowInMilliseconds));
         return this;
     }
 
     /**
-     * Number of buckets the rolling percentile window is broken into. This is
-     * passed into HystrixRollingPercentile inside HystrixCommandMetrics.
+     * Number of buckets the rolling percentile window is broken into. This is passed into HystrixRollingPercentile
+     * inside HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingPercentileWindowBuckets(int metricsRollingPercentileWindowBuckets) {
         setMetricsRollingPercentileWindowBuckets(Integer.toString(metricsRollingPercentileWindowBuckets));
@@ -270,18 +259,18 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * This property sets the duration of the statistical rolling window, in
-     * milliseconds. This is how long metrics are kept for the thread pool. The
-     * window is divided into buckets and “rolls” by those increments.
+     * This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are
+     * kept for the thread pool. The window is divided into buckets and “rolls” by those increments.
      */
-    public HystrixConfigurationDefinition metricsRollingStatisticalWindowInMilliseconds(int metricsRollingStatisticalWindowInMilliseconds) {
+    public HystrixConfigurationDefinition metricsRollingStatisticalWindowInMilliseconds(
+            int metricsRollingStatisticalWindowInMilliseconds) {
         setMetricsRollingStatisticalWindowInMilliseconds(Integer.toString(metricsRollingStatisticalWindowInMilliseconds));
         return this;
     }
 
     /**
-     * Number of buckets the rolling statistical window is broken into. This is
-     * passed into HystrixRollingNumber inside HystrixCommandMetrics.
+     * Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside
+     * HystrixCommandMetrics.
      */
     public HystrixConfigurationDefinition metricsRollingStatisticalWindowBuckets(int metricsRollingStatisticalWindowBuckets) {
         setMetricsRollingStatisticalWindowBuckets(Integer.toString(metricsRollingStatisticalWindowBuckets));
@@ -289,8 +278,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Whether HystrixCommand execution and events should be logged to
-     * HystrixRequestLog.
+     * Whether HystrixCommand execution and events should be logged to HystrixRequestLog.
      */
     public HystrixConfigurationDefinition requestLogEnabled(boolean requestLogEnabled) {
         setRequestLogEnabled(Boolean.toString(requestLogEnabled));
@@ -314,8 +302,8 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Max queue size. This should only affect the instantiation of the
-     * thread-pool - it is not eligible to change a queue size on the fly.
+     * Max queue size. This should only affect the instantiation of the thread-pool - it is not eligible to change a
+     * queue size on the fly.
      */
     public HystrixConfigurationDefinition maxQueueSize(int maxQueueSize) {
         setMaxQueueSize(Integer.toString(maxQueueSize));
@@ -323,11 +311,9 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Maximum thread-pool size that gets passed to
-     * {@link ThreadPoolExecutor#setMaximumPoolSize(int)}. This is the maximum
-     * amount of concurrency that can be supported without starting to reject
-     * HystrixCommands. Please note that this setting only takes effect if you
-     * also set allowMaximumSizeToDivergeFromCoreSize
+     * Maximum thread-pool size that gets passed to {@link ThreadPoolExecutor#setMaximumPoolSize(int)}. This is the
+     * maximum amount of concurrency that can be supported without starting to reject HystrixCommands. Please note that
+     * this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize
      */
     public HystrixConfigurationDefinition maximumSize(int maximumSize) {
         setMaximumSize(Integer.toString(maximumSize));
@@ -335,11 +321,9 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Queue size rejection threshold is an artificial max size at which
-     * rejections will occur even if maxQueueSize has not been reached. This is
-     * done because the maxQueueSize of a blocking queue can not be dynamically
-     * changed and we want to support dynamically changing the queue size that
-     * affects rejections.
+     * Queue size rejection threshold is an artificial max size at which rejections will occur even if maxQueueSize has
+     * not been reached. This is done because the maxQueueSize of a blocking queue can not be dynamically changed and we
+     * want to support dynamically changing the queue size that affects rejections.
      * <p>
      * This is used by HystrixCommand when queuing a thread for execution.
      */
@@ -349,27 +333,29 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Duration of statistical rolling window in milliseconds. This is passed
-     * into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance.
+     * Duration of statistical rolling window in milliseconds. This is passed into HystrixRollingNumber inside each
+     * HystrixThreadPoolMetrics instance.
      */
-    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowInMilliseconds(int threadPoolRollingNumberStatisticalWindowInMilliseconds) {
-        setThreadPoolRollingNumberStatisticalWindowInMilliseconds(Integer.toString(threadPoolRollingNumberStatisticalWindowInMilliseconds));
+    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowInMilliseconds(
+            int threadPoolRollingNumberStatisticalWindowInMilliseconds) {
+        setThreadPoolRollingNumberStatisticalWindowInMilliseconds(
+                Integer.toString(threadPoolRollingNumberStatisticalWindowInMilliseconds));
         return this;
     }
 
     /**
-     * Number of buckets the rolling statistical window is broken into. This is
-     * passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics
-     * instance.
+     * Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside
+     * each HystrixThreadPoolMetrics instance.
      */
-    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowBuckets(int threadPoolRollingNumberStatisticalWindowBuckets) {
+    public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowBuckets(
+            int threadPoolRollingNumberStatisticalWindowBuckets) {
         setThreadPoolRollingNumberStatisticalWindowBuckets(Integer.toString(threadPoolRollingNumberStatisticalWindowBuckets));
         return this;
     }
 
     /**
-     * Allows the configuration for maximumSize to take effect. That value can
-     * then be equal to, or higher, than coreSize
+     * Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than
+     * coreSize
      */
     public HystrixConfigurationDefinition allowMaximumSizeToDivergeFromCoreSize(boolean allowMaximumSizeToDivergeFromCoreSize) {
         setAllowMaximumSizeToDivergeFromCoreSize(Boolean.toString(allowMaximumSizeToDivergeFromCoreSize));

@@ -31,12 +31,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests against a "remote" JMX server. Creates an RMI Registry on or near port 39000
- * and registers the simple mbean
+ * Tests against a "remote" JMX server. Creates an RMI Registry on or near port 39000 and registers the simple mbean
  * <p/>
- * Only test here is the notification test since everything should work the
- * same as the platform server. May want to refactor the existing tests to
- * run the full suite on the local platform and this "remote" setup.
+ * Only test here is the notification test since everything should work the same as the platform server. May want to
+ * refactor the existing tests to run the full suite on the local platform and this "remote" setup.
  */
 public class JMXRemoteTest extends SimpleBeanFixture {
 
@@ -60,7 +58,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean
-        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object>emptyMap(), server);
+        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object> emptyMap(), server);
         connector.start();
     }
 

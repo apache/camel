@@ -36,7 +36,7 @@ public class KafkaConsumerTest {
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getConfiguration().getGroupId()).thenReturn("groupOne");
         assertThrows(IllegalArgumentException.class,
-            () -> new KafkaConsumer(endpoint, processor));
+                () -> new KafkaConsumer(endpoint, processor));
     }
 
     @Test

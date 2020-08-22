@@ -59,21 +59,20 @@ public class SplitCustomThreadPoolTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // register a custom thread pool profile with id myLowPool
                 context.getExecutorServiceManager().registerThreadPoolProfile(
-                    new ThreadPoolProfileBuilder("myLowPool").poolSize(2).maxPoolSize(10).build()
-                );
+                        new ThreadPoolProfileBuilder("myLowPool").poolSize(2).maxPoolSize(10).build());
 
                 from("direct:start")
-                    .to("log:foo")
-                    .split(body()).executorServiceRef("myLowPool")
+                        .to("log:foo")
+                        .split(body()).executorServiceRef("myLowPool")
                         .to("log:bar")
                         .process(e -> {
                             String name = Thread.currentThread().getName();
                             assertTrue(name.startsWith("Camel"), "Should use Camel thread");
                         })
                         .to("mock:split")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

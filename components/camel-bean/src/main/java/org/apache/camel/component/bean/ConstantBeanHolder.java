@@ -76,7 +76,7 @@ public class ConstantBeanHolder implements BeanHolder {
     }
 
     @Override
-    public Object getBean(Exchange exchange)  {
+    public Object getBean(Exchange exchange) {
         return bean;
     }
 

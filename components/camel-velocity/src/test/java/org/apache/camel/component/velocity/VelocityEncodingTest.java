@@ -24,7 +24,8 @@ public class VelocityEncodingTest extends VelocityLetterTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity:org/apache/camel/component/velocity/letter-utf16.vm?encoding=UTF-16").to("mock:result");
+                from("direct:a").to("velocity:org/apache/camel/component/velocity/letter-utf16.vm?encoding=UTF-16")
+                        .to("mock:result");
             }
         };
     }

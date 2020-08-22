@@ -113,8 +113,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
     }
 
     /**
-     * Write a file without chmod set, should work normally and not throw an
-     * exception for invalid chmod value
+     * Write a file without chmod set, should work normally and not throw an exception for invalid chmod value
      * 
      * @throws Exception
      */

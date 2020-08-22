@@ -33,13 +33,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EKSProducerTest extends CamelTestSupport {
-    
+
     @BindToRegistry("amazonEksClient")
     AmazonEKSClientMock clientMock = new AmazonEKSClientMock();
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListClustersTest() throws Exception {
 
@@ -52,12 +52,12 @@ public class EKSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListClustersResult resultGet = (ListClustersResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getClusters().size());
         assertEquals("Test", resultGet.getClusters().get(0));
     }
-    
+
     @Test
     public void eksCreateClusterTest() throws Exception {
 
@@ -74,11 +74,11 @@ public class EKSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         CreateClusterResult resultGet = (CreateClusterResult) exchange.getIn().getBody();
         assertEquals("Test", resultGet.getCluster().getName());
     }
-    
+
     @Test
     public void eksDescribeClusterTest() throws Exception {
 
@@ -92,11 +92,11 @@ public class EKSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeClusterResult resultGet = exchange.getIn().getBody(DescribeClusterResult.class);
         assertEquals("Test", resultGet.getCluster().getName());
     }
-    
+
     @Test
     public void eksDeleteClusterTest() throws Exception {
 
@@ -110,7 +110,7 @@ public class EKSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DeleteClusterResult resultGet = exchange.getIn().getBody(DeleteClusterResult.class);
         assertEquals("Test", resultGet.getCluster().getName());
     }
@@ -121,17 +121,17 @@ public class EKSProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listClusters")
-                    .to("aws-eks://test?eksClient=#amazonEksClient&operation=listClusters")
-                    .to("mock:result");
+                        .to("aws-eks://test?eksClient=#amazonEksClient&operation=listClusters")
+                        .to("mock:result");
                 from("direct:createCluster")
-                    .to("aws-eks://test?eksClient=#amazonEksClient&operation=createCluster")
-                    .to("mock:result");
+                        .to("aws-eks://test?eksClient=#amazonEksClient&operation=createCluster")
+                        .to("mock:result");
                 from("direct:deleteCluster")
-                    .to("aws-eks://test?eksClient=#amazonEksClient&operation=deleteCluster")
-                    .to("mock:result");
+                        .to("aws-eks://test?eksClient=#amazonEksClient&operation=deleteCluster")
+                        .to("mock:result");
                 from("direct:describeCluster")
-                    .to("aws-eks://test?eksClient=#amazonEksClient&operation=describeCluster")
-                    .to("mock:result");
+                        .to("aws-eks://test?eksClient=#amazonEksClient&operation=describeCluster")
+                        .to("mock:result");
             }
         };
     }

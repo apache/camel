@@ -40,7 +40,8 @@ public abstract class TypeConverterSupport implements TypeConverter {
     }
 
     @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+    public <T> T mandatoryConvertTo(Class<T> type, Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException {
         T t = convertTo(type, null, value);
         if (t == null) {
             throw new NoTypeConversionAvailableException(value, type);
@@ -50,7 +51,8 @@ public abstract class TypeConverterSupport implements TypeConverter {
     }
 
     @Override
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException, NoTypeConversionAvailableException {
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value)
+            throws TypeConversionException, NoTypeConversionAvailableException {
         T t = convertTo(type, exchange, value);
         if (t == null) {
             throw new NoTypeConversionAvailableException(value, type);

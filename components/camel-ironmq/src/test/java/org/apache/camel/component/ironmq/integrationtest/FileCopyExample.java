@@ -33,7 +33,8 @@ public class FileCopyExample extends CamelTestSupport {
     // replace with your token
     private String token = "myIronMQToken";
 
-    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
+    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
+                                          + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
 
     @BeforeEach
     public void clean() {

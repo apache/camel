@@ -33,7 +33,8 @@ public class Jt400EndpointTest extends Jt400TestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
+        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
     }
 
     /**

@@ -27,11 +27,11 @@ import org.apache.camel.spi.UriParam;
  * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedset">distributed set</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-set",
-    title = "Atomix Set",
-    syntax = "atomix-set:resourceName",
-    label = "clustering")
+             firstVersion = "2.20.0",
+             scheme = "atomix-set",
+             title = "Atomix Set",
+             syntax = "atomix-set:resourceName",
+             label = "clustering")
 public final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComponent, AtomixSetConfiguration> {
     @UriParam
     private AtomixSetConfiguration configuration;

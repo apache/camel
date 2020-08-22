@@ -32,25 +32,23 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-
 @ContextConfiguration
 @ExtendWith(SpringExtension.class)
 public class WSRMTest {
-    
-    protected static int port1 = CXFTestSupport.getPort2(); 
+
+    protected static int port1 = CXFTestSupport.getPort2();
     protected static int port2 = CXFTestSupport.getPort3();
-    
+
     @Autowired
     protected CamelContext context;
-    
+
     protected String getClientAddress() {
         return "http://localhost:" + port1 + "/wsrm/HelloWorld";
     }
 
     @Test
     public void testWSAddressing() throws Exception {
-        JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getClientAddress());
         clientBean.setServiceClass(HelloWorld.class);
@@ -67,13 +65,12 @@ public class WSRMTest {
         String result = client.sayHi("world!");
         assertEquals("Hello world!", result, "Get a wrong response");
     }
-   
+
     /**
      * @return
      */
     protected String getCxfClientConfig() {
         return "ws_rm.xml";
     }
-    
 
 }

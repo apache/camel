@@ -23,18 +23,15 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
 
 /**
- * Acquires exclusive read lock to the given file. Will wait until the lock is
- * granted. After granting the read lock it is released, we just want to make
- * sure that when we start consuming the file its not currently in progress of
- * being written by third party.
+ * Acquires exclusive read lock to the given file. Will wait until the lock is granted. After granting the read lock it
+ * is released, we just want to make sure that when we start consuming the file its not currently in progress of being
+ * written by third party.
  * <p/>
- * This implementation is only supported by the File component, that leverages
- * the {@link MarkerFileExclusiveReadLockStrategy} as well, to ensure only
- * acquiring locks on files, which is not already in progress by another
- * process, that have marked this using the marker file.
+ * This implementation is only supported by the File component, that leverages the
+ * {@link MarkerFileExclusiveReadLockStrategy} as well, to ensure only acquiring locks on files, which is not already in
+ * progress by another process, that have marked this using the marker file.
  * <p/>
- * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows
- * to turn off using marker files.
+ * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows to turn off using marker files.
  */
 public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclusiveReadLockStrategy<File> {
 
@@ -42,7 +39,8 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     private boolean markerFile = true;
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call marker first
         if (markerFile && !marker.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -52,7 +50,9 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call marker first
         try {
             if (markerFile) {
@@ -64,7 +64,9 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call marker first
         try {
             if (markerFile) {
@@ -76,7 +78,9 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call marker first
         try {
             if (markerFile) {

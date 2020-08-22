@@ -40,8 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test class for
- * {@link BoxCommentsManager} APIs.
+ * Test class for {@link BoxCommentsManager} APIs.
  */
 public class BoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
 

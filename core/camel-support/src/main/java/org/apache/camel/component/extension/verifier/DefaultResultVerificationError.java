@@ -27,7 +27,8 @@ public class DefaultResultVerificationError implements VerificationError {
     private final Set<String> parameterKeys;
     private final Map<Attribute, Object> details;
 
-    public DefaultResultVerificationError(Code code, String description, Set<String> parameterKeys, Map<Attribute, Object> details) {
+    public DefaultResultVerificationError(Code code, String description, Set<String> parameterKeys,
+                                          Map<Attribute, Object> details) {
         this.code = code;
         this.description = description;
         this.parameterKeys = parameterKeys;

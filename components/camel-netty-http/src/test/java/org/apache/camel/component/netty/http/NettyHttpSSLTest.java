@@ -107,4 +107,3 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     }
 
 }
-

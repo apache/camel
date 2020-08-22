@@ -142,8 +142,9 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor).when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
-                    .process(toProcessor);
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
+                        .process(toProcessor);
             }
         };
     }
@@ -183,9 +184,10 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor).when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
-                    .process(toProcessor); // continuation of the second when
-                                           // clause
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2)
+                        .process(toProcessor); // continuation of the second when
+                                                                                                                                                                                                     // clause
             }
         }, expected, "bar");
     }
@@ -195,8 +197,9 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor).when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
-                    .process(orderProcessor3).end().process(toProcessor);
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
+                        .process(orderProcessor3).end().process(toProcessor);
             }
         };
     }
@@ -236,11 +239,12 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor).when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
-                    .process(orderProcessor3).process(toProcessor); // continuation
-                                                                    // of the
-                                                                    // otherwise
-                                                                    // clause
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
+                        .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
+                        .process(orderProcessor3).process(toProcessor); // continuation
+                                                                                                                                                                                                                                          // of the
+                                                                                                                                                                                                                                          // otherwise
+                                                                                                                                                                                                                                          // clause
             }
         }, expected, "bar");
     }
@@ -248,7 +252,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class).process(orderProcessor).process(orderProcessor3).end();
+                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
+                        .process(orderProcessor).process(orderProcessor3).end();
             }
         };
     }
@@ -283,7 +288,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
+                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
+                        .process(orderProcessor).end().process(orderProcessor3);
             }
         };
     }
@@ -319,9 +325,10 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class).process(orderProcessor).doFinally().process(orderProcessor2)
-                    .process(orderProcessor3); // continuation of the
-                                               // finallyBlock clause
+                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
+                        .process(orderProcessor).doFinally().process(orderProcessor2)
+                        .process(orderProcessor3); // continuation of the
+                                                                                                                                                                                                                  // finallyBlock clause
             }
         };
     }
@@ -361,8 +368,9 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class).process(orderProcessor).doFinally().process(orderProcessor2)
-                    .end().process(orderProcessor3);
+                from("direct:a").doTry().process(validator).process(toProcessor).doCatch(ValidationException.class)
+                        .process(orderProcessor).doFinally().process(orderProcessor2)
+                        .end().process(orderProcessor3);
             }
         };
     }

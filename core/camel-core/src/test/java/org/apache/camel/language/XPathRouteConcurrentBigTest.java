@@ -88,13 +88,18 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=50&size=250000").choice().when()
-                    .xpath("//messageType = 'AAA' or " + "//messageType = 'AAB' or " + "//messageType = 'AAC' or " + "//messageType = 'AAD' or " + "//messageType = 'AAE' or "
-                           + "//messageType = 'AAF' or " + "//messageType = 'AAG' or " + "//messageType = 'AAH' or " + "//messageType = 'AAI' or " + "//messageType = 'AAJ' or "
-                           + "//messageType = 'AAK' or " + "//messageType = 'AAL' or " + "//messageType = 'AAM' or " + "//messageType = 'AAN' or " + "//messageType = 'AAO' or "
-                           + "//messageType = 'AAP' or " + "//messageType = 'AAQ' or " + "//messageType = 'AAR' or " + "//messageType = 'AAS' or " + "//messageType = 'AAT' or "
-                           + "//messageType = 'AAU' or " + "//messageType = 'AAV' or " + "//messageType = 'AAW' or " + "//messageType = 'AAX' or " + "//messageType = 'AAY' or "
-                           + "//messageType = 'AAZ'")
-                    .to("mock:result").otherwise().to("mock:other").end();
+                        .xpath("//messageType = 'AAA' or " + "//messageType = 'AAB' or " + "//messageType = 'AAC' or "
+                               + "//messageType = 'AAD' or " + "//messageType = 'AAE' or "
+                               + "//messageType = 'AAF' or " + "//messageType = 'AAG' or " + "//messageType = 'AAH' or "
+                               + "//messageType = 'AAI' or " + "//messageType = 'AAJ' or "
+                               + "//messageType = 'AAK' or " + "//messageType = 'AAL' or " + "//messageType = 'AAM' or "
+                               + "//messageType = 'AAN' or " + "//messageType = 'AAO' or "
+                               + "//messageType = 'AAP' or " + "//messageType = 'AAQ' or " + "//messageType = 'AAR' or "
+                               + "//messageType = 'AAS' or " + "//messageType = 'AAT' or "
+                               + "//messageType = 'AAU' or " + "//messageType = 'AAV' or " + "//messageType = 'AAW' or "
+                               + "//messageType = 'AAX' or " + "//messageType = 'AAY' or "
+                               + "//messageType = 'AAZ'")
+                        .to("mock:result").otherwise().to("mock:other").end();
             }
         };
     }

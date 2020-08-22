@@ -40,7 +40,7 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
 
     @EndpointInject("mock:unmarshall")
     private MockEndpoint mockUnmarshall;
-    
+
     @Test
     public void testMarshallMultipleNamespaces() throws Exception {
         mockMarshall.expectedMessageCount(1);
@@ -80,9 +80,10 @@ public class JaxbDataFormatMultipleNamespacesTest extends CamelTestSupport {
     public void testUnarshallMultipleNamespaces() throws Exception {
         mockUnmarshall.expectedMessageCount(1);
 
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns1:order xmlns:ns2=\"http://www.camel.apache.org/jaxb/example/address/1\""
-                        + " xmlns:ns1=\"http://www.camel.apache.org/jaxb/example/order/1\"><ns1:id>1</ns1:id><ns2:address><ns2:street>Main Street</ns2:street>"
-                        + "<ns2:streetNumber>3a</ns2:streetNumber><ns2:zip>65843</ns2:zip><ns2:city>Sulzbach</ns2:city></ns2:address></ns1:order>";
+        String payload
+                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><ns1:order xmlns:ns2=\"http://www.camel.apache.org/jaxb/example/address/1\""
+                  + " xmlns:ns1=\"http://www.camel.apache.org/jaxb/example/order/1\"><ns1:id>1</ns1:id><ns2:address><ns2:street>Main Street</ns2:street>"
+                  + "<ns2:streetNumber>3a</ns2:streetNumber><ns2:zip>65843</ns2:zip><ns2:city>Sulzbach</ns2:city></ns2:address></ns1:order>";
         template.sendBody("direct:unmarshall", payload);
 
         assertMockEndpointsSatisfied();

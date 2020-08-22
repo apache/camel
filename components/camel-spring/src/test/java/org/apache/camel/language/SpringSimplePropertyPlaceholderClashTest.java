@@ -27,7 +27,8 @@ public class SpringSimplePropertyPlaceholderClashTest extends SpringTestSupport 
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimplePropertyPlaceholderClashTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/language/SpringSimplePropertyPlaceholderClashTest-context.xml");
     }
 
     @Override

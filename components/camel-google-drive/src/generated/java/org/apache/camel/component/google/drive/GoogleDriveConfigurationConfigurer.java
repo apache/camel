@@ -76,5 +76,14 @@ public class GoogleDriveConfigurationConfigurer extends org.apache.camel.support
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes":
+        case "Scopes": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

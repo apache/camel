@@ -41,11 +41,12 @@ public class LoginUrl implements Serializable {
     /**
      * Builds {@link LoginUrl} instance.
      *
-     * @param url                An HTTP URL to be opened with user authorization data added to the query string
-     *                           when the button is pressed
+     * @param url                An HTTP URL to be opened with user authorization data added to the query string when
+     *                           the button is pressed
      * @param forwardText        Optional. New text of the button in forwarded messages.
      * @param botUsername        Optional. Username of a bot, which will be used for user authorization.
-     * @param requestWriteAccess Optional. Pass True to request the permission for your bot to send messages to the user.
+     * @param requestWriteAccess Optional. Pass True to request the permission for your bot to send messages to the
+     *                           user.
      */
     public LoginUrl(String url, String forwardText, String botUsername, Boolean requestWriteAccess) {
         this.url = url;
@@ -92,11 +93,11 @@ public class LoginUrl implements Serializable {
     @Override
     public String toString() {
         return "LoginUrl{"
-            + "url='" + url + '\''
-            + ", forwardText='" + forwardText + '\''
-            + ", botUsername='" + botUsername + '\''
-            + ", requestWriteAccess=" + requestWriteAccess
-            + '}';
+               + "url='" + url + '\''
+               + ", forwardText='" + forwardText + '\''
+               + ", botUsername='" + botUsername + '\''
+               + ", requestWriteAccess=" + requestWriteAccess
+               + '}';
     }
 
     @Override
@@ -109,9 +110,9 @@ public class LoginUrl implements Serializable {
         }
         LoginUrl loginUrl = (LoginUrl) o;
         return Objects.equals(url, loginUrl.url)
-            && Objects.equals(forwardText, loginUrl.forwardText)
-            && Objects.equals(botUsername, loginUrl.botUsername)
-            && Objects.equals(requestWriteAccess, loginUrl.requestWriteAccess);
+                && Objects.equals(forwardText, loginUrl.forwardText)
+                && Objects.equals(botUsername, loginUrl.botUsername)
+                && Objects.equals(requestWriteAccess, loginUrl.requestWriteAccess);
     }
 
     @Override

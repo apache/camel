@@ -34,52 +34,53 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
-    
+
     private static final String BEAN_SERVICE_ENDPOINT_NAME = "serviceEndpoint";
     private static final String BEAN_SERVICE_ADDRESS = "http://localhost/programmatically";
     private static final String BEAN_SERVICE_USERNAME = "BEAN_SERVICE_USERNAME";
     private static final String BEAN_SERVICE_PASSWORD = "BEAN_SERVICE_PASSWORD";
-    
+
     @Test
     public void testCreateCxfRsServerFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
-        SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean)endpoint.createJAXRSServerFactoryBean();
-        
+        SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean) endpoint.createJAXRSServerFactoryBean();
+
         assertEquals(1, sfb.getProviders().size(), "Get a wrong provider size");
-        assertEquals(sfb.getBeanId(), "rsServer", "Get a wrong beanId");
-        assertEquals(sfb.getAddress(), "http://localhost:9000/router", "Get a wrong address");
-        assertEquals(sfb.getResourceClasses().size(), 1, "Get a wrong size of resource classes");
+        assertEquals("rsServer", sfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9000/router", sfb.getAddress(), "Get a wrong address");
+        assertEquals(1, sfb.getResourceClasses().size(), "Get a wrong size of resource classes");
         assertEquals(sfb.getResourceClasses().get(0), CustomerService.class, "Get a wrong resource class");
         assertEquals(true, sfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
         assertEquals(200, sfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
         assertEquals(1, sfb.getInInterceptors().size(), "Got a wrong size of interceptors");
-        
+
         Map<String, Object> endpointProps = sfb.getProperties();
         // The beanId key is put by the AbstractCxfBeanDefinitionParser, so the size is 2
         assertEquals(2, endpointProps.size(), "Single endpoint property is expected");
         assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
     }
-    
+
     @Test
     public void testCreateCxfRsClientFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
-        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
-        assertEquals(cfb.getBeanId(), "rsClient", "Get a wrong beanId");
-        assertEquals(cfb.getAddress(), "http://localhost:9002/helloworld", "Get a wrong address");
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
+        assertEquals("rsClient", cfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9002/helloworld", cfb.getAddress(), "Get a wrong address");
         assertTrue(cfb.create() instanceof CustomerService, "Get a wrong resource class instance");
         assertEquals(false, cfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
         assertEquals(0, cfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
         assertEquals(1, cfb.getInInterceptors().size(), "Got a wrong size of interceptors");
 
     }
-    
+
     @Test
     public void testCreateCxfRsClientFactoryBeanProgrammatically() {
-        
+
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
-        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
-        
-        assertNotSame(super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb, "Got the same object but must be different");
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
+
+        assertNotSame(super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb,
+                "Got the same object but must be different");
         assertEquals(BEAN_SERVICE_ADDRESS, cfb.getAddress(), "Got the wrong address");
         assertNotNull(cfb.getServiceClass(), "Service class must not be null");
         assertEquals(CustomerService.class, cfb.getServiceClass(), "Got the wrong ServiceClass");
@@ -96,21 +97,23 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         clientFactoryBean.setPassword(BEAN_SERVICE_PASSWORD);
 
         return clientFactoryBean;
-    }    
-    
+    }
+
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {      
-        
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));        
+    protected AbstractXmlApplicationContext createApplicationContext() {
+
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));
         emulateBeanRegistrationProgrammatically(applicationContext);
-        
+
         return applicationContext;
     }
 
     private void emulateBeanRegistrationProgrammatically(ClassPathXmlApplicationContext applicationContext) {
-        
+
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
-        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
+        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
+                .rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
         beanFactory.registerBeanDefinition(BEAN_SERVICE_ENDPOINT_NAME, definitionBuilder.getBeanDefinition());
     }
 }

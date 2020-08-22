@@ -43,14 +43,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
 
 /**
- * Spring specific {@link DefaultCamelBeanPostProcessor} which uses Spring {@link BeanPostProcessor} to post process beans.
+ * Spring specific {@link DefaultCamelBeanPostProcessor} which uses Spring {@link BeanPostProcessor} to post process
+ * beans.
  *
  * @see DefaultCamelBeanPostProcessor
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPostProcessor, BeanPostProcessor, ApplicationContextAware, Ordered {
+public class CamelBeanPostProcessor
+        implements org.apache.camel.spi.CamelBeanPostProcessor, BeanPostProcessor, ApplicationContextAware, Ordered {
     private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<>();
@@ -71,7 +73,8 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
         public CamelContext getOrLookupCamelContext() {
             if (camelContext == null) {
                 if (camelId != null) {
-                    LOG.trace("Looking up CamelContext by id: {} from Spring ApplicationContext: {}", camelId, applicationContext);
+                    LOG.trace("Looking up CamelContext by id: {} from Spring ApplicationContext: {}", camelId,
+                            applicationContext);
                     camelContext = applicationContext.getBean(camelId, CamelContext.class);
                 } else {
                     // lookup by type and grab the single CamelContext if exists
@@ -119,8 +122,10 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
                     }
 
                     @Override
-                    protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
-                        return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
+                    protected RuntimeException createProxyInstantiationRuntimeException(
+                            Class<?> type, Endpoint endpoint, Exception e) {
+                        return new BeanInstantiationException(
+                                type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
                     }
 
                     @Override
@@ -135,7 +140,8 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
                     }
 
                     @Override
-                    protected void startService(Service service, CamelContext context, Object bean, String beanName) throws Exception {
+                    protected void startService(Service service, CamelContext context, Object bean, String beanName)
+                            throws Exception {
                         if (isSingleton(bean, beanName)) {
                             getCamelContext().addService(service);
                         } else {
@@ -143,8 +149,10 @@ public class CamelBeanPostProcessor implements org.apache.camel.spi.CamelBeanPos
                             ServiceHelper.startService(service);
                             if (prototypeBeans.add(beanName)) {
                                 // do not spam the log with WARN so do this only once per bean name
-                                CamelBeanPostProcessor.LOG.warn("The bean with id [" + beanName + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
-                                    + service + ". You may want to stop the service manually from the bean.");
+                                CamelBeanPostProcessor.LOG
+                                        .warn("The bean with id [" + beanName
+                                              + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
+                                              + service + ". You may want to stop the service manually from the bean.");
                             }
                         }
                     }

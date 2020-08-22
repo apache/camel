@@ -52,10 +52,10 @@ public class STS2ProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        AssumeRoleResponse resultGet = (AssumeRoleResponse)exchange.getIn().getBody();
+        AssumeRoleResponse resultGet = (AssumeRoleResponse) exchange.getIn().getBody();
         assertEquals("arn", resultGet.assumedRoleUser().arn());
     }
-    
+
     @Test
     public void stsGetSessionTokenTest() throws Exception {
 
@@ -69,7 +69,7 @@ public class STS2ProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        GetSessionTokenResponse resultGet = (GetSessionTokenResponse)exchange.getIn().getBody();
+        GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 
@@ -78,8 +78,10 @@ public class STS2ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole").to("mock:result");
-                from("direct:getSessionToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken").to("mock:result");
+                from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
+                        .to("mock:result");
+                from("direct:getSessionToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken")
+                        .to("mock:result");
             }
         };
     }

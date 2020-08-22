@@ -66,7 +66,7 @@ public class Jms2DeliveryDelayTest extends BaseJms2TestSupport {
             @Override
             public void configure() {
                 from("jms:topic:foo")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

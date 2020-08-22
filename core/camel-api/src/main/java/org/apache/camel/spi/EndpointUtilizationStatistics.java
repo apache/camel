@@ -34,17 +34,17 @@ public interface EndpointUtilizationStatistics {
     int size();
 
     /**
-     * Callback when an endpoint is being utilizated by an {@link org.apache.camel.Processor} EIP
-     * such as sending a message to a dynamic endpoint.
+     * Callback when an endpoint is being utilizated by an {@link org.apache.camel.Processor} EIP such as sending a
+     * message to a dynamic endpoint.
      *
-     * @param uri  the endpoint uri
+     * @param uri the endpoint uri
      */
     void onHit(String uri);
 
     /**
      * To remove an endpoint from tracking information about its utilization
      *
-     * @param uri  the endpoint uri
+     * @param uri the endpoint uri
      */
     void remove(String uri);
 

@@ -62,7 +62,8 @@ public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("aggregateGroup"), new BodyInAggregatingStrategy()).completionFromBatchConsumer().to("log:aggregated").to("mock:result");
+                from("direct:start").aggregate(header("aggregateGroup"), new BodyInAggregatingStrategy())
+                        .completionFromBatchConsumer().to("log:aggregated").to("mock:result");
             }
         };
     }

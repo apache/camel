@@ -65,7 +65,8 @@ public class MailToMultipleEndpointsTest extends CamelTestSupport {
 
                 from("direct:b").to("smtp://localhost?username=james&password=secret&to=b@b.com&from=you@you.com");
 
-                from("direct:c").to("smtp://localhost?username=admin&password=secret&to=c@c.com&from=me@me.com&cc=you@you.com,them@them.com");
+                from("direct:c").to(
+                        "smtp://localhost?username=admin&password=secret&to=c@c.com&from=me@me.com&cc=you@you.com,them@them.com");
             }
         };
     }

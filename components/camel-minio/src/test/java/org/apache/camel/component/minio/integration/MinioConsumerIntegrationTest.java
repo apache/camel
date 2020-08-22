@@ -79,7 +79,8 @@ public class MinioConsumerIntegrationTest extends CamelTestSupport {
                 String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint);
-                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=false").startupOrder(2).to("mock:result");
+                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=false")
+                        .startupOrder(2).to("mock:result");
 
             }
         };

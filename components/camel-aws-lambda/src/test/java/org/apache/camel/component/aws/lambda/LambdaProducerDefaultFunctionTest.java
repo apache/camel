@@ -37,8 +37,6 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
-
-
     @Test
     public void lambdaInvokeFunctionTest() throws Exception {
         Exchange exchange = template.send("direct:invokeFunction", ExchangePattern.InOut, new Processor() {
@@ -50,19 +48,18 @@ public class LambdaProducerDefaultFunctionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertNotNull(exchange.getMessage().getBody(String.class));
-        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertEquals("{\"Hello\":\"Camel\"}", exchange.getMessage().getBody(String.class));
     }
 
-   
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-              
-                from("direct:invokeFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient").to("mock:result");
 
-               
+                from("direct:invokeFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient")
+                        .to("mock:result");
+
             }
         };
     }

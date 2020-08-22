@@ -37,11 +37,11 @@ public final class HazelcastRoutePolicyMain {
                 policy.setTryLockTimeout(5, TimeUnit.SECONDS);
 
                 from("file:///tmp/camel?DELETE=true")
-                    .routeId(args[1])
-                    .routePolicy(policy)
-                    .setHeader("HazelcastRouteID", constant(args[1]))
-                    .setHeader("HazelcastServiceName", constant(args[0]))
-                    .to("log:org.apache.camel.component.hazelcast?level=INFO&showAll=true");
+                        .routeId(args[1])
+                        .routePolicy(policy)
+                        .setHeader("HazelcastRouteID", constant(args[1]))
+                        .setHeader("HazelcastServiceName", constant(args[0]))
+                        .to("log:org.apache.camel.component.hazelcast?level=INFO&showAll=true");
             }
         });
 

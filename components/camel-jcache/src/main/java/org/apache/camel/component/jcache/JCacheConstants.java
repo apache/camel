@@ -17,12 +17,12 @@
 package org.apache.camel.component.jcache;
 
 public interface JCacheConstants {
-    String ACTION          = "CamelJCacheAction";
-    String RESULT          = "CamelJCacheResult";
-    String EVENT_TYPE      = "CamelJCacheEventType";
-    String KEY             = "CamelJCacheKey";
-    String KEYS            = "CamelJCacheKeys";
-    String OLD_VALUE       = "CamelJCacheOldValue";
+    String ACTION = "CamelJCacheAction";
+    String RESULT = "CamelJCacheResult";
+    String EVENT_TYPE = "CamelJCacheEventType";
+    String KEY = "CamelJCacheKey";
+    String KEYS = "CamelJCacheKeys";
+    String OLD_VALUE = "CamelJCacheOldValue";
     String ENTRY_PROCESSOR = "CamelJCacheEntryProcessor";
-    String ARGUMENTS       = "CamelJCacheEntryArgs";
+    String ARGUMENTS = "CamelJCacheEntryArgs";
 }

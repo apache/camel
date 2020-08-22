@@ -26,17 +26,18 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextParameters> {
-    
+public abstract class AbstractSSLContextParametersFactoryBean
+        extends AbstractBaseSSLContextParametersFactoryBean<SSLContextParameters> {
+
     @XmlAttribute
     @Metadata(description = "The optional provider identifier for the JSSE implementation to use when constructing an SSLContext.")
     private String provider;
 
     @XmlAttribute
     @Metadata(description = "The optional protocol for the secure sockets created by the SSLContext"
-            + " represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.")
+                            + " represented by this instance's configuration. See Appendix A in the Java Secure Socket Extension Reference Guide for information about standard protocol names.")
     private String secureSocketProtocol;
-    
+
     @XmlAttribute
     @Metadata(description = "An optional certificate alias to use. This is useful when the keystore has multiple certificates.")
     private String certAlias;
@@ -44,23 +45,22 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
     @Override
     protected SSLContextParameters createInstance() throws Exception {
         SSLContextParameters newInstance = new SSLContextParameters();
-        
+
         if (getKeyManagers() != null) {
             getKeyManagers().setCamelContext(getCamelContext());
             newInstance.setKeyManagers(getKeyManagers().getObject());
         }
-        
+
         if (getTrustManagers() != null) {
             getTrustManagers().setCamelContext(getCamelContext());
             newInstance.setTrustManagers(getTrustManagers().getObject());
         }
-        
+
         if (getSecureRandom() != null) {
             getSecureRandom().setCamelContext(getCamelContext());
             newInstance.setSecureRandom(getSecureRandom().getObject());
         }
-        
-        
+
         if (getClientParameters() != null) {
             getClientParameters().setCamelContext(getCamelContext());
             newInstance.setClientParameters(getClientParameters().getObject());
@@ -70,12 +70,12 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
             getServerParameters().setCamelContext(getCamelContext());
             newInstance.setServerParameters(getServerParameters().getObject());
         }
-        
+
         newInstance.setProvider(provider);
         newInstance.setSecureSocketProtocol(secureSocketProtocol);
         newInstance.setCertAlias(certAlias);
         newInstance.setCamelContext(getCamelContext());
-        
+
         return newInstance;
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
     public Class<? extends SSLContextParameters> getObjectType() {
         return SSLContextParameters.class;
     }
-    
+
     public String getProvider() {
         return provider;
     }
@@ -99,7 +99,7 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
     public void setSecureSocketProtocol(String secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol;
     }
-    
+
     public String getCertAlias() {
         return certAlias;
     }

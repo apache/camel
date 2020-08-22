@@ -77,7 +77,7 @@ public class DocumentationEnricher {
 
         BaseModel<?> model = JsonMapper.generateModel(jsonFile.toPath());
         BaseOptionModel option = Stream.concat(model.getOptions().stream(),
-                    model instanceof ComponentModel ? ((ComponentModel) model).getEndpointOptions().stream() : Stream.empty())
+                model instanceof ComponentModel ? ((ComponentModel) model).getEndpointOptions().stream() : Stream.empty())
                 .filter(o -> name.equals(o.getName()))
                 .findAny().orElse(null);
 
@@ -86,13 +86,16 @@ public class DocumentationEnricher {
 
         // special for this option
         if ("useBlueprintPropertyResolver".equals(name)) {
-            descriptionText = "Whether to automatic detect OSGi Blueprint property placeholder service in use, and bridge with Camel property placeholder."
-                    + " When enabled this allows you to only setup OSGi Blueprint property placeholder and Camel can use the properties in the camelContext.";
+            descriptionText
+                    = "Whether to automatic detect OSGi Blueprint property placeholder service in use, and bridge with Camel property placeholder."
+                      + " When enabled this allows you to only setup OSGi Blueprint property placeholder and Camel can use the properties in the camelContext.";
         } else if ("binding".equals(name)) {
-            descriptionText = "In binding mode we bind the passed in arguments (args) to the created exchange using the existing Camel"
-                    + " @Body, @Header, @Headers, @ExchangeProperty annotations if no annotation then its bound as the message body";
+            descriptionText
+                    = "In binding mode we bind the passed in arguments (args) to the created exchange using the existing Camel"
+                      + " @Body, @Header, @Headers, @ExchangeProperty annotations if no annotation then its bound as the message body";
         } else if ("serviceRef".equals(name) && jsonFile.getName().endsWith("proxy.json")) {
-            descriptionText = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
+            descriptionText
+                    = "Reference to existing endpoint to lookup by endpoint id in the Camel registry to be used as proxied service";
         }
 
         if (option != null && option.isDeprecated()) {

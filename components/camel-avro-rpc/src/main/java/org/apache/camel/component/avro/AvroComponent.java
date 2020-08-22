@@ -43,17 +43,14 @@ public class AvroComponent extends DefaultComponent {
         super(context);
     }
 
-
     /**
-     * A factory method allowing derived components to create a new endpoint
-     * from the given URI, remaining path and optional parameters
+     * A factory method allowing derived components to create a new endpoint from the given URI, remaining path and
+     * optional parameters
      *
-     * @param uri        the full URI of the endpoint
-     * @param remaining  the remaining part of the URI without the query
-     *                   parameters or component prefix
-     * @param parameters the optional parameters passed in
-     * @return a newly created endpoint or null if the endpoint cannot be
-     *         created based on the inputs
+     * @param  uri        the full URI of the endpoint
+     * @param  remaining  the remaining part of the URI without the query parameters or component prefix
+     * @param  parameters the optional parameters passed in
+     * @return            a newly created endpoint or null if the endpoint cannot be created based on the inputs
      */
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -79,14 +76,13 @@ public class AvroComponent extends DefaultComponent {
         return answer;
     }
 
-   /**
-     * Registers new responder with uri as key. Registers consumer in responder.
-     * In case if responder is already registered by this uri then just
-     * registers consumer.
+    /**
+     * Registers new responder with uri as key. Registers consumer in responder. In case if responder is already
+     * registered by this uri then just registers consumer.
      * 
-     * @param uri URI of the endpoint without message name
-     * @param messageName message name
-     * @param consumer consumer that will be registered in providers` registry
+     * @param  uri         URI of the endpoint without message name
+     * @param  messageName message name
+     * @param  consumer    consumer that will be registered in providers` registry
      * @throws Exception
      */
     public void register(String uri, String messageName, AvroConsumer consumer) throws Exception {
@@ -97,12 +93,12 @@ public class AvroComponent extends DefaultComponent {
         }
         listener.register(messageName, consumer);
     }
-    
+
     /**
-     * Calls unregister of consumer by appropriate message name.
-     * In case if all consumers are unregistered then it removes responder from the registry.
+     * Calls unregister of consumer by appropriate message name. In case if all consumers are unregistered then it
+     * removes responder from the registry.
      *
-     * @param uri URI of the endpoint without message name
+     * @param uri         URI of the endpoint without message name
      * @param messageName message name
      */
     public void unregister(String uri, String messageName) {

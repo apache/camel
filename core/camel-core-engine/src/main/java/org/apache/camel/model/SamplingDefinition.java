@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.time.Duration;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -94,12 +93,11 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     // -------------------------------------------------------------------------
 
     /**
-     * Sets the sample message count which only a single
-     * {@link org.apache.camel.Exchange} will pass through after this many
-     * received.
+     * Sets the sample message count which only a single {@link org.apache.camel.Exchange} will pass through after this
+     * many received.
      *
-     * @param messageFrequency
-     * @return the builder
+     * @param  messageFrequency
+     * @return                  the builder
      */
     public SamplingDefinition sampleMessageFrequency(long messageFrequency) {
         setMessageFrequency(messageFrequency);
@@ -107,11 +105,10 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample period during which only a single
-     * {@link org.apache.camel.Exchange} will pass through.
+     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
-     * @param samplePeriod the period
-     * @return the builder
+     * @param  samplePeriod the period
+     * @return              the builder
      */
     public SamplingDefinition samplePeriod(Duration samplePeriod) {
         setSamplePeriod(samplePeriod);
@@ -119,11 +116,10 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample period during which only a single
-     * {@link org.apache.camel.Exchange} will pass through.
+     * Sets the sample period during which only a single {@link org.apache.camel.Exchange} will pass through.
      *
-     * @param samplePeriod the period
-     * @return the builder
+     * @param  samplePeriod the period
+     * @return              the builder
      */
     public SamplingDefinition samplePeriod(long samplePeriod) {
         setSamplePeriod(samplePeriod);
@@ -133,8 +129,8 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     /**
      * Sets the time units for the sample period, defaulting to seconds.
      *
-     * @param units the time unit of the sample period.
-     * @return the builder
+     * @param  units the time unit of the sample period.
+     * @return       the builder
      */
     @Deprecated
     public SamplingDefinition timeUnits(TimeUnit units) {
@@ -150,8 +146,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample period during which only a single Exchange will pass
-     * through.
+     * Sets the sample period during which only a single Exchange will pass through.
      */
     public void setSamplePeriod(String samplePeriod) {
         this.samplePeriod = samplePeriod;
@@ -170,8 +165,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
     }
 
     /**
-     * Sets the sample message count which only a single Exchange will pass
-     * through after this many received.
+     * Sets the sample message count which only a single Exchange will pass through after this many received.
      */
     public void setMessageFrequency(String messageFrequency) {
         this.messageFrequency = messageFrequency;

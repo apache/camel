@@ -70,7 +70,6 @@ public final class CamelJmsTestHelper {
         return createPersistentConnectionFactory(null);
     }
 
-
     @Deprecated
     public static ConnectionFactory createPersistentConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM

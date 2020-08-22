@@ -49,5 +49,4 @@ public interface Athena2Constants {
     String START_QUERY_EXECUTION_ATTEMPTS = "CamelAwsAthenaStartQueryExecutionAttempts"; // read only
     String START_QUERY_EXECUTION_ELAPSED_MILLIS = "CamelAwsAthenaStartQueryExecutionElapsedMillis"; // read only
 
-
 }

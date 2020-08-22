@@ -53,7 +53,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMarshalling2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
@@ -67,7 +67,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMarshalling3() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");

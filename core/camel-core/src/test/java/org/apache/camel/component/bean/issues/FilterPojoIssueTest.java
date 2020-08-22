@@ -52,7 +52,8 @@ public class FilterPojoIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(FilterPojoIssueTest.class, "doSomething").to("log:foo").filter(body().isNotNull()).to("mock:filter").end();
+                from("direct:start").bean(FilterPojoIssueTest.class, "doSomething").to("log:foo").filter(body().isNotNull())
+                        .to("mock:filter").end();
             }
         };
     }

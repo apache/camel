@@ -106,10 +106,10 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo").routeId("a")
-                     .to("log:a", "mock:a");
-  
+                        .to("log:a", "mock:a");
+
                 from("activemq:queue:foo").routeId("b")
-                     .to("log:b", "mock:b");
+                        .to("log:b", "mock:b");
             }
         };
     }

@@ -38,9 +38,10 @@ public class ConsumerExceptionHandledWithErrorHandlerTest extends SoroushBotTest
                         exchange.setProperty(Exchange.ROUTE_STOP, true);
                     }
                 }).handled(true).to("mock:exceptionRoute");
-                from("soroush://" + SoroushAction.getMessage + "/7?concurrentConsumers=2&queueCapacityPerThread=1&bridgeErrorHandler=true")
-                        .process(exchange -> Thread.sleep(1000))
-                        .to("mock:mainRoute");
+                from("soroush://" + SoroushAction.getMessage
+                     + "/7?concurrentConsumers=2&queueCapacityPerThread=1&bridgeErrorHandler=true")
+                             .process(exchange -> Thread.sleep(1000))
+                             .to("mock:mainRoute");
 
             }
         };

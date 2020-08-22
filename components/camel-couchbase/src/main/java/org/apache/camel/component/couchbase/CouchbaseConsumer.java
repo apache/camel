@@ -113,7 +113,6 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         LOG.info("Received result set from Couchbase");
         Collection collection = bucket.defaultCollection();
 
-
         if (LOG.isTraceEnabled()) {
             LOG.trace("ViewResponse =  {}", result);
         }

@@ -42,9 +42,9 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
         template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
-     
+
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
-        
+
         assertEquals(123, model.getId());
         assertEquals("Wednesday November 9 2011", model.getDate());
         assertEquals("Central California", model.getPlace());
@@ -78,7 +78,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         WeatherModel model = mock.getReceivedExchanges().get(0).getIn().getBody(WeatherModel.class);
-        
+
         assertEquals(123, model.getId());
         assertEquals("Wednesday, November 9, 2011", model.getDate());
         assertEquals("Central California, United States", model.getPlace());
@@ -109,8 +109,8 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("mock:result");
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("mock:result");
             }
         };
     }

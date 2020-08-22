@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a link to a file. By default, this file will be sent by the user with an optional caption.
  *
  * @see <a href="https://core.telegram.org/bots/api#inlinequeryresultdocument">
- * https://core.telegram.org/bots/api#inlinequeryresultdocument</a>
+ *      https://core.telegram.org/bots/api#inlinequeryresultdocument</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InlineQueryResultDocument extends InlineQueryResult {

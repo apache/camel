@@ -141,5 +141,14 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
         default: return null;
         }
     }
+
+    @Override
+    public Object getOptionNestedType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpparams":
+        case "HttpParams": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

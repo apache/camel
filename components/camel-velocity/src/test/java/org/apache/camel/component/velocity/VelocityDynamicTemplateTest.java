@@ -45,7 +45,7 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
         template.send("direct:a", createLetter());
 
         mock.assertIsSatisfied();
-        
+
         mock.reset();
 
         mock.expectedMessageCount(1);
@@ -65,11 +65,11 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class MyBean {
         ProducerTemplate template;
         boolean useLetter2;
-        
+
         public void sendToNewTemplate(Exchange exchange) throws Exception {
             if (template == null) {
                 template = exchange.getContext().createProducerTemplate();
@@ -77,9 +77,9 @@ public class VelocityDynamicTemplateTest extends CamelTestSupport {
             template.send("velocity:" + getNewTemplate(), exchange);
             useLetter2 = !useLetter2;
         }
-        
+
         private String getNewTemplate() {
-            if (useLetter2) {                
+            if (useLetter2) {
                 return "org/apache/camel/component/velocity/letter2.vm";
             } else {
                 return "org/apache/camel/component/velocity/letter.vm";

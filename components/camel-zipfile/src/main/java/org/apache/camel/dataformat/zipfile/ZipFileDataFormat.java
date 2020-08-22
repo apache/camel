@@ -38,8 +38,7 @@ import org.apache.camel.util.StringHelper;
 import static org.apache.camel.Exchange.FILE_NAME;
 
 /**
- * Zip file data format.
- * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
+ * Zip file data format. See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
 @Dataformat("zipfile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {

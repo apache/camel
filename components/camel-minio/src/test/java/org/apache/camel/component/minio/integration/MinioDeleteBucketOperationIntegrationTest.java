@@ -36,11 +36,10 @@ public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport 
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
-    MinioClient minioClient =
-            MinioClient.builder()
-                    .endpoint(properties.getProperty("endpoint"))
-                    .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
-                    .build();
+    MinioClient minioClient = MinioClient.builder()
+            .endpoint(properties.getProperty("endpoint"))
+            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -55,7 +54,8 @@ public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport 
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:listBuckets", exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
+        template.send("direct:listBuckets",
+                exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
         template.send("direct:deleteBucket", exchange -> {
             exchange.getIn().setHeader(MinioConstants.BUCKET_NAME, "mycamel2");

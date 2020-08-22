@@ -67,8 +67,8 @@ public class ManagedCustomBeanTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .bean(new MyCustomBean()).id("custom")
-                    .to("mock:result");
+                        .bean(new MyCustomBean()).id("custom")
+                        .to("mock:result");
             }
         };
     }

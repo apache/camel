@@ -56,7 +56,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
 
     private static final Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> ERROR_HANDLERS;
     static {
-        Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map = new HashMap<>();
+        Map<Class<?>, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>>> map
+                = new HashMap<>();
         map.put(DeadLetterChannelBuilder.class, DeadLetterChannelReifier::new);
         map.put(DefaultErrorHandlerBuilder.class, DefaultErrorHandlerReifier::new);
         map.put(ErrorHandlerBuilderRef.class, ErrorHandlerRefReifier::new);
@@ -74,12 +75,15 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         this.definition = definition;
     }
 
-    public static void registerReifier(Class<?> errorHandlerClass, BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
+    public static void registerReifier(
+            Class<?> errorHandlerClass,
+            BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> creator) {
         ERROR_HANDLERS.put(errorHandlerClass, creator);
     }
 
     public static ErrorHandlerReifier<? extends ErrorHandlerFactory> reifier(Route route, ErrorHandlerFactory definition) {
-        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier = ERROR_HANDLERS.get(definition.getClass());
+        BiFunction<Route, ErrorHandlerFactory, ErrorHandlerReifier<? extends ErrorHandlerFactory>> reifier
+                = ERROR_HANDLERS.get(definition.getClass());
         if (reifier != null) {
             return reifier.apply(route, definition);
         }
@@ -101,13 +105,14 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
         }
         Processor onRedelivery = getBean(Processor.class, def.getOnRedelivery(), def.getOnRedeliveryRef());
         Processor onExceptionOccurred = getBean(Processor.class, def.getOnExceptionOccurred(), def.getOnExceptionOccurredRef());
-        return new ExceptionPolicy(def.getId(), CamelContextHelper.getRouteId(def),
-                                   parseBoolean(def.getUseOriginalMessage(), false),
-                                   parseBoolean(def.getUseOriginalBody(), false),
-                                   ObjectHelper.isNotEmpty(def.getOutputs()), handled,
-                                   continued, retryWhile, onRedelivery,
-                                   onExceptionOccurred, def.getRedeliveryPolicyRef(),
-                                   getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
+        return new ExceptionPolicy(
+                def.getId(), CamelContextHelper.getRouteId(def),
+                parseBoolean(def.getUseOriginalMessage(), false),
+                parseBoolean(def.getUseOriginalBody(), false),
+                ObjectHelper.isNotEmpty(def.getOutputs()), handled,
+                continued, retryWhile, onRedelivery,
+                onExceptionOccurred, def.getRedeliveryPolicyRef(),
+                getRedeliveryPolicy(def.getRedeliveryPolicyType()), def.getExceptions());
     }
 
     private static Map<RedeliveryOption, String> getRedeliveryPolicy(RedeliveryPolicyDefinition definition) {
@@ -151,9 +156,9 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param route the route context
-     * @param ref reference id for the error handler
-     * @return the error handler
+     * @param  route the route context
+     * @param  ref   reference id for the error handler
+     * @return       the error handler
      */
     public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref) {
         return lookupErrorHandlerFactory(route, ref, true);
@@ -162,11 +167,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Lookup the error handler by the given ref
      *
-     * @param route the route
-     * @param ref reference id for the error handler
-     * @param mandatory whether the error handler must exists, if not a
-     *            {@link org.apache.camel.NoSuchBeanException} is thrown
-     * @return the error handler
+     * @param  route     the route
+     * @param  ref       reference id for the error handler
+     * @param  mandatory whether the error handler must exists, if not a {@link org.apache.camel.NoSuchBeanException} is
+     *                   thrown
+     * @return           the error handler
      */
     public static ErrorHandlerFactory lookupErrorHandlerFactory(Route route, String ref, boolean mandatory) {
         ErrorHandlerFactory answer;
@@ -183,7 +188,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             answer = route.getErrorHandlerFactory();
             // check if its also a ref with no error handler configuration like me
             if (answer instanceof ErrorHandlerBuilderRef) {
-                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
+                ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
                 String otherRef = other.getRef();
                 if (!isErrorHandlerFactoryConfigured(otherRef)) {
                     // the other has also no explicit error handler configured
@@ -219,7 +224,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
         ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
-            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef)answer;
+            ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();
             if (isErrorHandlerFactoryConfigured(otherRef)) {
                 answer = CamelContextHelper.lookup(camelContext, otherRef, ErrorHandlerBuilder.class);
@@ -233,14 +238,11 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     /**
-     * Returns whether a specific error handler builder has been configured or
-     * not.
+     * Returns whether a specific error handler builder has been configured or not.
      * <p/>
-     * Can be used to test if none has been configured and then install a custom
-     * error handler builder replacing the default error handler (that would
-     * have been used as fallback otherwise). <br/>
-     * This is for instance used by the transacted policy to setup a
-     * TransactedErrorHandlerBuilder in camel-spring.
+     * Can be used to test if none has been configured and then install a custom error handler builder replacing the
+     * default error handler (that would have been used as fallback otherwise). <br/>
+     * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder in camel-spring.
      */
     public static boolean isErrorHandlerFactoryConfigured(String ref) {
         return !ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER.equals(ref);
@@ -286,22 +288,23 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     /**
      * Creates the error handler
      *
-     * @param processor the outer processor
-     * @return the error handler
+     * @param  processor the outer processor
+     * @return           the error handler
      * @throws Exception is thrown if the error handler could not be created
      */
     public abstract Processor createErrorHandler(Processor processor) throws Exception;
 
     public void configure(ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
-            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport)handler;
+            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
 
             for (NamedNode exception : route.getErrorHandlers(definition)) {
                 addExceptionPolicy(handlerSupport, (OnExceptionDefinition) exception);
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler)handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler)handler).isUseOriginalBodyPolicy();
+            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy()
+                    || ((RedeliveryErrorHandler) handler).isUseOriginalBodyPolicy();
             if (original) {
                 // ensure allow original is turned on
                 route.setAllowUseOriginalMessage(true);
@@ -310,10 +313,10 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
     }
 
     /**
-     * Note: Not for end users - this method is used internally by
-     * camel-blueprint
+     * Note: Not for end users - this method is used internally by camel-blueprint
      */
-    public static RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicyDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
+    public static RedeliveryPolicy createRedeliveryPolicy(
+            RedeliveryPolicyDefinition definition, CamelContext context, RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer;
         if (parentPolicy != null) {
             answer = parentPolicy.copy();
@@ -332,28 +335,35 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setRedeliveryDelay(duration.toMillis());
             }
             if (definition.getAsyncDelayedRedelivery() != null) {
-                answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
+                answer.setAsyncDelayedRedelivery(
+                        CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
-                answer.setRetriesExhaustedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
+                answer.setRetriesExhaustedLogLevel(
+                        CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetriesExhaustedLogLevel()));
             }
             if (definition.getRetryAttemptedLogLevel() != null) {
-                answer.setRetryAttemptedLogLevel(CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetryAttemptedLogLevel()));
+                answer.setRetryAttemptedLogLevel(
+                        CamelContextHelper.parse(context, LoggingLevel.class, definition.getRetryAttemptedLogLevel()));
             }
             if (definition.getRetryAttemptedLogInterval() != null) {
-                answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, definition.getRetryAttemptedLogInterval()));
+                answer.setRetryAttemptedLogInterval(
+                        CamelContextHelper.parseInteger(context, definition.getRetryAttemptedLogInterval()));
             }
             if (definition.getBackOffMultiplier() != null) {
                 answer.setBackOffMultiplier(CamelContextHelper.parseDouble(context, definition.getBackOffMultiplier()));
             }
             if (definition.getUseExponentialBackOff() != null) {
-                answer.setUseExponentialBackOff(CamelContextHelper.parseBoolean(context, definition.getUseExponentialBackOff()));
+                answer.setUseExponentialBackOff(
+                        CamelContextHelper.parseBoolean(context, definition.getUseExponentialBackOff()));
             }
             if (definition.getCollisionAvoidanceFactor() != null) {
-                answer.setCollisionAvoidanceFactor(CamelContextHelper.parseDouble(context, definition.getCollisionAvoidanceFactor()));
+                answer.setCollisionAvoidanceFactor(
+                        CamelContextHelper.parseDouble(context, definition.getCollisionAvoidanceFactor()));
             }
             if (definition.getUseCollisionAvoidance() != null) {
-                answer.setUseCollisionAvoidance(CamelContextHelper.parseBoolean(context, definition.getUseCollisionAvoidance()));
+                answer.setUseCollisionAvoidance(
+                        CamelContextHelper.parseBoolean(context, definition.getUseCollisionAvoidance()));
             }
             if (definition.getMaximumRedeliveryDelay() != null) {
                 Duration duration = CamelContextHelper.parseDuration(context, definition.getMaximumRedeliveryDelay());
@@ -381,10 +391,12 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setLogExhausted(CamelContextHelper.parseBoolean(context, definition.getLogExhausted()));
             }
             if (definition.getLogExhaustedMessageHistory() != null) {
-                answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, definition.getLogExhaustedMessageHistory()));
+                answer.setLogExhaustedMessageHistory(
+                        CamelContextHelper.parseBoolean(context, definition.getLogExhaustedMessageHistory()));
             }
             if (definition.getLogExhaustedMessageBody() != null) {
-                answer.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(context, definition.getLogExhaustedMessageBody()));
+                answer.setLogExhaustedMessageBody(
+                        CamelContextHelper.parseBoolean(context, definition.getLogExhaustedMessageBody()));
             }
             if (definition.getDisableRedelivery() != null) {
                 if (CamelContextHelper.parseBoolean(context, definition.getDisableRedelivery())) {
@@ -395,7 +407,8 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 answer.setDelayPattern(CamelContextHelper.parseText(context, definition.getDelayPattern()));
             }
             if (definition.getAllowRedeliveryWhileStopping() != null) {
-                answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, definition.getAllowRedeliveryWhileStopping()));
+                answer.setAllowRedeliveryWhileStopping(
+                        CamelContextHelper.parseBoolean(context, definition.getAllowRedeliveryWhileStopping()));
             }
             if (definition.getExchangeFormatterRef() != null) {
                 answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, definition.getExchangeFormatterRef()));

@@ -47,11 +47,9 @@ public class BoxTasksManager {
     private BoxAPIConnection boxConnection;
 
     /**
-     * Create tasks manager to manage the tasks of Box connection's
-     * authenticated user.
+     * Create tasks manager to manage the tasks of Box connection's authenticated user.
      * 
-     * @param boxConnection
-     *            - Box connection to authenticated user account.
+     * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxTasksManager(BoxAPIConnection boxConnection) {
         this.boxConnection = boxConnection;
@@ -60,9 +58,8 @@ public class BoxTasksManager {
     /**
      * Get a list of any tasks on file.
      * 
-     * @param fileId
-     *            - the id of file.
-     * @return The list of tasks on file.
+     * @param  fileId - the id of file.
+     * @return        The list of tasks on file.
      */
     public List<BoxTask.Info> getFileTasks(String fileId) {
         try {
@@ -84,15 +81,11 @@ public class BoxTasksManager {
     /**
      * Add task to file.
      * 
-     * @param fileId
-     *            - the id of file to add task to.
-     * @param action
-     *            - the action the task assignee will be prompted to do.
-     * @param dueAt
-     *            - - the day at which this task is due.
-     * @param message
-     *            - an optional message to include with the task.
-     * @return The new task.
+     * @param  fileId  - the id of file to add task to.
+     * @param  action  - the action the task assignee will be prompted to do.
+     * @param  dueAt   - - the day at which this task is due.
+     * @param  message - an optional message to include with the task.
+     * @return         The new task.
      */
     public BoxTask addFileTask(String fileId, BoxTask.Action action, Date dueAt, String message) {
         try {
@@ -118,8 +111,7 @@ public class BoxTasksManager {
     /**
      * Delete task.
      * 
-     * @param taskId
-     *            - the id of task to delete.
+     * @param taskId - the id of task to delete.
      */
     public void deleteTask(String taskId) {
         try {
@@ -138,9 +130,8 @@ public class BoxTasksManager {
     /**
      * Get task information.
      * 
-     * @param taskId
-     *            - the id of task.
-     * @return The task information.
+     * @param  taskId - the id of task.
+     * @return        The task information.
      */
     public BoxTask.Info getTaskInfo(String taskId) {
         try {
@@ -161,11 +152,9 @@ public class BoxTasksManager {
     /**
      * Update task information.
      * 
-     * @param taskId
-     *            - the id of task.
-     * @param info
-     *            - the updated information
-     * @return The updated task.
+     * @param  taskId - the id of task.
+     * @param  info   - the updated information
+     * @return        The updated task.
      */
     public BoxTask updateTaskInfo(String taskId, BoxTask.Info info) {
         try {
@@ -190,9 +179,8 @@ public class BoxTasksManager {
     /**
      * Get a list of any assignments for task.
      * 
-     * @param taskId
-     *            - the id of task.
-     * @return The list of assignments for task.
+     * @param  taskId - the id of task.
+     * @return        The list of assignments for task.
      */
     public List<BoxTaskAssignment.Info> getTaskAssignments(String taskId) {
         try {
@@ -214,14 +202,12 @@ public class BoxTasksManager {
     /**
      * Add assignment for task.
      * 
-     * @param taskId
-     *            - the id of task to add assignment for.
-     * @param assignTo
-     *            - the user to assign to task.
-     * @return The assigned task.
+     * @param  taskId   - the id of task to add assignment for.
+     * @param  assignTo - the user to assign to task.
+     * @return          The assigned task.
      */
     @SuppressWarnings("unused") // compiler for some reason thinks 'if (assignTo
-                                // == null)' clause is dead code.
+                               // == null)' clause is dead code.
     public BoxTask addAssignmentToTask(String taskId, BoxUser assignTo) {
         try {
             LOG.debug("Assigning task(id=" + taskId + ") to user(id=" + assignTo.getID() + ")");
@@ -245,9 +231,8 @@ public class BoxTasksManager {
     /**
      * Get task assignment information.
      * 
-     * @param taskAssignmentId
-     *            - the id of task assignment.
-     * @return The task assignment information.
+     * @param  taskAssignmentId - the id of task assignment.
+     * @return                  The task assignment information.
      */
     public BoxTaskAssignment.Info getTaskAssignmentInfo(String taskAssignmentId) {
         try {
@@ -304,8 +289,7 @@ public class BoxTasksManager {
     /**
      * Delete task assignment.
      * 
-     * @param taskAssignmentId
-     *            - the id of task assignment to delete.
+     * @param taskAssignmentId - the id of task assignment to delete.
      */
     public void deleteTaskAssignment(String taskAssignmentId) {
         try {

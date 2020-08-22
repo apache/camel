@@ -25,6 +25,7 @@ public class SpringDeadLetterChannelLogExhaustedMessageHistoryTest extends DeadL
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/DeadLetterChannelLogExhaustedMessageHistoryTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/DeadLetterChannelLogExhaustedMessageHistoryTest.xml");
     }
 }

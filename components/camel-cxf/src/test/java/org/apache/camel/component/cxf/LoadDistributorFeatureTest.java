@@ -31,17 +31,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoadDistributorFeatureTest {
-    
-    private static int port1 = CXFTestSupport.getPort1(); 
+
+    private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
-    
-    
+
     private static final String SERVICE_ADDRESS_1 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service1";
     private static final String SERVICE_ADDRESS_2 = "http://localhost:" + port1 + "/LoadDistributorFeatureTest/service2";
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/LoadDistributorFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/LoadDistributorFeatureTest/proxy";
-    
+
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
@@ -53,7 +52,7 @@ public class LoadDistributorFeatureTest {
         factory1.setAddress(SERVICE_ADDRESS_1);
         factory1.setServiceBean(new HelloServiceImpl(" Server1"));
         factory1.create();
-        
+
         ServerFactoryBean factory2 = new ServerFactoryBean();
         factory2.setAddress(SERVICE_ADDRESS_2);
         factory2.setServiceBean(new HelloServiceImpl(" Server2"));
@@ -86,7 +85,7 @@ public class LoadDistributorFeatureTest {
                        + "&dataFormat=PAYLOAD";
 
         String backend = "cxf://" + SERVICE_ADDRESS_1 + "?wsdlURL=" + SERVICE_ADDRESS_1 + "?wsdl"
-                      + "&dataFormat=PAYLOAD";
+                         + "&dataFormat=PAYLOAD";
 
         context1 = new DefaultCamelContext();
         startRoute(context1, proxy, backend);
@@ -97,9 +96,8 @@ public class LoadDistributorFeatureTest {
         String proxy = "cxf://" + POJO_PROXY_ADDRESS + "?serviceClass=" + "org.apache.camel.component.cxf.HelloService"
                        + "&dataFormat=POJO";
 
-
         String backend = "cxf://" + SERVICE_ADDRESS_1 + "?serviceClass=" + "org.apache.camel.component.cxf.HelloService"
-                      + "&dataFormat=POJO";
+                         + "&dataFormat=POJO";
 
         context2 = new DefaultCamelContext();
         startRoute(context2, proxy, backend);
@@ -109,7 +107,7 @@ public class LoadDistributorFeatureTest {
 
         ctx.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 List<String> serviceList = new ArrayList<>();
                 serviceList.add(SERVICE_ADDRESS_1);
                 serviceList.add(SERVICE_ADDRESS_2);
@@ -120,7 +118,7 @@ public class LoadDistributorFeatureTest {
                 LoadDistributorFeature ldf = new LoadDistributorFeature();
                 ldf.setStrategy(strategy);
 
-                CxfEndpoint endpoint = (CxfEndpoint)(endpoint(real));
+                CxfEndpoint endpoint = (CxfEndpoint) (endpoint(real));
                 endpoint.getFeatures().add(ldf);
 
                 from(proxy).to(endpoint);
@@ -137,10 +135,8 @@ public class LoadDistributorFeatureTest {
         factory.setServiceClass(HelloService.class);
         factory.setAddress(url);
 
-
         HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
-
 
 }

@@ -120,7 +120,6 @@ public class MainIoCAutowireTest {
         return seda;
     }
 
-
     public static class MyDummyComponent extends DefaultComponent {
         private MyDummyConfig config = new MyDummyConfig();
 

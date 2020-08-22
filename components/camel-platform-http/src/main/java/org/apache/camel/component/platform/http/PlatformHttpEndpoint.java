@@ -36,39 +36,42 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Expose HTTP endpoints using the HTTP server available in the current platform.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path", category = {Category.HTTP}, consumerOnly = true)
+@UriEndpoint(firstVersion = "3.0.0", scheme = "platform-http", title = "Platform HTTP", syntax = "platform-http:path",
+             category = { Category.HTTP }, consumerOnly = true)
 public class PlatformHttpEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     @UriPath(description = "The path under which this endpoint serves the HTTP requests")
     @Metadata(required = true)
     private final String path;
 
-    @UriParam(label = "consumer", defaultValue = "false", description = "Whether or not the consumer should try to find a target consumer "
-            + "by matching the URI prefix if no exact match is found.")
+    @UriParam(label = "consumer", defaultValue = "false",
+              description = "Whether or not the consumer should try to find a target consumer "
+                            + "by matching the URI prefix if no exact match is found.")
     private boolean matchOnUriPrefix;
 
     @UriParam(label = "consumer", description = "A comma separated list of HTTP methods to serve, e.g. GET,POST ."
-            + " If no methods are specified, all methods will be served.")
+                                                + " If no methods are specified, all methods will be served.")
     private String httpMethodRestrict;
 
     @UriParam(label = "consumer", description = "The content type this endpoint accepts as an input, such as"
-            + " application/xml or application/json. <code>null</code> or <code>&#42;/&#42;</code> mean no restriction.")
+                                                + " application/xml or application/json. <code>null</code> or <code>&#42;/&#42;</code> mean no restriction.")
     private String consumes;
 
     @UriParam(label = "consumer", description = "The content type this endpoint produces, such as"
-            + " application/xml or application/json.")
+                                                + " application/xml or application/json.")
     private String produces;
 
     @UriParam(label = "consumer,advanced", description = "A comma or whitespace separated list of file extensions."
-            + " Uploads having these extensions will be stored locally."
-            + " Null value or asterisk (*) will allow all files.")
+                                                         + " Uploads having these extensions will be stored locally."
+                                                         + " Null value or asterisk (*) will allow all files.")
     private String fileNameExtWhitelist;
 
     @UriParam(label = "advanced", description = "An HTTP Server engine implementation to serve the requests of this"
-            + " endpoint.")
+                                                + " endpoint.")
     private PlatformHttpEngine platformHttpEngine;
 
-    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter headers to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new PlatformHttpHeaderFilterStrategy();
 
     public PlatformHttpEndpoint(String uri, String remaining, Component component) {

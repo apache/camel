@@ -37,7 +37,8 @@ import org.springframework.beans.factory.FactoryBean;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRouteContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteDefinition>> {
 
-    @XmlElement(name = "route", required = true)  @Metadata(description = "Routes")
+    @XmlElement(name = "route", required = true)
+    @Metadata(description = "Routes")
     private List<RouteDefinition> routes = new ArrayList<>();
 
     @Override
@@ -62,5 +63,5 @@ public class CamelRouteContextFactoryBean extends IdentifiedType implements Fact
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
-    
+
 }

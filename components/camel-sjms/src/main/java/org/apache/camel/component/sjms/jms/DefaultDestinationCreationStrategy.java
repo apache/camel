@@ -23,8 +23,7 @@ import javax.jms.Session;
 import org.apache.camel.util.URISupport;
 
 /**
- * Default implementation of DestinationCreationStrategy, delegates to Session.createTopic
- * and Session.createQueue.
+ * Default implementation of DestinationCreationStrategy, delegates to Session.createTopic and Session.createQueue.
  *
  * @see org.apache.camel.component.sjms.jms.DestinationCreationStrategy
  * @see javax.jms.Session

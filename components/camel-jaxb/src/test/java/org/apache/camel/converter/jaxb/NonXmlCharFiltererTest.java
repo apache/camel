@@ -84,7 +84,7 @@ public class NonXmlCharFiltererTest {
         String string = "abc";
         String result = nonXmlCharFiltererMock.filter(string);
 
-        verify(nonXmlCharFiltererMock).filter(new char[] {'a', 'b', 'c'}, 0, 3);
+        verify(nonXmlCharFiltererMock).filter(new char[] { 'a', 'b', 'c' }, 0, 3);
 
         assertSame(string, result, "Should have returned the same string if nothing was filtered");
     }
@@ -92,15 +92,16 @@ public class NonXmlCharFiltererTest {
     @Test
     public void testFilter1ArgFiltered() {
         when(nonXmlCharFiltererMock.filter(anyString())).thenCallRealMethod();
-        when(nonXmlCharFiltererMock.filter(eq(new char[] {'a', 'b', 'c'}), anyInt(), anyInt())).thenAnswer(new Answer<Boolean>() {
+        when(nonXmlCharFiltererMock.filter(eq(new char[] { 'a', 'b', 'c' }), anyInt(), anyInt()))
+                .thenAnswer(new Answer<Boolean>() {
 
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                char[] buffer = (char[]) invocation.getArguments()[0];
-                buffer[0] = 'i';
-                buffer[1] = 'o';
-                return true;
-            }
-        });
+                    public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                        char[] buffer = (char[]) invocation.getArguments()[0];
+                        buffer[0] = 'i';
+                        buffer[1] = 'o';
+                        return true;
+                    }
+                });
 
         String result = nonXmlCharFiltererMock.filter("abc");
         verify(nonXmlCharFiltererMock).filter(any(char[].class), eq(0), eq(3));
@@ -118,14 +119,14 @@ public class NonXmlCharFiltererTest {
         when(nonXmlCharFiltererMock.filter(any(char[].class), anyInt(), anyInt())).thenCallRealMethod();
         when(nonXmlCharFiltererMock.isFiltered(anyChar())).thenReturn(true, false, true);
 
-        char[] buffer = new char[] {'1', '2', '3', '4', '5', '6'};
+        char[] buffer = new char[] { '1', '2', '3', '4', '5', '6' };
         nonXmlCharFiltererMock.filter(buffer, 2, 3);
 
         verify(nonXmlCharFiltererMock).isFiltered('3');
         verify(nonXmlCharFiltererMock).isFiltered('4');
         verify(nonXmlCharFiltererMock).isFiltered('5');
 
-        assertArrayEquals(new char[] {'1', '2', ' ', '4', ' ', '6'}, buffer, "Unexpected buffer contents");
+        assertArrayEquals(new char[] { '1', '2', ' ', '4', ' ', '6' }, buffer, "Unexpected buffer contents");
     }
 
     @Test
@@ -141,8 +142,8 @@ public class NonXmlCharFiltererTest {
         for (int charCode = startCharCodeInclusive; charCode <= endCharCodeInclusive; charCode++) {
             if (nonXmlCharFilterer.isFiltered((char) charCode)) {
                 fail("Character " + asHex(charCode) + " from range ["
-                        + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
-                        + "] should be valid, but it is not");
+                     + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
+                     + "] should be valid, but it is not");
             }
 
         }
@@ -152,8 +153,8 @@ public class NonXmlCharFiltererTest {
         for (int charCode = startCharCodeInclusive; charCode <= endCharCodeInclusive; charCode++) {
             if (!nonXmlCharFilterer.isFiltered((char) charCode)) {
                 fail("Character " + asHex(charCode) + " from range ["
-                        + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
-                        + "] should not be valid, but it is");
+                     + asHex(startCharCodeInclusive) + "-" + asHex(endCharCodeInclusive)
+                     + "] should not be valid, but it is");
             }
         }
     }

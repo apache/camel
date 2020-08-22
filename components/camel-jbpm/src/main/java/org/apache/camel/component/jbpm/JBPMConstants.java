@@ -30,7 +30,7 @@ public interface JBPMConstants {
     String TASK_ID = "CamelJBPMTaskId";
     String TASK = "CamelJBPMTask";
     String USER_ID = "CamelJBPMUserId";
-    String TARGET_USER_ID = "CamelJBPMTargetUserId";    
+    String TARGET_USER_ID = "CamelJBPMTargetUserId";
     String ATTACHMENT_ID = "CamelJBPMAttachmentId";
     String CONTENT_ID = "CamelJBPMContentId";
     String ENTITY_LIST = "CamelJBPMEntityList";
@@ -49,8 +49,7 @@ public interface JBPMConstants {
     String HANDLE_EXCEPTION_WI_PARAM = "HandleExceptions";
     String RESPONSE_WI_PARAM = "Response";
     String MESSAGE_WI_PARAM = "Message";
-    
+
     String CAMEL_CONTEXT_BUILDER_KEY = "CamelContextBuilder";
 
-    
 }

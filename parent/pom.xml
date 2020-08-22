@@ -78,7 +78,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.13.73</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.14.3</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
@@ -156,7 +156,7 @@
         <docker-java-version>3.2.5</docker-java-version>
         <dozer-version>6.5.0</dozer-version>
         <drools-version>7.41.0.Final</drools-version>
-        <dropbox-version>3.1.4</dropbox-version>
+        <dropbox-version>3.1.5</dropbox-version>
         <debezium-version>1.2.1.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.16</debezium-mysql-connector-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -386,7 +386,6 @@
         <maven-archetype-plugin-version>3.0.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
-        <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
         <maven-checkstyle-plugin-version>3.1.1</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.35</maven-checkstyle-version>
         <maven-owasp-plugin-version>5.3.2</maven-owasp-plugin-version>
@@ -457,7 +456,7 @@
         <osgi-version>6.0.0</osgi-version>
         <paho-version>1.2.4</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
-        <pdfbox-version>2.0.20</pdfbox-version>
+        <pdfbox-version>2.0.21</pdfbox-version>
         <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.4</pgjdbc-ng-driver-version>
         <powermock-version>2.0.7</powermock-version>
@@ -612,6 +611,9 @@
         <camel.osgi.provide.capability />
 
         <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
+
+        <sourcecheckExcludes></sourcecheckExcludes>
+        <sourcecheckExcludesComma></sourcecheckExcludesComma>
     </properties>
 
     <dependencyManagement>
@@ -3939,12 +3941,58 @@
                                 </sourceDirectories>
                                 <headerLocation>header-java.txt</headerLocation>
                                 <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-                                <excludes>
-                                    **/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java
-                                </excludes>
+                                <excludes>${sourcecheckExcludesComma}**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
                             </configuration>
                             <goals>
                                 <goal>checkstyle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code</groupId>
+                    <artifactId>impsort-maven-plugin</artifactId>
+                    <version>${impsort-maven-plugin-version}</version>
+                    <configuration>
+                        <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
+                        <excludes>${sourcecheckExcludesComma}**/package-info.java</excludes>
+                        <staticAfter>true</staticAfter>
+                        <removeUnused>true</removeUnused>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>sort-imports</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>sort</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-format-plugin</artifactId>
+                    <version>${project.version}</version>
+                    <configuration>
+                        <configFile>camel-eclipse-formatter-config.xml</configFile>
+                        <skip>${format.skip}</skip>
+                        <skipHtmlFormatting>true</skipHtmlFormatting>
+                        <cachedir>${basedir}/target</cachedir>
+                        <excludes>${sourcecheckExcludes}</excludes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel</groupId>
+                            <artifactId>camel-buildtools</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>format</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>format</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -4250,7 +4298,10 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -4363,40 +4414,46 @@
         </profile>
 
         <profile>
-            <id>impsort</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.revelc.code</groupId>
-                        <artifactId>impsort-maven-plugin</artifactId>
-                        <version>${impsort-maven-plugin-version}</version>
-                        <executions>
-                            <execution>
-                                <id>sort-imports</id>
-                                <goals>
-                                    <goal>sort</goal>
-                                </goals>
-                                <phase>process-sources</phase>
-                                <configuration>
-                                    <groups>java.,javax.,org.w3c.,org.xml.,junit.,*</groups>
-                                    <excludes>**/package-info.java</excludes>
-                                    <staticAfter>true</staticAfter>
-                                    <removeUnused>true</removeUnused>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
             <id>sourcecheck</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-format-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>format</id>
+                                <phase />
+                            </execution>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>validate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>net.revelc.code</groupId>
+                        <artifactId>impsort-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sort-imports</id>
+                                <phase />
+                            </execution>
+                            <execution>
+                                <id>check</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

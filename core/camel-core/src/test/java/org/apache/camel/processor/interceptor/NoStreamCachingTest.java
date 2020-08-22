@@ -66,7 +66,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         boolean b1 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
         assertTrue(b1);
-        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
+        assertEquals(MESSAGE, a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class NoStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         boolean b1 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
         assertTrue(b1);
-        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
+        assertEquals(MESSAGE, a.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
     @Test
@@ -115,11 +115,11 @@ public class NoStreamCachingTest extends ContextTestSupport {
 
         boolean b2 = a.assertExchangeReceived(0).getIn().getBody() instanceof ByteArrayInputStream;
         assertTrue(b2);
-        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
+        assertEquals(MESSAGE, a.assertExchangeReceived(0).getIn().getBody(String.class));
 
         boolean b1 = b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache;
         assertTrue(b1);
-        assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
+        assertEquals(MESSAGE, b.assertExchangeReceived(0).getIn().getBody(String.class));
     }
 
 }

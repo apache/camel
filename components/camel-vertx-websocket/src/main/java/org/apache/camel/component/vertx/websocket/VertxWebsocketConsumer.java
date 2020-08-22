@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
-import io.vertx.core.http.ServerWebSocket;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

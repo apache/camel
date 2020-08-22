@@ -18,6 +18,7 @@ package org.apache.camel.component.micrometer;
 
 public enum MicrometerTimerAction {
 
-    start, stop
+    start,
+    stop
 
 }

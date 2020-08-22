@@ -33,7 +33,7 @@ public class Kinesis2Producer extends DefaultProducer {
 
     @Override
     public Kinesis2Endpoint getEndpoint() {
-        return (Kinesis2Endpoint)super.getEndpoint();
+        return (Kinesis2Endpoint) super.getEndpoint();
     }
 
     @Override

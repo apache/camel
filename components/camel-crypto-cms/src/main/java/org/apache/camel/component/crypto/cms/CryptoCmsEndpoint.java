@@ -33,7 +33,8 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name", producerOnly = true, category = {Category.SECURITY, Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name",
+             producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
 public class CryptoCmsEndpoint extends DefaultEndpoint {
     private final Processor processor;
 
@@ -80,9 +81,8 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Set the Crypto operation from that supplied after the crypto scheme in
-     * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
-     * Possible values: "sign", "verify", "encrypt", or "decrypt".
+     * Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto-cms:sign sets
+     * sign as the operation. Possible values: "sign", "verify", "encrypt", or "decrypt".
      */
     public void setCryptoOperation(String operation) {
         this.cryptoOperation = CryptoOperation.valueOf(operation);
@@ -93,17 +93,15 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the Crypto operation that was supplied in the crypto scheme in
-     * the endpoint uri
+     * Gets the Crypto operation that was supplied in the crypto scheme in the endpoint uri
      */
     public CryptoOperation getCryptoOperation() {
         return cryptoOperation;
     }
 
     /**
-     * The name part in the URI can be chosen by the user to distinguish between
-     * different signer/verifier/encryptor/decryptor endpoints within the camel
-     * context.
+     * The name part in the URI can be chosen by the user to distinguish between different
+     * signer/verifier/encryptor/decryptor endpoints within the camel context.
      */
     public void setName(String name) {
         this.name = name;
@@ -116,7 +114,8 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) {
-        throw new UnsupportedOperationException("Crypto CMS endpoints are not meant to be consumed from. They are meant be used as intermediate endpoints");
+        throw new UnsupportedOperationException(
+                "Crypto CMS endpoints are not meant to be consumed from. They are meant be used as intermediate endpoints");
     }
 
     public Object getManagedObject(CryptoCmsEndpoint endpoint) {

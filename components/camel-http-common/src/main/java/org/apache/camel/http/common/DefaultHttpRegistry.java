@@ -31,7 +31,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
     private static Map<String, HttpRegistry> registries = new HashMap<>();
-    
+
     private final Object lock = new Object();
 
     private final Set<HttpConsumer> consumers;
@@ -41,7 +41,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
         consumers = new HashSet<>();
         providers = new HashSet<>();
     }
-    
+
     /**
      * Lookup or create a new registry if none exists with the given name
      */
@@ -60,7 +60,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
     public static synchronized void removeHttpRegistry(String name) {
         registries.remove(name);
     }
-    
+
     @Override
     public void register(HttpConsumer consumer) {
         synchronized (lock) {
@@ -73,7 +73,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
             }
         }
     }
-    
+
     @Override
     public void unregister(HttpConsumer consumer) {
         synchronized (lock) {
@@ -86,7 +86,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
             }
         }
     }
-    
+
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
         CamelServlet camelServlet = provider;
@@ -97,12 +97,13 @@ public class DefaultHttpRegistry implements HttpRegistry {
     public void unregister(HttpRegistryProvider provider, Map<String, Object> properties) {
         unregister(provider);
     }
-    
+
     @Override
     public void register(HttpRegistryProvider provider) {
         synchronized (lock) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(), consumers.size());
+                LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(),
+                        consumers.size());
             }
             providers.add(provider);
             for (HttpConsumer consumer : consumers) {

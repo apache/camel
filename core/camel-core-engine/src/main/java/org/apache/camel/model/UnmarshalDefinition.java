@@ -66,15 +66,15 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Converts the message data received from the wire into a format that Apache
- * Camel processors can consume
+ * Converts the message data received from the wire into a format that Apache Camel processors can consume
  */
 @Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {
 
-    @XmlElements({@XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
+    @XmlElements({
+            @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
             @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
             @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
@@ -114,7 +114,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
             @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
             @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(required = false, name = "zip", type = ZipDeflaterDataFormat.class),
-            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)})
+            @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class) })
     private DataFormatDefinition dataFormatType;
 
     public UnmarshalDefinition() {

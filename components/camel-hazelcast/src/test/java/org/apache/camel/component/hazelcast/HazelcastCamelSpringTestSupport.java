@@ -53,5 +53,4 @@ public abstract class HazelcastCamelSpringTestSupport extends CamelSpringTestSup
         verifyNoMoreInteractions(hazelcastInstance);
     }
 
-
 }

@@ -202,7 +202,8 @@ public class XsltBuilderTest extends ContextTestSupport {
         builder.process(exchange);
         assertIsInstanceOf(byte[].class, exchange.getOut().getBody());
 
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>",
+                exchange.getOut().getBody(String.class));
     }
 
     @Test
@@ -281,7 +282,8 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         builder.process(exchange);
 
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody(String.class));
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>",
+                exchange.getOut().getBody(String.class));
     }
 
     @Test

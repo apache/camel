@@ -192,8 +192,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Force the emitter to produce a pretty YAML document when using the flow
-     * style.
+     * Force the emitter to produce a pretty YAML document when using the flow style.
      */
     public void setPrettyFlow(String prettyFlow) {
         this.prettyFlow = prettyFlow;

@@ -52,16 +52,16 @@ public class NettyHttpRedeliveryTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .maximumRedeliveries(50).redeliveryDelay(100).onExceptionOccurred(
-                        new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                // signal to start the route (after 5 attempts)
-                                latch.countDown();
-                                // and there is only 1 inflight
-                                assertEquals(1, context.getInflightRepository().size());
-                            }
-                        });
+                        .maximumRedeliveries(50).redeliveryDelay(100).onExceptionOccurred(
+                                new Processor() {
+                                    @Override
+                                    public void process(Exchange exchange) throws Exception {
+                                        // signal to start the route (after 5 attempts)
+                                        latch.countDown();
+                                        // and there is only 1 inflight
+                                        assertEquals(1, context.getInflightRepository().size());
+                                    }
+                                });
 
                 from("timer:foo").routeId("foo")
                         .to("netty-http:http://0.0.0.0:{{port}}/bar?keepAlive=false&disconnect=true")

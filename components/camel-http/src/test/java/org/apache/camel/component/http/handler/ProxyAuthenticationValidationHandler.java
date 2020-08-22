@@ -38,8 +38,10 @@ public class ProxyAuthenticationValidationHandler extends BasicValidationHandler
     }
 
     @Override
-    public void handle(final HttpRequest request, final HttpResponse response,
-                       final HttpContext context) throws HttpException, IOException {
+    public void handle(
+            final HttpRequest request, final HttpResponse response,
+            final HttpContext context)
+            throws HttpException, IOException {
 
         if (!getExpectedCredential().equals(context.getAttribute("proxy-creds"))) {
             response.setStatusCode(HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED);

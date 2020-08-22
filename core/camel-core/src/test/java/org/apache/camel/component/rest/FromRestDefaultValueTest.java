@@ -42,7 +42,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testDefaultHeaderValue() throws Exception {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Hello World");
@@ -66,7 +66,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testDefaultHeaderValueOverride() throws Exception {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Bye World");
@@ -87,9 +87,9 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
                 restConfiguration().host("localhost").enableCORS(true);
 
                 rest("/say/bye").consumes("application/json").get()
-                    .param().type(RestParamType.query).name("kind").defaultValue("customer").endParam()
-                    .param().type(RestParamType.header).name("indicator").defaultValue("disabled").endParam()
-                    .to("mock:bye");
+                        .param().type(RestParamType.query).name("kind").defaultValue("customer").endParam()
+                        .param().type(RestParamType.header).name("indicator").defaultValue("disabled").endParam()
+                        .to("mock:bye");
             }
         };
     }

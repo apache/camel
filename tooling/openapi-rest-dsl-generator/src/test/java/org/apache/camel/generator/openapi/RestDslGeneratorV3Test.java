@@ -56,8 +56,8 @@ public class RestDslGeneratorV3Test {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .generate(code);
+                .withGeneratedTime(generated)
+                .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3Petstore.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -70,14 +70,14 @@ public class RestDslGeneratorV3Test {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withClassName("MyRestRoute")
-            .withPackageName("com.example")
-            .withIndent("\t")
-            .withSourceCodeTimestamps()
-            .withOperationFilter("find*,deletePet,updatePet")
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
-            .generate(code);
+                .withGeneratedTime(generated)
+                .withClassName("MyRestRoute")
+                .withPackageName("com.example")
+                .withIndent("\t")
+                .withSourceCodeTimestamps()
+                .withOperationFilter("find*,deletePet,updatePet")
+                .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+                .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteFilterV3.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -89,13 +89,13 @@ public class RestDslGeneratorV3Test {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withClassName("MyRestRoute")
-            .withPackageName("com.example")
-            .withIndent("\t")
-            .withSourceCodeTimestamps()
-            .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
-            .generate(code);
+                .withGeneratedTime(generated)
+                .withClassName("MyRestRoute")
+                .withPackageName("com.example")
+                .withIndent("\t")
+                .withSourceCodeTimestamps()
+                .withDestinationGenerator(o -> "direct:rest-" + o.operationId)
+                .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/MyRestRouteV3.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -107,10 +107,10 @@ public class RestDslGeneratorV3Test {
         final StringBuilder code = new StringBuilder();
 
         RestDslGenerator.toAppendable(document)
-            .withGeneratedTime(generated)
-            .withRestComponent("servlet")
-            .withRestContextPath("/")
-            .generate(code);
+                .withGeneratedTime(generated)
+                .withRestComponent("servlet")
+                .withRestContextPath("/")
+                .generate(code);
 
         final URI file = RestDslGeneratorV3Test.class.getResource("/OpenApiV3PetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

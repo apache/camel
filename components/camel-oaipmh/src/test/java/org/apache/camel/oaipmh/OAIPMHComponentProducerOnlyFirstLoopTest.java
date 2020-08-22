@@ -22,10 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.oaipmh.utils.JettyTestServer;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class OAIPMHComponentProducerOnlyFirstLoopTest extends CamelTestSupport {
 
@@ -37,14 +37,14 @@ public class OAIPMHComponentProducerOnlyFirstLoopTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied(3 * 1000);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws IOException {
         //Mocked data  taken from https://dspace.ucuenca.edu.ec/oai/request - July 21, 2020
         JettyTestServer.getInstance().context = "test1";
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }
@@ -58,13 +58,14 @@ public class OAIPMHComponentProducerOnlyFirstLoopTest extends CamelTestSupport {
                         .setHeader("CamelOaimphFrom", constant("2020-06-01T00:00:00Z"))
                         .setHeader("CamelOaimphOnlyFirst", constant("true"))
                         .loopDoWhile(simple("${in.header.CamelOaimphResumptionToken} || ${body} == 'foo'"))
-                            .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
-                            .split(body())
-                            .split(xpath("/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
-                                    new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
-                                            .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
-                                            .add("dc", "http://purl.org/dc/elements/1.1/")))
-                            .to("mock:result")
+                        .to("oaipmh://localhost:" + JettyTestServer.getInstance().port + "/oai/request")
+                        .split(body())
+                        .split(xpath(
+                                "/default:OAI-PMH/default:ListRecords/default:record/default:metadata/oai_dc:dc/dc:title/text()",
+                                new Namespaces("default", "http://www.openarchives.org/OAI/2.0/")
+                                        .add("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/")
+                                        .add("dc", "http://purl.org/dc/elements/1.1/")))
+                        .to("mock:result")
                         .end();
             }
         };

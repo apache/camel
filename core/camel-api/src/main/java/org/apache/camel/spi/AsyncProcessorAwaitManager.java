@@ -23,12 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
 
 /**
- * A manager to handle async routing engine, when {@link Exchange}s are being handed over from one thread to another, while
- * the callee thread is blocked waiting for the other threads to complete, before it can continue.
+ * A manager to handle async routing engine, when {@link Exchange}s are being handed over from one thread to another,
+ * while the callee thread is blocked waiting for the other threads to complete, before it can continue.
  * <p/>
- * This manager offers insight into the state, and allow to force stuck exchanges to be continued and for blocked threads
- * to be unblocked, which may happen in case of severe malfunctions (such as the system runs out of memory, a 3rd party
- * never responding, or a timeout not triggering, etc).
+ * This manager offers insight into the state, and allow to force stuck exchanges to be continued and for blocked
+ * threads to be unblocked, which may happen in case of severe malfunctions (such as the system runs out of memory, a
+ * 3rd party never responding, or a timeout not triggering, etc).
  */
 public interface AsyncProcessorAwaitManager extends StaticService {
 
@@ -125,13 +125,13 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * Process the given exchange sychronously.
      *
      * @param processor the async processor to call
-     * @param exchange the exchange to process
+     * @param exchange  the exchange to process
      */
     void process(AsyncProcessor processor, Exchange exchange);
 
     /**
-     * Number of threads that are blocked waiting for other threads to trigger the callback when they are done processing
-     * the exchange.
+     * Number of threads that are blocked waiting for other threads to trigger the callback when they are done
+     * processing the exchange.
      */
     int size();
 
@@ -141,28 +141,28 @@ public interface AsyncProcessorAwaitManager extends StaticService {
     Collection<AwaitThread> browse();
 
     /**
-     * To interrupt an exchange which may seem as stuck, to force the exchange to continue,
-     * allowing any blocking thread to be released.
+     * To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread
+     * to be released.
      * <p/>
      * <b>Important:</b> Use this with caution as the other thread is still assumed to be process the exchange. Though
-     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to count-down
-     * so the blocked thread can continue. An exception is set on the exchange which allows Camel's error handler to deal
-     * with this malfunctioned exchange.
+     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
+     * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
+     * handler to deal with this malfunctioned exchange.
      *
-     * @param exchangeId    the exchange id to interrupt.
+     * @param exchangeId the exchange id to interrupt.
      */
     void interrupt(String exchangeId);
 
     /**
-     * To interrupt an exchange which may seem as stuck, to force the exchange to continue,
-     * allowing any blocking thread to be released.
+     * To interrupt an exchange which may seem as stuck, to force the exchange to continue, allowing any blocking thread
+     * to be released.
      * <p/>
      * <b>Important:</b> Use this with caution as the other thread is still assumed to be process the exchange. Though
-     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to count-down
-     * so the blocked thread can continue. An exception is set on the exchange which allows Camel's error handler to deal
-     * with this malfunctioned exchange.
+     * if it appears as the exchange is <i>stuck</i>, then this method can remedy this, by forcing the latch to
+     * count-down so the blocked thread can continue. An exception is set on the exchange which allows Camel's error
+     * handler to deal with this malfunctioned exchange.
      *
-     * @param exchange    the exchange to interrupt.
+     * @param exchange the exchange to interrupt.
      */
     void interrupt(Exchange exchange);
 

@@ -60,18 +60,18 @@ public class JmsMessageHeaderContentBasedRouterTest extends CamelTestSupport {
                 Predicate isB = header("route").isEqualTo("b");
 
                 from("activemq:queue:start")
-                    .bean(MyPreProcessorBean.class, "determineRouting")
-                    .choice()
+                        .bean(MyPreProcessorBean.class, "determineRouting")
+                        .choice()
                         .when(isA).to("mock:a")
                         .when(isB).to("mock:b")
-                    .end();
+                        .end();
 
             }
         };
     }
 
     public static class MyPreProcessorBean {
-        
+
         public void determineRouting(Exchange exchange) {
             exchange.getIn().setHeader("route", "b");
         }

@@ -37,12 +37,12 @@ public class NettyProducerPoolDisabledTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false");
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
-                    // body should be a String when using textline codec
-                    .validate(body().isInstanceOf(String.class))
-                    .transform(body().regexReplaceAll("Hello", "Bye"));
+                        // body should be a String when using textline codec
+                        .validate(body().isInstanceOf(String.class))
+                        .transform(body().regexReplaceAll("Hello", "Bye"));
             }
         };
     }

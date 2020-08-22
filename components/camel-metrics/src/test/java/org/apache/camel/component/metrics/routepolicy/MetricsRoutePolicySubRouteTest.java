@@ -62,11 +62,11 @@ public class MetricsRoutePolicySubRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo")
-                    .to("direct:bar")
-                    .to("mock:foo");
+                        .to("direct:bar")
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }

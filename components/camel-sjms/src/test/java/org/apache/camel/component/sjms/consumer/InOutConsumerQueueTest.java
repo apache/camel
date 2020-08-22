@@ -38,12 +38,12 @@ public class InOutConsumerQueueTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:queue:start").to("log:request")
-                    .to("sjms:queue:in.out.queue?exchangePattern=InOut&namedReplyTo=in.out.queue.response")
-                    .to("log:response").to("mock:result");
+                        .to("sjms:queue:in.out.queue?exchangePattern=InOut&namedReplyTo=in.out.queue.response")
+                        .to("log:response").to("mock:result");
 
                 from("sjms:queue:in.out.queue?exchangePattern=InOut").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String body = (String)exchange.getIn().getBody();
+                        String body = (String) exchange.getIn().getBody();
                         if (body.contains("Camel")) {
                             Thread.sleep(2000);
                         }

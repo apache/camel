@@ -84,9 +84,10 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
         assertEquals(3, set.size());
 
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService",
+                context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 

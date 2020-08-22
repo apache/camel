@@ -228,7 +228,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
         boolean b = loadBalance.getLoadBalancerType() instanceof StickyLoadBalancerDefinition;
         assertTrue(b, "The loadBalancer should be StickyLoadBalancerDefinition");
-        StickyLoadBalancerDefinition strategy = (StickyLoadBalancerDefinition)loadBalance.getLoadBalancerType();
+        StickyLoadBalancerDefinition strategy = (StickyLoadBalancerDefinition) loadBalance.getLoadBalancerType();
         assertNotNull(strategy.getCorrelationExpression(), "the expression should not be null ");
     }
 
@@ -240,7 +240,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(3, loadBalance.getOutputs().size(), "Here should have 3 output here");
         boolean b = loadBalance.getLoadBalancerType() instanceof FailoverLoadBalancerDefinition;
         assertTrue(b, "The loadBalancer should be FailoverLoadBalancerDefinition");
-        FailoverLoadBalancerDefinition strategy = (FailoverLoadBalancerDefinition)loadBalance.getLoadBalancerType();
+        FailoverLoadBalancerDefinition strategy = (FailoverLoadBalancerDefinition) loadBalance.getLoadBalancerType();
         assertEquals(2, strategy.getExceptions().size(), "there should be 2 exceptions");
     }
 

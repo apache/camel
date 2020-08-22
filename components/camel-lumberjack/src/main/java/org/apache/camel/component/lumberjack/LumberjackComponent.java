@@ -74,8 +74,8 @@ public class LumberjackComponent extends DefaultComponent implements SSLContextP
     }
 
     /**
-     * Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at
-     * the endpoint level.
+     * Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the
+     * endpoint level.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;

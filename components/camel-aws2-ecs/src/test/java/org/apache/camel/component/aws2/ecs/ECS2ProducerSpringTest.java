@@ -49,11 +49,11 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterArns().size());
         assertEquals("Test", resultGet.clusterArns().get(0));
     }
-    
+
     @Test
     public void ecsListClustersPojoTest() throws Exception {
 
@@ -68,7 +68,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ListClustersResponse resultGet = (ListClustersResponse)exchange.getIn().getBody();
+        ListClustersResponse resultGet = (ListClustersResponse) exchange.getIn().getBody();
         assertEquals(1, resultGet.clusterArns().size());
         assertEquals("Test", resultGet.clusterArns().get(0));
     }
@@ -87,7 +87,7 @@ public class ECS2ProducerSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        CreateClusterResponse resultGet = (CreateClusterResponse)exchange.getIn().getBody();
+        CreateClusterResponse resultGet = (CreateClusterResponse) exchange.getIn().getBody();
         assertEquals("Test", resultGet.cluster().clusterName());
     }
 

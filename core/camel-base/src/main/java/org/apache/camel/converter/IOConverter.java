@@ -52,8 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Some core java.io based <a
- * href="http://camel.apache.org/type-converter.html">Type Converters</a>
+ * Some core java.io based <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
 @Converter(generateLoader = true)
 public final class IOConverter {
@@ -129,12 +128,12 @@ public final class IOConverter {
     public static InputStream toInputStream(String text, Exchange exchange) throws IOException {
         return toInputStream(text.getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
-    
+
     @Converter
     public static InputStream toInputStream(StringBuffer buffer, Exchange exchange) throws IOException {
         return toInputStream(buffer.toString(), exchange);
     }
-    
+
     @Converter
     public static InputStream toInputStream(StringBuilder builder, Exchange exchange) throws IOException {
         return toInputStream(builder.toString(), exchange);
@@ -229,10 +228,11 @@ public final class IOConverter {
         } else {
             return new ObjectInputStream(IOHelper.buffered(stream)) {
                 @Override
-                protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {
+                protected Class<?> resolveClass(ObjectStreamClass objectStreamClass)
+                        throws IOException, ClassNotFoundException {
                     // need to let Camel be able to resolve class using ClassResolver SPI, to let class loading
                     // work in OSGi and other containers
-                    Class<?>  answer = null;
+                    Class<?> answer = null;
                     String name = objectStreamClass.getName();
                     if (exchange != null) {
                         LOG.trace("Loading class {} using Camel ClassResolver", name);

@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CalendarFreebusyIntegrationTest extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarFreebusyIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarFreebusyApiMethod.class).getName();
 
     @Test
     public void testQuery() throws Exception {

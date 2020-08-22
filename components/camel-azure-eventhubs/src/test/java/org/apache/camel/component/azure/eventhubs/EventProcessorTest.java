@@ -36,18 +36,22 @@ public class EventProcessorTest {
         final Consumer<ErrorContext> onError = error -> {
         };
 
-        assertThrows(IllegalArgumentException.class, () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobContainerName("testContainer");
-        assertThrows(IllegalArgumentException.class, () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobAccountName("testAcc");
-        assertThrows(IllegalArgumentException.class, () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobAccessKey("testAccess");
         assertNotNull(EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
 
         configuration.setBlobContainerName(null);
-        assertThrows(IllegalArgumentException.class, () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
+        assertThrows(IllegalArgumentException.class,
+                () -> EventHubsClientFactory.createEventProcessorClient(configuration, onEvent, onError));
     }
 }

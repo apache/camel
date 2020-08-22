@@ -31,7 +31,6 @@ public class AbstractNitriteTest extends CamelTestSupport implements BeforeEachC
 
     protected String testMethodName;
 
-
     @Override
     protected void doPreSetup() throws Exception {
         super.doPreSetup();

@@ -76,8 +76,7 @@ import static org.apache.camel.component.jms.JmsMessageType.Stream;
 import static org.apache.camel.component.jms.JmsMessageType.Text;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage}
- * to and from a JMS {@link Message}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage} to and from a JMS {@link Message}
  */
 public class JmsBinding {
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
@@ -118,9 +117,9 @@ public class JmsBinding {
     /**
      * Extracts the body from the JMS message
      *
-     * @param exchange the exchange
-     * @param message  the message to extract its body
-     * @return the body, can be <tt>null</tt>
+     * @param  exchange the exchange
+     * @param  message  the message to extract its body
+     * @return          the body, can be <tt>null</tt>
      */
     public Object extractBodyFromJms(Exchange exchange, Message message) {
         try {
@@ -128,7 +127,8 @@ public class JmsBinding {
             // based on message type
             if (endpoint != null && endpoint.getMessageConverter() != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
+                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}",
+                            endpoint.getMessageConverter(), message);
                 }
                 return endpoint.getMessageConverter().fromMessage(message);
             }
@@ -141,7 +141,7 @@ public class JmsBinding {
 
             if (message instanceof ObjectMessage) {
                 LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
-                ObjectMessage objectMessage = (ObjectMessage)message;
+                ObjectMessage objectMessage = (ObjectMessage) message;
                 Object payload = objectMessage.getObject();
                 if (payload instanceof DefaultExchangeHolder) {
                     DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
@@ -155,17 +155,17 @@ public class JmsBinding {
                 }
             } else if (message instanceof TextMessage) {
                 LOG.trace("Extracting body as a TextMessage from JMS message: {}", message);
-                TextMessage textMessage = (TextMessage)message;
+                TextMessage textMessage = (TextMessage) message;
                 return textMessage.getText();
             } else if (message instanceof MapMessage) {
                 LOG.trace("Extracting body as a MapMessage from JMS message: {}", message);
-                return createMapFromMapMessage((MapMessage)message);
+                return createMapFromMapMessage((MapMessage) message);
             } else if (message instanceof BytesMessage) {
                 LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
-                return createByteArrayFromBytesMessage(exchange, (BytesMessage)message);
+                return createByteArrayFromBytesMessage(exchange, (BytesMessage) message);
             } else if (message instanceof StreamMessage) {
                 LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
-                StreamMessage streamMessage = (StreamMessage)message;
+                StreamMessage streamMessage = (StreamMessage) message;
                 return createInputStreamFromStreamMessage(exchange, streamMessage);
             } else {
                 return null;
@@ -248,7 +248,8 @@ public class JmsBinding {
         boolean artemis = endpoint != null && endpoint.isArtemisStreamingEnabled();
         Long size = artemis ? getSafeLongProperty(message, "_AMQ_LARGE_SIZE") : null;
         if (size != null && size > 0) {
-            LOG.trace("Optimised for Artemis: Reading from BytesMessage in streaming mode directly into CachedOutputStream payload");
+            LOG.trace(
+                    "Optimised for Artemis: Reading from BytesMessage in streaming mode directly into CachedOutputStream payload");
             CachedOutputStream cos = new CachedOutputStream(exchange, true);
             // this will save the stream and wait until the entire message is written before continuing.
             message.setObjectProperty("JMS_AMQ_SaveStream", cos);
@@ -268,7 +269,7 @@ public class JmsBinding {
             LOG.warn("Length of BytesMessage is too long: {}", message.getBodyLength());
             return null;
         }
-        byte[] result = new byte[(int)message.getBodyLength()];
+        byte[] result = new byte[(int) message.getBodyLength()];
         message.readBytes(result);
         return result;
     }
@@ -280,9 +281,9 @@ public class JmsBinding {
     /**
      * Creates a JMS message from the Camel exchange and message
      *
-     * @param exchange the current exchange
-     * @param session the JMS session used to create the message
-     * @return a newly created JMS Message instance containing the
+     * @param  exchange     the current exchange
+     * @param  session      the JMS session used to create the message
+     * @return              a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
@@ -296,20 +297,21 @@ public class JmsBinding {
     /**
      * Creates a JMS message from the Camel exchange and message
      *
-     * @param exchange the current exchange
-     * @param camelMessage the body to make a javax.jms.Message as
-     * @param session the JMS session used to create the message
-     * @param cause optional exception occurred that should be sent as reply instead of a regular body
-     * @return a newly created JMS Message instance containing the
+     * @param  exchange     the current exchange
+     * @param  camelMessage the body to make a javax.jms.Message as
+     * @param  session      the JMS session used to create the message
+     * @param  cause        optional exception occurred that should be sent as reply instead of a regular body
+     * @return              a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause) throws JMSException {
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
+            throws JMSException {
         Message answer = null;
 
         boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
         boolean force = endpoint != null && endpoint.getConfiguration().isForceSendOriginalMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
-            JmsMessage jmsMessage = (JmsMessage)camelMessage;
+            JmsMessage jmsMessage = (JmsMessage) camelMessage;
             if (!jmsMessage.shouldCreateNewMessage() || force) {
                 answer = jmsMessage.getJmsMessage();
 
@@ -372,8 +374,10 @@ public class JmsBinding {
         }
     }
 
-    public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
-                                  String headerName, Object headerValue) throws JMSException {
+    public void appendJmsProperty(
+            Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
+            String headerName, Object headerValue)
+            throws JMSException {
         if (isStandardJMSHeader(headerName)) {
             if (headerName.equals("JMSCorrelationID") && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
@@ -411,7 +415,9 @@ public class JmsBinding {
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
                     if (PatternHelper.matchPattern(headerName, pattern)) {
-                        LOG.debug("Header {} allowed as additional header despite not being valid according to the JMS specification", headerName);
+                        LOG.debug(
+                                "Header {} allowed as additional header despite not being valid according to the JMS specification",
+                                headerName);
                         value = headerValue;
                         break;
                     }
@@ -425,15 +431,16 @@ public class JmsBinding {
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
-                        new Object[]{headerName, headerValue.getClass().getName(), headerValue});
+                        new Object[] { headerName, headerValue.getClass().getName(), headerValue });
             }
         }
     }
 
     /**
      * Is the given header a standard JMS header
-     * @param headerName the header name
-     * @return <tt>true</tt> if its a standard JMS header
+     * 
+     * @param  headerName the header name
+     * @return            <tt>true</tt> if its a standard JMS header
      */
     protected boolean isStandardJMSHeader(String headerName) {
         if (!headerName.startsWith("JMS")) {
@@ -459,23 +466,23 @@ public class JmsBinding {
     }
 
     /**
-     * Strategy to test if the given header is valid according to the JMS spec to be set as a property
-     * on the JMS message.
+     * Strategy to test if the given header is valid according to the JMS spec to be set as a property on the JMS
+     * message.
      * <p/>
      * This default implementation will allow:
      * <ul>
-     *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
-     *   <li>String and any other literals, Character, CharSequence</li>
-     *   <li>Boolean</li>
-     *   <li>Number</li>
-     *   <li>java.math.BigInteger</li>
-     *   <li>java.math.BigDecimal</li>
-     *   <li>java.util.Date</li>
+     * <li>any primitives and their counter Objects (Integer, Double etc.)</li>
+     * <li>String and any other literals, Character, CharSequence</li>
+     * <li>Boolean</li>
+     * <li>Number</li>
+     * <li>java.math.BigInteger</li>
+     * <li>java.math.BigDecimal</li>
+     * <li>java.util.Date</li>
      * </ul>
      *
-     * @param headerName   the header name
-     * @param headerValue  the header value
-     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @param  headerName  the header name
+     * @param  headerValue the header value
+     * @return             the value to use, <tt>null</tt> to ignore this header
      */
     protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
         if (headerValue instanceof String) {
@@ -494,7 +501,7 @@ public class JmsBinding {
             return headerValue;
         } else if (headerValue instanceof Date) {
             if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
-                return ZonedDateTime.ofInstant(((Date)headerValue).toInstant(), ZoneOffset.UTC).toString();
+                return ZonedDateTime.ofInstant(((Date) headerValue).toInstant(), ZoneOffset.UTC).toString();
             } else {
                 return headerValue.toString();
             }
@@ -510,11 +517,15 @@ public class JmsBinding {
         return answer;
     }
 
-    protected Message createJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context) throws JMSException {
+    protected Message createJmsMessage(
+            Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context)
+            throws JMSException {
         return createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
     }
 
-    protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
+    protected Message createJmsMessage(
+            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context)
+            throws JMSException {
         JmsMessageType type;
 
         // special for transferExchange
@@ -530,7 +541,8 @@ public class JmsBinding {
         // use a custom message converter
         if (endpoint != null && endpoint.getMessageConverter() != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
+                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}",
+                        endpoint.getMessageConverter(), body);
             }
             return endpoint.getMessageConverter().toMessage(body, session);
         }
@@ -565,10 +577,10 @@ public class JmsBinding {
         // warn if the body could not be mapped
         if (body != null && LOG.isWarnEnabled()) {
             LOG.warn("Cannot determine specific JmsMessage type to use from body class."
-                    + " Will use generic JmsMessage."
-                    + " Body class: " + org.apache.camel.util.ObjectHelper.classCanonicalName(body)
-                    + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                    + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
+                     + " Will use generic JmsMessage."
+                     + " Body class: " + org.apache.camel.util.ObjectHelper.classCanonicalName(body)
+                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
         }
 
         // return a default message
@@ -583,7 +595,8 @@ public class JmsBinding {
      *
      * @return type or null if no mapping was possible
      */
-    protected JmsMessageType getJMSMessageTypeForBody(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
+    protected JmsMessageType getJMSMessageTypeForBody(
+            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
         boolean streamingEnabled = endpoint.getConfiguration().isStreamMessageTypeEnabled();
 
         JmsMessageType type = null;
@@ -621,7 +634,10 @@ public class JmsBinding {
      *
      * @return jmsMessage or null if the mapping was not successfully
      */
-    protected Message createJmsMessageForType(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context, JmsMessageType type) throws JMSException {
+    protected Message createJmsMessageForType(
+            Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context,
+            JmsMessageType type)
+            throws JMSException {
         switch (type) {
             case Text: {
                 TextMessage message = session.createTextMessage();
@@ -665,7 +681,8 @@ public class JmsBinding {
                 ObjectMessage message = session.createObjectMessage();
                 if (body != null) {
                     try {
-                        Serializable payload = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
+                        Serializable payload
+                                = context.getTypeConverter().mandatoryConvertTo(Serializable.class, exchange, body);
                         message.setObject(payload);
                     } catch (NoTypeConversionAvailableException e) {
                         // cannot convert to serializable then thrown an exception to avoid sending a null message
@@ -711,6 +728,7 @@ public class JmsBinding {
         }
         return null;
     }
+
     /**
      * Populates a {@link MapMessage} from a {@link Map} instance.
      */
@@ -743,8 +761,9 @@ public class JmsBinding {
      * <p/>
      * <b>Note</b>: Currently only supports sending java identifiers as keys
      */
-    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
-                                         Object headerValue, Exchange exchange) {
+    protected boolean shouldOutputHeader(
+            org.apache.camel.Message camelMessage, String headerName,
+            Object headerValue, Exchange exchange) {
         return headerFilterStrategy == null
                 || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }

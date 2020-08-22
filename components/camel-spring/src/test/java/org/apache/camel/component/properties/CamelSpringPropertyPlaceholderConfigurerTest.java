@@ -28,7 +28,8 @@ public class CamelSpringPropertyPlaceholderConfigurerTest extends SpringTestSupp
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml");
     }
 
     @Test

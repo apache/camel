@@ -39,18 +39,18 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
 
         // start http proxy
         HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
-            .withPort(proxyPort)
-            .withProxyAuthenticator(new ProxyAuthenticator() {
-                @Override
-                public boolean authenticate(String userName, String password) {
-                    return "user".equals(userName) && "password".equals(password);
-                }
+                .withPort(proxyPort)
+                .withProxyAuthenticator(new ProxyAuthenticator() {
+                    @Override
+                    public boolean authenticate(String userName, String password) {
+                        return "user".equals(userName) && "password".equals(password);
+                    }
 
-                @Override
-                public String getRealm() {
-                    return "myrealm";
-                }
-            }).start();
+                    @Override
+                    public String getRealm() {
+                        return "myrealm";
+                    }
+                }).start();
 
         String expected = "Hello World";
 
@@ -74,8 +74,9 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                     + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
+                             .to("mock:result");
             }
         };
     }

@@ -18,4 +18,3 @@
  * Tests the behaviour of Spring JavaConfig with Spring-Test
  */
 package org.apache.camel.spring.javaconfig.test;
-

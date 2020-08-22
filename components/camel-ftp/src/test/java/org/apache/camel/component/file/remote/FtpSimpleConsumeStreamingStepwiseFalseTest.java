@@ -71,8 +71,10 @@ public class FtpSimpleConsumeStreamingStepwiseFalseTest extends FtpServerTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise=" + String.valueOf(isStepwise())).routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("ftp://localhost:" + getPort()
+                     + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise="
+                     + String.valueOf(isStepwise())).routeId("foo").noAutoStartup()
+                             .to("mock:result");
             }
         };
     }

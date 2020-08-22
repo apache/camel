@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf;
 
 import org.junit.jupiter.api.BeforeEach;
 
-
 /**
  * Test for throwing the CustomizedException from Camel CXF consumer with MESSAGE DataFormat
  */

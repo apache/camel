@@ -36,8 +36,8 @@ public final class SoroushService {
     private static final String URL = "https://bot.sapp.ir";
     private static SoroushService soroushService;
     /**
-     * allow Soroush server to be mocked for testing,
-     * during testing soroush service will be connected to the alternativeUrl if provided
+     * allow Soroush server to be mocked for testing, during testing soroush service will be connected to the
+     * alternativeUrl if provided
      */
     private String alternativeUrl;
 
@@ -63,9 +63,9 @@ public final class SoroushService {
     /**
      * create fully qualified URL, given the token, endpoint and fileId if needed.
      *
-     * @param token
-     * @param type
-     * @param fileId
+     * @param  token
+     * @param  type
+     * @param  fileId
      * @return
      */
     public String generateUrl(String token, SoroushAction type, String fileId) {
@@ -82,8 +82,8 @@ public final class SoroushService {
     /**
      * create {@link WebTarget } for uploading file to server
      *
-     * @param token
-     * @param timeOut
+     * @param  token
+     * @param  timeOut
      * @return
      */
     public WebTarget createUploadFileTarget(String token, Integer timeOut) {
@@ -96,8 +96,8 @@ public final class SoroushService {
     /**
      * create {@link WebTarget } for sending message to server
      *
-     * @param token
-     * @param timeOut
+     * @param  token
+     * @param  timeOut
      * @return
      */
 
@@ -110,9 +110,9 @@ public final class SoroushService {
     /**
      * create {@link WebTarget } for downloading file from server
      *
-     * @param token
-     * @param fileId
-     * @param timeOut
+     * @param  token
+     * @param  fileId
+     * @param  timeOut
      * @return
      */
 
@@ -123,31 +123,33 @@ public final class SoroushService {
     }
 
     /**
-     * check if the response is successfully sent to soroush, by default it assumes that the response type is SoroushResponse
+     * check if the response is successfully sent to soroush, by default it assumes that the response type is
+     * SoroushResponse
      *
-     * @param response the response
-     * @param soroushMessage the message that we are checking its success, only for logging purpose
-     * @return SoroushResponse
+     * @param  response         the response
+     * @param  soroushMessage   the message that we are checking its success, only for logging purpose
+     * @return                  SoroushResponse
      * @throws IOException      if can not connect to soroush server
      * @throws SoroushException if soroush reject the response
      */
-    public SoroushResponse assertSuccessful(Response response, SoroushMessage soroushMessage) throws IOException, SoroushException {
+    public SoroushResponse assertSuccessful(Response response, SoroushMessage soroushMessage)
+            throws IOException, SoroushException {
         return assertSuccessful(response, SoroushResponse.class, soroushMessage);
     }
 
     /**
-     * throw IOException
-     * if the exception is instance of SoroushException it indicates that the soroush does not accept the message
-     * and therefore resending the request will never be succeed
+     * throw IOException if the exception is instance of SoroushException it indicates that the soroush does not accept
+     * the message and therefore resending the request will never be succeed
      *
-     * @param <T>          the class that we expect the response should be of this type
-     * @param response the response
-     * @param responseType expecting response type from soroush
-     * @param soroushMessage the message that we are checking its success, only for logging purpose
+     * @param  <T>              the class that we expect the response should be of this type
+     * @param  response         the response
+     * @param  responseType     expecting response type from soroush
+     * @param  soroushMessage   the message that we are checking its success, only for logging purpose
      * @throws IOException      if sending message to soroush server is not successful
      * @throws SoroushException if soroush reject the response with an error code
      */
-    public <T> T assertSuccessful(Response response, Class<T> responseType, SoroushMessage soroushMessage) throws IOException, SoroushException {
+    public <T> T assertSuccessful(Response response, Class<T> responseType, SoroushMessage soroushMessage)
+            throws IOException, SoroushException {
         int status = response.getStatus();
         if (status == 503 || status == 429 || status == 301) {
             String message = response.readEntity(String.class);

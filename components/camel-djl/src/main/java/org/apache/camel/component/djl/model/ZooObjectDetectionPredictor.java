@@ -43,13 +43,12 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
     private final ZooModel<BufferedImage, DetectedObjects> model;
 
     public ZooObjectDetectionPredictor(String artifactId) throws Exception {
-        Criteria<BufferedImage, DetectedObjects> criteria =
-                Criteria.builder()
-                        .optApplication(Application.CV.OBJECT_DETECTION)
-                        .setTypes(BufferedImage.class, DetectedObjects.class)
-                        .optArtifactId(artifactId)
-                        .optProgress(new ProgressBar())
-                        .build();
+        Criteria<BufferedImage, DetectedObjects> criteria = Criteria.builder()
+                .optApplication(Application.CV.OBJECT_DETECTION)
+                .setTypes(BufferedImage.class, DetectedObjects.class)
+                .optArtifactId(artifactId)
+                .optProgress(new ProgressBar())
+                .build();
         this.model = ModelZoo.loadModel(criteria);
     }
 

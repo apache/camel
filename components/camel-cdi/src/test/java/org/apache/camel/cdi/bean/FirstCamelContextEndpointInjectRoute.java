@@ -29,7 +29,7 @@ public class FirstCamelContextEndpointInjectRoute extends RouteBuilder {
     @Inject
     @Uri("direct:inbound")
     private Endpoint inbound;
-    
+
     @Override
     public void configure() {
         from(inbound).setHeader("context").constant("first").to("mock:outbound");

@@ -33,7 +33,9 @@ public class DataStreamFlinkProducer extends DefaultProducer {
         DataStream ds = resolveDataStream(exchange);
         DataStreamCallback dataStreamCallback = resolveDataStreamCallback(exchange);
         Object body = exchange.getIn().getBody();
-        Object result = body instanceof List ? dataStreamCallback.onDataStream(ds, ((List) body).toArray(new Object[0])) : dataStreamCallback.onDataStream(ds, body);
+        Object result = body instanceof List
+                ? dataStreamCallback.onDataStream(ds, ((List) body).toArray(new Object[0]))
+                : dataStreamCallback.onDataStream(ds, body);
         collectResults(exchange, result);
     }
 

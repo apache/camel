@@ -29,12 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Acquires exclusive read lock to the given file by checking whether the file
- * is being changed by scanning the file at different intervals (to detect
- * changes).
+ * Acquires exclusive read lock to the given file by checking whether the file is being changed by scanning the file at
+ * different intervals (to detect changes).
  * <p/>
- * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows
- * to turn off using marker files.
+ * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows to turn off using marker files.
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
@@ -45,7 +43,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -66,7 +65,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so
                     // return false
                     return false;
@@ -74,7 +74,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             }
 
             if (!target.exists()) {
-                CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
+                CamelLogger.log(LOG, readLockLoggingLevel,
+                        "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                 return false;
             }
 
@@ -86,7 +87,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
             LOG.trace("New older than threshold: {}", newOlderThan);
 
-            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length) || (minAge != 0 && newLastModified < newOlderThan))) {
+            if (newLength >= minLength && ((minAge == 0 && newLastModified == lastModified && newLength == length)
+                    || (minAge != 0 && newLastModified < newOlderThan))) {
                 LOG.trace("Read lock acquired.");
                 exclusive = true;
             } else {

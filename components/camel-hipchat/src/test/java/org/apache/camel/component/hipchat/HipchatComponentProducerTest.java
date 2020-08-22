@@ -114,7 +114,8 @@ public class HipchatComponentProducerTest extends CamelTestSupport {
 
         assertRemainingResultExchange(result.getExchanges().get(0));
 
-        assertEquals(204, exchange.getIn().getHeader(HipchatConstants.TO_ROOM_RESPONSE_STATUS, StatusLine.class).getStatusCode());
+        assertEquals(204,
+                exchange.getIn().getHeader(HipchatConstants.TO_ROOM_RESPONSE_STATUS, StatusLine.class).getStatusCode());
         assertNotNull(callback);
         assertNotNull(callback.called);
         assertEquals("This is my unit test message.", callback.called.get(HipchatApiConstants.API_MESSAGE));
@@ -148,7 +149,8 @@ public class HipchatComponentProducerTest extends CamelTestSupport {
 
         assertRemainingResultExchange(result.getExchanges().get(0));
 
-        assertEquals(204, exchange.getIn().getHeader(HipchatConstants.TO_USER_RESPONSE_STATUS, StatusLine.class).getStatusCode());
+        assertEquals(204,
+                exchange.getIn().getHeader(HipchatConstants.TO_USER_RESPONSE_STATUS, StatusLine.class).getStatusCode());
         assertNotNull(callback);
         assertNotNull(callback.called);
         assertEquals("This is my unit test message.", callback.called.get(HipchatApiConstants.API_MESSAGE));
@@ -207,10 +209,10 @@ public class HipchatComponentProducerTest extends CamelTestSupport {
 
     public static class PostCallback {
         public Map<String, String> called;
+
         public void call(Map<String, String> postParam) {
             this.called = postParam;
         }
     }
-
 
 }

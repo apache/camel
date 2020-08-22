@@ -46,8 +46,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
     public void shouldMarshalWithDefaultConfiguration() throws Exception {
         template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")
-        ));
+                asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -77,8 +76,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
     public void shouldMarshalAndAddNewColumns() throws Exception {
         template.sendBody("direct:default", Arrays.asList(
                 asMap("A", "1", "B", "2"),
-                asMap("C", "three", "A", "one", "B", "two")
-        ));
+                asMap("C", "three", "A", "one", "B", "two")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -94,8 +92,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
     public void shouldMarshalWithSpecificHeaders() throws Exception {
         template.sendBody("direct:header", Arrays.asList(
                 asMap("A", "1", "B", "2", "C", "3"),
-                asMap("A", "one", "B", "two", "C", "three")
-        ));
+                asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -111,8 +108,7 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
     public void shouldMarshalUsingAdvancedConfiguration() throws Exception {
         template.sendBody("direct:advanced", Arrays.asList(
                 asMap("A", null, "B", "", "C", "_"),
-                asMap("A", "one", "B", "two", "C", "three")
-        ));
+                asMap("A", "one", "B", "two", "C", "three")));
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
@@ -130,17 +126,16 @@ public final class UniVocityCsvDataFormatMarshalTest extends CamelTestSupport {
 
         // Write a CSV with specific headers
         tests.put("header", new UniVocityCsvDataFormat()
-                .setHeaders(new String[]{"A", "C"}));
+                .setHeaders(new String[] { "A", "C" }));
 
         // Write a CSV with an advanced configuration
         tests.put("advanced", new UniVocityCsvDataFormat()
-                        .setNullValue("N/A")
-                        .setEmptyValue("empty")
-                        .setQuote('_')
-                        .setQuoteAllFields(true)
-                        .setQuoteEscape('-')
-                        .setDelimiter(';')
-        );
+                .setNullValue("N/A")
+                .setEmptyValue("empty")
+                .setQuote('_')
+                .setQuoteAllFields(true)
+                .setQuoteEscape('-')
+                .setDelimiter(';'));
 
         return new RouteBuilder() {
             @Override

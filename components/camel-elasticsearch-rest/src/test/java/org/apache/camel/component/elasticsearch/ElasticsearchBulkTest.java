@@ -75,7 +75,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
+        request.add(
+                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
 
         // when
         @SuppressWarnings("unchecked")
@@ -94,7 +95,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
 
         // given
         BulkRequest request = new BulkRequest();
-        request.add(new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
+        request.add(
+                new IndexRequest(prefix + "foo", prefix + "bar", prefix + "baz").source(prefix + "content", prefix + "hello"));
 
         // when
         BulkItemResponse[] response = (BulkItemResponse[]) template.requestBody("direct:bulk", request);
@@ -110,9 +112,9 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:bulk_index")
-                    .to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter");
                 from("direct:bulk")
-                    .to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter");
             }
         };
     }

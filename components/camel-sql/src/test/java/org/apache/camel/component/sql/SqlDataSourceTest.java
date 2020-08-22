@@ -40,10 +40,10 @@ public class SqlDataSourceTest extends CamelTestSupport {
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry reg = new SimpleRegistry();
-        
+
         // this is the database we create with some initial data for our unit test
         db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
         reg.bind("dataSource", db);
 
@@ -82,8 +82,8 @@ public class SqlDataSourceTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:simple")
-                    .to("sql:select * from projects where license = # order by id?dataSource=#dataSource")
-                    .to("mock:result");
+                        .to("sql:select * from projects where license = # order by id?dataSource=#dataSource")
+                        .to("mock:result");
             }
         };
     }

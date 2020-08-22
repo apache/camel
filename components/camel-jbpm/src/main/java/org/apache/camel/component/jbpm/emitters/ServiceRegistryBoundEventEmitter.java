@@ -24,9 +24,9 @@ import org.jbpm.persistence.api.integration.InstanceView;
 import org.jbpm.services.api.service.ServiceRegistry;
 
 public class ServiceRegistryBoundEventEmitter implements EventEmitter {
-    
+
     private EventEmitter delegate;
-    
+
     public ServiceRegistryBoundEventEmitter() {
         this.delegate = (EventEmitter) ServiceRegistry.get().service("CamelEventEmitter");
     }
@@ -34,7 +34,7 @@ public class ServiceRegistryBoundEventEmitter implements EventEmitter {
     @Override
     public void deliver(Collection<InstanceView<?>> data) {
         delegate.deliver(data);
-        
+
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ServiceRegistryBoundEventEmitter implements EventEmitter {
     @Override
     public void drop(Collection<InstanceView<?>> data) {
         delegate.drop(data);
-        
+
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ServiceRegistryBoundEventEmitter implements EventEmitter {
 
     @Override
     public void close() {
- 
+
     }
 
 }

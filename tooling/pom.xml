@@ -47,6 +47,15 @@
     <properties>
         <camel.osgi.export.pkg />
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-format-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
     <!-- profiles>
       <profile>
         <id>build.manual</id>

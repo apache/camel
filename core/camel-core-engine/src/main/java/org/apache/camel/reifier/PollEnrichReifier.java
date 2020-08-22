@@ -32,7 +32,7 @@ import org.apache.camel.support.DefaultExchange;
 public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
 
     public PollEnrichReifier(Route route, ProcessorDefinition<?> definition) {
-        super(route, (PollEnrichDefinition)definition);
+        super(route, (PollEnrichDefinition) definition);
     }
 
     @Override
@@ -75,21 +75,23 @@ public class PollEnrichReifier extends ProcessorReifier<PollEnrichDefinition> {
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookup(parseString(definition.getAggregationStrategyRef()), Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy)aggStrategy;
+                strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(
+                        aggStrategy, parseString(definition.getAggregationStrategyMethodName()));
                 if (definition.getAggregationStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                     adapter.setAllowNullOldExchange(parseBoolean(definition.getAggregationStrategyMethodAllowNull(), false));
                 }
                 strategy = adapter;
             } else {
-                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
+                throw new IllegalArgumentException(
+                        "Cannot find AggregationStrategy in Registry with name: " + definition.getAggregationStrategyRef());
             }
         }
 
         if (strategy instanceof CamelContextAware) {
-            ((CamelContextAware)strategy).setCamelContext(camelContext);
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
         }
 
         return strategy;

@@ -203,20 +203,25 @@ public class GitProducer extends DefaultProducer {
             File localRepo = new File(endpoint.getLocalPath(), "");
             if (!localRepo.exists()) {
                 if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                    UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                    UsernamePasswordCredentialsProvider credentials
+                            = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
                     if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
-                            .call();
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), ""))
+                                .call();
                     } else {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), ""))
-                            .setBranch(endpoint.getBranchName()).call();
+                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), ""))
+                                .setBranch(endpoint.getBranchName()).call();
                     }
                 } else {
                     if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).call();
+                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), "")).call();
                     } else {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath()).setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
-                            .call();
+                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
+                                .setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
+                                .call();
                     }
                 }
             } else {
@@ -240,7 +245,8 @@ public class GitProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(endpoint.getTagName())) {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
             } else {
-                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName()).call();
+                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName())
+                        .call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git {} operation", operation);
@@ -359,7 +365,8 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage)
+                        .call();
             } else {
                 git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
@@ -431,7 +438,8 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                UsernamePasswordCredentialsProvider credentials
+                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
                 result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).call();
@@ -453,8 +461,10 @@ public class GitProducer extends DefaultProducer {
                 throw new IllegalArgumentException("Tag Name must be specified to execute " + operation);
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
+                UsernamePasswordCredentialsProvider credentials
+                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                result = git.push().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName())
+                        .add(Constants.R_TAGS + endpoint.getTagName()).call();
             } else {
                 result = git.push().setRemote(endpoint.getRemoteName()).add(Constants.R_TAGS + endpoint.getTagName()).call();
             }
@@ -475,7 +485,8 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                UsernamePasswordCredentialsProvider credentials = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
+                UsernamePasswordCredentialsProvider credentials
+                        = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
                 result = git.pull().setCredentialsProvider(credentials).setRemote(endpoint.getRemoteName()).call();
             } else {
                 result = git.pull().setRemote(endpoint.getRemoteName()).call();

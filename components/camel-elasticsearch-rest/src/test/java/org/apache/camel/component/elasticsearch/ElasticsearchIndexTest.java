@@ -83,13 +83,13 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("elasticsearch-rest://elasticsearch");
+                        .to("elasticsearch-rest://elasticsearch");
                 from("direct:index")
-                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
                 from("direct:deleteIndex")
-                    .to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter");
                 from("direct:indexWithReplication")
-                    .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter");
             }
         };
     }

@@ -62,12 +62,12 @@ public class ZipFileSplitOneFileTest extends CamelTestSupport {
                 zf.setUsingIterator(true);
 
                 from("file://target/zip-unmarshal?noop=true&include=.*zip")
-                    .to("mock:input")
-                    .unmarshal(zf)
-                    .split(bodyAs(Iterator.class)).streaming()
+                        .to("mock:input")
+                        .unmarshal(zf)
+                        .split(bodyAs(Iterator.class)).streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
-                    .end();
+                        .end();
             }
         };
     }

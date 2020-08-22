@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 public class RouteRefPropertyPlaceholderMultipleCamelContextRefsTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefPropertyPlaceholderMultipleCamelContextRefsTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/RouteRefPropertyPlaceholderMultipleCamelContextRefsTest.xml");
     }
 
     @Test
@@ -42,7 +43,7 @@ public class RouteRefPropertyPlaceholderMultipleCamelContextRefsTest {
         Endpoint start1 = camel1.getEndpoint("direct:start");
         Endpoint start2 = camel2.getEndpoint("direct:start");
         assertNotSame(start1, start2);
-        
+
         MockEndpoint mock1 = camel1.getEndpoint("mock:end-1", MockEndpoint.class);
         mock1.expectedBodiesReceived("Hello World");
 
@@ -57,5 +58,5 @@ public class RouteRefPropertyPlaceholderMultipleCamelContextRefsTest {
 
         ac.stop();
     }
-    
+
 }

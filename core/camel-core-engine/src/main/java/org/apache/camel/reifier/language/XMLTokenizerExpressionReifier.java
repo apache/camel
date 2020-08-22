@@ -48,7 +48,7 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
 
     protected void configureNamespaceAware(Object builder) {
         if (definition.getNamespaces() != null && builder instanceof NamespaceAware) {
-            NamespaceAware namespaceAware = (NamespaceAware)builder;
+            NamespaceAware namespaceAware = (NamespaceAware) builder;
             namespaceAware.setNamespaces(definition.getNamespaces());
         }
     }
@@ -60,6 +60,5 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
         properties.put("group", definition.getGroup());
         setProperties(target, properties);
     }
-
 
 }

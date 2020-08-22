@@ -40,7 +40,8 @@ public class SpringManagedTransactedProcessorTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedTransactedProcessorTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/management/SpringManagedTransactedProcessorTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {

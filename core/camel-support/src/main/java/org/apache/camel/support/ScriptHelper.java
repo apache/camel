@@ -32,8 +32,8 @@ public final class ScriptHelper {
     }
 
     /**
-     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc.
-     * This requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc. This
+     * requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>.
      * <p/>
      * If not then the returned value is returned as-is.
@@ -43,14 +43,14 @@ public final class ScriptHelper {
     }
 
     /**
-     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc.
-     * This requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc. This
+     * requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
      * <tt>resource:file:/var/myscript.groovy</tt>.
      * <p/>
      * If not then the returned value is returned as-is.
      * <p/>
-     * If the exchange is provided (not null), then the external script can be referred via simple language for dynamic values, etc.
-     * <tt>resource:classpath:${header.myFileName}</tt>
+     * If the exchange is provided (not null), then the external script can be referred via simple language for dynamic
+     * values, etc. <tt>resource:classpath:${header.myFileName}</tt>
      */
     public static String resolveOptionalExternalScript(CamelContext camelContext, Exchange exchange, String expression) {
         if (expression == null) {

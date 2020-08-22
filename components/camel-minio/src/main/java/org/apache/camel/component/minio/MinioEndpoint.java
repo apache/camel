@@ -54,7 +54,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * Store and retrieve objects from Minio Storage Service using Minio SDK.
  */
 @UriEndpoint(firstVersion = "3.5.0", scheme = "minio", title = "Minio", syntax = "minio:bucketName",
-        category = {Category.CLOUD, Category.FILE})
+             category = { Category.CLOUD, Category.FILE })
 public class MinioEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioEndpoint.class);
@@ -108,7 +108,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
             } else {
-                throw new InvalidBucketNameException("Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
+                throw new InvalidBucketNameException(
+                        "Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
 
             }
         }
@@ -129,8 +130,10 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         return createExchange(getExchangePattern(), minioObject, objectName);
     }
 
-    public Exchange createExchange(ExchangePattern pattern,
-                                   InputStream minioObject, String objectName) throws Exception {
+    public Exchange createExchange(
+            ExchangePattern pattern,
+            InputStream minioObject, String objectName)
+            throws Exception {
         LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
 
         Exchange exchange = super.createExchange(pattern);
@@ -189,7 +192,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     }
 
     private void makeBucket(String bucketName) throws Exception {
-        MakeBucketArgs.Builder makeBucketRequest = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
+        MakeBucketArgs.Builder makeBucketRequest
+                = MakeBucketArgs.builder().bucket(bucketName).objectLock(getConfiguration().isObjectLock());
         if (isNotEmpty(getConfiguration().getRegion())) {
             makeBucketRequest.region(getConfiguration().getRegion());
         }
@@ -208,14 +212,18 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         StatObjectArgs.Builder statObjectRequest = StatObjectArgs.builder().bucket(bucketName).object(objectName);
 
-        MinioChecks.checkServerSideEncryptionCustomerKeyConfig(getConfiguration(), statObjectRequest::ssec);
-        MinioChecks.checkOffsetConfig(getConfiguration(), statObjectRequest::offset);
-        MinioChecks.checkLengthConfig(getConfiguration(), statObjectRequest::length);
-        MinioChecks.checkVersionIdConfig(getConfiguration(), statObjectRequest::versionId);
-        MinioChecks.checkMatchETagConfig(getConfiguration(), statObjectRequest::matchETag);
-        MinioChecks.checkNotMatchETagConfig(getConfiguration(), statObjectRequest::notMatchETag);
-        MinioChecks.checkModifiedSinceConfig(getConfiguration(), statObjectRequest::modifiedSince);
-        MinioChecks.checkUnModifiedSinceConfig(getConfiguration(), statObjectRequest::unmodifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getServerSideEncryptionCustomerKey,
+                statObjectRequest::ssec);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getOffset, statObjectRequest::offset);
+        MinioChecks.checkLengthAndSetConfig(getConfiguration()::getLength, statObjectRequest::length);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getVersionId, statObjectRequest::versionId);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getMatchETag, statObjectRequest::matchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getNotMatchETag,
+                statObjectRequest::notMatchETag);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getModifiedSince,
+                statObjectRequest::modifiedSince);
+        MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
+                statObjectRequest::unmodifiedSince);
 
         ObjectStat stat = minioClient.statObject(statObjectRequest.build());
 

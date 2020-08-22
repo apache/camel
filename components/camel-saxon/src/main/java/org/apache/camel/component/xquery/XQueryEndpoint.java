@@ -39,14 +39,16 @@ import org.slf4j.LoggerFactory;
 /**
  * Query and/or transform XML payloads using XQuery and Saxon.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", category = {Category.TRANSFORMATION})
+@UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri",
+             category = { Category.TRANSFORMATION })
 public class XQueryEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
 
     private volatile XQueryBuilder xquery;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String resourceUri;
     @UriParam(label = "advanced")
     private Configuration configuration;

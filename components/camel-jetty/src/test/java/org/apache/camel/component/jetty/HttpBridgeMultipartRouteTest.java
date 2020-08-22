@@ -68,7 +68,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
         assertEquals(body, responseString);
 
         String numAttachments = response.getFirstHeader("numAttachments").getValue();
-        assertEquals(numAttachments, "2");
+        assertEquals("2", numAttachments);
 
         client.close();
     }
@@ -91,7 +91,8 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                     }
                 };
 
-                HttpEndpoint epOut = getContext().getEndpoint("http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
+                HttpEndpoint epOut = getContext().getEndpoint(
+                        "http://localhost:" + port1 + "?bridgeEndpoint=true&throwExceptionOnFailure=false", HttpEndpoint.class);
                 epOut.setHeaderFilterStrategy(new MultipartHeaderFilterStrategy());
 
                 from("jetty:http://localhost:" + port2 + "/test/hello?enableMultipartFilter=false").to(epOut);

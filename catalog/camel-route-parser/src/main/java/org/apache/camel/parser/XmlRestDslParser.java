@@ -38,14 +38,16 @@ public final class XmlRestDslParser {
     }
 
     /**
-     * Parses the XML file and build a rest configuration model of the discovered rest configurations in the XML source file.
+     * Parses the XML file and build a rest configuration model of the discovered rest configurations in the XML source
+     * file.
      *
-     * @param xml                     the xml file as input stream
-     * @param baseDir                 the base of the source code
-     * @param fullyQualifiedFileName  the fully qualified source code file name
-     * @return a list of rest configurations (often there is only one)
+     * @param  xml                    the xml file as input stream
+     * @param  baseDir                the base of the source code
+     * @param  fullyQualifiedFileName the fully qualified source code file name
+     * @return                        a list of rest configurations (often there is only one)
      */
-    public static List<RestConfigurationDetails> parseRestConfiguration(InputStream xml, String baseDir, String fullyQualifiedFileName) {
+    public static List<RestConfigurationDetails> parseRestConfiguration(
+            InputStream xml, String baseDir, String fullyQualifiedFileName) {
         // try parse it as dom
         Document dom = null;
         try {
@@ -62,12 +64,13 @@ public final class XmlRestDslParser {
     }
 
     /**
-     * Parses the java source class and build a rest service model of the discovered rest services in the java source class.
+     * Parses the java source class and build a rest service model of the discovered rest services in the java source
+     * class.
      *
-     * @param xml                     the xml file as input stream
-     * @param baseDir                 the base of the source code
-     * @param fullyQualifiedFileName  the fully qualified source code file name
-     * @return a list of rest services
+     * @param  xml                    the xml file as input stream
+     * @param  baseDir                the base of the source code
+     * @param  fullyQualifiedFileName the fully qualified source code file name
+     * @return                        a list of rest services
      */
     public static List<RestServiceDetails> parseRestService(InputStream xml, String baseDir, String fullyQualifiedFileName) {
 

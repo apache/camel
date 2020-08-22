@@ -48,7 +48,7 @@ final class LocalDateTimeConverter implements SingleValueConverter {
             return null;
         }
 
-        final LocalDateTime localDateTime = (LocalDateTime)value;
+        final LocalDateTime localDateTime = (LocalDateTime) value;
 
         return ISO_OFFSET_DATE_TIME.format(localDateTime.atZone(ZoneId.systemDefault()));
     }

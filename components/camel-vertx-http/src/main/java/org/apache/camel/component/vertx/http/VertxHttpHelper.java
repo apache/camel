@@ -178,10 +178,9 @@ public final class VertxHttpHelper {
         return answer;
     }
 
-
     /**
-     * Retrieves the charset from the exchange Content-Type header, or falls back to the CamelCharsetName
-     * exchange property when not available
+     * Retrieves the charset from the exchange Content-Type header, or falls back to the CamelCharsetName exchange
+     * property when not available
      */
     public static String getCharsetFromExchange(Exchange exchange) {
         String charset = null;

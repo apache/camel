@@ -25,7 +25,8 @@ public class SpringAggregateThreadPoolProfileTest extends AggregateThreadPoolPro
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateThreadPoolProfileTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateThreadPoolProfileTest.xml");
     }
 
 }

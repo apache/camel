@@ -40,8 +40,10 @@ import software.amazon.awssdk.utils.AttributeMap;
 /**
  * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
  */
-@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose", syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {Category.CLOUD,
-                                                                                                                                                                                       Category.MESSAGING})
+@UriEndpoint(firstVersion = "3.2.0", scheme = "aws2-kinesis-firehose", title = "AWS 2 Kinesis Firehose",
+             syntax = "aws2-kinesis-firehose:streamName", producerOnly = true, category = {
+                     Category.CLOUD,
+                     Category.MESSAGING })
 public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     @UriParam
@@ -49,7 +51,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
 
     private FirehoseClient kinesisFirehoseClient;
 
-    public KinesisFirehose2Endpoint(String uri, KinesisFirehose2Configuration configuration, KinesisFirehose2Component component) {
+    public KinesisFirehose2Endpoint(String uri, KinesisFirehose2Configuration configuration,
+                                    KinesisFirehose2Component component) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -67,7 +70,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null ? configuration.getAmazonKinesisFirehoseClient() : createKinesisFirehoseClient();
+        kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
+                ? configuration.getAmazonKinesisFirehoseClient() : createKinesisFirehoseClient();
 
     }
 
@@ -89,7 +93,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":" + configuration.getProxyPort());
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
+                                           + configuration.getProxyPort());
             proxyConfig.endpoint(proxyEndpoint);
             httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
@@ -97,7 +102,8 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
+                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
+                        .credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
                 clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
             }
@@ -114,8 +120,7 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
                     .builder()
                     .put(
                             SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE
-                    )
+                            Boolean.TRUE)
                     .build());
             clientBuilder.httpClient(ahc);
         }

@@ -202,7 +202,8 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
     @Override
     protected void doStart() throws Exception {
         client = this.configuration.createConsulClient(getCamelContext());
-        scheduler = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ConsulServiceRegistry");
+        scheduler
+                = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ConsulServiceRegistry");
     }
 
     @Override
@@ -241,10 +242,12 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
             throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ")");
         }
 
-        Registration registration = ImmutableRegistration.builder().address(computeServiceHost(definition)).port(definition.getPort()).name(definition.getName())
-            .id(definition.getId()).check(computeCheck(definition))
-            .tags(definition.getMetadata().entrySet().stream().filter(e -> e.getValue() != null).map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList()))
-            .addTags("_consul.service.registry.id=" + getId()).build();
+        Registration registration = ImmutableRegistration.builder().address(computeServiceHost(definition))
+                .port(definition.getPort()).name(definition.getName())
+                .id(definition.getId()).check(computeCheck(definition))
+                .tags(definition.getMetadata().entrySet().stream().filter(e -> e.getValue() != null)
+                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList()))
+                .addTags("_consul.service.registry.id=" + getId()).build();
 
         // perform service registration against consul
         client.agentClient().register(registration);
@@ -302,29 +305,33 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
     private Registration.RegCheck computeCheck(ServiceDefinition definition) {
         if (definition.getHealth() == null) {
             return ImmutableRegCheck.builder().ttl(String.format("%ss", configuration.getCheckInterval()))
-                .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build();
+                    .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build();
         }
 
         return definition.getHealth().getEndpoint().flatMap(uri -> {
             if (Objects.equals("http", uri.getScheme())) {
-                return Optional.of(ImmutableRegCheck.builder().http(uri.toASCIIString()).interval(String.format("%ss", configuration.getCheckInterval()))
-                    .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
+                return Optional.of(ImmutableRegCheck.builder().http(uri.toASCIIString())
+                        .interval(String.format("%ss", configuration.getCheckInterval()))
+                        .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
             }
             if (Objects.equals("https", uri.getScheme())) {
-                return Optional.of(ImmutableRegCheck.builder().http(uri.toASCIIString()).interval(String.format("%ss", configuration.getCheckInterval()))
-                    .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
+                return Optional.of(ImmutableRegCheck.builder().http(uri.toASCIIString())
+                        .interval(String.format("%ss", configuration.getCheckInterval()))
+                        .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
             }
             if (Objects.equals("tcp", uri.getScheme())) {
-                return Optional.of(ImmutableRegCheck.builder().tcp(uri.getHost()).interval(String.format("%ss", configuration.getCheckInterval()))
-                    .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
+                return Optional.of(ImmutableRegCheck.builder().tcp(uri.getHost())
+                        .interval(String.format("%ss", configuration.getCheckInterval()))
+                        .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
             }
             if (Objects.equals("grpc", uri.getScheme())) {
-                return Optional.of(ImmutableRegCheck.builder().grpc(uri.getHost()).interval(String.format("%ss", configuration.getCheckInterval()))
-                    .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
+                return Optional.of(ImmutableRegCheck.builder().grpc(uri.getHost())
+                        .interval(String.format("%ss", configuration.getCheckInterval()))
+                        .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
             }
 
             return Optional.empty();
         }).orElseGet(() -> ImmutableRegCheck.builder().ttl(String.format("%ss", configuration.getCheckInterval()))
-            .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
+                .deregisterCriticalServiceAfter(String.format("%ss", configuration.getDeregisterAfter())).build());
     }
 }

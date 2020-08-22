@@ -29,9 +29,9 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This xmltokenizer language can operate in the following modes:
  * <ul>
- *     <li>inject - injecting the contextual namespace bindings into the extracted token</li>
- *     <li>wrap - wrapping the extracted token in its ancestor context</li>
- *     <li>unwrap - unwrapping the extracted token to its child content</li>
+ * <li>inject - injecting the contextual namespace bindings into the extracted token</li>
+ * <li>wrap - wrapping the extracted token in its ancestor context</li>
+ * <li>unwrap - unwrapping the extracted token to its child content</li>
  * </ul>
  */
 @Language("xtokenize")

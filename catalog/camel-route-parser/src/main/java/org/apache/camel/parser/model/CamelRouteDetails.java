@@ -122,12 +122,12 @@ public class CamelRouteDetails {
     @Override
     public String toString() {
         return "CamelRouteDetails["
-                + "fileName='" + fileName + '\''
-                + ", lineNumber='" + lineNumber + '\''
-                + ", lineNumberEnd='" + lineNumberEnd + '\''
-                + ", className='" + className + '\''
-                + ", methodName='" + methodName + '\''
-                + ", routeId='" + routeId + '\''
-                + ']';
+               + "fileName='" + fileName + '\''
+               + ", lineNumber='" + lineNumber + '\''
+               + ", lineNumberEnd='" + lineNumberEnd + '\''
+               + ", className='" + className + '\''
+               + ", methodName='" + methodName + '\''
+               + ", routeId='" + routeId + '\''
+               + ']';
     }
 }

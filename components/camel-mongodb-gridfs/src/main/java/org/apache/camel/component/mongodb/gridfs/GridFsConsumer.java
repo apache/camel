@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
@@ -65,7 +64,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                1);
         executor.execute(this);
     }
 
@@ -73,14 +73,15 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     public void run() {
         MongoCursor<GridFSFile> cursor = null;
         Date fromDate = null;
-        
+
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
         boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
-        boolean persistsTimestamp = queryStrategy == QueryStrategy.PersistentTimestamp || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
+        boolean persistsTimestamp = queryStrategy == QueryStrategy.PersistentTimestamp
+                || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
         boolean usesAttribute = queryStrategy == QueryStrategy.FileAttribute
-            || queryStrategy == QueryStrategy.TimeStampAndFileAttribute
-            || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
-        
+                || queryStrategy == QueryStrategy.TimeStampAndFileAttribute
+                || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
+
         MongoCollection<Document> ptsCollection = null;
         Document persistentTimestamp = null;
         if (persistsTimestamp) {
