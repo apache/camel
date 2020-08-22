@@ -872,14 +872,6 @@ public final class PropertyBindingSupport {
                 // resolve property placeholders
                 str = camelContext.resolvePropertyPlaceholders(str.toString());
             }
-            // special for reference (we should not do this for options that are String type)
-            // this is only required for reflection (non configurer as configurer does this automatic in a more safe way)
-            if (configurer == null && reference && isReferenceParameter(str)) {
-                Object bean = CamelContextHelper.lookup(camelContext, str.toString().substring(1));
-                if (bean != null) {
-                    str = bean;
-                }
-            }
             value = str;
         } catch (Exception e) {
             // report the exception using the long key and parent target
@@ -897,7 +889,7 @@ public final class PropertyBindingSupport {
                 }
                 if (!bound) {
                     // fallback to reflection based
-                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase);
+                    bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, reference);
                 }
             } else {
                 // regular key
@@ -930,7 +922,7 @@ public final class PropertyBindingSupport {
 
     private static boolean setPropertyCollectionViaReflection(
             CamelContext context, Object target, String name, Object value,
-            boolean ignoreCase)
+            boolean ignoreCase, boolean reference)
             throws Exception {
 
         BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
@@ -963,6 +955,19 @@ public final class PropertyBindingSupport {
                         "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
             }
         }
+
+        // special for reference (we should not do this for options that are String type)
+        // this is only required for reflection (as configurer does this automatic in a more safe way)
+        if (value instanceof String) {
+            String str = value.toString();
+            if (reference && isReferenceParameter(str)) {
+                Object bean = CamelContextHelper.lookup(context, str.toString().substring(1));
+                if (bean != null) {
+                    value = bean;
+                }
+            }
+        }
+
         if (obj instanceof Map) {
             Map map = (Map) obj;
             map.put(lookupKey, value);
@@ -1231,12 +1236,20 @@ public final class PropertyBindingSupport {
 
         String refName = null;
         if (reference && value instanceof String) {
-            if (value.toString().startsWith("#bean:")) {
+            String str = value.toString();
+            if (str.startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
                 refName = "#" + ((String) value).substring(6);
                 value = null;
-            } else if (value.toString().equals("#autowired")) {
+            } else if (str.equals("#autowired")) {
                 value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, null);
+            } else if (isReferenceParameter(str)) {
+                // special for reference (we should not do this for options that are String type)
+                // this is only required for reflection (as configurer does this automatic in a more safe way)
+                Object bean = CamelContextHelper.lookup(context, str.toString().substring(1));
+                if (bean != null) {
+                    value = bean;
+                }
             }
         }
 
