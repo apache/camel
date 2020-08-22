@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {
-    new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-    .setParentId(2).addLogMessage("routing at b")
-    .addTag("b-tag", "request-header-value"),
-    new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-    new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
-    new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(2).addLogMessage("routing at b")
+                    .addTag("b-tag", "request-header-value"),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public SpanProcessorsTest() {
@@ -44,10 +44,10 @@ public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
     @Test
     public void testRoute() throws Exception {
         Exchange result = template.request("direct:start",
-        exchange -> {
-            exchange.getIn().setBody("Hello");
-            exchange.getIn().setHeader("request-header", simple("request-header-value"));
-        });
+                exchange -> {
+                    exchange.getIn().setBody("Hello");
+                    exchange.getIn().setHeader("request-header", simple("request-header-value"));
+                });
 
         verify();
         assertEquals(result.getMessage().getHeader("baggage-header", String.class), "request-header-value");
@@ -61,22 +61,22 @@ public class SpanProcessorsTest extends CamelOpenTelemetryTestSupport {
                 from("direct:start").to("seda:a").routeId("start");
 
                 from("seda:a").routeId("a")
-                .log("routing at ${routeId}")
-                .process(new SetCorrelationContextProcessor("a-baggage", simple("${header.request-header}")))
-                .to("seda:b")
-                .delay(2000)
-                .to("seda:c")
-                .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .process(new SetCorrelationContextProcessor("a-baggage", simple("${header.request-header}")))
+                        .to("seda:b")
+                        .delay(2000)
+                        .to("seda:c")
+                        .log("End of routing");
 
                 from("seda:b").routeId("b")
-                .log("routing at ${routeId}")
-                .process(new AttributeProcessor("b-tag", simple("${header.request-header}")))
-                .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .process(new AttributeProcessor("b-tag", simple("${header.request-header}")))
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                .to("log:test")
-                .process(new GetCorrelationContextProcessor("a-baggage", "baggage-header"))
-                .delay(simple("${random(0,100)}"));
+                        .to("log:test")
+                        .process(new GetCorrelationContextProcessor("a-baggage", "baggage-header"))
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

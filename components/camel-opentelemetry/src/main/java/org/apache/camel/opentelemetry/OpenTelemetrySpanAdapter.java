@@ -29,7 +29,6 @@ import io.opentelemetry.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
-
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
     static final EntryMetadata DEFAULT_ENTRY_METADATA = EntryMetadata.create(EntryMetadata.EntryTtl.UNLIMITED_PROPAGATION);
     private static final String DEFAULT_EVENT_NAME = "log";
@@ -125,9 +124,9 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
                 continue;
             }
             if (value instanceof Byte
-                || value instanceof Short
-                || value instanceof Integer
-                || value instanceof Long) {
+                    || value instanceof Short
+                    || value instanceof Integer
+                    || value instanceof Long) {
                 attributesBuilder.setAttribute(key, AttributeValue.longAttributeValue(((Number) value).longValue()));
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.setAttribute(key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));

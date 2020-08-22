@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A processor which adds a attribute on the active {@link io.opentelemetry.trace.Span} with an {@link org.apache.camel.Expression}
+ * A processor which adds a attribute on the active {@link io.opentelemetry.trace.Span} with an
+ * {@link org.apache.camel.Expression}
  */
 public class AttributeProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 

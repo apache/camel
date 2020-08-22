@@ -20,7 +20,6 @@ import java.util.Set;
 
 import io.grpc.Context;
 import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.context.Scope;
 import io.opentelemetry.correlationcontext.CorrelationContext;
 import io.opentelemetry.correlationcontext.CorrelationsContextUtils;
 import io.opentelemetry.trace.DefaultTracer;
@@ -127,7 +126,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             }
         }
 
-        return new OpenTelemetrySpanAdapter(builder.startSpan(),correlationContext);
+        return new OpenTelemetrySpanAdapter(builder.startSpan(), correlationContext);
     }
 
     @Override
@@ -139,7 +138,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     @Override
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
-        Context context = TracingContextUtils.withSpan(spanFromExchange.getOpenTelemetrySpan(),Context.current());
+        Context context = TracingContextUtils.withSpan(spanFromExchange.getOpenTelemetrySpan(), Context.current());
         context = CorrelationsContextUtils.withCorrelationContext(spanFromExchange.getCorrelationContext(), context);
         OpenTelemetry.getPropagators().getHttpTextFormat().inject(context, adapter, new OpenTelemetrySetter());
     }
