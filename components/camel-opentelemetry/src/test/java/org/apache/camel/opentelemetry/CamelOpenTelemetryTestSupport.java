@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.opentelemetry.correlationcontext.CorrelationsContextUtils;
 import io.opentelemetry.exporters.inmemory.InMemoryTracing;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.TracerSdkProvider;
@@ -164,7 +165,7 @@ public class CamelOpenTelemetryTestSupport extends CamelTestSupport {
         }
         if (!td.getTags().isEmpty()) {
             for (Map.Entry<String, String> entry : td.getTags().entrySet()) {
-                assertEquals(entry.getValue(), span.getAttributes().get(entry.getKey()));
+                assertEquals(entry.getValue(), span.getAttributes().get(entry.getKey()).getStringValue());
             }
         }
 
