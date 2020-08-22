@@ -313,7 +313,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
     }
 
     @Override
-    public void onContextStop(CamelContext context) {
+    public void onContextStopped(CamelContext context) {
         // the agent hasn't been started
         if (!initialized) {
             return;
