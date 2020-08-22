@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Goto https://play.min.io and search for 'mycamelbucket'. If bucket(s) does not exist, set 'autoCreateBucket=true' in route(s)")
 public class MinioComponentIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
@@ -113,8 +113,8 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             public void configure() {
                 String minioEndpointUri
                         = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
-                        + "&secretKey=RAW(" + properties.getProperty("secretKey")
-                        + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io&deleteAfterRead=false";
+                          + "&secretKey=RAW(" + properties.getProperty("secretKey")
+                          + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io&deleteAfterRead=false";
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

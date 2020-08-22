@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.minio.integration.testContainers;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,7 +23,6 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
@@ -37,45 +33,49 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
 
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
-
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioComponentIntegrationTest() throws IOException {
-    }
-
     @Test
-    public void send() throws Exception {
-        result.expectedMessageCount(3);
+    public void sendInOnly() throws Exception {
+        result.expectedMessageCount(2);
 
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange_0 -> {
-            exchange_0.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest0");
-            exchange_0.getIn().setBody("This is my bucket content.");
+        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1");
+            exchange.getIn().setBody("This is my bucket content.");
         });
 
-        Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange_1 -> {
-            exchange_1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1");
-            exchange_1.getIn().setBody("This is my bucket content.");
-        });
-
-        Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange_2 -> {
-            exchange_2.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
-            exchange_2.getIn().setBody("This is my bucket content.");
+        Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
+            exchange.getIn().setBody("This is my bucket content.");
         });
 
         assertMockEndpointsSatisfied();
 
         assertResultExchange(result.getExchanges().get(0));
         assertResultExchange(result.getExchanges().get(1));
-        assertResultExchange(result.getExchanges().get(2));
 
-        assertResponseMessage(exchange.getMessage());
         assertResponseMessage(exchange1.getIn());
         assertResponseMessage(exchange2.getIn());
+    }
+
+    @Test
+    public void sendInOut() throws Exception {
+        result.expectedMessageCount(1);
+
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
+            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest3");
+            exchange1.getIn().setBody("This is my bucket content.");
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertResultExchange(result.getExchanges().get(0));
+
+        assertResponseMessage(exchange.getMessage());
     }
 
     private void assertResultExchange(Exchange resultExchange) {
@@ -102,9 +102,10 @@ public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
-                        + "&secretKey=RAW(" + properties.getProperty("secretKey")
-                        + ")&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort();
+                        = "minio://mycamelbucket?accessKey=" + ACCESS_KEY
+                          + "&secretKey=RAW(" + SECRET_KEY
+                          + ")&autoCreateBucket=true&endpoint=http://" + CONTAINER.getHost() + "&proxyPort="
+                          + CONTAINER.getMappedPort(BROKER_PORT);
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

@@ -26,34 +26,34 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
 public class MinioTestContainerSupport extends ContainerAwareTestSupport {
+    static Properties properties;
 
-    public static final String CONTAINER_IMAGE = "minio/minio:latest"; // tested against 2.1.2, 2.2.0 & 2.3.1
-    public static final String CONTAINER_NAME = "minio";
-    public static final int BROKER_PORT = 9000;
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
-
-    public MinioTestContainerSupport() throws IOException {
+    static {
+        try {
+            properties = MinioTestUtils.loadMinioPropertiesFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return new GenericContainer<>(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
-                .withEnv("MINIO_ACCESS_KEY", properties.getProperty("accessKey"))
-                .withEnv("MINIO_SECRET_KEY", properties.getProperty("secretKey"))
+    static final String CONTAINER_IMAGE = "minio/minio:latest";
+    static final String CONTAINER_NAME = "minio";
+    static final String ACCESS_KEY = properties.getProperty("accessKey");
+    static final String SECRET_KEY = properties.getProperty("secretKey");
+    static final int BROKER_PORT = 9000;
+    static final GenericContainer CONTAINER;
+
+    static {
+        CONTAINER = new GenericContainer<>(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
+                .withEnv("MINIO_ACCESS_KEY", ACCESS_KEY)
+                .withEnv("MINIO_SECRET_KEY", SECRET_KEY)
                 .withCommand("server /data")
                 .withExposedPorts(BROKER_PORT)
                 .waitingFor(new HttpWaitStrategy()
                         .forPath("/minio/health/ready")
                         .forPort(BROKER_PORT)
                         .withStartupTimeout(Duration.ofSeconds(10)));
-    }
 
-    public String getMinioHost() {
-        return getContainer(CONTAINER_NAME).getContainerIpAddress();
+        CONTAINER.start();
     }
-
-    public int getMinioPort() {
-        return getContainer(CONTAINER_NAME).getMappedPort(BROKER_PORT);
-    }
-
 }

@@ -31,7 +31,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Must be manually tested. Goto https://play.min.io")
 public class MinioDeleteBucketOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 

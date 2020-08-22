@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.testContainers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
 
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
@@ -32,22 +31,18 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Disabled("Goto https://play.min.io and search for 'mycamelbucket'. If bucket(s) does not exist, create 'mycamelbucket' and upload a 'element.txt' file with length at least 9")
-public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
+public class MinioObjectRangeOperationIntegrationTest extends MinioTestContainerSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
-    MinioClient minioClient = MinioClient.builder()
-            .endpoint(properties.getProperty("endpoint"))
-            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+    MinioClient client = MinioClient.builder()
+            .endpoint("http://" + CONTAINER.getHost(), CONTAINER.getMappedPort(BROKER_PORT), false)
+            .credentials(ACCESS_KEY, SECRET_KEY)
             .build();
 
     @EndpointInject
@@ -63,6 +58,14 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
+        template.send("direct:putObject", exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
+            exchange.getIn()
+                    .setBody("MinIO is a cloud storage server compatible with Amazon S3, released under Apache License v2. "
+                             + "As an object store, MinIO can store unstructured data such as photos, videos, log files, backups and container images. "
+                             + "The maximum size of an object is 5TB.");
+        });
+
         template.send("direct:getPartialObject", exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
             exchange.getIn().setHeader(MinioConstants.OFFSET, 0);
@@ -77,9 +80,12 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint = "minio://mycamelbucket?operation=getPartialObject&autoCreateBucket=false";
+                String minioEndpoint = "minio://mycamelbucket?autoCreateBucket=true";
+                String minioEndpoint1 = "minio://mycamelbucket?operation=getPartialObject";
 
-                from("direct:getPartialObject").to(minioEndpoint).process(exchange -> {
+                from("direct:putObject").to(minioEndpoint);
+
+                from("direct:getPartialObject").to(minioEndpoint1).process(exchange -> {
                     InputStream minioPartialObject = exchange.getIn().getBody(InputStream.class);
                     LOG.info(readInputStream(minioPartialObject));
 

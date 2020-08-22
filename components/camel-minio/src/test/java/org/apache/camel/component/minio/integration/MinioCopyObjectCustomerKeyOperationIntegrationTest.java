@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Goto https://play.min.io and search for 'mycamel' and 'mycamel1'. If bucket(s) does not exist, set 'autoCreateBucket=true' in route(s)")
 public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
 
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
@@ -64,6 +64,7 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
             .endpoint(properties.getProperty("endpoint"))
             .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
             .build();
+
     @EndpointInject
     private ProducerTemplate template;
 

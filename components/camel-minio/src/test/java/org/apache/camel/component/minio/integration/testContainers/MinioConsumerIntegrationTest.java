@@ -16,27 +16,28 @@
  */
 package org.apache.camel.component.minio.integration.testContainers;
 
-import java.util.Properties;
-
+import io.minio.MinioClient;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+
+    @BindToRegistry("minioClient")
+    MinioClient client = MinioClient.builder()
+            .endpoint("http://" + CONTAINER.getHost(), CONTAINER.getMappedPort(BROKER_PORT), false)
+            .credentials(ACCESS_KEY, SECRET_KEY)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-
-    public MinioConsumerIntegrationTest() throws Exception {
-    }
 
     @Test
     public void sendIn() throws Exception {
@@ -65,13 +66,10 @@ public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint
-                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
-                        + "&secretKey=RAW(" + properties.getProperty("secretKey")
-                        + ")&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort();
+                String minioEndpoint = "minio://mycamel?autoCreateBucket=true";
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint);
-                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=true&endpoint=http://" + getMinioHost() + "&proxyPort=" + getMinioPort())
+                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=true")
                         .startupOrder(2).to("mock:result");
 
             }
