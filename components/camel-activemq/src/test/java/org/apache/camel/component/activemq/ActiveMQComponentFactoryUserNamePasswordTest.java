@@ -39,7 +39,7 @@ public class ActiveMQComponentFactoryUserNamePasswordTest extends CamelSpringTes
 
         ActiveMQConfiguration config = (ActiveMQConfiguration) comp.getConfiguration();
         assertNotNull(config);
-        assertEquals("admin2", config.getUserName());
+        assertEquals("admin2", config.getUsername());
         assertEquals("secret2", config.getPassword());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
