@@ -25,14 +25,14 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 
 abstract class AbstractPlatformHttpTest {
-    private static final Object lock = new Object();
+    protected static int port;
+    private static final Object LOCK = new Object();
     private static JettyServerTest server;
     private static CamelContext ctx;
-    protected static int port;
 
     @BeforeEach
     public void init() throws Exception {
-        synchronized (lock) {
+        synchronized (LOCK) {
             if (ctx == null) {
                 ctx = new DefaultCamelContext();
                 ctx.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, new JettyCustomPlatformHttpEngine());
@@ -60,7 +60,7 @@ abstract class AbstractPlatformHttpTest {
 
     @AfterAll
     public static void tearDown() throws Exception {
-        synchronized (lock) {
+        synchronized (LOCK) {
             ctx.stop();
             server.stop();
             ctx = null;
