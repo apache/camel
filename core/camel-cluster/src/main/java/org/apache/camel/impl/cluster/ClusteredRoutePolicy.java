@@ -47,7 +47,7 @@ import org.apache.camel.util.ReferenceCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "Clustered Route policy using")
+@ManagedResource(description = "Clustered Route policy")
 public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
@@ -64,6 +64,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final CamelClusterService.Selector clusterServiceSelector;
     private CamelClusterService clusterService;
     private CamelClusterView clusterView;
+    private volatile boolean clusterViewAddListenerDone;
 
     private Duration initialDelay;
     private ScheduledExecutorService executorService;
@@ -105,11 +106,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
             try {
                 // Remove event listener
-                clusterView.removeEventListener(leadershipEventListener);
+                if (clusterView != null) {
+                    clusterView.removeEventListener(leadershipEventListener);
 
-                // If all the routes have been shut down then the view and its
-                // resources can eventually be released.
-                clusterView.getClusterService().releaseView(clusterView);
+                    // If all the routes have been shut down then the view and its
+                    // resources can eventually be released.
+                    clusterView.getClusterService().releaseView(clusterView);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
@@ -193,6 +196,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                 clusterService.getClass().getName());
 
         clusterView = clusterService.getView(namespace);
+        if (!clusterViewAddListenerDone) {
+            clusterView.addEventListener(leadershipEventListener);
+            clusterViewAddListenerDone = true;
+        }
     }
 
     @Override
@@ -288,11 +295,19 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void onCamelContextStarted() {
-        LOG.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
-                stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
-                startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
+                    stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
+                    startedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")));
+        }
 
-        clusterView.addEventListener(leadershipEventListener);
+        if (clusterView != null && !clusterViewAddListenerDone) {
+            clusterView.addEventListener(leadershipEventListener);
+            clusterViewAddListenerDone = true;
+        } else {
+            // cluster view is not initialized yet, so lets add its listener in doStart
+            clusterViewAddListenerDone = false;
+        }
     }
 
     // ****************************************************
