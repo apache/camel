@@ -277,6 +277,7 @@
         <module>camel-microprofile-metrics</module>
         <module>camel-milo</module>
         <module>camel-mina</module>
+        <module>camel-minio</module>
         <module>camel-mllp</module>
         <module>camel-mongodb-gridfs</module>
         <module>camel-mongodb</module>
@@ -394,7 +395,6 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
-        <module>camel-minio</module>
   </modules>
 
     <properties>
