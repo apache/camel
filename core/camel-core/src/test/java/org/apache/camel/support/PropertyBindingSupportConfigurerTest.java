@@ -172,7 +172,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testPropertiesOptionallKeyMandatory() throws Exception {
+    public void testPropertiesOptionalKeyMandatory() throws Exception {
         Bar bar = new Bar();
 
         Map<String, Object> prop = new HashMap<>();
@@ -217,6 +217,39 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         } catch (PropertyBindingException e) {
             assertEquals("unknown", e.getPropertyName());
         }
+    }
+
+    @Test
+    public void testPropertiesNoReflection() throws Exception {
+        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setExtendedStatistics(true);
+        bi.setLoggingLevel(LoggingLevel.WARN);
+
+        Bar bar = new Bar();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("age", "33");
+        prop.put("{{committer}}", "true");
+        prop.put("gold-customer", "true");
+        prop.put("work.id", "123");
+        prop.put("work.name", "{{companyName}}");
+
+        myConfigurer.reset();
+        PropertyBindingSupport.build().withReflection(false).withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        assertEquals(6, myConfigurer.getCounter());
+
+        assertEquals(33, bar.getAge());
+        assertTrue(bar.isRider());
+        assertTrue(bar.isGoldCustomer());
+        assertEquals(0, bar.getWork().getId());
+        assertNull(bar.getWork().getName());
+
+        assertEquals(2, prop.size());
+        assertEquals("123", prop.get("work.id"));
+        assertEquals("{{companyName}}", prop.get("work.name"));
+
+        // reflection is turned off
+        assertEquals(0, bi.getInvokedCounter());
     }
 
     @Test

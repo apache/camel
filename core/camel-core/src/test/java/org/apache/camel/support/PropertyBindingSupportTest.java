@@ -27,11 +27,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -138,6 +135,23 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertEquals("Acme", foo.getBar().getWork().getName());
 
         assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
+    public void testPropertiesNoReflection() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.AGE", "33");
+
+        PropertyBindingSupport.build().withReflection(false).bind(context, foo, prop);
+
+        assertNull(foo.getName());
+        assertEquals(0, foo.getBar().getAge());
+
+        // should not bind any properties as reflection is off
+        assertEquals(2, prop.size());
     }
 
     @Test
