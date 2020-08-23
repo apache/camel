@@ -30,6 +30,7 @@ import org.apache.activemq.broker.region.policy.PolicyMap;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter;
+import org.apache.activemq.store.kahadb.disk.journal.Journal;
 import org.apache.activemq.util.Wait;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -98,7 +99,7 @@ public class TransactedConsumeTest extends CamelSpringTestSupport {
         // amq.setDirectory(new File("target/data"));
         // brokerService.setPersistenceAdapter(amq);
         KahaDBPersistenceAdapter kahaDBPersistenceAdapter = (KahaDBPersistenceAdapter) brokerService.getPersistenceAdapter();
-        kahaDBPersistenceAdapter.setEnableJournalDiskSyncs(false);
+        kahaDBPersistenceAdapter.setJournalDiskSyncStrategy(Journal.JournalDiskSyncStrategy.NEVER.toString());
         brokerService.addConnector("tcp://localhost:61616");
         return brokerService;
     }
