@@ -48,7 +48,6 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
      * Release a view if it has no references.
      *
      * @param  view      the view.
-     * @throws Exception
      */
     void releaseView(CamelClusterView view) throws Exception;
 
@@ -71,7 +70,6 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
      * Check if the service is the leader on the given namespace.
      *
      * @param  namespace the namespace.
-     * @return
      */
     boolean isLeader(String namespace);
 
