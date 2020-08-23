@@ -39,7 +39,8 @@ public class HttpSendDynamicAwareHeadersTest extends BaseHttpTest {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/dynamicAware", new BasicValidationHandler(GET.name(), null, null, null)).create();
+                .registerHandler("/dynamicAware", new BasicValidationHandler(GET.name(), "par1=val1&par2=val2", null, null))
+                .create();
         localServer.start();
 
         super.setUp();
