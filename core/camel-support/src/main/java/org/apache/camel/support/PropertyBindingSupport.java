@@ -591,8 +591,8 @@ public final class PropertyBindingSupport {
             // 2) sort by reference (as it may refer to other beans in the OGNL graph)
             Object v1 = map.get(o1);
             Object v2 = map.get(o2);
-            boolean ref1 = v1 != null && v1.toString().startsWith("#");
-            boolean ref2 = v2 != null && v2.toString().startsWith("#");
+            boolean ref1 = v1 instanceof String && ((String) v1).startsWith("#");
+            boolean ref2 = v2 instanceof String && ((String) v2).startsWith("#");
             if (ref1 != ref2) {
                 return Boolean.compare(ref1, ref2);
             }
@@ -1246,7 +1246,7 @@ public final class PropertyBindingSupport {
             } else if (isReferenceParameter(str)) {
                 // special for reference (we should not do this for options that are String type)
                 // this is only required for reflection (as configurer does this automatic in a more safe way)
-                Object bean = CamelContextHelper.lookup(context, str.toString().substring(1));
+                Object bean = CamelContextHelper.lookup(context, str.substring(1));
                 if (bean != null) {
                     value = bean;
                 }
@@ -1462,8 +1462,10 @@ public final class PropertyBindingSupport {
                     Method method = introspection.getPropertyGetter(target.getClass(), key, ignoreCase);
                     if (method != null) {
                         String typeName = method.getGenericReturnType().getTypeName();
-                        String fqn = StringHelper.between(typeName, "<", ">");
+                        // its a map (Map<String, com.foo.MyObject>) so we look for , >
+                        String fqn = StringHelper.between(typeName, ",", ">");
                         if (fqn != null) {
+                            fqn = fqn.trim();
                             parameterType = context.getClassResolver().resolveClass(fqn);
                         }
                     }
@@ -1497,6 +1499,7 @@ public final class PropertyBindingSupport {
                     // they contains so we can use that to know the parameter type
                     Method method = introspection.getPropertyGetter(target.getClass(), key, ignoreCase);
                     if (method != null) {
+                        // its a list (List<com.foo.MyObject>) so we look for < >
                         String typeName = method.getGenericReturnType().getTypeName();
                         String fqn = StringHelper.between(typeName, "<", ">");
                         if (fqn != null) {
