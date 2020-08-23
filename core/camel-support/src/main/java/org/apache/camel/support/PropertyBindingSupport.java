@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
@@ -581,7 +580,7 @@ public final class PropertyBindingSupport {
      * we process the binding in a way that allows us to walk down the OGNL object graph and build empty nodes on the
      * fly, and as well handle map/list and array types as well.
      */
-    private static class PropertyBindingKeyComparator implements Comparator<String> {
+    private static final class PropertyBindingKeyComparator implements Comparator<String> {
 
         private final Map<String, Object> map;
 
@@ -631,8 +630,7 @@ public final class PropertyBindingSupport {
      * @param  reference          whether reference parameter (syntax starts with #) is in use
      * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
      * @param  reflection         whether to allow using reflection (when there is no configurer available).
-     * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the
-     *                            properties
+     * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the properties
      * @return                    true if one or more properties was bound
      */
     private static boolean doBindProperties(
@@ -1258,7 +1256,8 @@ public final class PropertyBindingSupport {
                 refName = "#" + ((String) value).substring(6);
                 value = null;
             } else if (str.equals("#autowired")) {
-                value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, true, null);
+                value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, true,
+                        null);
             } else if (isReferenceParameter(str)) {
                 // special for reference (we should not do this for options that are String type)
                 // this is only required for reflection (as configurer does this automatic in a more safe way)
