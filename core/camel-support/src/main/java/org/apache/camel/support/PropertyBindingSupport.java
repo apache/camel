@@ -104,6 +104,7 @@ public final class PropertyBindingSupport {
         private boolean allowPrivateSetter = true;
         private boolean ignoreCase;
         private String optionPrefix;
+        private boolean reflection = true;
         private PropertyConfigurer configurer;
 
         /**
@@ -240,6 +241,14 @@ public final class PropertyBindingSupport {
         }
 
         /**
+         * Whether to allow using reflection (when there is no configurer available).
+         */
+        public Builder withReflection(boolean reflection) {
+            this.reflection = reflection;
+            return this;
+        }
+
+        /**
          * Binds the properties to the target object, and removes the property that was bound from properties.
          *
          * @return true if one or more properties was bound
@@ -255,7 +264,7 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
                     optionPrefix, ignoreCase, true, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
         /**
@@ -273,7 +282,7 @@ public final class PropertyBindingSupport {
 
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, true, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
         /**
@@ -290,7 +299,7 @@ public final class PropertyBindingSupport {
             properties.put(key, value);
 
             return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, configurer);
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
     }
@@ -621,7 +630,8 @@ public final class PropertyBindingSupport {
      *                            value
      * @param  reference          whether reference parameter (syntax starts with #) is in use
      * @param  placeholder        whether to use Camels property placeholder to resolve placeholders on keys and values
-     * @param  configurer         to use an optional {@link org.apache.camel.spi.PropertyConfigurer} to configure the
+     * @param  reflection         whether to allow using reflection (when there is no configurer available).
+     * @param  configurer         to use an optional {@link PropertyConfigurer} to configure the
      *                            properties
      * @return                    true if one or more properties was bound
      */
@@ -630,7 +640,7 @@ public final class PropertyBindingSupport {
             String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean mandatory,
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder,
-            PropertyConfigurer configurer) {
+            boolean reflection, PropertyConfigurer configurer) {
 
         if (properties == null || properties.isEmpty()) {
             return false;
@@ -642,24 +652,30 @@ public final class PropertyBindingSupport {
             properties = new OptionPrefixMap(properties, optionPrefix);
         }
 
-        // need to process them in specific order so use a sorted map
-        // and use our comparator
-        SortedMap<String, Object> sorted = new TreeMap<>(new PropertyBindingKeyComparator(properties));
-        sorted.putAll(properties);
+        Map<String, Object> sorted;
+        if (properties.size() > 1) {
+            // need to process them in specific order so use a sorted map
+            // and use our comparator
+            sorted = new TreeMap<>(new PropertyBindingKeyComparator(properties));
+            sorted.putAll(properties);
+        } else {
+            // no need to sort as there is only 1 element
+            sorted = properties;
+        }
 
         // process each property and bind it
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
 
-            // if nesting is not allowed, then only bind properties without dots (ONGL graph)
+            // if nesting is not allowed, then only bind properties without dots (OGNL graph)
             if (!nesting && key.indexOf('.') != -1) {
                 continue;
             }
 
             // attempt to bind the property
             boolean hit = doBuildPropertyOgnlPath(camelContext, target, key, value, deepNesting, fluentBuilder,
-                    allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, configurer);
+                    allowPrivateSetter, ignoreCase, reference, placeholder, mandatory, reflection, configurer);
             if (hit && removeParameter) {
                 properties.remove(key);
             }
@@ -673,7 +689,7 @@ public final class PropertyBindingSupport {
             final CamelContext camelContext, final Object originalTarget, String name, final Object value,
             boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean ignoreCase, boolean reference, boolean placeholder, boolean mandatory,
-            PropertyConfigurer configurer) {
+            boolean reflection, PropertyConfigurer configurer) {
 
         boolean optional = name.startsWith("?");
         if (optional) {
@@ -705,7 +721,7 @@ public final class PropertyBindingSupport {
             if (configurer != null) {
                 prop = getOrCreatePropertyOgnlPathViaConfigurer(camelContext, newTarget, part, ignoreCase, configurer);
             }
-            if (prop == null) {
+            if (prop == null && reflection) {
                 // no configurer or not possible with configurer so fallback and use reflection
                 prop = getOrCreatePropertyOgnlPathViaReflection(camelContext, newTarget, part, ignoreCase);
             }
@@ -719,7 +735,7 @@ public final class PropertyBindingSupport {
                     prop = attemptCreateNewInstanceViaConfigurer(camelContext, newTarget, part, ignoreCase,
                             configurer);
                 }
-                if (prop == null) {
+                if (prop == null && reflection) {
                     // no configurer or not possible with configurer so fallback and use reflection
                     prop = attemptCreateNewInstanceViaReflection(camelContext, newTarget, newClass, part, fluentBuilder,
                             allowPrivateSetter,
@@ -767,7 +783,7 @@ public final class PropertyBindingSupport {
         // we have walked down to the last part of the ognl path and are ready to set the last piece with the value
         // now this is actually also a bit complex so lets use another method for that
         return doSetPropertyValue(camelContext, newTarget, newName, value, ignoreCase, mandatory,
-                fluentBuilder, allowPrivateSetter, reference, placeholder, optional, configurer);
+                fluentBuilder, allowPrivateSetter, reference, placeholder, optional, reflection, configurer);
     }
 
     private static Object attemptCreateNewInstanceViaReflection(
@@ -849,7 +865,7 @@ public final class PropertyBindingSupport {
             boolean ignoreCase, boolean mandatory,
             boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder, boolean optional,
-            PropertyConfigurer configurer) {
+            boolean reflection, PropertyConfigurer configurer) {
 
         String key = name;
         Object text = value;
@@ -866,7 +882,7 @@ public final class PropertyBindingSupport {
         // prepare the value before it is bound
         try {
             Object str = resolveValue(camelContext, target, key, text, ignoreCase, fluentBuilder,
-                    allowPrivateSetter, configurer);
+                    allowPrivateSetter, reflection, configurer);
             // resolve property placeholders
             if (str instanceof String) {
                 // resolve property placeholders
@@ -887,7 +903,7 @@ public final class PropertyBindingSupport {
                 if (configurer != null) {
                     bound = setPropertyCollectionViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
                 }
-                if (!bound) {
+                if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setPropertyCollectionViaReflection(camelContext, target, key, value, ignoreCase, reference);
                 }
@@ -896,10 +912,10 @@ public final class PropertyBindingSupport {
                 if (configurer != null) {
                     bound = setSimplePropertyViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
                 }
-                if (!bound) {
+                if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
-                            reference, ignoreCase);
+                            reflection, ignoreCase);
                 }
 
             }
@@ -961,7 +977,7 @@ public final class PropertyBindingSupport {
         if (value instanceof String) {
             String str = value.toString();
             if (reference && isReferenceParameter(str)) {
-                Object bean = CamelContextHelper.lookup(context, str.toString().substring(1));
+                Object bean = CamelContextHelper.lookup(context, str.substring(1));
                 if (bean != null) {
                     value = bean;
                 }
@@ -1157,7 +1173,7 @@ public final class PropertyBindingSupport {
     private static Object resolveAutowired(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter,
-            PropertyConfigurer configurer)
+            boolean reflection, PropertyConfigurer configurer)
             throws Exception {
 
         if (value instanceof String) {
@@ -1169,7 +1185,7 @@ public final class PropertyBindingSupport {
                     // favour using configurer
                     parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(name);
                 }
-                if (parameterType == null) {
+                if (parameterType == null && reflection) {
                     // fallback to reflection
                     Method method
                             = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter,
@@ -1204,7 +1220,7 @@ public final class PropertyBindingSupport {
     private static Object resolveValue(
             CamelContext context, Object target, String name, Object value,
             boolean ignoreCase, boolean fluentBuilder, boolean allowPrivateSetter,
-            PropertyConfigurer configurer)
+            boolean reflection, PropertyConfigurer configurer)
             throws Exception {
         if (value instanceof String) {
             String str = value.toString();
@@ -1220,7 +1236,7 @@ public final class PropertyBindingSupport {
                 }
             } else if (str.equals("#autowired")) {
                 value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter,
-                        configurer);
+                        reflection, configurer);
             } else {
                 value = resolveBean(context, name, value);
             }
@@ -1242,7 +1258,7 @@ public final class PropertyBindingSupport {
                 refName = "#" + ((String) value).substring(6);
                 value = null;
             } else if (str.equals("#autowired")) {
-                value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, null);
+                value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, true, null);
             } else if (isReferenceParameter(str)) {
                 // special for reference (we should not do this for options that are String type)
                 // this is only required for reflection (as configurer does this automatic in a more safe way)
