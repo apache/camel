@@ -27,7 +27,6 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

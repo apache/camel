@@ -235,7 +235,8 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         prop.put("work.name", "{{companyName}}");
 
         myConfigurer.reset();
-        PropertyBindingSupport.build().withReflection(false).withConfigurer(myConfigurer).withIgnoreCase(true).bind(context, bar, prop);
+        PropertyBindingSupport.build().withReflection(false).withConfigurer(myConfigurer).withIgnoreCase(true).bind(context,
+                bar, prop);
         assertEquals(6, myConfigurer.getCounter());
 
         assertEquals(33, bar.getAge());
