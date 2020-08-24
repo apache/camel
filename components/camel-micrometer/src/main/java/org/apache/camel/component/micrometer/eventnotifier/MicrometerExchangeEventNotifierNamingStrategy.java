@@ -55,9 +55,15 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
     }
 
     default Tags getInflightExchangesTags(ExchangeEvent event, Endpoint endpoint) {
-        return Tags.of(
-                CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
-                SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
-                ROUTE_ID_TAG, event.getExchange().getFromRouteId());
+        if (event.getExchange().getFromRouteId() != null) {
+            return Tags.of(
+                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                    SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
+                    ROUTE_ID_TAG, event.getExchange().getFromRouteId());
+        } else {
+            return Tags.of(
+                    CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
+                    SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName());
+        }
     }
 }
