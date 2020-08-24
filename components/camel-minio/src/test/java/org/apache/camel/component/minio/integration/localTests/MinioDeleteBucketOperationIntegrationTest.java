@@ -26,7 +26,7 @@ import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class MinioDeleteBucketOperationIntegrationTest extends MinioTestContainerSupport {
+class MinioDeleteBucketOperationIntegrationTest extends MinioTestContainerSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -41,7 +41,7 @@ public class MinioDeleteBucketOperationIntegrationTest extends MinioTestContaine
     private MockEndpoint result;
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:listBuckets",

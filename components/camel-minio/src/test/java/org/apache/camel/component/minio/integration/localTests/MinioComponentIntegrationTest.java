@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
+class MinioComponentIntegrationTest extends MinioTestContainerSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -40,7 +40,7 @@ public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
     private MockEndpoint result;
 
     @Test
-    public void sendInOnly() throws Exception {
+    void sendInOnly() throws Exception {
         result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
@@ -63,7 +63,7 @@ public class MinioComponentIntegrationTest extends MinioTestContainerSupport {
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    void sendInOut() throws Exception {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {

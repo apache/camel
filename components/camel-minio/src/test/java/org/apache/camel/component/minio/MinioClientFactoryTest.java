@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MinioClientFactoryTest {
+class MinioClientFactoryTest {
 
     @Test
-    public void getStandardMinioClientDefault() {
+    void getStandardMinioClientDefault() {
         MinioConfiguration minioConfiguration = new MinioConfiguration();
         MinioCamelInternalClient minioClient = MinioClientFactory.getClient(minioConfiguration);
         assertTrue(minioClient instanceof MinioRemoteClientImpl);

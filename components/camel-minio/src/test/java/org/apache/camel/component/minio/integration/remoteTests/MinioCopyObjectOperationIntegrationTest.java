@@ -26,12 +26,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
+class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
@@ -46,11 +46,11 @@ public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioCopyObjectOperationIntegrationTest() throws IOException {
+    MinioCopyObjectOperationIntegrationTest() throws IOException {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", exchange -> {

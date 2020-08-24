@@ -32,14 +32,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
+class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
@@ -54,12 +54,12 @@ public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioListObjectsOperationIntegrationTest() throws IOException {
+    MinioListObjectsOperationIntegrationTest() throws IOException {
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:listBuckets",

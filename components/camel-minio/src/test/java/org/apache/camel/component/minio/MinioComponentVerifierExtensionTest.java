@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
+class MinioComponentVerifierExtensionTest extends CamelTestSupport {
 
     // *************************************************
     // Tests (parameters)
@@ -37,7 +37,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() {
+    void testParameters() {
         Component component = context().getComponent("minio");
 
         ComponentVerifierExtension verifier
@@ -55,7 +55,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivity() {
+    void testConnectivity() {
         Component component = context().getComponent("minio");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -72,7 +72,7 @@ public class MinioComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectivityAndRegion() {
+    void testConnectivityAndRegion() {
         Component component = context().getComponent("minio");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);

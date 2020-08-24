@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Properties;
 
-import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
-public class MinioTestContainerSupport extends ContainerAwareTestSupport {
+class MinioTestContainerSupport extends ContainerAwareTestSupport {
     static Properties properties;
 
     static {

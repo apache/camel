@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MinioObjectRangeOperationIntegrationTest extends MinioTestContainerSupport {
+class MinioObjectRangeOperationIntegrationTest extends MinioTestContainerSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
 
@@ -51,11 +51,11 @@ public class MinioObjectRangeOperationIntegrationTest extends MinioTestContainer
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioObjectRangeOperationIntegrationTest() throws IOException {
+    MinioObjectRangeOperationIntegrationTest() throws IOException {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:putObject", exchange -> {

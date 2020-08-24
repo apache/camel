@@ -31,14 +31,14 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
+class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
@@ -55,11 +55,11 @@ public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioObjectRangeOperationIntegrationTest() throws IOException {
+    MinioObjectRangeOperationIntegrationTest() throws IOException {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:getPartialObject", exchange -> {

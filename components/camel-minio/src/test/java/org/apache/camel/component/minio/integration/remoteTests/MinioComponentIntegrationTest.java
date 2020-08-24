@@ -26,7 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MinioComponentIntegrationTest extends CamelTestSupport {
+class MinioComponentIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @EndpointInject("direct:start")
@@ -45,11 +45,11 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioComponentIntegrationTest() throws IOException {
+    MinioComponentIntegrationTest() throws IOException {
     }
 
     @Test
-    public void sendInOnly() throws Exception {
+    void sendInOnly() throws Exception {
         result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
@@ -72,7 +72,7 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    void sendInOut() throws Exception {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {

@@ -25,7 +25,7 @@ import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
+class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -40,7 +40,7 @@ public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
     private MockEndpoint result;
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(3);
 
         template.send("direct:putObject", exchange -> {
