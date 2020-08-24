@@ -45,7 +45,6 @@ public class HttpTestServer {
         System.setProperty("HttpTestServer.Port", Integer.toString(PORT));
     }
 
-
     /**
      * Creates a new test server.
      *
