@@ -50,7 +50,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testClusteredRoutePolicyFactory() throws Exception {
+    public void testClusteredRoutePolicy() throws Exception {
         // route is stopped as we are not leader yet
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
 
@@ -67,7 +67,7 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
     }
 
     @Test
-    public void testClusteredRoutePolicyFactoryAddRoute() throws Exception {
+    public void testClusteredRoutePolicyAddRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -84,6 +84,34 @@ public class ClusteredRoutePolicyTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Bar");
 
         cs.getView().setLeader(true);
+
+        template.sendBody("seda:foo", "Hello Foo");
+        template.sendBody("seda:bar", "Hello Bar");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+    }
+
+    @Test
+    public void testClusteredRoutePolicyAddRouteAlreadyLeader() throws Exception {
+        cs.getView().setLeader(true);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:bar").routeId("bar").routePolicy(policy)
+                        .to("mock:bar");
+            }
+        });
+
+        // route is started as we are leader
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Foo");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Bar");
 
         template.sendBody("seda:foo", "Hello Foo");
         template.sendBody("seda:bar", "Hello Bar");
