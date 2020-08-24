@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.remoteTests;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -26,9 +26,9 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
+import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Goto https://play.min.io and search for 'mycamelbucket'. If bucket(s) does not exist, set 'autoCreateBucket=true' in route(s)")
 public class MinioComponentIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 

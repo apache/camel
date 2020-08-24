@@ -14,9 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.remoteTests;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import io.minio.MinioClient;
@@ -25,14 +31,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.MinioOperations;
+import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Disabled("Goto https://play.min.io and search for 'mycamel' and 'mycamel1'. If bucket(s) does not exist, create 'mycamel1' and set 'autoCreateBucket=true' in route(s)")
-public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
+public class MinioObjectRangeOperationIntegrationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
@@ -47,26 +55,20 @@ public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioCopyObjectOperationIntegrationTest() throws IOException {
+    public MinioObjectRangeOperationIntegrationTest() throws IOException {
     }
 
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setBody("Test");
+        template.send("direct:getPartialObject", exchange -> {
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "element.txt");
+            exchange.getIn().setHeader(MinioConstants.OFFSET, 0);
+            exchange.getIn().setHeader(MinioConstants.LENGTH, 9);
         });
-
-        template.send("direct:copyObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "test1.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "mycamel1");
-            exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
-        });
-
         assertMockEndpointsSatisfied();
+
     }
 
     @Override
@@ -74,13 +76,27 @@ public class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
+                String minioEndpoint = "minio://mycamelbucket?operation=getPartialObject&autoCreateBucket=false";
 
-                from("direct:putObject").to(minioEndpoint);
+                from("direct:getPartialObject").to(minioEndpoint).process(exchange -> {
+                    InputStream minioPartialObject = exchange.getIn().getBody(InputStream.class);
+                    LOG.info(readInputStream(minioPartialObject));
 
-                from("direct:copyObject").to(minioEndpoint).to("mock:result");
+                }).to("mock:result");
 
             }
         };
+    }
+
+    private String readInputStream(InputStream minioObject) throws IOException {
+        StringBuilder textBuilder = new StringBuilder();
+        try (Reader reader
+                = new BufferedReader(new InputStreamReader(minioObject, Charset.forName(StandardCharsets.UTF_8.name())))) {
+            int c;
+            while ((c = reader.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+        }
+        return textBuilder.toString();
     }
 }

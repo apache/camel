@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration.testContainers;
+package org.apache.camel.component.minio.integration.remoteTests;
+
+import java.util.Properties;
 
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
@@ -22,15 +24,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
+import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
+public class MinioConsumerIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
-            .endpoint("http://" + CONTAINER.getHost(), CONTAINER.getMappedPort(BROKER_PORT), false)
-            .credentials(ACCESS_KEY, SECRET_KEY)
+            .endpoint(properties.getProperty("endpoint"))
+            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+            .region(properties.getProperty("region"))
             .build();
 
     @EndpointInject
@@ -38,6 +44,9 @@ public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    public MinioConsumerIntegrationTest() throws Exception {
+    }
 
     @Test
     public void sendIn() throws Exception {
@@ -66,10 +75,10 @@ public class MinioConsumerIntegrationTest extends MinioTestContainerSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint = "minio://mycamel?autoCreateBucket=true";
+                String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
 
                 from("direct:putObject").startupOrder(1).to(minioEndpoint);
-                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=true")
+                from("minio://mycamel?moveAfterRead=true&destinationBucketName=camel-kafka-connector&autoCreateBucket=false")
                         .startupOrder(2).to("mock:result");
 
             }
