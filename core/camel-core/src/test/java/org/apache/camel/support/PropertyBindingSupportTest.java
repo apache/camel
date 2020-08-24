@@ -189,7 +189,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bar.work.id", "123");
         prop.put("bar.work.name", "{{companyName}}");
 
-        PropertyBindingSupport.build().withDash(true).bind(context, foo, prop);
+        PropertyBindingSupport.build().bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());

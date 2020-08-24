@@ -74,8 +74,8 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * </ul>
  *
  * <p>
- * Keys with dash style is supported and will internally be converted from dash to camel case style
- * (eg queue-connection-factory => queueConnectionFactory)
+ * Keys with dash style is supported and will internally be converted from dash to camel case style (eg
+ * queue-connection-factory => queueConnectionFactory)
  * <p>
  * Keys can be marked as optional if the key name starts with a question mark, such as:
  *
@@ -765,7 +765,7 @@ public final class PropertyBindingSupport {
                     // if its a map/list/array type then find out what type the collection uses
                     // so we can use that to lookup as configurer
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
-                            .getCollectionValueType(newTarget, key, ignoreCase);
+                            .getCollectionValueType(newTarget, undashKey(key), ignoreCase);
                     if (collectionType != null) {
                         configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
                                 .resolvePropertyConfigurer(collectionType.getSimpleName(), camelContext);
@@ -1050,16 +1050,17 @@ public final class PropertyBindingSupport {
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
         String key = name.substring(0, pos);
+        String undashKey = undashKey(key);
 
         Object obj = null;
         if (configurer instanceof PropertyConfigurerGetter) {
-            obj = ((PropertyConfigurerGetter) configurer).getOptionValue(target, key, ignoreCase);
+            obj = ((PropertyConfigurerGetter) configurer).getOptionValue(target, undashKey, ignoreCase);
         }
         if (obj == null) {
             // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
             Class<?> returnType = null;
             if (configurer instanceof PropertyConfigurerGetter) {
-                returnType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(key);
+                returnType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
             }
             if (returnType == null) {
                 return false;
@@ -1073,7 +1074,7 @@ public final class PropertyBindingSupport {
             }
             if (obj != null) {
                 // set
-                boolean hit = configurer.configure(camelContext, target, undashKey(key), obj, ignoreCase);
+                boolean hit = configurer.configure(camelContext, target, undashKey, obj, ignoreCase);
                 if (!hit) {
                     // not a map or list
                     throw new IllegalArgumentException(
@@ -1126,7 +1127,7 @@ public final class PropertyBindingSupport {
             if (idx >= size) {
                 obj = Arrays.copyOf((Object[]) obj, idx + 1);
                 // replace array
-                boolean hit = configurer.configure(camelContext, originalTarget, undashKey(key), obj, ignoreCase);
+                boolean hit = configurer.configure(camelContext, originalTarget, undashKey, obj, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + name
@@ -1177,6 +1178,8 @@ public final class PropertyBindingSupport {
             boolean reflection, PropertyConfigurer configurer)
             throws Exception {
 
+        String undashKey = undashKey(name);
+
         if (value instanceof String) {
             String str = value.toString();
             if (str.equals("#autowired")) {
@@ -1184,18 +1187,19 @@ public final class PropertyBindingSupport {
                 Class<?> parameterType = null;
                 if (configurer instanceof PropertyConfigurerGetter) {
                     // favour using configurer
-                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(name);
+                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
                 }
                 if (parameterType == null && reflection) {
                     // fallback to reflection
                     Method method
-                            = findBestSetterMethod(context, target.getClass(), name, fluentBuilder, allowPrivateSetter,
+                            = findBestSetterMethod(context, target.getClass(), undashKey, fluentBuilder, allowPrivateSetter,
                                     ignoreCase);
                     if (method != null) {
                         parameterType = method.getParameterTypes()[0];
                     } else {
                         throw new IllegalStateException(
-                                "Cannot find setter method with name: " + name + " on class: " + target.getClass().getName()
+                                "Cannot find setter method with name: " + undashKey + " on class: "
+                                                        + target.getClass().getName()
                                                         + " to use for autowiring");
                     }
                 }
@@ -1293,17 +1297,18 @@ public final class PropertyBindingSupport {
             lookupKey = property.substring(pos + 1, property.length() - 1);
             key = property.substring(0, pos);
         }
+        String undashKey = undashKey(key);
 
         Object answer = null;
         Class<?> type = null;
 
         if (configurer instanceof PropertyConfigurerGetter) {
-            answer = ((PropertyConfigurerGetter) configurer).getOptionValue(target, key, ignoreCase);
+            answer = ((PropertyConfigurerGetter) configurer).getOptionValue(target, undashKey, ignoreCase);
         }
         if (answer != null) {
             type = answer.getClass();
         } else if (configurer instanceof PropertyConfigurerGetter) {
-            type = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(key);
+            type = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
         }
 
         if (answer == null && type == null) {
@@ -1326,7 +1331,7 @@ public final class PropertyBindingSupport {
                                                        + " as either a Map/List/array because target bean is not a Map, List or array type: "
                                                        + target);
                 }
-                boolean hit = configurer.configure(context, target, undashKey(key), answer, ignoreCase);
+                boolean hit = configurer.configure(context, target, undashKey, answer, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
@@ -1342,7 +1347,7 @@ public final class PropertyBindingSupport {
                 // okay there was no element in the list, so create a new empty instance if we can know its parameter type
                 Class<?> parameterType = null;
                 if (configurer instanceof PropertyConfigurerGetter) {
-                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getCollectionValueType(target, key,
+                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getCollectionValueType(target, undashKey,
                             ignoreCase);
                 }
                 if (parameterType != null
@@ -1368,7 +1373,7 @@ public final class PropertyBindingSupport {
                 // okay there was no element in the list, so create a new empty instance if we can know its parameter type
                 Class<?> parameterType = null;
                 if (configurer instanceof PropertyConfigurerGetter) {
-                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getCollectionValueType(target, key,
+                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getCollectionValueType(target, undashKey,
                             ignoreCase);
                 }
                 if (parameterType != null
@@ -1386,7 +1391,7 @@ public final class PropertyBindingSupport {
                 // index outside current array size, so enlarge array
                 arr = Arrays.copyOf(arr, idx + 1);
                 // replace array
-                boolean hit = configurer.configure(context, target, undashKey(key), arr, true);
+                boolean hit = configurer.configure(context, target, undashKey, arr, true);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
