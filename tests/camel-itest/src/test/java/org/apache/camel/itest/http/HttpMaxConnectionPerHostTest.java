@@ -53,7 +53,7 @@ public class HttpMaxConnectionPerHostTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
-        localServer = new HttpTestServer(null, null);
+        localServer = new HttpTestServer();
         localServer.register("/", new HttpRequestHandler() {
             public void handle(
                     HttpRequest request, HttpResponse response,
