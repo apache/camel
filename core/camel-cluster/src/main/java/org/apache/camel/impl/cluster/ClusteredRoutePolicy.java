@@ -175,27 +175,37 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     public void onInit(Route route) {
         super.onInit(route);
 
-        LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.setAutoStartup(false);
-
         this.refCount.retain();
-        this.stoppedRoutes.add(route);
+
+        if (camelContext.isStarted() && isLeader()) {
+            // when camel context is already started, and we add new routes
+            // then let the route controller start the route as usual (no need to mark as auto startup false)
+            startedRoutes.add(route);
+        } else {
+            LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
+            route.setAutoStartup(false);
+            this.stoppedRoutes.add(route);
+        }
 
         startManagedRoutes();
     }
 
     @Override
-    public void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (clusterService == null) {
             clusterService = ClusterServiceHelper.lookupService(camelContext, clusterServiceSelector)
                     .orElseThrow(() -> new IllegalStateException("CamelCluster service not found"));
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})", this, clusterService,
+                    clusterService.getId(),
+                    clusterService.getClass().getName());
+        }
+    }
 
-        LOG.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})", this, clusterService,
-                clusterService.getId(),
-                clusterService.getClass().getName());
-
-        clusterView = clusterService.getView(namespace);
+    @Override
+    public void doStart() throws Exception {
+        this.clusterView = clusterService.getView(namespace);
         if (!clusterViewAddListenerDone) {
             clusterView.addEventListener(leadershipEventListener);
             clusterViewAddListenerDone = true;

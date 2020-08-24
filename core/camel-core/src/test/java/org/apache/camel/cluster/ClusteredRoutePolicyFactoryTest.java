@@ -106,6 +106,34 @@ public class ClusteredRoutePolicyFactoryTest extends ContextTestSupport {
         };
     }
 
+    @Test
+    public void testClusteredRoutePolicyFactoryAddRouteAlreadyLeader() throws Exception {
+        cs.getView().setLeader(true);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:bar").routeId("bar")
+                        .to("mock:bar");
+            }
+        });
+
+        // route is started as we are leader
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Foo");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Bar");
+
+        template.sendBody("seda:foo", "Hello Foo");
+        template.sendBody("seda:bar", "Hello Bar");
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+    }
+
     // *********************************
     // Helpers
     // *********************************
