@@ -393,10 +393,24 @@ public final class URISupport {
      */
     @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
-        return createQueryString(options.keySet(), options);
+        return createQueryString(options.keySet(), options, true);
     }
 
-    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options)
+    /**
+     * Assembles a query from the given map.
+     *
+     * @param  options            the map with the options (eg key/value pairs)
+     * @param  encode             whether to URL encode the query string
+     * @return                    a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there
+     *                            is no options.
+     * @throws URISyntaxException is thrown if uri has invalid syntax.
+     */
+    @SuppressWarnings("unchecked")
+    public static String createQueryString(Map<String, Object> options, boolean encode) throws URISyntaxException {
+        return createQueryString(options.keySet(), options, encode);
+    }
+
+    public static String createQueryString(Collection<String> sortedKeys, Map<String, Object> options, boolean encode)
             throws URISyntaxException {
         try {
             if (options.size() > 0) {
@@ -418,7 +432,7 @@ public final class URISupport {
                         List<String> list = (List<String>) value;
                         for (Iterator<String> it = list.iterator(); it.hasNext();) {
                             String s = it.next();
-                            appendQueryStringParameter(key, s, rc);
+                            appendQueryStringParameter(key, s, rc, encode);
                             // append & separator if there is more in the list
                             // to append
                             if (it.hasNext()) {
@@ -428,7 +442,7 @@ public final class URISupport {
                     } else {
                         // use the value as a String
                         String s = value != null ? value.toString() : null;
-                        appendQueryStringParameter(key, s, rc);
+                        appendQueryStringParameter(key, s, rc, encode);
                     }
                 }
                 return rc.toString();
@@ -442,9 +456,13 @@ public final class URISupport {
         }
     }
 
-    private static void appendQueryStringParameter(String key, String value, StringBuilder rc)
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc, boolean encode)
             throws UnsupportedEncodingException {
-        rc.append(URLEncoder.encode(key, CHARSET));
+        if (encode) {
+            rc.append(URLEncoder.encode(key, CHARSET));
+        } else {
+            rc.append(key);
+        }
         if (value == null) {
             return;
         }
@@ -457,7 +475,11 @@ public final class URISupport {
             String s = StringHelper.replaceAll(value, "%", "%25");
             rc.append(s);
         } else {
-            rc.append(URLEncoder.encode(value, CHARSET));
+            if (encode) {
+                rc.append(URLEncoder.encode(value, CHARSET));
+            } else {
+                rc.append(value);
+            }
         }
     }
 
@@ -590,7 +612,7 @@ public final class URISupport {
                 keys.sort(null);
 
                 // build uri object with sorted parameters
-                query = URISupport.createQueryString(keys, parameters);
+                query = URISupport.createQueryString(keys, parameters, true);
                 return buildUri(scheme, path, query);
             }
         }
@@ -637,7 +659,7 @@ public final class URISupport {
                     List<String> keys = new ArrayList<>(parameters.keySet());
                     keys.sort(null);
                     // rebuild query with sorted parameters
-                    query = URISupport.createQueryString(keys, parameters);
+                    query = URISupport.createQueryString(keys, parameters, true);
                 }
 
                 return buildUri(scheme, path, query);
