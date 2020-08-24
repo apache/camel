@@ -70,9 +70,12 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  * #class:com.foo.MyClassType#myFactoryMethod('Hello World', 5, true). Or if you need to create the instance via
  * constructor parameters then you can specify the parameters as shown: #class:com.foo.MyClass('Hello World', 5,
  * true)</li>.
- * <li>ignore case - Whether to ignore case for property keys
- * <li>
+ * <li>ignore case - Whether to ignore case for property keys</li>
  * </ul>
+ *
+ * <p>
+ * Keys with dash style is supported and will internally be converted from dash to camel case style
+ * (eg queue-connection-factory => queueConnectionFactory)
  * <p>
  * Keys can be marked as optional if the key name starts with a question mark, such as:
  *
@@ -464,7 +467,7 @@ public final class PropertyBindingSupport {
                         if (value != null) {
                             if (configurer != null) {
                                 // favour using source code generated configurer
-                                hit = configurer.configure(camelContext, target, key, value, true);
+                                hit = configurer.configure(camelContext, target, undashKey(key), value, true);
                             }
                             if (!hit) {
                                 // fallback to use reflection based
@@ -849,7 +852,7 @@ public final class PropertyBindingSupport {
                 obj = camelContext.getInjector().newInstance(parameterType);
             }
             if (obj != null) {
-                boolean hit = configurer.configure(camelContext, newTarget, key, obj, ignoreCase);
+                boolean hit = configurer.configure(camelContext, newTarget, undashKey(key), obj, ignoreCase);
                 if (hit) {
                     answer = obj;
                 }
@@ -1070,7 +1073,7 @@ public final class PropertyBindingSupport {
             }
             if (obj != null) {
                 // set
-                boolean hit = configurer.configure(camelContext, target, key, obj, ignoreCase);
+                boolean hit = configurer.configure(camelContext, target, undashKey(key), obj, ignoreCase);
                 if (!hit) {
                     // not a map or list
                     throw new IllegalArgumentException(
@@ -1123,7 +1126,7 @@ public final class PropertyBindingSupport {
             if (idx >= size) {
                 obj = Arrays.copyOf((Object[]) obj, idx + 1);
                 // replace array
-                boolean hit = configurer.configure(camelContext, originalTarget, key, obj, ignoreCase);
+                boolean hit = configurer.configure(camelContext, originalTarget, undashKey(key), obj, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + name
@@ -1145,7 +1148,7 @@ public final class PropertyBindingSupport {
             CamelContext camelContext, Object target, String key, Object value,
             boolean ignoreCase, PropertyConfigurer configurer) {
         try {
-            return configurer.configure(camelContext, target, key, value, ignoreCase);
+            return configurer.configure(camelContext, target, undashKey(key), value, ignoreCase);
         } catch (Exception e) {
             throw new PropertyBindingException(target, key, value, e);
         }
@@ -1323,7 +1326,7 @@ public final class PropertyBindingSupport {
                                                        + " as either a Map/List/array because target bean is not a Map, List or array type: "
                                                        + target);
                 }
-                boolean hit = configurer.configure(context, target, key, answer, ignoreCase);
+                boolean hit = configurer.configure(context, target, undashKey(key), answer, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
@@ -1383,7 +1386,7 @@ public final class PropertyBindingSupport {
                 // index outside current array size, so enlarge array
                 arr = Arrays.copyOf(arr, idx + 1);
                 // replace array
-                boolean hit = configurer.configure(context, target, key, arr, true);
+                boolean hit = configurer.configure(context, target, undashKey(key), arr, true);
                 if (!hit) {
                     throw new IllegalArgumentException(
                             "Cannot set property: " + key
@@ -1941,6 +1944,12 @@ public final class PropertyBindingSupport {
         }
 
         return value;
+    }
+
+    private static String undashKey(String key) {
+        // as we un-dash property keys then we need to prepare this for the configurer (reflection does this automatic)
+        key = StringHelper.dashToCamelCase(key);
+        return key;
     }
 
 }

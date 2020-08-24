@@ -254,6 +254,30 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPropertiesDash() throws Exception {
+        PropertyBindingSupportTest.Foo foo = new PropertyBindingSupportTest.Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("name", "James");
+        prop.put("bar.age", "33");
+        prop.put("bar.{{committer}}", "true");
+        prop.put("bar.gold-customer", "true");
+        prop.put("bar.work.id", "123");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        PropertyBindingSupport.build().withDash(true).bind(context, foo, prop);
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue(prop.isEmpty(), "Should bind all properties");
+    }
+
+    @Test
     public void testConfigurerShouldNotFailForAnonymousClasses() throws Exception {
         PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, new Bar() {
             @Override
@@ -317,8 +341,9 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         @Override
         public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-            name = name.toLowerCase(Locale.ENGLISH);
-            name = name.replaceAll("-", "");
+            if (ignoreCase) {
+                name = name.toLowerCase(Locale.ENGLISH);
+            }
             if (target instanceof Bar) {
                 Bar bar = (Bar) target;
                 if ("age".equals(name)) {
@@ -333,7 +358,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                     bar.work((Company) value);
                     counter++;
                     return true;
-                } else if ("goldcustomer".equals(name)) {
+                } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
                     bar.goldCustomer(Boolean.parseBoolean(value.toString()));
                     counter++;
                     return true;
@@ -364,8 +389,9 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
         @Override
         public Object getOptionValue(Object target, String name, boolean ignoreCase) {
-            name = name.toLowerCase(Locale.ENGLISH);
-            name = name.replaceAll("-", "");
+            if (ignoreCase) {
+                name = name.toLowerCase(Locale.ENGLISH);
+            }
             if (target instanceof Bar) {
                 Bar bar = (Bar) target;
                 if ("age".equals(name)) {
@@ -377,7 +403,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
                 } else if ("work".equals(name)) {
                     counter++;
                     return bar.getWork();
-                } else if ("goldcustomer".equals(name)) {
+                } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
                     counter++;
                     return bar.isGoldCustomer();
                 }
