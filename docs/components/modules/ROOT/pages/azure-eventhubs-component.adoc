@@ -201,8 +201,7 @@ This allows camel route to consume and produce events asynchronously without blo
 
 === Message body type
 The component's producer expects the data in the message body to be in `byte[]`. This allows the user to utilize Camel TypeConverter to marshal/unmarshal data with ease.
-The same goes as well for the component's consumer, it will set the encoded data as `byte[]` in the message body.
-
+The same goes as well for the component's consumer, it will set the encoded data as `byte[]` in the message body. Therefore, Camel will try first to convert the data to `byte[]` using the provided the typeConverters in the Camel context (e.g: `String` to `byte[]`).
 
 === Automatic detection of EventHubProducerAsyncClient client in registry
 
