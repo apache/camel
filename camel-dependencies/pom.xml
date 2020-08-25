@@ -221,7 +221,7 @@
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
     <glassfish-javax-json>1.0.4</glassfish-javax-json>
-    <glassfish-jaxb-runtime-version>2.3.2</glassfish-jaxb-runtime-version>
+    <glassfish-jaxb-runtime-version>2.3.3</glassfish-jaxb-runtime-version>
     <gmetric4j-version>1.0.10</gmetric4j-version>
     <google-api-client-version>1.22.0</google-api-client-version>
     <google-api-common-version>1.8.1</google-api-common-version>
@@ -296,7 +296,7 @@
     <jackson2-version>2.10.5</jackson2-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jakarta-api-version>2.1.5</jakarta-api-version>
-    <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
+    <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
     <jakarta-mail-version>1.6.5</jakarta-mail-version>
     <jakarta.el-version>3.0.3</jakarta.el-version>
     <jandex-version>2.2.1.Final</jandex-version>
