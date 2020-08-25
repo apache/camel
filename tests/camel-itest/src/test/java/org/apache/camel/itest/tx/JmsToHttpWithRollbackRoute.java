@@ -22,16 +22,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
+
+import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
  * <p/>
  * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
-public class JmsToHttpWithRollbackRoute extends SpringRouteBuilder {
+public class JmsToHttpWithRollbackRoute extends RouteBuilder {
     protected static int counter;
     protected int port;
 
