@@ -100,6 +100,9 @@ Build the project (fast build).
 
 If you intend to work on the code and provide patches and other work you want to submit to the Apache Camel project, then you can fork the project on github and work on your own fork. The custom work you do should be done on branches you create, which can then be committed and pushed upstream, and then submitted to Apache Camel as PRs (pull requests). You can find many resources online how to work on github projects and how to submit work to these projects.
 
+
+If you aren't able to build component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.
+
 [#running-checkstyle]
 == Running checkstyle
 
