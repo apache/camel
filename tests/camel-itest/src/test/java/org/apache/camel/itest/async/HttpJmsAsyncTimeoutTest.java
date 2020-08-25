@@ -19,7 +19,7 @@ package org.apache.camel.itest.async;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;

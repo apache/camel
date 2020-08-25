@@ -50,7 +50,7 @@ public class JmsHttpPostIssueTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:in", "Hello World");
 
-        assertTrue(notify.matchesMockWaitTime(), "Should complete the JMS route");
+        assertTrue(notify.matchesWaitTime(), "Should complete the JMS route");
     }
 
     @Test
