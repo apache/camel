@@ -96,7 +96,6 @@ public final class PropertyBindingSupport {
         private CamelContext camelContext;
         private Object target;
         private Map<String, Object> properties;
-        private Map<String, Map<String, Object>> map;
         private boolean removeParameters = true;
         private boolean mandatory;
         private boolean nesting = true;
@@ -137,21 +136,6 @@ public final class PropertyBindingSupport {
                 // we need to mutate existing as we are may be removing bound properties
                 this.properties.forEach(properties::putIfAbsent);
                 this.properties = properties;
-            }
-            return this;
-        }
-
-        /**
-         * The map of map that holds the properties to use.
-         */
-        public Builder map(Map<String, Map<String, Object>> map) {
-            if (this.map == null) {
-                this.map = map;
-            } else {
-                // there may be existing options so add those if missing
-                // we need to mutate existing as we are may be removing bound properties
-                this.map.forEach(map::putIfAbsent);
-                this.map = map;
             }
             return this;
         }
@@ -276,11 +260,8 @@ public final class PropertyBindingSupport {
             org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
             org.apache.camel.util.ObjectHelper.notNull(target, "target");
 
-            if ((properties == null || properties.isEmpty()) && (map == null || map.isEmpty())) {
+            if (properties == null || properties.isEmpty()) {
                 return false;
-            }
-            if (properties != null && map != null) {
-                throw new IllegalArgumentException("Only either properties or map can be used, not both at the same time");
             }
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
@@ -301,41 +282,9 @@ public final class PropertyBindingSupport {
             Object obj = target != null ? target : this.target;
             Map<String, Object> prop = properties != null ? properties : this.properties;
 
-            // flattern map as facade for doBindProperties
-            Map<String, Object> facade = flatternMapToProperties(map);
-
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
                     optionPrefix, ignoreCase, true, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
-        }
-
-        /**
-         * Binds the properties to the target object, and removes the property that was bound from properties.
-         *
-         * @param  camelContext the camel context
-         * @param  target       the target object
-         * @param  map          the map of map that holds the properties to use
-         * @return              true if one or more properties was bound
-         */
-        public boolean bind(CamelContext camelContext, Object target, Map<String, Map<String, Object>> map) {
-            CamelContext context = camelContext != null ? camelContext : this.camelContext;
-            Object obj = target != null ? target : this.target;
-            Map<String, Map<String, Object>> prop = map != null ? map : this.map;
-            if (!removeParameters) {
-                prop = new HashMap<>(prop);
-            }
-
-            // flattern map as facade for doBindProperties
-            Map<String, Object> facade = flatternMapToProperties(map);
-
-            return doBindProperties(context, obj, facade,
-                    optionPrefix, ignoreCase, true, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
-        }
-
-        private static Map<String, Object> flatternMapToProperties(Map<String, Map<String, Object>> map) {
-            // TODO:
-
         }
 
         /**
