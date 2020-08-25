@@ -70,8 +70,8 @@ public class RoasterEndpointInjectTest {
         assertEquals("mock:foo?retainFirst=1", details.get(6).getEndpointUri());
         assertEquals("45", details.get(6).getLineNumber());
         assertEquals("46", details.get(6).getLineNumberEnd());
-        assertEquals(1438, details.get(6).getAbsolutePosition());
-        assertEquals(17, details.get(6).getLinePosition());
+        assertEquals(1454, details.get(6).getAbsolutePosition());
+        assertEquals(21, details.get(6).getLinePosition());
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
