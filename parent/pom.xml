@@ -139,7 +139,8 @@
         <curator-version>4.3.0</curator-version>
         <cxf-version>3.4.0</cxf-version>
         <cxf-version-range>[3.3,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.3.5</cxf-codegen-plugin-version>
+        <cxf-codegen-plugin-version>3.4.0</cxf-codegen-plugin-version>
+        <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>3.3.1</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.3.1</cxf-xjc-utils-version>
         <deltaspike-version>1.9.0</deltaspike-version>
