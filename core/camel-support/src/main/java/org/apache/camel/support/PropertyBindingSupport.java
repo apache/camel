@@ -97,6 +97,7 @@ public final class PropertyBindingSupport {
         private Object target;
         private Map<String, Object> properties;
         private boolean removeParameters = true;
+        private boolean flattenProperties;
         private boolean mandatory;
         private boolean nesting = true;
         private boolean deepNesting = true;
@@ -156,6 +157,14 @@ public final class PropertyBindingSupport {
          */
         public Builder withRemoveParameters(boolean removeParameters) {
             this.removeParameters = removeParameters;
+            return this;
+        }
+
+        /**
+         * Whether properties should be flattened (when properties is a map of maps).
+         */
+        public Builder withFlattenProperties(boolean flattenProperties) {
+            this.flattenProperties = flattenProperties;
             return this;
         }
 
@@ -265,7 +274,7 @@ public final class PropertyBindingSupport {
             }
 
             return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
-                    optionPrefix, ignoreCase, true, mandatory,
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
@@ -283,7 +292,7 @@ public final class PropertyBindingSupport {
             Map<String, Object> prop = properties != null ? properties : this.properties;
 
             return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
-                    optionPrefix, ignoreCase, true, mandatory,
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
@@ -300,7 +309,7 @@ public final class PropertyBindingSupport {
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(key, value);
 
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, mandatory,
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
                     nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
         }
 
@@ -524,7 +533,7 @@ public final class PropertyBindingSupport {
      *
      * @param  camelContext the camel context
      * @param  target       the target object
-     * @param  properties   the properties where the bound properties will be removed from
+     * @param  properties   the properties (as flat key=value paris) where the bound properties will be removed
      * @return              true if one or more properties was bound
      * @see                 #build()
      */
@@ -535,6 +544,29 @@ public final class PropertyBindingSupport {
         org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
 
         return PropertyBindingSupport.build().bind(camelContext, target, properties);
+    }
+
+    /**
+     * Binds the properties to the target object, and removes the property that was bound from properties.
+     * <p/>
+     * This method uses the default settings, and if you need to configure any setting then use the fluent builder
+     * {@link #build()} where each option can be customized, such as whether parameter should be removed, or whether
+     * options are mandatory etc.
+     *
+     * @param  camelContext the camel context
+     * @param  target       the target object
+     * @param  properties   the properties as (map of maps) where the properties will be flattened, and bound properties
+     *                      will be removed
+     * @return              true if one or more properties was bound
+     * @see                 #build()
+     */
+    public static boolean bindWithFlattenProperties(CamelContext camelContext, Object target, Map<String, Object> properties) {
+        // mandatory parameters
+        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+        org.apache.camel.util.ObjectHelper.notNull(target, "target");
+        org.apache.camel.util.ObjectHelper.notNull(properties, "properties");
+
+        return PropertyBindingSupport.build().withFlattenProperties(true).bind(camelContext, target, properties);
     }
 
     /**
@@ -574,6 +606,64 @@ public final class PropertyBindingSupport {
             toBeRemoved.forEach(originalMap::remove);
 
             return super.remove(key);
+        }
+
+    }
+
+    /**
+     * Used for flatten properties when they are a map of maps
+     */
+    private static class FlattenMap extends LinkedHashMap<String, Object> {
+
+        private final Map<String, Object> originalMap;
+
+        public FlattenMap(Map<String, Object> map) {
+            this.originalMap = map;
+            flatten("", originalMap);
+        }
+
+        @SuppressWarnings("unchecked")
+        private void flatten(String prefix, Map<?, Object> map) {
+            for (Map.Entry<?, Object> entry : map.entrySet()) {
+                String key = entry.getKey().toString();
+                boolean optional = key.startsWith("?");
+                if (optional) {
+                    key = key.substring(1);
+                }
+                Object value = entry.getValue();
+                String keyPrefix = (optional ? "?" : "") + (prefix.isEmpty() ? key : prefix + "." + key);
+                if (value instanceof Map) {
+                    flatten(keyPrefix, (Map<?, Object>) value);
+                } else {
+                    put(keyPrefix, value);
+                }
+            }
+        }
+
+        @Override
+        public Object remove(Object key) {
+            // we only need to care about the remove method,
+            // so we can remove the corresponding key from the original map
+
+            // walk key with dots to remove right node
+            String[] parts = key.toString().split("\\.");
+            Map map = originalMap;
+            for (int i = 0; i < parts.length; i++) {
+                String part = parts[i];
+                Object obj = map.get(part);
+                if (i == parts.length - 1) {
+                    map.remove(part);
+                } else if (obj instanceof Map) {
+                    map = (Map) obj;
+                }
+            }
+
+            // remove empty middle maps
+            Object answer = super.remove(key);
+            if (super.isEmpty()) {
+                originalMap.clear();
+            }
+            return answer;
         }
 
     }
@@ -622,6 +712,7 @@ public final class PropertyBindingSupport {
      * @param  optionPrefix       the prefix used to filter properties
      * @param  ignoreCase         whether to ignore case for property keys
      * @param  removeParameter    whether to remove bound parameters
+     * @param  flattenProperties  whether properties should be flattened (when properties is a map of maps)
      * @param  mandatory          whether all parameters must be bound
      * @param  nesting            whether nesting is in use
      * @param  deepNesting        whether deep nesting is in use, where Camel will attempt to walk as deep as possible
@@ -638,13 +729,17 @@ public final class PropertyBindingSupport {
      */
     private static boolean doBindProperties(
             CamelContext camelContext, Object target, Map<String, Object> properties,
-            String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean mandatory,
+            String optionPrefix, boolean ignoreCase, boolean removeParameter, boolean flattenProperties, boolean mandatory,
             boolean nesting, boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
             boolean reference, boolean placeholder,
             boolean reflection, PropertyConfigurer configurer) {
 
         if (properties == null || properties.isEmpty()) {
             return false;
+        }
+
+        if (flattenProperties) {
+            properties = new FlattenMap(properties);
         }
 
         boolean answer = false;

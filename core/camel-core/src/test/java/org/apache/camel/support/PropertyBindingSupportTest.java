@@ -577,7 +577,6 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             PropertyBindingSupport.build().withIgnoreCase(true).withMandatory(true).bind(context, foo, prop);
             fail("Should fail");
         } catch (PropertyBindingException e) {
-            //            assertEquals("bar.unknown", e.getPropertyName());
             assertEquals("unknown", e.getPropertyName());
         }
     }
