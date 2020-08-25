@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -158,7 +159,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
         private void prepareExchangeForFailover(Exchange exchange) {
             exchange.setException(null);
 
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
+            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
             exchange.setProperty(Exchange.FAILURE_HANDLED, null);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, null);
             exchange.getIn().removeHeader(Exchange.REDELIVERED);

@@ -21,17 +21,19 @@ import javax.annotation.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
+
+import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
  * <p/>
  * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
-public class JmsToHttpWithOnExceptionRoute extends SpringRouteBuilder {
+public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
     protected static int counter;
     protected int port;
 
