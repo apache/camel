@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
@@ -59,12 +57,6 @@ public class PulsarTestSupport extends ContainerAwareTestSupport {
     }
 
     protected void cleanupResources() throws Exception {
-        System.out.println("Cleaning up resources");
-        Instant t0 = Instant.now();
-        try {
-            super.cleanupResources();
-        } finally {
-            System.out.println("Resources clean up in " + Duration.between(t0, Instant.now()));
-        }
+        super.cleanupResources();
     }
 }
