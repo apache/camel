@@ -417,8 +417,8 @@ Once the release train (camel, camel-karaf and camel-spring-boot) has been voted
 
   $ git commit -a
   $ git push origin master (or the branch related to the release, eg. camel-3.4.x)
-  $ git tag -a camel-example-$version -m "$version"
-  $ git push origin camel-example-$version
+  $ git tag -a camel-examples-$version -m "$version"
+  $ git push origin camel-examples-$version
 
 * Now we pushed the tag and we need to advance the version of the examples
 
