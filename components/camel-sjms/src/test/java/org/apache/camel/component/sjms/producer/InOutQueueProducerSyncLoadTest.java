@@ -26,6 +26,7 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -123,7 +124,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
-                        .inOut("sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
                                + TEST_DESTINATION_NAME
                                + ".response&consumerCount=20&producerCount=40&synchronous=true")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");

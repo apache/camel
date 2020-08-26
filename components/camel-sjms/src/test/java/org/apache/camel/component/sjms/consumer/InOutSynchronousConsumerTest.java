@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
                 from("direct:start")
                         .to("log:before")
                         .process(exchange -> beforeThreadName = Thread.currentThread().getName())
-                        .inOut(url)
+                        .to(ExchangePattern.InOut, url)
                         .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("log:after")
                         .to("mock:result");
