@@ -30,9 +30,19 @@
     <artifactId>camel-etcd3</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Etcd3</name>
-    <description>Camel Etcd3 support</description>
+    <description>Aggregation repository using EtcD as datastore</description>
+
+    <properties>
+        <firstVersion>3.5.0</firstVersion>
+        <label>database</label>
+    </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.etcd</groupId>
@@ -40,9 +50,15 @@
             <version>${jetcd-version}</version>
         </dependency>
 
+        <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
    
