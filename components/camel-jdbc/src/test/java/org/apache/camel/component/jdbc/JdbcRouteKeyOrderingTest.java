@@ -52,9 +52,8 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
 
             // assertions of the response
             assertNotNull(out);
-            assertNotNull(out.getOut());
-            List<Map<String, Object>> rowList = out.getOut().getBody(List.class);
-            assertNotNull(rowList, "out body could not be converted to a List - was: " + out.getOut().getBody());
+            List<Map<String, Object>> rowList = out.getMessage().getBody(List.class);
+            assertNotNull(rowList, "out body could not be converted to a List - was: " + out.getMessage().getBody());
             assertEquals(3, rowList.size());
 
             Map<String, Object> row = rowList.get(0);

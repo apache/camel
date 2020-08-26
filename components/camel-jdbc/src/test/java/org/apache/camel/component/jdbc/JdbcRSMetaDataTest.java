@@ -41,16 +41,15 @@ public class JdbcRSMetaDataTest extends AbstractJdbcTestSupport {
 
         Exchange out = template.send(directHelloEndpoint, directHelloExchange);
         assertNotNull(out);
-        assertNotNull(out.getOut());
 
-        List<Map<String, Object>> returnValues = out.getOut().getBody(List.class);
+        List<Map<String, Object>> returnValues = out.getMessage().getBody(List.class);
         assertNotNull(returnValues);
         assertEquals(3, returnValues.size());
         Map<String, Object> row = returnValues.get(0);
         assertEquals("cust1", row.get("ID"));
         assertEquals("jstrachan", row.get("NAME"));
 
-        Set<String> columnNames = (Set<String>) out.getOut().getHeader(JdbcConstants.JDBC_COLUMN_NAMES);
+        Set<String> columnNames = (Set<String>) out.getMessage().getHeader(JdbcConstants.JDBC_COLUMN_NAMES);
         assertNotNull(columnNames);
         assertEquals(2, columnNames.size());
         assertTrue(columnNames.contains("ID"));

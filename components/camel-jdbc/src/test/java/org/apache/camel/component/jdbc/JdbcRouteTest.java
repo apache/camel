@@ -52,8 +52,7 @@ public class JdbcRouteTest extends AbstractJdbcTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<Map<String, Object>> data = out.getOut().getBody(List.class);
+        List<Map<String, Object>> data = out.getMessage().getBody(List.class);
         assertNotNull(data);
         assertEquals(3, data.size());
         Map<String, Object> row = data.get(0);
