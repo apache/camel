@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -101,7 +102,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").inOut(
+                from("direct:start").to(ExchangePattern.InOut,
                         "jms:queue:foo?replyToConcurrentConsumers=10&replyToMaxConcurrentConsumers=20&recoveryInterval=10")
                         .process(exchange -> {
                             String threadName = Thread.currentThread().getName();

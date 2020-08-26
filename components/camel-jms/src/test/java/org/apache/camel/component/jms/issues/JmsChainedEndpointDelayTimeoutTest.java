@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
@@ -68,11 +69,11 @@ public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
                         .to("mock:exception");
 
                 from("activemq:test")
-                        .inOut("activemq:ping?requestTimeout=500")
+                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500")
                         .delay(constant(1000));
 
                 from("activemq:testReplyFixedQueue")
-                        .inOut("activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
+                        .to(ExchangePattern.InOut, "activemq:ping?requestTimeout=500&replyToType=Exclusive&replyTo=reply")
                         .delay(constant(1000));
 
                 from("activemq:ping")

@@ -25,6 +25,7 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -113,7 +114,7 @@ public class JmsInOutTransferExchangeTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .inOut("activemq:responseGenerator?transferExchange=true")
+                        .to(ExchangePattern.InOut, "activemq:responseGenerator?transferExchange=true")
                         .to("mock:result");
 
                 from("activemq:responseGenerator?transferExchange=true")

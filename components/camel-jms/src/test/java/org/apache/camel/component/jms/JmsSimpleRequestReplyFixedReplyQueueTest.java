@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                        .inOut("activemq:queue:foo?replyTo=queue:bar")
+                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=queue:bar")
                         .to("mock:result");
 
                 from("activemq:queue:foo")

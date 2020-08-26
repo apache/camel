@@ -61,7 +61,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
         template.sendBody("activemq:queue:foo", "blah");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         assertTrue(getConditionalExceptionProcessor().getCount() == 2,
                 "Expected only 2 calls to process() (1 failure, 1 success) but encountered "

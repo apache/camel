@@ -20,6 +20,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -78,7 +79,8 @@ public class JmsRouteWithInOnlyAndMultipleAcksTest extends CamelTestSupport {
                 // topic subscribers, lets a bean handle
                 // the order and then delivers a reply back to
                 // the original order request initiator
-                from("amq:queue:inbox").to("mock:inbox").inOnly("amq:topic:orderServiceNotification").bean("orderService",
+                from("amq:queue:inbox").to("mock:inbox").to(ExchangePattern.InOnly, "amq:topic:orderServiceNotification").bean(
+                        "orderService",
                         "handleOrder");
 
                 // this route collects an order request notification
