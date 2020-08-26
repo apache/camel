@@ -61,6 +61,9 @@ public class RedisAggregationRepository extends ServiceSupport
     private int maximumRedeliveries = 3;
     private boolean allowSerializedHeaders;
 
+    public RedisAggregationRepository() {
+    }
+
     public RedisAggregationRepository(final String mapName, final String endpoint) {
         this.mapName = mapName;
         this.persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
@@ -368,6 +371,7 @@ public class RedisAggregationRepository extends ServiceSupport
     protected void doStop() throws Exception {
         if (redisson != null && shutdownRedisson) {
             redisson.shutdown();
+            redisson = null;
         }
     }
 
