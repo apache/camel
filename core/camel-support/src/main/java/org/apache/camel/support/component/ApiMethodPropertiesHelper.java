@@ -61,7 +61,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
 
         // use reflection free configurer (if possible)
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(componentConfiguration.getSimpleName(), context);
+                .resolvePropertyConfigurer(componentConfiguration.getName(), context);
         if (configurer instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
             Set<String> names = getter.getAllOptions(null).keySet();
@@ -107,7 +107,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
 
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
+                .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
@@ -143,7 +143,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         Set<String> fields = new HashSet<>();
 
         PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), context);
+                .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;

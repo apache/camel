@@ -137,7 +137,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         }
         // configure on configuration first to be reflection free
         configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+                .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
         if (configurer != null) {
             PropertyBindingSupport.build()
                     .withConfigurer(configurer)

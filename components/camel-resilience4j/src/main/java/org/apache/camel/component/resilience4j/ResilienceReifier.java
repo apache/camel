@@ -167,7 +167,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
-                .resolvePropertyConfigurer(Resilience4jConfigurationDefinition.class.getSimpleName(), camelContext);
+                .resolvePropertyConfigurer(Resilience4jConfigurationDefinition.class.getName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry

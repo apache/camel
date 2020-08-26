@@ -394,10 +394,11 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         int pos = name.lastIndexOf('.');
         String pn = name.substring(0, pos);
         String en = name.substring(pos + 1);
+        String fqn = name;
         try (Writer w = new StringWriter()) {
             w.append("# " + GENERATED_MSG + "\n");
             w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
-            String fileName = "META-INF/services/org/apache/camel/configurer/" + en;
+            String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
             boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());
             if (updated) {
                 getLog().info("Updated " + fileName);
