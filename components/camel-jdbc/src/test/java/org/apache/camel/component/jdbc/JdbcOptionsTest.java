@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -61,7 +60,6 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
         mock.assertIsSatisfied();
 
         String body = mock.getExchanges().get(0).getIn().getBody(String.class);
-        assertNull(body);
 
         // now test to see that they were inserted and committed properly
         MockEndpoint mockTest = getMockEndpoint("mock:retrieve");
