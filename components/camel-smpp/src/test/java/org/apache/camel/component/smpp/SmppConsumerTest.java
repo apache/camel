@@ -79,7 +79,7 @@ public class SmppConsumerTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                 .thenReturn("1");
 
         consumer.doStart();
@@ -88,7 +88,7 @@ public class SmppConsumerTest {
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
         verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 
     @Test
@@ -125,14 +125,14 @@ public class SmppConsumerTest {
                 NumberingPlanIndicator.UNKNOWN,
                 "(111*|222*|333*)");
         when(session.connectAndBind("localhost",
-                new Integer(2775),
+                Integer.valueOf(2775),
                 expectedBindParameter))
                         .thenReturn("1");
 
         consumer.doStart();
 
         verify(session).connectAndBind("localhost",
-                new Integer(2775),
+                Integer.valueOf(2775),
                 expectedBindParameter);
     }
 
