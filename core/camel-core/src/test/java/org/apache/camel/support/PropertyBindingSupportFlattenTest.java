@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -26,6 +25,7 @@ import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.PropertiesComponent;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -54,20 +54,15 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
     public void testProperties() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("id", "123");
-        work.put("name", "{{companyName}}");
-
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("age", "33");
-        bar.put("{{committer}}", "true");
-        bar.put("gold-customer", "true");
-        bar.put("work", work);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "James");
-        map.put("bar", bar);
+        Map<String, Object> map = mapOf(
+                "name", "James",
+                "bar", mapOf(
+                        "age", "33",
+                        "{{committer}}", "true",
+                        "gold-customer", "true",
+                        "work", mapOf(
+                                "id", "123",
+                                "name", "{{companyName}}")));
 
         PropertyBindingSupport.bindWithFlattenProperties(context, foo, map);
 
@@ -93,20 +88,15 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
 
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("id", "456");
-        work.put("name", "#property:{{workKey}}");
-
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("age", "#property:customerAge");
-        bar.put("rider", "true");
-        bar.put("gold-customer", "true");
-        bar.put("work", work);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", "#property:customerName");
-        map.put("bar", bar);
+        Map<String, Object> map = mapOf(
+                "name", "#property:customerName",
+                "bar", mapOf(
+                        "age", "#property:customerAge",
+                        "rider", "true",
+                        "gold-customer", "true",
+                        "work", mapOf(
+                                "id", "456",
+                                "name", "#property:{{workKey}}")));
 
         PropertyBindingSupport.bindWithFlattenProperties(context, foo, map);
 
@@ -131,24 +121,20 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
     public void testWithFluentBuilder() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("name", "{{companyName}}");
+        Map<String, Object> map = mapOf(
+                "bar", mapOf(
+                        "age", "33",
+                        "rider", "true",
+                        "gold-customer", "true",
+                        "work", mapOf(
+                                "name", "{{companyName}}")));
 
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("age", "33");
-        bar.put("rider", "true");
-        bar.put("gold-customer", "true");
-        bar.put("work", work);
-
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-
-        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James")
+        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo)
+                .withProperty("name", "James")
                 .withProperty("bar.work.id", "123")
                 .withFlattenProperties(true)
                 // and add the rest
-                .withProperties(prop).bind();
+                .withProperties(map).bind();
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -157,50 +143,42 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue(prop.isEmpty(), "Should bind all properties");
+        assertTrue(map.isEmpty(), "Should bind all properties");
     }
 
     @Test
     public void testPropertiesNoReflection() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("AGE", "33");
+        Map<String, Object> map = mapOf(
+                "name", "James",
+                "bar", mapOf(
+                        "AGE", "33"));
 
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-        prop.put("name", "James");
-
-        PropertyBindingSupport.build().withFlattenProperties(true).withReflection(false).bind(context, foo, prop);
+        PropertyBindingSupport.build().withFlattenProperties(true).withReflection(false).bind(context, foo, map);
 
         assertNull(foo.getName());
         assertEquals(0, foo.getBar().getAge());
 
         // should not bind any properties as reflection is off
-        assertEquals(2, prop.size());
+        assertEquals(2, map.size());
     }
 
     @Test
     public void testPropertiesIgnoreCase() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("naME", "{{companyName}}");
-        work.put("ID", "123");
+        Map<String, Object> map = mapOf(
+                "nAMe", "James",
+                "bar", mapOf(
+                        "age", "33",
+                        "{{committer}}", "true",
+                        "gOLd-Customer", "true",
+                        "WoRk", mapOf(
+                                "ID", "123",
+                                "naME", "{{companyName}}")));
 
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("AGE", "33");
-        bar.put("{{committer}}", "true");
-        bar.put("gOLd-Customer", "true");
-        bar.put("WoRk", work);
-
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-        prop.put("name", "James");
-
-        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, prop);
+        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -209,29 +187,24 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue(prop.isEmpty(), "Should bind all properties");
+        assertTrue(map.isEmpty(), "Should bind all properties");
     }
 
     @Test
     public void testPropertiesDash() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("name", "{{companyName}}");
-        work.put("id", "123");
+        Map<String, Object> map = mapOf(
+                "name", "James",
+                "bar", mapOf(
+                        "age", "33",
+                        "{{committer}}", "true",
+                        "gold-customer", "true",
+                        "work", mapOf(
+                                "id", "123",
+                                "name", "{{companyName}}")));
 
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("age", "33");
-        bar.put("{{committer}}", "true");
-        bar.put("gold-customer", "true");
-        bar.put("work", work);
-
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-        prop.put("name", "James");
-
-        PropertyBindingSupport.build().withFlattenProperties(true).bind(context, foo, prop);
+        PropertyBindingSupport.build().withFlattenProperties(true).bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -240,39 +213,28 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertTrue(prop.isEmpty(), "Should bind all properties");
+        assertTrue(map.isEmpty(), "Should bind all properties");
     }
 
     @Test
     public void testBindPropertiesWithOptionPrefix() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> work = new HashMap<>();
-        work.put("name", "{{companyName}}");
-        work.put("id", "123");
+        Map<String, Object> map = mapOf(
+                "my", mapOf(
+                        "prefix", mapOf(
+                                "name", "James",
+                                "bar", mapOf(
+                                        "age", "33",
+                                        "{{committer}}", "true",
+                                        "gold-customer", "true",
+                                        "work", mapOf(
+                                                "id", "123",
+                                                "name", "{{companyName}}")))),
+                "other", mapOf(
+                        "something", "test"));
 
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("age", "33");
-        bar.put("{{committer}}", "true");
-        bar.put("gold-customer", "true");
-        bar.put("work", work);
-
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-        prop.put("name", "James");
-
-        Map<String, Object> other = new HashMap<>();
-        other.put("something", "test");
-
-        Map<String, Object> root = new HashMap<>();
-        root.put("prefix", prop);
-        root.put("other", other);
-
-        Map<String, Object> my = new HashMap<>();
-        my.put("my", root);
-
-        PropertyBindingSupport.build().withFlattenProperties(true).withOptionPrefix("my.prefix.").bind(context, foo, my);
+        PropertyBindingSupport.build().withFlattenProperties(true).withOptionPrefix("my.prefix.").bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -280,36 +242,30 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         assertTrue(foo.getBar().isGoldCustomer());
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
-        assertEquals("test", other.get("something"));
+        Map other = (Map) map.get("other");
         assertEquals(1, other.size());
+        assertEquals("test", other.get("something"));
     }
 
     @Test
     public void testPropertiesOptionalKey() throws Exception {
         Foo foo = new Foo();
 
-        // Map.of requires JDK9 onwards and we are still compatible with Java 8
-        Map<String, Object> adr = new HashMap<>();
-        adr.put("?addresss", "Some street");
-        adr.put("?zip", "1234");
+        Map<String, Object> map = mapOf(
+                "name", "James",
+                "bar", mapOf(
+                        "AGE", "33",
+                        "{{committer}}", "true",
+                        "gOLd-customer", "true",
+                        "?silver-Customer", "true",
+                        "WoRk", mapOf(
+                                "?ID", "123",
+                                "?naME", "{{companyName}}",
+                                "adress", mapOf(
+                                        "?Street", "Some street",
+                                        "?zip", "1234"))));
 
-        Map<String, Object> work = new HashMap<>();
-        work.put("?naME", "{{companyName}}");
-        work.put("?ID", "123");
-        work.put("address", adr);
-
-        Map<String, Object> bar = new HashMap<>();
-        bar.put("AGE", "33");
-        bar.put("{{committer}}", "true");
-        bar.put("gOLd-Customer", "true");
-        bar.put("?silver-Customer", "true");
-        bar.put("WoRk", work);
-
-        Map<String, Object> prop = new HashMap<>();
-        prop.put("bar", bar);
-        prop.put("name", "James");
-
-        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, prop);
+        PropertyBindingSupport.build().withFlattenProperties(true).withIgnoreCase(true).bind(context, foo, map);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -318,9 +274,12 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         assertEquals(123, foo.getBar().getWork().getId());
         assertEquals("Acme", foo.getBar().getWork().getName());
 
-        assertFalse(prop.isEmpty(), "Should NOT bind all properties");
+        assertFalse(map.isEmpty(), "Should NOT bind all properties");
+        Map bar = (Map) map.get("bar");
+        Map work = (Map) bar.get("WoRk");
+        Map adr = (Map) work.get("adress");
         assertTrue(bar.containsKey("?silver-Customer"));
-        assertTrue(adr.containsKey("?addresss"));
+        assertTrue(adr.containsKey("?Street"));
         assertTrue(adr.containsKey("?zip"));
     }
 
@@ -358,7 +317,7 @@ public class PropertyBindingSupportFlattenTest extends ContextTestSupport {
         private int age;
         private boolean rider;
         private Company work; // has no default value but Camel can automatic
-                             // create one if there is a setter
+        // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {
