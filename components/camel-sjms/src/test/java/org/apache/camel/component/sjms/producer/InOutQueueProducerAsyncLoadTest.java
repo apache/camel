@@ -125,8 +125,8 @@ public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
                         .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
-                               + TEST_DESTINATION_NAME
-                               + ".response&consumerCount=10&producerCount=20&synchronous=false")
+                                                   + TEST_DESTINATION_NAME
+                                                   + ".response&consumerCount=10&producerCount=20&synchronous=false")
                         .threads(20)
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }
