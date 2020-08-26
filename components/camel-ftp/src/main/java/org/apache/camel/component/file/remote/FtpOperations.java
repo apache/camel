@@ -344,6 +344,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         log.debug("Renaming file: {} to: {}", from, to);
         try {
+            reconnectIfNecessary(null);
             return client.rename(from, to);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
@@ -989,13 +990,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
     
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
-        boolean reconnectRequired = false;
+        boolean reconnectRequired;
         try {
-            client.completePendingCommand();
-            if (!isConnected() || !sendNoop()) {
+            boolean connected = isConnected();
+            if (connected && !sendNoop()) {
                 reconnectRequired = true;
+            } else {
+                reconnectRequired = !connected;
             }
-        } catch (IOException | GenericFileOperationFailedException e) {
+        } catch (GenericFileOperationFailedException e) {
             // Ignore Exception and reconnect the client
             reconnectRequired = true;
         }
