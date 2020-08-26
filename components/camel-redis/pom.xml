@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,35 +31,38 @@
     <artifactId>camel-redis</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Redis</name>
-    <description>Camel Redis support</description>
+    <description>Aggregation repository using Redis as datastore</description>
+
+    <properties>
+        <firstVersion>3.5.0</firstVersion>
+        <label>database</label>
+    </properties>
 
     <dependencies>
 
         <dependency>
-           <groupId>org.redisson</groupId>
-           <artifactId>redisson</artifactId>
-           <version>${redisson-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
         <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>${redisson-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                       <endpoint>${endpoint}</endpoint>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
