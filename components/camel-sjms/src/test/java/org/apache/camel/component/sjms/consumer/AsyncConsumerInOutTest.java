@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.consumer;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.MyAsyncComponent;
@@ -68,7 +69,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .inOut("sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
+                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")
