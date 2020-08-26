@@ -85,7 +85,7 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory").to("mock:inbox")
-                        .inOnly("activemq:topic:order").bean("orderService",
+                        .to(ExchangePattern.InOnly, "activemq:topic:order").bean("orderService",
                                 "handleOrder");
 
                 from("activemq:topic:order").to("mock:topic");

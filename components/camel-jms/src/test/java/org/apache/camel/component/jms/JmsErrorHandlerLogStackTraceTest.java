@@ -43,7 +43,7 @@ public class JmsErrorHandlerLogStackTraceTest extends CamelTestSupport {
 
         template.sendBody("jms:queue:foo", "Hello World");
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
     }
 
     @Override

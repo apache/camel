@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.async;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -67,7 +68,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .inOut("activemq:queue:camel")
+                        .to(ExchangePattern.InOut, "activemq:queue:camel")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")
