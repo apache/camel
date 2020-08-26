@@ -535,6 +535,20 @@ This will require specifying the destinationBucket option. As example:
 
 In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
 
+You have also the possibility of using a key prefix/suffix while moving the file to a different bucket. The options are destinationBucketPrefix and destinationBucketSuffix.
+
+Taking the above example, you could do something like:
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&moveAfterRead=true&destinationBucket=myothercamelbucket&destinationBucketPrefix=RAW(pre-)&destinationBucketSuffix=RAW(-suff)")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+In this case the objects consumed will be moved to myothercamelbucket bucket and deleted from the original one (because of deleteAfterRead set to true as default).
+
+So if the file name is test, in the myothercamelbucket you should see a file called pre-test-suff.
+
 == Using customer key as encryption
 
 We introduced also the customer key support (an alternative of using KMS). The following code shows an example.
