@@ -17,19 +17,19 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilderConfigurer;
+import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MainRouteConfigurerTest {
+public class MainLambdaRouteBuilderTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
         Main main = new Main();
-        main.bind("myBarRoute", (RouteBuilderConfigurer) rb -> rb.from("direct:start").to("mock:results"));
+        main.bind("myBarRoute", (LambdaRouteBuilder) rb -> rb.from("direct:start").to("mock:results"));
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
