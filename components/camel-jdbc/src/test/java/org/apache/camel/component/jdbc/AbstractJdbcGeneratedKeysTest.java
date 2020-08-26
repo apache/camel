@@ -46,18 +46,18 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
+        List<Map<String, Object>> generatedKeys
+                = out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getMessage().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+        assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");
     }
 
@@ -85,18 +85,18 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
+        List<Map<String, Object>> generatedKeys
+                = out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getMessage().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+        assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");
     }
 
@@ -124,18 +124,18 @@ public abstract class AbstractJdbcGeneratedKeysTest extends AbstractJdbcTestSupp
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
-        assertNotNull(out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA));
+        assertNotNull(out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT));
 
-        List<Map<String, Object>> generatedKeys = out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
-        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getOut().getBody());
+        List<Map<String, Object>> generatedKeys
+                = out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, List.class);
+        assertNotNull(generatedKeys, "out body could not be converted to an ArrayList - was: " + out.getMessage().getBody());
         assertEquals(1, generatedKeys.size());
 
         Map<String, Object> row = generatedKeys.get(0);
         assertEquals(BigDecimal.valueOf(2), row.get("1"), "auto increment value should be 2");
 
-        assertEquals(1, out.getOut().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
+        assertEquals(1, out.getMessage().getHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT),
                 "generated keys row count should be one");
     }
 

@@ -44,9 +44,8 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getOut());
-        List<Map<String, Object>> data = out.getOut().getBody(List.class);
-        assertNotNull(data, "out body could not be converted to a List - was: " + out.getOut().getBody());
+        List<Map<String, Object>> data = out.getMessage().getBody(List.class);
+        assertNotNull(data, "out body could not be converted to a List - was: " + out.getMessage().getBody());
         assertEquals(3, data.size());
         Map<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("IDENTIFIER"));
