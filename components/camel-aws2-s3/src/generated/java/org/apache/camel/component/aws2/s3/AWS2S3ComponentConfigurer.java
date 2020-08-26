@@ -56,6 +56,10 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "delimiter": getOrCreateConfiguration(target).setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": getOrCreateConfiguration(target).setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": getOrCreateConfiguration(target).setDestinationBucketPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": getOrCreateConfiguration(target).setDestinationBucketSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "filename":
         case "fileName": getOrCreateConfiguration(target).setFileName(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
@@ -123,6 +127,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         answer.put("deleteAfterWrite", boolean.class);
         answer.put("delimiter", java.lang.String.class);
         answer.put("destinationBucket", java.lang.String.class);
+        answer.put("destinationBucketPrefix", java.lang.String.class);
+        answer.put("destinationBucketSuffix", java.lang.String.class);
         answer.put("fileName", java.lang.String.class);
         answer.put("includeBody", boolean.class);
         answer.put("includeFolders", boolean.class);
@@ -184,6 +190,10 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "delimiter": return getOrCreateConfiguration(target).getDelimiter();
         case "destinationbucket":
         case "destinationBucket": return getOrCreateConfiguration(target).getDestinationBucket();
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": return getOrCreateConfiguration(target).getDestinationBucketPrefix();
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": return getOrCreateConfiguration(target).getDestinationBucketSuffix();
         case "filename":
         case "fileName": return getOrCreateConfiguration(target).getFileName();
         case "includebody":

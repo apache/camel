@@ -335,6 +335,32 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the destination bucket prefix to use when an object must be
+         * moved and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2S3ComponentBuilder destinationBucketPrefix(
+                java.lang.String destinationBucketPrefix) {
+            doSetProperty("destinationBucketPrefix", destinationBucketPrefix);
+            return this;
+        }
+        /**
+         * Define the destination bucket suffix to use when an object must be
+         * moved and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default Aws2S3ComponentBuilder destinationBucketSuffix(
+                java.lang.String destinationBucketSuffix) {
+            doSetProperty("destinationBucketSuffix", destinationBucketSuffix);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -637,6 +663,8 @@ public interface Aws2S3ComponentBuilderFactory {
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
             case "destinationBucket": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucket((java.lang.String) value); return true;
+            case "destinationBucketPrefix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketPrefix((java.lang.String) value); return true;
+            case "destinationBucketSuffix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketSuffix((java.lang.String) value); return true;
             case "fileName": getOrCreateConfiguration((AWS2S3Component) component).setFileName((java.lang.String) value); return true;
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
