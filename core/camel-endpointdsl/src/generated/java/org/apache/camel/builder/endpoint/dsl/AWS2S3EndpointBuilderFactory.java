@@ -447,6 +447,32 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the destination bucket prefix to use when an object must be
+         * moved and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder destinationBucketPrefix(
+                String destinationBucketPrefix) {
+            doSetProperty("destinationBucketPrefix", destinationBucketPrefix);
+            return this;
+        }
+        /**
+         * Define the destination bucket suffix to use when an object must be
+         * moved and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default AWS2S3EndpointConsumerBuilder destinationBucketSuffix(
+                String destinationBucketSuffix) {
+            doSetProperty("destinationBucketSuffix", destinationBucketSuffix);
+            return this;
+        }
+        /**
          * To get the object from the bucket with the given file name.
          * 
          * The option is a: <code>java.lang.String</code> type.

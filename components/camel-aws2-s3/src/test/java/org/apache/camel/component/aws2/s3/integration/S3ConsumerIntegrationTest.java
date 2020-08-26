@@ -37,7 +37,9 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     S3Client client
-            = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
+            = S3Client.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create("xxxx", "yyyy")))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject
@@ -90,7 +92,7 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
 
                 from("direct:putObject").startupOrder(1).to(awsEndpoint).to("mock:result");
 
-                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false")
+                from("aws2-s3://mycamel?moveAfterRead=true&destinationBucket=camel-kafka-connector&autoCreateBucket=false&destinationBucketPrefix=RAW(movedPrefix)&destinationBucketSuffix=RAW(movedSuffix)")
                         .startupOrder(2).log("${body}");
 
             }

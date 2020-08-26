@@ -55,6 +55,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "delimiter": target.getConfiguration().setDelimiter(property(camelContext, java.lang.String.class, value)); return true;
         case "destinationbucket":
         case "destinationBucket": target.getConfiguration().setDestinationBucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": target.getConfiguration().setDestinationBucketPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": target.getConfiguration().setDestinationBucketSuffix(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -156,6 +160,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         answer.put("deleteAfterWrite", boolean.class);
         answer.put("delimiter", java.lang.String.class);
         answer.put("destinationBucket", java.lang.String.class);
+        answer.put("destinationBucketPrefix", java.lang.String.class);
+        answer.put("destinationBucketSuffix", java.lang.String.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("fileName", java.lang.String.class);
@@ -240,6 +246,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "delimiter": return target.getConfiguration().getDelimiter();
         case "destinationbucket":
         case "destinationBucket": return target.getConfiguration().getDestinationBucket();
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": return target.getConfiguration().getDestinationBucketPrefix();
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": return target.getConfiguration().getDestinationBucketSuffix();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

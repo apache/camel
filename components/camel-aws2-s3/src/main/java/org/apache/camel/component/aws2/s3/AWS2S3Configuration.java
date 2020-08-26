@@ -48,6 +48,10 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean moveAfterRead;
     @UriParam(label = "consumer")
     private String destinationBucket;
+    @UriParam(label = "consumer")
+    private String destinationBucketPrefix;
+    @UriParam(label = "consumer")
+    private String destinationBucketSuffix;
     @UriParam(label = "producer")
     private boolean deleteAfterWrite;
     @UriParam(label = "producer")
@@ -280,6 +284,28 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setDestinationBucket(String destinationBucket) {
         this.destinationBucket = destinationBucket;
+    }
+
+    public String getDestinationBucketPrefix() {
+        return destinationBucketPrefix;
+    }
+
+    /**
+     * Define the destination bucket prefix to use when an object must be moved and moveAfterRead is set to true.
+     */
+    public void setDestinationBucketPrefix(String destinationBucketPrefix) {
+        this.destinationBucketPrefix = destinationBucketPrefix;
+    }
+
+    public String getDestinationBucketSuffix() {
+        return destinationBucketSuffix;
+    }
+
+    /**
+     * Define the destination bucket suffix to use when an object must be moved and moveAfterRead is set to true.
+     */
+    public void setDestinationBucketSuffix(String destinationBucketSuffix) {
+        this.destinationBucketSuffix = destinationBucketSuffix;
     }
 
     public boolean isDeleteAfterWrite() {
