@@ -36,6 +36,7 @@
     <properties>
         <firstVersion>3.5.0</firstVersion>
         <label>database</label>
+        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>
