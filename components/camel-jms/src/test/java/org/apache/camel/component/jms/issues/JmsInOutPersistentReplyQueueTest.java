@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -54,7 +55,7 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("seda:start")
                         .log("Sending ${body}")
-                        .inOut("activemq:queue:foo?replyTo=myReplies")
+                        .to(ExchangePattern.InOut, "activemq:queue:foo?replyTo=myReplies")
                         // process the remainder of the route concurrently
                         .threads(5)
                         .log("Reply ${body}")

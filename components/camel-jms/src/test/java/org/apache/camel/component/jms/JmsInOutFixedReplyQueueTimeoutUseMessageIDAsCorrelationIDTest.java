@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -28,7 +29,8 @@ public class JmsInOutFixedReplyQueueTimeoutUseMessageIDAsCorrelationIDTest exten
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                        .inOut("activemq:queue:foo?replyTo=queue:bar&useMessageIDAsCorrelationID=true&requestTimeout=2000")
+                        .to(ExchangePattern.InOut,
+                                "activemq:queue:foo?replyTo=queue:bar&useMessageIDAsCorrelationID=true&requestTimeout=2000")
                         .to("mock:result");
 
                 from("activemq:queue:foo")
