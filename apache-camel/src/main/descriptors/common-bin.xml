@@ -165,6 +165,7 @@
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-elytron</include>
         <include>org.apache.camel:camel-etcd</include>
+        <include>org.apache.camel:camel-etcd3</include>
         <include>org.apache.camel:camel-exec</include>
         <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-fastjson</include>
