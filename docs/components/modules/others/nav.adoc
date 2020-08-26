@@ -22,6 +22,7 @@
 ** xref:platform-http-vertx.adoc[Platform Http Vertx]
 ** xref:reactive-executor-vertx.adoc[Reactive Executor Vert.x]
 ** xref:reactor.adoc[Reactor]
+** xref:redis.adoc[Redis]
 ** xref:resilience4j.adoc[Resilience4j]
 ** xref:ribbon.adoc[Ribbon]
 ** xref:rxjava.adoc[RxJava]

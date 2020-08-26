@@ -1,20 +1,21 @@
+package org.apache.camel.component.redis.processor.aggregate;
+
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * This is the aggregation strategy which is java code for <i>aggregating</i>
- * incoming messages with the existing aggregated message. In other words
- * you use this strategy to <i>merge</i> the messages together.
+ * This is the aggregation strategy which is java code for <i>aggregating</i> incoming messages with the existing
+ * aggregated message. In other words you use this strategy to <i>merge</i> the messages together.
  */
 public class MyAggregationStrategy implements AggregationStrategy {
 
     /**
      * Aggregates the messages.
      *
-     * @param oldExchange  the existing aggregated message. Is <tt>null</tt> the
-     *                     very first time as there are no existing message.
-     * @param newExchange  the incoming message. This is never <tt>null</tt>.
-     * @return the aggregated message.
+     * @param  oldExchange the existing aggregated message. Is <tt>null</tt> the very first time as there are no
+     *                     existing message.
+     * @param  newExchange the incoming message. This is never <tt>null</tt>.
+     * @return             the aggregated message.
      */
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // the first time there are no existing message and therefore
@@ -40,5 +41,5 @@ public class MyAggregationStrategy implements AggregationStrategy {
         // and return it
         return oldExchange;
     }
-    
+
 }
