@@ -70,7 +70,7 @@ public class SmppProducerTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameters))
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameters))
                 .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
 
@@ -79,7 +79,7 @@ public class SmppProducerTest {
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameters);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameters);
     }
 
     @Test

@@ -71,7 +71,7 @@ public class SmppProducerLazySessionCreationTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                 .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
         SmppBinding binding = mock(SmppBinding.class);
@@ -91,7 +91,7 @@ public class SmppProducerLazySessionCreationTest {
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class SmppProducerLazySessionCreationTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
                 .thenReturn("1");
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
@@ -123,6 +123,6 @@ public class SmppProducerLazySessionCreationTest {
         producer.doStart();
         producer.process(exchange);
 
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 }
