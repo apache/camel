@@ -27,8 +27,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.RouteBuilderConfigurer;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -55,12 +55,12 @@ public class DefaultRoutesCollector implements RoutesCollector {
 
         final AntPathMatcher matcher = new AntPathMatcher();
 
-        Set<RouteBuilderConfigurer> configurers = camelContext.getRegistry().findByType(RouteBuilderConfigurer.class);
-        for (RouteBuilderConfigurer configurer : configurers) {
+        Set<LambdaRouteBuilder> lrbs = camelContext.getRegistry().findByType(LambdaRouteBuilder.class);
+        for (LambdaRouteBuilder lrb : lrbs) {
             RouteBuilder rb = new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    configurer.accept(this);
+                    lrb.accept(this);
                 }
             };
             routes.add(rb);

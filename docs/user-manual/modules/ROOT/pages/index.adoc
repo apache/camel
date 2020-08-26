@@ -114,7 +114,7 @@ camel routes without them knowing
 * xref:processor.adoc[Processor]
 * xref:registry.adoc[Registry]
 * xref:route-builder.adoc[RouteBuilder]
-* xref:route-builder-configurer.adoc[RouteBuilderConfigurer]
+* xref:lambda-route-builder.adoc[LambdaRouteBuilder]
 * xref:route-controller.adoc[RouteController]
 * xref:route-policy.adoc[RoutePolicy]
 * xref:route-template.adoc[RouteTemplate]

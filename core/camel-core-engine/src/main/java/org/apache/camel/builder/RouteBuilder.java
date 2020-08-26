@@ -98,7 +98,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param  rbc       a lambda expression receiving the {@code RouteBuilder} to use to create routes
      * @throws Exception if an error occurs
      */
-    public static void addRoutes(CamelContext context, RouteBuilderConfigurer rbc) throws Exception {
+    public static void addRoutes(CamelContext context, LambdaRouteBuilder rbc) throws Exception {
         context.addRoutes(new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {

@@ -17,14 +17,14 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.RouteBuilderConfigurer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RouteBuilderConfigurerTest extends ContextTestSupport {
+public class LambdaRouteBuilderTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,10 +32,10 @@ public class RouteBuilderConfigurerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRouteBuilderConfigurer() throws Exception {
+    public void testLambda() throws Exception {
         assertEquals(0, context.getRoutesSize());
 
-        RouteBuilderConfigurer builder = rb -> rb.from("direct:start").to("mock:result");
+        LambdaRouteBuilder builder = rb -> rb.from("direct:start").to("mock:result");
         context.addRoutes(new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
@@ -55,7 +55,7 @@ public class RouteBuilderConfigurerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testRouteBuilderConfigurerLambda() throws Exception {
+    public void testLambdaTwo() throws Exception {
         assertEquals(0, context.getRoutesSize());
 
         RouteBuilder.addRoutes(context, rb -> rb.from("direct:start").to("mock:result"));
