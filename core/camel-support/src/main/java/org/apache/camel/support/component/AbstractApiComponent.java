@@ -109,7 +109,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         // copy component configuration, if set
         if (configuration != null) {
             PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                    .resolvePropertyConfigurer(configuration.getClass().getSimpleName(), getCamelContext());
+                    .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
             // use reflection free configurer (if possible)
             if (configurer instanceof PropertyConfigurerGetter) {
                 PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
@@ -128,7 +128,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
         PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                .resolvePropertyConfigurer(endpointConfiguration.getClass().getSimpleName(), getCamelContext());
+                .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), getCamelContext());
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
                 .bind(getCamelContext(), endpointConfiguration, componentProperties);

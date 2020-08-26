@@ -45,7 +45,7 @@ public final class PropertyConfigurerHelper {
 
         return context.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
-                .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
+                .resolvePropertyConfigurer(target.getClass().getName(), context);
     }
 
     /**

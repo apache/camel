@@ -229,7 +229,7 @@ public class HystrixReifier extends ProcessorReifier<CircuitBreakerDefinition> {
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
-                .resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getSimpleName(), camelContext);
+                .resolvePropertyConfigurer(HystrixConfigurationDefinition.class.getName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry

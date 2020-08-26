@@ -399,10 +399,10 @@ public final class PropertyBindingSupport {
             configurer = ((Component) target).getComponentPropertyConfigurer();
         }
         if (configurer == null) {
-            String name = target.getClass().getSimpleName();
+            String name = target.getClass().getName();
             if (target instanceof ExtendedCamelContext) {
                 // special for camel context itself as we have an extended configurer
-                name = "ExtendedCamelContext";
+                name = ExtendedCamelContext.class.getName();
             }
 
             if (isNotEmpty(name)) {
@@ -799,7 +799,7 @@ public final class PropertyBindingSupport {
         if (configurer == null) {
             // do we have a configurer by any chance
             configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                    .resolvePropertyConfigurer(newClass.getSimpleName(), camelContext);
+                    .resolvePropertyConfigurer(newClass.getName(), camelContext);
         }
 
         // we should only walk and create OGNL path for the middle graph
@@ -863,10 +863,10 @@ public final class PropertyBindingSupport {
                             .getCollectionValueType(newTarget, undashKey(key), ignoreCase);
                     if (collectionType != null) {
                         configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                                .resolvePropertyConfigurer(collectionType.getSimpleName(), camelContext);
+                                .resolvePropertyConfigurer(collectionType.getName(), camelContext);
                     } else {
                         configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                                .resolvePropertyConfigurer(prop.getClass().getSimpleName(), camelContext);
+                                .resolvePropertyConfigurer(prop.getClass().getName(), camelContext);
                     }
                 }
                 // prepare for next iterator

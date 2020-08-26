@@ -135,7 +135,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
 
         final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
-                .resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getSimpleName(), camelContext);
+                .resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getName(), camelContext);
 
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
