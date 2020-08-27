@@ -82,6 +82,7 @@ public class STS2ProducerTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getFederationToken);
+                exchange.getIn().setHeader(STS2Constants.FEDERATED_NAME, "federation-account");
             }
         });
 

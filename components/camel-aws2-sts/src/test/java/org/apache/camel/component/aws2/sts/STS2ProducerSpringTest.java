@@ -69,7 +69,7 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
         GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
-    
+
     public void stsGetFederationTokenTest() throws Exception {
 
         mock.expectedMessageCount(1);
@@ -77,6 +77,7 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getFederationToken);
+                exchange.getIn().setHeader(STS2Constants.FEDERATED_NAME, "federation-account");
             }
         });
 
