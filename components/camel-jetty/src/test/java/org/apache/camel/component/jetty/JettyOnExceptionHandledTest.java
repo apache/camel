@@ -30,8 +30,8 @@ public class JettyOnExceptionHandledTest extends BaseJettyTest {
         Exchange reply = template.request("http://localhost:{{port}}/myserver?throwExceptionOnFailure=false", null);
 
         assertNotNull(reply);
-        assertEquals("Dude something went wrong", reply.getOut().getBody(String.class));
-        assertEquals(500, reply.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Dude something went wrong", reply.getMessage().getBody(String.class));
+        assertEquals(500, reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Override

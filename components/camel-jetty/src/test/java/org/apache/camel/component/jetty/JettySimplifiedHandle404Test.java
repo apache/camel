@@ -70,8 +70,8 @@ public class JettySimplifiedHandle404Test extends BaseJettyTest {
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Page not found");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                        exchange.getMessage().setBody("Page not found");
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                     }
                 });
                 // END SNIPPET: e1

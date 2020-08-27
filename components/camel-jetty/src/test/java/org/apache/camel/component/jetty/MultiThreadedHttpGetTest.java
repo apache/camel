@@ -112,7 +112,7 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("<html>Bye World</html>");
+                        exchange.getMessage().setBody("<html>Bye World</html>");
                     }
                 });
             }

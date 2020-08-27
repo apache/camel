@@ -44,7 +44,7 @@ public class RestJettyGetTest extends BaseJettyTest {
                 rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

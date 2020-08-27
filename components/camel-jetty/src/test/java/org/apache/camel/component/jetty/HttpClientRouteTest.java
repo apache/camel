@@ -103,7 +103,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost:" + port2 + "/querystring?id=test");
             }
         });
-        assertEquals("test", exchange.getOut().getBody(String.class), "Get a wrong response.");
+        assertEquals("test", exchange.getMessage().getBody(String.class), "Get a wrong response.");
     }
 
     @Override
@@ -131,7 +131,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
-                        exchange.getOut().setBody(bis);
+                        exchange.getMessage().setBody(bis);
                     }
                 };
                 from("jetty:http://localhost:" + port1 + "/hello").process(proc).setHeader(Exchange.HTTP_CHUNKED)
@@ -141,7 +141,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port2 + "/Query%20/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(exchange.getIn().getHeader("myQuery", String.class));
+                        exchange.getMessage().setBody(exchange.getIn().getHeader("myQuery", String.class));
                     }
                 });
 
@@ -151,7 +151,7 @@ public class HttpClientRouteTest extends BaseJettyTest {
                         if (result == null) {
                             result = "No id header";
                         }
-                        exchange.getOut().setBody(result);
+                        exchange.getMessage().setBody(result);
                     }
                 });
             }

@@ -66,9 +66,9 @@ public class HttpHeaderCaseTest extends BaseJettyTest {
                         assertEquals("Carlsberg", map.get("beer"));
                         assertEquals(null, map.get("Beer"));
 
-                        exchange.getOut().setBody("Bye World");
-                        exchange.getOut().setHeader("MyCaseHeader", "aBc123");
-                        exchange.getOut().setHeader("otherCaseHeader", "456DEf");
+                        exchange.getMessage().setBody("Bye World");
+                        exchange.getMessage().setHeader("MyCaseHeader", "aBc123");
+                        exchange.getMessage().setHeader("otherCaseHeader", "456DEf");
                     }
                 });
             }

@@ -39,10 +39,10 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
 
-        List<?> foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getMessage().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
@@ -64,10 +64,10 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
 
-        List<?> foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getMessage().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
@@ -91,13 +91,13 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
                         assertEquals("bar", to.get(1));
 
                         // response
-                        exchange.getOut().setBody("OK");
+                        exchange.getMessage().setBody("OK");
                         // use multiple values for the foo header in the reply
                         List<Integer> list = new ArrayList<>();
                         list.add(123);
                         list.add(456);
-                        exchange.getOut().setHeader("foo", list);
-                        exchange.getOut().setHeader("bar", "yes");
+                        exchange.getMessage().setHeader("foo", list);
+                        exchange.getMessage().setHeader("bar", "yes");
                     }
                 });
             }

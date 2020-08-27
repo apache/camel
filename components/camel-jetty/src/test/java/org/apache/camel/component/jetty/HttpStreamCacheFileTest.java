@@ -22,7 +22,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,10 +91,10 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         if (ObjectHelper.isEmpty(body)) {
-                            exchange.getOut().setBody(responseBody);
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                            exchange.getMessage().setBody(responseBody);
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
                         } else {
-                            exchange.getOut().setBody("Bye World");
+                            exchange.getMessage().setBody("Bye World");
                         }
                     }
                 });

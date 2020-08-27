@@ -56,7 +56,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
                     exchange.setException(new CamelExchangeException("Simulated error at attempt " + count, exchange));
                 } else {
                     String reply = getEndpoint().getReply();
-                    exchange.getOut().setBody(reply);
+                    exchange.getMessage().setBody(reply);
                     LOG.info("Setting reply " + reply);
                 }
 

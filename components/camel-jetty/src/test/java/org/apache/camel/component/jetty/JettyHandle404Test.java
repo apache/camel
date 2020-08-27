@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,16 +94,16 @@ public class JettyHandle404Test extends BaseJettyTest {
                                 // the route breaks
                                 HttpOperationFailedException cause
                                         = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, HttpOperationFailedException.class);
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
-                                exchange.getOut().setBody(cause.getResponseBody());
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, cause.getStatusCode());
+                                exchange.getMessage().setBody(cause.getResponseBody());
                             }
                         }).end();
 
                 // this is our jetty server where we simulate the 404
                 from("jetty://http://localhost:{{port}}/myserver").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Page not found");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                        exchange.getMessage().setBody("Page not found");
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                     }
                 });
             }

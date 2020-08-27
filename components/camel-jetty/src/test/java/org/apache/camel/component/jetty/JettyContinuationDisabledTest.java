@@ -47,7 +47,7 @@ public class JettyContinuationDisabledTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myservice").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Thread.sleep(1000);
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
                     }
                 }).to("mock:result");
             }

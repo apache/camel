@@ -49,7 +49,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         });
 
         assertNotNull(out);
-        assertEquals("Bye World", out.getOut().getBody(String.class));
+        assertEquals("Bye World", out.getMessage().getBody(String.class));
 
         assertMockEndpointsSatisfied();
     }
