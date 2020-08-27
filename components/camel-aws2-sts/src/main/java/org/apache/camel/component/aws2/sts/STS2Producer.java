@@ -159,7 +159,7 @@ public class STS2Producer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void getFederationToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();

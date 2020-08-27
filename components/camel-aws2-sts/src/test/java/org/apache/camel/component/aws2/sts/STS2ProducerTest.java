@@ -73,7 +73,7 @@ public class STS2ProducerTest extends CamelTestSupport {
         GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
-    
+
     @Test
     public void stsGetFederationTokenTest() throws Exception {
 

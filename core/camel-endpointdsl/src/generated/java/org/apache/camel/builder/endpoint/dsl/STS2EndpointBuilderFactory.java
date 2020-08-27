@@ -382,7 +382,8 @@ public interface STS2EndpointBuilderFactory {
      */
     enum STS2Operations {
         assumeRole,
-        getSessionToken;
+        getSessionToken,
+        getFederationToken;
     }
 
     /**
