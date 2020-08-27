@@ -19,17 +19,16 @@ package org.apache.camel.component.minio;
 import java.util.Properties;
 
 import io.minio.MinioClient;
-import org.apache.camel.component.minio.integration.MinioTestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class MinioComponentConfigurationTest extends CamelTestSupport {
+class MinioComponentConfigurationTest extends CamelTestSupport {
 
     @Test
-    public void createEndpointWithMinimalConfiguration() throws Exception {
+    void createEndpointWithMinimalConfiguration() throws Exception {
         MinioComponent component = context.getComponent("minio", MinioComponent.class);
         MinioEndpoint endpoint = (MinioEndpoint) component
                 .createEndpoint(
@@ -42,7 +41,7 @@ public class MinioComponentConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
+    void createEndpointWithCredentialsAndClientExistInRegistry() throws Exception {
         final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
         MinioClient client = MinioClient.builder()

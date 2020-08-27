@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.remoteTests;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,15 +32,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
+class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @BindToRegistry("minioClient")
@@ -55,12 +54,12 @@ public class MinioListObjectsOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioListObjectsOperationIntegrationTest() throws IOException {
+    MinioListObjectsOperationIntegrationTest() throws IOException {
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
         template.send("direct:listBuckets",

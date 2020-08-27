@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.remoteTests;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -44,16 +44,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
+class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTestSupport {
 
     final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
     final ServerSideEncryptionCustomerKey secretKey = generateSecretKey();
@@ -64,17 +63,18 @@ public class MinioCopyObjectCustomerKeyOperationIntegrationTest extends CamelTes
             .endpoint(properties.getProperty("endpoint"))
             .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
             .build();
+
     @EndpointInject
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    public MinioCopyObjectCustomerKeyOperationIntegrationTest() throws IOException {
+    MinioCopyObjectCustomerKeyOperationIntegrationTest() throws IOException {
     }
 
     @Test
-    public void sendIn() throws Exception {
+    void sendIn() throws Exception {
 
         result.expectedMessageCount(1);
 
