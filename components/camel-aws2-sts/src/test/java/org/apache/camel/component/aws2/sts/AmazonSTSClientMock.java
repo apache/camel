@@ -21,6 +21,8 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.AssumedRoleUser;
 import software.amazon.awssdk.services.sts.model.Credentials;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
@@ -37,6 +39,13 @@ public class AmazonSTSClientMock implements StsClient {
     @Override
     public GetSessionTokenResponse getSessionToken(GetSessionTokenRequest getSessionTokenRequest) {
         return GetSessionTokenResponse.builder()
+                .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
+                .build();
+    }
+    
+    @Override
+    public GetFederationTokenResponse getFederationToken(GetFederationTokenRequest getFederationTokenRequest) {
+        return GetFederationTokenResponse.builder()
                 .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
                 .build();
     }
