@@ -33,6 +33,12 @@
     <description>Camel Azure Event Hubs Component</description>
 
     <properties>
+      <camel.osgi.import.pkg>
+        !org.apache.camel.component.azure.eventhubs*,
+        reactor*;version="[3,4)",
+        ${camel.osgi.import.defaults},
+        *
+      </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>
