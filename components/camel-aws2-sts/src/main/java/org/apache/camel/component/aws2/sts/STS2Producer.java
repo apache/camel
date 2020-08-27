@@ -182,7 +182,7 @@ public class STS2Producer extends DefaultProducer {
                 String federatedName = exchange.getIn().getHeader(STS2Constants.FEDERATED_NAME, String.class);
                 builder.name(federatedName);
             } else {
-                throw new IllegalArgumentException("Role ARN needs to be specified for assumeRole operation");
+                throw new IllegalArgumentException("Federated name needs to be specified for assumeRole operation");
             }
             try {
                 result = stsClient.getFederationToken(builder.build());
