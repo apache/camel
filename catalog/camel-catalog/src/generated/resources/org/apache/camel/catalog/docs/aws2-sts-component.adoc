@@ -51,7 +51,7 @@ The AWS 2 Security Token Service (STS) component supports 14 options, which are 
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | Component configuration |  | STS2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. The value can be one of: assumeRole, getSessionToken | assumeRole | STS2Operations
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: assumeRole, getSessionToken, getFederationToken | assumeRole | STS2Operations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the STS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the STS client |  | Integer
@@ -95,7 +95,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. The value can be one of: assumeRole, getSessionToken | assumeRole | STS2Operations
+| *operation* (producer) | *Required* The operation to perform. The value can be one of: assumeRole, getSessionToken, getFederationToken | assumeRole | STS2Operations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the STS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the STS client |  | Integer
@@ -131,6 +131,7 @@ Camel-AWS STS component provides the following operation on the producer side:
 
 - assumeRole
 - getSessionToken
+- getFedeationToken
 
 == Producer Examples
 
@@ -149,6 +150,15 @@ from("direct:assumeRole")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:getSessionToken")
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
+--------------------------------------------------------------------------------
+
+- getFederationToken: this operation will return a temporary federation token
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFederationToken")
+    .setHeader(STS2Constants.FEDERATED_NAME, constant("federation-account"))
     .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
 --------------------------------------------------------------------------------
 
