@@ -145,8 +145,8 @@ public class KafkaComponentTest extends CamelTestSupport {
         assertEquals("JKS", endpoint.getConfiguration().getSslTruststoreType());
         assertEquals("/usr/bin/kinit", endpoint.getConfiguration().getKerberosInitCmd());
         assertEquals(Integer.valueOf(60000), endpoint.getConfiguration().getKerberosBeforeReloginMinTime());
-        assertEquals(new Double(0.05), endpoint.getConfiguration().getKerberosRenewJitter());
-        assertEquals(new Double(0.8), endpoint.getConfiguration().getKerberosRenewWindowFactor());
+        assertEquals(Double.valueOf(0.05), endpoint.getConfiguration().getKerberosRenewJitter());
+        assertEquals(Double.valueOf(0.8), endpoint.getConfiguration().getKerberosRenewWindowFactor());
         assertEquals("MAC", endpoint.getConfiguration().getSslCipherSuites());
         assertEquals("test", endpoint.getConfiguration().getSslEndpointAlgorithm());
         assertEquals("SunX509", endpoint.getConfiguration().getSslKeymanagerAlgorithm());
