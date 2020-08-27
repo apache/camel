@@ -113,7 +113,7 @@ public class CustomFiltersTest extends BaseJettyTest {
                                 String request = in.getBody(String.class);
                                 // The other form date can be get from the message
                                 // header
-                                exchange.getOut().setBody(request + " response");
+                                exchange.getMessage().setBody(request + " response");
                             }
                         });
             }

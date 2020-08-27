@@ -103,20 +103,20 @@ public class HandlerTest extends BaseJettyTest {
 
                 from("jetty:http://localhost:" + port1 + "/?handlers=#statisticsHandler1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(htmlResponse);
+                        exchange.getMessage().setBody(htmlResponse);
                     }
                 });
 
                 from("jetty:http://localhost:" + port2 + "/?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(htmlResponse);
+                                exchange.getMessage().setBody(htmlResponse);
                             }
                         });
                 from("jetty:http://localhost:" + port2 + "/endpoint2?handlers=#statisticsHandler2,#statisticsHandler3")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(htmlResponse);
+                                exchange.getMessage().setBody(htmlResponse);
                             }
                         });
             }

@@ -74,7 +74,7 @@ public class MultiPartFormOkHttpTest extends BaseJettyTest {
                         assertNotNull(data, "Should have data");
                         assertEquals("some data here", data);
 
-                        exchange.getOut().setBody("Thanks");
+                        exchange.getMessage().setBody("Thanks");
                     }
                 });
             }

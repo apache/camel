@@ -39,7 +39,7 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
         Exchange out = fluentTemplate.withHeader("id", "666").to("direct:start").request(Exchange.class);
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not have thrown exception");
-        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Override
@@ -60,7 +60,7 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
                         if ("666".equals(id)) {
                             throw new IllegalArgumentException("Bad id number");
                         }
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

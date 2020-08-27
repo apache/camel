@@ -108,7 +108,7 @@ public class MultiPartFormTest extends BaseJettyTest {
                         assertEquals(DataHandler.class, header.getClass());
                         assertEquals(data, header);
 
-                        exchange.getOut().setBody(in.getHeader("comment"));
+                        exchange.getMessage().setBody(in.getHeader("comment"));
                     }
 
                 });

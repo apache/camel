@@ -35,8 +35,8 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
             }
         });
 
-        assertEquals("application/foobar", out.getOut().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("Some foobar stuff goes here", out.getOut().getBody(String.class));
+        assertEquals("application/foobar", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("Some foobar stuff goes here", out.getMessage().getBody(String.class));
     }
 
     @Test
@@ -47,8 +47,8 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
             }
         });
 
-        assertEquals("application/json", out.getOut().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out.getOut().getBody(String.class));
+        assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out.getMessage().getBody(String.class));
     }
 
     @Override

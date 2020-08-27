@@ -35,15 +35,15 @@ public class RestJettyOptionsTest extends BaseJettyTest {
             }
         });
 
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("GET,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
 
         exchange = fluentTemplate.to("http://localhost:" + getPort() + "/users/v1/id/123")
                 .withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("PUT,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("PUT,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
     }
 
     @Test
@@ -55,9 +55,9 @@ public class RestJettyOptionsTest extends BaseJettyTest {
             }
         });
 
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("GET,POST,OPTIONS", exchange.getOut().getHeader("ALLOW"));
-        assertEquals("", exchange.getOut().getBody(String.class));
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,POST,OPTIONS", exchange.getMessage().getHeader("ALLOW"));
+        assertEquals("", exchange.getMessage().getBody(String.class));
     }
 
     @Override

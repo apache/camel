@@ -60,7 +60,7 @@ public class HttpEndpointUriEncodingIssueTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myapp/mytest").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String columns = exchange.getIn().getHeader("columns", String.class);
-                        exchange.getOut().setBody("We got " + columns + " columns");
+                        exchange.getMessage().setBody("We got " + columns + " columns");
                     }
                 });
             }

@@ -54,7 +54,7 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
                         assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
 
                         // send back the query
-                        exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
+                        exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                     }
                 };
                 from("jetty://http://localhost:" + port2 + "/jettyTestRouteA?matchOnUriPrefix=true")

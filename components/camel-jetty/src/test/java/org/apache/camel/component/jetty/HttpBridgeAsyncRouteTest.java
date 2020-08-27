@@ -35,7 +35,7 @@ public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
                     public void process(Exchange exchange) throws Exception {
                         // get the request URL and copy it to the request body
                         String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
-                        exchange.getOut().setBody(uri);
+                        exchange.getMessage().setBody(uri);
                     }
                 };
                 from("jetty:http://localhost:" + port2 + "/test/hello?async=true&useContinuation=false")

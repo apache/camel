@@ -96,7 +96,7 @@ public class HttpProxyRouteTest extends BaseJettyTest {
                         // just take out the message body and send it back
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);
-                        exchange.getOut().setBody(request);
+                        exchange.getMessage().setBody(request);
                     }
 
                 });

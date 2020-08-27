@@ -34,11 +34,11 @@ public class HttpTwoEndpointTest extends BaseJettyTest {
         Exchange b = template.request("direct:b", null);
         assertNotNull(b);
 
-        assertEquals("Bye cheese", a.getOut().getBody(String.class));
-        assertEquals(246, a.getOut().getHeader("foo", Integer.class).intValue());
+        assertEquals("Bye cheese", a.getMessage().getBody(String.class));
+        assertEquals(246, a.getMessage().getHeader("foo", Integer.class).intValue());
 
-        assertEquals("Bye cake", b.getOut().getBody(String.class));
-        assertEquals(912, b.getOut().getHeader("foo", Integer.class).intValue());
+        assertEquals("Bye cake", b.getMessage().getBody(String.class));
+        assertEquals(912, b.getMessage().getHeader("foo", Integer.class).intValue());
 
         assertEquals(5, context.getEndpoints().size());
     }
@@ -57,8 +57,8 @@ public class HttpTwoEndpointTest extends BaseJettyTest {
                         int foo = exchange.getIn().getHeader("foo", Integer.class);
                         String bar = exchange.getIn().getHeader("bar", String.class);
 
-                        exchange.getOut().setHeader("foo", foo * 2);
-                        exchange.getOut().setBody("Bye " + bar);
+                        exchange.getMessage().setHeader("foo", foo * 2);
+                        exchange.getMessage().setBody("Bye " + bar);
                     }
                 });
             }

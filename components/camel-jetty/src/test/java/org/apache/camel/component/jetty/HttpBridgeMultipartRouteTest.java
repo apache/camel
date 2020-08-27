@@ -86,8 +86,8 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                         // put the number of attachments in a response header
-                        exchange.getOut().setHeader("numAttachments", in.getAttachments().size());
-                        exchange.getOut().setBody(in.getHeader("body"));
+                        exchange.getMessage().setHeader("numAttachments", in.getAttachments().size());
+                        exchange.getMessage().setBody(in.getHeader("body"));
                     }
                 };
 

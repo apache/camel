@@ -133,7 +133,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
                         // The other form date can be get from the message
                         // header
-                        exchange.getOut().setBody(in.getHeader("comment"));
+                        exchange.getMessage().setBody(in.getHeader("comment"));
                     }
                 });
                 // END SNIPPET: e1
@@ -150,7 +150,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                                 assertNotNull(data, "Should get the DataHandle log4j2.properties");
                                 // The other form date can be get from the message
                                 // header
-                                exchange.getOut().setBody(in.getHeader("comment"));
+                                exchange.getMessage().setBody(in.getHeader("comment"));
                             }
                         });
             }
