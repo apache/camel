@@ -30,6 +30,8 @@ import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest.Builder;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenRequest;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
@@ -54,6 +56,9 @@ public class STS2Producer extends DefaultProducer {
                 break;
             case getSessionToken:
                 getSessionToken(getEndpoint().getStsClient(), exchange);
+                break;
+            case getFederationToken:
+                getFederationToken(getEndpoint().getStsClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -148,6 +153,41 @@ public class STS2Producer extends DefaultProducer {
                 result = stsClient.getSessionToken(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Get Session Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+    
+    private void getFederationToken(StsClient stsClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof GetFederationTokenRequest) {
+                GetFederationTokenResponse result;
+                try {
+                    GetFederationTokenRequest request = (GetFederationTokenRequest) payload;
+                    result = stsClient.getFederationToken(request);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Get Federation Token command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            GetFederationTokenRequest.Builder builder = GetFederationTokenRequest.builder();
+            GetFederationTokenResponse result;
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(STS2Constants.FEDERATED_NAME))) {
+                String federatedName = exchange.getIn().getHeader(STS2Constants.FEDERATED_NAME, String.class);
+                builder.name(federatedName);
+            } else {
+                throw new IllegalArgumentException("Role ARN needs to be specified for assumeRole operation");
+            }
+            try {
+                result = stsClient.getFederationToken(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Get Federation Token command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

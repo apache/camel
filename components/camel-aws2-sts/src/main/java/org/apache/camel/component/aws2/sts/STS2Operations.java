@@ -19,5 +19,6 @@ package org.apache.camel.component.aws2.sts;
 public enum STS2Operations {
 
     assumeRole,
-    getSessionToken
+    getSessionToken,
+    getFederationToken
 }

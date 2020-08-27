@@ -23,4 +23,5 @@ public interface STS2Constants {
     String OPERATION = "CamelAwsStsOperation";
     String ROLE_ARN = "CamelAwsStsRoleArn";
     String ROLE_SESSION_NAME = "CamelAwsStsRoleSessionName";
+    String FEDERATED_NAME = "CamelAwsStsFederatedName";
 }

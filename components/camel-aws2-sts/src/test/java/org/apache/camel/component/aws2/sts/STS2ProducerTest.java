@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,6 +73,23 @@ public class STS2ProducerTest extends CamelTestSupport {
         GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
+    
+    @Test
+    public void stsGetFederationTokenTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:getFederationToken", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getFederationToken);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
+        assertEquals("xxx", resultGet.credentials().accessKeyId());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -81,6 +99,8 @@ public class STS2ProducerTest extends CamelTestSupport {
                 from("direct:assumeRole").to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
                         .to("mock:result");
                 from("direct:getSessionToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getSessionToken")
+                        .to("mock:result");
+                from("direct:getFederationToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getFederationToken")
                         .to("mock:result");
             }
         };
