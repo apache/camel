@@ -42,7 +42,7 @@ public class AmazonSTSClientMock implements StsClient {
                 .credentials(Credentials.builder().accessKeyId("xxx").secretAccessKey("yyy").sessionToken("test").build())
                 .build();
     }
-    
+
     @Override
     public GetFederationTokenResponse getFederationToken(GetFederationTokenRequest getFederationTokenRequest) {
         return GetFederationTokenResponse.builder()
