@@ -35,8 +35,8 @@ public class HttpProducerQueryParamTest extends BaseJettyTest {
         Exchange exchange = template.request(url + "?quote=Camel%20rocks", null);
         assertNotNull(exchange);
 
-        String body = exchange.getOut().getBody(String.class);
-        Map<?, ?> headers = exchange.getOut().getHeaders();
+        String body = exchange.getMessage().getBody(String.class);
+        Map<?, ?> headers = exchange.getMessage().getHeaders();
 
         assertEquals("Bye World", body);
         assertEquals("Carlsberg", headers.get("beer"));
@@ -51,8 +51,8 @@ public class HttpProducerQueryParamTest extends BaseJettyTest {
         });
         assertNotNull(exchange);
 
-        String body = exchange.getOut().getBody(String.class);
-        Map<?, ?> headers = exchange.getOut().getHeaders();
+        String body = exchange.getMessage().getBody(String.class);
+        Map<?, ?> headers = exchange.getMessage().getHeaders();
 
         assertEquals("Bye World", body);
         assertEquals("Carlsberg", headers.get("beer"));
@@ -68,8 +68,8 @@ public class HttpProducerQueryParamTest extends BaseJettyTest {
                         String quote = exchange.getIn().getHeader("quote", String.class);
                         assertEquals("Camel rocks", quote);
 
-                        exchange.getOut().setBody("Bye World");
-                        exchange.getOut().setHeader("beer", "Carlsberg");
+                        exchange.getMessage().setBody("Bye World");
+                        exchange.getMessage().setHeader("beer", "Carlsberg");
                     }
                 });
             }

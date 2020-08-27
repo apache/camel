@@ -104,7 +104,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                 from("direct:get1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody("Hello " + id);
+                        exchange.getMessage().setBody("Hello " + id);
                     }
                 });
 
@@ -112,8 +112,8 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                        exchange.getOut().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, ct);
+                        exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
                     }
                 });
 

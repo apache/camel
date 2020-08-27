@@ -98,13 +98,13 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                             String requestBody = exchange.getIn().getBody(String.class);
                             assertEquals("<Hello>World</Hello>", requestBody, "Get a wrong request string");
                         }
-                        exchange.getOut().setHeader(Exchange.CONTENT_ENCODING, "gzip");
+                        exchange.getMessage().setHeader(Exchange.CONTENT_ENCODING, "gzip");
                         // check the Accept Encoding header
                         String header = exchange.getIn().getHeader("Accept-Encoding", String.class);
                         if (header != null && header.indexOf("gzip") > -1) {
-                            exchange.getOut().setBody("<b>Hello World for gzip</b>");
+                            exchange.getMessage().setBody("<b>Hello World for gzip</b>");
                         } else {
-                            exchange.getOut().setBody("<b>Hello World</b>");
+                            exchange.getMessage().setBody("<b>Hello World</b>");
                         }
                     }
                 });

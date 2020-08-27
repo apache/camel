@@ -47,8 +47,8 @@ public class HttpHeaderTest extends BaseJettyTest {
             }
         });
 
-        assertNotNull(ex.getOut().getHeader("Server"));
-        assertNull(ex.getOut().getHeader("Date"));
+        assertNotNull(ex.getMessage().getHeader("Server"));
+        assertNull(ex.getMessage().getHeader("Date"));
 
         ex = template.request("http://localhost:{{port2}}/server/mytest", new Processor() {
             @Override
@@ -57,8 +57,8 @@ public class HttpHeaderTest extends BaseJettyTest {
             }
         });
 
-        assertNull(ex.getOut().getHeader("Server"));
-        assertNotNull(ex.getOut().getHeader("Date"));
+        assertNull(ex.getMessage().getHeader("Server"));
+        assertNotNull(ex.getMessage().getHeader("Date"));
     }
 
     @Override
@@ -80,11 +80,11 @@ public class HttpHeaderTest extends BaseJettyTest {
                         for (Entry<String, Object> entry : headers.entrySet()) {
                             if ("SOAPAction".equals(entry.getKey())
                                     && "http://xxx.com/interfaces/ticket".equals(entry.getValue())) {
-                                exchange.getOut().setBody("Find the key!");
+                                exchange.getMessage().setBody("Find the key!");
                                 return;
                             }
                         }
-                        exchange.getOut().setBody("Cannot find the key!");
+                        exchange.getMessage().setBody("Cannot find the key!");
                     }
                 });
 

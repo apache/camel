@@ -90,9 +90,9 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
             assertEquals("uno", message.getRequest().getParameter("one"));
             assertEquals("dos", message.getRequest().getParameter("two"));
 
-            exchange.getOut().setBody("Bye World");
-            exchange.getOut().setHeader("one", "eins");
-            exchange.getOut().setHeader("two", "zwei");
+            exchange.getMessage().setBody("Bye World");
+            exchange.getMessage().setHeader("one", "eins");
+            exchange.getMessage().setHeader("two", "zwei");
         }
     }
 }

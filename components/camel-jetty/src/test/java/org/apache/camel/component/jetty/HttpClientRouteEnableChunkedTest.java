@@ -82,7 +82,7 @@ public class HttpClientRouteEnableChunkedTest extends BaseJettyTest {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());
-                        exchange.getOut().setBody(bis);
+                        exchange.getMessage().setBody(bis);
                     }
                 };
 

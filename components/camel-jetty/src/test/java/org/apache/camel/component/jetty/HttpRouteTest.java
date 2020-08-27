@@ -219,9 +219,9 @@ public class HttpRouteTest extends BaseJettyTest {
                             HttpSession session = message.getRequest().getSession();
                             assertNotNull(session, "we should get session here");
                         } catch (Exception e) {
-                            exchange.getOut().setBody(e);
+                            exchange.getMessage().setBody(e);
                         }
-                        exchange.getOut().setBody("<b>Hello World</b>");
+                        exchange.getMessage().setBody("<b>Hello World</b>");
                     }
                 };
 
@@ -229,7 +229,7 @@ public class HttpRouteTest extends BaseJettyTest {
 
                 Processor printProcessor = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message out = exchange.getOut();
+                        Message out = exchange.getMessage();
                         out.copyFrom(exchange.getIn());
                         log.info("The body's object is " + exchange.getIn().getBody());
                         log.info("Process body = " + exchange.getIn().getBody(String.class));
@@ -250,9 +250,9 @@ public class HttpRouteTest extends BaseJettyTest {
                         String value = exchange.getIn().getHeader("request", String.class);
                         if (value != null) {
                             assertNotNull(value, "The value of the parameter should not be null");
-                            exchange.getOut().setBody(value);
+                            exchange.getMessage().setBody(value);
                         } else {
-                            exchange.getOut().setBody("Can't get a right parameter");
+                            exchange.getMessage().setBody("Can't get a right parameter");
                         }
                     }
                 };
@@ -263,7 +263,7 @@ public class HttpRouteTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         String value = exchange.getIn().getBody(String.class);
                         assertEquals(POST_MESSAGE, value, "The response message is wrong");
-                        exchange.getOut().setBody("OK");
+                        exchange.getMessage().setBody("OK");
                     }
                 });
 
@@ -274,14 +274,14 @@ public class HttpRouteTest extends BaseJettyTest {
                                 assertTrue(is instanceof org.eclipse.jetty.server.HttpInput, "It should be a raw inputstream");
                                 String request = exchange.getIn().getBody(String.class);
                                 assertEquals("This is a test", request, "Got a wrong request");
-                                exchange.getOut().setBody("OK");
+                                exchange.getMessage().setBody("OK");
                             }
                         });
 
                 from("jetty:http://localhost:" + port4 + "/requestBufferSize").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String string = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody(string);
+                        exchange.getMessage().setBody(string);
                     }
                 });
             }

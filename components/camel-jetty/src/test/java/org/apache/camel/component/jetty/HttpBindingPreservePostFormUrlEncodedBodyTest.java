@@ -38,7 +38,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
 
         });
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Request message is OK", body);
     }
 
@@ -62,7 +62,7 @@ public class HttpBindingPreservePostFormUrlEncodedBodyTest extends BaseJettyTest
                                 "Get a wrong form parameter from the message header");
 
                         // send a response
-                        exchange.getOut().setBody("Request message is OK");
+                        exchange.getMessage().setBody("Request message is OK");
                     }
                 });
             }

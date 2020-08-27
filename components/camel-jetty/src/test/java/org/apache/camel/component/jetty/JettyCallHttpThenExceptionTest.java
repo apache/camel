@@ -41,9 +41,9 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
 
         assertNotNull(reply);
-        assertTrue(reply.getOut().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));
-        assertEquals(500, reply.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Server Error", reply.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertTrue(reply.getMessage().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));
+        assertEquals(500, reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Server Error", reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
     }
 
     @Override

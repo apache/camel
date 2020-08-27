@@ -49,7 +49,7 @@ public class JettyRestProducerVerbUpperCaseTest extends BaseJettyTest {
                         assertEquals("GET", method);
 
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

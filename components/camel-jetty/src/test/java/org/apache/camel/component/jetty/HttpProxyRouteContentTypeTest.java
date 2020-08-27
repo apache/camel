@@ -46,7 +46,7 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
                     public void process(Exchange exchange) throws Exception {
 
-                        exchange.getOut().setBody(ExchangeHelper.getContentType(exchange));
+                        exchange.getMessage().setBody(ExchangeHelper.getContentType(exchange));
                     }
 
                 });

@@ -77,7 +77,7 @@ public class JettyRouteWithSocketPropertiesTest extends BaseJettyTest {
             assertEquals("bookid=123", body);
 
             // send a html response
-            exchange.getOut().setBody("<html><body>Book 123 is Camel in Action</body></html>");
+            exchange.getMessage().setBody("<html><body>Book 123 is Camel in Action</body></html>");
         }
     }
 

@@ -59,7 +59,7 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
                                         "Get a wrong form parameter from the message header");
 
                                 // send a response
-                                exchange.getOut().setBody("Request message is OK");
+                                exchange.getMessage().setBody("Request message is OK");
                             }
                         });
             }

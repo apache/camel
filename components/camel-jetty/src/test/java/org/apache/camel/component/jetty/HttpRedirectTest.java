@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
@@ -69,13 +69,13 @@ public class HttpRedirectTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                        exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
+                        exchange.getMessage().setHeader("location", "http://localhost:" + getPort() + "/newtest");
                     }
                 });
                 from("jetty://http://localhost:{{port}}/remove").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
                     }
                 });
 

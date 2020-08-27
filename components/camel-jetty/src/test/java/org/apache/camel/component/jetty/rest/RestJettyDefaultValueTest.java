@@ -62,10 +62,10 @@ public class RestJettyDefaultValueTest extends BaseJettyTest {
                                 ObjectHelper.notNull(verbose, "verbose");
 
                                 if ("true".equals(verbose)) {
-                                    exchange.getOut().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
+                                    exchange.getMessage().setBody(id + ";Donald Duck;1113 Quack Street Duckburg");
                                 }
                                 if ("false".equals(verbose)) {
-                                    exchange.getOut().setBody(id + ";Donald Duck");
+                                    exchange.getMessage().setBody(id + ";Donald Duck");
                                 }
                             }
                         });

@@ -56,12 +56,12 @@ public class RestJettyGetWildcardsTest extends BaseJettyTest {
                 rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 }).endRest().get("{id}/{query}").route().to("mock:query").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Goofy");
+                        exchange.getMessage().setBody(id + ";Goofy");
                     }
                 }).endRest();
             }
