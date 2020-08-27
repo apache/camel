@@ -95,7 +95,7 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     public void testPutWithTTL() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
-        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_VALUE, Long.valueOf(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
         template.sendBodyAndHeaders("direct:put", "test", headers);
         verify(map).put("4711", "test", 1, TimeUnit.MINUTES);
@@ -204,10 +204,10 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
     public void testPutIfAbsentWithTtl() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
-        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_VALUE, Long.valueOf(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
-        verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
+        verify(map).putIfAbsent("4711", "replaced", Long.valueOf(1), TimeUnit.MINUTES);
     }
 
     @Test

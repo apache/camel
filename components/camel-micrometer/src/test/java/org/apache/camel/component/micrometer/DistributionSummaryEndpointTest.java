@@ -39,7 +39,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class DistributionSummaryEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
-    private static final Double VALUE = new Long(System.currentTimeMillis()).doubleValue();
+    private static final Double VALUE = Long.valueOf(System.currentTimeMillis()).doubleValue();
 
     @Mock
     private MeterRegistry registry;

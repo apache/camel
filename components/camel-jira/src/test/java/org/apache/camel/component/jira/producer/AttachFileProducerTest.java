@@ -101,7 +101,7 @@ public class AttachFileProducerTest extends CamelTestSupport {
             Collection<Attachment> attachments = new ArrayList<>();
             attachments.add(new Attachment(
                     issue.getAttachmentsUri(), attachedFile.getName(), null, null,
-                    new Long(attachedFile.length()).intValue(), null, null, null));
+                    Long.valueOf(attachedFile.length()).intValue(), null, null, null));
             // re-create the issue with the attachment sent by the route
             issue = createIssueWithAttachment(issue.getId(), issue.getSummary(), issue.getKey(), issue.getIssueType(),
                     issue.getDescription(), issue.getPriority(), issue.getAssignee(), attachments);

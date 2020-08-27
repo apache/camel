@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest {
 
     @BindToRegistry("interval")
-    private Long interval = new Long(2);
+    private Long interval = Long.valueOf(2);
 
     @BindToRegistry("count")
     private Integer count = Integer.valueOf(1);
