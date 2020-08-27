@@ -66,9 +66,8 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
         for (ChangeMessageVisibilityRequest req : this.client.changeMessageVisibilityRequests) {
             assertEquals("https://queue.amazonaws.com/541925086079/MyQueue", req.getQueueUrl());
             assertEquals(RECEIPT_HANDLE, req.getReceiptHandle());
-            Integer expectedTimeout = new Integer(6); // Should be 1.5 x TIMEOUT
-                                                     // as takes into account
-                                                     // the delay period
+            // Should be 1.5 x TIMEOUT as takes into account the delay period
+            Integer expectedTimeout = Integer.valueOf(6);
             assertEquals(expectedTimeout, req.getVisibilityTimeout());
         }
     }

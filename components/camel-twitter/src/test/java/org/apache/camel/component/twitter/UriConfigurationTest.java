@@ -51,8 +51,8 @@ public class UriConfigurationTest {
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
-        assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
-        assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
+        assertEquals(Integer.valueOf(50), twitterEndpoint.getProperties().getCount());
+        assertEquals(Integer.valueOf(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
 
     @Test

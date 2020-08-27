@@ -115,7 +115,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
         assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
-        assertEquals(new Integer(9000), endpoint.getConfiguration().getProxyPort());
+        assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
         assertEquals(Protocol.HTTPS, endpoint.getConfiguration().getProxyProtocol());
     }
 }

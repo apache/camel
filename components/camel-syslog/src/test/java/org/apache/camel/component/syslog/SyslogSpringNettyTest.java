@@ -40,7 +40,7 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
     @BeforeAll
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        System.setProperty("server-port", new Integer(serverPort).toString());
+        System.setProperty("server-port", Integer.valueOf(serverPort).toString());
     }
 
     @Override

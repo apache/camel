@@ -42,7 +42,7 @@ public class CometBindingTest {
     private static final Object FOO = new Object();
     private static final Long THIRTY_FOUR = Long.valueOf(34L);
     private static final Double TWO_POINT_ONE = Double.valueOf(2.1);
-    private static final Integer EIGHT = new Integer(8);
+    private static final Integer EIGHT = Integer.valueOf(8);
     private static final String HELLO = "hello";
     private static final String FOO_ATTR_NAME = "foo";
     private static final String LONG_ATTR_NAME = "long";

@@ -25,7 +25,7 @@ public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest 
     private Long interval = new Long(2);
 
     @BindToRegistry("count")
-    private Integer count = new Integer(1);
+    private Integer count = Integer.valueOf(1);
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
