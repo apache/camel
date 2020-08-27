@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio.integration.remoteTests;
+
+import java.io.IOException;
+import java.util.Properties;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -23,9 +26,9 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
+import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
-public class MinioComponentIntegrationTest extends CamelTestSupport {
+class MinioComponentIntegrationTest extends CamelTestSupport {
+    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -42,9 +45,12 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    MinioComponentIntegrationTest() throws IOException {
+    }
+
     @Test
-    public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
+    void sendInOnly() throws Exception {
+        result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
@@ -59,13 +65,14 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         assertResultExchange(result.getExchanges().get(0));
+        assertResultExchange(result.getExchanges().get(1));
 
         assertResponseMessage(exchange1.getIn());
         assertResponseMessage(exchange2.getIn());
     }
 
     @Test
-    public void sendInOut() throws Exception {
+    void sendInOut() throws Exception {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
@@ -104,8 +111,9 @@ public class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=Q3AM3UQ867SPQQA43P2F&secretKey=RAW(zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG)&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io";
-
+                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
+                          + "&secretKey=RAW(" + properties.getProperty("secretKey")
+                          + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io&deleteAfterRead=false";
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

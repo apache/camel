@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.component.minio;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public final class MinioTestUtils {
         return properties;
     }
 
-    public static Properties loadMinioAccessFromJvmEnv() throws Exception {
+    static Properties loadMinioAccessFromJvmEnv() throws Exception {
         final Properties properties = new Properties();
         if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null
                 || System.getProperty("secretKey") == null) {
