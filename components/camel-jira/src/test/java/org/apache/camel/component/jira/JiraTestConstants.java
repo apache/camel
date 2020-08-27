@@ -24,4 +24,5 @@ public interface JiraTestConstants {
     String USERNAME = "someguy";
     String PASSWORD = "my_password";
     String JIRA_CREDENTIALS = TEST_JIRA_URL + "&username=" + USERNAME + "&password=" + PASSWORD;
+    String WATCHED_COMPONENTS = "Priority,Status,Resolution";
 }
