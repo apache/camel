@@ -24,6 +24,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
+import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,6 +67,22 @@ public class STS2ProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         GetSessionTokenResponse resultGet = (GetSessionTokenResponse) exchange.getIn().getBody();
+        assertEquals("xxx", resultGet.credentials().accessKeyId());
+    }
+    
+    public void stsGetFederationTokenTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:getFederationToken", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(STS2Constants.OPERATION, STS2Operations.getFederationToken);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        GetFederationTokenResponse resultGet = (GetFederationTokenResponse) exchange.getIn().getBody();
         assertEquals("xxx", resultGet.credentials().accessKeyId());
     }
 

@@ -34,6 +34,11 @@
             <to uri="aws2-sts://test?stsClient=#amazonStsClient&amp;operation=getSessionToken"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:getFederationToken"/>
+            <to uri="aws2-sts://test?stsClient=#amazonStsClient&amp;operation=getFederationToken"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 
     <bean id="amazonStsClient" class="org.apache.camel.component.aws2.sts.AmazonSTSClientMock"/>
