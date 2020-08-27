@@ -131,6 +131,7 @@ Camel-AWS STS component provides the following operation on the producer side:
 
 - assumeRole
 - getSessionToken
+- getFedeationToken
 
 == Producer Examples
 
@@ -149,6 +150,15 @@ from("direct:assumeRole")
 [source,java]
 --------------------------------------------------------------------------------
 from("direct:getSessionToken")
+    .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
+--------------------------------------------------------------------------------
+
+- getFederationToken: this operation will return a temporary federation token
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFederationToken")
+    .setHeader(STS2Constants.FEDERATED_NAME, constant("federation-account"))
     .to("aws2-sts://test?stsClient=#amazonSTSClient&operation=getSessionToken")
 --------------------------------------------------------------------------------
 
