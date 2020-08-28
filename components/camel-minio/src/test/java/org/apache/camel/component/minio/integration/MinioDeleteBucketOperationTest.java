@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration.remoteTests;
-
-import java.io.IOException;
-import java.util.Properties;
+package org.apache.camel.component.minio.integration;
 
 import io.minio.MinioClient;
 import org.apache.camel.BindToRegistry;
@@ -26,18 +23,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
 import org.apache.camel.component.minio.MinioOperations;
-import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+class MinioDeleteBucketOperationTest extends MinioTestContainerSupport {
 
     @BindToRegistry("minioClient")
-    MinioClient minioClient = MinioClient.builder()
-            .endpoint(properties.getProperty("endpoint"))
-            .credentials(properties.getProperty("accessKey"), properties.getProperty("secretKey"))
+    MinioClient client = MinioClient.builder()
+            .endpoint("http://" + CONTAINER.getHost(), CONTAINER.getMappedPort(BROKER_PORT), false)
+            .credentials(ACCESS_KEY, SECRET_KEY)
             .build();
 
     @EndpointInject
@@ -46,23 +40,16 @@ class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioCopyObjectOperationIntegrationTest() throws IOException {
-    }
-
     @Test
     void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:putObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setBody("Test");
-        });
+        template.send("direct:listBuckets",
+                exchange -> exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.listBuckets));
 
-        template.send("direct:copyObject", exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "test.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_OBJECT_NAME, "test1.txt");
-            exchange.getIn().setHeader(MinioConstants.DESTINATION_BUCKET_NAME, "mycamel1");
-            exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.copyObject);
+        template.send("direct:deleteBucket", exchange -> {
+            exchange.getIn().setHeader(MinioConstants.BUCKET_NAME, "mycamel2");
+            exchange.getIn().setHeader(MinioConstants.MINIO_OPERATION, MinioOperations.deleteBucket);
         });
 
         assertMockEndpointsSatisfied();
@@ -73,11 +60,11 @@ class MinioCopyObjectOperationIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String minioEndpoint = "minio://mycamel?autoCreateBucket=false";
+                String minioEndpoint = "minio://mycamel2?autoCreateBucket=true";
 
-                from("direct:putObject").to(minioEndpoint);
+                from("direct:listBuckets").to(minioEndpoint);
 
-                from("direct:copyObject").to(minioEndpoint).to("mock:result");
+                from("direct:deleteBucket").to(minioEndpoint).to("mock:result");
 
             }
         };

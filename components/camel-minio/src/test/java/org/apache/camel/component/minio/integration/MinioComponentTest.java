@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration.remoteTests;
-
-import java.io.IOException;
-import java.util.Properties;
+package org.apache.camel.component.minio.integration;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -26,9 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.minio.MinioConstants;
-import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MinioComponentIntegrationTest extends CamelTestSupport {
-    final Properties properties = MinioTestUtils.loadMinioPropertiesFile();
+class MinioComponentTest extends MinioTestContainerSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -45,20 +39,17 @@ class MinioComponentIntegrationTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioComponentIntegrationTest() throws IOException {
-    }
-
     @Test
     void sendInOnly() throws Exception {
         result.expectedMessageCount(2);
 
         Exchange exchange1 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest1");
             exchange.getIn().setBody("This is my bucket content.");
         });
 
         Exchange exchange2 = template.send("direct:start", ExchangePattern.InOnly, exchange -> {
-            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest2");
             exchange.getIn().setBody("This is my bucket content.");
         });
 
@@ -76,7 +67,7 @@ class MinioComponentIntegrationTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, exchange1 -> {
-            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest");
+            exchange1.getIn().setHeader(MinioConstants.OBJECT_NAME, "CamelUnitTest3");
             exchange1.getIn().setBody("This is my bucket content.");
         });
 
@@ -111,9 +102,10 @@ class MinioComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=" + properties.getProperty("accessKey")
-                          + "&secretKey=RAW(" + properties.getProperty("secretKey")
-                          + ")&region=us-west-1&autoCreateBucket=false&endpoint=https://play.min.io&deleteAfterRead=false";
+                        = "minio://mycamelbucket?accessKey=" + ACCESS_KEY
+                          + "&secretKey=RAW(" + SECRET_KEY
+                          + ")&autoCreateBucket=true&endpoint=http://" + CONTAINER.getHost() + "&proxyPort="
+                          + CONTAINER.getMappedPort(BROKER_PORT);
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 
