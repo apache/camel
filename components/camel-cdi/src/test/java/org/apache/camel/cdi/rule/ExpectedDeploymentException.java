@@ -28,8 +28,8 @@ import org.junit.runners.model.Statement;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertThat;
 
 public final class ExpectedDeploymentException implements TestRule {
 

@@ -44,13 +44,13 @@ import org.junit.runner.RunWith;
 
 import static org.apache.camel.cdi.rule.LogEventMatcher.logEvent;
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesPattern;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)

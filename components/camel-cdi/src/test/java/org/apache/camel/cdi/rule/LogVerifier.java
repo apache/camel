@@ -26,6 +26,7 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.rules.Verifier;
 import org.junit.runner.Description;
@@ -70,7 +71,8 @@ public class LogVerifier extends Verifier {
                   null,
                   PatternLayout.newBuilder()
                           .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
-                          .build());
+                          .build(),
+                  true, Property.EMPTY_ARRAY);
         }
 
         @Override
