@@ -92,6 +92,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                         final Class<?> argType = argument.getType();
                         final String typeArgs = argument.getTypeArgs();
                         final String argTypeName = argType.getCanonicalName();
+                        final String typeDesc = argument.getDescription();
 
                         for (Map.Entry<Pattern, List<NameReplacement>> argEntry : argMap.entrySet()) {
                             final Matcher matcher = argEntry.getKey().matcher(argument.getName());
@@ -104,7 +105,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
                                         // no type pattern
                                         final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
-                                        argument = new ApiMethodArg(newName, argType, typeArgs);
+                                        argument = new ApiMethodArg(newName, argType, typeArgs, typeDesc);
 
                                     } else {
 
@@ -113,12 +114,14 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                                             if (!adapter.replaceWithType) {
                                                 // replace argument name
                                                 final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
-                                                argument = new ApiMethodArg(newName, argType, typeArgs);
+                                                argument = new ApiMethodArg(
+                                                        newName, argType, typeArgs, typeDesc);
                                             } else {
                                                 // replace name with argument type name
                                                 final String newName
                                                         = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
-                                                argument = new ApiMethodArg(newName, argType, typeArgs);
+                                                argument = new ApiMethodArg(
+                                                        newName, argType, typeArgs, typeDesc);
                                             }
                                         }
                                     }

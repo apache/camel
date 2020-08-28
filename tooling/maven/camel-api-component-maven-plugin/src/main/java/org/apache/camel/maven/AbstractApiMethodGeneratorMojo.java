@@ -17,6 +17,7 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.camel.support.component.ArgumentSubstitutionParser;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -69,7 +71,23 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
         // create parser
         ApiMethodParser parser = createAdapterParser(proxyType);
-        parser.setSignatures(getSignatureList());
+
+        List<String> signatures = new ArrayList<>();
+        Map<String, Map<String, String>> parameters = new HashMap<>();
+        List<SignatureModel> data = getSignatureList();
+        for (SignatureModel model : data) {
+            signatures.add(model.getSignature());
+            String method = StringHelper.before(model.getSignature(), "(");
+            if (method != null && method.contains(" ")) {
+                method = StringHelper.after(method, " ");
+            }
+            if (method != null) {
+                parameters.put(method, model.getParameters());
+            }
+        }
+        parser.setSignatures(signatures);
+        parser.setParameters(parameters);
+
         parser.setClassLoader(getProjectClassLoader());
 
         // parse signatures
@@ -95,7 +113,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
     }
 
-    public abstract List<String> getSignatureList() throws MojoExecutionException;
+    public abstract List<SignatureModel> getSignatureList() throws MojoExecutionException;
 
     public Class<?> getProxyType() throws MojoExecutionException {
         if (proxyType == null) {
@@ -195,7 +213,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                                     argWithTypes, name, e.getMessage()),
                             e);
                 }
-                parameters.put(name, new ApiMethodArg(name, argType, typeArgs));
+                parameters.put(name, new ApiMethodArg(name, argType, typeArgs, option.getDescription()));
             }
         }
 
@@ -291,6 +309,17 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         PRIMITIVE_VALUES.put(Long.TYPE, "0L");
         PRIMITIVE_VALUES.put(Float.TYPE, "0.0f");
         PRIMITIVE_VALUES.put(Double.TYPE, "0.0d");
+    }
+
+    public boolean hasDoc(ApiMethodArg argument) {
+        return argument.getDescription() != null && !argument.getDescription().isEmpty();
+    }
+
+    public String getDoc(ApiMethodArg argument) {
+        if (argument.getDescription() == null || argument.getDescription().isEmpty()) {
+            return "";
+        }
+        return argument.getDescription();
     }
 
     public static String getDefaultArgValue(Class<?> aClass) {

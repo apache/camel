@@ -64,6 +64,7 @@ public abstract class ApiMethodParser<T> {
 
     private final Class<T> proxyType;
     private List<String> signatures;
+    private Map<String, Map<String, String>> parameters;
     private ClassLoader classLoader = ApiMethodParser.class.getClassLoader();
 
     public ApiMethodParser(Class<T> proxyType) {
@@ -81,6 +82,14 @@ public abstract class ApiMethodParser<T> {
     public final void setSignatures(List<String> signatures) {
         this.signatures = new ArrayList<>();
         this.signatures.addAll(signatures);
+    }
+
+    public Map<String, Map<String, String>> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Map<String, String>> parameters) {
+        this.parameters = parameters;
     }
 
     public final ClassLoader getClassLoader() {
@@ -156,7 +165,15 @@ public abstract class ApiMethodParser<T> {
                 if (typeArgs != null && typeArgs.equals(genericTypeParameterName)) {
                     typeArgs = genericTypeParameterUpperBound;
                 }
-                arguments.add(new ApiMethodArg(argsMatcher.group(3), type, typeArgs));
+                String typeName = argsMatcher.group(3);
+                String typeDesc = null;
+                if (parameters != null && name != null && typeName != null) {
+                    Map<String, String> params = parameters.get(name);
+                    if (params != null) {
+                        typeDesc = params.get(typeName);
+                    }
+                }
+                arguments.add(new ApiMethodArg(typeName, type, typeArgs, typeDesc));
             }
 
             Method method;

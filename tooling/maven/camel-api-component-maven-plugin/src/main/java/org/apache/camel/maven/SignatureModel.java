@@ -16,45 +16,29 @@
  */
 package org.apache.camel.maven;
 
+import java.util.Map;
+
 /**
- * Extra endpoint option to add to generated *EndpointConfiguration
+ * Models of the method signatures from the parser.
  */
-public class ExtraOption {
+public class SignatureModel {
 
-    private String type;
-    private String name;
-    private String description;
+    private String signature;
+    private Map<String, String> parameters;
 
-    public ExtraOption() {
+    public String getSignature() {
+        return signature;
     }
 
-    public ExtraOption(String type, String name, String description) {
-        this.type = type;
-        this.name = name;
-        this.description = description;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
-    public String getType() {
-        return type;
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

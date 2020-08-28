@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -68,9 +68,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     protected Boolean includeStaticMethods;
 
     @Override
-    public List<String> getSignatureList() throws MojoExecutionException {
+    public List<SignatureModel> getSignatureList() throws MojoExecutionException {
         // signatures as map from signature with no arg names to arg names from JavadocParser
-        Map<String, String> result = new HashMap<>();
+        Map<String, SignatureModel> result = new LinkedHashMap<>();
 
         final Pattern packagePatterns = Pattern.compile(excludePackages);
         final Pattern classPatterns = (excludeClasses != null) ? Pattern.compile(excludeClasses) : null;
@@ -129,7 +129,12 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                         }
                         final String resultType = getResultType(aClass, name, types);
                         if (resultType != null) {
-                            result.put(method, resultType + " " + name + methodMap.get(method));
+                            SignatureModel model = new SignatureModel();
+                            String signature = resultType + " " + name + methodMap.get(method);
+                            model.setSignature(signature);
+                            Map<String, String> params = htmlParser.getParameters().get(name);
+                            model.setParameters(params);
+                            result.put(method, model);
                         }
                     }
                 }
