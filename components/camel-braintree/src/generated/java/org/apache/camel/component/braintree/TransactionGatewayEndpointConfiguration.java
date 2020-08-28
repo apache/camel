@@ -14,23 +14,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class TransactionGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private java.math.BigDecimal amount;
-
     @UriParam
     private com.braintreegateway.TransactionCloneRequest cloneRequest;
-
-    @UriParam
+    @UriParam(description = "Of the transaction to cancel release from escrow of")
     private String id;
-
-    @UriParam
+    @UriParam(description = "The search query")
     private com.braintreegateway.TransactionSearchRequest query;
-
     @UriParam
     private com.braintreegateway.TransactionRefundRequest refundRequest;
-
-    @UriParam
+    @UriParam(description = "The request")
     private com.braintreegateway.TransactionRequest request;
 
     public java.math.BigDecimal getAmount() {

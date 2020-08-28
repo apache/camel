@@ -14,41 +14,29 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The description of the new group")
     private String description;
-
-    @UriParam
+    @UriParam(description = "The external_sync_identifier of the new group")
     private String externalSyncIdentifier;
-
-    @UriParam
+    @UriParam(description = "The id of group")
     private String groupId;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxGroup.Info groupInfo;
-
-    @UriParam
+    @UriParam(description = "The id of group membership to delete")
     private String groupMembershipId;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxGroupMembership.Info info;
-
-    @UriParam
+    @UriParam(description = "The invitibility_level of the new group")
     private String invitabilityLevel;
-
-    @UriParam
+    @UriParam(description = "The member_viewability_level of the new group")
     private String memberViewabilityLevel;
-
-    @UriParam
+    @UriParam(description = "The name of the new group")
     private String name;
-
-    @UriParam
+    @UriParam(description = "The provenance of the new group")
     private String provenance;
-
-    @UriParam
+    @UriParam(description = "The role of the user in this group. Can be")
     private com.box.sdk.BoxGroupMembership.Role role;
-
-    @UriParam
+    @UriParam(description = "The id of user to be added to group")
     private String userId;
 
     public String getDescription() {

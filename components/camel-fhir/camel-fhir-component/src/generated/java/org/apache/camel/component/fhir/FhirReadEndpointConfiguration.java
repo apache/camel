@@ -14,43 +14,30 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirReadEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType iUrl;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
     private String ifVersionMatches;
-
     @UriParam
     private Long longId;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> resource;
-
     @UriParam
     private String resourceClass;
-
     @UriParam
     private Boolean returnNull;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseResource returnResource;
-
     @UriParam
     private String stringId;
-
     @UriParam
     private Boolean throwError;
-
     @UriParam
     private String url;
-
     @UriParam
     private String version;
 

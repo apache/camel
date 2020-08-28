@@ -14,56 +14,39 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
-
-    @UriParam
+    @UriParam(description = "AS2 name of sender")
     private String as2From;
-
-    @UriParam
+    @UriParam(description = "The structure of AS2 to send; see")
     private org.apache.camel.component.as2.api.AS2MessageStructure as2MessageStructure;
-
-    @UriParam
+    @UriParam(description = "AS2 name of recipient")
     private String as2To;
-
-    @UriParam
+    @UriParam(description = "The algorithm used to compress the message or")
     private org.apache.camel.component.as2.api.AS2CompressionAlgorithm compressionAlgorithm;
-
-    @UriParam
+    @UriParam(description = "An RFC2822 address to request a receipt or")
     private String dispositionNotificationTo;
-
-    @UriParam
+    @UriParam(description = "EDI message to transport")
     private String ediMessage;
-
-    @UriParam
+    @UriParam(description = "The content typw of EDI message")
     private org.apache.http.entity.ContentType ediMessageContentType;
-
-    @UriParam
+    @UriParam(description = "The transfer encoding used to transport EDI message")
     private String ediMessageTransferEncoding;
-
-    @UriParam
+    @UriParam(description = "The algorithm used to encrypt the message or")
     private org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm;
-
-    @UriParam
+    @UriParam(description = "The chain of certificates used to encrypt the message or")
     private java.security.cert.Certificate[] encryptingCertificateChain;
-
-    @UriParam
+    @UriParam(description = "RFC2822 address of sender")
     private String from;
-
-    @UriParam
+    @UriParam(description = "Resource location to deliver message")
     private String requestUri;
-
-    @UriParam
+    @UriParam(description = "The senders list of signing algorithms for signing receipt, in preferred order, or")
     private String[] signedReceiptMicAlgorithms;
-
-    @UriParam
+    @UriParam(description = "The algorithm used to sign the message or")
     private org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm;
-
-    @UriParam
+    @UriParam(description = "The chain of certificates used to sign the message or")
     private java.security.cert.Certificate[] signingCertificateChain;
-
-    @UriParam
+    @UriParam(description = "The private key used to sign EDI message")
     private java.security.PrivateKey signingPrivateKey;
-
-    @UriParam
+    @UriParam(description = "Message subject")
     private String subject;
 
     public String getAs2From() {

@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CalendarAclEndpointConfiguration extends GoogleCalendarConfiguration {
-
     @UriParam
     private String calendarId;
-
     @UriParam
     private com.google.api.services.calendar.model.AclRule content;
-
     @UriParam
     private com.google.api.services.calendar.model.Channel contentChannel;
-
     @UriParam
     private String ruleId;
 

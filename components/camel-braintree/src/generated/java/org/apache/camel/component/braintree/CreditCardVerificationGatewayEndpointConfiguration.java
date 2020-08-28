@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CreditCardVerificationGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private String id;
-
     @UriParam
     private com.braintreegateway.CreditCardVerificationSearchRequest query;
-
     @UriParam
     private com.braintreegateway.CreditCardVerificationRequest request;
 

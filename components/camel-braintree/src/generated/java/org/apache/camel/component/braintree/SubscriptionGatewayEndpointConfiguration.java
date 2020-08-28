@@ -14,25 +14,18 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SubscriptionGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private java.math.BigDecimal amount;
-
     @UriParam
     private String customerId;
-
-    @UriParam
+    @UriParam(description = "Of the")
     private String id;
-
-    @UriParam
+    @UriParam(description = "The request")
     private com.braintreegateway.SubscriptionRequest request;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.braintreegateway.SubscriptionSearchRequest searchRequest;
-
     @UriParam
     private Boolean submitForSettlement;
-
     @UriParam
     private String subscriptionId;
 

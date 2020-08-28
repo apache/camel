@@ -14,14 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxCommentsManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The id of comment to change")
     private String commentId;
-
-    @UriParam
+    @UriParam(description = "The id of file to rename")
     private String fileId;
-
-    @UriParam
+    @UriParam(description = "The comment's message")
     private String message;
 
     public String getCommentId() {

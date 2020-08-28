@@ -14,40 +14,28 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirOperationEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private Boolean asynchronous;
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseBundle msgBundle;
-
     @UriParam
     private String name;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseParameters parameters;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType;
-
     @UriParam
     private String respondToUri;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> responseClass;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType;
-
     @UriParam
     private Boolean useHttpGet;
 

@@ -14,7 +14,6 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveChannelsEndpointConfiguration extends GoogleDriveConfiguration {
-
     @UriParam
     private com.google.api.services.drive.model.Channel contentChannel;
 

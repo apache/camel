@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersMessagesAttachmentsEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private String id;
-
     @UriParam
     private String messageId;
-
     @UriParam
     private String userId;
 

@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DrivePermissionsEndpointConfiguration extends GoogleDriveConfiguration {
-
     @UriParam
     private com.google.api.services.drive.model.Permission content;
-
     @UriParam
     private String email;
-
     @UriParam
     private String fileId;
-
     @UriParam
     private String permissionId;
 

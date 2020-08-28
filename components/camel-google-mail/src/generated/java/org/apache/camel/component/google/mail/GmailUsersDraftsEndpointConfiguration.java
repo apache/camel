@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private com.google.api.services.gmail.model.Draft content;
-
     @UriParam
     private String id;
-
     @UriParam
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
-
     @UriParam
     private String userId;
 

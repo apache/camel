@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersLabelsEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private com.google.api.services.gmail.model.Label content;
-
     @UriParam
     private String id;
-
     @UriParam
     private String userId;
 

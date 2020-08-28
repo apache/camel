@@ -14,10 +14,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SettlementBatchSummaryGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private String groupByCustomField;
-
     @UriParam
     private java.util.Calendar settlementDate;
 

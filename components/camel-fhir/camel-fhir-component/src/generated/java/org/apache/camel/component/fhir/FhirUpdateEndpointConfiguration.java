@@ -14,25 +14,18 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirUpdateEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
     private ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
-
     @UriParam
     private String resourceAsString;
-
     @UriParam
     private String stringId;
-
     @UriParam
     private String url;
 

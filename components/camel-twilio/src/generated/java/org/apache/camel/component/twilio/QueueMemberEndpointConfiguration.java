@@ -14,20 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class QueueMemberEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The method")
     private com.twilio.http.HttpMethod method;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The call_sid")
     private String pathCallSid;
-
-    @UriParam
+    @UriParam(description = "The Queue in which to find the members")
     private String pathQueueSid;
-
-    @UriParam
+    @UriParam(description = "The url")
     private java.net.URI url;
 
     public com.twilio.http.HttpMethod getMethod() {

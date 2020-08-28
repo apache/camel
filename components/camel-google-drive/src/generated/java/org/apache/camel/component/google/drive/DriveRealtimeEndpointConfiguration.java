@@ -14,10 +14,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveRealtimeEndpointConfiguration extends GoogleDriveConfiguration {
-
     @UriParam
     private String fileId;
-
     @UriParam
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
 

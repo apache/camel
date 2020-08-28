@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirLoadPageEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseBundle bundle;
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType;
-
     @UriParam
     private String url;
 

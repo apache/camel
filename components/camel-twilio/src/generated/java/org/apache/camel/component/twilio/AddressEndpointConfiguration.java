@@ -14,29 +14,21 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AddressEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The city")
     private String city;
-
-    @UriParam
+    @UriParam(description = "The customer_name")
     private String customerName;
-
-    @UriParam
+    @UriParam(description = "The iso_country")
     private String isoCountry;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The sid")
     private String pathSid;
-
-    @UriParam
+    @UriParam(description = "The postal_code")
     private String postalCode;
-
-    @UriParam
+    @UriParam(description = "The region")
     private String region;
-
-    @UriParam
+    @UriParam(description = "The street")
     private String street;
 
     public String getCity() {

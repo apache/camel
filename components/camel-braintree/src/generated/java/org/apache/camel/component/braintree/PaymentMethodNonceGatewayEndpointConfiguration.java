@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class PaymentMethodNonceGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private String paymentMethodNonce;
-
     @UriParam
     private String paymentMethodToken;
-
     @UriParam
     private com.braintreegateway.PaymentMethodNonceRequest request;
 

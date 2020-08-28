@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxEventLogsManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The lower bound on the timestamp of the events returned")
     private java.util.Date after;
-
-    @UriParam
+    @UriParam(description = "The upper bound on the timestamp of the events returned")
     private java.util.Date before;
-
-    @UriParam
+    @UriParam(description = "The starting position of the event stream. May be")
     private String position;
-
-    @UriParam
+    @UriParam(description = "An optional list of event types to filter by")
     private com.box.sdk.BoxEvent.Type[] types;
 
     public java.util.Date getAfter() {

@@ -14,23 +14,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "ApplicationSid that configures from where to fetch TwiML")
     private String applicationSid;
-
-    @UriParam
+    @UriParam(description = "Twilio number from which to originate the call")
     private com.twilio.type.PhoneNumber from;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "Call Sid that uniquely identifies the Call to delete")
     private String pathSid;
-
-    @UriParam
+    @UriParam(description = "Phone number, SIP address or client identifier to call")
     private com.twilio.type.Endpoint to;
-
-    @UriParam
+    @UriParam(description = "Url from which to fetch TwiML")
     private java.net.URI url;
 
     public String getApplicationSid() {

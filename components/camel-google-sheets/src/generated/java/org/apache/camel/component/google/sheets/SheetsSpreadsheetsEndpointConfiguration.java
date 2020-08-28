@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SheetsSpreadsheetsEndpointConfiguration extends GoogleSheetsConfiguration {
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest batchUpdateSpreadsheetRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.Spreadsheet content;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest getSpreadsheetByDataFilterRequest;
-
-    @UriParam
+    @UriParam(description = "The spreadsheet to apply the updates to")
     private String spreadsheetId;
 
     public com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest getBatchUpdateSpreadsheetRequest() {

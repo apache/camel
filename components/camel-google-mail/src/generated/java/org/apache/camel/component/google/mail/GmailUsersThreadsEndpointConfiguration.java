@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private com.google.api.services.gmail.model.ModifyThreadRequest content;
-
     @UriParam
     private String id;
-
     @UriParam
     private String userId;
 

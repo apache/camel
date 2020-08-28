@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CustomerGatewayEndpointConfiguration extends BraintreeConfiguration {
-
-    @UriParam
+    @UriParam(description = "The id of the association filter to use")
     private String associationFilterId;
-
-    @UriParam
+    @UriParam(description = "The id of the")
     private String id;
-
-    @UriParam
+    @UriParam(description = "The request query to use for search")
     private com.braintreegateway.CustomerSearchRequest query;
-
-    @UriParam
+    @UriParam(description = "The request")
     private com.braintreegateway.CustomerRequest request;
 
     public String getAssociationFilterId() {

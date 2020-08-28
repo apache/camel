@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfiguration {
-
     @UriParam
     private String commentId;
-
     @UriParam
     private com.google.api.services.drive.model.CommentReply content;
-
     @UriParam
     private String fileId;
-
     @UriParam
     private String replyId;
 

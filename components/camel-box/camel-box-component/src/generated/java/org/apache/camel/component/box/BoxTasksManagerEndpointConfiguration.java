@@ -14,29 +14,21 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxTasksManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The action the task assignee will be prompted to do")
     private com.box.sdk.BoxTask.Action action;
-
-    @UriParam
+    @UriParam(description = "The user to assign to task")
     private com.box.sdk.BoxUser assignTo;
-
-    @UriParam
+    @UriParam(description = "The day at which this task is due")
     private java.util.Date dueAt;
-
-    @UriParam
+    @UriParam(description = "The id of file to add task to")
     private String fileId;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxTask.Info info;
-
-    @UriParam
+    @UriParam(description = "An optional message to include with the task")
     private String message;
-
-    @UriParam
+    @UriParam(description = "The id of task assignment to delete.Skip navigation links")
     private String taskAssignmentId;
-
-    @UriParam
+    @UriParam(description = "The id of task to add assignment for")
     private String taskId;
 
     public com.box.sdk.BoxTask.Action getAction() {

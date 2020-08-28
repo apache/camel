@@ -14,10 +14,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private com.google.api.services.gmail.model.WatchRequest content;
-
     @UriParam
     private String userId;
 

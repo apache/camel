@@ -14,10 +14,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirCapabilitiesEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseConformance> type;
 

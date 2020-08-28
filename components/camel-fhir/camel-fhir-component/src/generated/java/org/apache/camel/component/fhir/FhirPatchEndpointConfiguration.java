@@ -14,23 +14,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirPatchEndpointConfiguration extends FhirConfiguration {
-
-    @UriParam
+    @UriParam(description = "See")
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
-    @UriParam
+    @UriParam(description = "The resource ID to patch")
     private org.hl7.fhir.instance.model.api.IIdType id;
-
-    @UriParam
+    @UriParam(description = "The body of the patch document serialized in either XML or JSON which conforms to http://jsonpatch.com/ or http://tools.ietf.org/html/rfc5261")
     private String patchBody;
-
-    @UriParam
+    @UriParam(description = "Add a")
     private ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn;
-
-    @UriParam
+    @UriParam(description = "The resource ID to patch")
     private String stringId;
-
-    @UriParam
+    @UriParam(description = "The search URL to use. The format of this URL should be of the form")
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {

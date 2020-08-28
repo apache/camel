@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class RecordingAddOnResultPayloadEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The add_on_result_sid")
     private String pathAddOnResultSid;
-
-    @UriParam
+    @UriParam(description = "The reference_sid")
     private String pathReferenceSid;
-
-    @UriParam
+    @UriParam(description = "Delete by unique payload Sid")
     private String pathSid;
 
     public String getPathAccountSid() {

@@ -14,32 +14,23 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SheetsSpreadsheetsValuesEndpointConfiguration extends GoogleSheetsConfiguration {
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchClearValuesRequest batchClearValuesRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest batchGetValuesByDataFilterRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest batchUpdateValuesByDataFilterRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest batchUpdateValuesRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.ClearValuesRequest clearValuesRequest;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest content;
-
-    @UriParam
+    @UriParam(description = "The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table.")
     private String range;
-
-    @UriParam
+    @UriParam(description = "The ID of the spreadsheet to update")
     private String spreadsheetId;
-
-    @UriParam
+    @UriParam(description = "The")
     private com.google.api.services.sheets.v4.model.ValueRange values;
 
     public com.google.api.services.sheets.v4.model.BatchClearValuesRequest getBatchClearValuesRequest() {

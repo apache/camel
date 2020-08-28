@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class WebhookNotificationGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private String challenge;
-
     @UriParam
     private String payload;
-
     @UriParam
     private String signature;
 

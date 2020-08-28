@@ -14,20 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirCreateEndpointConfiguration extends FhirConfiguration {
-
-    @UriParam
+    @UriParam(description = "See")
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
-    @UriParam
+    @UriParam(description = "Add a")
     private ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn;
-
-    @UriParam
+    @UriParam(description = "The resource to create")
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
-
-    @UriParam
+    @UriParam(description = "The resource to create")
     private String resourceAsString;
-
-    @UriParam
+    @UriParam(description = "The search URL to use. The format of this URL should be of the form")
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {

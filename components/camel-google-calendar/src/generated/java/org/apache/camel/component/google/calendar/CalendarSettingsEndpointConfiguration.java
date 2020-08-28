@@ -14,10 +14,8 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CalendarSettingsEndpointConfiguration extends GoogleCalendarConfiguration {
-
     @UriParam
     private com.google.api.services.calendar.model.Channel contentChannel;
-
     @UriParam
     private String setting;
 

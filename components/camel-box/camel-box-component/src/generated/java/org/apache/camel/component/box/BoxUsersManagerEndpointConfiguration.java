@@ -14,41 +14,29 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The email address to add as an alias")
     private String email;
-
-    @UriParam
+    @UriParam(description = "The id of the email alias to delete")
     private String emailAliasId;
-
-    @UriParam
+    @UriParam(description = "The fields to retrieve. Leave this out for the standard fields.")
     private String[] fields;
-
-    @UriParam
+    @UriParam(description = "The filter term to lookup users by (login for external, login or name for managed); if")
     private String filterTerm;
-
-    @UriParam
+    @UriParam(description = "Whether or not this user should be deleted even if they still own files")
     private Boolean force;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxUser.Info info;
-
-    @UriParam
+    @UriParam(description = "The email address the user will use to login")
     private String login;
-
-    @UriParam
+    @UriParam(description = "The name of the user")
     private String name;
-
-    @UriParam
+    @UriParam(description = "Whether or not to send an email notification to the user that their account has been deleted")
     private Boolean notifyUser;
-
-    @UriParam
+    @UriParam(description = "Additional user information")
     private com.box.sdk.CreateUserParams params;
-
-    @UriParam
+    @UriParam(description = "The user id of the user whose files will be the source for this operation.Skip navigation links")
     private String sourceUserId;
-
-    @UriParam
+    @UriParam(description = "The id of user")
     private String userId;
 
     public String getEmail() {

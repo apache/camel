@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveParentsEndpointConfiguration extends GoogleDriveConfiguration {
-
     @UriParam
     private com.google.api.services.drive.model.ParentReference content;
-
     @UriParam
     private String fileId;
-
     @UriParam
     private String parentId;
 

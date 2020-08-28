@@ -14,20 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ConferenceParticipantEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The from")
     private com.twilio.type.PhoneNumber from;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The call_sid")
     private String pathCallSid;
-
-    @UriParam
+    @UriParam(description = "The conference_sid")
     private String pathConferenceSid;
-
-    @UriParam
+    @UriParam(description = "The to")
     private com.twilio.type.PhoneNumber to;
 
     public com.twilio.type.PhoneNumber getFrom() {
