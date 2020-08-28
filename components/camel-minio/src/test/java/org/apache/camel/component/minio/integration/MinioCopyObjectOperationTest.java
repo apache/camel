@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration.localTests;
+package org.apache.camel.component.minio.integration;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.camel.component.minio.MinioOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-class MinioCopyObjectOperationIntegrationTest extends MinioTestContainerSupport {
+class MinioCopyObjectOperationTest extends MinioTestContainerSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -42,7 +42,7 @@ class MinioCopyObjectOperationIntegrationTest extends MinioTestContainerSupport 
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioCopyObjectOperationIntegrationTest() throws IOException {
+    MinioCopyObjectOperationTest() throws IOException {
     }
 
     @Test

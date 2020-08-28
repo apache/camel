@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration.localTests;
+package org.apache.camel.component.minio.integration;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class MinioObjectRangeOperationIntegrationTest extends MinioTestContainerSupport {
+class MinioObjectRangeOperationTest extends MinioTestContainerSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationIntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinioObjectRangeOperationTest.class);
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
@@ -51,7 +51,7 @@ class MinioObjectRangeOperationIntegrationTest extends MinioTestContainerSupport
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    MinioObjectRangeOperationIntegrationTest() throws IOException {
+    MinioObjectRangeOperationTest() throws IOException {
     }
 
     @Test
