@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class PaymentMethodGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private com.braintreegateway.PaymentMethodDeleteRequest deleteRequest;
-
     @UriParam
     private com.braintreegateway.PaymentMethodGrantRequest grantRequest;
-
     @UriParam
     private com.braintreegateway.PaymentMethodRequest request;
-
     @UriParam
     private String token;
 

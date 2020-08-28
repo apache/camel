@@ -14,19 +14,14 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirMetaEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseMetaType meta;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseMetaType> metaType;
-
     @UriParam
     private String theResourceName;
 

@@ -14,23 +14,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The id of comment to change")
     private String collaborationId;
-
-    @UriParam
+    @UriParam(description = "The collaborator to add")
     private com.box.sdk.BoxCollaborator collaborator;
-
-    @UriParam
+    @UriParam(description = "The email address of the collaborator to add")
     private String email;
-
-    @UriParam
+    @UriParam(description = "The id of folder to add collaboration to")
     private String folderId;
-
     @UriParam
     private com.box.sdk.BoxCollaboration.Info info;
-
-    @UriParam
+    @UriParam(description = "The role of the collaborator")
     private com.box.sdk.BoxCollaboration.Role role;
 
     public String getCollaborationId() {

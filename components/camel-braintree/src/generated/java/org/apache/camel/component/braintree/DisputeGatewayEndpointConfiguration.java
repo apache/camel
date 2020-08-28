@@ -14,29 +14,21 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DisputeGatewayEndpointConfiguration extends BraintreeConfiguration {
-
-    @UriParam
+    @UriParam(description = "The content of the text evidence for the dispute")
     private String content;
-
-    @UriParam
+    @UriParam(description = "The dispute id to add text evidence to")
     private String disputeId;
-
-    @UriParam
+    @UriParam(description = "The document id of a previously uploaded document")
     private String documentId;
-
-    @UriParam
+    @UriParam(description = "The evidence id to remove")
     private String evidenceId;
-
-    @UriParam
+    @UriParam(description = "The file evidence request for the dispute")
     private com.braintreegateway.FileEvidenceRequest fileEvidenceRequest;
-
-    @UriParam
+    @UriParam(description = "The dispute id to accept")
     private String id;
-
-    @UriParam
+    @UriParam(description = "The query for what disputes to find")
     private com.braintreegateway.DisputeSearchRequest query;
-
-    @UriParam
+    @UriParam(description = "The text evidence request for the dispute")
     private com.braintreegateway.TextEvidenceRequest textEvidenceRequest;
 
     public String getContent() {

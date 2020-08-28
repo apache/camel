@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class IncomingPhoneNumberEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The desired area code for the new number")
     private String areaCode;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "Delete by unique phone-number Sid")
     private String pathSid;
-
-    @UriParam
+    @UriParam(description = "The phone number")
     private com.twilio.type.PhoneNumber phoneNumber;
 
     public String getAreaCode() {

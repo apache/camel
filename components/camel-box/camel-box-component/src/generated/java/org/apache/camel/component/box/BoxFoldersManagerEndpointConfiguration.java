@@ -14,47 +14,33 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxFoldersManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The access level of the shared link")
     private com.box.sdk.BoxSharedLink.Access access;
-
-    @UriParam
+    @UriParam(description = "The id of the destination folder")
     private String destinationFolderId;
-
-    @UriParam
+    @UriParam(description = "The information fields to retrieve; if")
     private String[] fields;
-
-    @UriParam
+    @UriParam(description = "The id of folder to copy")
     private String folderId;
-
-    @UriParam
+    @UriParam(description = "The name of created folder")
     private String folderName;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxFolder.Info info;
-
-    @UriParam
+    @UriParam(description = "The maximum number of children to retrieve after the offset; if")
     private Long limit;
-
-    @UriParam
+    @UriParam(description = "The new name of folder")
     private String newFolderName;
-
-    @UriParam
+    @UriParam(description = "Is")
     private String newName;
-
-    @UriParam
+    @UriParam(description = "The index of first child item to retrieve; if")
     private Long offset;
-
-    @UriParam
+    @UriParam(description = "The id of parent folder")
     private String parentFolderId;
-
-    @UriParam
+    @UriParam(description = "Sequence of Box folder names from parent folder to returned folder")
     private String[] path;
-
-    @UriParam
+    @UriParam(description = "Is")
     private com.box.sdk.BoxSharedLink.Permissions permissions;
-
-    @UriParam
+    @UriParam(description = "The date and time at which time the created shared link will expire; if")
     private java.util.Date unshareDate;
 
     public com.box.sdk.BoxSharedLink.Access getAccess() {

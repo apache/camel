@@ -14,8 +14,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ReportGatewayEndpointConfiguration extends BraintreeConfiguration {
-
-    @UriParam
+    @UriParam(description = "The request")
     private com.braintreegateway.TransactionLevelFeeReportRequest request;
 
     public com.braintreegateway.TransactionLevelFeeReportRequest getRequest() {

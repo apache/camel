@@ -14,14 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallRecordingEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The call_sid")
     private String pathCallSid;
-
-    @UriParam
+    @UriParam(description = "The sid")
     private String pathSid;
 
     public String getPathAccountSid() {

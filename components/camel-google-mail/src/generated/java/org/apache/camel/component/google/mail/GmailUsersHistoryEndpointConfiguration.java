@@ -14,7 +14,6 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersHistoryEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private String userId;
 

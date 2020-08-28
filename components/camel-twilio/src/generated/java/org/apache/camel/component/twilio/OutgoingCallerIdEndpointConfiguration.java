@@ -14,11 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class OutgoingCallerIdEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "Delete by unique outgoing-caller-id Sid")
     private String pathSid;
 
     public String getPathAccountSid() {

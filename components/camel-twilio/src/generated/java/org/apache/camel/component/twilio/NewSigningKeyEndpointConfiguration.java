@@ -14,8 +14,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class NewSigningKeyEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
 
     public String getPathAccountSid() {

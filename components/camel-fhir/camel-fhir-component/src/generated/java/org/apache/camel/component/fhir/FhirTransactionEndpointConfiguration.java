@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirTransactionEndpointConfiguration extends FhirConfiguration {
-
-    @UriParam
+    @UriParam(description = "Bundle to use in the transaction")
     private org.hl7.fhir.instance.model.api.IBaseBundle bundle;
-
-    @UriParam
+    @UriParam(description = "See")
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
-    @UriParam
+    @UriParam(description = "Resources to use in the transaction")
     private java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> resources;
-
-    @UriParam
+    @UriParam(description = "Bundle to use in the transaction")
     private String stringBundle;
 
     public org.hl7.fhir.instance.model.api.IBaseBundle getBundle() {

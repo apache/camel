@@ -14,25 +14,18 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirHistoryEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private Integer count;
-
     @UriParam
     private java.util.Date cutoff;
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IIdType id;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType;
-
     @UriParam
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType;
 

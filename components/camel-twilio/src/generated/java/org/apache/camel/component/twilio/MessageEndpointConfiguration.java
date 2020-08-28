@@ -14,26 +14,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class MessageEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The body")
     private String body;
-
-    @UriParam
+    @UriParam(description = "The phone number that initiated the message")
     private com.twilio.type.PhoneNumber from;
-
-    @UriParam
+    @UriParam(description = "The media_url")
     private java.util.List<java.net.URI> mediaUrl;
-
-    @UriParam
+    @UriParam(description = "The messaging_service_sid")
     private String messagingServiceSid;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The message to delete")
     private String pathSid;
-
-    @UriParam
+    @UriParam(description = "The phone number to receive the message")
     private com.twilio.type.PhoneNumber to;
 
     public String getBody() {

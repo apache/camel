@@ -14,25 +14,18 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class Olingo2AppEndpointConfiguration extends Olingo2Configuration {
-
     @UriParam
     private Object data;
-
     @UriParam
     private org.apache.olingo.odata2.api.edm.Edm edm;
-
     @UriParam
     private java.util.Map<String,String> endpointHttpHeaders;
-
     @UriParam
     private String keyPredicate;
-
     @UriParam
     private java.util.Map<String,String> queryParams;
-
     @UriParam
     private String resourcePath;
-
     @UriParam
     private org.apache.camel.component.olingo2.api.Olingo2ResponseHandler responseHandler;
 

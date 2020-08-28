@@ -14,14 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AddressGatewayEndpointConfiguration extends BraintreeConfiguration {
-
-    @UriParam
+    @UriParam(description = "The id of the")
     private String customerId;
-
-    @UriParam
+    @UriParam(description = "The id of the")
     private String id;
-
-    @UriParam
+    @UriParam(description = "The request object")
     private com.braintreegateway.AddressRequest request;
 
     public String getCustomerId() {

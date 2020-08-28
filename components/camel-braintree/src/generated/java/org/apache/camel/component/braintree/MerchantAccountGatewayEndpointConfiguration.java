@@ -14,16 +14,12 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class MerchantAccountGatewayEndpointConfiguration extends BraintreeConfiguration {
-
     @UriParam
     private com.braintreegateway.MerchantAccountCreateForCurrencyRequest currencyRequest;
-
     @UriParam
     private String id;
-
     @UriParam
     private Integer page;
-
     @UriParam
     private com.braintreegateway.MerchantAccountRequest request;
 

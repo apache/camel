@@ -14,7 +14,6 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AS2ServerManagerEndpointConfiguration extends AS2Configuration {
-
     @UriParam
     private String requestUriPattern;
 

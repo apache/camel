@@ -14,14 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipDomainEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The unique address on Twilio to route SIP traffic")
     private String domainName;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The sid")
     private String pathSid;
 
     public String getDomainName() {

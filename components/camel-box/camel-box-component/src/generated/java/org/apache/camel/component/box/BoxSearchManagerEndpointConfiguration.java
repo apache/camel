@@ -14,11 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxSearchManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The id of folder searched")
     private String folderId;
-
-    @UriParam
+    @UriParam(description = "The search query")
     private String query;
 
     public String getFolderId() {

@@ -14,14 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ApplicationEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The friendly_name")
     private String friendlyName;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The application sid to delete")
     private String pathSid;
 
     public String getFriendlyName() {

@@ -14,8 +14,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AccountEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "Fetch by unique Account Sid")
     private String pathSid;
 
     public String getPathSid() {

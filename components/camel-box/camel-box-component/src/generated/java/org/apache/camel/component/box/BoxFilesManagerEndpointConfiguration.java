@@ -14,95 +14,65 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration {
-
-    @UriParam
+    @UriParam(description = "The access level of the shared link")
     private com.box.sdk.BoxSharedLink.Access access;
-
-    @UriParam
+    @UriParam(description = "If the file name is already used, call the uploadNewVersion instead.")
     private Boolean check;
-
-    @UriParam
+    @UriParam(description = "A stream containing contents of the file to upload")
     private java.io.InputStream content;
-
-    @UriParam
+    @UriParam(description = "The content created date that will be given to the uploaded file")
     private java.util.Date created;
-
-    @UriParam
+    @UriParam(description = "The id of the destination folder")
     private String destinationFolderId;
-
-    @UriParam
+    @UriParam(description = "The information fields to retrieve; if")
     private String[] fields;
-
-    @UriParam
+    @UriParam(description = "A stream containing contents of the file to upload")
     private java.io.InputStream fileContent;
-
-    @UriParam
+    @UriParam(description = "The id of file to copy")
     private String fileId;
-
-    @UriParam
+    @UriParam(description = "The name to give the uploaded file")
     private String fileName;
-
-    @UriParam
+    @UriParam(description = "The size of the file's content used for monitoring the upload's progress")
     private Long fileSize;
-
-    @UriParam
+    @UriParam(description = "Either PNG of JPG")
     private com.box.sdk.BoxFile.ThumbnailFileType fileType;
-
-    @UriParam
+    @UriParam(description = "The updated information")
     private com.box.sdk.BoxFile.Info info;
-
-    @UriParam
+    @UriParam(description = "A listener for monitoring the download's progress; if")
     private com.box.sdk.ProgressListener listener;
-
-    @UriParam
+    @UriParam(description = "Maximum height")
     private Integer maxHeight;
-
-    @UriParam
+    @UriParam(description = "Maximum width")
     private Integer maxWidth;
-
-    @UriParam
+    @UriParam(description = "The new metadata values")
     private com.box.sdk.Metadata metadata;
-
-    @UriParam
+    @UriParam(description = "Minimum height")
     private Integer minHeight;
-
-    @UriParam
+    @UriParam(description = "Minimum width")
     private Integer minWidth;
-
-    @UriParam
+    @UriParam(description = "The content modified date that will be given to the uploaded file")
     private java.util.Date modified;
-
-    @UriParam
+    @UriParam(description = "The new name of file")
     private String newFileName;
-
-    @UriParam
+    @UriParam(description = "Is")
     private String newName;
-
-    @UriParam
+    @UriParam(description = "The stream to which the file contents will be written")
     private java.io.OutputStream output;
-
-    @UriParam
+    @UriParam(description = "The id of parent folder")
     private String parentFolderId;
-
-    @UriParam
+    @UriParam(description = "Is")
     private com.box.sdk.BoxSharedLink.Permissions permissions;
-
-    @UriParam
+    @UriParam(description = "The byte offset in file at which to stop the download; if")
     private Long rangeEnd;
-
-    @UriParam
+    @UriParam(description = "The byte offset in file at which to start the download; if")
     private Long rangeStart;
-
-    @UriParam
+    @UriParam(description = "The size of the file's content used for monitoring the upload's progress.Skip navigation links")
     private Long size;
-
-    @UriParam
+    @UriParam(description = "The metadata template type name; if")
     private String typeName;
-
-    @UriParam
+    @UriParam(description = "The date and time at which time the created shared link will expire; if")
     private java.util.Date unshareDate;
-
-    @UriParam
+    @UriParam(description = "The version of file to delete; initial version of file has value of")
     private Integer version;
 
     public com.box.sdk.BoxSharedLink.Access getAccess() {

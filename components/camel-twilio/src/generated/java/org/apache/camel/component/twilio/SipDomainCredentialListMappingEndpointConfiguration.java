@@ -14,17 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipDomainCredentialListMappingEndpointConfiguration extends TwilioConfiguration {
-
-    @UriParam
+    @UriParam(description = "The credential_list_sid")
     private String credentialListSid;
-
-    @UriParam
+    @UriParam(description = "The account_sid")
     private String pathAccountSid;
-
-    @UriParam
+    @UriParam(description = "The domain_sid")
     private String pathDomainSid;
-
-    @UriParam
+    @UriParam(description = "The sid")
     private String pathSid;
 
     public String getCredentialListSid() {

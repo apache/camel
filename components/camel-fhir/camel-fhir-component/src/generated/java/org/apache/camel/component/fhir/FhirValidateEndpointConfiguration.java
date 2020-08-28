@@ -14,13 +14,10 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirValidateEndpointConfiguration extends FhirConfiguration {
-
     @UriParam
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-
     @UriParam
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
-
     @UriParam
     private String resourceAsString;
 

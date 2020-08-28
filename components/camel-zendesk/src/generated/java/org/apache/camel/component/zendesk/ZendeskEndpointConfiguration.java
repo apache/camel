@@ -14,298 +14,200 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
-
     @UriParam
     private org.zendesk.client.v2.model.hc.Article article;
-
     @UriParam
     private org.zendesk.client.v2.model.hc.ArticleAttachments articleAttachments;
-
     @UriParam
     private Long articleId;
-
     @UriParam
     private Long articleId0;
-
     @UriParam
     private org.zendesk.client.v2.model.Attachment attachment;
-
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.Attachment> attachments;
-
     @UriParam
     private org.zendesk.client.v2.model.Audit audit;
-
     @UriParam
     private Long auditId;
-
     @UriParam
     private org.zendesk.client.v2.model.Automation automation;
-
     @UriParam
     private Long automationId;
-
     @UriParam
     private Long automationId0;
-
     @UriParam
     private org.zendesk.client.v2.model.hc.Category category;
-
     @UriParam
     private Long categoryId;
-
     @UriParam
     private Long category_id;
-
     @UriParam
     private org.zendesk.client.v2.model.Comment comment;
-
     @UriParam
     private Long commentId;
-
     @UriParam
     private byte[] content;
-
     @UriParam
     private String contentType;
-
     @UriParam
     private String email;
-
     @UriParam
     private java.util.Date endTime;
-
     @UriParam
     private String externalId;
-
     @UriParam
     private org.zendesk.client.v2.model.Field field;
-
     @UriParam
     private java.io.File file;
-
     @UriParam
     private String fileName;
-
     @UriParam
     private org.zendesk.client.v2.model.Forum forum;
-
     @UriParam
     private Long forum_id;
-
     @UriParam
     private org.zendesk.client.v2.model.Group group;
-
     @UriParam
     private org.zendesk.client.v2.model.GroupMembership groupMembership;
-
     @UriParam
     private Long group_id;
-
     @UriParam
     private Long group_membership_id;
-
     @UriParam
     private Long id;
-
     @UriParam
     private String idArticle;
-
     @UriParam
     private org.zendesk.client.v2.model.Identity identity;
-
     @UriParam
     private Long identityId;
-
     @UriParam
     private long[] ids;
-
     @UriParam
     private Boolean includeArchived;
-
     @UriParam
     private Boolean inline;
-
     @UriParam
     private Integer installationId;
-
     @UriParam
     private String json;
-
     @UriParam
     private String locale;
-
     @UriParam
     private org.zendesk.client.v2.model.Macro macro;
-
     @UriParam
     private Long macroId;
-
     @UriParam
     private Long macroId0;
-
     @UriParam
     private Long monitorId;
-
     @UriParam
     private String name;
-
     @UriParam
     private String newPassword;
-
     @UriParam
     private String oldPassword;
-
     @UriParam
     private org.zendesk.client.v2.model.Organization organization;
-
     @UriParam
     private Long organizationId;
-
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.Organization> organizationList;
-
     @UriParam
     private org.zendesk.client.v2.model.OrganizationMembership organizationMembership;
-
     @UriParam
     private Long organization_id;
-
     @UriParam
     private Long organization_membership_id;
-
     @UriParam
     private org.zendesk.client.v2.model.Organization[] organizations;
-
     @UriParam
     private Integer page;
-
     @UriParam
     private String params;
-
     @UriParam
     private String password;
-
     @UriParam
     private String query;
-
     @UriParam
     private org.zendesk.client.v2.model.Request request;
-
     @UriParam
     private Long requestId;
-
     @UriParam
     private String role;
-
     @UriParam
     private String[] roles;
-
     @UriParam
     private org.zendesk.client.v2.model.SatisfactionRating satisfactionRating;
-
     @UriParam
     private org.zendesk.client.v2.model.schedules.Schedule schedule;
-
     @UriParam
     private Long scheduleId;
-
     @UriParam
     private String searchTerm;
-
     @UriParam
     private org.zendesk.client.v2.model.hc.Section section;
-
     @UriParam
     private Long sectionId;
-
     @UriParam
     private java.util.Date startTime;
-
     @UriParam
     private org.zendesk.client.v2.model.JobStatus<?> status;
-
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.JobStatus> statuses;
-
     @UriParam
     private org.zendesk.client.v2.model.SuspendedTicket suspendedTicket;
-
     @UriParam
     private String[] tags;
-
     @UriParam
     private org.zendesk.client.v2.model.targets.Target target;
-
     @UriParam
     private Long targetId;
-
     @UriParam
     private org.zendesk.client.v2.model.Ticket ticket;
-
     @UriParam
     private org.zendesk.client.v2.model.TicketForm ticketForm;
-
     @UriParam
     private Long ticketId;
-
     @UriParam
     private Long ticketId0;
-
     @UriParam
     private org.zendesk.client.v2.model.TicketImport ticketImport;
-
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.Ticket> ticketList;
-
     @UriParam
     private org.zendesk.client.v2.model.Ticket[] tickets;
-
     @UriParam
     private String token;
-
     @UriParam
     private org.zendesk.client.v2.model.Topic topic;
-
     @UriParam
     private org.zendesk.client.v2.model.hc.Translation translation;
-
     @UriParam
     private org.zendesk.client.v2.model.Trigger trigger;
-
     @UriParam
     private Long triggerId;
-
     @UriParam
     private Long triggerId0;
-
     @UriParam
     private Long tweetId;
-
     @UriParam
     private Class<?> type;
-
     @UriParam
     private Long unixEpochTime;
-
     @UriParam
     private org.zendesk.client.v2.model.Attachment.Upload upload;
-
     @UriParam
     private org.zendesk.client.v2.model.User user;
-
     @UriParam
     private Long userId;
-
     @UriParam
     private Long userId0;
-
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.User> userList;
-
     @UriParam
     private Long user_id;
-
     @UriParam
     private org.zendesk.client.v2.model.User[] users;
 

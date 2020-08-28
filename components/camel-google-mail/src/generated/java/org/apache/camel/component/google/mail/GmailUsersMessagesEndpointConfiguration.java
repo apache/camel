@@ -14,25 +14,18 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailConfiguration {
-
     @UriParam
     private com.google.api.services.gmail.model.BatchDeleteMessagesRequest batchDeleteMessagesRequest;
-
     @UriParam
     private com.google.api.services.gmail.model.BatchModifyMessagesRequest batchModifyMessagesRequest;
-
     @UriParam
     private com.google.api.services.gmail.model.Message content;
-
     @UriParam
     private String id;
-
     @UriParam
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
-
     @UriParam
     private com.google.api.services.gmail.model.ModifyMessageRequest modifyMessageRequest;
-
     @UriParam
     private String userId;
 
