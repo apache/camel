@@ -371,6 +371,14 @@
             <version>${jboss-logging-version}</version>
         </dependency>
 
+        <!-- needed by jetty http server to load class: org.jvnet.staxex.util.XMLStreamReaderToXMLStreamWriter -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-osgi</artifactId>
+            <version>${jaxb-version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
