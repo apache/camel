@@ -254,7 +254,7 @@ public class DelayedMonoPublisherTest {
         sub.request(1);
 
         Integer res = queue.poll(1, TimeUnit.SECONDS);
-        assertEquals(new Integer(2), res);
+        assertEquals(Integer.valueOf(2), res);
     }
 
     @Test

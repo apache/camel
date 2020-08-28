@@ -146,7 +146,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
                      + "/org.apache.camel.component.thrift.generated.Calculator?negotiationType=SSL&sslParameters=#sslParams&synchronous=true")
                              .to("mock:thrift-secure-service").choice()
                              .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
-                             .setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                             .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
                              .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
                              .setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
             }

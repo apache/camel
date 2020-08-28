@@ -126,10 +126,10 @@ public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestS
     public void testPutIfAbsentWithTtl() throws InterruptedException {
         Map<String, Object> headers = new HashMap<>();
         headers.put(HazelcastConstants.OBJECT_ID, "4711");
-        headers.put(HazelcastConstants.TTL_VALUE, new Long(1));
+        headers.put(HazelcastConstants.TTL_VALUE, Long.valueOf(1));
         headers.put(HazelcastConstants.TTL_UNIT, TimeUnit.MINUTES);
         template.sendBodyAndHeaders("direct:putIfAbsent", "replaced", headers);
-        verify(map).putIfAbsent("4711", "replaced", new Long(1), TimeUnit.MINUTES);
+        verify(map).putIfAbsent("4711", "replaced", Long.valueOf(1), TimeUnit.MINUTES);
     }
 
     @Test

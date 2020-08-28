@@ -55,7 +55,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
         }
 
         // stop route with a 1s timeout and abortAfterTimeout=true (should abort after 1s)
-        Long timeout = new Long(1);
+        Long timeout = Long.valueOf(1);
         Boolean abortAfterTimeout = Boolean.TRUE;
         Object[] params = { timeout, abortAfterTimeout };
         String[] sig = { "java.lang.Long", "java.lang.Boolean" };
@@ -96,7 +96,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
         }
 
         // stop route with a 1s timeout and abortAfterTimeout=false (normal timeout behavior)
-        Long timeout = new Long(1);
+        Long timeout = Long.valueOf(1);
         Boolean abortAfterTimeout = Boolean.FALSE;
         Object[] params = { timeout, abortAfterTimeout };
         String[] sig = { "java.lang.Long", "java.lang.Boolean" };

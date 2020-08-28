@@ -132,7 +132,7 @@ public class ExecProducerTest {
     @DirtiesContext
     public void testInputLinesNotConvertibleToInputStream() throws IOException {
         // String must be convertible to InputStream
-        final Integer notConvertibleToInputStreamBody = new Integer(1);
+        final Integer notConvertibleToInputStreamBody = Integer.valueOf(1);
         Exchange e = producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {

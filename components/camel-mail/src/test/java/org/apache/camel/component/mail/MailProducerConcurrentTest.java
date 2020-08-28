@@ -74,7 +74,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
         assertMockEndpointsSatisfied();
-        assertTrue(builder.matchesMockWaitTime());
+        assertTrue(builder.matchesWaitTime());
 
         Mailbox box = Mailbox.get("someone@localhost");
         assertEquals(files, box.size());

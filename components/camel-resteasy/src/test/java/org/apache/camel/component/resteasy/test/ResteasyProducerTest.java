@@ -270,7 +270,7 @@ public class ResteasyProducerTest extends CamelTestSupport {
         assertEquals("application/json", contentType.get(0));
         //assertEquals("WildFly/8", server.get(0));
         assertEquals("87", contentLength.get(0));
-        assertEquals(new Integer(200), responseCode);
+        assertEquals(Integer.valueOf(200), responseCode);
     }
 
 }

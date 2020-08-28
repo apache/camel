@@ -173,10 +173,10 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonSQSClient());
         assertEquals("color,size", endpoint.getConfiguration().getAttributeNames());
         assertEquals("msgColor,msgSize", endpoint.getConfiguration().getMessageAttributeNames());
-        assertEquals(new Integer(1000), endpoint.getConfiguration().getDefaultVisibilityTimeout());
-        assertEquals(new Integer(2000), endpoint.getConfiguration().getVisibilityTimeout());
-        assertEquals(new Integer(65536), endpoint.getConfiguration().getMaximumMessageSize());
-        assertEquals(new Integer(1209600), endpoint.getConfiguration().getMessageRetentionPeriod());
+        assertEquals(Integer.valueOf(1000), endpoint.getConfiguration().getDefaultVisibilityTimeout());
+        assertEquals(Integer.valueOf(2000), endpoint.getConfiguration().getVisibilityTimeout());
+        assertEquals(Integer.valueOf(65536), endpoint.getConfiguration().getMaximumMessageSize());
+        assertEquals(Integer.valueOf(1209600), endpoint.getConfiguration().getMessageRetentionPeriod());
         assertEquals(
                 "{\"Version\":\"2008-10-17\",\"Id\":\"/195004372649/MyQueue/SQSDefaultPolicy\",\"Statement\":[{\"Sid\":\"Queue1ReceiveMessage\",\"Effect\":\"Allow\",\"Principal\":"
                      + "{\"AWS\":\"*\"},\"Action\":\"SQS:ReceiveMessage\",\"Resource\":\"/195004372649/MyQueue\"}]}",
@@ -184,7 +184,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals(
                 "{\"maxReceiveCount\":\"5\", \"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:195004372649:MyDeadLetterQueue\"}",
                 endpoint.getConfiguration().getRedrivePolicy());
-        assertEquals(new Integer(123), endpoint.getConfiguration().getDelaySeconds());
+        assertEquals(Integer.valueOf(123), endpoint.getConfiguration().getDelaySeconds());
         assertEquals(Integer.valueOf(10), endpoint.getConfiguration().getReceiveMessageWaitTimeSeconds());
         assertEquals(Integer.valueOf(20), endpoint.getConfiguration().getWaitTimeSeconds());
         assertEquals("111222333", endpoint.getConfiguration().getQueueOwnerAWSAccountId());

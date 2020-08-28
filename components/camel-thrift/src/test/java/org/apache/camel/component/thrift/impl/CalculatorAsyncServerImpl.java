@@ -40,7 +40,7 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
 
     @Override
     public void add(int num1, int num2, AsyncMethodCallback<Integer> resultHandler) throws TException {
-        resultHandler.onComplete(new Integer(num1 + num2));
+        resultHandler.onComplete(Integer.valueOf(num1 + num2));
     }
 
     @Override
@@ -91,6 +91,6 @@ public class CalculatorAsyncServerImpl implements Calculator.AsyncIface {
             Set<String> v11, Map<String, Long> v12,
             AsyncMethodCallback<Integer> resultHandler)
             throws TException {
-        resultHandler.onComplete(new Integer(1));
+        resultHandler.onComplete(Integer.valueOf(1));
     }
 }
