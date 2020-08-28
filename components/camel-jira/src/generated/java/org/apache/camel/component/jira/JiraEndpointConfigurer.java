@@ -42,10 +42,14 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "privatekey":
         case "privateKey": target.getConfiguration().setPrivateKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": target.setSendOnlyUpdatedField(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "verificationcode":
         case "verificationCode": target.getConfiguration().setVerificationCode(property(camelContext, java.lang.String.class, value)); return true;
+        case "watchedfields":
+        case "watchedFields": target.setWatchedFields(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -66,9 +70,11 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         answer.put("maxResults", java.lang.Integer.class);
         answer.put("password", java.lang.String.class);
         answer.put("privateKey", java.lang.String.class);
+        answer.put("sendOnlyUpdatedField", boolean.class);
         answer.put("synchronous", boolean.class);
         answer.put("username", java.lang.String.class);
         answer.put("verificationCode", java.lang.String.class);
+        answer.put("watchedFields", java.lang.String.class);
         return answer;
     }
 
@@ -99,10 +105,14 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
         case "password": return target.getConfiguration().getPassword();
         case "privatekey":
         case "privateKey": return target.getConfiguration().getPrivateKey();
+        case "sendonlyupdatedfield":
+        case "sendOnlyUpdatedField": return target.isSendOnlyUpdatedField();
         case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
         case "verificationcode":
         case "verificationCode": return target.getConfiguration().getVerificationCode();
+        case "watchedfields":
+        case "watchedFields": return target.getWatchedFields();
         default: return null;
         }
     }

@@ -8262,8 +8262,8 @@ public class StaticEndpointBuilders {
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
      * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
-     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
+     * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
      * 
      * @param path type
      */
@@ -8286,8 +8286,8 @@ public class StaticEndpointBuilders {
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
      * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS,
-     * ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
+     * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

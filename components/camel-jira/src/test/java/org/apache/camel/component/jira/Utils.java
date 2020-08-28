@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.atlassian.jira.rest.client.api.StatusCategory;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.BasicComponent;
 import com.atlassian.jira.rest.client.api.domain.BasicPriority;
@@ -33,6 +34,7 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.IssueLink;
 import com.atlassian.jira.rest.client.api.domain.IssueLinkType;
 import com.atlassian.jira.rest.client.api.domain.IssueType;
+import com.atlassian.jira.rest.client.api.domain.Priority;
 import com.atlassian.jira.rest.client.api.domain.Resolution;
 import com.atlassian.jira.rest.client.api.domain.Status;
 import com.atlassian.jira.rest.client.api.domain.User;
@@ -81,6 +83,23 @@ public final class Utils {
                 status, issue.getDescription(), issue.getPriority(), resolution, null, null,
                 issue.getAssignee(), null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null);
+    }
+
+    public static Issue setPriority(Issue issue, Priority p) {
+        return new Issue(
+                issue.getSummary(), issue.getSelf(), issue.getKey(), issue.getId(), null, issue.getIssueType(),
+                issue.getStatus(), issue.getDescription(), p, issue.getResolution(), null, null,
+                issue.getAssignee(), null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null);
+    }
+
+    public static Issue transitionIssueDone(Issue issue) {
+        URI doneStatusUri = URI.create(TEST_JIRA_URL + "/rest/api/2/status/1");
+        URI doneResolutionUri = URI.create(TEST_JIRA_URL + "/rest/api/2/resolution/1");
+        StatusCategory sc = new StatusCategory(doneResolutionUri, "statusCategory", 1L, "SC-1", "GREEN");
+        Status status = new Status(doneStatusUri, 1L, "Done", "Done", null, sc);
+        Resolution resolution = new Resolution(doneResolutionUri, 5L, "Resolution", "Resolution");
+        return transitionIssueDone(issue, status, resolution);
     }
 
     public static Issue createIssueWithAttachment(

@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.jira.consumer.NewCommentsConsumer;
 import org.apache.camel.component.jira.consumer.NewIssuesConsumer;
+import org.apache.camel.component.jira.consumer.WatchUpdatesConsumer;
 import org.apache.camel.component.jira.oauth.JiraOAuthAuthenticationHandler;
 import org.apache.camel.component.jira.oauth.OAuthAsynchronousJiraRestClientFactory;
 import org.apache.camel.component.jira.producer.AddCommentProducer;
@@ -57,7 +58,8 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
  * include:
  * <p>
  * CONSUMERS jira://newIssues (retrieve only new issues after the route is started) jira://newComments (retrieve only
- * new comments after the route is started)
+ * new comments after the route is started) jira://watchChanges (retrieve only defined changes in issues picked base on
+ * provided jql)
  * <p>
  * PRODUCERS jira://addIssue (add an issue) jira://addComment (add a comment on a given issue) jira://attach (add an
  * attachment on a given issue) jira://deleteIssue (delete a given issue) jira://updateIssue (update fields of a given
@@ -82,6 +84,10 @@ public class JiraEndpoint extends DefaultEndpoint {
     private JiraType type;
     @UriParam(label = "consumer")
     private String jql;
+    @UriParam(label = "consumer", defaultValue = "Status,Priority")
+    private String watchedFields = "Status,Priority";
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean sendOnlyUpdatedField = true;
     @UriParam(label = "consumer", defaultValue = "50")
     private Integer maxResults = 50;
     @UriParam
@@ -167,6 +173,8 @@ public class JiraEndpoint extends DefaultEndpoint {
             consumer = new NewCommentsConsumer(this, processor);
         } else if (type == JiraType.NEWISSUES) {
             consumer = new NewIssuesConsumer(this, processor);
+        } else if (type == JiraType.WATCHUPDATES) {
+            consumer = new WatchUpdatesConsumer(this, processor);
         } else {
             throw new IllegalArgumentException("Consumer does not support type: " + type);
         }
@@ -222,4 +230,28 @@ public class JiraEndpoint extends DefaultEndpoint {
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
     }
+
+    /**
+     * Comma separated list of fields to watch for changes. "Status,Priority" are the defaults.
+     */
+    public String getWatchedFields() {
+        return watchedFields;
+    }
+
+    public void setWatchedFields(String watchChange) {
+        this.watchedFields = watchChange;
+    }
+
+    /**
+     * Indicator for sending only changed fields in exchange body or issue object. By default consumer sends only
+     * changed fields.
+     */
+    public boolean isSendOnlyUpdatedField() {
+        return sendOnlyUpdatedField;
+    }
+
+    public void setSendOnlyUpdatedField(boolean sendOnlyUpdatedField) {
+        this.sendOnlyUpdatedField = sendOnlyUpdatedField;
+    }
+
 }
