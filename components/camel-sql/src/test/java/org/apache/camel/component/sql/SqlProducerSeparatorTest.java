@@ -62,7 +62,7 @@ public class SqlProducerSeparatorTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals(new Integer(4), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
+        assertEquals(Integer.valueOf(4), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
     }
 
     @Override

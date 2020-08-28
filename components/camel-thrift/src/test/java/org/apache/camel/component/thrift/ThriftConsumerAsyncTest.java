@@ -244,11 +244,11 @@ public class ThriftConsumerAsyncTest extends CamelTestSupport {
                 from("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator")
                         .to("mock:thrift-service").choice()
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
-                        .setBody(simple(new Integer(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("ping"))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("zip"))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("alltypes"))
-                        .setBody(simple(new Integer(THRIFT_TEST_NUM1).toString()))
+                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1).toString()))
                         .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo")).setBody(simple("${body[0]}"))
                         .bean(new CalculatorMessageBuilder(), "echo");
             }

@@ -86,7 +86,7 @@ public class ElSqlConsumerDeleteTest extends CamelTestSupport {
                 break;
             }
         }
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class),
                 "Should have deleted all 3 rows");
     }
 

@@ -208,7 +208,7 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
         Exchange exchange = template.request("direct:getActionInfo", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Action) exchange.getMessage().getBody()).getId(), new Integer(133459716));
+        assertEquals(((Action) exchange.getMessage().getBody()).getId(), Integer.valueOf(133459716));
     }
 
     @Test
@@ -217,12 +217,12 @@ public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSuppor
 
         Exchange exchange = template.request("direct:getDroplet", null);
 
-        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), Integer.valueOf(5428878));
 
         exchange = template.request("direct:getDroplet2", null);
 
         assertMockEndpointsSatisfied();
-        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), new Integer(5428878));
+        assertEquals(((Droplet) exchange.getMessage().getBody()).getId(), Integer.valueOf(5428878));
 
     }
 

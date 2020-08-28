@@ -71,8 +71,8 @@ public class BindyNumberTest {
         rec.field1 = new BigDecimal(123.45);
         rec.field2 = new BigDecimal(10.00);
         rec.field3 = new BigDecimal(10.00);
-        rec.field4 = new Double(10.00);
-        rec.field5 = new Double(10.00);
+        rec.field4 = Double.valueOf(10.00);
+        rec.field5 = Double.valueOf(10.00);
 
         mresult.expectedBodiesReceived("1234510.00   1010.00   10\r\n");
 

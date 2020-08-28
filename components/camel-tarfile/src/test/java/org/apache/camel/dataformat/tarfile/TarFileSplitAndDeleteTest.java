@@ -53,7 +53,7 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         // the original file should have been deleted
         assertFalse(new File(tarFile).exists(), "File should been deleted");
@@ -68,7 +68,7 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         // the original file should have been deleted,
         assertFalse(new File(tarFile).exists(), "File should been deleted");
