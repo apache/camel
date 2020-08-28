@@ -395,22 +395,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values
          * can be separated by comma.
          * 
-         * The option is a:
-         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
-         * 
-         * Group: sign
-         */
-        default CryptoCmsEndpointBuilder signer(List<Object> signer) {
-            doSetProperty("signer", signer);
-            return this;
-        }
-        /**
-         * Signer information: reference to bean(s) which implements
-         * org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values
-         * can be separated by comma.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: sign
          */
