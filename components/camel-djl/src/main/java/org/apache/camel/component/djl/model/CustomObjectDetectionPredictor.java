@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.djl.model;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
+import java.io.*;
 
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
+import ai.djl.modality.cv.Image;
+import ai.djl.modality.cv.ImageFactory;
 import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.translate.TranslateException;
 import ai.djl.translate.Translator;
@@ -65,9 +61,9 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
         }
     }
 
-    public DetectedObjects classify(Model model, Translator translator, BufferedImage input) throws Exception {
-        try (Predictor<BufferedImage, DetectedObjects> predictor = model.newPredictor(translator)) {
-            DetectedObjects detectedObjects = predictor.predict(input);
+    public DetectedObjects classify(Model model, Translator translator, Image image) throws Exception {
+        try (Predictor<Image, DetectedObjects> predictor = model.newPredictor(translator)) {
+            DetectedObjects detectedObjects = predictor.predict(image);
             return detectedObjects;
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
@@ -77,7 +73,8 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(Model model, Translator translator, File input) throws Exception {
         try {
-            return classify(model, translator, ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(new FileInputStream(input));
+            return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
@@ -86,7 +83,8 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(Model model, Translator translator, InputStream input) throws Exception {
         try {
-            return classify(model, translator, ImageIO.read(input));
+            Image image = ImageFactory.getInstance().fromInputStream(input);
+            return classify(model, translator, image);
         } catch (IOException e) {
             LOG.error("Couldn't transform input into a BufferedImage");
             throw new RuntimeException("Couldn't transform input into a BufferedImage", e);
