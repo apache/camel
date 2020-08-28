@@ -42,6 +42,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 @Component("crypto-cms")
 public class CryptoCmsComponent extends DefaultComponent {
 
@@ -61,12 +62,7 @@ public class CryptoCmsComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception { // NOPMD
-                                                                                                                      // called
-                                                                                                                      // method
-                                                                                                                      // setProperties
-                                                                                                                      // throws
-                                                                                                                      // Exception
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
         String scheme;

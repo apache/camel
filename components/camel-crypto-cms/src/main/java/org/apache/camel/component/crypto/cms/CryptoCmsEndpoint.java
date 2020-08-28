@@ -33,6 +33,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Encrypt, decrypt, sign and verify data in CMS Enveloped Data format.
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.20.0", scheme = "crypto-cms", title = "Crypto CMS", syntax = "crypto-cms:cryptoOperation:name",
              producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
 public class CryptoCmsEndpoint extends DefaultEndpoint {

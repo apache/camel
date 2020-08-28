@@ -75,10 +75,10 @@ public class SignedDataCreator extends CryptoCmsMarshallerAbstract {
 
         CMSSignedDataStreamGenerator gen = new CMSSignedDataStreamGenerator();
 
-        if (config.getSigner().isEmpty()) {
+        if (config.getSignerList().isEmpty()) {
             throw new CryptoCmsException("No signer information configured");
         }
-        for (SignerInfo signer : config.getSigner()) {
+        for (SignerInfo signer : config.getSignerList()) {
             // these certificates are sent within the signature
             LOG.debug("Signer info: {}", signer);
             X509Certificate signerCert = signer.getCertificate(exchange);
