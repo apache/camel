@@ -40,14 +40,16 @@ public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
     protected File signatureFile;
 
     @Override
-    public List<String> getSignatureList() throws MojoExecutionException {
+    public List<SignatureModel> getSignatureList() throws MojoExecutionException {
         // get signatureFile as a list of Strings
-        List<String> result = new ArrayList<>();
+        List<SignatureModel> result = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(this.signatureFile));
             String line = reader.readLine();
             while (line != null) {
-                result.add(line);
+                SignatureModel model = new SignatureModel();
+                model.setSignature(line);
+                result.add(model);
                 line = reader.readLine();
             }
             reader.close();

@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +31,13 @@ import javax.swing.text.html.parser.DTD;
 import javax.swing.text.html.parser.Parser;
 import javax.swing.text.html.parser.TagElement;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang.StringEscapeUtils;
 
+import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
+
 /**
- * Parses Javadoc HTML to get Method Signatures from Method Sumary. Supports Java 6, 7 and 8 Javadoc formats.
+ * Parses Javadoc HTML to get Method Signatures from Method Summary. Supports 8 and 11 Javadoc formats.
  */
 public class JavadocParser extends Parser {
 
@@ -48,6 +52,9 @@ public class JavadocParser extends Parser {
 
     private List<String> methods = new ArrayList<>();
     private Map<String, String> methodText = new HashMap<>();
+    private Map<String, Map<String, String>> parameters = new LinkedHashMap<>();
+    private Map<String, String> currentParameters;
+    private boolean parametersJavadoc;
     private String errorMessage;
 
     public JavadocParser(DTD dtd, String docPath) {
@@ -64,7 +71,8 @@ public class JavadocParser extends Parser {
 
         methods.clear();
         methodText.clear();
-
+        parameters.clear();
+        currentParameters = null;
         errorMessage = null;
     }
 
@@ -85,6 +93,10 @@ public class JavadocParser extends Parser {
                             && ("method_summary".equals(nameAttr) || "method.summary".equals(nameAttr)
                                     || "method_summary".equals(idAttr) || "method.summary".equals(idAttr))) {
                         parserState = ParserState.METHOD_SUMMARY;
+                    } else if (parserState == ParserState.INIT
+                            && ("method_detail".equals(nameAttr) || "method.detail".equals(nameAttr)
+                                    || "method_detail".equals(idAttr) || "method.detail".equals(idAttr))) {
+                        parserState = ParserState.METHOD_DETAIL;
                     } else if (parserState == ParserState.METHOD) {
                         if (methodWithTypes == null) {
 
@@ -120,6 +132,77 @@ public class JavadocParser extends Parser {
                 }
             } else if (parserState == ParserState.METHOD_SUMMARY && HTML.Tag.CODE.equals(htmlTag)) {
                 parserState = ParserState.METHOD;
+            } else if (parserState == ParserState.METHOD_DETAIL && HTML.Tag.H4.equals(htmlTag)) {
+                parserState = ParserState.METHOD_DETAIL_METHOD;
+            } else if (parserState == ParserState.METHOD_DETAIL && HTML.Tag.SPAN.equals(htmlTag)) {
+                Object clazz = getAttributes().getAttribute(HTML.Attribute.CLASS);
+                if ("paramLabel".equals(clazz)) {
+                    parserState = ParserState.METHOD_DETAIL_PARAM;
+                }
+            } else if (parserState == ParserState.METHOD_DETAIL_PARAM) {
+                if (HTML.Tag.CODE.equals(htmlTag) || HTML.Tag.DD.equals(htmlTag) || HTML.Tag.DL.equals(htmlTag)
+                        || HTML.Tag.DT.equals(htmlTag) || HTML.Tag.UL.equals(htmlTag)) {
+
+                    // okay so we need to grab javadoc for each parameter from the method signature
+                    // these parameters are documented elsewhere in the html reports, so we need
+                    // to find the span class where they start and then keep reading tags until there are no more parameters
+                    // unfortunately the end tag is not consistent whether there are 1 or more parameters
+                    // and therefore we need a bit of hacky code
+
+                    String text = methodTextBuilder.toString().trim();
+                    if (!text.isEmpty() && parametersJavadoc || (text.length() > 11 && text.startsWith("Parameters:"))) {
+                        parametersJavadoc = true;
+                        if (text.startsWith("Parameters:")) {
+                            text = text.substring(11);
+                        }
+                        String key = StringHelper.before(text, " ");
+                        String desc = StringHelper.after(text, " ");
+                        if (key != null) {
+                            key = key.trim();
+                        }
+                        if (desc != null) {
+                            // remove leading - and whitespaces
+                            while (desc.startsWith("-")) {
+                                desc = desc.substring(1);
+                                desc = desc.trim();
+                            }
+                            desc = sanitizeDescription(desc, false);
+                            if (desc != null && !desc.isEmpty()) {
+                                // upper case first letter
+                                char ch = desc.charAt(0);
+                                if (Character.isAlphabetic(ch) && !Character.isUpperCase(ch)) {
+                                    desc = Character.toUpperCase(ch) + desc.substring(1);
+                                }
+                                // remove ending dot if there is the text is just alpha or whitespace
+                                boolean removeDot = true;
+                                char[] arr = desc.toCharArray();
+                                for (int i = 0; i < arr.length; i++) {
+                                    ch = arr[i];
+                                    boolean accept = Character.isAlphabetic(ch) || Character.isWhitespace(ch) || ch == '\''
+                                            || ch == '-' || ch == '_';
+                                    boolean last = i == arr.length - 1;
+                                    accept |= last && ch == '.';
+                                    if (!accept) {
+                                        removeDot = false;
+                                        break;
+                                    }
+                                }
+                                if (removeDot && desc.endsWith(".")) {
+                                    desc = desc.substring(0, desc.length() - 1);
+                                }
+                                desc = desc.trim();
+                            }
+                        }
+                        if (key != null && desc != null && currentParameters != null) {
+                            currentParameters.put(key, desc);
+                        }
+                        methodTextBuilder.delete(0, methodTextBuilder.length());
+                        if (!HTML.Tag.DD.equals(htmlTag) && !HTML.Tag.CODE.equals(htmlTag)) {
+                            parserState = ParserState.METHOD_DETAIL;
+                            parametersJavadoc = false;
+                        }
+                    }
+                }
             }
         }
     }
@@ -154,6 +237,15 @@ public class JavadocParser extends Parser {
                 && HTML.Tag.TABLE.equals(tag.getHTMLTag())) {
             // end of method summary table
             parserState = ParserState.INIT;
+        } else if (parserState == ParserState.METHOD_DETAIL_METHOD && HTML.Tag.H4.equals(tag.getHTMLTag())) {
+            final Object end = getAttributes().getAttribute(HTML.Attribute.ENDTAG);
+            if ("true".equals(end)) {
+                String methodName = methodTextBuilder.toString();
+                parameters.putIfAbsent(methodName, new HashMap<>());
+                currentParameters = parameters.get(methodName);
+                methodTextBuilder.delete(0, methodTextBuilder.length());
+                parserState = ParserState.METHOD_DETAIL;
+            }
         }
     }
 
@@ -175,6 +267,10 @@ public class JavadocParser extends Parser {
     @Override
     protected void handleText(char[] text) {
         if (parserState == ParserState.METHOD && methodWithTypes != null) {
+            methodTextBuilder.append(text);
+        } else if (parserState == ParserState.METHOD_DETAIL_METHOD) {
+            methodTextBuilder.append(text);
+        } else if (parserState == ParserState.METHOD_DETAIL_PARAM) {
             methodTextBuilder.append(text);
         }
     }
@@ -198,9 +294,16 @@ public class JavadocParser extends Parser {
         return methodText;
     }
 
+    public Map<String, Map<String, String>> getParameters() {
+        return parameters;
+    }
+
     private enum ParserState {
         INIT,
         METHOD_SUMMARY,
-        METHOD
+        METHOD,
+        METHOD_DETAIL,
+        METHOD_DETAIL_METHOD,
+        METHOD_DETAIL_PARAM
     }
 }
