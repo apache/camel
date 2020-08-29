@@ -292,8 +292,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     private void marshalRequest(Object input, Request request) throws SalesforceException {
         try {
             request.content(new BytesContentProvider(objectMapper.writeValueAsBytes(input)));
-        } catch (IOException e) {
-            throw new SalesforceException(String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(), e.getMessage()), e);
+        } catch (Throwable e) {
+            throw new SalesforceException(
+                    String.format("Error marshaling request for {%s:%s} : %s", request.getMethod(), request.getURI(),
+                            e.getMessage()),
+                    e);
         }
     }
 
@@ -301,8 +304,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseTypeReference);
-        } catch (IOException e) {
-            throw new SalesforceException(String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(), e.getMessage()), e);
+        } catch (Throwable e) {
+            throw new SalesforceException(
+                    String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
+                            e.getMessage()),
+                    e);
         }
     }
 
@@ -314,8 +320,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         try {
             return objectMapper.readValue(response, responseClass);
-        } catch (IOException e) {
-            throw new SalesforceException(String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(), e.getMessage()), e);
+        } catch (Throwable e) {
+            throw new SalesforceException(
+                    String.format("Error unmarshaling response {%s:%s} : %s", request.getMethod(), request.getURI(),
+                            e.getMessage()),
+                    e);
         }
     }
 }
