@@ -212,7 +212,7 @@ public class ResteasyProducer extends DefaultProducer {
         } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             exchange.getMessage().getHeaders().put(ResteasyConstants.RESTEASY_PROXY_PRODUCER_EXCEPTION, e);
             exchange.getMessage().setBody(e);
-            LOG.error("Camel Resteasy Proxy Client Exception: {}", e);
+            LOG.error("Camel Resteasy Proxy Client Exception: {}", e.getMessage(), e);
         }
         return object;
     }

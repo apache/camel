@@ -87,7 +87,7 @@ public class AhcProducer extends DefaultAsyncProducer {
         @Override
         public void onThrowable(Throwable t) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t.getMessage(), t);
             }
             try {
                 getEndpoint().getBinding().onThrowable(getEndpoint(), exchange, t);
