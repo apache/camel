@@ -35,7 +35,7 @@ import org.joda.time.format.ISODateTimeFormat;
 /**
  * Harvest metadata using OAI-PMH protocol
  */
-@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl",
+@UriEndpoint(firstVersion = "3.5.0", scheme = "oaipmh", title = "OAI-PMH", syntax = "oaipmh:baseUrl", lenientProperties = true,
              category = { Category.ENDPOINT, Category.WEBSERVICE, Category.BATCH })
 public class OAIPMHEndpoint extends DefaultPollingEndpoint {
 

@@ -271,6 +271,7 @@
                             <exclude>**/dataformat-options.mvel</exclude>
                             <exclude>**/eip-options.mvel</exclude>
                             <exclude>**/language-options.mvel</exclude>
+                            <exclude>**/main-options.mvel</exclude>
                             <exclude>**/website-components-list.mvel</exclude>
                             <exclude>**/website-languages-list.mvel</exclude>
                             <exclude>**/website-others-list.mvel</exclude>
@@ -327,6 +328,8 @@
                             <exclude>**/META-INF/MANIFEST.MF</exclude>
                             <exclude>**/openapi.yaml</exclude>
                             <exclude>**/ignite/work/**/*</exclude>
+                            <exclude>**/MySecondFooConfigurer.java</exclude>
+                            <exclude>**/MySecondBarConfigurer.java</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>
