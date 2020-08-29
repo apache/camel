@@ -65,6 +65,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private CamelClusterService clusterService;
     private CamelClusterView clusterView;
     private volatile boolean clusterViewAddListenerDone;
+    private volatile boolean startManagedRoutesEarly;
 
     private Duration initialDelay;
     private ScheduledExecutorService executorService;
@@ -251,6 +252,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void doStartManagedRoutes() {
+        // if we are currently starting up Camel context then defer starting routes till its fully started
+        if (camelContext.isStarting()) {
+            LOG.debug("Will defer starting managed routes until camel context is fully started");
+            startManagedRoutesEarly = true;
+            return;
+        }
+
         if (!isRunAllowed()) {
             return;
         }
@@ -317,6 +325,13 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         } else {
             // cluster view is not initialized yet, so lets add its listener in doStart
             clusterViewAddListenerDone = false;
+        }
+
+        if (startManagedRoutesEarly) {
+            LOG.debug(
+                    "CamelContext is now fully started, can now start managed routes eager as we were appointed leader during early startup");
+            startManagedRoutesEarly = false;
+            startManagedRoutes();
         }
     }
 
