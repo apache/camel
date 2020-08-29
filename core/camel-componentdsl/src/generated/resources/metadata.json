@@ -5232,7 +5232,7 @@
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": true
   },
   "Olingo2ComponentBuilderFactory": {
     "kind": "component",
