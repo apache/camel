@@ -575,7 +575,7 @@ public interface ConsulEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
-                ConsistencyMode consistencyMode) {
+                Object consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1122,7 +1122,7 @@ public interface ConsulEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
-                ConsistencyMode consistencyMode) {
+                Object consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1586,7 +1586,7 @@ public interface ConsulEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
-                ConsistencyMode consistencyMode) {
+                Object consistencyMode) {
             doSetProperty("consistencyMode", consistencyMode);
             return this;
         }
@@ -1677,16 +1677,6 @@ public interface ConsulEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>com.orbitz.consul.option.ConsistencyMode</code>
-     * enum.
-     */
-    enum ConsistencyMode {
-        DEFAULT,
-        STALE,
-        CONSISTENT;
     }
 
     public interface ConsulBuilders {
