@@ -116,7 +116,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                         return Boolean.FALSE;
                     }
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to add message to repository {}", ex);
+                    LOG.error("Something went wrong trying to add message to repository {}", ex.getMessage(), ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -159,7 +159,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                         return Boolean.TRUE;
                     }
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to check message in repository {}", ex);
+                    LOG.error("Something went wrong trying to check message in repository {}", ex.getMessage(), ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -205,7 +205,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                         return Boolean.TRUE;
                     }
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to remove message to repository {}", ex);
+                    LOG.error("Something went wrong trying to remove message to repository {}", ex.getMessage(), ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -257,7 +257,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                     }
                     return Boolean.TRUE;
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to clear the repository {}", ex);
+                    LOG.error("Something went wrong trying to clear the repository {}", ex.getMessage(), ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {

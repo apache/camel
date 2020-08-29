@@ -112,7 +112,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     }
 
     protected void onException(Throwable ex) {
-        LOG.trace("onException {}", ex);
+        LOG.trace("onException {}", ex.getMessage(), ex);
 
         // need to close the request input stream
         closeRequestContentSource();
@@ -120,7 +120,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     }
 
     protected void onConnectionFailed(Throwable ex) {
-        LOG.trace("onConnectionFailed {}", ex);
+        LOG.trace("onConnectionFailed {}", ex.getMessage(), ex);
 
         // need to close the request input stream
         closeRequestContentSource();

@@ -891,7 +891,8 @@ public class XmlConverter {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri, value, e);
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri,
+                            value, e.getMessage(), e);
                 }
             }
         }
@@ -932,14 +933,14 @@ public class XmlConverter {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { XMLConstants.FEATURE_SECURE_PROCESSING, true, e });
+                    XMLConstants.FEATURE_SECURE_PROCESSING, true, e.getMessage(), e);
         }
         try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
-                    new Object[] { "http://xml.org/sax/features/external-general-entities", false, e });
+                    "http://xml.org/sax/features/external-general-entities", false, e.getMessage(), e);
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -951,7 +952,7 @@ public class XmlConverter {
             }
         } catch (Exception e) {
             LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
-                    new Object[] { "http://apache.org/xml/properties/security-manager", e });
+                    "http://apache.org/xml/properties/security-manager", e.getMessage(), e);
         }
         // setup the feature from the system property
         setupFeatures(factory);

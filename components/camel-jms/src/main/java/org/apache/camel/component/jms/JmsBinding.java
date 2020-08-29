@@ -338,7 +338,7 @@ public class JmsBinding {
         if (answer == null) {
             if (cause != null) {
                 // an exception occurred so send it as response
-                LOG.debug("Will create JmsMessage with caused exception: {}", cause);
+                LOG.debug("Will create JmsMessage with caused exception: {}", cause.getMessage(), cause);
                 // create jms message containing the caused exception
                 answer = createJmsMessage(cause, session);
             } else {

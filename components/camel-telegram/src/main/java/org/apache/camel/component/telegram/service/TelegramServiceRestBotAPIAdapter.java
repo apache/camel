@@ -402,7 +402,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         @Override
         public void onThrowable(Throwable t) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t.getMessage(), t);
             }
             exchange.setException(t);
             callback.done(false);
