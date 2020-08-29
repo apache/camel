@@ -177,7 +177,7 @@ public class XMLConverterHelper {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
-                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
+                    javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage(), e);
         }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
@@ -255,7 +255,8 @@ public class XMLConverterHelper {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri, value, e);
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri,
+                            value, e.getMessage(), e);
                 }
             }
         }

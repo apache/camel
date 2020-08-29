@@ -103,7 +103,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
                         // register new created proxy to the resteasy registry
                         getDispatcher().getRegistry().addSingletonResource(proxy);
                     } catch (ClassNotFoundException e) {
-                        LOG.error("Error initializing servlet: {}", e);
+                        LOG.error("Error initializing servlet: {}", e.getMessage(), e);
                         throw new ServletException(e);
                     }
                 }
@@ -273,10 +273,10 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
             consumer.getBinding().writeResponse(exchange, httpServletResponse);
 
         } catch (IOException e) {
-            LOG.error("Error processing request: {}", e);
+            LOG.error("Error processing request: {}", e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            LOG.error("Error processing request: {}", e);
+            LOG.error("Error processing request: {}", e.getMessage(), e);
             throw new ServletException(e);
         }
     }

@@ -56,7 +56,8 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Failover).subscribe());
             } catch (PulsarClientException exception) {
-                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName, exception);
+                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName,
+                        exception.getMessage(), exception);
             }
         }
         return consumers;

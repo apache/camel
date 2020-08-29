@@ -189,7 +189,7 @@ public class FallbackTypeConverter {
                         return castJaxbType(unmarshalled, type);
                     } catch (Exception ex) {
                         // There is some issue on the StaxStreamReader to CXFPayload message body with different namespaces
-                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex);
+                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex.getMessage(), ex);
                     }
                 }
             }
