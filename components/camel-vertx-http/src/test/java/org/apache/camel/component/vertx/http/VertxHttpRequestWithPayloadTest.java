@@ -57,14 +57,6 @@ public class VertxHttpRequestWithPayloadTest extends VertxHttpTestSupport {
     }
 
     @Test
-    public void testPostBodyAsStringWithEncoding() {
-        String suffix = "åäö";
-        String result = template.requestBodyAndHeader(getProducerUri(), BODY_PAYLOAD + suffix, Exchange.CONTENT_TYPE,
-                "text/plain; charset=iso-8859-1", String.class);
-        assertEquals("Got body: " + BODY_PAYLOAD + suffix, result);
-    }
-
-    @Test
     public void testPostBodyAsByteArray() {
         String result = template.requestBody(getProducerUri(), BODY_PAYLOAD.getBytes(StandardCharsets.UTF_8), String.class);
         assertEquals("Got body: " + BODY_PAYLOAD, result);
