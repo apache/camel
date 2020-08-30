@@ -210,13 +210,13 @@ public class BoxTasksManager {
                                // == null)' clause is dead code.
     public BoxTask addAssignmentToTask(String taskId, BoxUser assignTo) {
         try {
-            LOG.debug("Assigning task(id=" + taskId + ") to user(id=" + assignTo.getID() + ")");
             if (taskId == null) {
                 throw new IllegalArgumentException("Parameter 'commentId' can not be null");
             }
             if (assignTo == null) {
                 throw new IllegalArgumentException("Parameter 'assignTo' can not be null");
             }
+            LOG.debug("Assigning task(id=" + taskId + ") to user(id=" + assignTo.getID() + ")");
 
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.addAssignment(assignTo);
