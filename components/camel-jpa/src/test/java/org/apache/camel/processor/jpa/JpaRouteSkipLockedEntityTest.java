@@ -25,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.VersionedItem;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -68,7 +67,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             @Override
             public void configure() {
                 String options = "?skipLockedEntity=true"; //&lockModeType=PESSIMISTIC_FORCE_INCREMENT";
