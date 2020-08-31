@@ -39,7 +39,7 @@ public class ListDomainsCommandTest {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
-        configuration.setMaxNumberOfDomains(new Integer(5));
+        configuration.setMaxNumberOfDomains(Integer.valueOf(5));
         exchange = new DefaultExchange(new DefaultCamelContext());
 
         command = new ListDomainsCommand(sdbClient, configuration, exchange);
@@ -52,7 +52,7 @@ public class ListDomainsCommandTest {
 
         command.execute();
 
-        assertEquals(new Integer(5), sdbClient.listDomainsRequest.getMaxNumberOfDomains());
+        assertEquals(Integer.valueOf(5), sdbClient.listDomainsRequest.getMaxNumberOfDomains());
         assertEquals("TOKEN1", sdbClient.listDomainsRequest.getNextToken());
 
         List<String> domains = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAMES, List.class);
@@ -64,10 +64,10 @@ public class ListDomainsCommandTest {
 
     @Test
     public void determineMaxNumberOfDomains() {
-        assertEquals(new Integer(5), this.command.determineMaxNumberOfDomains());
+        assertEquals(Integer.valueOf(5), this.command.determineMaxNumberOfDomains());
 
-        exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, new Integer(10));
+        exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, Integer.valueOf(10));
 
-        assertEquals(new Integer(10), this.command.determineMaxNumberOfDomains());
+        assertEquals(Integer.valueOf(10), this.command.determineMaxNumberOfDomains());
     }
 }

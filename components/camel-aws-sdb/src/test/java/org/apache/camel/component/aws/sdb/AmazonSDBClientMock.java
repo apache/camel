@@ -109,13 +109,13 @@ public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
         }
 
         DomainMetadataResult result = new DomainMetadataResult();
-        result.setTimestamp(new Integer(10));
-        result.setItemCount(new Integer(11));
-        result.setAttributeNameCount(new Integer(12));
-        result.setAttributeValueCount(new Integer(13));
-        result.setAttributeNamesSizeBytes(new Long(1000000));
-        result.setAttributeValuesSizeBytes(new Long(2000000));
-        result.setItemNamesSizeBytes(new Long(3000000));
+        result.setTimestamp(Integer.valueOf(10));
+        result.setItemCount(Integer.valueOf(11));
+        result.setAttributeNameCount(Integer.valueOf(12));
+        result.setAttributeValueCount(Integer.valueOf(13));
+        result.setAttributeNamesSizeBytes(Long.valueOf(1000000));
+        result.setAttributeValuesSizeBytes(Long.valueOf(2000000));
+        result.setItemNamesSizeBytes(Long.valueOf(3000000));
         return result;
     }
 
