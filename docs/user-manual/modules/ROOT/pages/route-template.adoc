@@ -159,7 +159,7 @@ Then we can create two routes from this template by configuring the values in th
 ----
 camel.route-template[0].template-id=mytemplate
 camel.route-template[0].input=foo
-camel.route-template[1].result=cheese
+camel.route-template[0].result=cheese
 
 camel.route-template[1].template-id=mytemplate
 camel.route-template[1].input=bar
