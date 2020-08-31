@@ -60,3 +60,56 @@ The `LifecycleStrategy` has been enhanced and provides some additional methods a
 * **onContextStarted**: is now invoked when the context is started
 * **onContextStopping**: is invoked when the context is about to be stopped, this was previously achieved by the `onContextStop` which is now deprecated.
 * **onContextStop**: is now invoked when the context is stopped
+
+=== JUnit 5 testing
+
+Camel has been migrated from JUnit 4 to JUnit 5 as our default testing in all the components.
+The new test components reflect this with the following JAR names:
+
+- camel-test-junit5
+- camel-test-spring-junit5
+- camel-testcontainers-junit5
+- camel-testcontainers-spring-junit5
+
+The older test components supports only JUnit 4.
+
+=== Spring Boot testing with JUnit 5
+
+Testing Camel on Spring Boot with JUnit 5 have also changed slightly to use JUnit 5 APIs and testing style.
+
+The following set of dependencies can be used:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring-junit5</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Then in your test classes you should annotate the Spring Boot test class with the new `@CamelSpringBootTest`
+(from package `org.apache.camel.test.spring.junit5.CamelSpringBootTest` in camel-test-spring-junit5 JAR)
+annotation as shown:
+
+[source,java]
+----
+@CamelSpringBootTest
+@SpringBootTest(classes = MyCamelApplication.class)
+public class MyCamelApplicationJUnit5Test {
+
+    @Autowired
+    private CamelContext camelContext;
+
+    @Test
+    public void shouldProduceMessages() throws Exception {
+        // here you can write your unit test
+    }
+
+}
+----
