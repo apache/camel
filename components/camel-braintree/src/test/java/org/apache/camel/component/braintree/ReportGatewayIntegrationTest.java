@@ -18,11 +18,9 @@ package org.apache.camel.component.braintree;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 import com.braintreegateway.TransactionLevelFeeReport;
 import com.braintreegateway.TransactionLevelFeeReportRequest;
-import com.braintreegateway.TransactionLevelFeeReportRow;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.ReportGatewayApiMethod;
@@ -61,8 +59,8 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
         assertNotNull(result, "transactionLevelFees result");
         assertTrue(result.isSuccess(), "transactionLevelFees success");
-        List<TransactionLevelFeeReportRow> rows = result.getTarget().getRows();
-        assertTrue(rows.size() > 0, "transactionLevelFeeRows found");
+        TransactionLevelFeeReport report = result.getTarget();
+        assertNotNull(report);
 
         LOG.debug("transactionLevelFees: " + result);
     }
