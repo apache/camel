@@ -52,8 +52,10 @@ public class PerformanceTestComponent extends DefaultComponent {
     }
 
     public static int getHeaderValue(Exchange exchange, String header) {
-        Integer value = exchange.getContext().getTypeConverter().convertTo(Integer.class, exchange, exchange.getIn().getHeader(header));
-        return value != null ? value : header.equals(HEADER_THREADS) ? DEFAULT_THREADS : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
+        Integer value = exchange.getContext().getTypeConverter().convertTo(Integer.class, exchange,
+                exchange.getIn().getHeader(header));
+        return value != null ? value : header.equals(HEADER_THREADS) ? DEFAULT_THREADS
+                : header.equals(HEADER_ITERATIONS) ? DEFAULT_ITERATIONS : 0;
     }
 
     private static final class PerformanceTestEndpoint extends DefaultEndpoint {
@@ -104,10 +106,11 @@ public class PerformanceTestComponent extends DefaultComponent {
         public void process(final Exchange exchange) throws Exception {
             final int count = getHeaderValue(exchange, HEADER_ITERATIONS);
             final int threads = getHeaderValue(exchange, HEADER_THREADS);
-            PerformanceTestEndpoint endpoint = (PerformanceTestEndpoint)getEndpoint();
+            PerformanceTestEndpoint endpoint = (PerformanceTestEndpoint) getEndpoint();
             if (endpoint != null) {
-                final DefaultConsumer consumer = (DefaultConsumer)endpoint.getConsumer();
-                ExecutorService executor = exchange.getContext().getExecutorServiceManager().newFixedThreadPool(this, "perf", threads);
+                final DefaultConsumer consumer = (DefaultConsumer) endpoint.getConsumer();
+                ExecutorService executor
+                        = exchange.getContext().getExecutorServiceManager().newFixedThreadPool(this, "perf", threads);
                 CompletionService<Exchange> tasks = new ExecutorCompletionService<>(executor);
 
                 // StopWatch watch = new StopWatch(); // if we want to clock how
