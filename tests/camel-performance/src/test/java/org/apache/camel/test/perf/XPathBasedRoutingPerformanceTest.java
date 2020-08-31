@@ -68,13 +68,13 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
                 namespaces.put("m", "http://services.samples/xsd");
 
                 from("direct:filter")
-                    .filter().xpath("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
+                        .filter().xpath("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
                         .to("mock:end");
 
                 from("direct:choice")
-                    .choice()
+                        .choice()
                         .when().xpath("/soapenv:Envelope/soapenv:Body/m:buyStocks/order[1]/symbol='IBM'", namespaces)
-                            .to("mock:end");
+                        .to("mock:end");
             }
         };
     }
