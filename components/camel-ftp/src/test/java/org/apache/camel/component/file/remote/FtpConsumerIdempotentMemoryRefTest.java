@@ -56,7 +56,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello E", "e.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
         assertTrue(repo.contains("a.txt"));
@@ -78,7 +78,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello G", "g.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
     }
