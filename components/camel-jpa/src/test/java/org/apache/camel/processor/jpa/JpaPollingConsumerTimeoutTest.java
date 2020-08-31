@@ -18,13 +18,12 @@ package org.apache.camel.processor.jpa;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.spring.SpringRouteBuilder;
 
 public class JpaPollingConsumerTimeoutTest extends JpaPollingConsumerTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                         .pollEnrich()

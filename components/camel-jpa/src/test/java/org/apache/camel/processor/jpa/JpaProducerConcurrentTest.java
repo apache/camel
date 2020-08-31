@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to("jpa://" + SendEmail.class.getName() + "?usePersist=true").to("mock:result");
             }

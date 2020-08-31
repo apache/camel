@@ -22,13 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 
 public class JpaRouteEndpointTest extends JpaRouteTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 JpaEndpoint jpa = new JpaEndpoint();
                 jpa.setComponent(new JpaComponent());
