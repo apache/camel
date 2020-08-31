@@ -128,7 +128,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.ListDomains);
-                exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, new Integer(5));
+                exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, Integer.valueOf(5));
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
             }
         });

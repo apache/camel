@@ -148,13 +148,13 @@ public class SdbComponentTest extends CamelTestSupport {
 
         assertEquals("TestDomain", amazonSDBClient.domainMetadataRequest.getDomainName());
 
-        assertEquals(new Integer(10), exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
-        assertEquals(new Integer(11), exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
-        assertEquals(new Integer(12), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));
-        assertEquals(new Integer(13), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_COUNT));
-        assertEquals(new Long(1000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_SIZE));
-        assertEquals(new Long(2000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE));
-        assertEquals(new Long(3000000), exchange.getIn().getHeader(SdbConstants.ITEM_NAME_SIZE));
+        assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(SdbConstants.TIMESTAMP));
+        assertEquals(Integer.valueOf(11), exchange.getIn().getHeader(SdbConstants.ITEM_COUNT));
+        assertEquals(Integer.valueOf(12), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_COUNT));
+        assertEquals(Integer.valueOf(13), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_COUNT));
+        assertEquals(Long.valueOf(1000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAME_SIZE));
+        assertEquals(Long.valueOf(2000000), exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE));
+        assertEquals(Long.valueOf(3000000), exchange.getIn().getHeader(SdbConstants.ITEM_NAME_SIZE));
     }
 
     @SuppressWarnings("unchecked")
@@ -206,12 +206,12 @@ public class SdbComponentTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.ListDomains);
-                exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, new Integer(5));
+                exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, Integer.valueOf(5));
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
             }
         });
 
-        assertEquals(new Integer(5), amazonSDBClient.listDomainsRequest.getMaxNumberOfDomains());
+        assertEquals(Integer.valueOf(5), amazonSDBClient.listDomainsRequest.getMaxNumberOfDomains());
         assertEquals("TOKEN1", amazonSDBClient.listDomainsRequest.getNextToken());
 
         List<String> domains = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAMES, List.class);
