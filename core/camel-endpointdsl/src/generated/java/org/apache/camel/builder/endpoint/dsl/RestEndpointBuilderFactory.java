@@ -715,8 +715,8 @@ public interface RestEndpointBuilderFactory {
          * 
          * Path parameter: method (required)
          * HTTP method to use.
-         * The value can be one of: get, post, put, delete, patch, head, trace,
-         * connect, options
+         * There are 9 enums and the value can be one of: get, post, put,
+         * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
          * The base path
@@ -741,8 +741,8 @@ public interface RestEndpointBuilderFactory {
          * 
          * Path parameter: method (required)
          * HTTP method to use.
-         * The value can be one of: get, post, put, delete, patch, head, trace,
-         * connect, options
+         * There are 9 enums and the value can be one of: get, post, put,
+         * delete, patch, head, trace, connect, options
          * 
          * Path parameter: path (required)
          * The base path

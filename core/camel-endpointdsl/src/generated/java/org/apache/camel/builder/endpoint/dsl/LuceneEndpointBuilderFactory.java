@@ -264,7 +264,7 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to do such as insert or query.
-         * The value can be one of: insert, query
+         * There are 2 enums and the value can be one of: insert, query
          * 
          * @param path host:operation
          */
@@ -286,7 +286,7 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to do such as insert or query.
-         * The value can be one of: insert, query
+         * There are 2 enums and the value can be one of: insert, query
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

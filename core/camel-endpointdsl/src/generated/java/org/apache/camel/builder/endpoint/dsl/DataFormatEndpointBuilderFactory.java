@@ -165,7 +165,7 @@ public interface DataFormatEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to use either marshal or unmarshal
-         * The value can be one of: marshal, unmarshal
+         * There are 2 enums and the value can be one of: marshal, unmarshal
          * 
          * @param path name:operation
          */
@@ -187,7 +187,7 @@ public interface DataFormatEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to use either marshal or unmarshal
-         * The value can be one of: marshal, unmarshal
+         * There are 2 enums and the value can be one of: marshal, unmarshal
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

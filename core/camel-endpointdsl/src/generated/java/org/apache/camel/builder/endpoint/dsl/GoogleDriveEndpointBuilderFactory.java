@@ -1259,15 +1259,16 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: drive-about, drive-apps, drive-changes,
-         * drive-channels, drive-children, drive-comments, drive-files,
-         * drive-parents, drive-permissions, drive-properties, drive-realtime,
-         * drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: drive-about,
+         * drive-apps, drive-changes, drive-channels, drive-children,
+         * drive-comments, drive-files, drive-parents, drive-permissions,
+         * drive-properties, drive-realtime, drive-replies, drive-revisions
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: copy, delete, get, getIdForEmail, insert,
-         * list, patch, stop, touch, trash, untrash, update, watch
+         * There are 13 enums and the value can be one of: copy, delete, get,
+         * getIdForEmail, insert, list, patch, stop, touch, trash, untrash,
+         * update, watch
          * 
          * @param path apiName/methodName
          */
@@ -1286,15 +1287,16 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: drive-about, drive-apps, drive-changes,
-         * drive-channels, drive-children, drive-comments, drive-files,
-         * drive-parents, drive-permissions, drive-properties, drive-realtime,
-         * drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: drive-about,
+         * drive-apps, drive-changes, drive-channels, drive-children,
+         * drive-comments, drive-files, drive-parents, drive-permissions,
+         * drive-properties, drive-realtime, drive-replies, drive-revisions
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: copy, delete, get, getIdForEmail, insert,
-         * list, patch, stop, touch, trash, untrash, update, watch
+         * There are 13 enums and the value can be one of: copy, delete, get,
+         * getIdForEmail, insert, list, patch, stop, touch, trash, untrash,
+         * update, watch
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

@@ -215,7 +215,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to use
-         * The value can be one of: startCase
+         * There are 1 enums and the value can be one of: startCase
          * 
          * @param path operation
          */
@@ -234,7 +234,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to use
-         * The value can be one of: startCase
+         * There are 1 enums and the value can be one of: startCase
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

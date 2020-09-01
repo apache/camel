@@ -531,7 +531,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Path parameter: cryptoOperation (required)
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto:sign sets sign as the operation.
-         * The value can be one of: sign, verify
+         * There are 2 enums and the value can be one of: sign, verify
          * 
          * Path parameter: name (required)
          * The logical name of this operation.
@@ -555,7 +555,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Path parameter: cryptoOperation (required)
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto:sign sets sign as the operation.
-         * The value can be one of: sign, verify
+         * There are 2 enums and the value can be one of: sign, verify
          * 
          * Path parameter: name (required)
          * The logical name of this operation.

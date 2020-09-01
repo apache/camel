@@ -1245,8 +1245,8 @@ public interface YammerEndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * The function to use
-         * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-         * PRIVATE, RECEIVED, USERS, CURRENT
+         * There are 9 enums and the value can be one of: MESSAGES, MY_FEED,
+         * ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
          * 
          * @param path function
          */
@@ -1265,8 +1265,8 @@ public interface YammerEndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * The function to use
-         * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-         * PRIVATE, RECEIVED, USERS, CURRENT
+         * There are 9 enums and the value can be one of: MESSAGES, MY_FEED,
+         * ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

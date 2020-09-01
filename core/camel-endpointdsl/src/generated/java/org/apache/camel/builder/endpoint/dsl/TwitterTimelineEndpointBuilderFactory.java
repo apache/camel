@@ -1596,8 +1596,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-         * UNKNOWN
+         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+         * MENTIONS, RETWEETSOFME, UNKNOWN
          * 
          * @param path timelineType
          */
@@ -1616,8 +1616,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-         * UNKNOWN
+         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+         * MENTIONS, RETWEETSOFME, UNKNOWN
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

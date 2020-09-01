@@ -828,9 +828,10 @@ public interface JiraEndpointBuilderFactory {
          * Operation to perform. Consumers: NewIssues, NewComments. Producers:
          * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
          * Watchers. See this class javadoc description for more information.
-         * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-         * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
-         * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+         * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+         * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES,
+         * UPDATEISSUE, TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG,
+         * FETCHISSUE, FETCHCOMMENTS
          * 
          * @param path type
          */
@@ -851,9 +852,10 @@ public interface JiraEndpointBuilderFactory {
          * Operation to perform. Consumers: NewIssues, NewComments. Producers:
          * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
          * Watchers. See this class javadoc description for more information.
-         * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-         * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
-         * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+         * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+         * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES,
+         * UPDATEISSUE, TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG,
+         * FETCHISSUE, FETCHCOMMENTS
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

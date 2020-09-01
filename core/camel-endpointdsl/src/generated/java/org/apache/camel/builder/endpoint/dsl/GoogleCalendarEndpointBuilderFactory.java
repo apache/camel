@@ -1249,13 +1249,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: acl, list, calendars, channels, colors,
-         * freebusy, events, settings
+         * There are 8 enums and the value can be one of: acl, list, calendars,
+         * channels, colors, freebusy, events, settings
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: calendarImport, clear, delete, get, insert,
-         * instances, list, move, patch, query, quickAdd, stop, update, watch
+         * There are 14 enums and the value can be one of: calendarImport,
+         * clear, delete, get, insert, instances, list, move, patch, query,
+         * quickAdd, stop, update, watch
          * 
          * @param path apiName/methodName
          */
@@ -1274,13 +1275,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: acl, list, calendars, channels, colors,
-         * freebusy, events, settings
+         * There are 8 enums and the value can be one of: acl, list, calendars,
+         * channels, colors, freebusy, events, settings
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: calendarImport, clear, delete, get, insert,
-         * instances, list, move, patch, query, quickAdd, stop, update, watch
+         * There are 14 enums and the value can be one of: calendarImport,
+         * clear, delete, get, insert, instances, list, move, patch, query,
+         * quickAdd, stop, update, watch
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

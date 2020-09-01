@@ -759,7 +759,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * Path parameter: transport (required)
          * Transport to use, can be either http or netty
-         * The value can be one of: http, netty
+         * There are 2 enums and the value can be one of: http, netty
          * 
          * Path parameter: port (required)
          * Port number to use
@@ -787,7 +787,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * Path parameter: transport (required)
          * Transport to use, can be either http or netty
-         * The value can be one of: http, netty
+         * There are 2 enums and the value can be one of: http, netty
          * 
          * Path parameter: port (required)
          * Port number to use

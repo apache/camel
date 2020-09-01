@@ -1082,14 +1082,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: threads, messages, attachments, labels,
-         * history, drafts, users
+         * There are 7 enums and the value can be one of: threads, messages,
+         * attachments, labels, history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: attachments, create, delete, get,
-         * getProfile, gmailImport, insert, list, modify, patch, send, stop,
-         * trash, untrash, update, watch
+         * There are 16 enums and the value can be one of: attachments, create,
+         * delete, get, getProfile, gmailImport, insert, list, modify, patch,
+         * send, stop, trash, untrash, update, watch
          * 
          * @param path apiName/methodName
          */
@@ -1108,14 +1108,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: threads, messages, attachments, labels,
-         * history, drafts, users
+         * There are 7 enums and the value can be one of: threads, messages,
+         * attachments, labels, history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: attachments, create, delete, get,
-         * getProfile, gmailImport, insert, list, modify, patch, send, stop,
-         * trash, untrash, update, watch
+         * There are 16 enums and the value can be one of: attachments, create,
+         * delete, get, getProfile, gmailImport, insert, list, modify, patch,
+         * send, stop, trash, untrash, update, watch
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

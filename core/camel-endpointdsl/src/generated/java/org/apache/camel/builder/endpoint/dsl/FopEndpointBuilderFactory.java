@@ -196,8 +196,8 @@ public interface FopEndpointBuilderFactory {
          * Path parameter: outputType (required)
          * The primary output format is PDF but other output formats are also
          * supported.
-         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
-         * txt
+         * There are 10 enums and the value can be one of: pdf, ps, pcl, png,
+         * jpeg, svg, xml, mif, rtf, txt
          * 
          * @param path outputType
          */
@@ -218,8 +218,8 @@ public interface FopEndpointBuilderFactory {
          * Path parameter: outputType (required)
          * The primary output format is PDF but other output formats are also
          * supported.
-         * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf,
-         * txt
+         * There are 10 enums and the value can be one of: pdf, ps, pcl, png,
+         * jpeg, svg, xml, mif, rtf, txt
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

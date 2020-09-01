@@ -1339,8 +1339,8 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * Path parameter: action (required)
          * The action to do.
-         * The value can be one of: sendMessage, getMessage, uploadFile,
-         * downloadFile
+         * There are 4 enums and the value can be one of: sendMessage,
+         * getMessage, uploadFile, downloadFile
          * 
          * @param path action
          */
@@ -1359,8 +1359,8 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * Path parameter: action (required)
          * The action to do.
-         * The value can be one of: sendMessage, getMessage, uploadFile,
-         * downloadFile
+         * There are 4 enums and the value can be one of: sendMessage,
+         * getMessage, uploadFile, downloadFile
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

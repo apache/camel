@@ -875,12 +875,12 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The endpoint operation.
-         * The value can be one of: post, user
+         * There are 2 enums and the value can be one of: post, user
          * 
          * Path parameter: operationDetail
          * The second part of an endpoint operation. Needed only when endpoint
          * semantic is not enough, like wordpress:post:delete
-         * The value can be one of: delete
+         * There are 1 enums and the value can be one of: delete
          * 
          * @param path operation
          */
@@ -899,12 +899,12 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * The endpoint operation.
-         * The value can be one of: post, user
+         * There are 2 enums and the value can be one of: post, user
          * 
          * Path parameter: operationDetail
          * The second part of an endpoint operation. Needed only when endpoint
          * semantic is not enough, like wordpress:post:delete
-         * The value can be one of: delete
+         * There are 1 enums and the value can be one of: delete
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

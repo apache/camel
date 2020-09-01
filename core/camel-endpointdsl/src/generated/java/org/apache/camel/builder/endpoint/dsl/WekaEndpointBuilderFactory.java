@@ -295,8 +295,8 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * The command to use.
-         * The value can be one of: filter, model, read, write, push, pop,
-         * version
+         * There are 7 enums and the value can be one of: filter, model, read,
+         * write, push, pop, version
          * 
          * @param path command
          */
@@ -315,8 +315,8 @@ public interface WekaEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * The command to use.
-         * The value can be one of: filter, model, read, write, push, pop,
-         * version
+         * There are 7 enums and the value can be one of: filter, model, read,
+         * write, push, pop, version
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

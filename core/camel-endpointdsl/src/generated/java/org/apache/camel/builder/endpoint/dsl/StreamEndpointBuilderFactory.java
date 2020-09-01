@@ -892,7 +892,8 @@ public interface StreamEndpointBuilderFactory {
          * 
          * Path parameter: kind (required)
          * Kind of stream to use such as System.in or System.out.
-         * The value can be one of: in, out, err, header, file
+         * There are 5 enums and the value can be one of: in, out, err, header,
+         * file
          * 
          * @param path kind
          */
@@ -911,7 +912,8 @@ public interface StreamEndpointBuilderFactory {
          * 
          * Path parameter: kind (required)
          * Kind of stream to use such as System.in or System.out.
-         * The value can be one of: in, out, err, header, file
+         * There are 5 enums and the value can be one of: in, out, err, header,
+         * file
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

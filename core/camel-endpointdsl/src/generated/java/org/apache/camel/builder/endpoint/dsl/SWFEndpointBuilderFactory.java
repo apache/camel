@@ -1348,7 +1348,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Activity or workflow
-         * The value can be one of: activity, workflow
+         * There are 2 enums and the value can be one of: activity, workflow
          * 
          * @param path type
          */
@@ -1367,7 +1367,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Activity or workflow
-         * The value can be one of: activity, workflow
+         * There are 2 enums and the value can be one of: activity, workflow
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

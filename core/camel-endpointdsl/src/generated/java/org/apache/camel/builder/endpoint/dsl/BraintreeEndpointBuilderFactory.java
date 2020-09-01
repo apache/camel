@@ -1416,10 +1416,10 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: addOn, address, clientToken,
-         * creditCardVerification, customer, discount, dispute, documentUpload,
-         * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
-         * settlementBatchSummary, subscription, transaction,
+         * There are 17 enums and the value can be one of: addOn, address,
+         * clientToken, creditCardVerification, customer, discount, dispute,
+         * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce,
+         * plan, report, settlementBatchSummary, subscription, transaction,
          * webhookNotification
          * 
          * Path parameter: methodName
@@ -1442,10 +1442,10 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: addOn, address, clientToken,
-         * creditCardVerification, customer, discount, dispute, documentUpload,
-         * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
-         * settlementBatchSummary, subscription, transaction,
+         * There are 17 enums and the value can be one of: addOn, address,
+         * clientToken, creditCardVerification, customer, discount, dispute,
+         * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce,
+         * plan, report, settlementBatchSummary, subscription, transaction,
          * webhookNotification
          * 
          * Path parameter: methodName

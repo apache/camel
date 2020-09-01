@@ -726,7 +726,8 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to perform
-         * The value can be one of: put, del, search, get, move
+         * There are 5 enums and the value can be one of: put, del, search, get,
+         * move
          * 
          * @param path name/operation
          */
@@ -749,7 +750,8 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation to perform
-         * The value can be one of: put, del, search, get, move
+         * There are 5 enums and the value can be one of: put, del, search, get,
+         * move
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

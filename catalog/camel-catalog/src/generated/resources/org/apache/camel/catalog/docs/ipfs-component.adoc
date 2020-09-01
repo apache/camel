@@ -65,7 +65,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *ipfsCmd* | *Required* The ipfs command. The value can be one of: add, cat, get, version |  | String
+| *ipfsCmd* | *Required* The ipfs command. There are 4 enums and the value can be one of: add, cat, get, version |  | String
 |===
 
 

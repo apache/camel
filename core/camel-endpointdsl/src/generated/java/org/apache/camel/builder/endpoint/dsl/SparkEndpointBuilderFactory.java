@@ -277,7 +277,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * Path parameter: endpointType (required)
          * Type of the endpoint (rdd, dataframe, hive).
-         * The value can be one of: rdd, dataframe, hive
+         * There are 3 enums and the value can be one of: rdd, dataframe, hive
          * 
          * @param path endpointType
          */
@@ -296,7 +296,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * Path parameter: endpointType (required)
          * Type of the endpoint (rdd, dataframe, hive).
-         * The value can be one of: rdd, dataframe, hive
+         * There are 3 enums and the value can be one of: rdd, dataframe, hive
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

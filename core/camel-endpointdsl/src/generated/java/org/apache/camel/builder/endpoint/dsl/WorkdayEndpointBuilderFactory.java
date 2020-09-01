@@ -257,7 +257,7 @@ public interface WorkdayEndpointBuilderFactory {
          * 
          * Path parameter: entity (required)
          * The entity to be requested or subscribed via API.
-         * The value can be one of: report, commonAPI
+         * There are 2 enums and the value can be one of: report, commonAPI
          * 
          * Path parameter: path (required)
          * The API path to access an entity structure.
@@ -279,7 +279,7 @@ public interface WorkdayEndpointBuilderFactory {
          * 
          * Path parameter: entity (required)
          * The entity to be requested or subscribed via API.
-         * The value can be one of: report, commonAPI
+         * There are 2 enums and the value can be one of: report, commonAPI
          * 
          * Path parameter: path (required)
          * The API path to access an entity structure.

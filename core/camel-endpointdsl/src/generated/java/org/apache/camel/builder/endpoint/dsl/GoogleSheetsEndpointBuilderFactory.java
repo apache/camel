@@ -1092,12 +1092,12 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: spreadsheets, data
+         * There are 2 enums and the value can be one of: spreadsheets, data
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: create, get, update, append, batchUpdate,
-         * clear
+         * There are 6 enums and the value can be one of: create, get, update,
+         * append, batchUpdate, clear
          * 
          * @param path apiName/methodName
          */
@@ -1116,12 +1116,12 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: spreadsheets, data
+         * There are 2 enums and the value can be one of: spreadsheets, data
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: create, get, update, append, batchUpdate,
-         * clear
+         * There are 6 enums and the value can be one of: create, get, update,
+         * append, batchUpdate, clear
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

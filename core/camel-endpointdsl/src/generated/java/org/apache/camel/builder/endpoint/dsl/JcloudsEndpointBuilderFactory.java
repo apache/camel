@@ -564,7 +564,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * What command to execute such as blobstore or compute.
-         * The value can be one of: blobstore, compute
+         * There are 2 enums and the value can be one of: blobstore, compute
          * 
          * Path parameter: providerId (required)
          * The name of the cloud provider that provides the target service (e.g.
@@ -587,7 +587,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * Path parameter: command (required)
          * What command to execute such as blobstore or compute.
-         * The value can be one of: blobstore, compute
+         * There are 2 enums and the value can be one of: blobstore, compute
          * 
          * Path parameter: providerId (required)
          * The name of the cloud provider that provides the target service (e.g.

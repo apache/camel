@@ -1376,7 +1376,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * The endpoint type. Currently, only the 'bots' type is supported.
-         * The value can be one of: bots
+         * There are 1 enums and the value can be one of: bots
          * 
          * @param path type
          */
@@ -1395,7 +1395,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * The endpoint type. Currently, only the 'bots' type is supported.
-         * The value can be one of: bots
+         * There are 1 enums and the value can be one of: bots
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
