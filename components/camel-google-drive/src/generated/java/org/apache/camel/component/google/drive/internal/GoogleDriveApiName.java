@@ -38,7 +38,7 @@ public enum GoogleDriveApiName implements ApiName {
     DRIVE_REVISIONS("drive-revisions");
 
 
-    private static final GoogleDriveApiName[] VALUES = values();
+    private static final GoogleDriveApiName[] CACHED_ENUM_VALUES = values();
     
     private final String name;
 
@@ -57,9 +57,9 @@ public enum GoogleDriveApiName implements ApiName {
     }
 
     public static GoogleDriveApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].name.equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
             }
         }
         throw new IllegalArgumentException("Invalid value " + value);

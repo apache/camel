@@ -89,7 +89,7 @@ public enum Olingo2AppApiMethod implements ApiMethod {
         arg("endpointHttpHeaders", java.util.Map.class),
         arg("responseHandler", org.apache.camel.component.olingo2.api.Olingo2ResponseHandler.class));
 
-    
+    private static final Olingo2AppApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -99,6 +99,18 @@ public enum Olingo2AppApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static Olingo2AppApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

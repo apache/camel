@@ -36,7 +36,7 @@ public enum DriveRealtimeApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class));
 
-    
+    private static final DriveRealtimeApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -46,6 +46,18 @@ public enum DriveRealtimeApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static DriveRealtimeApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

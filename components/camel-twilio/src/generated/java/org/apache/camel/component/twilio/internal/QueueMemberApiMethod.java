@@ -59,7 +59,7 @@ public enum QueueMemberApiMethod implements ApiMethod {
         arg("pathCallSid", String.class),
         arg("url", java.net.URI.class));
 
-    
+    private static final QueueMemberApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -69,6 +69,18 @@ public enum QueueMemberApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static QueueMemberApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

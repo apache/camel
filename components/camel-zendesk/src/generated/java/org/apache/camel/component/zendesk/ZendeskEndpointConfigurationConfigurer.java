@@ -112,7 +112,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "macroid0":
         case "MacroId0": target.setMacroId0(property(camelContext, java.lang.Long.class, value)); return true;
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "MethodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
         case "monitorid":
         case "MonitorId": target.setMonitorId(property(camelContext, java.lang.Long.class, value)); return true;
         case "name":
@@ -310,7 +310,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("Macro", org.zendesk.client.v2.model.Macro.class);
         answer.put("MacroId", java.lang.Long.class);
         answer.put("MacroId0", java.lang.Long.class);
-        answer.put("MethodName", java.lang.String.class);
+        answer.put("MethodName", org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class);
         answer.put("MonitorId", java.lang.Long.class);
         answer.put("Name", java.lang.String.class);
         answer.put("NewPassword", java.lang.String.class);

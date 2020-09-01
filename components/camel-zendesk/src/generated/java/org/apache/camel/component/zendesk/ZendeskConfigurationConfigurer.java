@@ -20,7 +20,7 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
         org.apache.camel.component.zendesk.ZendeskConfiguration target = (org.apache.camel.component.zendesk.ZendeskConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "methodname":
-        case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
+        case "MethodName": target.setMethodName(property(camelContext, org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class, value)); return true;
         case "oauthtoken":
         case "OauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "password":
@@ -38,7 +38,7 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("MethodName", java.lang.String.class);
+        answer.put("MethodName", org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class);
         answer.put("OauthToken", java.lang.String.class);
         answer.put("Password", java.lang.String.class);
         answer.put("ServerUrl", java.lang.String.class);

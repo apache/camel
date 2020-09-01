@@ -14,7 +14,7 @@ public enum ZendeskApiName implements ApiName {
     DEFAULT("");
 
 
-    private static final ZendeskApiName[] VALUES = values();
+    private static final ZendeskApiName[] CACHED_ENUM_VALUES = values();
     
     private final String name;
 
@@ -33,9 +33,9 @@ public enum ZendeskApiName implements ApiName {
     }
 
     public static ZendeskApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].name.equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
             }
         }
         throw new IllegalArgumentException("Invalid value " + value);

@@ -56,7 +56,7 @@ public enum CalendarCalendarListApiMethod implements ApiMethod {
         "watch",
         arg("contentChannel", com.google.api.services.calendar.model.Channel.class));
 
-    
+    private static final CalendarCalendarListApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -66,6 +66,18 @@ public enum CalendarCalendarListApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static CalendarCalendarListApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

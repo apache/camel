@@ -28,7 +28,7 @@ public enum BoxEventLogsManagerApiMethod implements ApiMethod {
         arg("before", java.util.Date.class),
         arg("types", new com.box.sdk.BoxEvent.Type[0].getClass()));
 
-    
+    private static final BoxEventLogsManagerApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -38,6 +38,18 @@ public enum BoxEventLogsManagerApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static BoxEventLogsManagerApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

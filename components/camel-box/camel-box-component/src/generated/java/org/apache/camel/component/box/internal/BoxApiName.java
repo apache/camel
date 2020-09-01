@@ -32,7 +32,7 @@ public enum BoxApiName implements ApiName {
     USERS("users");
 
 
-    private static final BoxApiName[] VALUES = values();
+    private static final BoxApiName[] CACHED_ENUM_VALUES = values();
     
     private final String name;
 
@@ -51,9 +51,9 @@ public enum BoxApiName implements ApiName {
     }
 
     public static BoxApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].name.equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
             }
         }
         throw new IllegalArgumentException("Invalid value " + value);
