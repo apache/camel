@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.message.Feedback
  */
-@UriParams
+@UriParams(apiName = "message-feedback")
 @Configurer
 public final class MessageFeedbackEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that will create the resource")

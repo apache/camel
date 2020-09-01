@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.as2.api.AS2ClientManager
  */
-@UriParams
+@UriParams(apiName = "client")
 @Configurer
 public final class AS2ClientManagerEndpointConfiguration extends AS2Configuration {
     @UriParam(description = "AS2 name of sender")

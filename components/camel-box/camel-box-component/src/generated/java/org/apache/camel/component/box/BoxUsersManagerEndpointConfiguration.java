@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxUsersManager
  */
-@UriParams
+@UriParams(apiName = "users")
 @Configurer
 public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The email address to add as an alias")

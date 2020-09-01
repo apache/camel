@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$About
  */
-@UriParams
+@UriParams(apiName = "drive-about")
 @Configurer
 public final class DriveAboutEndpointConfiguration extends GoogleDriveConfiguration {
 }

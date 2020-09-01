@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Replies
  */
-@UriParams
+@UriParams(apiName = "drive-replies")
 @Configurer
 public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

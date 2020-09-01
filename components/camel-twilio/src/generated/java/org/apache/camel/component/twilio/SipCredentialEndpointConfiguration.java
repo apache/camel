@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.credentiallist.Credential
  */
-@UriParams
+@UriParams(apiName = "sip-credential-list-credential")
 @Configurer
 public final class SipCredentialEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The password will not be returned in the response")

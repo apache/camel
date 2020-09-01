@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.sheets.v4.Sheets$Spreadsheets
  */
-@UriParams
+@UriParams(apiName = "spreadsheets")
 @Configurer
 public final class SheetsSpreadsheetsEndpointConfiguration extends GoogleSheetsConfiguration {
     @UriParam(description = "The")

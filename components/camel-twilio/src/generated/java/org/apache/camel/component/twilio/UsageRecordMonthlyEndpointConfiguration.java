@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.Monthly
  */
-@UriParams
+@UriParams(apiName = "usage-record-monthly")
 @Configurer
 public final class UsageRecordMonthlyEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resources to read")

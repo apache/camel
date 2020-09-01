@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.recording.addonresult.Payload
  */
-@UriParams
+@UriParams(apiName = "recording-add-on-result-payload")
 @Configurer
 public final class RecordingAddOnResultPayloadEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resources to delete")

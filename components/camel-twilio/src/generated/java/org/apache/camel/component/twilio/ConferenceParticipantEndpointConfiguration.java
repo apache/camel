@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.conference.Participant
  */
-@UriParams
+@UriParams(apiName = "conference-participant")
 @Configurer
 public final class ConferenceParticipantEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The phone number, Client identifier, or username portion of SIP address that made this call.")

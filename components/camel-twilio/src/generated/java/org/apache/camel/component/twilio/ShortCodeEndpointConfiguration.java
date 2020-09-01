@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.ShortCode
  */
-@UriParams
+@UriParams(apiName = "short-code")
 @Configurer
 public final class ShortCodeEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resource(s) to fetch")

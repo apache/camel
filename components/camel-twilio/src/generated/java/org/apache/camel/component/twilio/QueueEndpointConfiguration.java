@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Queue
  */
-@UriParams
+@UriParams(apiName = "queue")
 @Configurer
 public final class QueueEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "A string to describe this resource")

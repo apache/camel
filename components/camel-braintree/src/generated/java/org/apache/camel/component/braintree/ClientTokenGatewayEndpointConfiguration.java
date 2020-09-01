@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.ClientTokenGateway
  */
-@UriParams
+@UriParams(apiName = "clientToken")
 @Configurer
 public final class ClientTokenGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam

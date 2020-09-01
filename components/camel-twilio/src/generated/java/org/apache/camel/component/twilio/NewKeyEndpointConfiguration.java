@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.NewKey
  */
-@UriParams
+@UriParams(apiName = "new-key")
 @Configurer
 public final class NewKeyEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that will be responsible for the new Key resource")

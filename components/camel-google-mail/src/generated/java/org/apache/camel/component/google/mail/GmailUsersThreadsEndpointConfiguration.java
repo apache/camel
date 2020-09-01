@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.gmail.Gmail$Users$Threads
  */
-@UriParams
+@UriParams(apiName = "threads")
 @Configurer
 public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam

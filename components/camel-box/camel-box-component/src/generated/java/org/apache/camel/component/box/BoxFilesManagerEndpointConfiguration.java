@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxFilesManager
  */
-@UriParams
+@UriParams(apiName = "files")
 @Configurer
 public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The access level of the shared link")

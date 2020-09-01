@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.calendar.Calendar$Settings
  */
-@UriParams
+@UriParams(apiName = "settings")
 @Configurer
 public final class CalendarSettingsEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam

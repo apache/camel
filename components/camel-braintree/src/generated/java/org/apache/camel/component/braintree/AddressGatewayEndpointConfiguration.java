@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.AddressGateway
  */
-@UriParams
+@UriParams(apiName = "address")
 @Configurer
 public final class AddressGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The id of the")

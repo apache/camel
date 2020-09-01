@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirDelete
  */
-@UriParams
+@UriParams(apiName = "delete")
 @Configurer
 public final class FhirDeleteEndpointConfiguration extends FhirConfiguration {
     @UriParam(description = "See")

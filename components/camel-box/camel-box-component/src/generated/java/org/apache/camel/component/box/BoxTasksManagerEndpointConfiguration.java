@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxTasksManager
  */
-@UriParams
+@UriParams(apiName = "tasks")
 @Configurer
 public final class BoxTasksManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The action the task assignee will be prompted to do")

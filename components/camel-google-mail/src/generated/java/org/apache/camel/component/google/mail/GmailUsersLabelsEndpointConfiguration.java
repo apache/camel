@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.gmail.Gmail$Users$Labels
  */
-@UriParams
+@UriParams(apiName = "labels")
 @Configurer
 public final class GmailUsersLabelsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam

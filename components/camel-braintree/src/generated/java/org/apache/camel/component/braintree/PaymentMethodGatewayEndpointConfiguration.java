@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.PaymentMethodGateway
  */
-@UriParams
+@UriParams(apiName = "paymentMethod")
 @Configurer
 public final class PaymentMethodGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam

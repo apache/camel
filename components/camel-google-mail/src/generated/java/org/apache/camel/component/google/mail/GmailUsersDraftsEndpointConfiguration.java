@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.gmail.Gmail$Users$Drafts
  */
-@UriParams
+@UriParams(apiName = "drafts")
 @Configurer
 public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam

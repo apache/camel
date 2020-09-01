@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.ReportGateway
  */
-@UriParams
+@UriParams(apiName = "report")
 @Configurer
 public final class ReportGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The request")

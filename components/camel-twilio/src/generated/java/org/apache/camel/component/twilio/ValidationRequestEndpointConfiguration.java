@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.ValidationRequest
  */
-@UriParams
+@UriParams(apiName = "validation-request")
 @Configurer
 public final class ValidationRequestEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account responsible for the new Caller ID")

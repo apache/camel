@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountry
  */
-@UriParams
+@UriParams(apiName = "available-phone-number-country")
 @Configurer
 public final class AvailablePhoneNumberCountryEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account requesting the available phone number Country resource")

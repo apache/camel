@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirTransaction
  */
-@UriParams
+@UriParams(apiName = "transaction")
 @Configurer
 public final class FhirTransactionEndpointConfiguration extends FhirConfiguration {
     @UriParam(description = "Bundle to use in the transaction")

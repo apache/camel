@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Realtime
  */
-@UriParams
+@UriParams(apiName = "drive-realtime")
 @Configurer
 public final class DriveRealtimeEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

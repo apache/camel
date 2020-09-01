@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.IncomingPhoneNumber
  */
-@UriParams
+@UriParams(apiName = "incoming-phone-number")
 @Configurer
 public final class IncomingPhoneNumberEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The desired area code for the new phone number")

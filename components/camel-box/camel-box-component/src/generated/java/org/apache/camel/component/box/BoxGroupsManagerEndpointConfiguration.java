@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxGroupsManager
  */
-@UriParams
+@UriParams(apiName = "groups")
 @Configurer
 public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The description of the new group")

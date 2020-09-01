@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Address
  */
-@UriParams
+@UriParams(apiName = "address")
 @Configurer
 public final class AddressEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The city of the new address")

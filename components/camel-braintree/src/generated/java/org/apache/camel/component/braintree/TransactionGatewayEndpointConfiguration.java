@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.TransactionGateway
  */
-@UriParams
+@UriParams(apiName = "transaction")
 @Configurer
 public final class TransactionGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam

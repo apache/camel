@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.Trigger
  */
-@UriParams
+@UriParams(apiName = "usage-trigger")
 @Configurer
 public final class UsageTriggerEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The URL we call when the trigger fires")

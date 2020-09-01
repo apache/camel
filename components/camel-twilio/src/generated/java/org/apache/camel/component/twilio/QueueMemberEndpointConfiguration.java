@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.queue.Member
  */
-@UriParams
+@UriParams(apiName = "queue-member")
 @Configurer
 public final class QueueMemberEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resource(s) to fetch")

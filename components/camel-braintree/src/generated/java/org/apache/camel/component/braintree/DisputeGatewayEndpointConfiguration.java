@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.DisputeGateway
  */
-@UriParams
+@UriParams(apiName = "dispute")
 @Configurer
 public final class DisputeGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The content of the text evidence for the dispute")

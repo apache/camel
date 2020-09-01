@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirMeta
  */
-@UriParams
+@UriParams(apiName = "meta")
 @Configurer
 public final class FhirMetaEndpointConfiguration extends FhirConfiguration {
     @UriParam
