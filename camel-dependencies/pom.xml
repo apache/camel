@@ -180,7 +180,7 @@
     <drools-version>7.42.0.Final</drools-version>
     <dropbox-version>3.1.5</dropbox-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
-    <ehcache3-version>3.8.1</ehcache3-version>
+    <ehcache3-version>3.9.0</ehcache3-version>
     <elasticsearch-rest-cluster-runner-version>7.8.0.0</elasticsearch-rest-cluster-runner-version>
     <elasticsearch-rest-sniffer-version>7.8.0</elasticsearch-rest-sniffer-version>
     <elasticsearch-rest-version>7.8.0</elasticsearch-rest-version>
