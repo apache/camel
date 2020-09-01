@@ -352,7 +352,8 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * The value can be one of: create, append, extractText
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param path operation
          */
@@ -371,7 +372,8 @@ public interface PdfEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Operation type
-         * The value can be one of: create, append, extractText
+         * There are 3 enums and the value can be one of: create, append,
+         * extractText
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

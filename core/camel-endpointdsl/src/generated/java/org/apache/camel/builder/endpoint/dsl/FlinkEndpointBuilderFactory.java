@@ -282,7 +282,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * Path parameter: endpointType (required)
          * Type of the endpoint (dataset, datastream).
-         * The value can be one of: dataset, datastream
+         * There are 2 enums and the value can be one of: dataset, datastream
          * 
          * @param path endpointType
          */
@@ -301,7 +301,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * Path parameter: endpointType (required)
          * Type of the endpoint (dataset, datastream).
-         * The value can be one of: dataset, datastream
+         * There are 2 enums and the value can be one of: dataset, datastream
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

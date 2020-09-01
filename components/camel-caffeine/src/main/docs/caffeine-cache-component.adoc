@@ -52,7 +52,7 @@ The Caffeine Cache component supports 18 options, which are listed below.
 | *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
-| *evictionType* (producer) | Set the eviction Type for this cache. The value can be one of: size_based, time_based | SIZE_BASED | EvictionType
+| *evictionType* (producer) | Set the eviction Type for this cache. There are 2 enums and the value can be one of: size_based, time_based | SIZE_BASED | EvictionType
 | *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
 | *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
 | *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int
@@ -100,7 +100,7 @@ with the following path and query parameters:
 | *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
-| *evictionType* (producer) | Set the eviction Type for this cache. The value can be one of: size_based, time_based | SIZE_BASED | EvictionType
+| *evictionType* (producer) | Set the eviction Type for this cache. There are 2 enums and the value can be one of: size_based, time_based | SIZE_BASED | EvictionType
 | *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
 | *expireAfterWriteTime* (producer) | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | int
 | *initialCapacity* (producer) | Set the initial Capacity for the cache | 10000 | int

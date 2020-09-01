@@ -1459,7 +1459,8 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Whether to work with data queues or remote program call
-         * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
+         * MSGQ
          * 
          * @param path userID:password/systemName/objectPath.type
          */
@@ -1493,7 +1494,8 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Whether to work with data queues or remote program call
-         * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
+         * MSGQ
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

@@ -1874,7 +1874,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of:
+         * There are 1 enums and the value can be one of:
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1896,7 +1896,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of:
+         * There are 1 enums and the value can be one of:
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

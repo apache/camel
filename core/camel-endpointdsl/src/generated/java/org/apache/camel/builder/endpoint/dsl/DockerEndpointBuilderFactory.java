@@ -1429,10 +1429,10 @@ public interface DockerEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Which operation to use
-         * The value can be one of: events, stats, auth, info, ping, version,
-         * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-         * imagepushimageremove, imagesearch, imagetag, containerattach,
-         * containercommit, containercopyfile, containercreate,
+         * There are 31 enums and the value can be one of: events, stats, auth,
+         * info, ping, version, imagebuild, imagecreate, imageinspect,
+         * imagelist, imagepull, imagepushimageremove, imagesearch, imagetag,
+         * containerattach, containercommit, containercopyfile, containercreate,
          * containerdiffinspectcontainer, containerkill, containerlist,
          * containerlog, containerpause, containerrestart, containerremove,
          * containerstartcontainerstop, containertop, containerunpause,
@@ -1455,10 +1455,10 @@ public interface DockerEndpointBuilderFactory {
          * 
          * Path parameter: operation (required)
          * Which operation to use
-         * The value can be one of: events, stats, auth, info, ping, version,
-         * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-         * imagepushimageremove, imagesearch, imagetag, containerattach,
-         * containercommit, containercopyfile, containercreate,
+         * There are 31 enums and the value can be one of: events, stats, auth,
+         * info, ping, version, imagebuild, imagecreate, imageinspect,
+         * imagelist, imagepull, imagepushimageremove, imagesearch, imagetag,
+         * containerattach, containercommit, containercopyfile, containercreate,
          * containerdiffinspectcontainer, containerkill, containerlist,
          * containerlog, containerpause, containerrestart, containerremove,
          * containerstartcontainerstop, containertop, containerunpause,

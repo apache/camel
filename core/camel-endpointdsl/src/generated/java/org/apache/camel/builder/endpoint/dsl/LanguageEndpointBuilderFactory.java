@@ -308,9 +308,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * The value can be one of: bean, constant, exchangeProperty, file,
-         * groovy, header, javascript, jsonpath, mvel, ognl, , ref, simple,
-         * spel, sql, terser, tokenize, xpath, xquery, xtokenize
+         * There are 20 enums and the value can be one of: bean, constant,
+         * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel,
+         * ognl, , ref, simple, spel, sql, terser, tokenize, xpath, xquery,
+         * xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry
@@ -333,9 +334,10 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * Path parameter: languageName (required)
          * Sets the name of the language to use
-         * The value can be one of: bean, constant, exchangeProperty, file,
-         * groovy, header, javascript, jsonpath, mvel, ognl, , ref, simple,
-         * spel, sql, terser, tokenize, xpath, xquery, xtokenize
+         * There are 20 enums and the value can be one of: bean, constant,
+         * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel,
+         * ognl, , ref, simple, spel, sql, terser, tokenize, xpath, xquery,
+         * xtokenize
          * 
          * Path parameter: resourceUri
          * Path to the resource, or a reference to lookup a bean in the Registry

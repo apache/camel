@@ -157,7 +157,8 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Path parameter: dnsType (required)
          * The type of the lookup.
-         * The value can be one of: dig, ip, lookup, wikipedia
+         * There are 4 enums and the value can be one of: dig, ip, lookup,
+         * wikipedia
          * 
          * @param path dnsType
          */
@@ -176,7 +177,8 @@ public interface DnsEndpointBuilderFactory {
          * 
          * Path parameter: dnsType (required)
          * The type of the lookup.
-         * The value can be one of: dig, ip, lookup, wikipedia
+         * There are 4 enums and the value can be one of: dig, ip, lookup,
+         * wikipedia
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

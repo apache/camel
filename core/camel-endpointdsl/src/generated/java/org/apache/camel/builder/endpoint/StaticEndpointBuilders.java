@@ -39,7 +39,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -64,7 +65,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -173,7 +175,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -197,7 +200,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -400,7 +404,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to perform
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param path name/operation
      */
@@ -423,7 +428,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to perform
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -774,7 +780,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
-     * The value can be one of: http, netty
+     * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
      * Port number to use
@@ -803,7 +809,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: transport (required)
      * Transport to use, can be either http or netty
-     * The value can be one of: http, netty
+     * There are 2 enums and the value can be one of: http, netty
      * 
      * Path parameter: port (required)
      * Port number to use
@@ -2405,7 +2411,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Activity or workflow
-     * The value can be one of: activity, workflow
+     * There are 2 enums and the value can be one of: activity, workflow
      * 
      * @param path type
      */
@@ -2425,7 +2431,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Activity or workflow
-     * The value can be one of: activity, workflow
+     * There are 2 enums and the value can be one of: activity, workflow
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -2849,7 +2855,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use
-     * The value can be one of: startCase
+     * There are 1 enums and the value can be one of: startCase
      * 
      * @param path operation
      */
@@ -2869,7 +2875,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use
-     * The value can be one of: startCase
+     * There are 1 enums and the value can be one of: startCase
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -2893,8 +2899,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: collaborations, comments, event-logs, files,
-     * folders, groups, events, search, tasks, users
+     * There are 10 enums and the value can be one of: collaborations, comments,
+     * event-logs, files, folders, groups, events, search, tasks, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2918,8 +2924,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: collaborations, comments, event-logs, files,
-     * folders, groups, events, search, tasks, users
+     * There are 10 enums and the value can be one of: collaborations, comments,
+     * event-logs, files, folders, groups, events, search, tasks, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2945,10 +2951,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: addOn, address, clientToken,
-     * creditCardVerification, customer, discount, dispute, documentUpload,
-     * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
-     * settlementBatchSummary, subscription, transaction, webhookNotification
+     * There are 17 enums and the value can be one of: addOn, address,
+     * clientToken, creditCardVerification, customer, discount, dispute,
+     * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan,
+     * report, settlementBatchSummary, subscription, transaction,
+     * webhookNotification
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -2971,10 +2978,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: addOn, address, clientToken,
-     * creditCardVerification, customer, discount, dispute, documentUpload,
-     * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
-     * settlementBatchSummary, subscription, transaction, webhookNotification
+     * There are 17 enums and the value can be one of: addOn, address,
+     * clientToken, creditCardVerification, customer, discount, dispute,
+     * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan,
+     * report, settlementBatchSummary, subscription, transaction,
+     * webhookNotification
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -3491,15 +3499,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * Command can be either route or language
-     * The value can be one of: route, language
+     * There are 2 enums and the value can be one of: route, language
      * 
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * The value can be one of: bean, constant, el, exchangeProperty, file,
-     * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-     * tokenize, xpath, xquery, xtokenize
+     * There are 19 enums and the value can be one of: bean, constant, el,
+     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * @param path command:language
      */
@@ -3519,15 +3527,15 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * Command can be either route or language
-     * The value can be one of: route, language
+     * There are 2 enums and the value can be one of: route, language
      * 
      * Path parameter: language
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * The value can be one of: bean, constant, el, exchangeProperty, file,
-     * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
-     * tokenize, xpath, xquery, xtokenize
+     * There are 19 enums and the value can be one of: bean, constant, el,
+     * exchangeProperty, file, groovy, header, jsonpath, mvel, ognl, ref,
+     * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -3652,7 +3660,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
@@ -3684,7 +3692,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use for communicating with the database.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: hostname (required)
      * Hostname of the running couchdb instance
@@ -3825,7 +3833,7 @@ public class StaticEndpointBuilders {
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
-     * The value can be one of: sign, verify
+     * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
      * The logical name of this operation.
@@ -3850,7 +3858,7 @@ public class StaticEndpointBuilders {
      * Path parameter: cryptoOperation (required)
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto:sign sets sign as the operation.
-     * The value can be one of: sign, verify
+     * There are 2 enums and the value can be one of: sign, verify
      * 
      * Path parameter: name (required)
      * The logical name of this operation.
@@ -3878,7 +3886,8 @@ public class StaticEndpointBuilders {
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
      * Possible values: sign, verify, encrypt, or decrypt.
-     * The value can be one of: sign, verify, encrypt, decrypt
+     * There are 4 enums and the value can be one of: sign, verify, encrypt,
+     * decrypt
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
@@ -3906,7 +3915,8 @@ public class StaticEndpointBuilders {
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
      * Possible values: sign, verify, encrypt, or decrypt.
-     * The value can be one of: sign, verify, encrypt, decrypt
+     * There are 4 enums and the value can be one of: sign, verify, encrypt,
+     * decrypt
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between
@@ -4038,7 +4048,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal, unmarshal
+     * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param path name:operation
      */
@@ -4061,7 +4071,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal, unmarshal
+     * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4342,12 +4352,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation
      * The operation to perform to the given resource.
-     * The value can be one of: create, update, delete, list, ownList, get,
-     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
-     * transfer, convert, attach, detach, assign, unassign, tag, untag
+     * There are 36 enums and the value can be one of: create, update, delete,
+     * list, ownList, get, listBackups, listActions, listNeighbors,
+     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
+     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
+     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
+     * assign, unassign, tag, untag
      * 
      * @param path operation
      */
@@ -4367,12 +4378,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation
      * The operation to perform to the given resource.
-     * The value can be one of: create, update, delete, list, ownList, get,
-     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
-     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
-     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
-     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
-     * transfer, convert, attach, detach, assign, unassign, tag, untag
+     * There are 36 enums and the value can be one of: create, update, delete,
+     * list, ownList, get, listBackups, listActions, listNeighbors,
+     * listSnapshots, listKernels, listAllNeighbors, enableBackups,
+     * disableBackups, reboot, powerCycle, shutdown, powerOn, powerOff, restore,
+     * resetPassword, resize, rebuild, rename, changeKernel, enableIpv6,
+     * enablePrivateNetworking, takeSnapshot, transfer, convert, attach, detach,
+     * assign, unassign, tag, untag
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4604,7 +4616,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * The value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param path dnsType
      */
@@ -4624,7 +4636,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * The value can be one of: dig, ip, lookup, wikipedia
+     * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -4647,9 +4659,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * The value can be one of: events, stats, auth, info, ping, version,
-     * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-     * imagepushimageremove, imagesearch, imagetag, containerattach,
+     * There are 31 enums and the value can be one of: events, stats, auth,
+     * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
+     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
      * containercommit, containercopyfile, containercreate,
      * containerdiffinspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
@@ -4674,9 +4686,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Which operation to use
-     * The value can be one of: events, stats, auth, info, ping, version,
-     * imagebuild, imagecreate, imageinspect, imagelist, imagepull,
-     * imagepushimageremove, imagesearch, imagetag, containerattach,
+     * There are 31 enums and the value can be one of: events, stats, auth,
+     * info, ping, version, imagebuild, imagecreate, imageinspect, imagelist,
+     * imagepull, imagepushimageremove, imagesearch, imagetag, containerattach,
      * containercommit, containercopyfile, containercreate,
      * containerdiffinspectcontainer, containerkill, containerlist,
      * containerlog, containerpause, containerrestart, containerremove,
@@ -4788,7 +4800,8 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param path operation
      */
@@ -4810,7 +4823,8 @@ public class StaticEndpointBuilders {
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
-     * The value can be one of: put, del, search, get, move
+     * There are 5 enums and the value can be one of: put, del, search, get,
+     * move
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5317,7 +5331,7 @@ public class StaticEndpointBuilders {
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
-     * The value can be one of: fixed, delim
+     * There are 2 enums and the value can be one of: fixed, delim
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
@@ -5341,7 +5355,7 @@ public class StaticEndpointBuilders {
      * Path parameter: type
      * Whether to use fixed or delimiter
      * Default value: delim
-     * The value can be one of: fixed, delim
+     * There are 2 enums and the value can be one of: fixed, delim
      * 
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
@@ -5367,7 +5381,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset, datastream
+     * There are 2 enums and the value can be one of: dataset, datastream
      * 
      * @param path endpointType
      */
@@ -5387,7 +5401,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (dataset, datastream).
-     * The value can be one of: dataset, datastream
+     * There are 2 enums and the value can be one of: dataset, datastream
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5412,7 +5426,8 @@ public class StaticEndpointBuilders {
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
-     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
+     * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
+     * svg, xml, mif, rtf, txt
      * 
      * @param path outputType
      */
@@ -5434,7 +5449,8 @@ public class StaticEndpointBuilders {
      * Path parameter: outputType (required)
      * The primary output format is PDF but other output formats are also
      * supported.
-     * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
+     * There are 10 enums and the value can be one of: pdf, ps, pcl, png, jpeg,
+     * svg, xml, mif, rtf, txt
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5755,9 +5771,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
-     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
-     * CREATEISSUE
+     * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
      * 
      * Path parameter: branchName
      * Name of branch
@@ -5780,9 +5796,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * The value can be one of: CLOSEPULLREQUEST, PULLREQUESTCOMMENT, COMMIT,
-     * PULLREQUEST, TAG, PULLREQUESTSTATE, PULLREQUESTFILES, GETCOMMITFILE,
-     * CREATEISSUE
+     * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
      * 
      * Path parameter: branchName
      * Name of branch
@@ -5908,13 +5924,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: acl, list, calendars, channels, colors,
-     * freebusy, events, settings
+     * There are 8 enums and the value can be one of: acl, list, calendars,
+     * channels, colors, freebusy, events, settings
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: calendarImport, clear, delete, get, insert,
-     * instances, list, move, patch, query, quickAdd, stop, update, watch
+     * There are 14 enums and the value can be one of: calendarImport, clear,
+     * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
+     * update, watch
      * 
      * @param path apiName/methodName
      */
@@ -5934,13 +5951,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: acl, list, calendars, channels, colors,
-     * freebusy, events, settings
+     * There are 8 enums and the value can be one of: acl, list, calendars,
+     * channels, colors, freebusy, events, settings
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: calendarImport, clear, delete, get, insert,
-     * instances, list, move, patch, query, quickAdd, stop, update, watch
+     * There are 14 enums and the value can be one of: calendarImport, clear,
+     * delete, get, insert, instances, list, move, patch, query, quickAdd, stop,
+     * update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6004,15 +6022,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: drive-about, drive-apps, drive-changes,
-     * drive-channels, drive-children, drive-comments, drive-files,
-     * drive-parents, drive-permissions, drive-properties, drive-realtime,
-     * drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: drive-about, drive-apps,
+     * drive-changes, drive-channels, drive-children, drive-comments,
+     * drive-files, drive-parents, drive-permissions, drive-properties,
+     * drive-realtime, drive-replies, drive-revisions
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
-     * patch, stop, touch, trash, untrash, update, watch
+     * There are 13 enums and the value can be one of: copy, delete, get,
+     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
+     * watch
      * 
      * @param path apiName/methodName
      */
@@ -6032,15 +6051,16 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: drive-about, drive-apps, drive-changes,
-     * drive-channels, drive-children, drive-comments, drive-files,
-     * drive-parents, drive-permissions, drive-properties, drive-realtime,
-     * drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: drive-about, drive-apps,
+     * drive-changes, drive-channels, drive-children, drive-comments,
+     * drive-files, drive-parents, drive-permissions, drive-properties,
+     * drive-realtime, drive-replies, drive-revisions
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
-     * patch, stop, touch, trash, untrash, update, watch
+     * There are 13 enums and the value can be one of: copy, delete, get,
+     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
+     * watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6063,14 +6083,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: threads, messages, attachments, labels, history,
-     * drafts, users
+     * There are 7 enums and the value can be one of: threads, messages,
+     * attachments, labels, history, drafts, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
-     * update, watch
+     * There are 16 enums and the value can be one of: attachments, create,
+     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
+     * stop, trash, untrash, update, watch
      * 
      * @param path apiName/methodName
      */
@@ -6090,14 +6110,14 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: threads, messages, attachments, labels, history,
-     * drafts, users
+     * There are 7 enums and the value can be one of: threads, messages,
+     * attachments, labels, history, drafts, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: attachments, create, delete, get, getProfile,
-     * gmailImport, insert, list, modify, patch, send, stop, trash, untrash,
-     * update, watch
+     * There are 16 enums and the value can be one of: attachments, create,
+     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
+     * stop, trash, untrash, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6208,11 +6228,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: spreadsheets, data
+     * There are 2 enums and the value can be one of: spreadsheets, data
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, get, update, append, batchUpdate, clear
+     * There are 6 enums and the value can be one of: create, get, update,
+     * append, batchUpdate, clear
      * 
      * @param path apiName/methodName
      */
@@ -6232,11 +6253,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: spreadsheets, data
+     * There are 2 enums and the value can be one of: spreadsheets, data
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, get, update, append, batchUpdate, clear
+     * There are 6 enums and the value can be one of: create, get, update,
+     * append, batchUpdate, clear
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -7721,7 +7743,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: ipfsCmd (required)
      * The ipfs command
-     * The value can be one of: add, cat, get, version
+     * There are 4 enums and the value can be one of: add, cat, get, version
      * 
      * @param path ipfsCmd
      */
@@ -7741,7 +7763,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: ipfsCmd (required)
      * The ipfs command
-     * The value can be one of: add, cat, get, version
+     * There are 4 enums and the value can be one of: add, cat, get, version
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -7944,7 +7966,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * What command to execute such as blobstore or compute.
-     * The value can be one of: blobstore, compute
+     * There are 2 enums and the value can be one of: blobstore, compute
      * 
      * Path parameter: providerId (required)
      * The name of the cloud provider that provides the target service (e.g.
@@ -7968,7 +7990,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * What command to execute such as blobstore or compute.
-     * The value can be one of: blobstore, compute
+     * There are 2 enums and the value can be one of: blobstore, compute
      * 
      * Path parameter: providerId (required)
      * The name of the cloud provider that provides the target service (e.g.
@@ -8263,9 +8285,10 @@ public class StaticEndpointBuilders {
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
-     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
-     * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+     * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
+     * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
+     * FETCHCOMMENTS
      * 
      * @param path type
      */
@@ -8287,9 +8310,10 @@ public class StaticEndpointBuilders {
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
-     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
-     * NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE, TRANSITIONISSUE,
-     * WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE, FETCHCOMMENTS
+     * There are 14 enums and the value can be one of: ADDCOMMENT, ADDISSUE,
+     * ATTACH, DELETEISSUE, NEWISSUES, NEWCOMMENTS, WATCHUPDATES, UPDATEISSUE,
+     * TRANSITIONISSUE, WATCHERS, ADDISSUELINK, ADDWORKLOG, FETCHISSUE,
+     * FETCHCOMMENTS
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -8313,7 +8337,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -8337,7 +8362,8 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic, temp-queue, temp-topic
+     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
+     * temp-topic
      * 
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
@@ -8701,7 +8727,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param path userID:password/systemName/objectPath.type
      */
@@ -8736,7 +8762,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * Whether to work with data queues or remote program call
-     * The value can be one of: DTAQ, PGM, SRVPGM, MSGQ
+     * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9447,9 +9473,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * The value can be one of: bean, constant, exchangeProperty, file, groovy,
-     * header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql,
-     * terser, tokenize, xpath, xquery, xtokenize
+     * There are 20 enums and the value can be one of: bean, constant,
+     * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel, ognl,
+     * , ref, simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -9473,9 +9499,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * The value can be one of: bean, constant, exchangeProperty, file, groovy,
-     * header, javascript, jsonpath, mvel, ognl, , ref, simple, spel, sql,
-     * terser, tokenize, xpath, xquery, xtokenize
+     * There are 20 enums and the value can be one of: bean, constant,
+     * exchangeProperty, file, groovy, header, javascript, jsonpath, mvel, ognl,
+     * , ref, simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -9699,7 +9725,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
-     * The value can be one of: insert, query
+     * There are 2 enums and the value can be one of: insert, query
      * 
      * @param path host:operation
      */
@@ -9722,7 +9748,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation to do such as insert or query.
-     * The value can be one of: insert, query
+     * There are 2 enums and the value can be one of: insert, query
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -9844,7 +9870,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: gauge, counter, histogram, meter, timer
+     * There are 5 enums and the value can be one of: gauge, counter, histogram,
+     * meter, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9868,7 +9895,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: gauge, counter, histogram, meter, timer
+     * There are 5 enums and the value can be one of: gauge, counter, histogram,
+     * meter, timer
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9895,8 +9923,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-     * DISTRIBUTION_SUMMARY, OTHER
+     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9923,8 +9951,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricsType (required)
      * Type of metrics
-     * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-     * DISTRIBUTION_SUMMARY, OTHER
+     * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+     * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
      * 
      * Path parameter: metricsName (required)
      * Name of metrics
@@ -9953,8 +9981,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricType (required)
      * Metric type
-     * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, simple timer, invalid
+     * There are 8 enums and the value can be one of: concurrent gauge, counter,
+     * gauge, meter, histogram, timer, simple timer, invalid
      * 
      * Path parameter: metricName (required)
      * Metric name
@@ -9977,8 +10005,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: metricType (required)
      * Metric type
-     * The value can be one of: concurrent gauge, counter, gauge, meter,
-     * histogram, timer, simple timer, invalid
+     * There are 8 enums and the value can be one of: concurrent gauge, counter,
+     * gauge, meter, histogram, timer, simple timer, invalid
      * 
      * Path parameter: metricName (required)
      * Metric name
@@ -10685,7 +10713,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
-     * The value can be one of: tcp, udp
+     * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
@@ -10712,7 +10740,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: protocol (required)
      * The protocol to use which can be tcp or udp.
-     * The value can be one of: tcp, udp
+     * There are 2 enums and the value can be one of: tcp, udp
      * 
      * Path parameter: host (required)
      * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
@@ -10743,7 +10771,7 @@ public class StaticEndpointBuilders {
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
      * only option.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
@@ -10774,7 +10802,7 @@ public class StaticEndpointBuilders {
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
      * only option.
-     * The value can be one of: http, https
+     * There are 2 enums and the value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
@@ -10934,7 +10962,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
+     * There are 1 enums and the value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10957,7 +10985,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
+     * There are 1 enums and the value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -11444,7 +11472,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: create, append, extractText
+     * There are 3 enums and the value can be one of: create, append,
+     * extractText
      * 
      * @param path operation
      */
@@ -11464,7 +11493,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: create, append, extractText
+     * There are 3 enums and the value can be one of: create, append,
+     * extractText
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11713,7 +11743,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent, non-persistent
+     * There are 2 enums and the value can be one of: persistent, non-persistent
      * 
      * Path parameter: tenant (required)
      * The tenant
@@ -11742,7 +11772,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: persistence (required)
      * Whether the topic is persistent or non-persistent
-     * The value can be one of: persistent, non-persistent
+     * There are 2 enums and the value can be one of: persistent, non-persistent
      * 
      * Path parameter: tenant (required)
      * The tenant
@@ -12095,8 +12125,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: method (required)
      * HTTP method to use.
-     * The value can be one of: get, post, put, delete, patch, head, trace,
-     * connect, options
+     * There are 9 enums and the value can be one of: get, post, put, delete,
+     * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
      * The base path
@@ -12122,8 +12152,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: method (required)
      * HTTP method to use.
-     * The value can be one of: get, post, put, delete, patch, head, trace,
-     * connect, options
+     * There are 9 enums and the value can be one of: get, post, put, delete,
+     * patch, head, trace, connect, options
      * 
      * Path parameter: path (required)
      * The base path
@@ -12398,7 +12428,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
-     * The value can be one of: COMPLETE, COMPENSATE
+     * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param path action
      */
@@ -12418,7 +12448,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
-     * The value can be one of: COMPLETE, COMPENSATE
+     * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -12441,13 +12471,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * The value can be one of: getVersions, getResources, getGlobalObjects,
-     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
-     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
-     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
-     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
-     * getAllBatches, getRequest, getResults, createBatchQuery,
-     * getQueryResultIds, getQueryResult, getRecentReports,
+     * There are 43 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
+     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
+     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
      * composite-tree, composite-batch, composite
@@ -12473,13 +12503,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName
      * The operation to use
-     * The value can be one of: getVersions, getResources, getGlobalObjects,
-     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
-     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
-     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
-     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
-     * getAllBatches, getRequest, getResults, createBatchQuery,
-     * getQueryResultIds, getQueryResult, getRecentReports,
+     * There are 43 enums and the value can be one of: getVersions,
+     * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
+     * createSObject, updateSObject, deleteSObject, getSObjectWithId,
+     * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
+     * queryAll, search, apexCall, recent, createJob, getJob, closeJob,
+     * abortJob, createBatch, getBatch, getAllBatches, getRequest, getResults,
+     * createBatchQuery, getQueryResultIds, getQueryResult, getRecentReports,
      * getReportDescription, executeSyncReport, executeAsyncReport,
      * getReportInstances, getReportResults, limits, approval, approvals,
      * composite-tree, composite-batch, composite
@@ -12956,7 +12986,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -12982,7 +13012,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -13011,7 +13041,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -13037,7 +13067,7 @@ public class StaticEndpointBuilders {
      * Path parameter: destinationType
      * The kind of destination to use
      * Default value: queue
-     * The value can be one of: queue, topic
+     * There are 2 enums and the value can be one of: queue, topic
      * 
      * Path parameter: destinationName (required)
      * DestinationName is a JMS queue or topic name. By default, the
@@ -13295,8 +13325,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * The action to do.
-     * The value can be one of: sendMessage, getMessage, uploadFile,
-     * downloadFile
+     * There are 4 enums and the value can be one of: sendMessage, getMessage,
+     * uploadFile, downloadFile
      * 
      * @param path action
      */
@@ -13316,8 +13346,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: action (required)
      * The action to do.
-     * The value can be one of: sendMessage, getMessage, uploadFile,
-     * downloadFile
+     * There are 4 enums and the value can be one of: sendMessage, getMessage,
+     * uploadFile, downloadFile
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13340,7 +13370,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (rdd, dataframe, hive).
-     * The value can be one of: rdd, dataframe, hive
+     * There are 3 enums and the value can be one of: rdd, dataframe, hive
      * 
      * @param path endpointType
      */
@@ -13360,7 +13390,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: endpointType (required)
      * Type of the endpoint (rdd, dataframe, hive).
-     * The value can be one of: rdd, dataframe, hive
+     * There are 3 enums and the value can be one of: rdd, dataframe, hive
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -13701,8 +13731,8 @@ public class StaticEndpointBuilders {
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-     * The value can be one of: ROOT_QNAME, ACTION, TO, SOAP_ACTION,
-     * XPATHRESULT, URI, URI_PATH, BEANNAME
+     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
+     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
@@ -13743,8 +13773,8 @@ public class StaticEndpointBuilders {
      * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
      * in order to integrate with existing (legacy) endpoint mappings like
      * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-     * The value can be one of: ROOT_QNAME, ACTION, TO, SOAP_ACTION,
-     * XPATHRESULT, URI, URI_PATH, BEANNAME
+     * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION, TO,
+     * SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
      * 
      * Path parameter: lookupKey
      * Endpoint mapping key if endpoint mapping is used
@@ -13994,7 +14024,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in, out, err, header, file
+     * There are 5 enums and the value can be one of: in, out, err, header, file
      * 
      * @param path kind
      */
@@ -14014,7 +14044,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in, out, err, header, file
+     * There are 5 enums and the value can be one of: in, out, err, header, file
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14127,7 +14157,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
-     * The value can be one of: bots
+     * There are 1 enums and the value can be one of: bots
      * 
      * @param path type
      */
@@ -14147,7 +14177,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * The endpoint type. Currently, only the 'bots' type is supported.
-     * The value can be one of: bots
+     * There are 1 enums and the value can be one of: bots
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14231,7 +14261,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: parse, detect
+     * There are 2 enums and the value can be one of: parse, detect
      * 
      * @param path operation
      */
@@ -14251,7 +14281,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * Operation type
-     * The value can be one of: parse, detect
+     * There are 2 enums and the value can be one of: parse, detect
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -14492,8 +14522,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-     * UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, RETWEETSOFME, UNKNOWN
      * 
      * @param path timelineType
      */
@@ -14513,8 +14543,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
-     * UNKNOWN
+     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
+     * MENTIONS, RETWEETSOFME, UNKNOWN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15093,7 +15123,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * The command to use.
-     * The value can be one of: filter, model, read, write, push, pop, version
+     * There are 7 enums and the value can be one of: filter, model, read,
+     * write, push, pop, version
      * 
      * @param path command
      */
@@ -15113,7 +15144,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: command (required)
      * The command to use.
-     * The value can be one of: filter, model, read, write, push, pop, version
+     * There are 7 enums and the value can be one of: filter, model, read,
+     * write, push, pop, version
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15136,12 +15168,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, user
+     * There are 2 enums and the value can be one of: post, user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
-     * The value can be one of: delete
+     * There are 1 enums and the value can be one of: delete
      * 
      * @param path operation
      */
@@ -15161,12 +15193,12 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, user
+     * There are 2 enums and the value can be one of: post, user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint
      * semantic is not enough, like wordpress:post:delete
-     * The value can be one of: delete
+     * There are 1 enums and the value can be one of: delete
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15189,7 +15221,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report, commonAPI
+     * There are 2 enums and the value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.
@@ -15212,7 +15244,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: entity (required)
      * The entity to be requested or subscribed via API.
-     * The value can be one of: report, commonAPI
+     * There are 2 enums and the value can be one of: report, commonAPI
      * 
      * Path parameter: path (required)
      * The API path to access an entity structure.
@@ -15614,8 +15646,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: function (required)
      * The function to use
-     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-     * PRIVATE, RECEIVED, USERS, CURRENT
+     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
+     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
      * 
      * @param path function
      */
@@ -15635,8 +15667,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: function (required)
      * The function to use
-     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
-     * PRIVATE, RECEIVED, USERS, CURRENT
+     * There are 9 enums and the value can be one of: MESSAGES, MY_FEED, ALGO,
+     * FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

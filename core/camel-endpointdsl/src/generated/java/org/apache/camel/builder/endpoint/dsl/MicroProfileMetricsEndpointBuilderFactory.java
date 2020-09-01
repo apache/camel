@@ -361,8 +361,8 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricType (required)
          * Metric type
-         * The value can be one of: concurrent gauge, counter, gauge, meter,
-         * histogram, timer, simple timer, invalid
+         * There are 8 enums and the value can be one of: concurrent gauge,
+         * counter, gauge, meter, histogram, timer, simple timer, invalid
          * 
          * Path parameter: metricName (required)
          * Metric name
@@ -385,8 +385,8 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * Path parameter: metricType (required)
          * Metric type
-         * The value can be one of: concurrent gauge, counter, gauge, meter,
-         * histogram, timer, simple timer, invalid
+         * There are 8 enums and the value can be one of: concurrent gauge,
+         * counter, gauge, meter, histogram, timer, simple timer, invalid
          * 
          * Path parameter: metricName (required)
          * Metric name

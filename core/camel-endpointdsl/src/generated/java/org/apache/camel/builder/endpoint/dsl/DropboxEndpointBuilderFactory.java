@@ -807,7 +807,8 @@ public interface DropboxEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
-         * The value can be one of: put, del, search, get, move
+         * There are 5 enums and the value can be one of: put, del, search, get,
+         * move
          * 
          * @param path operation
          */
@@ -828,7 +829,8 @@ public interface DropboxEndpointBuilderFactory {
          * Path parameter: operation (required)
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
-         * The value can be one of: put, del, search, get, move
+         * There are 5 enums and the value can be one of: put, del, search, get,
+         * move
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

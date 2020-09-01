@@ -208,8 +208,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-         * DISTRIBUTION_SUMMARY, OTHER
+         * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+         * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
@@ -235,8 +235,8 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * Path parameter: metricsType (required)
          * Type of metrics
-         * The value can be one of: COUNTER, GAUGE, LONG_TASK_TIMER, TIMER,
-         * DISTRIBUTION_SUMMARY, OTHER
+         * There are 6 enums and the value can be one of: COUNTER, GAUGE,
+         * LONG_TASK_TIMER, TIMER, DISTRIBUTION_SUMMARY, OTHER
          * 
          * Path parameter: metricsName (required)
          * Name of metrics
