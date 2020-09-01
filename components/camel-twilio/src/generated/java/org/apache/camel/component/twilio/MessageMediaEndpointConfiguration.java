@@ -14,11 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class MessageMediaEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resource(s) to delete")
     private String pathAccountSid;
-    @UriParam(description = "The message_sid")
+    @UriParam(description = "The SID of the Message resource that this Media resource belongs to")
     private String pathMessageSid;
-    @UriParam(description = "Delete by unique media Sid")
+    @UriParam(description = "The unique string that identifies this resource")
     private String pathSid;
 
     public String getPathAccountSid() {

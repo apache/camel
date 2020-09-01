@@ -29,6 +29,8 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
         case "PathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathsid":
         case "PathSid": target.setPathSid(property(camelContext, java.lang.String.class, value)); return true;
+        case "status":
+        case "Status": target.setStatus(property(camelContext, com.twilio.rest.api.v2010.account.call.Recording.Status.class, value)); return true;
         default: return false;
         }
     }
@@ -41,6 +43,7 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
         answer.put("PathAccountSid", java.lang.String.class);
         answer.put("PathCallSid", java.lang.String.class);
         answer.put("PathSid", java.lang.String.class);
+        answer.put("Status", com.twilio.rest.api.v2010.account.call.Recording.Status.class);
         return answer;
     }
 
@@ -58,6 +61,8 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
         case "PathCallSid": return target.getPathCallSid();
         case "pathsid":
         case "PathSid": return target.getPathSid();
+        case "status":
+        case "Status": return target.getStatus();
         default: return null;
         }
     }

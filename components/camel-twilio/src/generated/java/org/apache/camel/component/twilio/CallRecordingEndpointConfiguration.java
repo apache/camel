@@ -14,12 +14,14 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallRecordingEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The call_sid")
+    @UriParam(description = "The SID of the Call to associate the resource with")
     private String pathCallSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
+    @UriParam(description = "The new status of the recording")
+    private com.twilio.rest.api.v2010.account.call.Recording.Status status;
 
     public String getPathAccountSid() {
         return pathAccountSid;
@@ -43,5 +45,13 @@ public final class CallRecordingEndpointConfiguration extends TwilioConfiguratio
 
     public void setPathSid(String pathSid) {
         this.pathSid = pathSid;
+    }
+
+    public com.twilio.rest.api.v2010.account.call.Recording.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(com.twilio.rest.api.v2010.account.call.Recording.Status status) {
+        this.status = status;
     }
 }

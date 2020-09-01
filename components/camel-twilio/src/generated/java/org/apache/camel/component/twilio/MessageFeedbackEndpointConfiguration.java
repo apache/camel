@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class MessageFeedbackEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The message_sid")
+    @UriParam(description = "The SID of the Message resource for which the feedback was provided")
     private String pathMessageSid;
 
     public String getPathAccountSid() {

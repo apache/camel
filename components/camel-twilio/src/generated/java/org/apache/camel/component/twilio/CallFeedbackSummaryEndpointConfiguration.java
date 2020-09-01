@@ -14,13 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallFeedbackSummaryEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The end_date")
+    @UriParam(description = "Only include feedback given on or before this date")
     private org.joda.time.LocalDate endDate;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique sid that identifies this account")
     private String pathAccountSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "A string that uniquely identifies this feedback summary resource")
     private String pathSid;
-    @UriParam(description = "The start_date")
+    @UriParam(description = "Only include feedback given on or after this date")
     private org.joda.time.LocalDate startDate;
 
     public org.joda.time.LocalDate getEndDate() {

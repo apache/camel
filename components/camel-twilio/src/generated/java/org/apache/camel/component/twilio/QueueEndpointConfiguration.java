@@ -14,11 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class QueueEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "A user-provided string that identifies this queue")
+    @UriParam(description = "A string to describe this resource")
     private String friendlyName;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "Delete by unique queue Sid")
+    @UriParam(description = "The unique string that identifies this resource")
     private String pathSid;
 
     public String getFriendlyName() {

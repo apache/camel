@@ -14,7 +14,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class UsageRecordTodayEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resources to read")
     private String pathAccountSid;
 
     public String getPathAccountSid() {

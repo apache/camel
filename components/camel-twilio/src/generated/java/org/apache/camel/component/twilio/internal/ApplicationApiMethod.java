@@ -22,14 +22,12 @@ public enum ApplicationApiMethod implements ApiMethod {
 
     CREATOR(
         com.twilio.rest.api.v2010.account.ApplicationCreator.class,
-        "creator",
-        arg("friendlyName", String.class)),
+        "creator"),
 
     CREATOR_1(
         com.twilio.rest.api.v2010.account.ApplicationCreator.class,
         "creator",
-        arg("pathAccountSid", String.class),
-        arg("friendlyName", String.class)),
+        arg("pathAccountSid", String.class)),
 
     DELETER(
         com.twilio.rest.api.v2010.account.ApplicationDeleter.class,

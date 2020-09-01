@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class AvailablePhoneNumberCountryLocalEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account requesting the AvailablePhoneNumber resources")
     private String pathAccountSid;
-    @UriParam(description = "The country_code")
+    @UriParam(description = "The ISO Country code of the country from which to read phone numbers")
     private String pathCountryCode;
 
     public String getPathAccountSid() {

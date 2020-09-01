@@ -14,13 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class RecordingAddOnResultPayloadEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resources to delete")
     private String pathAccountSid;
-    @UriParam(description = "The add_on_result_sid")
+    @UriParam(description = "The SID of the AddOnResult to which the payloads to delete belongs")
     private String pathAddOnResultSid;
-    @UriParam(description = "The reference_sid")
+    @UriParam(description = "The SID of the recording to which the AddOnResult resource that contains the payloads to delete belongs")
     private String pathReferenceSid;
-    @UriParam(description = "Delete by unique payload Sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
 
     public String getPathAccountSid() {

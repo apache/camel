@@ -14,15 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipIpAccessControlListIpAddressEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The friendly_name")
+    @UriParam(description = "A human readable descriptive text for this resource, up to 64 characters long.")
     private String friendlyName;
-    @UriParam(description = "The ip_address")
+    @UriParam(description = "An IP address in dotted decimal notation from which you want to accept traffic. Any SIP requests from this IP address will be allowed by Twilio. IPv4 only supported today.")
     private String ipAddress;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique sid that identifies this account")
     private String pathAccountSid;
-    @UriParam(description = "The ip_access_control_list_sid")
+    @UriParam(description = "The IpAccessControlList Sid with which to associate the created IpAddress resource")
     private String pathIpAccessControlListSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "A string that identifies the resource to delete")
     private String pathSid;
 
     public String getFriendlyName() {

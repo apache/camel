@@ -14,15 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipCredentialEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The password")
+    @UriParam(description = "The password will not be returned in the response")
     private String password;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique id of the Account that is responsible for this resource")
     private String pathAccountSid;
-    @UriParam(description = "The credential_list_sid")
+    @UriParam(description = "The unique id that identifies the credential list to include the created credential")
     private String pathCredentialListSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "The unique id that identifies the resource to delete")
     private String pathSid;
-    @UriParam(description = "The username")
+    @UriParam(description = "The username for this credential")
     private String username;
 
     public String getPassword() {
