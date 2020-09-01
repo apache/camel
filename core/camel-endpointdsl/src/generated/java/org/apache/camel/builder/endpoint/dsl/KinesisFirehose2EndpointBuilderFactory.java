@@ -376,6 +376,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
         sendBatchRecord,
         createDeliveryStream,
         deleteDeliveryStream,
+        describeDeliveryStream,
         updateDestination;
     }
 
