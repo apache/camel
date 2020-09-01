@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "atmos",
     "title": "Atmos",
-    "description": "Integract with EMC's ViPR object data services using the Atmos Client.",
+    "description": "Integrate with EMC's ViPR object data services using the Atmos Client.",
     "deprecated": false,
     "firstVersion": "2.15.0",
     "label": "cloud,file",

@@ -130,7 +130,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Atmos (camel-atmos)
-     * Integract with EMC's ViPR object data services using the Atmos Client.
+     * Integrate with EMC's ViPR object data services using the Atmos Client.
      * 
      * Category: cloud,file
      * Since: 2.15
