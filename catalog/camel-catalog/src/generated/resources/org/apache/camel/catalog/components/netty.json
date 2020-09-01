@@ -17,6 +17,7 @@
     "syntax": "netty:protocol:host:port",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -17,6 +17,7 @@
     "syntax": "aws2-sns:topicNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

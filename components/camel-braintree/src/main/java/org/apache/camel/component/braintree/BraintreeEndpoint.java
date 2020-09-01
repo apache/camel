@@ -39,6 +39,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Process payments using Braintree Payments.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
+             apiPropertyQualifier = "apiName",
              category = { Category.CLOUD, Category.PAYMENT })
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 

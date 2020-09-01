@@ -17,6 +17,7 @@
     "syntax": "mybatis-bean:beanName:methodName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

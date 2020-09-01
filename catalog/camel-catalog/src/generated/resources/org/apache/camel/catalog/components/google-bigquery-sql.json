@@ -17,6 +17,7 @@
     "syntax": "google-bigquery-sql:projectId:query",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

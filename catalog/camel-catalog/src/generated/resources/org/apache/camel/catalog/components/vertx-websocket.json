@@ -17,6 +17,7 @@
     "syntax": "vertx-websocket:host:port\/path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

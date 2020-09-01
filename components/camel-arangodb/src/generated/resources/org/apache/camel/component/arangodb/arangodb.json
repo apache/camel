@@ -17,6 +17,7 @@
     "syntax": "arangodb:database",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

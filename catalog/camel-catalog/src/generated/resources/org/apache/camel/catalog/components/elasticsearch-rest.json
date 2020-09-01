@@ -17,6 +17,7 @@
     "syntax": "elasticsearch-rest:clusterName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

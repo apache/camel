@@ -29,6 +29,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected String alternativeSyntax;
     protected boolean async;
     protected boolean api;
+    protected String apiPropertyQualifier;
     protected boolean consumerOnly;
     protected boolean producerOnly;
     protected boolean lenientProperties;
@@ -97,6 +98,14 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public void setApi(boolean api) {
         this.api = api;
+    }
+
+    public String getApiPropertyQualifier() {
+        return apiPropertyQualifier;
+    }
+
+    public void setApiPropertyQualifier(String apiPropertyQualifier) {
+        this.apiPropertyQualifier = apiPropertyQualifier;
     }
 
     public boolean isConsumerOnly() {

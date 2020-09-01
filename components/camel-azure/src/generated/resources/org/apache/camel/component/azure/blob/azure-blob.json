@@ -17,6 +17,7 @@
     "syntax": "azure-blob:containerOrBlobUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -37,7 +37,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Manage files in Google Drive.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive",
-             syntax = "google-drive:apiName/methodName",
+             syntax = "google-drive:apiName/methodName", apiPropertyQualifier = "apiName",
              consumerPrefix = "consumer", category = { Category.FILE, Category.CLOUD, Category.API })
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;

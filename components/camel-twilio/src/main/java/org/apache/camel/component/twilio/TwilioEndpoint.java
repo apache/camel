@@ -43,6 +43,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Interact with Twilio REST APIs using Twilio Java SDK.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
+             apiPropertyQualifier = "apiName",
              category = { Category.API, Category.MESSAGING, Category.CLOUD })
 public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> {
 

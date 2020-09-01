@@ -17,6 +17,7 @@
     "syntax": "box:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
