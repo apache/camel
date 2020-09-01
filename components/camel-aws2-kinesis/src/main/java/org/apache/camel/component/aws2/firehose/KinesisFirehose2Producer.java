@@ -31,6 +31,8 @@ import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamReques
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamResponse;
+import software.amazon.awssdk.services.firehose.model.DescribeDeliveryStreamRequest;
+import software.amazon.awssdk.services.firehose.model.DescribeDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
@@ -70,6 +72,9 @@ public class KinesisFirehose2Producer extends DefaultProducer {
                     break;
                 case updateDestination:
                     updateDestination(getClient(), exchange);
+                    break;
+                case describeDeliveryStream:
+                    describeDeliveryStream(getClient(), exchange);
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported operation");
@@ -121,6 +126,29 @@ public class KinesisFirehose2Producer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException(
                     "The updateDestination operation expects an UpdateDestinationRequest instance as body");
+        }
+    }
+    
+    private void describeDeliveryStream(FirehoseClient client, Exchange exchange) {
+        if (exchange.getIn().getBody() instanceof DescribeDeliveryStreamRequest) {
+        	DescribeDeliveryStreamRequest req = exchange.getIn().getBody(DescribeDeliveryStreamRequest.class);
+            DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
+                DescribeDeliveryStreamRequest req
+                        = DescribeDeliveryStreamRequest.builder()
+                                .deliveryStreamName(exchange.getIn()
+                                        .getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME, String.class))
+                                .build();
+                DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            } else {
+                throw new IllegalArgumentException(
+                        "The describeDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
+            }
         }
     }
 
