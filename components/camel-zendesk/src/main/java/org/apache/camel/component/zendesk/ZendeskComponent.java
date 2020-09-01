@@ -34,8 +34,18 @@ import org.zendesk.client.v2.Zendesk;
 @Component("zendesk")
 public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, ZendeskConfiguration, ZendeskApiCollection> {
 
+    @Metadata
+    private String serverUrl;
+    @Metadata(label = "security", secret = true)
+    private String username;
+    @Metadata(label = "security", secret = true)
+    private String oauthToken;
+    @Metadata(label = "security", secret = true)
+    private String token;
+    @Metadata(label = "security", secret = true)
+    private String password;
     @Metadata(label = "advanced")
-    Zendesk zendesk;
+    private Zendesk zendesk;
 
     public ZendeskComponent() {
         super(ZendeskEndpoint.class, ZendeskApiName.class, ZendeskApiCollection.getCollection());
@@ -79,11 +89,115 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
         this.zendesk = zendesk;
     }
 
+    /**
+     * The server URL to connect.
+     *
+     * @return server URL
+     */
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    /**
+     * The server URL to connect.
+     *
+     * @param url server URL
+     */
+    public void setServerUrl(String url) {
+        this.serverUrl = url;
+    }
+
+    /**
+     * The user name.
+     *
+     * @return user name
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * The user name.
+     *
+     * @param user user name
+     */
+    public void setUsername(String user) {
+        this.username = user;
+    }
+
+    /**
+     * The security token.
+     *
+     * @return security token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * The security token.
+     *
+     * @param token security token
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * The OAuth token.
+     *
+     * @return OAuth token
+     */
+    public String getOauthToken() {
+        return oauthToken;
+    }
+
+    /**
+     * The OAuth token.
+     *
+     * @param token OAuth token
+     */
+    public void setOauthToken(String token) {
+        this.oauthToken = token;
+    }
+
+    /**
+     * The password.
+     *
+     * @return password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The password.
+     *
+     * @param password password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     protected Endpoint createEndpoint(
             String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
         endpointConfiguration.setMethodName(ZendeskApiMethod.fromValue(methodName));
+
+        if (endpointConfiguration.getServerUrl() == null) {
+            endpointConfiguration.setServerUrl(serverUrl);
+        }
+        if (endpointConfiguration.getUsername() == null) {
+            endpointConfiguration.setUsername(username);
+        }
+        if (endpointConfiguration.getPassword() == null) {
+            endpointConfiguration.setPassword(password);
+        }
+        if (endpointConfiguration.getOauthToken() == null) {
+            endpointConfiguration.setOauthToken(oauthToken);
+        }
+
         return new ZendeskEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 

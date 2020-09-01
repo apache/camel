@@ -26,6 +26,13 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.zendesk.ZendeskConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oauthtoken":
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "serverurl":
+        case "serverUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "zendesk": target.setZendesk(property(camelContext, org.zendesk.client.v2.Zendesk.class, value)); return true;
         default: return false;
         }
@@ -38,6 +45,11 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("configuration", org.apache.camel.component.zendesk.ZendeskConfiguration.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("oauthToken", java.lang.String.class);
+        answer.put("password", java.lang.String.class);
+        answer.put("serverUrl", java.lang.String.class);
+        answer.put("token", java.lang.String.class);
+        answer.put("username", java.lang.String.class);
         answer.put("zendesk", org.zendesk.client.v2.Zendesk.class);
         return answer;
     }
@@ -53,6 +65,13 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oauthtoken":
+        case "oauthToken": return target.getOauthToken();
+        case "password": return target.getPassword();
+        case "serverurl":
+        case "serverUrl": return target.getServerUrl();
+        case "token": return target.getToken();
+        case "username": return target.getUsername();
         case "zendesk": return target.getZendesk();
         default: return null;
         }
