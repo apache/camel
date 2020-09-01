@@ -1092,7 +1092,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: SPREADSHEETS, DATA
+         * The value can be one of: spreadsheets, data
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1116,7 +1116,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: SPREADSHEETS, DATA
+         * The value can be one of: spreadsheets, data
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

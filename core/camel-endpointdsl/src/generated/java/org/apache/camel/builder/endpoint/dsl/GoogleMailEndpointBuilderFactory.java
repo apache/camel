@@ -1082,8 +1082,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS,
-         * HISTORY, DRAFTS, USERS
+         * The value can be one of: threads, messages, attachments, labels,
+         * history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1108,8 +1108,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS,
-         * HISTORY, DRAFTS, USERS
+         * The value can be one of: threads, messages, attachments, labels,
+         * history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

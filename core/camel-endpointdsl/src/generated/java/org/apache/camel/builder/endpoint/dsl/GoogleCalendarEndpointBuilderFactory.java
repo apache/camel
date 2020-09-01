@@ -1249,8 +1249,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-         * FREEBUSY, EVENTS, SETTINGS
+         * The value can be one of: acl, list, calendars, channels, colors,
+         * freebusy, events, settings
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1274,8 +1274,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-         * FREEBUSY, EVENTS, SETTINGS
+         * The value can be one of: acl, list, calendars, channels, colors,
+         * freebusy, events, settings
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

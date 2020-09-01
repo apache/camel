@@ -39,6 +39,11 @@ public enum GoogleMailApiName implements ApiName {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static GoogleMailApiName fromValue(String value) throws IllegalArgumentException {
         for (int i = 0; i < VALUES.length; i++) {
             if (VALUES[i].name.equals(value)) {

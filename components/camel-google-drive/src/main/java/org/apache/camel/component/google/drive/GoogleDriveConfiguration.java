@@ -37,8 +37,7 @@ public class GoogleDriveConfiguration {
             = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
                     DriveScopes.DRIVE);
 
-    @UriPath(enums = "drive-about,drive-apps,drive-changes,drive-channels,drive-children,drive-comments,drive-files,drive-parents"
-                     + ",drive-permissions,drive-properties,drive-realtime,drive-replies,drive-revisions")
+    @UriPath
     @Metadata(required = true)
     private GoogleDriveApiName apiName;
 

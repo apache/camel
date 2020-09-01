@@ -1416,11 +1416,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
-         * WEBHOOKNOTIFICATION
+         * The value can be one of: addOn, address, clientToken,
+         * creditCardVerification, customer, discount, dispute, documentUpload,
+         * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
+         * settlementBatchSummary, subscription, transaction,
+         * webhookNotification
          * 
          * Path parameter: methodName
          * What sub operation to use for the selected operation
@@ -1442,11 +1442,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-         * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-         * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-         * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
-         * WEBHOOKNOTIFICATION
+         * The value can be one of: addOn, address, clientToken,
+         * creditCardVerification, customer, discount, dispute, documentUpload,
+         * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
+         * settlementBatchSummary, subscription, transaction,
+         * webhookNotification
          * 
          * Path parameter: methodName
          * What sub operation to use for the selected operation

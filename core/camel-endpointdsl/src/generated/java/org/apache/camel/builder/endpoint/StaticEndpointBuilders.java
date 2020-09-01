@@ -307,7 +307,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CLIENT, SERVER
+     * The value can be one of: client, server
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -330,7 +330,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CLIENT, SERVER
+     * The value can be one of: client, server
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2893,8 +2893,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+     * The value can be one of: collaborations, comments, event-logs, files,
+     * folders, groups, events, search, tasks, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2918,8 +2918,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
-     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
+     * The value can be one of: collaborations, comments, event-logs, files,
+     * folders, groups, events, search, tasks, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2945,10 +2945,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-     * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-     * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-     * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION
+     * The value can be one of: addOn, address, clientToken,
+     * creditCardVerification, customer, discount, dispute, documentUpload,
+     * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
+     * settlementBatchSummary, subscription, transaction, webhookNotification
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -2971,10 +2971,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ADDON, ADDRESS, CLIENTTOKEN,
-     * CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD,
-     * MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT,
-     * SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION
+     * The value can be one of: addOn, address, clientToken,
+     * creditCardVerification, customer, discount, dispute, documentUpload,
+     * merchantAccount, paymentMethod, paymentMethodNonce, plan, report,
+     * settlementBatchSummary, subscription, transaction, webhookNotification
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -5178,9 +5178,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CAPABILITIES, CREATE, DELETE, HISTORY,
-     * LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE,
-     * VALIDATE
+     * The value can be one of: capabilities, create, delete, history,
+     * load-page, meta, operation, patch, read, search, transaction, update,
+     * validate
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5204,9 +5204,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: CAPABILITIES, CREATE, DELETE, HISTORY,
-     * LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE,
-     * VALIDATE
+     * The value can be one of: capabilities, create, delete, history,
+     * load-page, meta, operation, patch, read, search, transaction, update,
+     * validate
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5908,8 +5908,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-     * FREEBUSY, EVENTS, SETTINGS
+     * The value can be one of: acl, list, calendars, channels, colors,
+     * freebusy, events, settings
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5934,8 +5934,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS,
-     * FREEBUSY, EVENTS, SETTINGS
+     * The value can be one of: acl, list, calendars, channels, colors,
+     * freebusy, events, settings
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6063,8 +6063,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY,
-     * DRAFTS, USERS
+     * The value can be one of: threads, messages, attachments, labels, history,
+     * drafts, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6090,8 +6090,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY,
-     * DRAFTS, USERS
+     * The value can be one of: threads, messages, attachments, labels, history,
+     * drafts, users
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6208,7 +6208,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS, DATA
+     * The value can be one of: spreadsheets, data
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6232,7 +6232,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: SPREADSHEETS, DATA
+     * The value can be one of: spreadsheets, data
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10934,7 +10934,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * The value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10957,7 +10957,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * The value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10983,7 +10983,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * The value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -11006,7 +11006,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: DEFAULT
+     * The value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -14315,26 +14315,26 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACCOUNT, ADDRESS, APPLICATION,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE, CONNECT_APP,
-     * INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY, NEW_SIGNING_KEY,
-     * NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING, SHORT_CODE,
-     * SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
-     * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
-     * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
-     * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
-     * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
-     * SIP_CREDENTIAL_LIST, SIP_DOMAIN, SIP_IP_ACCESS_CONTROL_LIST,
-     * SIP_CREDENTIAL_LIST_CREDENTIAL, SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
-     * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
-     * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
-     * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
-     * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
-     * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
+     * The value can be one of: account, address, application,
+     * available-phone-number-country, call, conference, connect-app,
+     * incoming-phone-number, key, message, new-key, new-signing-key,
+     * notification, outgoing-caller-id, queue, recording, short-code,
+     * signing-key, token, transcription, validation-request,
+     * address-dependent-phone-number, available-phone-number-country-local,
+     * available-phone-number-country-mobile,
+     * available-phone-number-country-toll-free, call-feedback,
+     * call-feedback-summary, call-notification, call-recording,
+     * conference-participant, incoming-phone-number-local,
+     * incoming-phone-number-mobile, incoming-phone-number-toll-free,
+     * message-feedback, message-media, queue-member, recording-add-on-result,
+     * recording-transcription, recording-add-on-result-payload,
+     * sip-credential-list, sip-domain, sip-ip-access-control-list,
+     * sip-credential-list-credential, sip-domain-credential-list-mapping,
+     * sip-domain-ip-access-control-list-mapping,
+     * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
+     * usage-record-all-time, usage-record-daily, usage-record-last-month,
+     * usage-record-monthly, usage-record-this-month, usage-record-today,
+     * usage-record-yearly, usage-record-yesterday
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -14358,26 +14358,26 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: ACCOUNT, ADDRESS, APPLICATION,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE, CONNECT_APP,
-     * INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY, NEW_SIGNING_KEY,
-     * NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING, SHORT_CODE,
-     * SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
-     * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
-     * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
-     * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
-     * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
-     * SIP_CREDENTIAL_LIST, SIP_DOMAIN, SIP_IP_ACCESS_CONTROL_LIST,
-     * SIP_CREDENTIAL_LIST_CREDENTIAL, SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
-     * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
-     * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
-     * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
-     * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
-     * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
+     * The value can be one of: account, address, application,
+     * available-phone-number-country, call, conference, connect-app,
+     * incoming-phone-number, key, message, new-key, new-signing-key,
+     * notification, outgoing-caller-id, queue, recording, short-code,
+     * signing-key, token, transcription, validation-request,
+     * address-dependent-phone-number, available-phone-number-country-local,
+     * available-phone-number-country-mobile,
+     * available-phone-number-country-toll-free, call-feedback,
+     * call-feedback-summary, call-notification, call-recording,
+     * conference-participant, incoming-phone-number-local,
+     * incoming-phone-number-mobile, incoming-phone-number-toll-free,
+     * message-feedback, message-media, queue-member, recording-add-on-result,
+     * recording-transcription, recording-add-on-result-payload,
+     * sip-credential-list, sip-domain, sip-ip-access-control-list,
+     * sip-credential-list-credential, sip-domain-credential-list-mapping,
+     * sip-domain-ip-access-control-list-mapping,
+     * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
+     * usage-record-all-time, usage-record-daily, usage-record-last-month,
+     * usage-record-monthly, usage-record-this-month, usage-record-today,
+     * usage-record-yearly, usage-record-yesterday
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
