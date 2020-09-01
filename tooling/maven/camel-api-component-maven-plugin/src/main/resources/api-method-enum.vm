@@ -59,7 +59,8 @@ public enum $enumName implements ApiMethod {
         arg("$arg.Name", $helper.getType($arg.Type))#end)#if ( $foreach.hasNext ),$newLine#else;#end
 #end
 
-    $newLine
+    private static final ${enumName}[] VALUES = values();
+
     private final ApiMethod apiMethod;
 
     private ${enumName}(Class<?> resultType, String name, ApiMethodArg... args) {
@@ -68,6 +69,18 @@ public enum $enumName implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static $enumName fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < VALUES.length; i++) {
+            if (VALUES[i].getName().equalsIgnoreCase(value)) {
+                return VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }
