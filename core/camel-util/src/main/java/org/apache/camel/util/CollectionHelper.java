@@ -164,6 +164,7 @@ public final class CollectionHelper {
     /**
      * Build a map from varargs.
      */
+    @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> mapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
         Map<K, V> map = creator.get();
         map.put(key, value);

@@ -144,6 +144,24 @@ public interface LifecycleStrategy {
     void onEndpointRemove(Endpoint endpoint);
 
     /**
+     * Notification on {@link DataFormat} being resolved from the {@link Registry}
+     *
+     * @param name       the unique name of the {@link DataFormat}
+     * @param dataFormat the resolved {@link DataFormat}
+     */
+    default void onDataFormatCreated(String name, DataFormat dataFormat) {
+    }
+
+    /**
+     * Notification on a {@link Language} instance being resolved.
+     *
+     * @param name     the unique name of the {@link Language}
+     * @param language the created {@link Language}
+     */
+    default void onLanguageCreated(String name, Language language) {
+    }
+
+    /**
      * Notification on adding a {@link Service}.
      *
      * @param context the camel context
