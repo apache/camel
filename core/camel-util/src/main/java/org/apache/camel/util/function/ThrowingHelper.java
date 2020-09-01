@@ -28,43 +28,71 @@ public final class ThrowingHelper {
     private ThrowingHelper() {
     }
 
+    /**
+     * Wrap a {@link ThrowingSupplier} to a standard {@link Suppliers} by throwing a {@link RuntimeException} in case of
+     * an exception is thrown by the delegated supplier.
+     */
     public static <V, T extends Throwable> Supplier<V> wrapAsSupplier(ThrowingSupplier<V, T> supplier) {
-        return () -> {
-            try {
-                return supplier.get();
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
+        return new Supplier<V>() {
+            @Override
+            public V get() {
+                try {
+                    return supplier.get();
+                } catch (Throwable t) {
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
 
+    /**
+     * Wrap a {@link ThrowingConsumer} to a standard {@link Consumer} by throwing a {@link RuntimeException} in case of
+     * an exception is thrown by the delegated consumer.
+     */
     public static <I, T extends Throwable> Consumer<I> wrapAsConsumer(ThrowingConsumer<I, T> consumer) {
-        return in -> {
-            try {
-                consumer.accept(in);
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
+        return new Consumer<I>() {
+            @Override
+            public void accept(I in) {
+                try {
+                    consumer.accept(in);
+                } catch (Throwable t) {
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
 
+    /**
+     * Wrap a {@link ThrowingBiConsumer} to a standard {@link BiConsumer} by throwing a {@link RuntimeException} in case
+     * of an exception is thrown by the delegated consumer.
+     */
     public static <I1, I2, T extends Throwable> BiConsumer<I1, I2> wrapAsBiConsumer(ThrowingBiConsumer<I1, I2, T> consumer) {
-        return (i1, i2) -> {
-            try {
-                consumer.accept(i1, i2);
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
+        return new BiConsumer<I1, I2>() {
+            @Override
+            public void accept(I1 i1, I2 i2) {
+                try {
+                    consumer.accept(i1, i2);
+                } catch (Throwable t) {
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
 
+    /**
+     * Wrap a {@link ThrowingFunction} to a standard {@link Function} by throwing a {@link RuntimeException} in case of
+     * an exception is thrown by the delegated function.
+     */
     public static <I, R, T extends Throwable> Function<I, R> wrapAsFunction(ThrowingFunction<I, R, T> function) {
-        return in -> {
-            try {
-                return function.apply(in);
+        return new Function<I, R>() {
+            @Override
+            public R apply(I in) {
+                try {
+                    return function.apply(in);
 
-            } catch (Throwable t) {
-                throw new RuntimeException(t);
+                } catch (Throwable t) {
+                    throw new RuntimeException(t);
+                }
             }
         };
     }
