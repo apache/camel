@@ -49,6 +49,17 @@ public interface ZendeskComponentBuilderFactory {
             extends
                 ComponentBuilder<ZendeskComponent> {
         /**
+         * The server URL to connect.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ZendeskComponentBuilder serverUrl(java.lang.String serverUrl) {
+            doSetProperty("serverUrl", serverUrl);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -128,6 +139,50 @@ public interface ZendeskComponentBuilderFactory {
             doSetProperty("zendesk", zendesk);
             return this;
         }
+        /**
+         * The OAuth token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ZendeskComponentBuilder oauthToken(java.lang.String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
+            return this;
+        }
+        /**
+         * The password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ZendeskComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The security token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ZendeskComponentBuilder token(java.lang.String token) {
+            doSetProperty("token", token);
+            return this;
+        }
+        /**
+         * The user name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default ZendeskComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     class ZendeskComponentBuilderImpl
@@ -145,11 +200,16 @@ public interface ZendeskComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "serverUrl": ((ZendeskComponent) component).setServerUrl((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((ZendeskComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((ZendeskComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((ZendeskComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((ZendeskComponent) component).setConfiguration((org.apache.camel.component.zendesk.ZendeskConfiguration) value); return true;
             case "zendesk": ((ZendeskComponent) component).setZendesk((org.zendesk.client.v2.Zendesk) value); return true;
+            case "oauthToken": ((ZendeskComponent) component).setOauthToken((java.lang.String) value); return true;
+            case "password": ((ZendeskComponent) component).setPassword((java.lang.String) value); return true;
+            case "token": ((ZendeskComponent) component).setToken((java.lang.String) value); return true;
+            case "username": ((ZendeskComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }
