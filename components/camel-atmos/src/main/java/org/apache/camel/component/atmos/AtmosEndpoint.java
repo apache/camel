@@ -35,7 +35,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER_DELAY;
 
 /**
- * Integract with EMC's ViPR object data services using the Atmos Client.
+ * Integrate with EMC's ViPR object data services using the Atmos Client.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation",
              category = { Category.CLOUD, Category.FILE })
