@@ -173,6 +173,10 @@ public abstract class AbstractCamelContext extends BaseService
         implements ExtendedCamelContext, CatalogCamelContext, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
+
+    // start auto assigning route ids using numbering 1000 and upwards
+    int defaultRouteStartupOrder = 1000;
+
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
@@ -196,14 +200,14 @@ public abstract class AbstractCamelContext extends BaseService
             = new DefaultAnnotationBasedProcessorFactory();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
+    private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
+    private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
         @Override
         public Set<String> initialValue() {
             return new HashSet<>();
         }
     };
-    // start auto assigning route ids using numbering 1000 and upwards
-    int defaultRouteStartupOrder = 1000;
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -211,7 +215,6 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
-    private Set<LogListener> logListeners = new LinkedHashSet<>();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
@@ -293,7 +296,6 @@ public abstract class AbstractCamelContext extends BaseService
     private Date startDate;
 
     private SSLContextParameters sslContextParameters;
-    private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
      * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
