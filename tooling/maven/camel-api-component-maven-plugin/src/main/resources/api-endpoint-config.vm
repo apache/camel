@@ -43,7 +43,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for $proxyType.Name
  */
-@UriParams
+@UriParams(apiName = "$apiName")
 @Configurer
 public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )
