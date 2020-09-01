@@ -4,7 +4,7 @@
 :page-source: components/camel-atmos/src/main/docs/atmos-component.adoc
 :docTitle: Atmos
 :artifactId: camel-atmos
-:description: Integract with EMC's ViPR object data services using the Atmos Client.
+:description: Integrate with EMC's ViPR object data services using the Atmos Client.
 :since: 2.15
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
