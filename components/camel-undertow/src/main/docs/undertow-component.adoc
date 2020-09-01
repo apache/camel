@@ -196,6 +196,132 @@ In this sample we define a route that exposes a WebSocket service at
 </route>
 ----
 
+== HTTP/2 Example
+In this sample, we configure the camel-undertow component to support the HTTP/2 protocol and expose a HTTP service at http://localhost:7766/foo/bar.
+
+The directory structure of this sample is as follows:
+----
+├── pom.xml <1>
+├── README.md
+└── src
+    └── main
+        └── resources
+            └── META-INF
+                └── spring
+                    └── camel-context.xml <2>
+----
+
+The following files are important for configuring the camel-undertow component to support the HTTP/2 protocol:
+
+<1> pom.xml: 
+Includes the following properties and dependencies:
++
+[source,xml]
+----
+<properties>
+    <camel.version>2.21.1</camel.version>
+</properties>
+
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-core</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-spring</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-undertow</artifactId>
+    <version>${camel.version}</version>
+    </dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-http-common</artifactId>
+    <version>${camel.version}</version>
+</dependency>
+
+<plugin>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-maven-plugin</artifactId>
+    <version>${camel.version}</version>
+    <configuration>
+        <fileApplicationContextUri>src/main/resources/META-INF/spring/camel-context.xml</fileApplicationContextUri>
+    </configuration>
+</plugin>
+----
+
+<2> camel-context.xml:
+Configures the camel-undertow component as follows:
++
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <camelContext id="cbr-example-context" xmlns="http://camel.apache.org/schema/spring">
+        <route id="cbr-route" trace="true">
+            <from id="_from1" uri="undertow:http://localhost:7766/foo/bar"/>
+            <setBody id="_setBody1">
+                <constant>Sending Response</constant>
+            </setBody>
+            <log id="_log5" message="Headers ${in.headers}"/>
+            <log id="_log5" message="Done processing ${body}"/>
+        </route>
+    </camelContext>
+    <bean class="org.apache.camel.component.undertow.UndertowComponent" id="undertow">
+        <property name="hostOptions" ref="undertowHostOptions"/>
+    </bean>
+    <bean     class="org.apache.camel.component.undertow.UndertowHostOptions" id="undertowHostOptions">
+        <property name="http2Enabled" value="true"/>
+    </bean>
+</beans>
+----
+
+NOTE: The `http2Enabled` property which is set to `false` by default, is set to `true` for `UndertowHostOptions` class. This class is then referred to `UndertowComponent` which is used in camel route.
+
+In this example, by using the `camel-maven-plugin` in the `pom.xml` file, we can expose a HTTP service at `http://localhost:7766/foo/bar` when we execute the Maven command `mvn camel:run`.
+
+We can test this example using the curl command as follows:
+
+----
+$ curl -v --http2 http://localhost:7766/foo/bar
+* Trying ::1...
+* TCP_NODELAY set
+* connect to ::1 port 7766 failed: Connection refused
+* Trying 127.0.0.1...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 7766 (#0)
+> GET /foo/bar HTTP/1.1
+> Host: localhost:7766
+> User-Agent: curl/7.53.1
+> Accept: */*
+> Connection: Upgrade, HTTP2-Settings
+> Upgrade: h2c
+> HTTP2-Settings: AAMAAABkAARAAAAAAAIAAAAA
+> 
+< HTTP/1.1 101 Switching Protocols
+< Connection: Upgrade
+< Upgrade: h2c
+< Date: Sun, 10 Dec 2017 08:43:58 GMT
+* Received 101
+* Using HTTP2, server supports multi-use
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Connection state changed (MAX_CONCURRENT_STREAMS updated)!
+< HTTP/2 200 
+< accept: */*
+< http2-settings: AAMAAABkAARAAAAAAAIAAAAA
+< breadcrumbid: ID-dhcppc1-1512886066149-0-25
+< content-length: 16
+< user-agent: curl/7.53.1
+< date: Sun, 10 Dec 2017 08:43:58 GMT
+< 
+* Connection #0 to host localhost left intact
+Sending Response
+----
+
 == Using localhost as host
 
 When you specify `localhost` in a URL, Camel exposes the endpoint only
