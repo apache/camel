@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "box:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true

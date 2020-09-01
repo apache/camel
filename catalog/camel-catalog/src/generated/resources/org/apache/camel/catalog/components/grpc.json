@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

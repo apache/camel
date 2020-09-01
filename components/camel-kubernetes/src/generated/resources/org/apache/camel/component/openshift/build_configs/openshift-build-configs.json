@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "openshift-build-configs:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

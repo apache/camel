@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "ahc:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true

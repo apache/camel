@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "cxf:beanId:address",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

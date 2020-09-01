@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "undertow:httpURI",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true,

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "dns:dnsType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

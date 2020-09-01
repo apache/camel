@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

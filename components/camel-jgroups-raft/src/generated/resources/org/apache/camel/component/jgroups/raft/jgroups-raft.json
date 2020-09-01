@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

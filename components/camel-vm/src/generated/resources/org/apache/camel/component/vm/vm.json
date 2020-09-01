@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "vm:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

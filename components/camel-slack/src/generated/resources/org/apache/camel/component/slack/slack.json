@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "slack:channel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

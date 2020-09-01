@@ -17,6 +17,7 @@
     "syntax": "xmpp:host:port\/participant",
     "alternativeSyntax": "xmpp:user:password@host:port\/participant",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

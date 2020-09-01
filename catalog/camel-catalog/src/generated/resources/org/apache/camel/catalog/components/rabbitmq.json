@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

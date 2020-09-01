@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "controlbus:command:language",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

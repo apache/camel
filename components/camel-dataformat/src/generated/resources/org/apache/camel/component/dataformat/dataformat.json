@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "dataformat:name:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true

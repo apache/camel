@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "xchange:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

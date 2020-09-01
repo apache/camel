@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

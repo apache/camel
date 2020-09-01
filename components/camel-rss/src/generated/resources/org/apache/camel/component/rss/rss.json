@@ -16,6 +16,7 @@
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

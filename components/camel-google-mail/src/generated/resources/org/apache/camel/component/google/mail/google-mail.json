@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "google-mail:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

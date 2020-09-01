@@ -17,6 +17,7 @@
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

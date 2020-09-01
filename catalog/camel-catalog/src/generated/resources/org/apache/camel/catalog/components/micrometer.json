@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "jira:type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

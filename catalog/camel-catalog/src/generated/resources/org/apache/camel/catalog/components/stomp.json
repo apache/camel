@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "stomp:destination",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -17,6 +17,7 @@
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

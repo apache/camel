@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "pgevent:host:port\/database\/channel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

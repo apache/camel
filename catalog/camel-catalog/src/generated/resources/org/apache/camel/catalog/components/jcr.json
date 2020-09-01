@@ -17,6 +17,7 @@
     "syntax": "jcr:host\/base",
     "alternativeSyntax": "jcr:username:password@host\/base",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "kudu:host:port\/tableName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

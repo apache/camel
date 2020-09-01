@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "vertx:address",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

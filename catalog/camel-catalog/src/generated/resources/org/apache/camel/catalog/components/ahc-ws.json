@@ -17,6 +17,7 @@
     "alternativeSchemes": "ahc-ws,ahc-wss",
     "syntax": "ahc-ws:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

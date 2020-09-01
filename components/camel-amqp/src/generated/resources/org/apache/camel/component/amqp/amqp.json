@@ -16,6 +16,7 @@
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

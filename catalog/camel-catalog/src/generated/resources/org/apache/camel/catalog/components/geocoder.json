@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

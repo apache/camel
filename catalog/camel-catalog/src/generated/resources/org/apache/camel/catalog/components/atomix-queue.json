@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

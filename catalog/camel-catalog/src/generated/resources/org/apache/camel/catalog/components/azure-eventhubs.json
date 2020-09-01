@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "azure-eventhubs:namespace\/eventHubName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

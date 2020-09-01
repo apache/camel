@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "ignite-events:endpointId",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

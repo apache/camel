@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "oaipmh:baseUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true

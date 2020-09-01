@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

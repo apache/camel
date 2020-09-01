@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "rest-api:path\/contextIdPattern",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

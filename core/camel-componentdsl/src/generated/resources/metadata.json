@@ -16,6 +16,7 @@
     "extendsScheme": "jms",
     "syntax": "activemq:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -37,6 +38,7 @@
     "extendsScheme": "",
     "syntax": "ahc:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -59,6 +61,7 @@
     "alternativeSchemes": "ahc-ws,ahc-wss",
     "syntax": "ahc-ws:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -81,6 +84,7 @@
     "alternativeSchemes": "ahc-ws,ahc-wss",
     "syntax": "ahc-wss:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -102,6 +106,7 @@
     "extendsScheme": "jms",
     "syntax": "amqp:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -123,6 +128,7 @@
     "extendsScheme": "",
     "syntax": "apns:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -144,6 +150,7 @@
     "extendsScheme": "",
     "syntax": "arangodb:database",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -165,6 +172,7 @@
     "extendsScheme": "",
     "syntax": "as2:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -186,6 +194,7 @@
     "extendsScheme": "",
     "syntax": "asterisk:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -207,6 +216,7 @@
     "extendsScheme": "",
     "syntax": "atmos:name\/operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -229,6 +239,7 @@
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -250,6 +261,7 @@
     "extendsScheme": "",
     "syntax": "atom:feedUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -271,6 +283,7 @@
     "extendsScheme": "",
     "syntax": "atomix-map:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -292,6 +305,7 @@
     "extendsScheme": "",
     "syntax": "atomix-messaging:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -313,6 +327,7 @@
     "extendsScheme": "",
     "syntax": "atomix-multimap:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -334,6 +349,7 @@
     "extendsScheme": "",
     "syntax": "atomix-queue:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -355,6 +371,7 @@
     "extendsScheme": "",
     "syntax": "atomix-set:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -376,6 +393,7 @@
     "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -397,6 +415,7 @@
     "extendsScheme": "",
     "syntax": "avro:transport:host:port\/messageName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -418,6 +437,7 @@
     "extendsScheme": "",
     "syntax": "aws2-athena:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -439,6 +459,7 @@
     "extendsScheme": "",
     "syntax": "aws2-cw:namespace",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -460,6 +481,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ddb:tableName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -481,6 +503,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ddbstream:tableName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -502,6 +525,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ec2:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -523,6 +547,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ecs:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -544,6 +569,7 @@
     "extendsScheme": "",
     "syntax": "aws2-eks:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -565,6 +591,7 @@
     "extendsScheme": "",
     "syntax": "aws2-iam:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -586,6 +613,7 @@
     "extendsScheme": "",
     "syntax": "aws2-kinesis:streamName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -607,6 +635,7 @@
     "extendsScheme": "",
     "syntax": "aws2-kinesis-firehose:streamName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -628,6 +657,7 @@
     "extendsScheme": "",
     "syntax": "aws2-kms:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -649,6 +679,7 @@
     "extendsScheme": "",
     "syntax": "aws2-lambda:function",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -670,6 +701,7 @@
     "extendsScheme": "",
     "syntax": "aws2-mq:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -691,6 +723,7 @@
     "extendsScheme": "",
     "syntax": "aws2-msk:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -712,6 +745,7 @@
     "extendsScheme": "",
     "syntax": "aws2-s3:\/\/bucketNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -733,6 +767,7 @@
     "extendsScheme": "",
     "syntax": "aws2-ses:from",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -754,6 +789,7 @@
     "extendsScheme": "",
     "syntax": "aws2-sns:topicNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -775,6 +811,7 @@
     "extendsScheme": "",
     "syntax": "aws2-sqs:queueNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -796,6 +833,7 @@
     "extendsScheme": "",
     "syntax": "aws2-sts:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -817,6 +855,7 @@
     "extendsScheme": "",
     "syntax": "aws2-translate:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -838,6 +877,7 @@
     "extendsScheme": "",
     "syntax": "aws-cw:namespace",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -859,6 +899,7 @@
     "extendsScheme": "",
     "syntax": "aws-ddb:tableName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -880,6 +921,7 @@
     "extendsScheme": "",
     "syntax": "aws-ddbstream:tableName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -901,6 +943,7 @@
     "extendsScheme": "",
     "syntax": "aws-ec2:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -922,6 +965,7 @@
     "extendsScheme": "",
     "syntax": "aws-ecs:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -943,6 +987,7 @@
     "extendsScheme": "",
     "syntax": "aws-eks:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -964,6 +1009,7 @@
     "extendsScheme": "",
     "syntax": "aws-iam:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -985,6 +1031,7 @@
     "extendsScheme": "",
     "syntax": "aws-kinesis:streamName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1006,6 +1053,7 @@
     "extendsScheme": "",
     "syntax": "aws-kinesis-firehose:streamName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1027,6 +1075,7 @@
     "extendsScheme": "",
     "syntax": "aws-kms:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1048,6 +1097,7 @@
     "extendsScheme": "",
     "syntax": "aws-lambda:function",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1069,6 +1119,7 @@
     "extendsScheme": "",
     "syntax": "aws-mq:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1090,6 +1141,7 @@
     "extendsScheme": "",
     "syntax": "aws-msk:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1111,6 +1163,7 @@
     "extendsScheme": "",
     "syntax": "aws-s3:\/\/bucketNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1132,6 +1185,7 @@
     "extendsScheme": "",
     "syntax": "aws-sdb:domainName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1153,6 +1207,7 @@
     "extendsScheme": "",
     "syntax": "aws-ses:from",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1174,6 +1229,7 @@
     "extendsScheme": "",
     "syntax": "aws-sns:topicNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1195,6 +1251,7 @@
     "extendsScheme": "",
     "syntax": "aws-sqs:queueNameOrArn",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1216,6 +1273,7 @@
     "extendsScheme": "",
     "syntax": "aws-swf:type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1237,6 +1295,7 @@
     "extendsScheme": "",
     "syntax": "aws-translate:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1258,6 +1317,7 @@
     "extendsScheme": "",
     "syntax": "azure-blob:containerOrBlobUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1279,6 +1339,7 @@
     "extendsScheme": "",
     "syntax": "azure-eventhubs:namespace\/eventHubName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1300,6 +1361,7 @@
     "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1321,6 +1383,7 @@
     "extendsScheme": "",
     "syntax": "azure-storage-blob:containerName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1342,6 +1405,7 @@
     "extendsScheme": "",
     "syntax": "azure-storage-queue:queueName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1363,6 +1427,7 @@
     "extendsScheme": "",
     "syntax": "bean:beanName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1384,6 +1449,7 @@
     "extendsScheme": "",
     "syntax": "bean-validator:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1405,6 +1471,7 @@
     "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1426,6 +1493,7 @@
     "extendsScheme": "",
     "syntax": "bonita:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1447,6 +1515,7 @@
     "extendsScheme": "",
     "syntax": "box:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -1468,6 +1537,7 @@
     "extendsScheme": "",
     "syntax": "braintree:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1489,6 +1559,7 @@
     "extendsScheme": "",
     "syntax": "browse:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1510,6 +1581,7 @@
     "extendsScheme": "",
     "syntax": "caffeine-cache:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1531,6 +1603,7 @@
     "extendsScheme": "",
     "syntax": "caffeine-loadcache:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1552,6 +1625,7 @@
     "extendsScheme": "",
     "syntax": "chatscript:host:port\/botName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1573,6 +1647,7 @@
     "extendsScheme": "",
     "syntax": "chunk:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1594,6 +1669,7 @@
     "extendsScheme": "",
     "syntax": "class:beanName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1615,6 +1691,7 @@
     "extendsScheme": "",
     "syntax": "cm-sms:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1636,6 +1713,7 @@
     "extendsScheme": "",
     "syntax": "cmis:cmsUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1658,6 +1736,7 @@
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coap:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1680,6 +1759,7 @@
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coap+tcp:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1702,6 +1782,7 @@
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coaps:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1724,6 +1805,7 @@
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coaps+tcp:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1746,6 +1828,7 @@
     "alternativeSchemes": "cometd,cometds",
     "syntax": "cometd:host:port\/channelName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1768,6 +1851,7 @@
     "alternativeSchemes": "cometd,cometds",
     "syntax": "cometds:host:port\/channelName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1789,6 +1873,7 @@
     "extendsScheme": "",
     "syntax": "consul:apiEndpoint",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1810,6 +1895,7 @@
     "extendsScheme": "",
     "syntax": "controlbus:command:language",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1831,6 +1917,7 @@
     "extendsScheme": "",
     "syntax": "corda:node",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1852,6 +1939,7 @@
     "extendsScheme": "",
     "syntax": "couchbase:protocol:hostname:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1873,6 +1961,7 @@
     "extendsScheme": "",
     "syntax": "couchdb:protocol:hostname:port\/database",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1894,6 +1983,7 @@
     "extendsScheme": "",
     "syntax": "cql:beanRef:hosts:port\/keyspace",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1915,6 +2005,7 @@
     "extendsScheme": "",
     "syntax": "cron:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -1937,6 +2028,7 @@
     "extendsScheme": "",
     "syntax": "crypto-cms:cryptoOperation:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1958,6 +2050,7 @@
     "extendsScheme": "",
     "syntax": "crypto:cryptoOperation:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1979,6 +2072,7 @@
     "extendsScheme": "",
     "syntax": "cxf:beanId:address",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2000,6 +2094,7 @@
     "extendsScheme": "",
     "syntax": "cxfrs:beanId:address",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2021,6 +2116,7 @@
     "extendsScheme": "",
     "syntax": "dataformat:name:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -2042,6 +2138,7 @@
     "extendsScheme": "",
     "syntax": "dataset:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2063,6 +2160,7 @@
     "extendsScheme": "",
     "syntax": "dataset-test:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -2084,6 +2182,7 @@
     "extendsScheme": "",
     "syntax": "debezium-mongodb:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2105,6 +2204,7 @@
     "extendsScheme": "",
     "syntax": "debezium-mysql:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2126,6 +2226,7 @@
     "extendsScheme": "",
     "syntax": "debezium-postgres:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2147,6 +2248,7 @@
     "extendsScheme": "",
     "syntax": "debezium-sqlserver:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2168,6 +2270,7 @@
     "extendsScheme": "",
     "syntax": "digitalocean:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2189,6 +2292,7 @@
     "extendsScheme": "",
     "syntax": "direct:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2210,6 +2314,7 @@
     "extendsScheme": "",
     "syntax": "direct-vm:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2232,6 +2337,7 @@
     "alternativeSchemes": "disruptor,disruptor-vm",
     "syntax": "disruptor:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2254,6 +2360,7 @@
     "alternativeSchemes": "disruptor,disruptor-vm",
     "syntax": "disruptor-vm:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2275,6 +2382,7 @@
     "extendsScheme": "",
     "syntax": "djl:application",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2296,6 +2404,7 @@
     "extendsScheme": "",
     "syntax": "dns:dnsType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2317,6 +2426,7 @@
     "extendsScheme": "",
     "syntax": "docker:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2338,6 +2448,7 @@
     "extendsScheme": "",
     "syntax": "dozer:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2359,6 +2470,7 @@
     "extendsScheme": "",
     "syntax": "drill:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2380,6 +2492,7 @@
     "extendsScheme": "",
     "syntax": "dropbox:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2401,6 +2514,7 @@
     "extendsScheme": "",
     "syntax": "ehcache:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2422,6 +2536,7 @@
     "extendsScheme": "",
     "syntax": "elasticsearch-rest:clusterName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2443,6 +2558,7 @@
     "extendsScheme": "",
     "syntax": "elsql:elsqlName:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2464,6 +2580,7 @@
     "extendsScheme": "",
     "syntax": "etcd-keys:path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2485,6 +2602,7 @@
     "extendsScheme": "",
     "syntax": "etcd-stats:path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2506,6 +2624,7 @@
     "extendsScheme": "",
     "syntax": "etcd-watch:path",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2527,6 +2646,7 @@
     "extendsScheme": "",
     "syntax": "exec:executable",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2548,6 +2668,7 @@
     "extendsScheme": "",
     "syntax": "facebook:methodName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2569,6 +2690,7 @@
     "extendsScheme": "",
     "syntax": "fhir:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2590,6 +2712,7 @@
     "extendsScheme": "",
     "syntax": "file:directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2611,6 +2734,7 @@
     "extendsScheme": "",
     "syntax": "file-watch:path",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2632,6 +2756,7 @@
     "extendsScheme": "",
     "syntax": "flatpack:type:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2653,6 +2778,7 @@
     "extendsScheme": "",
     "syntax": "flink:endpointType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2674,6 +2800,7 @@
     "extendsScheme": "",
     "syntax": "fop:outputType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2695,6 +2822,7 @@
     "extendsScheme": "",
     "syntax": "freemarker:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2718,6 +2846,7 @@
     "syntax": "ftp:host:port\/directoryName",
     "alternativeSyntax": "ftp:username:password@host:port\/directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2741,6 +2870,7 @@
     "syntax": "ftps:host:port\/directoryName",
     "alternativeSyntax": "ftps:username:password@host:port\/directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2762,6 +2892,7 @@
     "extendsScheme": "",
     "syntax": "ganglia:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2783,6 +2914,7 @@
     "extendsScheme": "",
     "syntax": "geocoder:address:latlng",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2804,6 +2936,7 @@
     "extendsScheme": "",
     "syntax": "git:localPath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2825,6 +2958,7 @@
     "extendsScheme": "",
     "syntax": "github:type\/branchName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2846,6 +2980,7 @@
     "extendsScheme": "",
     "syntax": "google-bigquery:projectId:datasetId:tableId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2867,6 +3002,7 @@
     "extendsScheme": "",
     "syntax": "google-bigquery-sql:projectId:query",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2888,6 +3024,7 @@
     "extendsScheme": "",
     "syntax": "google-calendar:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2909,6 +3046,7 @@
     "extendsScheme": "",
     "syntax": "google-calendar-stream:index",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2930,6 +3068,7 @@
     "extendsScheme": "",
     "syntax": "google-drive:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2951,6 +3090,7 @@
     "extendsScheme": "",
     "syntax": "google-mail:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2972,6 +3112,7 @@
     "extendsScheme": "",
     "syntax": "google-mail-stream:index",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2993,6 +3134,7 @@
     "extendsScheme": "",
     "syntax": "google-pubsub:projectId:destinationName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3014,6 +3156,7 @@
     "extendsScheme": "",
     "syntax": "google-sheets:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3035,6 +3178,7 @@
     "extendsScheme": "",
     "syntax": "google-sheets-stream:apiName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3056,6 +3200,7 @@
     "extendsScheme": "",
     "syntax": "gora:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3077,6 +3222,7 @@
     "extendsScheme": "",
     "syntax": "grape:defaultCoordinates",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3098,6 +3244,7 @@
     "extendsScheme": "",
     "syntax": "graphql:httpUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3119,6 +3266,7 @@
     "extendsScheme": "",
     "syntax": "grpc:host:port\/service",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3140,6 +3288,7 @@
     "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3161,6 +3310,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-atomicvalue:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3182,6 +3332,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-instance:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3203,6 +3354,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-list:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3224,6 +3376,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-map:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3245,6 +3398,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-multimap:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3266,6 +3420,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-queue:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3287,6 +3442,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-replicatedmap:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3308,6 +3464,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-ringbuffer:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3329,6 +3486,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-seda:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3350,6 +3508,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-set:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3371,6 +3530,7 @@
     "extendsScheme": "",
     "syntax": "hazelcast-topic:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3392,6 +3552,7 @@
     "extendsScheme": "",
     "syntax": "hbase:tableName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3413,6 +3574,7 @@
     "extendsScheme": "",
     "syntax": "hdfs:hostName:port\/path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3434,6 +3596,7 @@
     "extendsScheme": "",
     "syntax": "hipchat:protocol:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3456,6 +3619,7 @@
     "alternativeSchemes": "http,https",
     "syntax": "http:httpUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -3478,6 +3642,7 @@
     "alternativeSchemes": "http,https",
     "syntax": "https:httpUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -3499,6 +3664,7 @@
     "extendsScheme": "",
     "syntax": "iec60870-client:uriPath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3520,6 +3686,7 @@
     "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3541,6 +3708,7 @@
     "extendsScheme": "",
     "syntax": "ignite-cache:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3562,6 +3730,7 @@
     "extendsScheme": "",
     "syntax": "ignite-compute:endpointId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3583,6 +3752,7 @@
     "extendsScheme": "",
     "syntax": "ignite-events:endpointId",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3604,6 +3774,7 @@
     "extendsScheme": "",
     "syntax": "ignite-idgen:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3625,6 +3796,7 @@
     "extendsScheme": "",
     "syntax": "ignite-messaging:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3646,6 +3818,7 @@
     "extendsScheme": "",
     "syntax": "ignite-queue:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3667,6 +3840,7 @@
     "extendsScheme": "",
     "syntax": "ignite-set:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3690,6 +3864,7 @@
     "syntax": "imap:host:port",
     "alternativeSyntax": "imap:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3713,6 +3888,7 @@
     "syntax": "imaps:host:port",
     "alternativeSyntax": "imaps:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3734,6 +3910,7 @@
     "extendsScheme": "",
     "syntax": "infinispan:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3755,6 +3932,7 @@
     "extendsScheme": "",
     "syntax": "influxdb:connectionBean",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3776,6 +3954,7 @@
     "extendsScheme": "",
     "syntax": "iota:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3797,6 +3976,7 @@
     "extendsScheme": "",
     "syntax": "ipfs:ipfsCmd",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3819,6 +3999,7 @@
     "syntax": "irc:hostname:port",
     "alternativeSyntax": "irc:username:password@hostname:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3840,6 +4021,7 @@
     "extendsScheme": "",
     "syntax": "ironmq:queueName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3861,6 +4043,7 @@
     "extendsScheme": "",
     "syntax": "jbpm:connectionURL",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3882,6 +4065,7 @@
     "extendsScheme": "",
     "syntax": "jcache:cacheName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3903,6 +4087,7 @@
     "extendsScheme": "",
     "syntax": "jclouds:command:providerId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3925,6 +4110,7 @@
     "syntax": "jcr:host\/base",
     "alternativeSyntax": "jcr:username:password@host\/base",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3946,6 +4132,7 @@
     "extendsScheme": "",
     "syntax": "jdbc:dataSourceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3968,6 +4155,7 @@
     "extendsScheme": "http",
     "syntax": "jetty:httpUri",
     "async": true,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -3989,6 +4177,7 @@
     "extendsScheme": "",
     "syntax": "jgroups:clusterName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4010,6 +4199,7 @@
     "extendsScheme": "",
     "syntax": "jgroups-raft:clusterName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4031,6 +4221,7 @@
     "extendsScheme": "",
     "syntax": "jing:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4052,6 +4243,7 @@
     "extendsScheme": "",
     "syntax": "jira:type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4074,6 +4266,7 @@
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4095,6 +4288,7 @@
     "extendsScheme": "",
     "syntax": "jmx:serverURL",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -4116,6 +4310,7 @@
     "extendsScheme": "",
     "syntax": "jolt:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4137,6 +4332,7 @@
     "extendsScheme": "",
     "syntax": "jooq:entityType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4158,6 +4354,7 @@
     "extendsScheme": "",
     "syntax": "jpa:entityType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4179,6 +4376,7 @@
     "extendsScheme": "",
     "syntax": "jslt:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4200,6 +4398,7 @@
     "extendsScheme": "",
     "syntax": "json-validator:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4221,6 +4420,7 @@
     "extendsScheme": "",
     "syntax": "jsonata:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4242,6 +4442,7 @@
     "extendsScheme": "",
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4263,6 +4464,7 @@
     "extendsScheme": "",
     "syntax": "kafka:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4284,6 +4486,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-config-maps:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4305,6 +4508,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-deployments:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4326,6 +4530,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-hpa:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4347,6 +4552,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-job:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4368,6 +4574,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-namespaces:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4389,6 +4596,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-nodes:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4410,6 +4618,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes-claims:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4431,6 +4640,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-persistent-volumes:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4452,6 +4662,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4473,6 +4684,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-replication-controllers:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4494,6 +4706,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-resources-quota:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4515,6 +4728,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-secrets:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4536,6 +4750,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-service-accounts:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4557,6 +4772,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-services:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4578,6 +4794,7 @@
     "extendsScheme": "",
     "syntax": "kudu:host:port\/tableName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4599,6 +4816,7 @@
     "extendsScheme": "",
     "syntax": "language:languageName:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4620,6 +4838,7 @@
     "extendsScheme": "",
     "syntax": "ldap:dirContextName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4641,6 +4860,7 @@
     "extendsScheme": "",
     "syntax": "ldif:ldapConnectionName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4662,6 +4882,7 @@
     "extendsScheme": "",
     "syntax": "log:loggerName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4683,6 +4904,7 @@
     "extendsScheme": "",
     "syntax": "lpr:hostname:port\/printername",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4704,6 +4926,7 @@
     "extendsScheme": "",
     "syntax": "lucene:host:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4725,6 +4948,7 @@
     "extendsScheme": "",
     "syntax": "lumberjack:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -4746,6 +4970,7 @@
     "extendsScheme": "",
     "syntax": "master:namespace:delegateUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -4767,6 +4992,7 @@
     "extendsScheme": "",
     "syntax": "metrics:metricsType:metricsName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4788,6 +5014,7 @@
     "extendsScheme": "",
     "syntax": "micrometer:metricsType:metricsName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4809,6 +5036,7 @@
     "extendsScheme": "",
     "syntax": "microprofile-metrics:metricType:metricName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4830,6 +5058,7 @@
     "extendsScheme": "",
     "syntax": "milo-client:endpointUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4851,6 +5080,7 @@
     "extendsScheme": "",
     "syntax": "milo-server:itemId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4872,6 +5102,7 @@
     "extendsScheme": "",
     "syntax": "mina:protocol:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4893,6 +5124,7 @@
     "extendsScheme": "",
     "syntax": "minio:bucketName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4914,6 +5146,7 @@
     "extendsScheme": "",
     "syntax": "mllp:hostname:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4935,6 +5168,7 @@
     "extendsScheme": "",
     "syntax": "mock:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -4956,6 +5190,7 @@
     "extendsScheme": "",
     "syntax": "mongodb:connectionBean",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4977,6 +5212,7 @@
     "extendsScheme": "",
     "syntax": "mongodb-gridfs:connectionBean",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4998,6 +5234,7 @@
     "extendsScheme": "",
     "syntax": "msv:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5019,6 +5256,7 @@
     "extendsScheme": "",
     "syntax": "mustache:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5040,6 +5278,7 @@
     "extendsScheme": "",
     "syntax": "mvel:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5061,6 +5300,7 @@
     "extendsScheme": "",
     "syntax": "mybatis-bean:beanName:methodName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5082,6 +5322,7 @@
     "extendsScheme": "",
     "syntax": "mybatis:statement",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5103,6 +5344,7 @@
     "extendsScheme": "",
     "syntax": "nagios:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5124,6 +5366,7 @@
     "extendsScheme": "",
     "syntax": "nats:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5145,6 +5388,7 @@
     "extendsScheme": "",
     "syntax": "netty:protocol:host:port",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5167,6 +5411,7 @@
     "extendsScheme": "netty",
     "syntax": "netty-http:protocol:host:port\/path",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -5188,6 +5433,7 @@
     "extendsScheme": "",
     "syntax": "nitrite:database",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5209,6 +5455,7 @@
     "extendsScheme": "",
     "syntax": "nsq:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5230,6 +5477,7 @@
     "extendsScheme": "",
     "syntax": "oaipmh:baseUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -5251,6 +5499,7 @@
     "extendsScheme": "",
     "syntax": "olingo2:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5272,6 +5521,7 @@
     "extendsScheme": "",
     "syntax": "olingo4:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5293,6 +5543,7 @@
     "extendsScheme": "",
     "syntax": "openshift-build-configs:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5314,6 +5565,7 @@
     "extendsScheme": "",
     "syntax": "openshift-builds:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5335,6 +5587,7 @@
     "extendsScheme": "",
     "syntax": "openstack-cinder:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5356,6 +5609,7 @@
     "extendsScheme": "",
     "syntax": "openstack-glance:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5377,6 +5631,7 @@
     "extendsScheme": "",
     "syntax": "openstack-keystone:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5398,6 +5653,7 @@
     "extendsScheme": "",
     "syntax": "openstack-neutron:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5419,6 +5675,7 @@
     "extendsScheme": "",
     "syntax": "openstack-nova:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5440,6 +5697,7 @@
     "extendsScheme": "",
     "syntax": "openstack-swift:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5461,6 +5719,7 @@
     "extendsScheme": "",
     "syntax": "optaplanner:configFile",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5482,6 +5741,7 @@
     "extendsScheme": "",
     "syntax": "paho:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5503,6 +5763,7 @@
     "extendsScheme": "",
     "syntax": "pdf:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5524,6 +5785,7 @@
     "extendsScheme": "",
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5545,6 +5807,7 @@
     "extendsScheme": "",
     "syntax": "pgevent:host:port\/database\/channel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5566,6 +5829,7 @@
     "extendsScheme": "",
     "syntax": "platform-http:path",
     "async": true,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5589,6 +5853,7 @@
     "syntax": "pop3:host:port",
     "alternativeSyntax": "pop3:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5612,6 +5877,7 @@
     "syntax": "pop3s:host:port",
     "alternativeSyntax": "pop3s:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5633,6 +5899,7 @@
     "extendsScheme": "",
     "syntax": "pubnub:channel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5654,6 +5921,7 @@
     "extendsScheme": "",
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5675,6 +5943,7 @@
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5696,6 +5965,7 @@
     "extendsScheme": "",
     "syntax": "quickfix:configurationName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5717,6 +5987,7 @@
     "extendsScheme": "",
     "syntax": "rabbitmq:exchangeName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5738,6 +6009,7 @@
     "extendsScheme": "",
     "syntax": "reactive-streams:stream",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5759,6 +6031,7 @@
     "extendsScheme": "",
     "syntax": "ref:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5780,6 +6053,7 @@
     "extendsScheme": "",
     "syntax": "rest-api:path\/contextIdPattern",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -5801,6 +6075,7 @@
     "extendsScheme": "",
     "syntax": "rest:method:path:uriTemplate",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -5822,6 +6097,7 @@
     "extendsScheme": "",
     "syntax": "rest-openapi:specificationUri#operationId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5843,6 +6119,7 @@
     "extendsScheme": "",
     "syntax": "rest-swagger:specificationUri#operationId",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5865,6 +6142,7 @@
     "extendsScheme": "http",
     "syntax": "resteasy:httpUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5886,6 +6164,7 @@
     "extendsScheme": "",
     "syntax": "robotframework:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5907,6 +6186,7 @@
     "extendsScheme": "atom",
     "syntax": "rss:feedUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -5928,6 +6208,7 @@
     "extendsScheme": "",
     "syntax": "saga:action",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5949,6 +6230,7 @@
     "extendsScheme": "",
     "syntax": "salesforce:operationName:topicName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5970,6 +6252,7 @@
     "extendsScheme": "",
     "syntax": "sap-netweaver:url",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5991,6 +6274,7 @@
     "extendsScheme": "",
     "syntax": "scheduler:name",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6012,6 +6296,7 @@
     "extendsScheme": "",
     "syntax": "schematron:path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6034,6 +6319,7 @@
     "extendsScheme": "ftp",
     "syntax": "scp:host:port\/directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6055,6 +6341,7 @@
     "extendsScheme": "",
     "syntax": "seda:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6076,6 +6363,7 @@
     "extendsScheme": "",
     "syntax": "service:delegateUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -6097,6 +6385,7 @@
     "extendsScheme": "",
     "syntax": "servicenow:instanceName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6119,6 +6408,7 @@
     "extendsScheme": "http",
     "syntax": "servlet:contextPath",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6141,6 +6431,7 @@
     "extendsScheme": "file",
     "syntax": "sftp:host:port\/directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6163,6 +6454,7 @@
     "alternativeSchemes": "sip,sips",
     "syntax": "sip:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6185,6 +6477,7 @@
     "alternativeSchemes": "sip,sips",
     "syntax": "sips:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6206,6 +6499,7 @@
     "extendsScheme": "sjms",
     "syntax": "sjms2:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6227,6 +6521,7 @@
     "extendsScheme": "",
     "syntax": "sjms-batch:destinationName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6248,6 +6543,7 @@
     "extendsScheme": "",
     "syntax": "sjms:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6269,6 +6565,7 @@
     "extendsScheme": "",
     "syntax": "slack:channel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6291,6 +6588,7 @@
     "alternativeSchemes": "smpp,smpps",
     "syntax": "smpp:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -6313,6 +6611,7 @@
     "alternativeSchemes": "smpp,smpps",
     "syntax": "smpps:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -6336,6 +6635,7 @@
     "syntax": "smtp:host:port",
     "alternativeSyntax": "smtp:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6359,6 +6659,7 @@
     "syntax": "smtps:host:port",
     "alternativeSyntax": "smtps:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6380,6 +6681,7 @@
     "extendsScheme": "",
     "syntax": "snmp:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6402,6 +6704,7 @@
     "alternativeSchemes": "solr,solrs,solrCloud",
     "syntax": "solr:url",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6424,6 +6727,7 @@
     "alternativeSchemes": "solr,solrs,solrCloud",
     "syntax": "solrCloud:url",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6446,6 +6750,7 @@
     "alternativeSchemes": "solr,solrs,solrCloud",
     "syntax": "solrs:url",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6467,6 +6772,7 @@
     "extendsScheme": "",
     "syntax": "soroush:action",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6488,6 +6794,7 @@
     "extendsScheme": "",
     "syntax": "spark:endpointType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6509,6 +6816,7 @@
     "extendsScheme": "",
     "syntax": "splunk:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6530,6 +6838,7 @@
     "extendsScheme": "",
     "syntax": "splunk-hec:splunkURL\/token",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6551,6 +6860,7 @@
     "extendsScheme": "",
     "syntax": "spring-batch:jobName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6572,6 +6882,7 @@
     "extendsScheme": "",
     "syntax": "spring-event:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6593,6 +6904,7 @@
     "extendsScheme": "",
     "syntax": "spring-integration:defaultChannel",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6614,6 +6926,7 @@
     "extendsScheme": "",
     "syntax": "spring-ldap:templateName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6635,6 +6948,7 @@
     "extendsScheme": "",
     "syntax": "spring-redis:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6656,6 +6970,7 @@
     "extendsScheme": "",
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6677,6 +6992,7 @@
     "extendsScheme": "",
     "syntax": "sql:query",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6698,6 +7014,7 @@
     "extendsScheme": "",
     "syntax": "sql-stored:template",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6720,6 +7037,7 @@
     "syntax": "ssh:host:port",
     "alternativeSyntax": "ssh:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6741,6 +7059,7 @@
     "extendsScheme": "",
     "syntax": "stax:contentHandlerClass",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6762,6 +7081,7 @@
     "extendsScheme": "",
     "syntax": "stomp:destination",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6783,6 +7103,7 @@
     "extendsScheme": "",
     "syntax": "stream:kind",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6804,6 +7125,7 @@
     "extendsScheme": "",
     "syntax": "string-template:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6825,6 +7147,7 @@
     "extendsScheme": "",
     "syntax": "stub:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6846,6 +7169,7 @@
     "extendsScheme": "",
     "syntax": "telegram:type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6867,6 +7191,7 @@
     "extendsScheme": "",
     "syntax": "thrift:host:port\/service",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6888,6 +7213,7 @@
     "extendsScheme": "",
     "syntax": "tika:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6909,6 +7235,7 @@
     "extendsScheme": "",
     "syntax": "timer:timerName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6930,6 +7257,7 @@
     "extendsScheme": "",
     "syntax": "twilio:apiName\/methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6951,6 +7279,7 @@
     "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6972,6 +7301,7 @@
     "extendsScheme": "",
     "syntax": "twitter-search:keywords",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6993,6 +7323,7 @@
     "extendsScheme": "",
     "syntax": "twitter-timeline:timelineType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7014,6 +7345,7 @@
     "extendsScheme": "",
     "syntax": "undertow:httpURI",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -7035,6 +7367,7 @@
     "extendsScheme": "",
     "syntax": "validator:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7056,6 +7389,7 @@
     "extendsScheme": "",
     "syntax": "velocity:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7077,6 +7411,7 @@
     "extendsScheme": "",
     "syntax": "vertx:address",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7098,6 +7433,7 @@
     "extendsScheme": "",
     "syntax": "vertx-http:httpUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -7119,6 +7455,7 @@
     "extendsScheme": "",
     "syntax": "vertx-websocket:host:port\/path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7140,6 +7477,7 @@
     "extendsScheme": "",
     "syntax": "vm:name",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7161,6 +7499,7 @@
     "extendsScheme": "",
     "syntax": "weather:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7182,6 +7521,7 @@
     "extendsScheme": "",
     "syntax": "web3j:nodeAddress",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7203,6 +7543,7 @@
     "extendsScheme": "",
     "syntax": "webhook:endpointUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -7224,6 +7565,7 @@
     "extendsScheme": "",
     "syntax": "websocket:host:port\/resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7245,6 +7587,7 @@
     "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7266,6 +7609,7 @@
     "extendsScheme": "",
     "syntax": "weka:command",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7287,6 +7631,7 @@
     "extendsScheme": "",
     "syntax": "wordpress:operation",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7308,6 +7653,7 @@
     "extendsScheme": "",
     "syntax": "workday:entity:path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7329,6 +7675,7 @@
     "extendsScheme": "",
     "syntax": "xchange:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7350,6 +7697,7 @@
     "extendsScheme": "",
     "syntax": "xj:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7371,6 +7719,7 @@
     "extendsScheme": "",
     "syntax": "xmlsecurity-sign:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7392,6 +7741,7 @@
     "extendsScheme": "",
     "syntax": "xmlsecurity-verify:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7414,6 +7764,7 @@
     "syntax": "xmpp:host:port\/participant",
     "alternativeSyntax": "xmpp:user:password@host:port\/participant",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7435,6 +7786,7 @@
     "extendsScheme": "",
     "syntax": "xquery:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7456,6 +7808,7 @@
     "extendsScheme": "",
     "syntax": "xslt:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7477,6 +7830,7 @@
     "extendsScheme": "",
     "syntax": "xslt-saxon:resourceUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7498,6 +7852,7 @@
     "extendsScheme": "",
     "syntax": "yammer:function",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7519,6 +7874,7 @@
     "extendsScheme": "",
     "syntax": "zendesk:methodName",
     "async": false,
+    "api": true,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -7540,6 +7896,7 @@
     "extendsScheme": "",
     "syntax": "zookeeper:serverUrls\/path",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7561,6 +7918,7 @@
     "extendsScheme": "",
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "quartz:groupName\/triggerName",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
