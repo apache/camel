@@ -14,13 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class UsageTriggerEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "URL Twilio will request when the trigger fires")
+    @UriParam(description = "The URL we call when the trigger fires")
     private java.net.URI callbackUrl;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
-    @UriParam(description = "The value at which the trigger will fire")
+    @UriParam(description = "The usage value at which the trigger should fire")
     private String triggerValue;
     @UriParam(description = "The usage category the trigger watches")
     private com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory usageCategory;

@@ -24,7 +24,7 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         case "applicationsid":
         case "ApplicationSid": target.setApplicationSid(property(camelContext, java.lang.String.class, value)); return true;
         case "from":
-        case "From": target.setFrom(property(camelContext, com.twilio.type.PhoneNumber.class, value)); return true;
+        case "From": target.setFrom(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
@@ -33,6 +33,8 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         case "PathSid": target.setPathSid(property(camelContext, java.lang.String.class, value)); return true;
         case "to":
         case "To": target.setTo(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
+        case "twiml":
+        case "Twiml": target.setTwiml(property(camelContext, com.twilio.type.Twiml.class, value)); return true;
         case "url":
         case "Url": target.setUrl(property(camelContext, java.net.URI.class, value)); return true;
         default: return false;
@@ -44,11 +46,12 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
         answer.put("ApplicationSid", java.lang.String.class);
-        answer.put("From", com.twilio.type.PhoneNumber.class);
+        answer.put("From", com.twilio.type.Endpoint.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PathAccountSid", java.lang.String.class);
         answer.put("PathSid", java.lang.String.class);
         answer.put("To", com.twilio.type.Endpoint.class);
+        answer.put("Twiml", com.twilio.type.Twiml.class);
         answer.put("Url", java.net.URI.class);
         return answer;
     }
@@ -71,6 +74,8 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
         case "PathSid": return target.getPathSid();
         case "to":
         case "To": return target.getTo();
+        case "twiml":
+        case "Twiml": return target.getTwiml();
         case "url":
         case "Url": return target.getUrl();
         default: return null;

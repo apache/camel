@@ -14,11 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallFeedbackEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique sid that identifies this account")
     private String pathAccountSid;
-    @UriParam(description = "The call_sid")
+    @UriParam(description = "The call sid that uniquely identifies the call")
     private String pathCallSid;
-    @UriParam(description = "The quality_score")
+    @UriParam(description = "The call quality expressed as an integer from 1 to 5")
     private Integer qualityScore;
 
     public String getPathAccountSid() {

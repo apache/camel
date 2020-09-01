@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ValidationRequestEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account responsible for the new Caller ID")
     private String pathAccountSid;
-    @UriParam(description = "The phone_number")
+    @UriParam(description = "The phone number to verify in E.164 format")
     private com.twilio.type.PhoneNumber phoneNumber;
 
     public String getPathAccountSid() {

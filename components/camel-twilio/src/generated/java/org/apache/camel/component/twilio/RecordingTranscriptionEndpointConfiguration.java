@@ -14,11 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class RecordingTranscriptionEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resources to delete")
     private String pathAccountSid;
-    @UriParam(description = "The recording_sid")
+    @UriParam(description = "The SID of the recording that created the transcription to delete")
     private String pathRecordingSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
 
     public String getPathAccountSid() {

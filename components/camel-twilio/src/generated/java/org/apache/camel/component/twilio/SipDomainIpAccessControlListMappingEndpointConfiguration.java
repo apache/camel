@@ -14,13 +14,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipDomainIpAccessControlListMappingEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The ip_access_control_list_sid")
+    @UriParam(description = "The unique id of the IP access control list to map to the SIP domain")
     private String ipAccessControlListSid;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique id of the Account that is responsible for this resource")
     private String pathAccountSid;
-    @UriParam(description = "The domain_sid")
+    @UriParam(description = "A string that uniquely identifies the SIP Domain")
     private String pathDomainSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "A 34 character string that uniquely identifies the resource to delete.")
     private String pathSid;
 
     public String getIpAccessControlListSid() {

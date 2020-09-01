@@ -14,19 +14,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class MessageEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The body")
+    @UriParam(description = "The text of the message you want to send. Can be up to 1,600 characters in length.")
     private String body;
     @UriParam(description = "The phone number that initiated the message")
     private com.twilio.type.PhoneNumber from;
-    @UriParam(description = "The media_url")
+    @UriParam(description = "The URL of the media to send with the message")
     private java.util.List<java.net.URI> mediaUrl;
-    @UriParam(description = "The messaging_service_sid")
+    @UriParam(description = "The SID of the Messaging Service you want to associate with the message")
     private String messagingServiceSid;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The message to delete")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
-    @UriParam(description = "The phone number to receive the message")
+    @UriParam(description = "The destination phone number")
     private com.twilio.type.PhoneNumber to;
 
     public String getBody() {

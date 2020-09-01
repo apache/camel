@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class OutgoingCallerIdEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resources to delete")
     private String pathAccountSid;
-    @UriParam(description = "Delete by unique outgoing-caller-id Sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
 
     public String getPathAccountSid() {

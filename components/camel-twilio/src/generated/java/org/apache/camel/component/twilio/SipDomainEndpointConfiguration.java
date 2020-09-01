@@ -16,9 +16,9 @@ import org.apache.camel.spi.UriParams;
 public final class SipDomainEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The unique address on Twilio to route SIP traffic")
     private String domainName;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The sid")
+    @UriParam(description = "The unique string that identifies the resource")
     private String pathSid;
 
     public String getDomainName() {

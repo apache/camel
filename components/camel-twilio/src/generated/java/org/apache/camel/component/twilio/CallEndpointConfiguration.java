@@ -14,17 +14,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CallEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "ApplicationSid that configures from where to fetch TwiML")
+    @UriParam(description = "The SID of the Application resource that will handle the call")
     private String applicationSid;
     @UriParam(description = "Twilio number from which to originate the call")
-    private com.twilio.type.PhoneNumber from;
-    @UriParam(description = "The account_sid")
+    private com.twilio.type.Endpoint from;
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "Call Sid that uniquely identifies the Call to delete")
+    @UriParam(description = "The unique string that identifies this resource")
     private String pathSid;
-    @UriParam(description = "Phone number, SIP address or client identifier to call")
+    @UriParam(description = "Phone number, SIP address, or client identifier to call")
     private com.twilio.type.Endpoint to;
-    @UriParam(description = "Url from which to fetch TwiML")
+    @UriParam(description = "TwiML instructions for the call")
+    private com.twilio.type.Twiml twiml;
+    @UriParam(description = "The absolute URL that returns TwiML for this call")
     private java.net.URI url;
 
     public String getApplicationSid() {
@@ -35,11 +37,11 @@ public final class CallEndpointConfiguration extends TwilioConfiguration {
         this.applicationSid = applicationSid;
     }
 
-    public com.twilio.type.PhoneNumber getFrom() {
+    public com.twilio.type.Endpoint getFrom() {
         return from;
     }
 
-    public void setFrom(com.twilio.type.PhoneNumber from) {
+    public void setFrom(com.twilio.type.Endpoint from) {
         this.from = from;
     }
 
@@ -65,6 +67,14 @@ public final class CallEndpointConfiguration extends TwilioConfiguration {
 
     public void setTo(com.twilio.type.Endpoint to) {
         this.to = to;
+    }
+
+    public com.twilio.type.Twiml getTwiml() {
+        return twiml;
+    }
+
+    public void setTwiml(com.twilio.type.Twiml twiml) {
+        this.twiml = twiml;
     }
 
     public java.net.URI getUrl() {

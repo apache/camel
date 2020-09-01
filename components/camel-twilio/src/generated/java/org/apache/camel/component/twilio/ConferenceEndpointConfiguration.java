@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ConferenceEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that created the resource(s) to fetch")
     private String pathAccountSid;
-    @UriParam(description = "Fetch by unique conference Sid")
+    @UriParam(description = "The unique string that identifies this resource")
     private String pathSid;
 
     public String getPathAccountSid() {

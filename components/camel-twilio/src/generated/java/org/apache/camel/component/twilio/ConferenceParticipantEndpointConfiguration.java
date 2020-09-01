@@ -14,15 +14,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class ConferenceParticipantEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The from")
+    @UriParam(description = "The phone number, Client identifier, or username portion of SIP address that made this call.")
     private com.twilio.type.PhoneNumber from;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The call_sid")
+    @UriParam(description = "The Call SID or URL encoded label of the participant to delete")
     private String pathCallSid;
-    @UriParam(description = "The conference_sid")
+    @UriParam(description = "The SID of the participant's conference")
     private String pathConferenceSid;
-    @UriParam(description = "The to")
+    @UriParam(description = "The phone number, SIP address or Client identifier that received this call.")
     private com.twilio.type.PhoneNumber to;
 
     public com.twilio.type.PhoneNumber getFrom() {

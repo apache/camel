@@ -21,8 +21,6 @@ public class ApplicationEndpointConfigurationConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
-        case "friendlyname":
-        case "FriendlyName": target.setFriendlyName(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
@@ -37,7 +35,6 @@ public class ApplicationEndpointConfigurationConfigurer extends org.apache.camel
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("FriendlyName", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("PathAccountSid", java.lang.String.class);
         answer.put("PathSid", java.lang.String.class);
@@ -50,8 +47,6 @@ public class ApplicationEndpointConfigurationConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiname":
         case "ApiName": return target.getApiName();
-        case "friendlyname":
-        case "FriendlyName": return target.getFriendlyName();
         case "methodname":
         case "MethodName": return target.getMethodName();
         case "pathaccountsid":

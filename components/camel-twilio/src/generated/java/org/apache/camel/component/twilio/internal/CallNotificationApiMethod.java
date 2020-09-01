@@ -20,19 +20,6 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum CallNotificationApiMethod implements ApiMethod {
 
-    DELETER(
-        com.twilio.rest.api.v2010.account.call.NotificationDeleter.class,
-        "deleter",
-        arg("pathCallSid", String.class),
-        arg("pathSid", String.class)),
-
-    DELETER_1(
-        com.twilio.rest.api.v2010.account.call.NotificationDeleter.class,
-        "deleter",
-        arg("pathAccountSid", String.class),
-        arg("pathCallSid", String.class),
-        arg("pathSid", String.class)),
-
     FETCHER(
         com.twilio.rest.api.v2010.account.call.NotificationFetcher.class,
         "fetcher",

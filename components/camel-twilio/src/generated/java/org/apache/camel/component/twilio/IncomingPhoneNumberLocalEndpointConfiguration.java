@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class IncomingPhoneNumberLocalEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The SID of the Account that will create the resource")
     private String pathAccountSid;
-    @UriParam(description = "The phone_number")
+    @UriParam(description = "The phone number to purchase in E.164 format")
     private com.twilio.type.PhoneNumber phoneNumber;
 
     public String getPathAccountSid() {

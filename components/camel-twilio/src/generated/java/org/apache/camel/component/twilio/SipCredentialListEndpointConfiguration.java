@@ -14,11 +14,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SipCredentialListEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The friendly_name")
+    @UriParam(description = "Human readable descriptive text")
     private String friendlyName;
-    @UriParam(description = "The account_sid")
+    @UriParam(description = "The unique id of the Account that is responsible for this resource")
     private String pathAccountSid;
-    @UriParam(description = "Delete by unique credential Sid")
+    @UriParam(description = "Delete by unique credential list Sid")
     private String pathSid;
 
     public String getFriendlyName() {
