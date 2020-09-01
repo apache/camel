@@ -34,13 +34,11 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
@@ -88,253 +86,11 @@ import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
  */
 public final class PropertyBindingSupport {
 
-    /**
-     * To use a fluent builder style to configure this property binding support.
-     */
-    public static class Builder {
-
-        private CamelContext camelContext;
-        private Object target;
-        private Map<String, Object> properties;
-        private boolean removeParameters = true;
-        private boolean flattenProperties;
-        private boolean mandatory;
-        private boolean nesting = true;
-        private boolean deepNesting = true;
-        private boolean reference = true;
-        private boolean placeholder = true;
-        private boolean fluentBuilder = true;
-        private boolean allowPrivateSetter = true;
-        private boolean ignoreCase;
-        private String optionPrefix;
-        private boolean reflection = true;
-        private PropertyConfigurer configurer;
-
-        /**
-         * CamelContext to be used
-         */
-        public Builder withCamelContext(CamelContext camelContext) {
-            this.camelContext = camelContext;
-            return this;
-        }
-
-        /**
-         * Target object that should have parameters bound
-         */
-        public Builder withTarget(Object target) {
-            this.target = target;
-            return this;
-        }
-
-        /**
-         * The properties to use for binding
-         */
-        public Builder withProperties(Map<String, Object> properties) {
-            if (this.properties == null) {
-                this.properties = properties;
-            } else {
-                // there may be existing options so add those if missing
-                // we need to mutate existing as we are may be removing bound properties
-                this.properties.forEach(properties::putIfAbsent);
-                this.properties = properties;
-            }
-            return this;
-        }
-
-        /**
-         * Adds property to use for binding
-         */
-        public Builder withProperty(String key, Object value) {
-            if (this.properties == null) {
-                this.properties = new LinkedHashMap<>();
-            }
-            this.properties.put(key, value);
-            return this;
-        }
-
-        /**
-         * Whether parameters should be removed when its bound
-         */
-        public Builder withRemoveParameters(boolean removeParameters) {
-            this.removeParameters = removeParameters;
-            return this;
-        }
-
-        /**
-         * Whether properties should be flattened (when properties is a map of maps).
-         */
-        public Builder withFlattenProperties(boolean flattenProperties) {
-            this.flattenProperties = flattenProperties;
-            return this;
-        }
-
-        /**
-         * Whether all parameters should be mandatory and successfully bound
-         */
-        public Builder withMandatory(boolean mandatory) {
-            this.mandatory = mandatory;
-            return this;
-        }
-
-        /**
-         * Whether nesting is in use
-         */
-        public Builder withNesting(boolean nesting) {
-            this.nesting = nesting;
-            return this;
-        }
-
-        /**
-         * Whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects
-         * in the OGNL graph if a property has a setter and the object can be created from a default no-arg constructor.
-         */
-        public Builder withDeepNesting(boolean deepNesting) {
-            this.deepNesting = deepNesting;
-            return this;
-        }
-
-        /**
-         * Whether reference parameter (syntax starts with #) is in use
-         */
-        public Builder withReference(boolean reference) {
-            this.reference = reference;
-            return this;
-        }
-
-        /**
-         * Whether to use Camels property placeholder to resolve placeholders on keys and values
-         */
-        public Builder withPlaceholder(boolean placeholder) {
-            this.placeholder = placeholder;
-            return this;
-        }
-
-        /**
-         * Whether fluent builder is allowed as a valid getter/setter
-         */
-        public Builder withFluentBuilder(boolean fluentBuilder) {
-            this.fluentBuilder = fluentBuilder;
-            return this;
-        }
-
-        /**
-         * Whether properties should be filtered by prefix. * Note that the prefix is removed from the key before the
-         * property is bound.
-         */
-        public Builder withAllowPrivateSetter(boolean allowPrivateSetter) {
-            this.allowPrivateSetter = allowPrivateSetter;
-            return this;
-        }
-
-        /**
-         * Whether to ignore case in the property names (keys).
-         */
-        public Builder withIgnoreCase(boolean ignoreCase) {
-            this.ignoreCase = ignoreCase;
-            return this;
-        }
-
-        /**
-         * Whether properties should be filtered by prefix. Note that the prefix is removed from the key before the
-         * property is bound.
-         */
-        public Builder withOptionPrefix(String optionPrefix) {
-            this.optionPrefix = optionPrefix;
-            return this;
-        }
-
-        /**
-         * Whether to use the configurer to configure the properties.
-         */
-        public Builder withConfigurer(PropertyConfigurer configurer) {
-            this.configurer = configurer;
-            return this;
-        }
-
-        /**
-         * Whether to allow using reflection (when there is no configurer available).
-         */
-        public Builder withReflection(boolean reflection) {
-            this.reflection = reflection;
-            return this;
-        }
-
-        /**
-         * Binds the properties to the target object, and removes the property that was bound from properties.
-         *
-         * @return true if one or more properties was bound
-         */
-        public boolean bind() {
-            // mandatory parameters
-            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
-            org.apache.camel.util.ObjectHelper.notNull(target, "target");
-
-            if (properties == null || properties.isEmpty()) {
-                return false;
-            }
-
-            return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
-                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
-        }
-
-        /**
-         * Binds the properties to the target object, and removes the property that was bound from properties.
-         *
-         * @param  camelContext the camel context
-         * @param  target       the target object
-         * @param  properties   the properties where the bound properties will be removed from
-         * @return              true if one or more properties was bound
-         */
-        public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
-            CamelContext context = camelContext != null ? camelContext : this.camelContext;
-            Object obj = target != null ? target : this.target;
-            Map<String, Object> prop = properties != null ? properties : this.properties;
-
-            return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
-                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
-        }
-
-        /**
-         * Binds the property to the target object.
-         *
-         * @param  camelContext the camel context
-         * @param  target       the target object
-         * @param  key          the property key
-         * @param  value        the property value
-         * @return              true if the property was bound
-         */
-        public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
-            Map<String, Object> properties = new HashMap<>(1);
-            properties.put(key, value);
-
-            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
-                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
-        }
-
-    }
-
     private PropertyBindingSupport() {
     }
 
     public static Builder build() {
         return new Builder();
-    }
-
-    @FunctionalInterface
-    public interface OnAutowiring {
-
-        /**
-         * Callback when a property was autowired on a bean
-         *
-         * @param target       the targeted bean
-         * @param propertyName the name of the property
-         * @param propertyType the type of the property
-         * @param value        the property value
-         */
-        void onAutowire(Object target, String propertyName, Class propertyType, Object value);
-
     }
 
     /**
@@ -391,38 +147,18 @@ public final class PropertyBindingSupport {
         Map<String, Object> properties = new LinkedHashMap<>();
 
         // if there a configurer
-        PropertyConfigurer configurer = null;
-        PropertyConfigurerGetter getter;
-        if (target instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
-        }
-        if (configurer == null) {
-            String name = target.getClass().getName();
-            if (target instanceof ExtendedCamelContext) {
-                // special for camel context itself as we have an extended configurer
-                name = ExtendedCamelContext.class.getName();
-            }
-
-            if (isNotEmpty(name)) {
-                // see if there is a configurer for it
-                configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                        .resolvePropertyConfigurer(name, camelContext);
-            }
-        }
+        PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, target);
 
         // use configurer to get all the current options and its values
         Map<String, Object> getterAllOption = null;
         if (configurer instanceof PropertyConfigurerGetter) {
-            getter = (PropertyConfigurerGetter) configurer;
-            final PropertyConfigurerGetter lambdaGetter = getter;
+            final PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
             final Object lambdaTarget = target;
             getterAllOption = getter.getAllOptions(target);
             getterAllOption.forEach((key, type) -> {
                 // we only need the complex types
                 if (isComplexUserType((Class) type)) {
-                    Object value = lambdaGetter.getOptionValue(lambdaTarget, key, true);
+                    Object value = getter.getOptionValue(lambdaTarget, key, true);
                     properties.put(key, value);
                 }
             });
@@ -570,139 +306,6 @@ public final class PropertyBindingSupport {
     }
 
     /**
-     * Used for making it easier to support using option prefix in property binding and to remove the bound properties
-     * from the input map.
-     */
-    private static class OptionPrefixMap extends LinkedHashMap<String, Object> {
-
-        private final String optionPrefix;
-        private final Map<String, Object> originalMap;
-
-        public OptionPrefixMap(Map<String, Object> map, String optionPrefix) {
-            this.originalMap = map;
-            this.optionPrefix = optionPrefix;
-            // copy from original map into our map without the option prefix
-            map.forEach((k, v) -> {
-                if (startsWithIgnoreCase(k, optionPrefix)) {
-                    put(k.substring(optionPrefix.length()), v);
-                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
-                    put(k.substring(optionPrefix.length() + 1), v);
-                }
-            });
-        }
-
-        @Override
-        public Object remove(Object key) {
-            // we only need to care about the remove method,
-            // so we can remove the corresponding key from the original map
-            Set<String> toBeRemoved = new HashSet<>();
-            originalMap.forEach((k, v) -> {
-                if (startsWithIgnoreCase(k, optionPrefix)) {
-                    toBeRemoved.add(k);
-                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
-                    toBeRemoved.add(k);
-                }
-            });
-            toBeRemoved.forEach(originalMap::remove);
-
-            return super.remove(key);
-        }
-
-    }
-
-    /**
-     * Used for flatten properties when they are a map of maps
-     */
-    private static class FlattenMap extends LinkedHashMap<String, Object> {
-
-        private final Map<String, Object> originalMap;
-
-        public FlattenMap(Map<String, Object> map) {
-            this.originalMap = map;
-            flatten("", originalMap);
-        }
-
-        @SuppressWarnings("unchecked")
-        private void flatten(String prefix, Map<?, Object> map) {
-            for (Map.Entry<?, Object> entry : map.entrySet()) {
-                String key = entry.getKey().toString();
-                boolean optional = key.startsWith("?");
-                if (optional) {
-                    key = key.substring(1);
-                }
-                Object value = entry.getValue();
-                String keyPrefix = (optional ? "?" : "") + (prefix.isEmpty() ? key : prefix + "." + key);
-                if (value instanceof Map) {
-                    flatten(keyPrefix, (Map<?, Object>) value);
-                } else {
-                    put(keyPrefix, value);
-                }
-            }
-        }
-
-        @Override
-        public Object remove(Object key) {
-            // we only need to care about the remove method,
-            // so we can remove the corresponding key from the original map
-
-            // walk key with dots to remove right node
-            String[] parts = key.toString().split("\\.");
-            Map map = originalMap;
-            for (int i = 0; i < parts.length; i++) {
-                String part = parts[i];
-                Object obj = map.get(part);
-                if (i == parts.length - 1) {
-                    map.remove(part);
-                } else if (obj instanceof Map) {
-                    map = (Map) obj;
-                }
-            }
-
-            // remove empty middle maps
-            Object answer = super.remove(key);
-            if (super.isEmpty()) {
-                originalMap.clear();
-            }
-            return answer;
-        }
-
-    }
-
-    /**
-     * Used for sorting the property keys when doing property binding. We need to sort the keys in a specific order so
-     * we process the binding in a way that allows us to walk down the OGNL object graph and build empty nodes on the
-     * fly, and as well handle map/list and array types as well.
-     */
-    private static final class PropertyBindingKeyComparator implements Comparator<String> {
-
-        private final Map<String, Object> map;
-
-        private PropertyBindingKeyComparator(Map<String, Object> map) {
-            this.map = map;
-        }
-
-        @Override
-        public int compare(String o1, String o2) {
-            // 1) sort by nested level (shortest OGNL graph first)
-            int n1 = StringHelper.countChar(o1, '.');
-            int n2 = StringHelper.countChar(o2, '.');
-            if (n1 != n2) {
-                return Integer.compare(n1, n2);
-            }
-            // 2) sort by reference (as it may refer to other beans in the OGNL graph)
-            Object v1 = map.get(o1);
-            Object v2 = map.get(o2);
-            boolean ref1 = v1 instanceof String && ((String) v1).startsWith("#");
-            boolean ref2 = v2 instanceof String && ((String) v2).startsWith("#");
-            if (ref1 != ref2) {
-                return Boolean.compare(ref1, ref2);
-            }
-            // 3) sort by name
-            return o1.compareTo(o2);
-        }
-    }
-
-    /**
      * Binds the properties with the given prefix to the target object, and removes the property that was bound from
      * properties. Note that the prefix is removed from the key before the property is bound.
      *
@@ -798,8 +401,7 @@ public final class PropertyBindingSupport {
 
         if (configurer == null) {
             // do we have a configurer by any chance
-            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                    .resolvePropertyConfigurer(newClass.getName(), camelContext);
+            configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, newClass);
         }
 
         // we should only walk and create OGNL path for the middle graph
@@ -862,11 +464,9 @@ public final class PropertyBindingSupport {
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
                             .getCollectionValueType(newTarget, undashKey(key), ignoreCase);
                     if (collectionType != null) {
-                        configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                                .resolvePropertyConfigurer(collectionType.getName(), camelContext);
+                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, collectionType);
                     } else {
-                        configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
-                                .resolvePropertyConfigurer(prop.getClass().getName(), camelContext);
+                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, prop.getClass());
                     }
                 }
                 // prepare for next iterator
@@ -2050,6 +1650,381 @@ public final class PropertyBindingSupport {
         // as we un-dash property keys then we need to prepare this for the configurer (reflection does this automatic)
         key = StringHelper.dashToCamelCase(key);
         return key;
+    }
+
+    @FunctionalInterface
+    public interface OnAutowiring {
+
+        /**
+         * Callback when a property was autowired on a bean
+         *
+         * @param target       the targeted bean
+         * @param propertyName the name of the property
+         * @param propertyType the type of the property
+         * @param value        the property value
+         */
+        void onAutowire(Object target, String propertyName, Class propertyType, Object value);
+
+    }
+
+    /**
+     * To use a fluent builder style to configure this property binding support.
+     */
+    public static class Builder {
+
+        private CamelContext camelContext;
+        private Object target;
+        private Map<String, Object> properties;
+        private boolean removeParameters = true;
+        private boolean flattenProperties;
+        private boolean mandatory;
+        private boolean nesting = true;
+        private boolean deepNesting = true;
+        private boolean reference = true;
+        private boolean placeholder = true;
+        private boolean fluentBuilder = true;
+        private boolean allowPrivateSetter = true;
+        private boolean ignoreCase;
+        private String optionPrefix;
+        private boolean reflection = true;
+        private PropertyConfigurer configurer;
+
+        /**
+         * CamelContext to be used
+         */
+        public Builder withCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+            return this;
+        }
+
+        /**
+         * Target object that should have parameters bound
+         */
+        public Builder withTarget(Object target) {
+            this.target = target;
+            return this;
+        }
+
+        /**
+         * The properties to use for binding
+         */
+        public Builder withProperties(Map<String, Object> properties) {
+            if (this.properties == null) {
+                this.properties = properties;
+            } else {
+                // there may be existing options so add those if missing
+                // we need to mutate existing as we are may be removing bound properties
+                this.properties.forEach(properties::putIfAbsent);
+                this.properties = properties;
+            }
+            return this;
+        }
+
+        /**
+         * Adds property to use for binding
+         */
+        public Builder withProperty(String key, Object value) {
+            if (this.properties == null) {
+                this.properties = new LinkedHashMap<>();
+            }
+            this.properties.put(key, value);
+            return this;
+        }
+
+        /**
+         * Whether parameters should be removed when its bound
+         */
+        public Builder withRemoveParameters(boolean removeParameters) {
+            this.removeParameters = removeParameters;
+            return this;
+        }
+
+        /**
+         * Whether properties should be flattened (when properties is a map of maps).
+         */
+        public Builder withFlattenProperties(boolean flattenProperties) {
+            this.flattenProperties = flattenProperties;
+            return this;
+        }
+
+        /**
+         * Whether all parameters should be mandatory and successfully bound
+         */
+        public Builder withMandatory(boolean mandatory) {
+            this.mandatory = mandatory;
+            return this;
+        }
+
+        /**
+         * Whether nesting is in use
+         */
+        public Builder withNesting(boolean nesting) {
+            this.nesting = nesting;
+            return this;
+        }
+
+        /**
+         * Whether deep nesting is in use, where Camel will attempt to walk as deep as possible by creating new objects
+         * in the OGNL graph if a property has a setter and the object can be created from a default no-arg constructor.
+         */
+        public Builder withDeepNesting(boolean deepNesting) {
+            this.deepNesting = deepNesting;
+            return this;
+        }
+
+        /**
+         * Whether reference parameter (syntax starts with #) is in use
+         */
+        public Builder withReference(boolean reference) {
+            this.reference = reference;
+            return this;
+        }
+
+        /**
+         * Whether to use Camels property placeholder to resolve placeholders on keys and values
+         */
+        public Builder withPlaceholder(boolean placeholder) {
+            this.placeholder = placeholder;
+            return this;
+        }
+
+        /**
+         * Whether fluent builder is allowed as a valid getter/setter
+         */
+        public Builder withFluentBuilder(boolean fluentBuilder) {
+            this.fluentBuilder = fluentBuilder;
+            return this;
+        }
+
+        /**
+         * Whether properties should be filtered by prefix. * Note that the prefix is removed from the key before the
+         * property is bound.
+         */
+        public Builder withAllowPrivateSetter(boolean allowPrivateSetter) {
+            this.allowPrivateSetter = allowPrivateSetter;
+            return this;
+        }
+
+        /**
+         * Whether to ignore case in the property names (keys).
+         */
+        public Builder withIgnoreCase(boolean ignoreCase) {
+            this.ignoreCase = ignoreCase;
+            return this;
+        }
+
+        /**
+         * Whether properties should be filtered by prefix. Note that the prefix is removed from the key before the
+         * property is bound.
+         */
+        public Builder withOptionPrefix(String optionPrefix) {
+            this.optionPrefix = optionPrefix;
+            return this;
+        }
+
+        /**
+         * Whether to use the configurer to configure the properties.
+         */
+        public Builder withConfigurer(PropertyConfigurer configurer) {
+            this.configurer = configurer;
+            return this;
+        }
+
+        /**
+         * Whether to allow using reflection (when there is no configurer available).
+         */
+        public Builder withReflection(boolean reflection) {
+            this.reflection = reflection;
+            return this;
+        }
+
+        /**
+         * Binds the properties to the target object, and removes the property that was bound from properties.
+         *
+         * @return true if one or more properties was bound
+         */
+        public boolean bind() {
+            // mandatory parameters
+            org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
+            org.apache.camel.util.ObjectHelper.notNull(target, "target");
+
+            if (properties == null || properties.isEmpty()) {
+                return false;
+            }
+
+            return doBindProperties(camelContext, target, removeParameters ? properties : new HashMap<>(properties),
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+        }
+
+        /**
+         * Binds the properties to the target object, and removes the property that was bound from properties.
+         *
+         * @param  camelContext the camel context
+         * @param  target       the target object
+         * @param  properties   the properties where the bound properties will be removed from
+         * @return              true if one or more properties was bound
+         */
+        public boolean bind(CamelContext camelContext, Object target, Map<String, Object> properties) {
+            CamelContext context = camelContext != null ? camelContext : this.camelContext;
+            Object obj = target != null ? target : this.target;
+            Map<String, Object> prop = properties != null ? properties : this.properties;
+
+            return doBindProperties(context, obj, removeParameters ? prop : new HashMap<>(prop),
+                    optionPrefix, ignoreCase, removeParameters, flattenProperties, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+        }
+
+        /**
+         * Binds the property to the target object.
+         *
+         * @param  camelContext the camel context
+         * @param  target       the target object
+         * @param  key          the property key
+         * @param  value        the property value
+         * @return              true if the property was bound
+         */
+        public boolean bind(CamelContext camelContext, Object target, String key, Object value) {
+            Map<String, Object> properties = new HashMap<>(1);
+            properties.put(key, value);
+
+            return doBindProperties(camelContext, target, properties, optionPrefix, ignoreCase, true, false, mandatory,
+                    nesting, deepNesting, fluentBuilder, allowPrivateSetter, reference, placeholder, reflection, configurer);
+        }
+
+    }
+
+    /**
+     * Used for making it easier to support using option prefix in property binding and to remove the bound properties
+     * from the input map.
+     */
+    private static class OptionPrefixMap extends LinkedHashMap<String, Object> {
+
+        private final String optionPrefix;
+        private final Map<String, Object> originalMap;
+
+        public OptionPrefixMap(Map<String, Object> map, String optionPrefix) {
+            this.originalMap = map;
+            this.optionPrefix = optionPrefix;
+            // copy from original map into our map without the option prefix
+            map.forEach((k, v) -> {
+                if (startsWithIgnoreCase(k, optionPrefix)) {
+                    put(k.substring(optionPrefix.length()), v);
+                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
+                    put(k.substring(optionPrefix.length() + 1), v);
+                }
+            });
+        }
+
+        @Override
+        public Object remove(Object key) {
+            // we only need to care about the remove method,
+            // so we can remove the corresponding key from the original map
+            Set<String> toBeRemoved = new HashSet<>();
+            originalMap.forEach((k, v) -> {
+                if (startsWithIgnoreCase(k, optionPrefix)) {
+                    toBeRemoved.add(k);
+                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
+                    toBeRemoved.add(k);
+                }
+            });
+            toBeRemoved.forEach(originalMap::remove);
+
+            return super.remove(key);
+        }
+
+    }
+
+    /**
+     * Used for flatten properties when they are a map of maps
+     */
+    private static class FlattenMap extends LinkedHashMap<String, Object> {
+
+        private final Map<String, Object> originalMap;
+
+        public FlattenMap(Map<String, Object> map) {
+            this.originalMap = map;
+            flatten("", originalMap);
+        }
+
+        @SuppressWarnings("unchecked")
+        private void flatten(String prefix, Map<?, Object> map) {
+            for (Map.Entry<?, Object> entry : map.entrySet()) {
+                String key = entry.getKey().toString();
+                boolean optional = key.startsWith("?");
+                if (optional) {
+                    key = key.substring(1);
+                }
+                Object value = entry.getValue();
+                String keyPrefix = (optional ? "?" : "") + (prefix.isEmpty() ? key : prefix + "." + key);
+                if (value instanceof Map) {
+                    flatten(keyPrefix, (Map<?, Object>) value);
+                } else {
+                    put(keyPrefix, value);
+                }
+            }
+        }
+
+        @Override
+        public Object remove(Object key) {
+            // we only need to care about the remove method,
+            // so we can remove the corresponding key from the original map
+
+            // walk key with dots to remove right node
+            String[] parts = key.toString().split("\\.");
+            Map map = originalMap;
+            for (int i = 0; i < parts.length; i++) {
+                String part = parts[i];
+                Object obj = map.get(part);
+                if (i == parts.length - 1) {
+                    map.remove(part);
+                } else if (obj instanceof Map) {
+                    map = (Map) obj;
+                }
+            }
+
+            // remove empty middle maps
+            Object answer = super.remove(key);
+            if (super.isEmpty()) {
+                originalMap.clear();
+            }
+            return answer;
+        }
+
+    }
+
+    /**
+     * Used for sorting the property keys when doing property binding. We need to sort the keys in a specific order so
+     * we process the binding in a way that allows us to walk down the OGNL object graph and build empty nodes on the
+     * fly, and as well handle map/list and array types as well.
+     */
+    private static final class PropertyBindingKeyComparator implements Comparator<String> {
+
+        private final Map<String, Object> map;
+
+        private PropertyBindingKeyComparator(Map<String, Object> map) {
+            this.map = map;
+        }
+
+        @Override
+        public int compare(String o1, String o2) {
+            // 1) sort by nested level (shortest OGNL graph first)
+            int n1 = StringHelper.countChar(o1, '.');
+            int n2 = StringHelper.countChar(o2, '.');
+            if (n1 != n2) {
+                return Integer.compare(n1, n2);
+            }
+            // 2) sort by reference (as it may refer to other beans in the OGNL graph)
+            Object v1 = map.get(o1);
+            Object v2 = map.get(o2);
+            boolean ref1 = v1 instanceof String && ((String) v1).startsWith("#");
+            boolean ref2 = v2 instanceof String && ((String) v2).startsWith("#");
+            if (ref1 != ref2) {
+                return Boolean.compare(ref1, ref2);
+            }
+            // 3) sort by name
+            return o1.compareTo(o2);
+        }
     }
 
 }
