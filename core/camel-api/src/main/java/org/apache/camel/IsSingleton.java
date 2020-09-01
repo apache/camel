@@ -29,10 +29,19 @@ package org.apache.camel;
 public interface IsSingleton {
 
     /**
+     * Test if the given {@code instance} is a singleton or not.
+     *
+     * @param  instance the instance ot check
+     * @return          true if the given {@code instance} is a singleton
+     */
+    static boolean test(Object instance) {
+        return instance instanceof IsSingleton && ((IsSingleton) instance).isSingleton();
+    }
+
+    /**
      * Whether this class supports being singleton or not.
      *
      * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
      */
     boolean isSingleton();
-
 }

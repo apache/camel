@@ -173,10 +173,6 @@ public abstract class AbstractCamelContext extends BaseService
         implements ExtendedCamelContext, CatalogCamelContext, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
-
-    // start auto assigning route ids using numbering 1000 and upwards
-    int defaultRouteStartupOrder = 1000;
-
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
@@ -206,6 +202,8 @@ public abstract class AbstractCamelContext extends BaseService
             return new HashSet<>();
         }
     };
+    // start auto assigning route ids using numbering 1000 and upwards
+    int defaultRouteStartupOrder = 1000;
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -1734,11 +1732,8 @@ public abstract class AbstractCamelContext extends BaseService
 
             // check if the language is singleton, if so return the shared
             // instance
-            if (answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton) answer).isSingleton();
-                if (singleton) {
-                    return answer;
-                }
+            if (IsSingleton.test(answer)) {
+                return answer;
             }
 
             // language not known or not singleton, then use resolver
