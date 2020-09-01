@@ -307,7 +307,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: client, server
+     * There are 2 enums and the value can be one of: client, server
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -330,7 +330,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: client, server
+     * There are 2 enums and the value can be one of: client, server
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5178,9 +5178,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: capabilities, create, delete, history,
-     * load-page, meta, operation, patch, read, search, transaction, update,
-     * validate
+     * There are 13 enums and the value can be one of: capabilities, create,
+     * delete, history, load-page, meta, operation, patch, read, search,
+     * transaction, update, validate
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5204,9 +5204,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: capabilities, create, delete, history,
-     * load-page, meta, operation, patch, read, search, transaction, update,
-     * validate
+     * There are 13 enums and the value can be one of: capabilities, create,
+     * delete, history, load-page, meta, operation, patch, read, search,
+     * transaction, update, validate
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10983,7 +10983,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
+     * There are 1 enums and the value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -11006,7 +11006,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
+     * There are 1 enums and the value can be one of:
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -14315,11 +14315,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: account, address, application,
-     * available-phone-number-country, call, conference, connect-app,
-     * incoming-phone-number, key, message, new-key, new-signing-key,
-     * notification, outgoing-caller-id, queue, recording, short-code,
-     * signing-key, token, transcription, validation-request,
+     * There are 56 enums and the value can be one of: account, address,
+     * application, available-phone-number-country, call, conference,
+     * connect-app, incoming-phone-number, key, message, new-key,
+     * new-signing-key, notification, outgoing-caller-id, queue, recording,
+     * short-code, signing-key, token, transcription, validation-request,
      * address-dependent-phone-number, available-phone-number-country-local,
      * available-phone-number-country-mobile,
      * available-phone-number-country-toll-free, call-feedback,
@@ -14338,7 +14338,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, delete, fetch, read, update
+     * There are 5 enums and the value can be one of: create, delete, fetch,
+     * read, update
      * 
      * @param path apiName/methodName
      */
@@ -14358,11 +14359,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of: account, address, application,
-     * available-phone-number-country, call, conference, connect-app,
-     * incoming-phone-number, key, message, new-key, new-signing-key,
-     * notification, outgoing-caller-id, queue, recording, short-code,
-     * signing-key, token, transcription, validation-request,
+     * There are 56 enums and the value can be one of: account, address,
+     * application, available-phone-number-country, call, conference,
+     * connect-app, incoming-phone-number, key, message, new-key,
+     * new-signing-key, notification, outgoing-caller-id, queue, recording,
+     * short-code, signing-key, token, transcription, validation-request,
      * address-dependent-phone-number, available-phone-number-country-local,
      * available-phone-number-country-mobile,
      * available-phone-number-country-toll-free, call-feedback,
@@ -14381,7 +14382,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of: create, delete, fetch, read, update
+     * There are 5 enums and the value can be one of: create, delete, fetch,
+     * read, update
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -15657,45 +15659,46 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * The value can be one of: addTagToOrganisations, addTagToTicket,
-     * addTagToTopics, associateAttachmentsToArticle, changeUserPassword,
-     * createArticle, createArticleTranslation, createAutomation,
-     * createCategory, createCategoryTranslation, createComment,
-     * createDynamicContentItem, createDynamicContentItemVariant, createForum,
-     * createGroup, createGroupMembership, createMacro, createOrUpdateUser,
-     * createOrUpdateUsers, createOrUpdateUsersAsync, createOrganization,
-     * createOrganizationMembership, createOrganizationMemberships,
-     * createOrganizationMembershipsAsync, createOrganizations,
-     * createOrganizationsAsync, createPermissionGroup, createRequest,
-     * createSatisfactionRating, createSection, createSectionTranslation,
-     * createTarget, createTicket, createTicketAsync, createTicketField,
-     * createTicketForm, createTicketFromTweet, createTickets,
-     * createTicketsAsync, createTopic, createTrigger, createUpload,
-     * createUploadArticle, createUser, createUserIdentity, createUserSegment,
-     * createUsers, createUsersAsync, deleteArticle, deleteArticleAttachment,
-     * deleteAttachment, deleteAutomation, deleteCategory,
-     * deleteDynamicContentItem, deleteDynamicContentItemVariant, deleteForum,
-     * deleteGroup, deleteGroupMembership, deleteOrganization,
-     * deleteOrganizationMembership, deleteOrganizationMemberships,
-     * deletePermissionGroup, deleteSection, deleteSuspendedTicket,
-     * deleteTarget, deleteTicket, deleteTicketField, deleteTickets,
-     * deleteTopic, deleteTranslation, deleteTrigger, deleteUpload, deleteUser,
-     * deleteUserIdentity, deleteUserSegment, getArticle, getArticleFromSearch,
-     * getArticleSubscriptions, getArticleTranslations, getArticles,
-     * getArticlesFromAllLabels, getArticlesFromAnyLabels, getArticlesFromPage,
-     * getArticlesIncrementally, getAssignableGroupMemberships,
-     * getAssignableGroups, getAttachment, getAttachmentsFromArticle,
-     * getAuthenticatedUser, getAutoCompleteOrganizations, getAutomation,
-     * getAutomations, getBrands, getCCRequests, getCategories, getCategory,
-     * getCategoryTranslations, getComplianceDeletionStatuses, getCurrentUser,
-     * getCustomAgentRoles, getDeletedTickets, getDynamicContentItem,
-     * getDynamicContentItemVariant, getDynamicContentItemVariants,
-     * getDynamicContentItems, getForum, getForums, getGroup,
-     * getGroupMembership, getGroupMembershipByUser, getGroupMemberships,
-     * getGroupOrganization, getGroupUsers, getGroups, getHelpCenterLocales,
-     * getHolidaysForSchedule, getIncrementalTicketsResult, getJobStatus,
-     * getJobStatusAsync, getJobStatuses, getJobStatusesAsync, getMacro,
-     * getMacros, getOpenRequests, getOrganization, getOrganizationFields,
+     * There are 253 enums and the value can be one of: addTagToOrganisations,
+     * addTagToTicket, addTagToTopics, associateAttachmentsToArticle,
+     * changeUserPassword, createArticle, createArticleTranslation,
+     * createAutomation, createCategory, createCategoryTranslation,
+     * createComment, createDynamicContentItem, createDynamicContentItemVariant,
+     * createForum, createGroup, createGroupMembership, createMacro,
+     * createOrUpdateUser, createOrUpdateUsers, createOrUpdateUsersAsync,
+     * createOrganization, createOrganizationMembership,
+     * createOrganizationMemberships, createOrganizationMembershipsAsync,
+     * createOrganizations, createOrganizationsAsync, createPermissionGroup,
+     * createRequest, createSatisfactionRating, createSection,
+     * createSectionTranslation, createTarget, createTicket, createTicketAsync,
+     * createTicketField, createTicketForm, createTicketFromTweet,
+     * createTickets, createTicketsAsync, createTopic, createTrigger,
+     * createUpload, createUploadArticle, createUser, createUserIdentity,
+     * createUserSegment, createUsers, createUsersAsync, deleteArticle,
+     * deleteArticleAttachment, deleteAttachment, deleteAutomation,
+     * deleteCategory, deleteDynamicContentItem,
+     * deleteDynamicContentItemVariant, deleteForum, deleteGroup,
+     * deleteGroupMembership, deleteOrganization, deleteOrganizationMembership,
+     * deleteOrganizationMemberships, deletePermissionGroup, deleteSection,
+     * deleteSuspendedTicket, deleteTarget, deleteTicket, deleteTicketField,
+     * deleteTickets, deleteTopic, deleteTranslation, deleteTrigger,
+     * deleteUpload, deleteUser, deleteUserIdentity, deleteUserSegment,
+     * getArticle, getArticleFromSearch, getArticleSubscriptions,
+     * getArticleTranslations, getArticles, getArticlesFromAllLabels,
+     * getArticlesFromAnyLabels, getArticlesFromPage, getArticlesIncrementally,
+     * getAssignableGroupMemberships, getAssignableGroups, getAttachment,
+     * getAttachmentsFromArticle, getAuthenticatedUser,
+     * getAutoCompleteOrganizations, getAutomation, getAutomations, getBrands,
+     * getCCRequests, getCategories, getCategory, getCategoryTranslations,
+     * getComplianceDeletionStatuses, getCurrentUser, getCustomAgentRoles,
+     * getDeletedTickets, getDynamicContentItem, getDynamicContentItemVariant,
+     * getDynamicContentItemVariants, getDynamicContentItems, getForum,
+     * getForums, getGroup, getGroupMembership, getGroupMembershipByUser,
+     * getGroupMemberships, getGroupOrganization, getGroupUsers, getGroups,
+     * getHelpCenterLocales, getHolidaysForSchedule,
+     * getIncrementalTicketsResult, getJobStatus, getJobStatusAsync,
+     * getJobStatuses, getJobStatusesAsync, getMacro, getMacros,
+     * getOpenRequests, getOrganization, getOrganizationFields,
      * getOrganizationMembership, getOrganizationMembershipByUser,
      * getOrganizationMembershipForUser, getOrganizationMemberships,
      * getOrganizationMembershipsForOrg, getOrganizationMembershipsForUser,
@@ -15754,45 +15757,46 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * The value can be one of: addTagToOrganisations, addTagToTicket,
-     * addTagToTopics, associateAttachmentsToArticle, changeUserPassword,
-     * createArticle, createArticleTranslation, createAutomation,
-     * createCategory, createCategoryTranslation, createComment,
-     * createDynamicContentItem, createDynamicContentItemVariant, createForum,
-     * createGroup, createGroupMembership, createMacro, createOrUpdateUser,
-     * createOrUpdateUsers, createOrUpdateUsersAsync, createOrganization,
-     * createOrganizationMembership, createOrganizationMemberships,
-     * createOrganizationMembershipsAsync, createOrganizations,
-     * createOrganizationsAsync, createPermissionGroup, createRequest,
-     * createSatisfactionRating, createSection, createSectionTranslation,
-     * createTarget, createTicket, createTicketAsync, createTicketField,
-     * createTicketForm, createTicketFromTweet, createTickets,
-     * createTicketsAsync, createTopic, createTrigger, createUpload,
-     * createUploadArticle, createUser, createUserIdentity, createUserSegment,
-     * createUsers, createUsersAsync, deleteArticle, deleteArticleAttachment,
-     * deleteAttachment, deleteAutomation, deleteCategory,
-     * deleteDynamicContentItem, deleteDynamicContentItemVariant, deleteForum,
-     * deleteGroup, deleteGroupMembership, deleteOrganization,
-     * deleteOrganizationMembership, deleteOrganizationMemberships,
-     * deletePermissionGroup, deleteSection, deleteSuspendedTicket,
-     * deleteTarget, deleteTicket, deleteTicketField, deleteTickets,
-     * deleteTopic, deleteTranslation, deleteTrigger, deleteUpload, deleteUser,
-     * deleteUserIdentity, deleteUserSegment, getArticle, getArticleFromSearch,
-     * getArticleSubscriptions, getArticleTranslations, getArticles,
-     * getArticlesFromAllLabels, getArticlesFromAnyLabels, getArticlesFromPage,
-     * getArticlesIncrementally, getAssignableGroupMemberships,
-     * getAssignableGroups, getAttachment, getAttachmentsFromArticle,
-     * getAuthenticatedUser, getAutoCompleteOrganizations, getAutomation,
-     * getAutomations, getBrands, getCCRequests, getCategories, getCategory,
-     * getCategoryTranslations, getComplianceDeletionStatuses, getCurrentUser,
-     * getCustomAgentRoles, getDeletedTickets, getDynamicContentItem,
-     * getDynamicContentItemVariant, getDynamicContentItemVariants,
-     * getDynamicContentItems, getForum, getForums, getGroup,
-     * getGroupMembership, getGroupMembershipByUser, getGroupMemberships,
-     * getGroupOrganization, getGroupUsers, getGroups, getHelpCenterLocales,
-     * getHolidaysForSchedule, getIncrementalTicketsResult, getJobStatus,
-     * getJobStatusAsync, getJobStatuses, getJobStatusesAsync, getMacro,
-     * getMacros, getOpenRequests, getOrganization, getOrganizationFields,
+     * There are 253 enums and the value can be one of: addTagToOrganisations,
+     * addTagToTicket, addTagToTopics, associateAttachmentsToArticle,
+     * changeUserPassword, createArticle, createArticleTranslation,
+     * createAutomation, createCategory, createCategoryTranslation,
+     * createComment, createDynamicContentItem, createDynamicContentItemVariant,
+     * createForum, createGroup, createGroupMembership, createMacro,
+     * createOrUpdateUser, createOrUpdateUsers, createOrUpdateUsersAsync,
+     * createOrganization, createOrganizationMembership,
+     * createOrganizationMemberships, createOrganizationMembershipsAsync,
+     * createOrganizations, createOrganizationsAsync, createPermissionGroup,
+     * createRequest, createSatisfactionRating, createSection,
+     * createSectionTranslation, createTarget, createTicket, createTicketAsync,
+     * createTicketField, createTicketForm, createTicketFromTweet,
+     * createTickets, createTicketsAsync, createTopic, createTrigger,
+     * createUpload, createUploadArticle, createUser, createUserIdentity,
+     * createUserSegment, createUsers, createUsersAsync, deleteArticle,
+     * deleteArticleAttachment, deleteAttachment, deleteAutomation,
+     * deleteCategory, deleteDynamicContentItem,
+     * deleteDynamicContentItemVariant, deleteForum, deleteGroup,
+     * deleteGroupMembership, deleteOrganization, deleteOrganizationMembership,
+     * deleteOrganizationMemberships, deletePermissionGroup, deleteSection,
+     * deleteSuspendedTicket, deleteTarget, deleteTicket, deleteTicketField,
+     * deleteTickets, deleteTopic, deleteTranslation, deleteTrigger,
+     * deleteUpload, deleteUser, deleteUserIdentity, deleteUserSegment,
+     * getArticle, getArticleFromSearch, getArticleSubscriptions,
+     * getArticleTranslations, getArticles, getArticlesFromAllLabels,
+     * getArticlesFromAnyLabels, getArticlesFromPage, getArticlesIncrementally,
+     * getAssignableGroupMemberships, getAssignableGroups, getAttachment,
+     * getAttachmentsFromArticle, getAuthenticatedUser,
+     * getAutoCompleteOrganizations, getAutomation, getAutomations, getBrands,
+     * getCCRequests, getCategories, getCategory, getCategoryTranslations,
+     * getComplianceDeletionStatuses, getCurrentUser, getCustomAgentRoles,
+     * getDeletedTickets, getDynamicContentItem, getDynamicContentItemVariant,
+     * getDynamicContentItemVariants, getDynamicContentItems, getForum,
+     * getForums, getGroup, getGroupMembership, getGroupMembershipByUser,
+     * getGroupMemberships, getGroupOrganization, getGroupUsers, getGroups,
+     * getHelpCenterLocales, getHolidaysForSchedule,
+     * getIncrementalTicketsResult, getJobStatus, getJobStatusAsync,
+     * getJobStatuses, getJobStatusesAsync, getMacro, getMacros,
+     * getOpenRequests, getOrganization, getOrganizationFields,
      * getOrganizationMembership, getOrganizationMembershipByUser,
      * getOrganizationMembershipForUser, getOrganizationMemberships,
      * getOrganizationMembershipsForOrg, getOrganizationMembershipsForUser,

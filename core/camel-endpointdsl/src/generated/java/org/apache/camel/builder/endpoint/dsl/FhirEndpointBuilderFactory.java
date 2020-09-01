@@ -2353,9 +2353,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: capabilities, create, delete, history,
-         * load-page, meta, operation, patch, read, search, transaction, update,
-         * validate
+         * There are 13 enums and the value can be one of: capabilities, create,
+         * delete, history, load-page, meta, operation, patch, read, search,
+         * transaction, update, validate
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2378,9 +2378,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: capabilities, create, delete, history,
-         * load-page, meta, operation, patch, read, search, transaction, update,
-         * validate
+         * There are 13 enums and the value can be one of: capabilities, create,
+         * delete, history, load-page, meta, operation, patch, read, search,
+         * transaction, update, validate
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
