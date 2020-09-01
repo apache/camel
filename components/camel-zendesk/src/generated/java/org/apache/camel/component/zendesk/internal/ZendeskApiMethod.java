@@ -56,6 +56,12 @@ public enum ZendeskApiMethod implements ApiMethod {
         "createArticle",
         arg("article", org.zendesk.client.v2.model.hc.Article.class)),
 
+    CREATEARTICLE_1(
+        org.zendesk.client.v2.model.hc.Article.class,
+        "createArticle",
+        arg("article", org.zendesk.client.v2.model.hc.Article.class),
+        arg("notifySubscribers", boolean.class)),
+
     CREATEARTICLETRANSLATION(
         org.zendesk.client.v2.model.hc.Translation.class,
         "createArticleTranslation",
@@ -83,6 +89,17 @@ public enum ZendeskApiMethod implements ApiMethod {
         "createComment",
         arg("ticketId", long.class),
         arg("comment", org.zendesk.client.v2.model.Comment.class)),
+
+    CREATEDYNAMICCONTENTITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "createDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    CREATEDYNAMICCONTENTITEMVARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "createDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
 
     CREATEFORUM(
         org.zendesk.client.v2.model.Forum.class,
@@ -115,6 +132,21 @@ public enum ZendeskApiMethod implements ApiMethod {
         "createOrUpdateUser",
         arg("user", org.zendesk.client.v2.model.User.class)),
 
+    CREATEORUPDATEUSERS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrUpdateUsers",
+        arg("users", new org.zendesk.client.v2.model.User[0].getClass())),
+
+    CREATEORUPDATEUSERS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrUpdateUsers",
+        arg("usersList", java.util.List.class)),
+
+    CREATEORUPDATEUSERSASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "createOrUpdateUsersAsync",
+        arg("usersList", java.util.List.class)),
+
     CREATEORGANIZATION(
         org.zendesk.client.v2.model.Organization.class,
         "createOrganization",
@@ -131,6 +163,21 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("user_id", long.class),
         arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
 
+    CREATEORGANIZATIONMEMBERSHIPS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrganizationMemberships",
+        arg("organizationMembershipList", java.util.List.class)),
+
+    CREATEORGANIZATIONMEMBERSHIPS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "createOrganizationMemberships",
+        arg("organizationMemberships", new org.zendesk.client.v2.model.OrganizationMembership[0].getClass())),
+
+    CREATEORGANIZATIONMEMBERSHIPSASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "createOrganizationMembershipsAsync",
+        arg("organizationMembershipList", java.util.List.class)),
+
     CREATEORGANIZATIONS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createOrganizations",
@@ -145,6 +192,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.asynchttpclient.ListenableFuture.class,
         "createOrganizationsAsync",
         arg("organizationList", java.util.List.class)),
+
+    CREATEPERMISSIONGROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "createPermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
 
     CREATEREQUEST(
         org.zendesk.client.v2.model.Request.class,
@@ -281,6 +333,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("userId", long.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
 
+    CREATEUSERSEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "createUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
     CREATEUSERS(
         org.zendesk.client.v2.model.JobStatus.class,
         "createUsers",
@@ -330,6 +387,17 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteCategory",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
+
+    DELETEDYNAMICCONTENTITEM(
+        void.class,
+        "deleteDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    DELETEDYNAMICCONTENTITEMVARIANT(
+        void.class,
+        "deleteDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
 
     DELETEFORUM(
         void.class,
@@ -395,6 +463,22 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("user_id", long.class),
         arg("organization_membership_id", long.class)),
 
+    DELETEORGANIZATIONMEMBERSHIPS(
+        void.class,
+        "deleteOrganizationMemberships",
+        arg("id", long.class),
+        arg("ids", new long[0].getClass())),
+
+    DELETEPERMISSIONGROUP(
+        void.class,
+        "deletePermissionGroup",
+        arg("id", long.class)),
+
+    DELETEPERMISSIONGROUP_1(
+        void.class,
+        "deletePermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
+
     DELETESECTION(
         void.class,
         "deleteSection",
@@ -446,6 +530,16 @@ public enum ZendeskApiMethod implements ApiMethod {
         "deleteTopic",
         arg("topic", org.zendesk.client.v2.model.Topic.class)),
 
+    DELETETRANSLATION(
+        void.class,
+        "deleteTranslation",
+        arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
+
+    DELETETRANSLATION_1(
+        void.class,
+        "deleteTranslation",
+        arg("translationId", Long.class)),
+
     DELETETRIGGER(
         void.class,
         "deleteTrigger",
@@ -489,6 +583,16 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("userId", long.class),
         arg("identityId", long.class)),
 
+    DELETEUSERSEGMENT(
+        void.class,
+        "deleteUserSegment",
+        arg("id", long.class)),
+
+    DELETEUSERSEGMENT_1(
+        void.class,
+        "deleteUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
     GETARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
         "getArticle",
@@ -529,6 +633,26 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getArticles",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
+
+    GETARTICLES_2(
+        Iterable.class,
+        "getArticles",
+        arg("locale", String.class)),
+
+    GETARTICLES_3(
+        Iterable.class,
+        "getArticles",
+        arg("section", org.zendesk.client.v2.model.hc.Section.class)),
+
+    GETARTICLESFROMALLLABELS(
+        Iterable.class,
+        "getArticlesFromAllLabels",
+        arg("labels", java.util.List.class)),
+
+    GETARTICLESFROMANYLABELS(
+        Iterable.class,
+        "getArticlesFromAnyLabels",
+        arg("labels", java.util.List.class)),
 
     GETARTICLESFROMPAGE(
         java.util.List.class,
@@ -608,6 +732,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getCategoryTranslations",
         arg("categoryId", Long.class)),
 
+    GETCOMPLIANCEDELETIONSTATUSES(
+        Iterable.class,
+        "getComplianceDeletionStatuses",
+        arg("userId", long.class)),
+
     GETCURRENTUSER(
         org.zendesk.client.v2.model.User.class,
         "getCurrentUser"),
@@ -615,6 +744,36 @@ public enum ZendeskApiMethod implements ApiMethod {
     GETCUSTOMAGENTROLES(
         Iterable.class,
         "getCustomAgentRoles"),
+
+    GETDELETEDTICKETS(
+        Iterable.class,
+        "getDeletedTickets"),
+
+    GETDELETEDTICKETS_1(
+        Iterable.class,
+        "getDeletedTickets",
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
+
+    GETDYNAMICCONTENTITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "getDynamicContentItem",
+        arg("id", long.class)),
+
+    GETDYNAMICCONTENTITEMVARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "getDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("id", long.class)),
+
+    GETDYNAMICCONTENTITEMVARIANTS(
+        Iterable.class,
+        "getDynamicContentItemVariants",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    GETDYNAMICCONTENTITEMS(
+        Iterable.class,
+        "getDynamicContentItems"),
 
     GETFORUM(
         org.zendesk.client.v2.model.Forum.class,
@@ -674,6 +833,10 @@ public enum ZendeskApiMethod implements ApiMethod {
     GETGROUPS(
         Iterable.class,
         "getGroups"),
+
+    GETHELPCENTERLOCALES(
+        java.util.List.class,
+        "getHelpCenterLocales"),
 
     GETHOLIDAYSFORSCHEDULE(
         Iterable.class,
@@ -781,6 +944,15 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getOrganizationsIncrementally",
         arg("startTime", java.util.Date.class)),
 
+    GETPERMISSIONGROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "getPermissionGroup",
+        arg("id", long.class)),
+
+    GETPERMISSIONGROUPS(
+        Iterable.class,
+        "getPermissionGroups"),
+
     GETRECENTTICKETS(
         Iterable.class,
         "getRecentTickets"),
@@ -861,7 +1033,22 @@ public enum ZendeskApiMethod implements ApiMethod {
         "getSearchResults",
         arg("type", Class.class),
         arg("query", String.class),
-        arg("params", String.class)),
+        arg("parameters", String.class)),
+
+    GETSEARCHRESULTS_3(
+        Iterable.class,
+        "getSearchResults",
+        arg("type", Class.class),
+        arg("query", String.class),
+        arg("params", java.util.Map.class)),
+
+    GETSEARCHRESULTS_4(
+        Iterable.class,
+        "getSearchResults",
+        arg("type", Class.class),
+        arg("query", String.class),
+        arg("sortBy", String.class),
+        arg("sortOrder", org.zendesk.client.v2.model.SortOrder.class)),
 
     GETSECTION(
         org.zendesk.client.v2.model.hc.Section.class,
@@ -892,6 +1079,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getSections",
         arg("category", org.zendesk.client.v2.model.hc.Category.class)),
+
+    GETSECTIONS_2(
+        Iterable.class,
+        "getSections",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
 
     GETSOLVEDREQUESTS(
         Iterable.class,
@@ -952,6 +1144,12 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getTicketComments",
         arg("id", long.class)),
+
+    GETTICKETCOMMENTS_1(
+        Iterable.class,
+        "getTicketComments",
+        arg("id", long.class),
+        arg("order", org.zendesk.client.v2.model.SortOrder.class)),
 
     GETTICKETFIELD(
         org.zendesk.client.v2.model.Field.class,
@@ -1042,6 +1240,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("forum_id", long.class)),
 
     GETTOPICS_2(
+        Iterable.class,
+        "getTopics",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    GETTOPICS_3(
         java.util.List.class,
         "getTopics",
         arg("id", long.class),
@@ -1107,6 +1310,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("userId", long.class),
         arg("identityId", long.class)),
 
+    GETUSERRELATEDINFO(
+        org.zendesk.client.v2.model.UserRelatedInfo.class,
+        "getUserRelatedInfo",
+        arg("userId", long.class)),
+
     GETUSERREQUESTEDTICKETS(
         Iterable.class,
         "getUserRequestedTickets",
@@ -1121,6 +1329,24 @@ public enum ZendeskApiMethod implements ApiMethod {
         Iterable.class,
         "getUserRequests",
         arg("user", org.zendesk.client.v2.model.User.class)),
+
+    GETUSERSEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "getUserSegment",
+        arg("id", long.class)),
+
+    GETUSERSEGMENTS(
+        Iterable.class,
+        "getUserSegments"),
+
+    GETUSERSEGMENTS_1(
+        Iterable.class,
+        "getUserSegments",
+        arg("id", long.class)),
+
+    GETUSERSEGMENTSAPPLICABLE(
+        Iterable.class,
+        "getUserSegmentsApplicable"),
 
     GETUSERSUBSCRIPTIONS(
         Iterable.class,
@@ -1211,10 +1437,42 @@ public enum ZendeskApiMethod implements ApiMethod {
         "markTicketAsSpam",
         arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
 
+    MERGEUSERS(
+        org.zendesk.client.v2.model.User.class,
+        "mergeUsers",
+        arg("userIdThatWillRemain", long.class),
+        arg("userIdThatWillBeMerged", long.class)),
+
     NOTIFYAPP(
         void.class,
         "notifyApp",
         arg("json", String.class)),
+
+    PERMANENTLYDELETETICKET(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTicket",
+        arg("id", long.class)),
+
+    PERMANENTLYDELETETICKET_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTicket",
+        arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
+
+    PERMANENTLYDELETETICKETS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "permanentlyDeleteTickets",
+        arg("id", long.class),
+        arg("ids", new long[0].getClass())),
+
+    PERMANENTLYDELETEUSER(
+        org.zendesk.client.v2.model.User.class,
+        "permanentlyDeleteUser",
+        arg("id", long.class)),
+
+    PERMANENTLYDELETEUSER_1(
+        org.zendesk.client.v2.model.User.class,
+        "permanentlyDeleteUser",
+        arg("user", org.zendesk.client.v2.model.User.class)),
 
     QUEUECREATETICKETASYNC(
         org.asynchttpclient.ListenableFuture.class,
@@ -1375,6 +1633,17 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("locale", String.class),
         arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
 
+    UPDATEDYNAMICCONTENTITEM(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItem.class,
+        "updateDynamicContentItem",
+        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
+
+    UPDATEDYNAMICCONTENTITEMVARIANT(
+        org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class,
+        "updateDynamicContentItemVariant",
+        arg("itemId", Long.class),
+        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
+
     UPDATEFORUM(
         org.zendesk.client.v2.model.Forum.class,
         "updateForum",
@@ -1401,6 +1670,26 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Organization.class,
         "updateOrganization",
         arg("organization", org.zendesk.client.v2.model.Organization.class)),
+
+    UPDATEORGANIZATIONS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateOrganizations",
+        arg("organizationList", java.util.List.class)),
+
+    UPDATEORGANIZATIONS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateOrganizations",
+        arg("organizations", new org.zendesk.client.v2.model.Organization[0].getClass())),
+
+    UPDATEORGANIZATIONSASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateOrganizationsAsync",
+        arg("organizationList", java.util.List.class)),
+
+    UPDATEPERMISSIONGROUP(
+        org.zendesk.client.v2.model.hc.PermissionGroup.class,
+        "updatePermissionGroup",
+        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
 
     UPDATEREQUEST(
         org.zendesk.client.v2.model.Request.class,
@@ -1429,6 +1718,21 @@ public enum ZendeskApiMethod implements ApiMethod {
         "updateTicketField",
         arg("field", org.zendesk.client.v2.model.Field.class)),
 
+    UPDATETICKETS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateTickets",
+        arg("ticketList", java.util.List.class)),
+
+    UPDATETICKETS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateTickets",
+        arg("tickets", new org.zendesk.client.v2.model.Ticket[0].getClass())),
+
+    UPDATETICKETSASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateTicketsAsync",
+        arg("ticketList", java.util.List.class)),
+
     UPDATETOPIC(
         org.zendesk.client.v2.model.Topic.class,
         "updateTopic",
@@ -1456,6 +1760,26 @@ public enum ZendeskApiMethod implements ApiMethod {
         "updateUserIdentity",
         arg("userId", long.class),
         arg("identity", org.zendesk.client.v2.model.Identity.class)),
+
+    UPDATEUSERSEGMENT(
+        org.zendesk.client.v2.model.hc.UserSegment.class,
+        "updateUserSegment",
+        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
+
+    UPDATEUSERS(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateUsers",
+        arg("users", new org.zendesk.client.v2.model.User[0].getClass())),
+
+    UPDATEUSERS_1(
+        org.zendesk.client.v2.model.JobStatus.class,
+        "updateUsers",
+        arg("usersList", java.util.List.class)),
+
+    UPDATEUSERSASYNC(
+        org.asynchttpclient.ListenableFuture.class,
+        "updateUsersAsync",
+        arg("usersList", java.util.List.class)),
 
     VERIFYUSERIDENTITY(
         org.zendesk.client.v2.model.Identity.class,

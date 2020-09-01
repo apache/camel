@@ -95,8 +95,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Inline": target.setInline(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "installationid":
         case "InstallationId": target.setInstallationId(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "item":
+        case "Item": target.setItem(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItem.class, value)); return true;
+        case "itemid":
+        case "ItemId": target.setItemId(property(camelContext, java.lang.Long.class, value)); return true;
         case "json":
         case "Json": target.setJson(property(camelContext, java.lang.String.class, value)); return true;
+        case "labels":
+        case "Labels": target.setLabels(property(camelContext, java.util.List.class, value)); return true;
         case "locale":
         case "Locale": target.setLocale(property(camelContext, java.lang.String.class, value)); return true;
         case "macro":
@@ -113,10 +119,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "newpassword":
         case "NewPassword": target.setNewPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "notifysubscribers":
+        case "NotifySubscribers": target.setNotifySubscribers(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "oauthtoken":
         case "OauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "oldpassword":
         case "OldPassword": target.setOldPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "order":
+        case "Order": target.setOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
         case "organization":
         case "Organization": target.setOrganization(property(camelContext, org.zendesk.client.v2.model.Organization.class, value)); return true;
         case "organizationid":
@@ -125,6 +135,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "OrganizationList": target.setOrganizationList(property(camelContext, java.util.List.class, value)); return true;
         case "organizationmembership":
         case "OrganizationMembership": target.setOrganizationMembership(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership.class, value)); return true;
+        case "organizationmembershiplist":
+        case "OrganizationMembershipList": target.setOrganizationMembershipList(property(camelContext, java.util.List.class, value)); return true;
+        case "organizationmemberships":
+        case "OrganizationMemberships": target.setOrganizationMemberships(property(camelContext, org.zendesk.client.v2.model.OrganizationMembership[].class, value)); return true;
         case "organization_id":
         case "Organization_id": target.setOrganization_id(property(camelContext, java.lang.Long.class, value)); return true;
         case "organization_membership_id":
@@ -133,10 +147,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Organizations": target.setOrganizations(property(camelContext, org.zendesk.client.v2.model.Organization[].class, value)); return true;
         case "page":
         case "Page": target.setPage(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "parameters":
+        case "Parameters": target.setParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "params":
-        case "Params": target.setParams(property(camelContext, java.lang.String.class, value)); return true;
+        case "Params": target.setParams(property(camelContext, java.util.Map.class, value)); return true;
         case "password":
         case "Password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "permissiongroup":
+        case "PermissionGroup": target.setPermissionGroup(property(camelContext, org.zendesk.client.v2.model.hc.PermissionGroup.class, value)); return true;
         case "query":
         case "Query": target.setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "request":
@@ -161,6 +179,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "SectionId": target.setSectionId(property(camelContext, java.lang.Long.class, value)); return true;
         case "serverurl":
         case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortby":
+        case "SortBy": target.setSortBy(property(camelContext, java.lang.String.class, value)); return true;
+        case "sortorder":
+        case "SortOrder": target.setSortOrder(property(camelContext, org.zendesk.client.v2.model.SortOrder.class, value)); return true;
         case "starttime":
         case "StartTime": target.setStartTime(property(camelContext, java.util.Date.class, value)); return true;
         case "status":
@@ -195,6 +217,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Topic": target.setTopic(property(camelContext, org.zendesk.client.v2.model.Topic.class, value)); return true;
         case "translation":
         case "Translation": target.setTranslation(property(camelContext, org.zendesk.client.v2.model.hc.Translation.class, value)); return true;
+        case "translationid":
+        case "TranslationId": target.setTranslationId(property(camelContext, java.lang.Long.class, value)); return true;
         case "trigger":
         case "Trigger": target.setTrigger(property(camelContext, org.zendesk.client.v2.model.Trigger.class, value)); return true;
         case "triggerid":
@@ -215,14 +239,24 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "UserId": target.setUserId(property(camelContext, java.lang.Long.class, value)); return true;
         case "userid0":
         case "UserId0": target.setUserId0(property(camelContext, java.lang.Long.class, value)); return true;
+        case "useridthatwillbemerged":
+        case "UserIdThatWillBeMerged": target.setUserIdThatWillBeMerged(property(camelContext, java.lang.Long.class, value)); return true;
+        case "useridthatwillremain":
+        case "UserIdThatWillRemain": target.setUserIdThatWillRemain(property(camelContext, java.lang.Long.class, value)); return true;
         case "userlist":
         case "UserList": target.setUserList(property(camelContext, java.util.List.class, value)); return true;
+        case "usersegment":
+        case "UserSegment": target.setUserSegment(property(camelContext, org.zendesk.client.v2.model.hc.UserSegment.class, value)); return true;
         case "user_id":
         case "User_id": target.setUser_id(property(camelContext, java.lang.Long.class, value)); return true;
         case "username":
         case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "users":
         case "Users": target.setUsers(property(camelContext, org.zendesk.client.v2.model.User[].class, value)); return true;
+        case "userslist":
+        case "UsersList": target.setUsersList(property(camelContext, java.util.List.class, value)); return true;
+        case "variant":
+        case "Variant": target.setVariant(property(camelContext, org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class, value)); return true;
         default: return false;
         }
     }
@@ -268,7 +302,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("IncludeArchived", java.lang.Boolean.class);
         answer.put("Inline", java.lang.Boolean.class);
         answer.put("InstallationId", java.lang.Integer.class);
+        answer.put("Item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class);
+        answer.put("ItemId", java.lang.Long.class);
         answer.put("Json", java.lang.String.class);
+        answer.put("Labels", java.util.List.class);
         answer.put("Locale", java.lang.String.class);
         answer.put("Macro", org.zendesk.client.v2.model.Macro.class);
         answer.put("MacroId", java.lang.Long.class);
@@ -277,18 +314,24 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("MonitorId", java.lang.Long.class);
         answer.put("Name", java.lang.String.class);
         answer.put("NewPassword", java.lang.String.class);
+        answer.put("NotifySubscribers", java.lang.Boolean.class);
         answer.put("OauthToken", java.lang.String.class);
         answer.put("OldPassword", java.lang.String.class);
+        answer.put("Order", org.zendesk.client.v2.model.SortOrder.class);
         answer.put("Organization", org.zendesk.client.v2.model.Organization.class);
         answer.put("OrganizationId", java.lang.Long.class);
         answer.put("OrganizationList", java.util.List.class);
         answer.put("OrganizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class);
+        answer.put("OrganizationMembershipList", java.util.List.class);
+        answer.put("OrganizationMemberships", org.zendesk.client.v2.model.OrganizationMembership[].class);
         answer.put("Organization_id", java.lang.Long.class);
         answer.put("Organization_membership_id", java.lang.Long.class);
         answer.put("Organizations", org.zendesk.client.v2.model.Organization[].class);
         answer.put("Page", java.lang.Integer.class);
-        answer.put("Params", java.lang.String.class);
+        answer.put("Parameters", java.lang.String.class);
+        answer.put("Params", java.util.Map.class);
         answer.put("Password", java.lang.String.class);
+        answer.put("PermissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class);
         answer.put("Query", java.lang.String.class);
         answer.put("Request", org.zendesk.client.v2.model.Request.class);
         answer.put("RequestId", java.lang.Long.class);
@@ -301,6 +344,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("Section", org.zendesk.client.v2.model.hc.Section.class);
         answer.put("SectionId", java.lang.Long.class);
         answer.put("ServerUrl", java.lang.String.class);
+        answer.put("SortBy", java.lang.String.class);
+        answer.put("SortOrder", org.zendesk.client.v2.model.SortOrder.class);
         answer.put("StartTime", java.util.Date.class);
         answer.put("Status", org.zendesk.client.v2.model.JobStatus.class);
         answer.put("Statuses", java.util.List.class);
@@ -318,6 +363,7 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("Token", java.lang.String.class);
         answer.put("Topic", org.zendesk.client.v2.model.Topic.class);
         answer.put("Translation", org.zendesk.client.v2.model.hc.Translation.class);
+        answer.put("TranslationId", java.lang.Long.class);
         answer.put("Trigger", org.zendesk.client.v2.model.Trigger.class);
         answer.put("TriggerId", java.lang.Long.class);
         answer.put("TriggerId0", java.lang.Long.class);
@@ -328,10 +374,15 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         answer.put("User", org.zendesk.client.v2.model.User.class);
         answer.put("UserId", java.lang.Long.class);
         answer.put("UserId0", java.lang.Long.class);
+        answer.put("UserIdThatWillBeMerged", java.lang.Long.class);
+        answer.put("UserIdThatWillRemain", java.lang.Long.class);
         answer.put("UserList", java.util.List.class);
+        answer.put("UserSegment", org.zendesk.client.v2.model.hc.UserSegment.class);
         answer.put("User_id", java.lang.Long.class);
         answer.put("Username", java.lang.String.class);
         answer.put("Users", org.zendesk.client.v2.model.User[].class);
+        answer.put("UsersList", java.util.List.class);
+        answer.put("Variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class);
         return answer;
     }
 
@@ -415,8 +466,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Inline": return target.getInline();
         case "installationid":
         case "InstallationId": return target.getInstallationId();
+        case "item":
+        case "Item": return target.getItem();
+        case "itemid":
+        case "ItemId": return target.getItemId();
         case "json":
         case "Json": return target.getJson();
+        case "labels":
+        case "Labels": return target.getLabels();
         case "locale":
         case "Locale": return target.getLocale();
         case "macro":
@@ -433,10 +490,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Name": return target.getName();
         case "newpassword":
         case "NewPassword": return target.getNewPassword();
+        case "notifysubscribers":
+        case "NotifySubscribers": return target.getNotifySubscribers();
         case "oauthtoken":
         case "OauthToken": return target.getOauthToken();
         case "oldpassword":
         case "OldPassword": return target.getOldPassword();
+        case "order":
+        case "Order": return target.getOrder();
         case "organization":
         case "Organization": return target.getOrganization();
         case "organizationid":
@@ -445,6 +506,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "OrganizationList": return target.getOrganizationList();
         case "organizationmembership":
         case "OrganizationMembership": return target.getOrganizationMembership();
+        case "organizationmembershiplist":
+        case "OrganizationMembershipList": return target.getOrganizationMembershipList();
+        case "organizationmemberships":
+        case "OrganizationMemberships": return target.getOrganizationMemberships();
         case "organization_id":
         case "Organization_id": return target.getOrganization_id();
         case "organization_membership_id":
@@ -453,10 +518,14 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Organizations": return target.getOrganizations();
         case "page":
         case "Page": return target.getPage();
+        case "parameters":
+        case "Parameters": return target.getParameters();
         case "params":
         case "Params": return target.getParams();
         case "password":
         case "Password": return target.getPassword();
+        case "permissiongroup":
+        case "PermissionGroup": return target.getPermissionGroup();
         case "query":
         case "Query": return target.getQuery();
         case "request":
@@ -481,6 +550,10 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "SectionId": return target.getSectionId();
         case "serverurl":
         case "ServerUrl": return target.getServerUrl();
+        case "sortby":
+        case "SortBy": return target.getSortBy();
+        case "sortorder":
+        case "SortOrder": return target.getSortOrder();
         case "starttime":
         case "StartTime": return target.getStartTime();
         case "status":
@@ -515,6 +588,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Topic": return target.getTopic();
         case "translation":
         case "Translation": return target.getTranslation();
+        case "translationid":
+        case "TranslationId": return target.getTranslationId();
         case "trigger":
         case "Trigger": return target.getTrigger();
         case "triggerid":
@@ -535,14 +610,24 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "UserId": return target.getUserId();
         case "userid0":
         case "UserId0": return target.getUserId0();
+        case "useridthatwillbemerged":
+        case "UserIdThatWillBeMerged": return target.getUserIdThatWillBeMerged();
+        case "useridthatwillremain":
+        case "UserIdThatWillRemain": return target.getUserIdThatWillRemain();
         case "userlist":
         case "UserList": return target.getUserList();
+        case "usersegment":
+        case "UserSegment": return target.getUserSegment();
         case "user_id":
         case "User_id": return target.getUser_id();
         case "username":
         case "Username": return target.getUsername();
         case "users":
         case "Users": return target.getUsers();
+        case "userslist":
+        case "UsersList": return target.getUsersList();
+        case "variant":
+        case "Variant": return target.getVariant();
         default: return null;
         }
     }
@@ -552,14 +637,22 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachments":
         case "Attachments": return org.zendesk.client.v2.model.Attachment.class;
+        case "labels":
+        case "Labels": return java.lang.String.class;
         case "organizationlist":
         case "OrganizationList": return org.zendesk.client.v2.model.Organization.class;
+        case "organizationmembershiplist":
+        case "OrganizationMembershipList": return org.zendesk.client.v2.model.OrganizationMembership.class;
+        case "params":
+        case "Params": return java.lang.Object.class;
         case "statuses":
         case "Statuses": return org.zendesk.client.v2.model.JobStatus.class;
         case "ticketlist":
         case "TicketList": return org.zendesk.client.v2.model.Ticket.class;
         case "userlist":
         case "UserList": return org.zendesk.client.v2.model.User.class;
+        case "userslist":
+        case "UsersList": return org.zendesk.client.v2.model.User.class;
         default: return null;
         }
     }

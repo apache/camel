@@ -91,7 +91,13 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Integer installationId;
     @UriParam
+    private org.zendesk.client.v2.model.dynamic.DynamicContentItem item;
+    @UriParam
+    private Long itemId;
+    @UriParam
     private String json;
+    @UriParam
+    private java.util.List<String> labels;
     @UriParam
     private String locale;
     @UriParam
@@ -107,7 +113,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private String newPassword;
     @UriParam
+    private Boolean notifySubscribers;
+    @UriParam
     private String oldPassword;
+    @UriParam
+    private org.zendesk.client.v2.model.SortOrder order;
     @UriParam
     private org.zendesk.client.v2.model.Organization organization;
     @UriParam
@@ -117,6 +127,10 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.OrganizationMembership organizationMembership;
     @UriParam
+    private java.util.List<org.zendesk.client.v2.model.OrganizationMembership> organizationMembershipList;
+    @UriParam
+    private org.zendesk.client.v2.model.OrganizationMembership[] organizationMemberships;
+    @UriParam
     private Long organization_id;
     @UriParam
     private Long organization_membership_id;
@@ -125,9 +139,13 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Integer page;
     @UriParam
-    private String params;
+    private String parameters;
+    @UriParam
+    private java.util.Map<String,Object> params;
     @UriParam
     private String password;
+    @UriParam
+    private org.zendesk.client.v2.model.hc.PermissionGroup permissionGroup;
     @UriParam
     private String query;
     @UriParam
@@ -151,9 +169,13 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long sectionId;
     @UriParam
+    private String sortBy;
+    @UriParam
+    private org.zendesk.client.v2.model.SortOrder sortOrder;
+    @UriParam
     private java.util.Date startTime;
     @UriParam
-    private org.zendesk.client.v2.model.JobStatus<?> status;
+    private org.zendesk.client.v2.model.JobStatus status;
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.JobStatus> statuses;
     @UriParam
@@ -185,6 +207,8 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.hc.Translation translation;
     @UriParam
+    private Long translationId;
+    @UriParam
     private org.zendesk.client.v2.model.Trigger trigger;
     @UriParam
     private Long triggerId;
@@ -205,11 +229,21 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long userId0;
     @UriParam
+    private Long userIdThatWillBeMerged;
+    @UriParam
+    private Long userIdThatWillRemain;
+    @UriParam
     private java.util.List<org.zendesk.client.v2.model.User> userList;
+    @UriParam
+    private org.zendesk.client.v2.model.hc.UserSegment userSegment;
     @UriParam
     private Long user_id;
     @UriParam
     private org.zendesk.client.v2.model.User[] users;
+    @UriParam
+    private java.util.List<org.zendesk.client.v2.model.User> usersList;
+    @UriParam
+    private org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant variant;
 
     public org.zendesk.client.v2.model.hc.Article getArticle() {
         return article;
@@ -515,12 +549,36 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.installationId = installationId;
     }
 
+    public org.zendesk.client.v2.model.dynamic.DynamicContentItem getItem() {
+        return item;
+    }
+
+    public void setItem(org.zendesk.client.v2.model.dynamic.DynamicContentItem item) {
+        this.item = item;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
     public String getJson() {
         return json;
     }
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public java.util.List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(java.util.List<String> labels) {
+        this.labels = labels;
     }
 
     public String getLocale() {
@@ -579,12 +637,28 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.newPassword = newPassword;
     }
 
+    public Boolean getNotifySubscribers() {
+        return notifySubscribers;
+    }
+
+    public void setNotifySubscribers(Boolean notifySubscribers) {
+        this.notifySubscribers = notifySubscribers;
+    }
+
     public String getOldPassword() {
         return oldPassword;
     }
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    public org.zendesk.client.v2.model.SortOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(org.zendesk.client.v2.model.SortOrder order) {
+        this.order = order;
     }
 
     public org.zendesk.client.v2.model.Organization getOrganization() {
@@ -619,6 +693,22 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.organizationMembership = organizationMembership;
     }
 
+    public java.util.List<org.zendesk.client.v2.model.OrganizationMembership> getOrganizationMembershipList() {
+        return organizationMembershipList;
+    }
+
+    public void setOrganizationMembershipList(java.util.List<org.zendesk.client.v2.model.OrganizationMembership> organizationMembershipList) {
+        this.organizationMembershipList = organizationMembershipList;
+    }
+
+    public org.zendesk.client.v2.model.OrganizationMembership[] getOrganizationMemberships() {
+        return organizationMemberships;
+    }
+
+    public void setOrganizationMemberships(org.zendesk.client.v2.model.OrganizationMembership[] organizationMemberships) {
+        this.organizationMemberships = organizationMemberships;
+    }
+
     public Long getOrganization_id() {
         return organization_id;
     }
@@ -651,11 +741,19 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.page = page;
     }
 
-    public String getParams() {
+    public String getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
+    public java.util.Map<String,Object> getParams() {
         return params;
     }
 
-    public void setParams(String params) {
+    public void setParams(java.util.Map<String,Object> params) {
         this.params = params;
     }
 
@@ -665,6 +763,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public org.zendesk.client.v2.model.hc.PermissionGroup getPermissionGroup() {
+        return permissionGroup;
+    }
+
+    public void setPermissionGroup(org.zendesk.client.v2.model.hc.PermissionGroup permissionGroup) {
+        this.permissionGroup = permissionGroup;
     }
 
     public String getQuery() {
@@ -755,6 +861,22 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.sectionId = sectionId;
     }
 
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public org.zendesk.client.v2.model.SortOrder getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(org.zendesk.client.v2.model.SortOrder sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
     public java.util.Date getStartTime() {
         return startTime;
     }
@@ -763,11 +885,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.startTime = startTime;
     }
 
-    public org.zendesk.client.v2.model.JobStatus<?> getStatus() {
+    public org.zendesk.client.v2.model.JobStatus getStatus() {
         return status;
     }
 
-    public void setStatus(org.zendesk.client.v2.model.JobStatus<?> status) {
+    public void setStatus(org.zendesk.client.v2.model.JobStatus status) {
         this.status = status;
     }
 
@@ -891,6 +1013,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.translation = translation;
     }
 
+    public Long getTranslationId() {
+        return translationId;
+    }
+
+    public void setTranslationId(Long translationId) {
+        this.translationId = translationId;
+    }
+
     public org.zendesk.client.v2.model.Trigger getTrigger() {
         return trigger;
     }
@@ -971,12 +1101,36 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.userId0 = userId0;
     }
 
+    public Long getUserIdThatWillBeMerged() {
+        return userIdThatWillBeMerged;
+    }
+
+    public void setUserIdThatWillBeMerged(Long userIdThatWillBeMerged) {
+        this.userIdThatWillBeMerged = userIdThatWillBeMerged;
+    }
+
+    public Long getUserIdThatWillRemain() {
+        return userIdThatWillRemain;
+    }
+
+    public void setUserIdThatWillRemain(Long userIdThatWillRemain) {
+        this.userIdThatWillRemain = userIdThatWillRemain;
+    }
+
     public java.util.List<org.zendesk.client.v2.model.User> getUserList() {
         return userList;
     }
 
     public void setUserList(java.util.List<org.zendesk.client.v2.model.User> userList) {
         this.userList = userList;
+    }
+
+    public org.zendesk.client.v2.model.hc.UserSegment getUserSegment() {
+        return userSegment;
+    }
+
+    public void setUserSegment(org.zendesk.client.v2.model.hc.UserSegment userSegment) {
+        this.userSegment = userSegment;
     }
 
     public Long getUser_id() {
@@ -993,5 +1147,21 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setUsers(org.zendesk.client.v2.model.User[] users) {
         this.users = users;
+    }
+
+    public java.util.List<org.zendesk.client.v2.model.User> getUsersList() {
+        return usersList;
+    }
+
+    public void setUsersList(java.util.List<org.zendesk.client.v2.model.User> usersList) {
+        this.usersList = usersList;
+    }
+
+    public org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant getVariant() {
+        return variant;
+    }
+
+    public void setVariant(org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant variant) {
+        this.variant = variant;
     }
 }
