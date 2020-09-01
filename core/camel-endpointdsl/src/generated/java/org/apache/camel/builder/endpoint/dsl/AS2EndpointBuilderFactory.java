@@ -2456,7 +2456,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: CLIENT, SERVER
+         * The value can be one of: client, server
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2478,7 +2478,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: CLIENT, SERVER
+         * The value can be one of: client, server
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

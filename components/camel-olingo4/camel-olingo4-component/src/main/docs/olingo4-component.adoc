@@ -99,7 +99,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. The value can be one of: DEFAULT |  | Olingo4ApiName
+| *apiName* | *Required* What kind of operation to perform. The value can be one of:  |  | Olingo4ApiName
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 

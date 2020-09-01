@@ -93,7 +93,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. The value can be one of: ACL, LIST, CALENDARS, CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS |  | GoogleCalendarApiName
+| *apiName* | *Required* What kind of operation to perform. The value can be one of: acl, list, calendars, channels, colors, freebusy, events, settings |  | GoogleCalendarApiName
 | *methodName* | *Required* What sub operation to use for the selected operation. The value can be one of: calendarImport, clear, delete, get, insert, instances, list, move, patch, query, quickAdd, stop, update, watch |  | String
 |===
 
