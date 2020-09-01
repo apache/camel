@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.Account
  */
-@UriParams
+@UriParams(apiName = "account")
 @Configurer
 public final class AccountEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "Fetch by unique Account Sid")

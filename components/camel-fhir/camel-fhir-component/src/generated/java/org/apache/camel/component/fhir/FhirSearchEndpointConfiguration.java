@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirSearch
  */
-@UriParams
+@UriParams(apiName = "search")
 @Configurer
 public final class FhirSearchEndpointConfiguration extends FhirConfiguration {
     @UriParam(description = "See")

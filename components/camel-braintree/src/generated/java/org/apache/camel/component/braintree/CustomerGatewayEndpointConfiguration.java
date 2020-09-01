@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.braintreegateway.CustomerGateway
  */
-@UriParams
+@UriParams(apiName = "customer")
 @Configurer
 public final class CustomerGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The id of the association filter to use")

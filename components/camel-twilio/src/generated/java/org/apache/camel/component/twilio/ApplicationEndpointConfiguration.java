@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Application
  */
-@UriParams
+@UriParams(apiName = "application")
 @Configurer
 public final class ApplicationEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that will create the resource")

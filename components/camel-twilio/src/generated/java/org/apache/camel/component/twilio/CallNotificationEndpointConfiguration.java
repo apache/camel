@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.call.Notification
  */
-@UriParams
+@UriParams(apiName = "call-notification")
 @Configurer
 public final class CallNotificationEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resource to fetch")

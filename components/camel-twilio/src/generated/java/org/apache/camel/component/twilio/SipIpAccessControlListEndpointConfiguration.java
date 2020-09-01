@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.IpAccessControlList
  */
-@UriParams
+@UriParams(apiName = "sip-ip-access-control-list")
 @Configurer
 public final class SipIpAccessControlListEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "A human readable description of this resource")

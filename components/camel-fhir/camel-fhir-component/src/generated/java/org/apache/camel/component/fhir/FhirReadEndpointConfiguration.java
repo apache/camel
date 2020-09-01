@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirRead
  */
-@UriParams
+@UriParams(apiName = "read")
 @Configurer
 public final class FhirReadEndpointConfiguration extends FhirConfiguration {
     @UriParam

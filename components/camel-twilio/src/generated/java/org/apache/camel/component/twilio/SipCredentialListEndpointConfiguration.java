@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.CredentialList
  */
-@UriParams
+@UriParams(apiName = "sip-credential-list")
 @Configurer
 public final class SipCredentialListEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "Human readable descriptive text")

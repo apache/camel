@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.zendesk.client.v2.Zendesk
  */
-@UriParams
+@UriParams(apiName = "DEFAULT")
 @Configurer
 public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam

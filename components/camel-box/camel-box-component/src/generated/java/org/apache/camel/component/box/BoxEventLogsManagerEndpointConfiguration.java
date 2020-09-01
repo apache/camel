@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxEventLogsManager
  */
-@UriParams
+@UriParams(apiName = "event-logs")
 @Configurer
 public final class BoxEventLogsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The lower bound on the timestamp of the events returned")

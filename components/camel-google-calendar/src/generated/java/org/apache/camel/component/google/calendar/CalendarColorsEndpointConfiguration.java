@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.calendar.Calendar$Colors
  */
-@UriParams
+@UriParams(apiName = "colors")
 @Configurer
 public final class CalendarColorsEndpointConfiguration extends GoogleCalendarConfiguration {
 }

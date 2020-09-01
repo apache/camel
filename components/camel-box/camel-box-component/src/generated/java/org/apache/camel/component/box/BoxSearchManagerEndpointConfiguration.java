@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxSearchManager
  */
-@UriParams
+@UriParams(apiName = "search")
 @Configurer
 public final class BoxSearchManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The id of folder searched")

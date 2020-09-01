@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxCollaborationsManager
  */
-@UriParams
+@UriParams(apiName = "collaborations")
 @Configurer
 public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The id of comment to change")

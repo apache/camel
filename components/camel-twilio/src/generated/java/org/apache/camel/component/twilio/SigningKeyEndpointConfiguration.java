@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.SigningKey
  */
-@UriParams
+@UriParams(apiName = "signing-key")
 @Configurer
 public final class SigningKeyEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The account_sid")

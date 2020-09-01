@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxEventsManager
  */
-@UriParams
+@UriParams(apiName = "events")
 @Configurer
 public final class BoxEventsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The starting position of the event stream")

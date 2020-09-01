@@ -326,6 +326,13 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return argument.getDescription();
     }
 
+    public String getApiName(String apiName) {
+        if (apiName == null || apiName.isEmpty()) {
+            return "DEFAULT";
+        }
+        return apiName;
+    }
+
     public static String getDefaultArgValue(Class<?> aClass) {
         if (aClass.isPrimitive()) {
             // lookup default primitive value string

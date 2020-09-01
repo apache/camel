@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.Domain
  */
-@UriParams
+@UriParams(apiName = "sip-domain")
 @Configurer
 public final class SipDomainEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The unique address on Twilio to route SIP traffic")

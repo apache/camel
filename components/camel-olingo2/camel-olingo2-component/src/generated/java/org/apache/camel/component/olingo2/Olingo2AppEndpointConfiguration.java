@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.olingo2.api.Olingo2App
  */
-@UriParams
+@UriParams(apiName = "DEFAULT")
 @Configurer
 public final class Olingo2AppEndpointConfiguration extends Olingo2Configuration {
     @UriParam

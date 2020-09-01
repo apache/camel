@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Changes
  */
-@UriParams
+@UriParams(apiName = "drive-changes")
 @Configurer
 public final class DriveChangesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

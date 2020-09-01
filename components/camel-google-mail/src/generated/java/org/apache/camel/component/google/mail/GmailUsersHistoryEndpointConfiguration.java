@@ -11,7 +11,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.google.api.services.gmail.Gmail$Users$History
  */
-@UriParams
+@UriParams(apiName = "history")
 @Configurer
 public final class GmailUsersHistoryEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
