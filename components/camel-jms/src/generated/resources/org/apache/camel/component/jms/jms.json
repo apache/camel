@@ -17,6 +17,7 @@
     "extendsScheme": "",
     "syntax": "jms:destinationType:destinationName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

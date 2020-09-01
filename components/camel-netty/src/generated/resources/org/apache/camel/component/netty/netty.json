@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "netty:protocol:host:port",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "azure-queue:containerAndQueueUri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

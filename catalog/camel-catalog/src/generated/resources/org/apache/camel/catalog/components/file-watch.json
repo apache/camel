@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "file-watch:path",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

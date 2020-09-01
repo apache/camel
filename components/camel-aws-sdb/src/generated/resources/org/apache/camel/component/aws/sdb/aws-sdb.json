@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "aws-sdb:domainName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

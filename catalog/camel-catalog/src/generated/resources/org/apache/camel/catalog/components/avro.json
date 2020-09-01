@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "avro:transport:host:port\/messageName",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

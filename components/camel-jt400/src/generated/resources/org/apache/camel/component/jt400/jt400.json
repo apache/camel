@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

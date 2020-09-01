@@ -17,6 +17,7 @@
     "extendsScheme": "",
     "syntax": "crypto-cms:cryptoOperation:name",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

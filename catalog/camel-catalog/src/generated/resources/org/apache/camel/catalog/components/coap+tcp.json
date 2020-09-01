@@ -17,6 +17,7 @@
     "alternativeSchemes": "coap,coaps,coap+tcp,coaps+tcp",
     "syntax": "coap+tcp:uri",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

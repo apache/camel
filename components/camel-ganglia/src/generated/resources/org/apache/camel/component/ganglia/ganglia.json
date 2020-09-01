@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "ganglia:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "azure-storage-queue:queueName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

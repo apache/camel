@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "beanstalk:connectionSettings",
     "async": true,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

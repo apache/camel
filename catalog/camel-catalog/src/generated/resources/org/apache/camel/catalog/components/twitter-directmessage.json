@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "twitter-directmessage:user",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false,

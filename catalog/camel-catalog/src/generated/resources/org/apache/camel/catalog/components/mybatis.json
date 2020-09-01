@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "mybatis:statement",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

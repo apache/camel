@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "google-calendar-stream:index",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

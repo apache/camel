@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "snmp:host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

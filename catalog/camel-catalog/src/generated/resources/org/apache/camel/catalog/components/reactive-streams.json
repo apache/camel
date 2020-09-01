@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "reactive-streams:stream",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

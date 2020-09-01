@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
     "async": false,
+    "api": false,
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

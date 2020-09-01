@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "ldif:ldapConnectionName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

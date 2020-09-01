@@ -18,6 +18,7 @@
     "syntax": "imap:host:port",
     "alternativeSyntax": "imap:username:password@host:port",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

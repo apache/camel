@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "kubernetes-pods:masterUrl",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

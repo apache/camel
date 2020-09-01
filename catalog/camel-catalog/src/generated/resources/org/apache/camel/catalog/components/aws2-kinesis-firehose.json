@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "aws2-kinesis-firehose:streamName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

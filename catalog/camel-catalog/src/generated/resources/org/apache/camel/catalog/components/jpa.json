@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "jpa:entityType",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

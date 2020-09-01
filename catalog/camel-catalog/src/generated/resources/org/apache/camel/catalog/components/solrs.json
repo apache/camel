@@ -17,6 +17,7 @@
     "alternativeSchemes": "solr,solrs,solrCloud",
     "syntax": "solrs:url",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

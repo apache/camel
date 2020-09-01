@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "guava-eventbus:eventBusRef",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

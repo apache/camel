@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "iec60870-server:uriPath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

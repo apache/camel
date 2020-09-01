@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "openstack-cinder:host",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

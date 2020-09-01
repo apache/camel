@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "optaplanner:configFile",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

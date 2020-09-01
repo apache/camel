@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "ignite-messaging:topic",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

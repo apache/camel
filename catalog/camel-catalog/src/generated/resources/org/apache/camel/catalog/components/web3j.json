@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "web3j:nodeAddress",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "aws-eks:label",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

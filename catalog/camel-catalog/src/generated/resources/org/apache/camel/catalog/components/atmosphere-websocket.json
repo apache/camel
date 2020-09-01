@@ -17,6 +17,7 @@
     "extendsScheme": "servlet",
     "syntax": "atmosphere-websocket:servicePath",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

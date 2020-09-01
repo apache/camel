@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "lpr:hostname:port\/printername",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

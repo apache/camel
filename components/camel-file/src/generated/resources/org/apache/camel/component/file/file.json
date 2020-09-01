@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "file:directoryName",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

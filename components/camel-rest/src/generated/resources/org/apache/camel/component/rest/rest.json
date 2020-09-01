@@ -16,6 +16,7 @@
     "extendsScheme": "",
     "syntax": "rest:method:path:uriTemplate",
     "async": false,
+    "api": false,
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true,
