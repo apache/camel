@@ -47,6 +47,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @Parameter
     protected String classPrefix;
 
+    @Parameter
+    protected String apiName;
+
     // cached fields
     private Class<?> proxyType;
 
@@ -172,6 +175,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
+        context.put("apiName", apiName);
         context.put("configName", getConfigName());
         context.put("componentName", componentName);
         context.put("componentPackage", componentPackage);
