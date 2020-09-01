@@ -740,7 +740,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     if (!desc.endsWith(".")) {
                         desc = desc + ".";
                     }
-                    desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
+                    desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
+                           + wrapEnumValues(option.getEnums());
                     option.setDescription(desc);
                 });
         return component;
@@ -772,7 +773,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             if (!desc.endsWith(".")) {
                 desc = desc + ".";
             }
-            desc = desc + " The value can be one of: " + wrapEnumValues(option.getEnums());
+            desc = desc + " There are " + option.getEnums().size() + " enums and the value can be one of: "
+                   + wrapEnumValues(option.getEnums());
             option.setDescription(desc);
         });
         return model;

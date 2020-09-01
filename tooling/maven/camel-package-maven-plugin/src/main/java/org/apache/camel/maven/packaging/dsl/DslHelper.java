@@ -101,7 +101,8 @@ public final class DslHelper {
                     desc += "\nDefault value: " + option.getDefaultValue();
                 }
                 if (option.getEnums() != null && !option.getEnums().isEmpty()) {
-                    desc += "\nThe value can be one of: " + wrapEnumValues(option.getEnums());
+                    desc += "\nThere are " + option.getEnums().size() + " enums and the value can be one of: "
+                            + wrapEnumValues(option.getEnums());
                 }
             }
         }

@@ -899,11 +899,11 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: account, address, application,
-         * available-phone-number-country, call, conference, connect-app,
-         * incoming-phone-number, key, message, new-key, new-signing-key,
-         * notification, outgoing-caller-id, queue, recording, short-code,
-         * signing-key, token, transcription, validation-request,
+         * There are 56 enums and the value can be one of: account, address,
+         * application, available-phone-number-country, call, conference,
+         * connect-app, incoming-phone-number, key, message, new-key,
+         * new-signing-key, notification, outgoing-caller-id, queue, recording,
+         * short-code, signing-key, token, transcription, validation-request,
          * address-dependent-phone-number, available-phone-number-country-local,
          * available-phone-number-country-mobile,
          * available-phone-number-country-toll-free, call-feedback,
@@ -923,7 +923,8 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: create, delete, fetch, read, update
+         * There are 5 enums and the value can be one of: create, delete, fetch,
+         * read, update
          * 
          * @param path apiName/methodName
          */
@@ -942,11 +943,11 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: account, address, application,
-         * available-phone-number-country, call, conference, connect-app,
-         * incoming-phone-number, key, message, new-key, new-signing-key,
-         * notification, outgoing-caller-id, queue, recording, short-code,
-         * signing-key, token, transcription, validation-request,
+         * There are 56 enums and the value can be one of: account, address,
+         * application, available-phone-number-country, call, conference,
+         * connect-app, incoming-phone-number, key, message, new-key,
+         * new-signing-key, notification, outgoing-caller-id, queue, recording,
+         * short-code, signing-key, token, transcription, validation-request,
          * address-dependent-phone-number, available-phone-number-country-local,
          * available-phone-number-country-mobile,
          * available-phone-number-country-toll-free, call-feedback,
@@ -966,7 +967,8 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
-         * The value can be one of: create, delete, fetch, read, update
+         * There are 5 enums and the value can be one of: create, delete, fetch,
+         * read, update
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
