@@ -17,8 +17,10 @@
 package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,13 +41,55 @@ public final class PropertyConfigurerHelper {
      * @param  target  the target object for which we need a {@link org.apache.camel.spi.PropertyConfigurer}
      * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
      */
-    public static GeneratedPropertyConfigurer resolvePropertyConfigurer(CamelContext context, Object target) {
+    public static PropertyConfigurer resolvePropertyConfigurer(CamelContext context, Object target) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(context, "context");
 
+        PropertyConfigurer configurer = null;
+
+        if (target instanceof Component) {
+            // the component needs to be initialized to have the configurer ready
+            ServiceHelper.initService(target);
+            configurer = ((Component) target).getComponentPropertyConfigurer();
+        }
+
+        if (configurer == null) {
+            String name = target.getClass().getName();
+            if (target instanceof ExtendedCamelContext) {
+                // special for camel context itself as we have an extended configurer
+                name = ExtendedCamelContext.class.getName();
+            }
+
+            // see if there is a configurer for it
+            configurer = context.adapt(ExtendedCamelContext.class)
+                    .getConfigurerResolver()
+                    .resolvePropertyConfigurer(name, context);
+        }
+
+        return configurer;
+    }
+
+    /**
+     * Resolves the given configurer.
+     *
+     * @param  context    the camel context
+     * @param  targetType the target object type for which we need a {@link org.apache.camel.spi.PropertyConfigurer}
+     * @return            the resolved configurer, or <tt>null</tt> if no configurer could be found
+     */
+    public static PropertyConfigurer resolvePropertyConfigurer(CamelContext context, Class<?> targetType) {
+        ObjectHelper.notNull(targetType, "targetType");
+        ObjectHelper.notNull(context, "context");
+
+        String name = targetType.getName();
+        if (ExtendedCamelContext.class.isAssignableFrom(targetType)) {
+            // special for camel context itself as we have an extended configurer
+            name = ExtendedCamelContext.class.getName();
+        }
+
+        // see if there is a configurer for it
         return context.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
-                .resolvePropertyConfigurer(target.getClass().getName(), context);
+                .resolvePropertyConfigurer(name, context);
     }
 
     /**
@@ -60,7 +104,7 @@ public final class PropertyConfigurerHelper {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(context, "context");
 
-        GeneratedPropertyConfigurer configurer = resolvePropertyConfigurer(context, target);
+        PropertyConfigurer configurer = resolvePropertyConfigurer(context, target);
         if (type.isInstance(configurer)) {
             return type.cast(configurer);
         }

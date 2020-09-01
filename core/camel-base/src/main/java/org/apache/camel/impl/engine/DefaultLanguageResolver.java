@@ -23,7 +23,6 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +41,6 @@ public class DefaultLanguageResolver implements LanguageResolver {
 
     @Override
     public Language resolveLanguage(String name, CamelContext context) {
-        // lookup in registry first
-        Language languageReg = ResolverHelper.lookupLanguageInRegistryWithFallback(context, name);
-        if (languageReg != null) {
-            return languageReg;
-        }
-
         Class<?> type = null;
         try {
             type = findLanguage(name, context);

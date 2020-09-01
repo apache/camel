@@ -151,6 +151,7 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
@@ -186,6 +187,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
+    private final Map<String, DataFormat> dataformats = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
@@ -328,6 +330,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add a default LifecycleStrategy that discover strategies on the registry and invoke them
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
+
+        // add a default LifecycleStrategy to customize services using customizers from registry
+        this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
 
         if (build) {
             try {
@@ -1730,28 +1735,48 @@ public abstract class AbstractCamelContext extends BaseService
     public Language resolveLanguage(String language) {
         Language answer;
         synchronized (languages) {
-            answer = languages.get(language);
+            // as first iteration, check if there is a language instance for the given name
+            // bound to the registry
+            answer = ResolverHelper.lookupLanguageInRegistryWithFallback(getCamelContextReference(), language);
+            if (answer != null) {
+                Language old = languages.put(language, answer);
+                // if the language has already been loaded, thus it is already registered
+                // in the local language cache, we can return it as it has already been
+                // initialized and configured
+                if (old == answer) {
+                    return answer;
+                }
+            } else {
+                answer = languages.get(language);
 
-            // check if the language is singleton, if so return the shared
-            // instance
-            if (IsSingleton.test(answer)) {
-                return answer;
+                // check if the language is singleton, if so return the shared
+                // instance
+                if (IsSingleton.test(answer)) {
+                    return answer;
+                } else {
+                    answer = null;
+                }
             }
 
-            // language not known or not singleton, then use resolver
-            answer = getLanguageResolver().resolveLanguage(language, getCamelContextReference());
+            if (answer == null) {
+                // language not known or not singleton, then use resolver
+                answer = getLanguageResolver().resolveLanguage(language, getCamelContextReference());
+            }
 
-            // inject CamelContext if aware
             if (answer != null) {
-                if (answer instanceof CamelContextAware) {
-                    ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
-                }
+                // inject CamelContext if aware
+                CamelContextAware.trySetCamelContext(answer, getCamelContextReference());
+
                 if (answer instanceof Service) {
                     try {
                         startService((Service) answer);
                     } catch (Exception e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
+                }
+
+                for (LifecycleStrategy strategy : lifecycleStrategies) {
+                    strategy.onLanguageCreated(language, answer);
                 }
 
                 languages.put(language, answer);
@@ -3739,14 +3764,25 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public DataFormat resolveDataFormat(String name) {
-        DataFormat answer = getDataFormatResolver().resolveDataFormat(name, getCamelContextReference());
+        final DataFormat answer = dataformats.computeIfAbsent(name, new Function<String, DataFormat>() {
+            @Override
+            public DataFormat apply(String s) {
+                DataFormat df = ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name);
 
-        // inject CamelContext if aware
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
-        }
+                if (df != null) {
+                    // inject CamelContext if aware
+                    CamelContextAware.trySetCamelContext(df, getCamelContextReference());
 
-        return answer;
+                    for (LifecycleStrategy strategy : lifecycleStrategies) {
+                        strategy.onDataFormatCreated(name, df);
+                    }
+                }
+
+                return df;
+            }
+        });
+
+        return answer != null ? answer : createDataFormat(name);
     }
 
     @Override
@@ -3754,8 +3790,10 @@ public abstract class AbstractCamelContext extends BaseService
         DataFormat answer = getDataFormatResolver().createDataFormat(name, getCamelContextReference());
 
         // inject CamelContext if aware
-        if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(getCamelContextReference());
+        CamelContextAware.trySetCamelContext(answer, getCamelContextReference());
+
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            strategy.onDataFormatCreated(name, answer);
         }
 
         return answer;
