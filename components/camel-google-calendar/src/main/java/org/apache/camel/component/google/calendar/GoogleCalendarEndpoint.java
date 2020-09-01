@@ -37,7 +37,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Perform various operations on a Google Calendar.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar",
-             syntax = "google-calendar:apiName/methodName",
+             syntax = "google-calendar:apiName/methodName", apiPropertyQualifier = "apiName",
              consumerPrefix = "consumer", category = { Category.API, Category.CLOUD })
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 

@@ -2353,8 +2353,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: capabilities, create, delete, history,
-         * load-page, meta, patch, read, search, transaction, update, validate
+         * The value can be one of: CAPABILITIES, CREATE, DELETE, HISTORY,
+         * LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE,
+         * VALIDATE
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2377,8 +2378,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * The value can be one of: capabilities, create, delete, history,
-         * load-page, meta, patch, read, search, transaction, update, validate
+         * The value can be one of: CAPABILITIES, CREATE, DELETE, HISTORY,
+         * LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE,
+         * VALIDATE
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

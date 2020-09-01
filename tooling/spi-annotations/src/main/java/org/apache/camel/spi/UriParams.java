@@ -37,7 +37,9 @@ public @interface UriParams {
     String prefix() default "";
 
     /**
-     * The API name for API based components where configurations are separated by API names (grouping).
+     * The API name (grouping) of this configuration class.
+     *
+     * This is only applicable for API based components where configurations are separated by API names (grouping).
      */
     String apiName() default "";
 

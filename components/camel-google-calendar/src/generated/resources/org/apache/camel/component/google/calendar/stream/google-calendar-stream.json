@@ -17,6 +17,7 @@
     "syntax": "google-calendar-stream:index",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

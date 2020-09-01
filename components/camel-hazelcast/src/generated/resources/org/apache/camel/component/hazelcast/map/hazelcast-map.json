@@ -17,6 +17,7 @@
     "syntax": "hazelcast-map:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

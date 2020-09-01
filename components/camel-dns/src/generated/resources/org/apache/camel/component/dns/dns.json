@@ -17,6 +17,7 @@
     "syntax": "dns:dnsType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

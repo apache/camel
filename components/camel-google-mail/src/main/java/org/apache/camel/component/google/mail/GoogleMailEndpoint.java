@@ -41,6 +41,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
              scheme = "google-mail",
              title = "Google Mail",
              syntax = "google-mail:apiName/methodName",
+             apiPropertyQualifier = "apiName",
              consumerPrefix = "consumer",
              category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {

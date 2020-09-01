@@ -17,6 +17,7 @@
     "syntax": "flink:endpointType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

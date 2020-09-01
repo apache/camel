@@ -45,6 +45,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Communicate with OData 2.0 services using Apache Olingo.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName",
+             apiPropertyQualifier = "apiName",
              category = { Category.CLOUD })
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 

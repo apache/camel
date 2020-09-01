@@ -17,6 +17,7 @@
     "syntax": "aws-mq:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

@@ -17,6 +17,7 @@
     "syntax": "activemq:destinationType:destinationName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -39,6 +40,7 @@
     "syntax": "ahc:httpUri",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -62,6 +64,7 @@
     "syntax": "ahc-ws:httpUri",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -85,6 +88,7 @@
     "syntax": "ahc-wss:httpUri",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -107,6 +111,7 @@
     "syntax": "amqp:destinationType:destinationName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -129,6 +134,7 @@
     "syntax": "apns:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -151,6 +157,7 @@
     "syntax": "arangodb:database",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -173,6 +180,7 @@
     "syntax": "as2:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -195,6 +203,7 @@
     "syntax": "asterisk:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -217,6 +226,7 @@
     "syntax": "atmos:name\/operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -240,6 +250,7 @@
     "syntax": "atmosphere-websocket:servicePath",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -262,6 +273,7 @@
     "syntax": "atom:feedUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -284,6 +296,7 @@
     "syntax": "atomix-map:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -306,6 +319,7 @@
     "syntax": "atomix-messaging:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -328,6 +342,7 @@
     "syntax": "atomix-multimap:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -350,6 +365,7 @@
     "syntax": "atomix-queue:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -372,6 +388,7 @@
     "syntax": "atomix-set:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -394,6 +411,7 @@
     "syntax": "atomix-value:resourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -416,6 +434,7 @@
     "syntax": "avro:transport:host:port\/messageName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -438,6 +457,7 @@
     "syntax": "aws2-athena:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -460,6 +480,7 @@
     "syntax": "aws2-cw:namespace",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -482,6 +503,7 @@
     "syntax": "aws2-ddb:tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -504,6 +526,7 @@
     "syntax": "aws2-ddbstream:tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -526,6 +549,7 @@
     "syntax": "aws2-ec2:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -548,6 +572,7 @@
     "syntax": "aws2-ecs:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -570,6 +595,7 @@
     "syntax": "aws2-eks:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -592,6 +618,7 @@
     "syntax": "aws2-iam:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -614,6 +641,7 @@
     "syntax": "aws2-kinesis:streamName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -636,6 +664,7 @@
     "syntax": "aws2-kinesis-firehose:streamName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -658,6 +687,7 @@
     "syntax": "aws2-kms:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -680,6 +710,7 @@
     "syntax": "aws2-lambda:function",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -702,6 +733,7 @@
     "syntax": "aws2-mq:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -724,6 +756,7 @@
     "syntax": "aws2-msk:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -746,6 +779,7 @@
     "syntax": "aws2-s3:\/\/bucketNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -768,6 +802,7 @@
     "syntax": "aws2-ses:from",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -790,6 +825,7 @@
     "syntax": "aws2-sns:topicNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -812,6 +848,7 @@
     "syntax": "aws2-sqs:queueNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -834,6 +871,7 @@
     "syntax": "aws2-sts:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -856,6 +894,7 @@
     "syntax": "aws2-translate:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -878,6 +917,7 @@
     "syntax": "aws-cw:namespace",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -900,6 +940,7 @@
     "syntax": "aws-ddb:tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -922,6 +963,7 @@
     "syntax": "aws-ddbstream:tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -944,6 +986,7 @@
     "syntax": "aws-ec2:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -966,6 +1009,7 @@
     "syntax": "aws-ecs:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -988,6 +1032,7 @@
     "syntax": "aws-eks:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1010,6 +1055,7 @@
     "syntax": "aws-iam:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1032,6 +1078,7 @@
     "syntax": "aws-kinesis:streamName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1054,6 +1101,7 @@
     "syntax": "aws-kinesis-firehose:streamName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1076,6 +1124,7 @@
     "syntax": "aws-kms:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1098,6 +1147,7 @@
     "syntax": "aws-lambda:function",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1120,6 +1170,7 @@
     "syntax": "aws-mq:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1142,6 +1193,7 @@
     "syntax": "aws-msk:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1164,6 +1216,7 @@
     "syntax": "aws-s3:\/\/bucketNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1186,6 +1239,7 @@
     "syntax": "aws-sdb:domainName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1208,6 +1262,7 @@
     "syntax": "aws-ses:from",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1230,6 +1285,7 @@
     "syntax": "aws-sns:topicNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1252,6 +1308,7 @@
     "syntax": "aws-sqs:queueNameOrArn",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1274,6 +1331,7 @@
     "syntax": "aws-swf:type",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1296,6 +1354,7 @@
     "syntax": "aws-translate:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1318,6 +1377,7 @@
     "syntax": "azure-blob:containerOrBlobUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1340,6 +1400,7 @@
     "syntax": "azure-eventhubs:namespace\/eventHubName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1362,6 +1423,7 @@
     "syntax": "azure-queue:containerAndQueueUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1384,6 +1446,7 @@
     "syntax": "azure-storage-blob:containerName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1406,6 +1469,7 @@
     "syntax": "azure-storage-queue:queueName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1428,6 +1492,7 @@
     "syntax": "bean:beanName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1450,6 +1515,7 @@
     "syntax": "bean-validator:label",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1472,6 +1538,7 @@
     "syntax": "beanstalk:connectionSettings",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1494,6 +1561,7 @@
     "syntax": "bonita:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1516,6 +1584,7 @@
     "syntax": "box:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -1538,6 +1607,7 @@
     "syntax": "braintree:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1560,6 +1630,7 @@
     "syntax": "browse:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1582,6 +1653,7 @@
     "syntax": "caffeine-cache:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1604,6 +1676,7 @@
     "syntax": "caffeine-loadcache:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1626,6 +1699,7 @@
     "syntax": "chatscript:host:port\/botName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1648,6 +1722,7 @@
     "syntax": "chunk:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1670,6 +1745,7 @@
     "syntax": "class:beanName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1692,6 +1768,7 @@
     "syntax": "cm-sms:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1714,6 +1791,7 @@
     "syntax": "cmis:cmsUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1737,6 +1815,7 @@
     "syntax": "coap:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1760,6 +1839,7 @@
     "syntax": "coap+tcp:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1783,6 +1863,7 @@
     "syntax": "coaps:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1806,6 +1887,7 @@
     "syntax": "coaps+tcp:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1829,6 +1911,7 @@
     "syntax": "cometd:host:port\/channelName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1852,6 +1935,7 @@
     "syntax": "cometds:host:port\/channelName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1874,6 +1958,7 @@
     "syntax": "consul:apiEndpoint",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1896,6 +1981,7 @@
     "syntax": "controlbus:command:language",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -1918,6 +2004,7 @@
     "syntax": "corda:node",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1940,6 +2027,7 @@
     "syntax": "couchbase:protocol:hostname:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1962,6 +2050,7 @@
     "syntax": "couchdb:protocol:hostname:port\/database",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1984,6 +2073,7 @@
     "syntax": "cql:beanRef:hosts:port\/keyspace",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2006,6 +2096,7 @@
     "syntax": "cron:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2029,6 +2120,7 @@
     "syntax": "crypto-cms:cryptoOperation:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2051,6 +2143,7 @@
     "syntax": "crypto:cryptoOperation:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2073,6 +2166,7 @@
     "syntax": "cxf:beanId:address",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2095,6 +2189,7 @@
     "syntax": "cxfrs:beanId:address",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2117,6 +2212,7 @@
     "syntax": "dataformat:name:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -2139,6 +2235,7 @@
     "syntax": "dataset:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2161,6 +2258,7 @@
     "syntax": "dataset-test:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -2183,6 +2281,7 @@
     "syntax": "debezium-mongodb:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2205,6 +2304,7 @@
     "syntax": "debezium-mysql:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2227,6 +2327,7 @@
     "syntax": "debezium-postgres:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2249,6 +2350,7 @@
     "syntax": "debezium-sqlserver:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2271,6 +2373,7 @@
     "syntax": "digitalocean:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2293,6 +2396,7 @@
     "syntax": "direct:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2315,6 +2419,7 @@
     "syntax": "direct-vm:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2338,6 +2443,7 @@
     "syntax": "disruptor:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2361,6 +2467,7 @@
     "syntax": "disruptor-vm:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2383,6 +2490,7 @@
     "syntax": "djl:application",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2405,6 +2513,7 @@
     "syntax": "dns:dnsType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2427,6 +2536,7 @@
     "syntax": "docker:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -2449,6 +2559,7 @@
     "syntax": "dozer:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2471,6 +2582,7 @@
     "syntax": "drill:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2493,6 +2605,7 @@
     "syntax": "dropbox:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2515,6 +2628,7 @@
     "syntax": "ehcache:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2537,6 +2651,7 @@
     "syntax": "elasticsearch-rest:clusterName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2559,6 +2674,7 @@
     "syntax": "elsql:elsqlName:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2581,6 +2697,7 @@
     "syntax": "etcd-keys:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2603,6 +2720,7 @@
     "syntax": "etcd-stats:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2625,6 +2743,7 @@
     "syntax": "etcd-watch:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2647,6 +2766,7 @@
     "syntax": "exec:executable",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2669,6 +2789,7 @@
     "syntax": "facebook:methodName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2691,6 +2812,7 @@
     "syntax": "fhir:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2713,6 +2835,7 @@
     "syntax": "file:directoryName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2735,6 +2858,7 @@
     "syntax": "file-watch:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -2757,6 +2881,7 @@
     "syntax": "flatpack:type:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2779,6 +2904,7 @@
     "syntax": "flink:endpointType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2801,6 +2927,7 @@
     "syntax": "fop:outputType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2823,6 +2950,7 @@
     "syntax": "freemarker:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2847,6 +2975,7 @@
     "alternativeSyntax": "ftp:username:password@host:port\/directoryName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2871,6 +3000,7 @@
     "alternativeSyntax": "ftps:username:password@host:port\/directoryName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2893,6 +3023,7 @@
     "syntax": "ganglia:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2915,6 +3046,7 @@
     "syntax": "geocoder:address:latlng",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -2937,6 +3069,7 @@
     "syntax": "git:localPath",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2959,6 +3092,7 @@
     "syntax": "github:type\/branchName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2981,6 +3115,7 @@
     "syntax": "google-bigquery:projectId:datasetId:tableId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3003,6 +3138,7 @@
     "syntax": "google-bigquery-sql:projectId:query",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3025,6 +3161,7 @@
     "syntax": "google-calendar:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3047,6 +3184,7 @@
     "syntax": "google-calendar-stream:index",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3069,6 +3207,7 @@
     "syntax": "google-drive:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3091,6 +3230,7 @@
     "syntax": "google-mail:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3113,6 +3253,7 @@
     "syntax": "google-mail-stream:index",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3135,6 +3276,7 @@
     "syntax": "google-pubsub:projectId:destinationName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3157,6 +3299,7 @@
     "syntax": "google-sheets:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3179,6 +3322,7 @@
     "syntax": "google-sheets-stream:apiName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3201,6 +3345,7 @@
     "syntax": "gora:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3223,6 +3368,7 @@
     "syntax": "grape:defaultCoordinates",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3245,6 +3391,7 @@
     "syntax": "graphql:httpUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3267,6 +3414,7 @@
     "syntax": "grpc:host:port\/service",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3289,6 +3437,7 @@
     "syntax": "guava-eventbus:eventBusRef",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3311,6 +3460,7 @@
     "syntax": "hazelcast-atomicvalue:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3333,6 +3483,7 @@
     "syntax": "hazelcast-instance:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3355,6 +3506,7 @@
     "syntax": "hazelcast-list:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3377,6 +3529,7 @@
     "syntax": "hazelcast-map:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3399,6 +3552,7 @@
     "syntax": "hazelcast-multimap:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3421,6 +3575,7 @@
     "syntax": "hazelcast-queue:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3443,6 +3598,7 @@
     "syntax": "hazelcast-replicatedmap:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3465,6 +3621,7 @@
     "syntax": "hazelcast-ringbuffer:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3487,6 +3644,7 @@
     "syntax": "hazelcast-seda:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3509,6 +3667,7 @@
     "syntax": "hazelcast-set:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3531,6 +3690,7 @@
     "syntax": "hazelcast-topic:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3553,6 +3713,7 @@
     "syntax": "hbase:tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3575,6 +3736,7 @@
     "syntax": "hdfs:hostName:port\/path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3597,6 +3759,7 @@
     "syntax": "hipchat:protocol:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3620,6 +3783,7 @@
     "syntax": "http:httpUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -3643,6 +3807,7 @@
     "syntax": "https:httpUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -3665,6 +3830,7 @@
     "syntax": "iec60870-client:uriPath",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3687,6 +3853,7 @@
     "syntax": "iec60870-server:uriPath",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3709,6 +3876,7 @@
     "syntax": "ignite-cache:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3731,6 +3899,7 @@
     "syntax": "ignite-compute:endpointId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3753,6 +3922,7 @@
     "syntax": "ignite-events:endpointId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -3775,6 +3945,7 @@
     "syntax": "ignite-idgen:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3797,6 +3968,7 @@
     "syntax": "ignite-messaging:topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3819,6 +3991,7 @@
     "syntax": "ignite-queue:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3841,6 +4014,7 @@
     "syntax": "ignite-set:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3865,6 +4039,7 @@
     "alternativeSyntax": "imap:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3889,6 +4064,7 @@
     "alternativeSyntax": "imaps:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3911,6 +4087,7 @@
     "syntax": "infinispan:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3933,6 +4110,7 @@
     "syntax": "influxdb:connectionBean",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3955,6 +4133,7 @@
     "syntax": "iota:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -3977,6 +4156,7 @@
     "syntax": "ipfs:ipfsCmd",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4000,6 +4180,7 @@
     "alternativeSyntax": "irc:username:password@hostname:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4022,6 +4203,7 @@
     "syntax": "ironmq:queueName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4044,6 +4226,7 @@
     "syntax": "jbpm:connectionURL",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4066,6 +4249,7 @@
     "syntax": "jcache:cacheName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4088,6 +4272,7 @@
     "syntax": "jclouds:command:providerId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4111,6 +4296,7 @@
     "alternativeSyntax": "jcr:username:password@host\/base",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4133,6 +4319,7 @@
     "syntax": "jdbc:dataSourceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4156,6 +4343,7 @@
     "syntax": "jetty:httpUri",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -4178,6 +4366,7 @@
     "syntax": "jgroups:clusterName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4200,6 +4389,7 @@
     "syntax": "jgroups-raft:clusterName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4222,6 +4412,7 @@
     "syntax": "jing:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4244,6 +4435,7 @@
     "syntax": "jira:type",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4267,6 +4459,7 @@
     "syntax": "jms:destinationType:destinationName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4289,6 +4482,7 @@
     "syntax": "jmx:serverURL",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -4311,6 +4505,7 @@
     "syntax": "jolt:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4333,6 +4528,7 @@
     "syntax": "jooq:entityType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4355,6 +4551,7 @@
     "syntax": "jpa:entityType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4377,6 +4574,7 @@
     "syntax": "jslt:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4399,6 +4597,7 @@
     "syntax": "json-validator:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4421,6 +4620,7 @@
     "syntax": "jsonata:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4443,6 +4643,7 @@
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4465,6 +4666,7 @@
     "syntax": "kafka:topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4487,6 +4689,7 @@
     "syntax": "kubernetes-config-maps:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4509,6 +4712,7 @@
     "syntax": "kubernetes-deployments:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4531,6 +4735,7 @@
     "syntax": "kubernetes-hpa:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4553,6 +4758,7 @@
     "syntax": "kubernetes-job:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4575,6 +4781,7 @@
     "syntax": "kubernetes-namespaces:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4597,6 +4804,7 @@
     "syntax": "kubernetes-nodes:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4619,6 +4827,7 @@
     "syntax": "kubernetes-persistent-volumes-claims:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4641,6 +4850,7 @@
     "syntax": "kubernetes-persistent-volumes:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4663,6 +4873,7 @@
     "syntax": "kubernetes-pods:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4685,6 +4896,7 @@
     "syntax": "kubernetes-replication-controllers:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4707,6 +4919,7 @@
     "syntax": "kubernetes-resources-quota:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4729,6 +4942,7 @@
     "syntax": "kubernetes-secrets:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4751,6 +4965,7 @@
     "syntax": "kubernetes-service-accounts:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4773,6 +4988,7 @@
     "syntax": "kubernetes-services:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -4795,6 +5011,7 @@
     "syntax": "kudu:host:port\/tableName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4817,6 +5034,7 @@
     "syntax": "language:languageName:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4839,6 +5057,7 @@
     "syntax": "ldap:dirContextName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4861,6 +5080,7 @@
     "syntax": "ldif:ldapConnectionName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4883,6 +5103,7 @@
     "syntax": "log:loggerName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4905,6 +5126,7 @@
     "syntax": "lpr:hostname:port\/printername",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4927,6 +5149,7 @@
     "syntax": "lucene:host:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -4949,6 +5172,7 @@
     "syntax": "lumberjack:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -4971,6 +5195,7 @@
     "syntax": "master:namespace:delegateUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -4993,6 +5218,7 @@
     "syntax": "metrics:metricsType:metricsName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5015,6 +5241,7 @@
     "syntax": "micrometer:metricsType:metricsName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5037,6 +5264,7 @@
     "syntax": "microprofile-metrics:metricType:metricName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5059,6 +5287,7 @@
     "syntax": "milo-client:endpointUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5081,6 +5310,7 @@
     "syntax": "milo-server:itemId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5103,6 +5333,7 @@
     "syntax": "mina:protocol:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5125,6 +5356,7 @@
     "syntax": "minio:bucketName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5147,6 +5379,7 @@
     "syntax": "mllp:hostname:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5169,6 +5402,7 @@
     "syntax": "mock:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -5191,6 +5425,7 @@
     "syntax": "mongodb:connectionBean",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5213,6 +5448,7 @@
     "syntax": "mongodb-gridfs:connectionBean",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5235,6 +5471,7 @@
     "syntax": "msv:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5257,6 +5494,7 @@
     "syntax": "mustache:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5279,6 +5517,7 @@
     "syntax": "mvel:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5301,6 +5540,7 @@
     "syntax": "mybatis-bean:beanName:methodName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5323,6 +5563,7 @@
     "syntax": "mybatis:statement",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5345,6 +5586,7 @@
     "syntax": "nagios:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5367,6 +5609,7 @@
     "syntax": "nats:topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5389,6 +5632,7 @@
     "syntax": "netty:protocol:host:port",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5412,6 +5656,7 @@
     "syntax": "netty-http:protocol:host:port\/path",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -5434,6 +5679,7 @@
     "syntax": "nitrite:database",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5456,6 +5702,7 @@
     "syntax": "nsq:topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5478,6 +5725,7 @@
     "syntax": "oaipmh:baseUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -5500,6 +5748,7 @@
     "syntax": "olingo2:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5522,6 +5771,7 @@
     "syntax": "olingo4:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5544,6 +5794,7 @@
     "syntax": "openshift-build-configs:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5566,6 +5817,7 @@
     "syntax": "openshift-builds:masterUrl",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5588,6 +5840,7 @@
     "syntax": "openstack-cinder:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5610,6 +5863,7 @@
     "syntax": "openstack-glance:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5632,6 +5886,7 @@
     "syntax": "openstack-keystone:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5654,6 +5909,7 @@
     "syntax": "openstack-neutron:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5676,6 +5932,7 @@
     "syntax": "openstack-nova:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5698,6 +5955,7 @@
     "syntax": "openstack-swift:host",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5720,6 +5978,7 @@
     "syntax": "optaplanner:configFile",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5742,6 +6001,7 @@
     "syntax": "paho:topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5764,6 +6024,7 @@
     "syntax": "pdf:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -5786,6 +6047,7 @@
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5808,6 +6070,7 @@
     "syntax": "pgevent:host:port\/database\/channel",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5830,6 +6093,7 @@
     "syntax": "platform-http:path",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5854,6 +6118,7 @@
     "alternativeSyntax": "pop3:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5878,6 +6143,7 @@
     "alternativeSyntax": "pop3s:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5900,6 +6166,7 @@
     "syntax": "pubnub:channel",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5922,6 +6189,7 @@
     "syntax": "pulsar:persistence:\/\/tenant\/namespace\/topic",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5944,6 +6212,7 @@
     "syntax": "quartz:groupName\/triggerName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -5966,6 +6235,7 @@
     "syntax": "quickfix:configurationName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5988,6 +6258,7 @@
     "syntax": "rabbitmq:exchangeName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6010,6 +6281,7 @@
     "syntax": "reactive-streams:stream",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6032,6 +6304,7 @@
     "syntax": "ref:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6054,6 +6327,7 @@
     "syntax": "rest-api:path\/contextIdPattern",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -6076,6 +6350,7 @@
     "syntax": "rest:method:path:uriTemplate",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -6098,6 +6373,7 @@
     "syntax": "rest-openapi:specificationUri#operationId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6120,6 +6396,7 @@
     "syntax": "rest-swagger:specificationUri#operationId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6143,6 +6420,7 @@
     "syntax": "resteasy:httpUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6165,6 +6443,7 @@
     "syntax": "robotframework:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6187,6 +6466,7 @@
     "syntax": "rss:feedUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -6209,6 +6489,7 @@
     "syntax": "saga:action",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6231,6 +6512,7 @@
     "syntax": "salesforce:operationName:topicName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6253,6 +6535,7 @@
     "syntax": "sap-netweaver:url",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6275,6 +6558,7 @@
     "syntax": "scheduler:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6297,6 +6581,7 @@
     "syntax": "schematron:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6320,6 +6605,7 @@
     "syntax": "scp:host:port\/directoryName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6342,6 +6628,7 @@
     "syntax": "seda:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6364,6 +6651,7 @@
     "syntax": "service:delegateUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -6386,6 +6674,7 @@
     "syntax": "servicenow:instanceName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6409,6 +6698,7 @@
     "syntax": "servlet:contextPath",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6432,6 +6722,7 @@
     "syntax": "sftp:host:port\/directoryName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6455,6 +6746,7 @@
     "syntax": "sip:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6478,6 +6770,7 @@
     "syntax": "sips:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6500,6 +6793,7 @@
     "syntax": "sjms2:destinationType:destinationName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6522,6 +6816,7 @@
     "syntax": "sjms-batch:destinationName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -6544,6 +6839,7 @@
     "syntax": "sjms:destinationType:destinationName",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6566,6 +6862,7 @@
     "syntax": "slack:channel",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6589,6 +6886,7 @@
     "syntax": "smpp:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -6612,6 +6910,7 @@
     "syntax": "smpps:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -6636,6 +6935,7 @@
     "alternativeSyntax": "smtp:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6660,6 +6960,7 @@
     "alternativeSyntax": "smtps:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6682,6 +6983,7 @@
     "syntax": "snmp:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6705,6 +7007,7 @@
     "syntax": "solr:url",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6728,6 +7031,7 @@
     "syntax": "solrCloud:url",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6751,6 +7055,7 @@
     "syntax": "solrs:url",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6773,6 +7078,7 @@
     "syntax": "soroush:action",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6795,6 +7101,7 @@
     "syntax": "spark:endpointType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6817,6 +7124,7 @@
     "syntax": "splunk:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6839,6 +7147,7 @@
     "syntax": "splunk-hec:splunkURL\/token",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6861,6 +7170,7 @@
     "syntax": "spring-batch:jobName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6883,6 +7193,7 @@
     "syntax": "spring-event:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6905,6 +7216,7 @@
     "syntax": "spring-integration:defaultChannel",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6927,6 +7239,7 @@
     "syntax": "spring-ldap:templateName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -6949,6 +7262,7 @@
     "syntax": "spring-redis:host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6971,6 +7285,7 @@
     "syntax": "spring-ws:type:lookupKey:webServiceEndpointUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -6993,6 +7308,7 @@
     "syntax": "sql:query",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7015,6 +7331,7 @@
     "syntax": "sql-stored:template",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7038,6 +7355,7 @@
     "alternativeSyntax": "ssh:username:password@host:port",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7060,6 +7378,7 @@
     "syntax": "stax:contentHandlerClass",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7082,6 +7401,7 @@
     "syntax": "stomp:destination",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7104,6 +7424,7 @@
     "syntax": "stream:kind",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7126,6 +7447,7 @@
     "syntax": "string-template:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7148,6 +7470,7 @@
     "syntax": "stub:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7170,6 +7493,7 @@
     "syntax": "telegram:type",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7192,6 +7516,7 @@
     "syntax": "thrift:host:port\/service",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7214,6 +7539,7 @@
     "syntax": "tika:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7236,6 +7562,7 @@
     "syntax": "timer:timerName",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false
@@ -7258,6 +7585,7 @@
     "syntax": "twilio:apiName\/methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7280,6 +7608,7 @@
     "syntax": "twitter-directmessage:user",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7302,6 +7631,7 @@
     "syntax": "twitter-search:keywords",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7324,6 +7654,7 @@
     "syntax": "twitter-timeline:timelineType",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7346,6 +7677,7 @@
     "syntax": "undertow:httpURI",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -7368,6 +7700,7 @@
     "syntax": "validator:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7390,6 +7723,7 @@
     "syntax": "velocity:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7412,6 +7746,7 @@
     "syntax": "vertx:address",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7434,6 +7769,7 @@
     "syntax": "vertx-http:httpUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true
@@ -7456,6 +7792,7 @@
     "syntax": "vertx-websocket:host:port\/path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7478,6 +7815,7 @@
     "syntax": "vm:name",
     "async": true,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7500,6 +7838,7 @@
     "syntax": "weather:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7522,6 +7861,7 @@
     "syntax": "web3j:nodeAddress",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7544,6 +7884,7 @@
     "syntax": "webhook:endpointUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true
@@ -7566,6 +7907,7 @@
     "syntax": "websocket:host:port\/resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7588,6 +7930,7 @@
     "syntax": "websocket-jsr356:uri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7610,6 +7953,7 @@
     "syntax": "weka:command",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7632,6 +7976,7 @@
     "syntax": "wordpress:operation",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7654,6 +7999,7 @@
     "syntax": "workday:entity:path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7676,6 +8022,7 @@
     "syntax": "xchange:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7698,6 +8045,7 @@
     "syntax": "xj:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7720,6 +8068,7 @@
     "syntax": "xmlsecurity-sign:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7742,6 +8091,7 @@
     "syntax": "xmlsecurity-verify:name",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7765,6 +8115,7 @@
     "alternativeSyntax": "xmpp:user:password@host:port\/participant",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7787,6 +8138,7 @@
     "syntax": "xquery:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7809,6 +8161,7 @@
     "syntax": "xslt:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7831,6 +8184,7 @@
     "syntax": "xslt-saxon:resourceUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false
@@ -7853,6 +8207,7 @@
     "syntax": "yammer:function",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7875,6 +8230,7 @@
     "syntax": "zendesk:methodName",
     "async": false,
     "api": true,
+    "apiPropertyQualifier": "methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -7897,6 +8253,7 @@
     "syntax": "zookeeper:serverUrls\/path",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7919,6 +8276,7 @@
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

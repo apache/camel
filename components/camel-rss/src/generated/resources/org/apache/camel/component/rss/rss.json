@@ -17,6 +17,7 @@
     "syntax": "rss:feedUri",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

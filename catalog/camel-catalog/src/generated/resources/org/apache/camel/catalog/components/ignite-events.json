@@ -17,6 +17,7 @@
     "syntax": "ignite-events:endpointId",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

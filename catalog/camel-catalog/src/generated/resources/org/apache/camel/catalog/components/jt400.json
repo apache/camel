@@ -17,6 +17,7 @@
     "syntax": "jt400:userID:password\/systemName\/objectPath.type",
     "async": false,
     "api": false,
+    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
