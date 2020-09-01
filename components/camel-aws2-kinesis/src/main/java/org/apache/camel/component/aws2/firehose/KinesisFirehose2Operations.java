@@ -21,5 +21,6 @@ public enum KinesisFirehose2Operations {
     sendBatchRecord,
     createDeliveryStream,
     deleteDeliveryStream,
+    describeDeliveryStream, 
     updateDestination
 }
