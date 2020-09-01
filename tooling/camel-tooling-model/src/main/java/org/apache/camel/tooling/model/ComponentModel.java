@@ -28,6 +28,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected String syntax;
     protected String alternativeSyntax;
     protected boolean async;
+    protected boolean api;
     protected boolean consumerOnly;
     protected boolean producerOnly;
     protected boolean lenientProperties;
@@ -88,6 +89,14 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    public boolean isApi() {
+        return api;
+    }
+
+    public void setApi(boolean api) {
+        this.api = api;
     }
 
     public boolean isConsumerOnly() {

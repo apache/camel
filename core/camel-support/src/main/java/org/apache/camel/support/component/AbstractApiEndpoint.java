@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.ApiEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractApiEndpoint<E extends ApiName, T>
         extends ScheduledPollEndpoint
-        implements PropertyNamesInterceptor, PropertiesInterceptor {
+        implements ApiEndpoint, PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
     private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();

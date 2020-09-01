@@ -109,6 +109,7 @@ public final class JsonMapper {
         model.setSyntax(mobj.getString("syntax"));
         model.setAlternativeSyntax(mobj.getString("alternativeSyntax"));
         model.setAsync(mobj.getBooleanOrDefault("async", false));
+        model.setApi(mobj.getBooleanOrDefault("api", false));
         model.setConsumerOnly(mobj.getBooleanOrDefault("consumerOnly", false));
         model.setProducerOnly(mobj.getBooleanOrDefault("producerOnly", false));
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
@@ -136,6 +137,7 @@ public final class JsonMapper {
         obj.put("syntax", model.getSyntax());
         obj.put("alternativeSyntax", model.getAlternativeSyntax());
         obj.put("async", model.isAsync());
+        obj.put("api", model.isApi());
         obj.put("consumerOnly", model.isConsumerOnly());
         obj.put("producerOnly", model.isProducerOnly());
         obj.put("lenientProperties", model.isLenientProperties());
