@@ -715,7 +715,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 } else if (fieldType.isEnum()) {
                     enums = new ArrayList<>();
                     for (Object val : fieldType.getEnumConstants()) {
-                        enums.add(val.toString());
+                        String str = val.toString();
+                        if (!enums.contains(str)) {
+                            enums.add(str);
+                        }
                     }
                 }
 
@@ -870,7 +873,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     } else if (fieldTypeElement.isEnum()) {
                         enums = new ArrayList<>();
                         for (Object val : fieldTypeElement.getEnumConstants()) {
-                            enums.add(val.toString());
+                            String str = val.toString();
+                            if (!enums.contains(str)) {
+                                enums.add(str);
+                            }
                         }
                     }
 
@@ -989,7 +995,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         } else if (fieldTypeElement.isEnum()) {
                             enums = new ArrayList<>();
                             for (Object val : fieldTypeElement.getEnumConstants()) {
-                                enums.add(val.toString());
+                                String str = val.toString();
+                                if (!enums.contains(str)) {
+                                    enums.add(str);
+                                }
                             }
                         }
 
