@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zendesk;
 
+import org.apache.camel.component.zendesk.internal.ZendeskApiMethod;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -32,7 +33,7 @@ public class ZendeskConfiguration {
 
     @UriPath
     @Metadata(required = true)
-    private String methodName;
+    private ZendeskApiMethod methodName;
 
     @UriParam
     private String serverUrl;
@@ -54,7 +55,7 @@ public class ZendeskConfiguration {
      * 
      * @return the methodName
      */
-    public String getMethodName() {
+    public ZendeskApiMethod getMethodName() {
         return methodName;
     }
 
@@ -63,7 +64,7 @@ public class ZendeskConfiguration {
      * 
      * @param methodName the methodName to set
      */
-    public void setMethodName(String methodName) {
+    public void setMethodName(ZendeskApiMethod methodName) {
         this.methodName = methodName;
     }
 

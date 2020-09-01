@@ -94,7 +94,7 @@ public enum BoxFoldersManagerApiMethod implements ApiMethod {
         arg("folderId", String.class),
         arg("info", com.box.sdk.BoxFolder.Info.class));
 
-    
+    private static final BoxFoldersManagerApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -104,6 +104,18 @@ public enum BoxFoldersManagerApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static BoxFoldersManagerApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

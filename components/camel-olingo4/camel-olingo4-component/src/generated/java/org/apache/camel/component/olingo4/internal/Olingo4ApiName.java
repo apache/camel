@@ -14,7 +14,7 @@ public enum Olingo4ApiName implements ApiName {
     DEFAULT("");
 
 
-    private static final Olingo4ApiName[] VALUES = values();
+    private static final Olingo4ApiName[] CACHED_ENUM_VALUES = values();
     
     private final String name;
 
@@ -33,9 +33,9 @@ public enum Olingo4ApiName implements ApiName {
     }
 
     public static Olingo4ApiName fromValue(String value) throws IllegalArgumentException {
-        for (int i = 0; i < VALUES.length; i++) {
-            if (VALUES[i].name.equals(value)) {
-                return VALUES[i];
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].name.equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
             }
         }
         throw new IllegalArgumentException("Invalid value " + value);

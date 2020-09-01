@@ -49,7 +49,7 @@ public enum FhirHistoryApiMethod implements ApiMethod {
         arg("iCutoff", org.hl7.fhir.instance.model.api.IPrimitiveType.class),
         arg("extraParameters", java.util.Map.class));
 
-    
+    private static final FhirHistoryApiMethod[] CACHED_ENUM_VALUES = values();
 
     private final ApiMethod apiMethod;
 
@@ -59,6 +59,18 @@ public enum FhirHistoryApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
+
+    @Override
+    public String toString() { return apiMethod.getName(); }
+
+    public static FhirHistoryApiMethod fromValue(String value) throws IllegalArgumentException {
+        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
+            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+                return CACHED_ENUM_VALUES[i];
+            }
+        }
+        throw new IllegalArgumentException("Invalid value " + value);
+    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

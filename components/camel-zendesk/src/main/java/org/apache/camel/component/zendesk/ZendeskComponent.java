@@ -19,6 +19,7 @@ package org.apache.camel.component.zendesk;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.zendesk.internal.ZendeskApiCollection;
+import org.apache.camel.component.zendesk.internal.ZendeskApiMethod;
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.spi.Metadata;
@@ -82,7 +83,7 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     protected Endpoint createEndpoint(
             String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
-        endpointConfiguration.setMethodName(methodName);
+        endpointConfiguration.setMethodName(ZendeskApiMethod.fromValue(methodName));
         return new ZendeskEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
