@@ -88,6 +88,10 @@ public class RabbitMQComponent extends DefaultComponent {
     private String deadLetterExchangeType = "direct";
     @Metadata(label = "producer")
     private boolean allowNullHeaders;
+    @Metadata(label = "producer")
+    private Map<String, Object> additionalHeaders;
+    @Metadata(label = "producer")
+    private Map<String, Object> additionalProperties;
     @Metadata(label = "security")
     private String sslProtocol;
     @Metadata(label = "security")
@@ -202,6 +206,14 @@ public class RabbitMQComponent extends DefaultComponent {
                 = resolveAndRemoveReferenceParameter(params, "clientProperties", Map.class, getClientProperties());
         TrustManager trustManager
                 = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
+        Map<String, Object> additionalHeaders
+                = resolveAndRemoveReferenceParameter(params, "additionalHeaders", SimpleDataHolderBean.class).getMapData();
+        Map<String, Object> additionalProperties
+                = resolveAndRemoveReferenceParameter(params, "additionalProperties", SimpleDataHolderBean.class).getMapData();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Additional headers: {}", additionalHeaders);
+            LOG.debug("Additional properties: {}", additionalProperties);
+        }
         RabbitMQEndpoint endpoint;
         if (connectionFactory == null) {
             endpoint = new RabbitMQEndpoint(uri, this);
@@ -217,6 +229,8 @@ public class RabbitMQComponent extends DefaultComponent {
         endpoint.setThreadPoolSize(getThreadPoolSize());
         endpoint.setExchangeName(exchangeName);
         endpoint.setClientProperties(clientProperties);
+        endpoint.setAdditionalHeaders(additionalHeaders);
+        endpoint.setAdditionalProperties(additionalProperties);
         endpoint.setSslProtocol(getSslProtocol());
         endpoint.setTrustManager(trustManager);
         endpoint.setConnectionTimeout(getConnectionTimeout());
@@ -281,6 +295,10 @@ public class RabbitMQComponent extends DefaultComponent {
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
         endpoint.getMessageConverter().setAllowCustomHeaders(endpoint.isAllowCustomHeaders());
+
+        // Add additional headers and properties for message converter
+        endpoint.getMessageConverter().setAdditionalHeaders(endpoint.getAdditionalHeaders());
+        endpoint.getMessageConverter().setAdditionalProperties(endpoint.getAdditionalProperties());
 
         return endpoint;
     }
@@ -855,6 +873,31 @@ public class RabbitMQComponent extends DefaultComponent {
 
     public void setAllowNullHeaders(boolean allowNullHeaders) {
         this.allowNullHeaders = allowNullHeaders;
+    }
+
+    /**
+     * Map of additional headers. These headers will be set only when the 'allowCustomHeaders' is set to true
+     */
+    public void setAdditionalHeaders(Map<String, Object> additionalHeaders) {
+        this.additionalHeaders = additionalHeaders;
+    }
+
+    public Map<String, Object> getAdditionalHeaders() {
+        return additionalHeaders;
+    }
+
+    /**
+     * Map of additional properties. These are standard RabbitMQ properties as defined in
+     * {@link com.rabbitmq.client.AMQP.BasicProperties} The map keys should be from
+     * {@link org.apache.camel.component.rabbitmq.RabbitMQConstants}. Any other keys will be ignored. When the message
+     * already contains these headers they will be given precedence over these properties.
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
     }
 
     public ExceptionHandler getConnectionFactoryExceptionHandler() {

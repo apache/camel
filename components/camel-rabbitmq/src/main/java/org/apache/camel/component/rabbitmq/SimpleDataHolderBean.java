@@ -16,18 +16,28 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RabbitMQHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class SimpleDataHolderBean {
+    private Map<String, Object> mapData;
 
-    public RabbitMQHeaderFilterStrategy() {
-        initialize();
+    public SimpleDataHolderBean() {
+        this.mapData = new HashMap<>();
     }
 
-    protected void initialize() {
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("CamelRabbitmq*");
-        setInFilterPattern("CamelRabbitmq*");
+    public Map<String, Object> getMapData() {
+        return mapData;
     }
 
+    public void setMapData(Map<String, Object> mapData) {
+        this.mapData = mapData;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleDataHolderBean{" +
+               "mapData=" + mapData +
+               '}';
+    }
 }
