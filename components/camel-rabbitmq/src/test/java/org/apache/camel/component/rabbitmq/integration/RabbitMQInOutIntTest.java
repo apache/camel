@@ -143,15 +143,17 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     @Test
     public void inOutRaceConditionTest1() throws InterruptedException, IOException {
-        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
-                String.class);
+        String reply
+                = template.requestBodyAndHeader("direct:rabbitMQ", "test1", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                        String.class);
         assertEquals("test1 response", reply);
     }
 
     @Test
     public void inOutRaceConditionTest2() throws InterruptedException, IOException {
-        String reply = template.requestBodyAndHeader("direct:rabbitMQ", "test2", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
-                String.class);
+        String reply
+                = template.requestBodyAndHeader("direct:rabbitMQ", "test2", RabbitMQConstants.EXCHANGE_NAME, EXCHANGE,
+                        String.class);
         assertEquals("test2 response", reply);
     }
 
@@ -199,8 +201,9 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
         TestSerializableObject foo = new TestSerializableObject();
         foo.setName("foobar");
 
-        TestSerializableObject reply = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME,
-                EXCHANGE, TestSerializableObject.class);
+        TestSerializableObject reply
+                = template.requestBodyAndHeader("direct:rabbitMQ", foo, RabbitMQConstants.EXCHANGE_NAME,
+                        EXCHANGE, TestSerializableObject.class);
         assertEquals("foobar", reply.getName());
         assertEquals("foobar", reply.getDescription());
     }

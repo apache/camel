@@ -75,18 +75,10 @@ public class RabbitMQMessagePublisher {
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
         if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
-            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                 // default
-                                                                                                                 // exchange
-                                                                                                                 // for
-                                                                                                                 // reply-to
-                                                                                                                 // messages
-            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                          // default
-                                                                                                                          // exchange
-                                                                                                                          // for
-                                                                                                                          // reply-to
-                                                                                                                          // messages
+            // use default exchange for reply-to messages
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE);
+            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME,
+                    RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE);
         }
 
         return message;
@@ -102,6 +94,9 @@ public class RabbitMQMessagePublisher {
                     message.getBody());
 
             properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange properties: {}", properties);
+            }
         } catch (NoTypeConversionAvailableException | TypeConversionException e) {
             if (message.getBody() instanceof Serializable && endpoint.isAllowMessageBodySerialization()) {
                 // Add the header so the reply processor knows to de-serialize
@@ -132,8 +127,10 @@ public class RabbitMQMessagePublisher {
                     RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
         }
 
-        Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, endpoint.isMandatory(), Boolean.class);
-        Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, endpoint.isImmediate(), Boolean.class);
+        Boolean mandatory
+                = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, endpoint.isMandatory(), Boolean.class);
+        Boolean immediate
+                = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, endpoint.isImmediate(), Boolean.class);
 
         LOG.debug("Sending message to exchange: {} with CorrelationId: {}", exchangeName, properties.getCorrelationId());
 

@@ -158,3 +158,9 @@ Should eb replaced by:
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
+
+=== Camel RabbitMQ
+
+The `camel-rabbitmq` server component properties have been changed.
+Properties prefix `rabbitmq.` are replaced by `CamelRabbitmq`.
+
