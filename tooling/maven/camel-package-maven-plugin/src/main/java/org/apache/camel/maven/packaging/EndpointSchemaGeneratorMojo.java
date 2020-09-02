@@ -1103,10 +1103,18 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
 
+            if (apiOption) {
+                // do not check super classes for api options as we only check one level (to include new options and not common)
+                // if there are no options added then add the api name as empty option so we have it marked
+                if (!componentModel.getApiOptions().containsKey(apiName)) {
+                    componentModel.getApiOptions().put(apiName, Collections.EMPTY_LIST);
+                }
+                break;
+            }
+
             // check super classes which may also have fields
             Class<?> superclass = classElement.getSuperclass();
-            if (!apiOption && superclass != null) {
-                // do not check super classes for api options as we only check one level (to include new options and not common)
+            if (superclass != null) {
                 classElement = superclass;
             } else {
                 break;

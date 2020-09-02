@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -103,13 +104,17 @@ public final class JsonMapper {
             for (Map.Entry<String, Object> entry : mprap.entrySet()) {
                 String key = entry.getKey();
                 JsonObject mp = (JsonObject) entry.getValue();
-                mp.forEach((k, v) -> {
-                    String mk = k;
-                    JsonObject mo = (JsonObject) v;
-                    ComponentModel.ApiOptionModel option = new ComponentModel.ApiOptionModel();
-                    parseOption(mo, option, mk);
-                    model.addApiOption(key, option);
-                });
+                if (mp.isEmpty()) {
+                    model.getApiOptions().put(key, Collections.EMPTY_LIST);
+                } else {
+                    mp.forEach((k, v) -> {
+                        String mk = k;
+                        JsonObject mo = (JsonObject) v;
+                        ComponentModel.ApiOptionModel option = new ComponentModel.ApiOptionModel();
+                        parseOption(mo, option, mk);
+                        model.addApiOption(key, option);
+                    });
+                }
             }
         }
         return model;
