@@ -611,7 +611,11 @@ public abstract class AbstractCamelContext extends BaseService
                 // See https://issues.apache.org/jira/browse/CAMEL-11225
                 componentsInCreation.get().add(name);
 
-                component = getComponentResolver().resolveComponent(name, getCamelContextReference());
+                component = ResolverHelper.lookupComponentInRegistryWithFallback(getCamelContextReference(), name);
+                if (component == null) {
+                    component = getComponentResolver().resolveComponent(name, getCamelContextReference());
+                }
+
                 if (component != null) {
                     component.setCamelContext(getCamelContextReference());
                     component.build();
@@ -638,18 +642,6 @@ public abstract class AbstractCamelContext extends BaseService
             }
             throw new IllegalArgumentException(message);
         }
-    }
-
-    public Component resolveComponent(String name) {
-        Component answer = hasComponent(name);
-        if (answer == null) {
-            try {
-                answer = getComponentResolver().resolveComponent(name, this);
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Cannot resolve component: " + name, e);
-            }
-        }
-        return answer;
     }
 
     // Endpoint Management Methods
