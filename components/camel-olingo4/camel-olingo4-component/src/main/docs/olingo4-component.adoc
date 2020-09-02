@@ -163,16 +163,16 @@ The following lists each API method and its additional parameters.
 
 ==== DEFAULT
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *data* |  |  | Object
-| *edm* |  |  | Edm
-| *endpointHttpHeaders* |  |  | Map
-| *keyPredicate* |  |  | String
-| *queryParams* |  |  | Map
-| *resourcePath* |  |  | String
-| *responseHandler* |  |  | Olingo4ResponseHandler
+| Name | Description | Type
+| *data* |  | Object
+| *edm* |  | Edm
+| *endpointHttpHeaders* |  | Map
+| *keyPredicate* |  | String
+| *queryParams* |  | Map
+| *resourcePath* |  | String
+| *responseHandler* |  | Olingo4ResponseHandler
 |===
 // endpoint options: END
 

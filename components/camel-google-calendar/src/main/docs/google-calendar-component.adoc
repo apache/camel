@@ -155,32 +155,32 @@ The following lists each API method and its additional parameters.
 
 ==== acl
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* |  |  | String
-| *content* |  |  | AclRule
-| *contentChannel* |  |  | Channel
-| *ruleId* |  |  | String
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | AclRule
+| *contentChannel* |  | Channel
+| *ruleId* |  | String
 |===
 
 
 ==== calendars
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* |  |  | String
-| *content* |  |  | Calendar
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | Calendar
 |===
 
 
 ==== channels
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *contentChannel* |  |  | Channel
+| Name | Description | Type
+| *contentChannel* |  | Channel
 |===
 
 
@@ -191,45 +191,45 @@ The colors method has no API parameters.
 
 ==== events
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* |  |  | String
-| *content* |  |  | Event
-| *contentChannel* |  |  | Channel
-| *destination* |  |  | String
-| *eventId* |  |  | String
-| *text* |  |  | String
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | Event
+| *contentChannel* |  | Channel
+| *destination* |  | String
+| *eventId* |  | String
+| *text* |  | String
 |===
 
 
 ==== freebusy
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | FreeBusyRequest
+| Name | Description | Type
+| *content* |  | FreeBusyRequest
 |===
 
 
 ==== list
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* |  |  | String
-| *content* |  |  | CalendarListEntry
-| *contentChannel* |  |  | Channel
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | CalendarListEntry
+| *contentChannel* |  | Channel
 |===
 
 
 ==== settings
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *contentChannel* |  |  | Channel
-| *setting* |  |  | String
+| Name | Description | Type
+| *contentChannel* |  | Channel
+| *setting* |  | String
 |===
 // endpoint options: END
 

@@ -110,133 +110,136 @@ with the following path and query parameters:
 
 === Query API Parameters (1 APIs):
 
-The Zendesk endpoint is an API based component and has conditional parameters based on which API method in use.
+The Zendesk endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the methodName path parameter:
 
 ----
 zendesk:methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== methodName: DEFAULT
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== DEFAULT
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *article* |  |  | Article
-| *articleAttachments* |  |  | ArticleAttachments
-| *articleId* |  |  | Long
-| *articleId0* |  |  | Long
-| *attachment* |  |  | Attachment
-| *attachments* |  |  | List
-| *audit* |  |  | Audit
-| *auditId* |  |  | Long
-| *automation* |  |  | Automation
-| *automationId* |  |  | Long
-| *automationId0* |  |  | Long
-| *category* |  |  | Category
-| *categoryId* |  |  | Long
-| *category_id* |  |  | Long
-| *comment* |  |  | Comment
-| *commentId* |  |  | Long
-| *content* |  |  | byte[]
-| *contentType* |  |  | String
-| *email* |  |  | String
-| *endTime* |  |  | Date
-| *externalId* |  |  | String
-| *field* |  |  | Field
-| *file* |  |  | File
-| *fileName* |  |  | String
-| *forum* |  |  | Forum
-| *forum_id* |  |  | Long
-| *group* |  |  | Group
-| *groupMembership* |  |  | GroupMembership
-| *group_id* |  |  | Long
-| *group_membership_id* |  |  | Long
-| *id* |  |  | Long
-| *idArticle* |  |  | String
-| *identity* |  |  | Identity
-| *identityId* |  |  | Long
-| *ids* |  |  | long[]
-| *includeArchived* |  |  | Boolean
-| *inline* |  |  | Boolean
-| *installationId* |  |  | Integer
-| *item* |  |  | DynamicContentItem
-| *itemId* |  |  | Long
-| *json* |  |  | String
-| *labels* |  |  | List
-| *locale* |  |  | String
-| *macro* |  |  | Macro
-| *macroId* |  |  | Long
-| *macroId0* |  |  | Long
-| *monitorId* |  |  | Long
-| *name* |  |  | String
-| *newPassword* |  |  | String
-| *notifySubscribers* |  |  | Boolean
-| *oldPassword* |  |  | String
-| *order* |  |  | SortOrder
-| *organization* |  |  | Organization
-| *organizationId* |  |  | Long
-| *organizationList* |  |  | List
-| *organizationMembership* |  |  | OrganizationMembership
-| *organizationMembershipList* |  |  | List
-| *organizationMemberships* |  |  | OrganizationMembership[]
-| *organization_id* |  |  | Long
-| *organization_membership_id* |  |  | Long
-| *organizations* |  |  | Organization[]
-| *page* |  |  | Integer
-| *parameters* |  |  | String
-| *params* |  |  | Map
-| *password* |  |  | String
-| *permissionGroup* |  |  | PermissionGroup
-| *query* |  |  | String
-| *request* |  |  | Request
-| *requestId* |  |  | Long
-| *role* |  |  | String
-| *roles* |  |  | String[]
-| *satisfactionRating* |  |  | SatisfactionRating
-| *schedule* |  |  | Schedule
-| *scheduleId* |  |  | Long
-| *searchTerm* |  |  | String
-| *section* |  |  | Section
-| *sectionId* |  |  | Long
-| *sortBy* |  |  | String
-| *sortOrder* |  |  | SortOrder
-| *startTime* |  |  | Date
-| *status* |  |  | JobStatus
-| *statuses* |  |  | List
-| *suspendedTicket* |  |  | SuspendedTicket
-| *tags* |  |  | String[]
-| *target* |  |  | Target
-| *targetId* |  |  | Long
-| *ticket* |  |  | Ticket
-| *ticketForm* |  |  | TicketForm
-| *ticketId* |  |  | Long
-| *ticketId0* |  |  | Long
-| *ticketImport* |  |  | TicketImport
-| *ticketList* |  |  | List
-| *tickets* |  |  | Ticket[]
-| *token* |  |  | String
-| *topic* |  |  | Topic
-| *translation* |  |  | Translation
-| *translationId* |  |  | Long
-| *trigger* |  |  | Trigger
-| *triggerId* |  |  | Long
-| *triggerId0* |  |  | Long
-| *tweetId* |  |  | Long
-| *type* |  |  | Class
-| *unixEpochTime* |  |  | Long
-| *upload* |  |  | Upload
-| *user* |  |  | User
-| *userId* |  |  | Long
-| *userId0* |  |  | Long
-| *userIdThatWillBeMerged* |  |  | Long
-| *userIdThatWillRemain* |  |  | Long
-| *userList* |  |  | List
-| *userSegment* |  |  | UserSegment
-| *user_id* |  |  | Long
-| *users* |  |  | User[]
-| *usersList* |  |  | List
-| *variant* |  |  | DynamicContentItemVariant
+| Name | Description | Type
+| *article* |  | Article
+| *articleAttachments* |  | ArticleAttachments
+| *articleId* |  | Long
+| *articleId0* |  | Long
+| *attachment* |  | Attachment
+| *attachments* |  | List
+| *audit* |  | Audit
+| *auditId* |  | Long
+| *automation* |  | Automation
+| *automationId* |  | Long
+| *automationId0* |  | Long
+| *category* |  | Category
+| *categoryId* |  | Long
+| *category_id* |  | Long
+| *comment* |  | Comment
+| *commentId* |  | Long
+| *content* |  | byte[]
+| *contentType* |  | String
+| *email* |  | String
+| *endTime* |  | Date
+| *externalId* |  | String
+| *field* |  | Field
+| *file* |  | File
+| *fileName* |  | String
+| *forum* |  | Forum
+| *forum_id* |  | Long
+| *group* |  | Group
+| *groupMembership* |  | GroupMembership
+| *group_id* |  | Long
+| *group_membership_id* |  | Long
+| *id* |  | Long
+| *idArticle* |  | String
+| *identity* |  | Identity
+| *identityId* |  | Long
+| *ids* |  | long[]
+| *includeArchived* |  | Boolean
+| *inline* |  | Boolean
+| *installationId* |  | Integer
+| *item* |  | DynamicContentItem
+| *itemId* |  | Long
+| *json* |  | String
+| *labels* |  | List
+| *locale* |  | String
+| *macro* |  | Macro
+| *macroId* |  | Long
+| *macroId0* |  | Long
+| *monitorId* |  | Long
+| *name* |  | String
+| *newPassword* |  | String
+| *notifySubscribers* |  | Boolean
+| *oldPassword* |  | String
+| *order* |  | SortOrder
+| *organization* |  | Organization
+| *organizationId* |  | Long
+| *organizationList* |  | List
+| *organizationMembership* |  | OrganizationMembership
+| *organizationMembershipList* |  | List
+| *organizationMemberships* |  | OrganizationMembership[]
+| *organization_id* |  | Long
+| *organization_membership_id* |  | Long
+| *organizations* |  | Organization[]
+| *page* |  | Integer
+| *parameters* |  | String
+| *params* |  | Map
+| *password* |  | String
+| *permissionGroup* |  | PermissionGroup
+| *query* |  | String
+| *request* |  | Request
+| *requestId* |  | Long
+| *role* |  | String
+| *roles* |  | String[]
+| *satisfactionRating* |  | SatisfactionRating
+| *schedule* |  | Schedule
+| *scheduleId* |  | Long
+| *searchTerm* |  | String
+| *section* |  | Section
+| *sectionId* |  | Long
+| *sortBy* |  | String
+| *sortOrder* |  | SortOrder
+| *startTime* |  | Date
+| *status* |  | JobStatus
+| *statuses* |  | List
+| *suspendedTicket* |  | SuspendedTicket
+| *tags* |  | String[]
+| *target* |  | Target
+| *targetId* |  | Long
+| *ticket* |  | Ticket
+| *ticketForm* |  | TicketForm
+| *ticketId* |  | Long
+| *ticketId0* |  | Long
+| *ticketImport* |  | TicketImport
+| *ticketList* |  | List
+| *tickets* |  | Ticket[]
+| *token* |  | String
+| *topic* |  | Topic
+| *translation* |  | Translation
+| *translationId* |  | Long
+| *trigger* |  | Trigger
+| *triggerId* |  | Long
+| *triggerId0* |  | Long
+| *tweetId* |  | Long
+| *type* |  | Class
+| *unixEpochTime* |  | Long
+| *upload* |  | Upload
+| *user* |  | User
+| *userId* |  | Long
+| *userId0* |  | Long
+| *userIdThatWillBeMerged* |  | Long
+| *userIdThatWillRemain* |  | Long
+| *userList* |  | List
+| *userSegment* |  | UserSegment
+| *user_id* |  | Long
+| *users* |  | User[]
+| *usersList* |  | List
+| *variant* |  | DynamicContentItemVariant
 |===
 // endpoint options: END
 

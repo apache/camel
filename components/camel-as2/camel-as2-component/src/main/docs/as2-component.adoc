@@ -158,35 +158,35 @@ The following lists each API method and its additional parameters.
 
 ==== client
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *as2From* | AS2 name of sender |  | String
-| *as2MessageStructure* | The structure of AS2 to send; see |  | AS2MessageStructure
-| *as2To* | AS2 name of recipient |  | String
-| *compressionAlgorithm* | The algorithm used to compress the message or |  | AS2CompressionAlgorithm
-| *dispositionNotificationTo* | An RFC2822 address to request a receipt or |  | String
-| *ediMessage* | EDI message to transport |  | String
-| *ediMessageContentType* | The content typw of EDI message |  | ContentType
-| *ediMessageTransferEncoding* | The transfer encoding used to transport EDI message |  | String
-| *encryptingAlgorithm* | The algorithm used to encrypt the message or |  | AS2EncryptionAlgorithm
-| *encryptingCertificateChain* | The chain of certificates used to encrypt the message or |  | Certificate[]
-| *from* | RFC2822 address of sender |  | String
-| *requestUri* | Resource location to deliver message |  | String
-| *signedReceiptMicAlgorithms* | The senders list of signing algorithms for signing receipt, in preferred order, or |  | String[]
-| *signingAlgorithm* | The algorithm used to sign the message or |  | AS2SignatureAlgorithm
-| *signingCertificateChain* | The chain of certificates used to sign the message or |  | Certificate[]
-| *signingPrivateKey* | The private key used to sign EDI message |  | PrivateKey
-| *subject* | Message subject |  | String
+| Name | Description | Type
+| *as2From* | AS2 name of sender | String
+| *as2MessageStructure* | The structure of AS2 to send; see | AS2MessageStructure
+| *as2To* | AS2 name of recipient | String
+| *compressionAlgorithm* | The algorithm used to compress the message or | AS2CompressionAlgorithm
+| *dispositionNotificationTo* | An RFC2822 address to request a receipt or | String
+| *ediMessage* | EDI message to transport | String
+| *ediMessageContentType* | The content typw of EDI message | ContentType
+| *ediMessageTransferEncoding* | The transfer encoding used to transport EDI message | String
+| *encryptingAlgorithm* | The algorithm used to encrypt the message or | AS2EncryptionAlgorithm
+| *encryptingCertificateChain* | The chain of certificates used to encrypt the message or | Certificate[]
+| *from* | RFC2822 address of sender | String
+| *requestUri* | Resource location to deliver message | String
+| *signedReceiptMicAlgorithms* | The senders list of signing algorithms for signing receipt, in preferred order, or | String[]
+| *signingAlgorithm* | The algorithm used to sign the message or | AS2SignatureAlgorithm
+| *signingCertificateChain* | The chain of certificates used to sign the message or | Certificate[]
+| *signingPrivateKey* | The private key used to sign EDI message | PrivateKey
+| *subject* | Message subject | String
 |===
 
 
 ==== server
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *requestUriPattern* |  |  | String
+| Name | Description | Type
+| *requestUriPattern* |  | String
 |===
 // endpoint options: END
 

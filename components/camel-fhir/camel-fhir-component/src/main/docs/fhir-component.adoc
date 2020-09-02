@@ -184,181 +184,181 @@ The following lists each API method and its additional parameters.
 
 ==== capabilities
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* |  |  | Map
-| *type* |  |  | Class
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *type* |  | Class
 |===
 
 
 ==== create
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* | See |  | Map
-| *preferReturn* | Add a |  | PreferReturnEnum
-| *resource* | The resource to create |  | IBaseResource
-| *resourceAsString* | The resource to create |  | String
-| *url* | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *preferReturn* | Add a | PreferReturnEnum
+| *resource* | The resource to create | IBaseResource
+| *resourceAsString* | The resource to create | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
 
 ==== delete
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* | See |  | Map
-| *id* | The |  | IIdType
-| *resource* | The |  | IBaseResource
-| *stringId* | It's id |  | String
-| *type* | The resource type e.g Patient |  | String
-| *url* | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *id* | The | IIdType
+| *resource* | The | IBaseResource
+| *stringId* | It's id | String
+| *type* | The resource type e.g Patient | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
 
 ==== history
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *count* |  |  | Integer
-| *cutoff* |  |  | Date
-| *extraParameters* |  |  | Map
-| *iCutoff* |  |  | IPrimitiveType
-| *id* |  |  | IIdType
-| *resourceType* |  |  | Class
-| *returnType* |  |  | Class
+| Name | Description | Type
+| *count* |  | Integer
+| *cutoff* |  | Date
+| *extraParameters* |  | Map
+| *iCutoff* |  | IPrimitiveType
+| *id* |  | IIdType
+| *resourceType* |  | Class
+| *returnType* |  | Class
 |===
 
 
 ==== load-page
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *bundle* |  |  | IBaseBundle
-| *extraParameters* |  |  | Map
-| *returnType* |  |  | Class
-| *url* |  |  | String
+| Name | Description | Type
+| *bundle* |  | IBaseBundle
+| *extraParameters* |  | Map
+| *returnType* |  | Class
+| *url* |  | String
 |===
 
 
 ==== meta
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* |  |  | Map
-| *id* |  |  | IIdType
-| *meta* |  |  | IBaseMetaType
-| *metaType* |  |  | Class
-| *theResourceName* |  |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *meta* |  | IBaseMetaType
+| *metaType* |  | Class
+| *theResourceName* |  | String
 |===
 
 
 ==== operation
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *asynchronous* |  |  | Boolean
-| *extraParameters* |  |  | Map
-| *id* |  |  | IIdType
-| *msgBundle* |  |  | IBaseBundle
-| *name* |  |  | String
-| *outputParameterType* |  |  | Class
-| *parameters* |  |  | IBaseParameters
-| *resourceType* |  |  | Class
-| *respondToUri* |  |  | String
-| *responseClass* |  |  | Class
-| *returnType* |  |  | Class
-| *useHttpGet* |  |  | Boolean
+| Name | Description | Type
+| *asynchronous* |  | Boolean
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *msgBundle* |  | IBaseBundle
+| *name* |  | String
+| *outputParameterType* |  | Class
+| *parameters* |  | IBaseParameters
+| *resourceType* |  | Class
+| *respondToUri* |  | String
+| *responseClass* |  | Class
+| *returnType* |  | Class
+| *useHttpGet* |  | Boolean
 |===
 
 
 ==== patch
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* | See |  | Map
-| *id* | The resource ID to patch |  | IIdType
-| *patchBody* | The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 |  | String
-| *preferReturn* | Add a |  | PreferReturnEnum
-| *stringId* | The resource ID to patch |  | String
-| *url* | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *id* | The resource ID to patch | IIdType
+| *patchBody* | The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
+| *preferReturn* | Add a | PreferReturnEnum
+| *stringId* | The resource ID to patch | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
 
 ==== read
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* |  |  | Map
-| *iUrl* |  |  | IIdType
-| *id* |  |  | IIdType
-| *ifVersionMatches* |  |  | String
-| *longId* |  |  | Long
-| *resource* |  |  | Class
-| *resourceClass* |  |  | String
-| *returnNull* |  |  | Boolean
-| *returnResource* |  |  | IBaseResource
-| *stringId* |  |  | String
-| *throwError* |  |  | Boolean
-| *url* |  |  | String
-| *version* |  |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *iUrl* |  | IIdType
+| *id* |  | IIdType
+| *ifVersionMatches* |  | String
+| *longId* |  | Long
+| *resource* |  | Class
+| *resourceClass* |  | String
+| *returnNull* |  | Boolean
+| *returnResource* |  | IBaseResource
+| *stringId* |  | String
+| *throwError* |  | Boolean
+| *url* |  | String
+| *version* |  | String
 |===
 
 
 ==== search
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* | See |  | Map
-| *url* | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *url* | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
 |===
 
 
 ==== transaction
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *bundle* | Bundle to use in the transaction |  | IBaseBundle
-| *extraParameters* | See |  | Map
-| *resources* | Resources to use in the transaction |  | List
-| *stringBundle* | Bundle to use in the transaction |  | String
+| Name | Description | Type
+| *bundle* | Bundle to use in the transaction | IBaseBundle
+| *extraParameters* | See | Map
+| *resources* | Resources to use in the transaction | List
+| *stringBundle* | Bundle to use in the transaction | String
 |===
 
 
 ==== update
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* |  |  | Map
-| *id* |  |  | IIdType
-| *preferReturn* |  |  | PreferReturnEnum
-| *resource* |  |  | IBaseResource
-| *resourceAsString* |  |  | String
-| *stringId* |  |  | String
-| *url* |  |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *preferReturn* |  | PreferReturnEnum
+| *resource* |  | IBaseResource
+| *resourceAsString* |  | String
+| *stringId* |  | String
+| *url* |  | String
 |===
 
 
 ==== validate
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* |  |  | Map
-| *resource* |  |  | IBaseResource
-| *resourceAsString* |  |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *resource* |  | IBaseResource
+| *resourceAsString* |  | String
 |===
 // endpoint options: END
 
