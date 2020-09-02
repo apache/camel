@@ -24,7 +24,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.4.2</version>
+        <version>3.4.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-slack</artifactId>
@@ -50,6 +50,12 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>${json-simple-version}</version>
+            <exclusions>
+               <exclusion>
+                   <groupId>junit</groupId>
+                   <artifactId>junit</artifactId>
+               </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

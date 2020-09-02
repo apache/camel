@@ -25,6 +25,7 @@ import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -45,18 +46,26 @@ public class CronComponent extends DefaultComponent {
     public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
         CamelCronConfiguration configuration = new CamelCronConfiguration();
         configuration.setName(remaining);
-        setProperties(configuration, properties);
+
+        CronEndpoint answer = new CronEndpoint(uri, this, configuration);
+        setProperties(answer, properties);
+
+        // validate configuration
         validate(configuration);
 
+        // create delegate and set on endpoint
         Endpoint delegate = this.service.createEndpoint(configuration);
-        CronEndpoint cronEndpoint = new CronEndpoint(uri, this, delegate, configuration);
-
-        if (properties.size() > 0) {
-            // Additional endpoint properties present
-            setProperties(cronEndpoint, properties);
+        answer.setDelegate(delegate);
+        if (delegate instanceof DefaultEndpoint) {
+            DefaultEndpoint de = (DefaultEndpoint) delegate;
+            de.setBasicPropertyBinding(answer.isBasicPropertyBinding());
+            de.setBridgeErrorHandler(answer.isBridgeErrorHandler());
+            de.setExceptionHandler(answer.getExceptionHandler());
+            de.setExchangePattern(answer.getExchangePattern());
+            de.setSynchronous(answer.isSynchronous());
         }
 
-        return cronEndpoint;
+        return answer;
     }
 
     @Override

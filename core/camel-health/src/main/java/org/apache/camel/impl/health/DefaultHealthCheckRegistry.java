@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
  * Default {@link HealthCheckRegistry}.
  */
 @JdkService(HealthCheckRegistry.FACTORY)
+@DeferredContextBinding
 public class DefaultHealthCheckRegistry extends ServiceSupport implements HealthCheckRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHealthCheckRegistry.class);
 

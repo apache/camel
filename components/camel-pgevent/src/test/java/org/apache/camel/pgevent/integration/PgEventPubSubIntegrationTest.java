@@ -25,10 +25,10 @@ import org.junit.Test;
 
 public class PgEventPubSubIntegrationTest extends AbstractPgEventIntegrationTest {
 
-    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{userName}}&pass={{password}}")
+    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{databaseUser}}&pass={{password}}")
     private Endpoint subscribeEndpoint;
 
-    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{userName}}&pass={{password}}")
+    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{databaseUser}}&pass={{password}}")
     private Endpoint notifyEndpoint;
 
     @EndpointInject("timer://test?repeatCount=1&period=1")

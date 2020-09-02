@@ -18,7 +18,25 @@ package org.apache.camel.main;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Graceful shutdown when using Camel Main.
+ */
 public interface MainShutdownStrategy {
+
+    /**
+     * Event listener when shutting down.
+     */
+    interface ShutdownEventListener {
+
+        /**
+         * Callback on shutdown
+         */
+        void onShutdown();
+
+    }
+
+    void addShutdownListener(ShutdownEventListener listener);
+
     /**
      * @return true if the application is allowed to run.
      */

@@ -315,19 +315,19 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                 // only want to try AGAIN if the keepAlive is set.
                 do {
                     // a batch corresponds to a single session that will be committed or rolled back by a background thread
-                    final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
+                    Session session = null;
                     try {
+                        session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                         // only batch consumption from queues is supported - it makes no sense to transactionally consume
                         // from a topic as you don't car about message loss, users can just use a regular aggregator instead
                         Queue queue = session.createQueue(destinationName);
                         MessageConsumer consumer = session.createConsumer(queue);
-
                         try {
                             task.consumeBatchesOnLoop(session, consumer);
                         } finally {
                             closeJmsConsumer(consumer);
                         }
-                    } catch (javax.jms.IllegalStateException ex) {
+                    } catch (Exception ex) {
                         // from consumeBatchesOnLoop
                         // if keepAliveDelay was not specified (defaults to -1) just rethrow to break the loop. This preserves original default behavior
                         if (keepAliveDelay < 0) {
@@ -346,7 +346,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             } catch (Throwable ex) {
                 // from consumeBatchesOnLoop
                 // catch anything besides the IllegalStateException and exit the application
-                getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
+                getExceptionHandler().handleException("Exiting consumption loop due to exception caught consuming from " + destinationName, ex);
             } finally {
                 // indicate that we have shut down
                 CountDownLatch consumersShutdownLatch = consumersShutdownLatchRef.get();
@@ -368,7 +368,9 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private void closeJmsSession(Session session) {
             try {
-                session.close();
+                if (session != null) {
+                    session.close();
+                }
             } catch (JMSException ex2) {
                 // only include stacktrace in debug logging
                 if (LOG.isDebugEnabled()) {

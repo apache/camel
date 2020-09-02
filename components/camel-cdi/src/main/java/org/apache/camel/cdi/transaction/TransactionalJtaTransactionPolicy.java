@@ -16,7 +16,8 @@
  */
 package org.apache.camel.cdi.transaction;
 
-import javax.annotation.Resource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
@@ -39,9 +40,17 @@ import org.slf4j.LoggerFactory;
 public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionalJtaTransactionPolicy.class);
+    private static final String TRANSACTION_MANAGER_JNDI_NAME = "java:/TransactionManager";
 
-    @Resource(lookup = "java:/TransactionManager")
     protected TransactionManager transactionManager;
+
+    public TransactionalJtaTransactionPolicy() {
+        try {
+            transactionManager = InitialContext.doLookup(TRANSACTION_MANAGER_JNDI_NAME);
+        } catch (NamingException e) {
+            LOG.warn("Could not find the transaction manager through " + TRANSACTION_MANAGER_JNDI_NAME);
+        }
+    }
 
     protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Throwable {
         if (isNew) {

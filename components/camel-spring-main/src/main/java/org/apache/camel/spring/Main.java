@@ -192,14 +192,19 @@ public class Main extends MainCommandLineSupport {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-        if (additionalApplicationContext != null) {
-            LOG.debug("Stopping Additional ApplicationContext: {}", additionalApplicationContext.getId());
+        try {
+            if (additionalApplicationContext != null) {
+                LOG.debug("Stopping Additional ApplicationContext: {}", additionalApplicationContext.getId());
+                additionalApplicationContext.stop();
+            }
+            if (applicationContext != null) {
+                LOG.debug("Stopping Spring ApplicationContext: {}", applicationContext.getId());
+                applicationContext.stop();
+            }
             IOHelper.close(additionalApplicationContext);
-        }
-        if (applicationContext != null) {
-            LOG.debug("Stopping Spring ApplicationContext: {}", applicationContext.getId());
             IOHelper.close(applicationContext);
+        } finally {
+            super.doStop();
         }
     }
 

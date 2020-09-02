@@ -113,6 +113,15 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertExchange(exchange);
     }
 
+    @Test
+    public void httpGetWithProxyAndWithoutUserTwo() throws Exception {
+
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost() + "&proxyPort=" + getProxyPort(), exchange1 -> {
+        });
+
+        assertExchange(exchange);
+    }
+
     private String getProxyHost() {
         return proxy.getInetAddress().getHostName();
     }

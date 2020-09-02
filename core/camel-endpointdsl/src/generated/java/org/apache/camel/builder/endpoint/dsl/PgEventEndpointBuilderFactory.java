@@ -569,7 +569,9 @@ public interface PgEventEndpointBuilderFactory {
          * Default value: 5432
          * 
          * Path parameter: database (required)
-         * The database name
+         * The database name. The database name can take any characters because
+         * it is sent as a quoted identifier. It is part of the endpoint URI, so
+         * diacritical marks and non-Latin letters have to be URL encoded.
          * 
          * Path parameter: channel (required)
          * The channel name
@@ -598,7 +600,9 @@ public interface PgEventEndpointBuilderFactory {
          * Default value: 5432
          * 
          * Path parameter: database (required)
-         * The database name
+         * The database name. The database name can take any characters because
+         * it is sent as a quoted identifier. It is part of the endpoint URI, so
+         * diacritical marks and non-Latin letters have to be URL encoded.
          * 
          * Path parameter: channel (required)
          * The channel name

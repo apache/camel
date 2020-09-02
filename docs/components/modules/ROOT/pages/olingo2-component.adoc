@@ -54,7 +54,7 @@ for this component:
 
 
 // component options: START
-The Olingo2 component supports 16 options, which are listed below.
+The Olingo2 component supports 18 options, which are listed below.
 
 
 
@@ -64,6 +64,8 @@ The Olingo2 component supports 16 options, which are listed below.
 | *configuration* (common) | To use the shared configuration |  | Olingo2Configuration
 | *connectTimeout* (common) | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | int
 | *contentType* (common) | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *entityProviderReadProperties* (common) | Custom entity provider read properties applied to all read operations. |  | EntityProviderReadProperties
+| *entityProviderWriteProperties* (common) | Custom entity provider write properties applied to create, update, patch, batch and merge operations. For instance users can skip the Json object wrapper or enable content only mode when sending request data. A service URI set in the properties will always be overwritten by the serviceUri configuration parameter. Please consider to using the serviceUri configuration parameter instead of setting the respective write property here. |  | EntityProviderWriteProperties
 | *filterAlreadySeen* (common) | Set this to true to filter out results that have already been communicated by this component. | false | boolean
 | *httpHeaders* (common) | Custom HTTP headers to inject into every request, this could include OAuth tokens, etc. |  | Map
 | *proxy* (common) | HTTP proxy server configuration |  | HttpHost
@@ -105,7 +107,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (34 parameters):
+=== Query Parameters (36 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,6 +115,8 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *connectTimeout* (common) | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | int
 | *contentType* (common) | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *entityProviderReadProperties* (common) | Custom entity provider read properties applied to all read operations. |  | EntityProviderReadProperties
+| *entityProviderWriteProperties* (common) | Custom entity provider write properties applied to create, update, patch, batch and merge operations. For instance users can skip the Json object wrapper or enable content only mode when sending request data. A service URI set in the properties will always be overwritten by the serviceUri configuration parameter. Please consider to using the serviceUri configuration parameter instead of setting the respective write property here. |  | EntityProviderWriteProperties
 | *filterAlreadySeen* (common) | Set this to true to filter out results that have already been communicated by this component. | false | boolean
 | *httpHeaders* (common) | Custom HTTP headers to inject into every request, this could include OAuth tokens, etc. |  | Map
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String

@@ -1500,4 +1500,13 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
     }
 
+    @Test
+    public void validateEnvVariableInSyntax() throws Exception {
+        EndpointValidationResult result = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
+        assertTrue(result.isSuccess());
+
+        result = catalog.validateEndpointProperties("netty-http:http://foo-bar/?requestTimeout={{env:TIMEOUT}}");
+        assertTrue(result.isSuccess());
+    }
+
 }

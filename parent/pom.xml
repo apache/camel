@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.4.2</version>
+        <version>3.4.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -313,7 +313,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.1.0</jedis-client-version>
         <jersey-version>2.28</jersey-version>
-        <jetty9-version>9.4.29.v20200521</jetty9-version>
+        <jetty9-version>9.4.31.v20200723</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -402,8 +402,8 @@
         <maven-shade-plugin-version>3.2.1</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.2.3</maven-war-plugin-version>
-        <metrics-version>4.1.5</metrics-version>
-        <micrometer-version>1.5.1</micrometer-version>
+        <metrics-version>4.1.11</metrics-version>
+        <micrometer-version>1.5.4</micrometer-version>
         <microprofile-config-version>1.4</microprofile-config-version>
         <microprofile-metrics-version>2.3</microprofile-metrics-version>
         <microprofile-health-version>2.2</microprofile-health-version>
@@ -452,7 +452,7 @@
         <paho-version>1.2.4</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
         <pdfbox-version>2.0.20</pdfbox-version>
-        <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.2.14</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.4</pgjdbc-ng-driver-version>
         <powermock-version>2.0.7</powermock-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
@@ -510,14 +510,14 @@
         <solr-version-range>[8,9)</solr-version-range>
         <spark-version>2.4.6</spark-version>
         <splunk-version>1.6.5.0_1</splunk-version>
-        <spring-batch-version>4.2.2.RELEASE</spring-batch-version>
+        <spring-batch-version>4.2.4.RELEASE</spring-batch-version>
         <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
         <spring-integration-version>5.3.0.RELEASE</spring-integration-version>
         <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.2.7.RELEASE</spring5-version>
-        <spring-security-version>5.3.2.RELEASE</spring-security-version>
+        <spring5-version>5.2.8.RELEASE</spring5-version>
+        <spring-security-version>5.3.4.RELEASE</spring-security-version>
         <spring-ws-version>3.0.9.RELEASE</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.7</squareup-okhttp-version>

@@ -87,6 +87,72 @@ public interface Olingo2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointConsumerBuilder entityProviderReadProperties(
+                Object entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointConsumerBuilder entityProviderReadProperties(
+                String entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointConsumerBuilder entityProviderWriteProperties(
+                Object entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointConsumerBuilder entityProviderWriteProperties(
+                String entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
@@ -982,6 +1048,72 @@ public interface Olingo2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointProducerBuilder entityProviderReadProperties(
+                Object entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointProducerBuilder entityProviderReadProperties(
+                String entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointProducerBuilder entityProviderWriteProperties(
+                Object entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointProducerBuilder entityProviderWriteProperties(
+                String entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
@@ -1360,6 +1492,72 @@ public interface Olingo2EndpointBuilderFactory {
          */
         default Olingo2EndpointBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
+            return this;
+        }
+        /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointBuilder entityProviderReadProperties(
+                Object entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider read properties applied to all read
+         * operations.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointBuilder entityProviderReadProperties(
+                String entityProviderReadProperties) {
+            doSetProperty("entityProviderReadProperties", entityProviderReadProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option is a:
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointBuilder entityProviderWriteProperties(
+                Object entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
+            return this;
+        }
+        /**
+         * Custom entity provider write properties applied to create, update,
+         * patch, batch and merge operations. For instance users can skip the
+         * Json object wrapper or enable content only mode when sending request
+         * data. A service URI set in the properties will always be overwritten
+         * by the serviceUri configuration parameter. Please consider to using
+         * the serviceUri configuration parameter instead of setting the
+         * respective write property here.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * 
+         * Group: common
+         */
+        default Olingo2EndpointBuilder entityProviderWriteProperties(
+                String entityProviderWriteProperties) {
+            doSetProperty("entityProviderWriteProperties", entityProviderWriteProperties);
             return this;
         }
         /**

@@ -26,6 +26,7 @@ import java.util.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -74,6 +75,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         String jsonString = readResponse(response);
 
         JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
+
+        checkSlackReply(c);
+
         JsonArray list = c.getCollection("messages");
         exchanges = createExchanges(list);
         return processBatch(CastUtils.cast(exchanges));
@@ -133,7 +137,14 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
         String jsonString = readResponse(response);
         JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
+
+        checkSlackReply(c);
+
         Collection<JsonObject> channels = c.getCollection("channels");
+        if (channels == null) {
+            throw new RuntimeCamelException("The response was successful but no channel list was provided");
+        }
+
         for (JsonObject singleChannel : channels) {
             if (singleChannel.get("name") != null) {
                 if (singleChannel.get("name").equals(channel)) {
@@ -145,6 +156,20 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return jsonString;
+    }
+
+    private void checkSlackReply(JsonObject c) {
+        boolean okStatus = c.getBoolean("ok");
+
+        if (!okStatus) {
+            String errorMessage = c.getString("error");
+
+            if (errorMessage == null || errorMessage.isEmpty()) {
+                errorMessage = "the slack server did not provide error details";
+            }
+
+            throw new RuntimeCamelException(String.format("API request to Slack failed: %s", errorMessage));
+        }
     }
 
 }

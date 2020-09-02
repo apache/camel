@@ -328,7 +328,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         }
         final CoderResult result = this.decoder.flush(this.cbuf);
         len += handleDecodingResult(result, charbuffer, bbuf);
-        this.cbuf.clear();
+        cast(this.cbuf).clear();
         return len;
     }
 

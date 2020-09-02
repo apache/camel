@@ -316,6 +316,7 @@ public interface SjmsEndpointBuilderFactory {
          * Default: -1
          * Group: transaction
          */
+        @Deprecated
         default SjmsEndpointConsumerBuilder transactionBatchCount(
                 int transactionBatchCount) {
             doSetProperty("transactionBatchCount", transactionBatchCount);
@@ -330,6 +331,7 @@ public interface SjmsEndpointBuilderFactory {
          * Default: -1
          * Group: transaction
          */
+        @Deprecated
         default SjmsEndpointConsumerBuilder transactionBatchCount(
                 String transactionBatchCount) {
             doSetProperty("transactionBatchCount", transactionBatchCount);
@@ -344,6 +346,7 @@ public interface SjmsEndpointBuilderFactory {
          * Default: 5s
          * Group: transaction
          */
+        @Deprecated
         default SjmsEndpointConsumerBuilder transactionBatchTimeout(
                 long transactionBatchTimeout) {
             doSetProperty("transactionBatchTimeout", transactionBatchTimeout);
@@ -358,6 +361,7 @@ public interface SjmsEndpointBuilderFactory {
          * Default: 5s
          * Group: transaction
          */
+        @Deprecated
         default SjmsEndpointConsumerBuilder transactionBatchTimeout(
                 String transactionBatchTimeout) {
             doSetProperty("transactionBatchTimeout", transactionBatchTimeout);

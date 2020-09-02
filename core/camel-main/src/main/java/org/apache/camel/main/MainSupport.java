@@ -45,7 +45,7 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     protected MainSupport() {
-        this.shutdownStrategy = new DefaultMainShutdownStrategy();
+        this.shutdownStrategy = new DefaultMainShutdownStrategy(this);
     }
 
     /**

@@ -16,15 +16,7 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-
 public class RabbitmqSpanDecorator extends AbstractMessagingSpanDecorator {
-
-    /**
-     * Constants copied from {@link org.apache.camel.component.rabbitmq.RabbitMQConstants}
-     */
-    protected static final String EXCHANGE_NAME = "rabbitmq.EXCHANGE_NAME";
 
     @Override
     public String getComponent() {
@@ -34,11 +26,6 @@ public class RabbitmqSpanDecorator extends AbstractMessagingSpanDecorator {
     @Override
     public String getComponentClassName() {
         return "org.apache.camel.component.rabbitmq.RabbitMQComponent";
-    }
-
-    @Override
-    public String getDestination(Exchange exchange, Endpoint endpoint) {
-        return (String)exchange.getIn().getHeader(EXCHANGE_NAME);
     }
 
 }

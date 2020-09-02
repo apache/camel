@@ -14,28 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentracing.decorators;
+package org.apache.camel.zipkin;
 
-import org.apache.camel.Exchange;
+import brave.Span;
 import org.apache.camel.Message;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class RabbitmqSpanDecoratorTest {
+public class CamelRequestTest {
 
     @Test
-    public void testGetDestinationHeaderTopic() {
-        Exchange exchange = Mockito.mock(Exchange.class);
-        Message message = Mockito.mock(Message.class);
-
-        Mockito.when(exchange.getIn()).thenReturn(message);
-        Mockito.when(message.getHeader(RabbitmqSpanDecorator.EXCHANGE_NAME)).thenReturn("test");
-
-        RabbitmqSpanDecorator decorator = new RabbitmqSpanDecorator();
-
-        assertEquals("test", decorator.getDestination(exchange, null));
+    public void testCamelRequest() {
+        Message message = mock(Message.class);
+        when(message.getHeader("X-B3-TraceId", String.class)).thenReturn("924c5b125daaaec8");
+        CamelRequest request = new CamelRequest(message, Span.Kind.PRODUCER);
+        request.setHeader("X-B3-SpanId", "db1ccb94946711b0");
+        assertThat(request.spanKind()).isEqualTo(Span.Kind.PRODUCER);
+        assertThat(request.unwrap()).isEqualTo(message);
+        verify(message).setHeader("X-B3-SpanId", "db1ccb94946711b0");
+        assertThat(request.getHeader("X-B3-TraceId")).isEqualTo("924c5b125daaaec8");
     }
 
 }

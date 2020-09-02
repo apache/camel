@@ -319,7 +319,8 @@ public class BlobOperations {
         final BlobCommonRequestOptions commonRequestOptions = BlobUtils.getCommonRequestOptions(exchange);
         final boolean createAppendBlob = BlobExchangeHeaders.getCreateAppendBlobFlagFromHeaders(exchange);
 
-        if (createAppendBlob) {
+        // only if header is true and we don't have one exists
+        if (createAppendBlob && !client.appendBlobExists()) {
             createAppendBlob(exchange);
         }
 
@@ -358,7 +359,8 @@ public class BlobOperations {
 
         final boolean createPageBlob = BlobExchangeHeaders.getCreatePageBlobFlagFromHeaders(exchange);
 
-        if (createPageBlob) {
+        // only if header is true and we don't have one exists
+        if (createPageBlob && !client.pageBlobExists()) {
             createPageBlob(exchange);
         }
 

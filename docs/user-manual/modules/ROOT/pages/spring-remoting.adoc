@@ -112,7 +112,7 @@ serviceInterface.
 == Working with InOnly method calls
 
 As of 1.5 Camel supports the @InOnly and @Pattern annotations to let you
-specify which methods are not InOut (xref:{eip-vc}:eips:request-reply.adoc[Request
+specify which methods are not InOut (xref:{eip-vc}:eips:requestReply-eip.adoc[Request
 Reply]) but are InOnly (oneway or fire and forget
 xref:{eip-vc}:eips:event-message.adoc[Event Message]).
 

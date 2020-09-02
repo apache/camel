@@ -538,11 +538,6 @@ public class SubscriptionHelper extends ServiceSupport {
             channelName.append(topicName);
         }
 
-        final int typeIdx = channelName.indexOf("/", 1);
-        if ("event".equals(channelName.substring(1, typeIdx)) && !topicName.endsWith("__e")) {
-            channelName.append("__e");
-        }
-
         return channelName.toString();
     }
 

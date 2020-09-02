@@ -399,13 +399,15 @@ public interface SalesforceComponentBuilderFactory {
          * In what packages are the generated DTO classes. Typically the classes
          * would be generated using camel-salesforce-maven-plugin. Set it if
          * using the generated DTOs to gain the benefit of using short SObject
-         * names in parameters/header values.
+         * names in parameters/header values. Multiple packages can be separated
+         * by comma.
          * 
-         * The option is a: <code>java.lang.String[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default SalesforceComponentBuilder packages(java.lang.String[] packages) {
+        @Deprecated
+        default SalesforceComponentBuilder packages(java.lang.String packages) {
             doSetProperty("packages", packages);
             return this;
         }
@@ -1056,7 +1058,7 @@ public interface SalesforceComponentBuilderFactory {
             case "notifyForOperationUndelete": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUndelete((java.lang.Boolean) value); return true;
             case "notifyForOperationUpdate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUpdate((java.lang.Boolean) value); return true;
             case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
-            case "packages": ((SalesforceComponent) component).setPackages((java.lang.String[]) value); return true;
+            case "packages": ((SalesforceComponent) component).setPackages((java.lang.String) value); return true;
             case "rawPayload": getOrCreateConfiguration((SalesforceComponent) component).setRawPayload((boolean) value); return true;
             case "reportId": getOrCreateConfiguration((SalesforceComponent) component).setReportId((java.lang.String) value); return true;
             case "reportMetadata": getOrCreateConfiguration((SalesforceComponent) component).setReportMetadata((org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata) value); return true;

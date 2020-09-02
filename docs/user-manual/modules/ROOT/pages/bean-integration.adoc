@@ -32,7 +32,7 @@ See more details at:
 
 * xref:pojo-consuming.adoc[POJO Consuming] to consume and possibly route messages from Camel
 * xref:pojo-producing.adoc[POJO Producing] to make it easy to produce camel messages from your POJOs
-* `@DynamicRouter` Annotation for creating a xref:{eip-vc}:eips:dynamic-router.adoc[Dynamic Router] from a POJO method
+* `@DynamicRouter` Annotation for creating a xref:{eip-vc}:eips:dynamicRouter-eip.adoc[Dynamic Router] from a POJO method
 * `@RecipientList` Annotation for creating a xref:{eip-vc}:eips:recipientList-eip.adoc[Recipient List] from a POJO method
 * `@RoutingSlip` Annotation for creating a xref:{eip-vc}:eips:routingSlip-eip.adoc[Routing Slip] for a POJO method
 * xref:bean-injection.adoc[Bean Injection] to inject Camel related resources into your POJOs

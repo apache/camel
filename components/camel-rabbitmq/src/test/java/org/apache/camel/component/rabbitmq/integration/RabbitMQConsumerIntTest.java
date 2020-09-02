@@ -43,7 +43,7 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     private static final String QUEUE = "q1";
     private static final String MSG = "hello world";
 
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest")
+    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest&arg.queue.x-single-active-consumer=true")
     private Endpoint from;
 
     @EndpointInject("mock:result")

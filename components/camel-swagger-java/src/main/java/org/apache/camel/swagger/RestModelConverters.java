@@ -23,14 +23,13 @@ import io.swagger.models.Model;
 import io.swagger.models.properties.StringProperty;
 
 /**
- * A Camel extended {@link ModelConverters} where we appending vendor extensions
- * to include the java class name of the model classes.
+ * A ModelConverter appends vendor extensions to include the java class name of the model classes.
  */
-public class RestModelConverters extends ModelConverters {
+public class RestModelConverters {
 
     public Map<String, Model> readClass(Class clazz) {
         String name = clazz.getName();
-        Map<String, Model> resolved = super.read(clazz);
+        Map<String, Model> resolved = ModelConverters.getInstance().read(clazz);
         if (resolved != null) {
             for (Model model : resolved.values()) {
                 // enrich with the class name of the model
@@ -38,7 +37,7 @@ public class RestModelConverters extends ModelConverters {
             }
 
             // read any extra using read-all
-            Map<String, Model> extra = super.readAll(clazz);
+            Map<String, Model> extra = ModelConverters.getInstance().readAll(clazz);
             if (extra != null) {
                 for (Map.Entry<String, Model> entry : extra.entrySet()) {
                     if (!resolved.containsKey(entry.getKey())) {

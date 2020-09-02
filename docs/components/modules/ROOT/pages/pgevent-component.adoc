@@ -80,7 +80,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *host* | To connect using hostname and port to the database. | localhost | String
 | *port* | To connect using hostname and port to the database. | 5432 | Integer
-| *database* | *Required* The database name |  | String
+| *database* | *Required* The database name. The database name can take any characters because it is sent as a quoted identifier. It is part of the endpoint URI, so diacritical marks and non-Latin letters have to be URL encoded. |  | String
 | *channel* | *Required* The channel name |  | String
 |===
 

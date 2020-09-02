@@ -47,21 +47,10 @@ pipeline {
 
         stage('Build & Deploy') {
             when {
-                branch 'master'
+                branch 'camel-3.4.x'
             }
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
-            }
-        }
-
-        stage('Website update') {
-            when {
-                branch 'master'
-                changeset 'docs/**/*'
-            }
-
-            steps {
-                build job: 'Camel.website/master', wait: false
             }
         }
 
@@ -69,11 +58,6 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
-            }
-            post {
-                always {
-                    checkstyle pattern: '**/checkstyle-result.xml', canRunOnFailed: true
-                }
             }
         }
 

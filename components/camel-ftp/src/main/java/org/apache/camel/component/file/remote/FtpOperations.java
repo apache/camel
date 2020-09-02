@@ -990,16 +990,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
     
     private void reconnectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
-        if (isConnected()) {
-            log.trace("sendNoOp to check if connection should be reconnected");
-            try {
-                client.sendNoOp();
-            } catch (IOException e) {
-                log.trace("NoOp to server failed, try to reconnect");
-                connect(endpoint.getConfiguration(), exchange);
+        boolean reconnectRequired;
+        try {
+            boolean connected = isConnected();
+            if (connected && !sendNoop()) {
+                reconnectRequired = true;
+            } else {
+                reconnectRequired = !connected;
             }
-        } else {
-            log.trace("Client is not connected, try to reconnect");
+        } catch (GenericFileOperationFailedException e) {
+            // Ignore Exception and reconnect the client
+            reconnectRequired = true;
+        }
+        if (reconnectRequired) {
+            log.trace("Client is not connected anymore, try to reconnect");
             connect(endpoint.getConfiguration(), exchange);
         }
     }

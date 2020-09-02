@@ -48,7 +48,8 @@ public enum RabbitMQConstants {
     RABBITMQ_QUEUE_LENGTH_LIMIT_KEY("x-max-length", "Maximum number of messages can be set by supplying this property for the queue declaration argument with a non-negative integer value."),
     RABBITMQ_QUEUE_MAX_PRIORITY_KEY("x-max-priority", ""),
     RABBITMQ_QUEUE_MESSAGE_TTL_KEY("x-message-ttl", "Message TTL(time to live) that can be set for a given queue in milliseconds."),
-    RABBITMQ_QUEUE_TTL_KEY("x-expires", "Expiry time for a given queue. Queues will expire after a period of time only when they are not used (e.g. do not have consumers). This feature can be used together with the auto-delete queue property.");
+    RABBITMQ_QUEUE_TTL_KEY("x-expires", "Expiry time for a given queue. Queues will expire after a period of time only when they are not used (e.g. do not have consumers). This feature can be used together with the auto-delete queue property."),
+    RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY("x-single-active-consumer", "Single active consumer allows to have only one consumer at a time consuming from a queue and to fail over to another registered consumer in case the active one is cancelled or dies. ");
 
     private final String key;
     private final String description;

@@ -932,7 +932,7 @@ public interface JpaEndpointBuilderFactory {
         default AdvancedJpaEndpointConsumerBuilder parameters(
                 String key,
                 Object value) {
-            doSetMultiValueProperty("parameters", "null" + key, value);
+            doSetMultiValueProperty("parameters", "parameters." + key, value);
             return this;
         }
         /**
@@ -953,7 +953,7 @@ public interface JpaEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder parameters(Map values) {
-            doSetMultiValueProperties("parameters", "null", values);
+            doSetMultiValueProperties("parameters", "parameters.", values);
             return this;
         }
         /**

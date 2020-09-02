@@ -617,7 +617,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                 objectMapper.setTimeZone(timezone);
             }
         } else {
-            LOG.warn("The objectMapper was already found in the registry, no customizations will be applied");
+            LOG.info("The objectMapper was already found in the registry, no customizations will be applied");
         }
     }
 
