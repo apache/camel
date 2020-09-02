@@ -44,6 +44,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("prefetchSize", int.class);
         map.put("threadPoolSize", int.class);
         map.put("allowNullHeaders", boolean.class);
+        map.put("additionalHeaders", java.util.Map.class);
+        map.put("additionalProperties", java.util.Map.class);
         map.put("channelPoolMaxSize", int.class);
         map.put("channelPoolMaxWait", long.class);
         map.put("guaranteedDeliveries", boolean.class);
@@ -78,6 +80,10 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": target.setAdditionalHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": target.setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "allownullheaders":
         case "allowNullHeaders": target.setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
@@ -185,6 +191,10 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return target.getAdditionalHeaders();
+        case "additionalproperties":
+        case "additionalProperties": return target.getAdditionalProperties();
         case "addresses": return target.getAddresses();
         case "allownullheaders":
         case "allowNullHeaders": return target.isAllowNullHeaders();

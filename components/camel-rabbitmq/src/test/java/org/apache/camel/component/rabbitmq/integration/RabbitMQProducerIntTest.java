@@ -135,7 +135,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
-        template.sendBodyAndHeader("new message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+        template.sendBodyAndHeader("new message", RabbitMQConstants.EXCHANGE_NAME.key(), "ex1");
 
         assertThatBodiesReceivedIn(received, "new message");
     }
@@ -146,7 +146,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
 
-        headers.put(RabbitMQConstants.EXCHANGE_NAME, EXCHANGE);
+        headers.put(RabbitMQConstants.EXCHANGE_NAME.key(), EXCHANGE);
         headers.put(CUSTOM_HEADER, CUSTOM_HEADER.toLowerCase());
 
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
@@ -162,7 +162,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
 
-        headers.put(RabbitMQConstants.EXCHANGE_NAME, null);
+        headers.put(RabbitMQConstants.EXCHANGE_NAME.key(), null);
         headers.put(CUSTOM_HEADER, null);
 
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
@@ -178,7 +178,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
 
-        headers.put(RabbitMQConstants.EXCHANGE_NAME, "testa");
+        headers.put(RabbitMQConstants.EXCHANGE_NAME.key(), "testa");
         headers.put(CUSTOM_HEADER, "exchange");
 
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
@@ -187,7 +187,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
         Thread.sleep(500);
         assertEquals(received.get(0), "new message");
-        assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
+        assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME.key()));
         assertFalse(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
 
@@ -197,7 +197,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final Map<String, Object> receivedHeaders = new HashMap<>();
         Map<String, Object> headers = new HashMap<>();
 
-        headers.put(RabbitMQConstants.EXCHANGE_NAME, "testa");
+        headers.put(RabbitMQConstants.EXCHANGE_NAME.key(), "testa");
         headers.put(CUSTOM_HEADER, "exchange");
 
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received, receivedHeaders));
@@ -206,7 +206,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
 
         Thread.sleep(500);
         assertEquals(received.get(0), "new message");
-        assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME));
+        assertTrue(receivedHeaders.containsKey(RabbitMQConstants.EXCHANGE_NAME.key()));
         assertTrue(receivedHeaders.containsKey(CUSTOM_HEADER));
     }
 
@@ -246,7 +246,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
-        templateWithConfirms.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+        templateWithConfirms.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME.key(), "ex1");
 
         assertThatBodiesReceivedIn(received, "publisher ack message");
     }
@@ -268,7 +268,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         final List<String> received = new ArrayList<>();
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
-        templateWithGuranteedDelivery.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
+        templateWithGuranteedDelivery.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME.key(), "ex1");
 
         assertThatBodiesReceivedIn(received, "publisher ack message");
     }
@@ -286,7 +286,7 @@ public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
         channel.basicConsume("sammyq", true, new ArrayPopulatingConsumer(received));
 
         templateWithGuranteedDeliveryBadRouteButNotMandatory.sendBodyAndHeader("publisher ack message",
-                RabbitMQConstants.EXCHANGE_NAME, "ex1");
+                RabbitMQConstants.EXCHANGE_NAME.key(), "ex1");
 
         assertThatBodiesReceivedIn(received);
     }

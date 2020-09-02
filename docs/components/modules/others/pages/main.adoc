@@ -362,13 +362,12 @@ Maps have a special syntax with brackets as shown below:
 
 [source,properties]
 ----
-camel.beans.mymap[table] = 12
-camel.beans.mymap[food] = Big Burger
-camel.beans.mymap[cheese] = yes
-camel.beans.mymap[quantity] = 1
+camel.beans.company[name] = Acme
+camel.beans.company[country] = USA
+camel.beans.company[zip] = 92010
 ----
 
-The Map is registered in the Camel Registry with the name `mymap`.
+The Map is registered in the Camel Registry with the name `company`.
 
 == Defining a List bean
 
@@ -376,12 +375,10 @@ This is similar to Map bean where the key is the index, eg 0, 1, 2, etc:
 
 [source,properties]
 ----
-camel.beans.myprojects[0] = Camel
-camel.beans.myprojects[1] = Kafka
-camel.beans.myprojects[2] = Quarkus
+camel.beans.projects[0] = Camel
+camel.beans.projects[1] = Kafka
+camel.beans.projects[2] = Quarkus
 ----
-
-The List is registered in the Camel Registry with the name `myprojects`.
 
 == Examples
 

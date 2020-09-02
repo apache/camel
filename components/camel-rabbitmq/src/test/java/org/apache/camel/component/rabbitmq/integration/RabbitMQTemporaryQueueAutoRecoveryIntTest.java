@@ -157,11 +157,13 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
 
         directRabbitMQProducer.requestBody(REQUEST);
         String replyToOriginal
-                = consumingMockEndpoint.getExchanges().get(0).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+                = consumingMockEndpoint.getExchanges().get(0).getMessage().getHeader(RabbitMQConstants.REPLY_TO.key(),
+                        String.class);
 
         directRabbitMQProducer.requestBody(REQUEST);
         String replyToVerify
-                = consumingMockEndpoint.getExchanges().get(1).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+                = consumingMockEndpoint.getExchanges().get(1).getMessage().getHeader(RabbitMQConstants.REPLY_TO.key(),
+                        String.class);
 
         Thread.sleep(7000);
 
@@ -170,7 +172,8 @@ public class RabbitMQTemporaryQueueAutoRecoveryIntTest extends AbstractRabbitMQI
 
         directRabbitMQProducer.requestBody(REQUEST);
         String replyToRecovered
-                = consumingMockEndpoint.getExchanges().get(2).getMessage().getHeader(RabbitMQConstants.REPLY_TO, String.class);
+                = consumingMockEndpoint.getExchanges().get(2).getMessage().getHeader(RabbitMQConstants.REPLY_TO.key(),
+                        String.class);
 
         String tempQueueRoutingKey
                 = (String) getExchangeBindingsProducer.requestBodyAndHeader(null, TEMP_QUEUE_NAME, replyToRecovered);

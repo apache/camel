@@ -14,37 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main;
+package org.apache.camel.support.beans;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyFoo {
+public class SimpleDataHolderBean {
+    private Map<String, Object> mapData;
 
-    private String name;
-    private Map<String, Object> map;
-
-    public MyFoo() {
+    public SimpleDataHolderBean() {
+        this.mapData = new HashMap<>();
     }
 
-    public MyFoo(String name) {
-        this.name = name;
-        this.map = new HashMap<>();
+    public Map<String, Object> getMapData() {
+        return mapData;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Map<String, Object> getMap() {
-        return map;
-    }
-
-    public void setMap(Map<String, Object> map) {
-        this.map = map;
+    public void setMapData(Map<String, Object> mapData) {
+        this.mapData = mapData;
     }
 }

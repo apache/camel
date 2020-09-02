@@ -173,6 +173,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
     @UriParam(label = "producer")
+    private Map<String, Object> additionalHeaders;
+    @UriParam(label = "producer")
+    private Map<String, Object> additionalProperties;
+    @UriParam(label = "producer")
     private boolean allowCustomHeaders = true;
     @UriParam(label = "consumer")
     private String consumerTag = "";
@@ -998,6 +1002,30 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setAllowCustomHeaders(boolean allowCustomHeaders) {
         this.allowCustomHeaders = allowCustomHeaders;
+    }
+
+    /**
+     * Map of additional headers. These headers will be set only when the 'allowCustomHeaders' is set to true
+     */
+    public void setAdditionalHeaders(Map<String, Object> additionalHeaders) {
+        this.additionalHeaders = additionalHeaders;
+    }
+
+    public Map<String, Object> getAdditionalHeaders() {
+        return additionalHeaders;
+    }
+
+    /**
+     * Map of additional properties. These are standard RabbitMQ properties as defined in
+     * {@link com.rabbitmq.client.AMQP.BasicProperties}. The map keys should be from
+     * {@link org.apache.camel.component.rabbitmq.RabbitMQConstants}. Any other keys will be ignored.
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
     }
 
     public ExceptionHandler getConnectionFactoryExceptionHandler() {

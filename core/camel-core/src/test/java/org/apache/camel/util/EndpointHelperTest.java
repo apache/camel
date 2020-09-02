@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.beans.SimpleDataHolderBean;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
@@ -77,12 +78,28 @@ public class EndpointHelperTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
         foo = context.getEndpoint("mock:foo");
         bar = context.getEndpoint("mock:bar");
+        org.apache.camel.MyFoo myFoo = new org.apache.camel.MyFoo("fooName");
 
+        SimpleDataHolderBean simpleDataHolderBean = new SimpleDataHolderBean();
+        simpleDataHolderBean.setMapData(
+                com.google.common.collect.ImmutableMap.of("key1", "value1", "key2", 2, "key3", java.time.Instant.now()));
         context.getRegistry().bind("foo", foo);
+
+        context.getRegistry().bind("myFoo", myFoo);
+        context.getRegistry().bind("dataHolderBean", simpleDataHolderBean);
         context.getRegistry().bind("coolbar", bar);
         context.getRegistry().bind("numbar", "12345");
 
         return context;
+    }
+
+    @Test
+    public void testResolveReferenceParameterWithBean() {
+        SimpleDataHolderBean obj = EndpointHelper
+                .resolveReferenceParameter(context, "#bean:dataHolderBean", SimpleDataHolderBean.class);
+        assertNotNull(obj);
+        assertNotNull(obj.getMapData());
+        assertEquals(3, obj.getMapData().size());
     }
 
     @Test

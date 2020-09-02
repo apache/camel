@@ -74,19 +74,12 @@ public class RabbitMQMessagePublisher {
             LOG.trace("Removing header: {}", RabbitMQEndpoint.SERIALIZE_HEADER);
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
-        if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY)) {
-            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                 // default
-                                                                                                                 // exchange
-                                                                                                                 // for
-                                                                                                                 // reply-to
-                                                                                                                 // messages
-            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE); // use
-                                                                                                                          // default
-                                                                                                                          // exchange
-                                                                                                                          // for
-                                                                                                                          // reply-to
-                                                                                                                          // messages
+        if (routingKey != null && routingKey.startsWith(RabbitMQConstants.RABBITMQ_DIRECT_REPLY_ROUTING_KEY.key())) {
+            // use default exchange for reply-to messages
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME.key(), RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE.key());
+            // use default exchange for reply-to messages
+            message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key(),
+                    RabbitMQConstants.RABBITMQ_DIRECT_REPLY_EXCHANGE.key());
         }
 
         return message;
@@ -102,6 +95,9 @@ public class RabbitMQMessagePublisher {
                     message.getBody());
 
             properties = endpoint.getMessageConverter().buildProperties(camelExchange).build();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange properties: {}", properties);
+            }
         } catch (NoTypeConversionAvailableException | TypeConversionException e) {
             if (message.getBody() instanceof Serializable && endpoint.isAllowMessageBodySerialization()) {
                 // Add the header so the reply processor knows to de-serialize
@@ -122,18 +118,20 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key());
         // If it is BridgeEndpoint we should ignore the message header of
         // EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || endpoint.isBridgeEndpoint()) {
             exchangeName = endpoint.getExchangeName();
         } else {
             LOG.debug("Overriding header: {} detected sending message to exchange: {}",
-                    RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, exchangeName);
+                    RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key(), exchangeName);
         }
 
-        Boolean mandatory = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY, endpoint.isMandatory(), Boolean.class);
-        Boolean immediate = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE, endpoint.isImmediate(), Boolean.class);
+        Boolean mandatory
+                = camelExchange.getIn().getHeader(RabbitMQConstants.MANDATORY.key(), endpoint.isMandatory(), Boolean.class);
+        Boolean immediate
+                = camelExchange.getIn().getHeader(RabbitMQConstants.IMMEDIATE.key(), endpoint.isImmediate(), Boolean.class);
 
         LOG.debug("Sending message to exchange: {} with CorrelationId: {}", exchangeName, properties.getCorrelationId());
 

@@ -70,39 +70,39 @@ public class RabbitMQDeclareSupport {
 
     private void formatSpecialQueueArguments(Map<String, Object> queueArgs) {
         // some arguments must be in numeric values so we need to fix this
-        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
+        Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY.key());
         if (queueLengthLimit instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY.key(), Long.parseLong((String) queueLengthLimit));
         }
 
-        Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
+        Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY.key());
         if (queueMaxPriority instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY.key(), Integer.parseInt((String) queueMaxPriority));
         }
 
-        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
+        Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY.key());
         if (queueMessageTtl instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY, Long.parseLong((String) queueMessageTtl));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY.key(), Long.parseLong((String) queueMessageTtl));
         }
 
-        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
+        Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY.key());
         if (queueExpiration instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY.key(), Long.parseLong((String) queueExpiration));
         }
 
-        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY);
+        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY.key());
         if (singleConsumer instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY,
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY.key(),
                     Boolean.parseBoolean((String) singleConsumer));
         }
     }
 
     private void populateQueueArgumentsFromDeadLetterExchange(final Map<String, Object> queueArgs) {
         if (endpoint.getDeadLetterExchange() != null) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, endpoint.getDeadLetterExchange());
+            queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE.key(), endpoint.getDeadLetterExchange());
 
             if (endpoint.getDeadLetterRoutingKey() != null) {
-                queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, endpoint.getDeadLetterRoutingKey());
+                queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY.key(), endpoint.getDeadLetterRoutingKey());
             }
         }
     }
