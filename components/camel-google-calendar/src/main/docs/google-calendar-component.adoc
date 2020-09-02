@@ -141,17 +141,20 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (7 APIs):
+=== Query API Parameters (8 APIs):
 
-The Google Calendar endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Calendar endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 google-calendar:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: acl
+
+==== acl
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -161,7 +164,9 @@ google-calendar:apiName/methodName
 | *ruleId* |  |  | String
 |===
 
-==== apiName: calendars
+
+==== calendars
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -169,14 +174,23 @@ google-calendar:apiName/methodName
 | *content* |  |  | Calendar
 |===
 
-==== apiName: channels
+
+==== channels
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *contentChannel* |  |  | Channel
 |===
 
-==== apiName: events
+
+==== colors
+
+The colors method has no API parameters.
+
+
+==== events
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -188,14 +202,18 @@ google-calendar:apiName/methodName
 | *text* |  |  | String
 |===
 
-==== apiName: freebusy
+
+==== freebusy
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *content* |  |  | FreeBusyRequest
 |===
 
-==== apiName: list
+
+==== list
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -204,7 +222,9 @@ google-calendar:apiName/methodName
 | *contentChannel* |  |  | Channel
 |===
 
-==== apiName: settings
+
+==== settings
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

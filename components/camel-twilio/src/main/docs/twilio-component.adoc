@@ -104,22 +104,27 @@ with the following path and query parameters:
 
 === Query API Parameters (56 APIs):
 
-The Twilio endpoint is an API based component and has conditional parameters based on which API method in use.
+The Twilio endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 twilio:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: account
+
+==== account
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathSid* | Fetch by unique Account Sid |  | String
 |===
 
-==== apiName: address
+
+==== address
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -133,7 +138,9 @@ twilio:apiName/methodName
 | *street* | The number and street address of the new address |  | String
 |===
 
-==== apiName: address-dependent-phone-number
+
+==== address-dependent-phone-number
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -141,7 +148,9 @@ twilio:apiName/methodName
 | *pathAddressSid* | The SID of the Address resource associated with the phone number |  | String
 |===
 
-==== apiName: application
+
+==== application
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -149,7 +158,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: available-phone-number-country
+
+==== available-phone-number-country
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -157,7 +168,9 @@ twilio:apiName/methodName
 | *pathCountryCode* | The ISO country code of the country to fetch available phone number information about |  | String
 |===
 
-==== apiName: available-phone-number-country-local
+
+==== available-phone-number-country-local
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -165,7 +178,9 @@ twilio:apiName/methodName
 | *pathCountryCode* | The ISO Country code of the country from which to read phone numbers |  | String
 |===
 
-==== apiName: available-phone-number-country-mobile
+
+==== available-phone-number-country-mobile
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -173,7 +188,9 @@ twilio:apiName/methodName
 | *pathCountryCode* | The ISO Country code of the country from which to read phone numbers |  | String
 |===
 
-==== apiName: available-phone-number-country-toll-free
+
+==== available-phone-number-country-toll-free
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -181,7 +198,9 @@ twilio:apiName/methodName
 | *pathCountryCode* | The ISO Country code of the country from which to read phone numbers |  | String
 |===
 
-==== apiName: call
+
+==== call
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -194,7 +213,9 @@ twilio:apiName/methodName
 | *url* | The absolute URL that returns TwiML for this call |  | URI
 |===
 
-==== apiName: call-feedback
+
+==== call-feedback
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -203,7 +224,9 @@ twilio:apiName/methodName
 | *qualityScore* | The call quality expressed as an integer from 1 to 5 |  | Integer
 |===
 
-==== apiName: call-feedback-summary
+
+==== call-feedback-summary
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -213,7 +236,9 @@ twilio:apiName/methodName
 | *startDate* | Only include feedback given on or after this date |  | LocalDate
 |===
 
-==== apiName: call-notification
+
+==== call-notification
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -222,7 +247,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: call-recording
+
+==== call-recording
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -232,7 +259,9 @@ twilio:apiName/methodName
 | *status* | The new status of the recording |  | Status
 |===
 
-==== apiName: conference
+
+==== conference
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -240,7 +269,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies this resource |  | String
 |===
 
-==== apiName: conference-participant
+
+==== conference-participant
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -251,7 +282,9 @@ twilio:apiName/methodName
 | *to* | The phone number, SIP address or Client identifier that received this call. |  | PhoneNumber
 |===
 
-==== apiName: connect-app
+
+==== connect-app
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -259,7 +292,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: incoming-phone-number
+
+==== incoming-phone-number
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -269,7 +304,9 @@ twilio:apiName/methodName
 | *phoneNumber* | The phone number to purchase in E.164 format |  | PhoneNumber
 |===
 
-==== apiName: incoming-phone-number-local
+
+==== incoming-phone-number-local
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -277,7 +314,9 @@ twilio:apiName/methodName
 | *phoneNumber* | The phone number to purchase in E.164 format |  | PhoneNumber
 |===
 
-==== apiName: incoming-phone-number-mobile
+
+==== incoming-phone-number-mobile
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -285,7 +324,9 @@ twilio:apiName/methodName
 | *phoneNumber* | The phone number to purchase in E.164 format |  | PhoneNumber
 |===
 
-==== apiName: incoming-phone-number-toll-free
+
+==== incoming-phone-number-toll-free
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -293,7 +334,9 @@ twilio:apiName/methodName
 | *phoneNumber* | The phone number to purchase in E.164 format |  | PhoneNumber
 |===
 
-==== apiName: key
+
+==== key
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -301,7 +344,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: message
+
+==== message
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -314,7 +359,9 @@ twilio:apiName/methodName
 | *to* | The destination phone number |  | PhoneNumber
 |===
 
-==== apiName: message-feedback
+
+==== message-feedback
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -322,7 +369,9 @@ twilio:apiName/methodName
 | *pathMessageSid* | The SID of the Message resource for which the feedback was provided |  | String
 |===
 
-==== apiName: message-media
+
+==== message-media
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -331,21 +380,27 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies this resource |  | String
 |===
 
-==== apiName: new-key
+
+==== new-key
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that will be responsible for the new Key resource |  | String
 |===
 
-==== apiName: new-signing-key
+
+==== new-signing-key
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that will be responsible for the new Key resource |  | String
 |===
 
-==== apiName: notification
+
+==== notification
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -353,7 +408,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: outgoing-caller-id
+
+==== outgoing-caller-id
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -361,7 +418,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: queue
+
+==== queue
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -370,7 +429,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies this resource |  | String
 |===
 
-==== apiName: queue-member
+
+==== queue-member
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -380,7 +441,9 @@ twilio:apiName/methodName
 | *url* | The absolute URL of the Queue resource |  | URI
 |===
 
-==== apiName: recording
+
+==== recording
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -388,7 +451,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: recording-add-on-result
+
+==== recording-add-on-result
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -397,7 +462,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource to delete |  | String
 |===
 
-==== apiName: recording-add-on-result-payload
+
+==== recording-add-on-result-payload
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -407,7 +474,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: recording-transcription
+
+==== recording-transcription
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -416,7 +485,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: short-code
+
+==== short-code
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -424,7 +495,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies this resource |  | String
 |===
 
-==== apiName: signing-key
+
+==== signing-key
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -432,7 +505,9 @@ twilio:apiName/methodName
 | *pathSid* | The sid |  | String
 |===
 
-==== apiName: sip-credential-list
+
+==== sip-credential-list
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -441,7 +516,9 @@ twilio:apiName/methodName
 | *pathSid* | Delete by unique credential list Sid |  | String
 |===
 
-==== apiName: sip-credential-list-credential
+
+==== sip-credential-list-credential
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -452,7 +529,9 @@ twilio:apiName/methodName
 | *username* | The username for this credential |  | String
 |===
 
-==== apiName: sip-domain
+
+==== sip-domain
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -461,7 +540,9 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: sip-domain-credential-list-mapping
+
+==== sip-domain-credential-list-mapping
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -471,7 +552,9 @@ twilio:apiName/methodName
 | *pathSid* | A string that identifies the resource to delete |  | String
 |===
 
-==== apiName: sip-domain-ip-access-control-list-mapping
+
+==== sip-domain-ip-access-control-list-mapping
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -481,7 +564,9 @@ twilio:apiName/methodName
 | *pathSid* | A 34 character string that uniquely identifies the resource to delete. |  | String
 |===
 
-==== apiName: sip-ip-access-control-list
+
+==== sip-ip-access-control-list
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -490,7 +575,9 @@ twilio:apiName/methodName
 | *pathSid* | A string that identifies the resource to delete |  | String
 |===
 
-==== apiName: sip-ip-access-control-list-ip-address
+
+==== sip-ip-access-control-list-ip-address
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -501,14 +588,18 @@ twilio:apiName/methodName
 | *pathSid* | A string that identifies the resource to delete |  | String
 |===
 
-==== apiName: token
+
+==== token
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that will create the resource |  | String
 |===
 
-==== apiName: transcription
+
+==== transcription
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -516,70 +607,90 @@ twilio:apiName/methodName
 | *pathSid* | The unique string that identifies the resource |  | String
 |===
 
-==== apiName: usage-record
+
+==== usage-record
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-all-time
+
+==== usage-record-all-time
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-daily
+
+==== usage-record-daily
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-last-month
+
+==== usage-record-last-month
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-monthly
+
+==== usage-record-monthly
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-this-month
+
+==== usage-record-this-month
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-today
+
+==== usage-record-today
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-yearly
+
+==== usage-record-yearly
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-record-yesterday
+
+==== usage-record-yesterday
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *pathAccountSid* | The SID of the Account that created the resources to read |  | String
 |===
 
-==== apiName: usage-trigger
+
+==== usage-trigger
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -590,7 +701,9 @@ twilio:apiName/methodName
 | *usageCategory* | The usage category the trigger watches |  | UsageCategory
 |===
 
-==== apiName: validation-request
+
+==== validation-request
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
