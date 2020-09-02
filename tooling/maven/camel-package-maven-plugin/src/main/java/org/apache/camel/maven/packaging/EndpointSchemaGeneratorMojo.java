@@ -87,12 +87,15 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
+import static org.apache.camel.tooling.model.ComponentModel.*;
+
 @Mojo(name = "generate-endpoint-schema", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
       defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     public static final DotName URI_ENDPOINT = DotName.createSimple(UriEndpoint.class.getName());
     public static final DotName COMPONENT = DotName.createSimple(Component.class.getName());
+    public static final DotName URI_PARAMS = DotName.createSimple(UriParams.class.getName());
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC
             = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
@@ -125,6 +128,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return;
         }
 
+        executeUriEndpoint();
+    }
+
+    private void executeUriEndpoint() throws MojoExecutionException, MojoFailureException {
         List<Class<?>> classes = new ArrayList<>();
         for (AnnotationInstance ai : getIndex().getAnnotations(URI_ENDPOINT)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
@@ -253,6 +260,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             generateComponentConfigurer(uriEndpoint, scheme, schemes, componentModel, parentData);
         }
 
+        // enrich the component model with additional configurations for api components
+        enhanceComponentModelWithApiModel(componentModel);
+
         String json = JsonMapper.createParameterJsonSchema(componentModel);
 
         // write json schema
@@ -266,6 +276,25 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
 
         return componentModel;
+    }
+
+    /**
+     * Used for enhancing the component model with apiProperties for API based components (such as twilio, olingo and
+     * others)
+     */
+    private void enhanceComponentModelWithApiModel(ComponentModel componentModel) {
+        for (AnnotationInstance ai : getIndex().getAnnotations(URI_PARAMS)) {
+            Class<?> classElement = loadClass(ai.target().asClass().name().toString());
+            final UriParams uriParams = classElement.getAnnotation(UriParams.class);
+            if (uriParams != null) {
+                String apiName = uriParams.apiName();
+                if (!Strings.isNullOrEmpty(apiName)) {
+                    String extraPrefix = uriParams.prefix();
+                    findClassProperties(componentModel, classElement, Collections.EMPTY_SET, extraPrefix,
+                            null, null, false);
+                }
+            }
+        }
     }
 
     protected boolean updateResource(Path dir, String file, String data) {
@@ -803,6 +832,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         final Class<?> orgClassElement = classElement;
         excludes = new HashSet<>(excludes);
         while (true) {
+            String apiName = null;
+            boolean apiOption = false;
+            UriParams uriParams = classElement.getAnnotation(UriParams.class);
+            if (uriParams != null) {
+                apiName = uriParams.apiName();
+                apiOption = !Strings.isNullOrEmpty(apiName);
+            }
+
             String excludedProperties = "";
             Metadata metadata = classElement.getAnnotation(Metadata.class);
             if (metadata != null) {
@@ -1026,6 +1063,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         BaseOptionModel option;
                         if (componentOption) {
                             option = new ComponentOptionModel();
+                        } else if (apiOption) {
+                            option = new ApiOptionModel();
                         } else {
                             option = new EndpointOptionModel();
                         }
@@ -1051,6 +1090,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         if (componentOption) {
                             option.setKind("property");
                             componentModel.addComponentOption((ComponentOptionModel) option);
+                        } else if (apiOption) {
+                            option.setKind("parameter");
+                            componentModel.addApiOption(apiName, (ApiOptionModel) option);
                         } else {
                             option.setKind("parameter");
                             if (componentModel.getEndpointOptions().stream().noneMatch(opt -> name.equals(opt.getName()))) {
@@ -1063,7 +1105,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             // check super classes which may also have fields
             Class<?> superclass = classElement.getSuperclass();
-            if (superclass != null) {
+            if (!apiOption && superclass != null) {
+                // do not check super classes for api options as we only check one level (to include new options and not common)
                 classElement = superclass;
             } else {
                 break;
