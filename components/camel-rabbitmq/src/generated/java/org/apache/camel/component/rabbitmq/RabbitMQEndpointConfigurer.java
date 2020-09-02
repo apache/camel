@@ -53,10 +53,10 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("threadPoolSize", int.class);
-        map.put("allowCustomHeaders", boolean.class);
-        map.put("allowNullHeaders", boolean.class);
         map.put("additionalHeaders", java.util.Map.class);
         map.put("additionalProperties", java.util.Map.class);
+        map.put("allowCustomHeaders", boolean.class);
+        map.put("allowNullHeaders", boolean.class);
         map.put("bridgeEndpoint", boolean.class);
         map.put("channelPoolMaxSize", int.class);
         map.put("channelPoolMaxWait", long.class);

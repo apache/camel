@@ -43,9 +43,9 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         map.put("prefetchGlobal", boolean.class);
         map.put("prefetchSize", int.class);
         map.put("threadPoolSize", int.class);
-        map.put("allowNullHeaders", boolean.class);
         map.put("additionalHeaders", java.util.Map.class);
         map.put("additionalProperties", java.util.Map.class);
+        map.put("allowNullHeaders", boolean.class);
         map.put("channelPoolMaxSize", int.class);
         map.put("channelPoolMaxWait", long.class);
         map.put("guaranteedDeliveries", boolean.class);

@@ -33,4 +33,11 @@ public class SimpleDataHolderBean {
     public void setMapData(Map<String, Object> mapData) {
         this.mapData = mapData;
     }
+
+    @Override
+    public String toString() {
+        return "SimpleDataHolderBean{" +
+               "mapData=" + mapData +
+               '}';
+    }
 }

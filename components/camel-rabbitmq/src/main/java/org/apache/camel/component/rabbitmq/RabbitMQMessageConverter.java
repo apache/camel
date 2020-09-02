@@ -218,7 +218,10 @@ public class RabbitMQMessageConverter {
         String ignoredProperties = exchangeProperties.keySet().stream()
                 .filter(key -> !RabbitMQConstants.BASIC_AMQP_PROPERTIES.contains(key))
                 .collect(Collectors.joining(", "));
-        LOG.info("Ignoring non-AMQP basic properties: {}", ignoredProperties);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Added AMQP basic properties: {}", properties.build().toString());
+            LOG.debug("Ignoring non-AMQP basic properties: {}", ignoredProperties);
+        }
 
         return properties;
     }
@@ -228,12 +231,18 @@ public class RabbitMQMessageConverter {
             RabbitMQConstants rabbitMQProperty) {
         boolean hasAdditionalProps = additionalProperties != null && !additionalProperties
                 .isEmpty();
-        Object object = msg.removeHeader(rabbitMQProperty.key());
-        if (exchangeProperties.containsKey(rabbitMQProperty.key())) {
-            object = exchangeProperties.get(rabbitMQProperty.key());
+        String propertyKey = rabbitMQProperty.key();
+        Object object = msg.removeHeader(propertyKey);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("additionalProperties: {}", additionalProperties);
+            LOG.debug("propertyKey: {}, exchangeProperty: {}, additionalProperty: {}", propertyKey,
+                    exchangeProperties.get(propertyKey), additionalProperties.get(propertyKey));
+        }
+        if (exchangeProperties.containsKey(propertyKey)) {
+            object = exchangeProperties.get(propertyKey);
         }
         if (object == null && hasAdditionalProps) {
-            object = additionalProperties.get(rabbitMQProperty.key());
+            object = additionalProperties.get(propertyKey);
         }
         return object;
     }

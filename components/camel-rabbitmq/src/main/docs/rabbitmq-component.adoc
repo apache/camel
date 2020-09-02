@@ -271,16 +271,16 @@ The following headers are set on exchanges when consuming messages.
 |===
 |Property |Value
 
-|`rabbitmq-ROUTING_KEY` |The routing key that was used to receive the message, or the routing key
+|`rabbitmq_ROUTING_KEY` |The routing key that was used to receive the message, or the routing key
 that will be used when producing a message
 
-|`rabbitmq-EXCHANGE_NAME` |The exchange the message was received from
+|`rabbitmq_EXCHANGE_NAME` |The exchange the message was received from
 
-|`rabbitmq-DELIVERY_TAG` |The rabbitmq delivery tag of the received message
+|`rabbitmq_DELIVERY_TAG` |The rabbitmq delivery tag of the received message
 
-|`rabbitmq-REDELIVERY_TAG` |Whether the message is a redelivered
+|`rabbitmq_REDELIVERY_TAG` |Whether the message is a redelivered
 
-|`rabbitmq-REQUEUE` |This is used by the consumer to control rejection of the
+|`rabbitmq_REQUEUE` |This is used by the consumer to control rejection of the
 message. When the consumer is complete processing the exchange, and if
 the exchange failed, then the consumer is going to reject the message
 from the RabbitMQ broker. The value of this header controls this
@@ -296,37 +296,37 @@ camel exchange then they will be set on the RabbitMQ message.
 |===
 |Property |Value
 
-|`rabbitmq-ROUTING_KEY` |The routing key that will be used when sending the message
+|`rabbitmq_ROUTING_KEY` |The routing key that will be used when sending the message
 
-|`rabbitmq-EXCHANGE_NAME` |The exchange the message was received from
+|`rabbitmq_EXCHANGE_NAME` |The exchange the message was received from
 
-|`rabbitmq-EXCHANGE_OVERRIDE_NAME` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
+|`rabbitmq_EXCHANGE_OVERRIDE_NAME` |Used for force sending the message to this exchange instead of the endpoint configured name on the producer
 
-|`rabbitmq-CONTENT_TYPE` |The contentType to set on the RabbitMQ message
+|`rabbitmq_CONTENT_TYPE` |The contentType to set on the RabbitMQ message
 
-|`rabbitmq-PRIORITY` |The priority header to set on the RabbitMQ message
+|`rabbitmq_PRIORITY` |The priority header to set on the RabbitMQ message
 
-|`rabbitmq-CORRELATIONID` |The correlationId to set on the RabbitMQ message
+|`rabbitmq_CORRELATIONID` |The correlationId to set on the RabbitMQ message
 
-|`rabbitmq-MESSAGE_ID` |The message id to set on the RabbitMQ message
+|`rabbitmq_MESSAGE_ID` |The message id to set on the RabbitMQ message
 
-|`rabbitmq-DELIVERY_MODE` |If the message should be persistent or not
+|`rabbitmq_DELIVERY_MODE` |If the message should be persistent or not
 
-|`rabbitmq-USERID` |The userId to set on the RabbitMQ message
+|`rabbitmq_USERID` |The userId to set on the RabbitMQ message
 
-|`rabbitmq-CLUSTERID` |The clusterId to set on the RabbitMQ message
+|`rabbitmq_CLUSTERID` |The clusterId to set on the RabbitMQ message
 
-|`rabbitmq-REPLY_TO` |The replyTo to set on the RabbitMQ message
+|`rabbitmq_REPLY_TO` |The replyTo to set on the RabbitMQ message
 
-|`rabbitmq-CONTENT_ENCODING` |The contentEncoding to set on the RabbitMQ message
+|`rabbitmq_CONTENT_ENCODING` |The contentEncoding to set on the RabbitMQ message
 
-|`rabbitmq-TYPE` |The type to set on the RabbitMQ message
+|`rabbitmq_TYPE` |The type to set on the RabbitMQ message
 
-|`rabbitmq-EXPIRATION` |The expiration to set on the RabbitMQ message
+|`rabbitmq_EXPIRATION` |The expiration to set on the RabbitMQ message
 
-|`rabbitmq-TIMESTAMP` |The timestamp to set on the RabbitMQ message
+|`rabbitmq_TIMESTAMP` |The timestamp to set on the RabbitMQ message
 
-|`rabbitmq-APP_ID` |The appId to set on the RabbitMQ message
+|`rabbitmq_APP_ID` |The appId to set on the RabbitMQ message
 |===
 
 Headers are set by the consumer once the message is received. The
@@ -354,7 +354,7 @@ from("rabbitmq:A?queue=IN&declare=false&autoDelete=false&arg.queue.x-message-ttl
   // ...
   .process(e -> {
     InputModel input = e.getMessage().getBody(InputModel.class);
-    e.getMessage().removeHeader("rabbitmq-ROUTING_KEY");
+    e.getMessage().removeHeader("rabbitmq_ROUTING_KEY");
     OutputModel output = ...
     e.getMessage().setBody(output);
   })
@@ -367,7 +367,7 @@ Now you are at least guaranteed to not create a loop from the camel route.
 == Allowing custom Headers
 
 The `allowCustomHeaders` endpoint option can be used to avoid adding custom headers to the message sent to RabbitMQ.
-If set to false, the user will have only rabbitmq-* headers in the payload of the message. Default value for this option is true.
+If set to false, the user will have only rabbitmq_* headers in the payload of the message. Default value for this option is true.
 
 [NOTE]
 ====
