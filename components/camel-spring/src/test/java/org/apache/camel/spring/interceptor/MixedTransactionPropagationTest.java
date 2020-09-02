@@ -85,15 +85,15 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(3, count, "Number of books");
 
         // assert correct books in database
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
-        assertEquals(new Integer(0),
+        assertEquals(Integer.valueOf(0),
                 jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
-        assertEquals(new Integer(0),
+        assertEquals(Integer.valueOf(0),
                 jdbc.queryForObject("select count(*) from books where title = 'Donkey in Action'", Integer.class));
     }
 
@@ -105,15 +105,15 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(5, count, "Number of books");
 
         // assert correct books in database
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
-        assertEquals(new Integer(1),
+        assertEquals(Integer.valueOf(1),
                 jdbc.queryForObject("select count(*) from books where title = 'Crocodile in Action'", Integer.class));
     }
 
