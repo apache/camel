@@ -86,9 +86,9 @@ public class RabbitMQDeclareSupport {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY.key(), Long.parseLong((String)queueExpiration));
         }
 
-        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY);
+        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY.key());
         if (singleConsumer instanceof String) {
-            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY, Boolean.parseBoolean((String)singleConsumer));
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY.key(), Boolean.parseBoolean((String)singleConsumer));
         }
     }
 
