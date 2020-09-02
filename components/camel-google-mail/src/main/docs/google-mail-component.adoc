@@ -165,65 +165,65 @@ google-mail:apiName/methodName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *id* (common) |  |  | String
-| *messageId* (common) |  |  | String
-| *userId* (common) |  |  | String
+| *id* |  |  | String
+| *messageId* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== apiName: drafts
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | Draft
-| *id* (common) |  |  | String
-| *mediaContent* (common) |  |  | AbstractInputStreamContent
-| *userId* (common) |  |  | String
+| *content* |  |  | Draft
+| *id* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
+| *userId* |  |  | String
 |===
 
 ==== apiName: history
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *userId* (common) |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== apiName: labels
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | Label
-| *id* (common) |  |  | String
-| *userId* (common) |  |  | String
+| *content* |  |  | Label
+| *id* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== apiName: messages
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *batchDeleteMessagesRequest* (common) |  |  | BatchDeleteMessagesRequest
-| *batchModifyMessagesRequest* (common) |  |  | BatchModifyMessagesRequest
-| *content* (common) |  |  | Message
-| *id* (common) |  |  | String
-| *mediaContent* (common) |  |  | AbstractInputStreamContent
-| *modifyMessageRequest* (common) |  |  | ModifyMessageRequest
-| *userId* (common) |  |  | String
+| *batchDeleteMessagesRequest* |  |  | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* |  |  | BatchModifyMessagesRequest
+| *content* |  |  | Message
+| *id* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
+| *modifyMessageRequest* |  |  | ModifyMessageRequest
+| *userId* |  |  | String
 |===
 
 ==== apiName: threads
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | ModifyThreadRequest
-| *id* (common) |  |  | String
-| *userId* (common) |  |  | String
+| *content* |  |  | ModifyThreadRequest
+| *id* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== apiName: users
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | WatchRequest
-| *userId* (common) |  |  | String
+| *content* |  |  | WatchRequest
+| *userId* |  |  | String
 |===
 // endpoint options: END
 

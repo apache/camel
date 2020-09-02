@@ -155,61 +155,61 @@ google-calendar:apiName/methodName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | AclRule
-| *contentChannel* (common) |  |  | Channel
-| *ruleId* (common) |  |  | String
+| *calendarId* |  |  | String
+| *content* |  |  | AclRule
+| *contentChannel* |  |  | Channel
+| *ruleId* |  |  | String
 |===
 
 ==== apiName: calendars
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | Calendar
+| *calendarId* |  |  | String
+| *content* |  |  | Calendar
 |===
 
 ==== apiName: channels
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *contentChannel* (common) |  |  | Channel
+| *contentChannel* |  |  | Channel
 |===
 
 ==== apiName: events
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | Event
-| *contentChannel* (common) |  |  | Channel
-| *destination* (common) |  |  | String
-| *eventId* (common) |  |  | String
-| *text* (common) |  |  | String
+| *calendarId* |  |  | String
+| *content* |  |  | Event
+| *contentChannel* |  |  | Channel
+| *destination* |  |  | String
+| *eventId* |  |  | String
+| *text* |  |  | String
 |===
 
 ==== apiName: freebusy
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | FreeBusyRequest
+| *content* |  |  | FreeBusyRequest
 |===
 
 ==== apiName: list
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | CalendarListEntry
-| *contentChannel* (common) |  |  | Channel
+| *calendarId* |  |  | String
+| *content* |  |  | CalendarListEntry
+| *contentChannel* |  |  | Channel
 |===
 
 ==== apiName: settings
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *contentChannel* (common) |  |  | Channel
-| *setting* (common) |  |  | String
+| *contentChannel* |  |  | Channel
+| *setting* |  |  | String
 |===
 // endpoint options: END
 
