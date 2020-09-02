@@ -127,7 +127,7 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (14 APIs):
+=== Query API Parameters (17 APIs):
 
 The Braintree endpoint is an API based component and has conditional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
@@ -137,7 +137,13 @@ braintree:apiName/methodName
 ----
 
 
+==== apiName: addOn
+
+The addOn method has no API parameters.
+
+
 ==== apiName: address
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -146,14 +152,18 @@ braintree:apiName/methodName
 | *request* | The request object |  | AddressRequest
 |===
 
+
 ==== apiName: clientToken
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *request* |  |  | ClientTokenRequest
 |===
 
+
 ==== apiName: creditCardVerification
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -162,7 +172,9 @@ braintree:apiName/methodName
 | *request* |  |  | CreditCardVerificationRequest
 |===
 
+
 ==== apiName: customer
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -172,7 +184,14 @@ braintree:apiName/methodName
 | *request* | The request |  | CustomerRequest
 |===
 
+
+==== apiName: discount
+
+The discount method has no API parameters.
+
+
 ==== apiName: dispute
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -186,14 +205,18 @@ braintree:apiName/methodName
 | *textEvidenceRequest* | The text evidence request for the dispute |  | TextEvidenceRequest
 |===
 
+
 ==== apiName: documentUpload
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *request* |  |  | DocumentUploadRequest
 |===
 
+
 ==== apiName: merchantAccount
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -203,7 +226,9 @@ braintree:apiName/methodName
 | *request* |  |  | MerchantAccountRequest
 |===
 
+
 ==== apiName: paymentMethod
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -213,7 +238,9 @@ braintree:apiName/methodName
 | *token* |  |  | String
 |===
 
+
 ==== apiName: paymentMethodNonce
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -222,14 +249,23 @@ braintree:apiName/methodName
 | *request* |  |  | PaymentMethodNonceRequest
 |===
 
+
+==== apiName: plan
+
+The plan method has no API parameters.
+
+
 ==== apiName: report
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *request* | The request |  | TransactionLevelFeeReportRequest
 |===
 
+
 ==== apiName: settlementBatchSummary
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -237,7 +273,9 @@ braintree:apiName/methodName
 | *settlementDate* |  |  | Calendar
 |===
 
+
 ==== apiName: subscription
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -250,7 +288,9 @@ braintree:apiName/methodName
 | *subscriptionId* |  |  | String
 |===
 
+
 ==== apiName: transaction
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -262,7 +302,9 @@ braintree:apiName/methodName
 | *request* | The request |  | TransactionRequest
 |===
 
+
 ==== apiName: webhookNotification
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

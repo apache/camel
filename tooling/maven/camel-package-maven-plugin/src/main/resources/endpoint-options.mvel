@@ -43,11 +43,15 @@ The API method is located in the endpoint URI as the @{apiPropertyQualifier} pat
 
 @foreach{api : apiOptions.entrySet()}
 ==== @{apiPropertyQualifier}: @{api.key}
+@if{api.value.isEmpty()}
+The @{api.key} method has no API parameters.
+@else{}
 [width="100%",cols="2,5,^1,2",options="header"]
 |===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
 | Name | Description | Default | Type
 @foreach{row : api.value}| *@{row.getShortName(30)}* @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType()}
 @end{}|===
+@end{}
 @end{}
 
 @end{}
