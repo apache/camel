@@ -20,7 +20,7 @@
     "apiPropertyQualifier": "methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": false
   },
   "componentProperties": {
     "serverUrl": { "kind": "property", "displayName": "Server Url", "group": "common", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "The server URL to connect." },
