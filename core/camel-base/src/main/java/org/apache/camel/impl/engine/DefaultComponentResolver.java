@@ -24,7 +24,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +42,6 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     @Override
     public Component resolveComponent(String name, CamelContext context) {
-        // lookup in registry first
-        Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
-        if (componentReg != null) {
-            return componentReg;
-        }
-
         // not in registry then use component factory
         Class<?> type;
         try {
