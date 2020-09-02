@@ -156,15 +156,18 @@ with the following path and query parameters:
 
 === Query API Parameters (10 APIs):
 
-The Box endpoint is an API based component and has conditional parameters based on which API method in use.
+The Box endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 box:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: collaborations
+
+==== collaborations
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -176,7 +179,9 @@ box:apiName/methodName
 | *role* | The role of the collaborator |  | Role
 |===
 
-==== apiName: comments
+
+==== comments
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -185,7 +190,9 @@ box:apiName/methodName
 | *message* | The comment's message |  | String
 |===
 
-==== apiName: event-logs
+
+==== event-logs
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -195,14 +202,18 @@ box:apiName/methodName
 | *types* | An optional list of event types to filter by |  | Type[]
 |===
 
-==== apiName: events
+
+==== events
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *startingPosition* | The starting position of the event stream |  | Long
 |===
 
-==== apiName: files
+
+==== files
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -238,7 +249,9 @@ box:apiName/methodName
 | *version* | The version of file to delete; initial version of file has value of |  | Integer
 |===
 
-==== apiName: folders
+
+==== folders
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -258,7 +271,9 @@ box:apiName/methodName
 | *unshareDate* | The date and time at which time the created shared link will expire; if |  | Date
 |===
 
-==== apiName: groups
+
+==== groups
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -276,7 +291,9 @@ box:apiName/methodName
 | *userId* | The id of user to be added to group |  | String
 |===
 
-==== apiName: search
+
+==== search
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -284,7 +301,9 @@ box:apiName/methodName
 | *query* | The search query |  | String
 |===
 
-==== apiName: tasks
+
+==== tasks
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -298,7 +317,9 @@ box:apiName/methodName
 | *taskId* | The id of task to add assignment for |  | String
 |===
 
-==== apiName: users
+
+==== users
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

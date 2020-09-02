@@ -172,15 +172,18 @@ with the following path and query parameters:
 
 === Query API Parameters (13 APIs):
 
-The FHIR endpoint is an API based component and has conditional parameters based on which API method in use.
+The FHIR endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 fhir:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: capabilities
+
+==== capabilities
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -188,7 +191,9 @@ fhir:apiName/methodName
 | *type* |  |  | Class
 |===
 
-==== apiName: create
+
+==== create
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -199,7 +204,9 @@ fhir:apiName/methodName
 | *url* | The search URL to use. The format of this URL should be of the form |  | String
 |===
 
-==== apiName: delete
+
+==== delete
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -211,7 +218,9 @@ fhir:apiName/methodName
 | *url* | The search URL to use. The format of this URL should be of the form |  | String
 |===
 
-==== apiName: history
+
+==== history
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -224,7 +233,9 @@ fhir:apiName/methodName
 | *returnType* |  |  | Class
 |===
 
-==== apiName: load-page
+
+==== load-page
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -234,7 +245,9 @@ fhir:apiName/methodName
 | *url* |  |  | String
 |===
 
-==== apiName: meta
+
+==== meta
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -245,7 +258,9 @@ fhir:apiName/methodName
 | *theResourceName* |  |  | String
 |===
 
-==== apiName: operation
+
+==== operation
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -263,7 +278,9 @@ fhir:apiName/methodName
 | *useHttpGet* |  |  | Boolean
 |===
 
-==== apiName: patch
+
+==== patch
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -275,7 +292,9 @@ fhir:apiName/methodName
 | *url* | The search URL to use. The format of this URL should be of the form |  | String
 |===
 
-==== apiName: read
+
+==== read
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -294,7 +313,9 @@ fhir:apiName/methodName
 | *version* |  |  | String
 |===
 
-==== apiName: search
+
+==== search
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -302,7 +323,9 @@ fhir:apiName/methodName
 | *url* | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. |  | String
 |===
 
-==== apiName: transaction
+
+==== transaction
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -312,7 +335,9 @@ fhir:apiName/methodName
 | *stringBundle* | Bundle to use in the transaction |  | String
 |===
 
-==== apiName: update
+
+==== update
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -325,7 +350,9 @@ fhir:apiName/methodName
 | *url* |  |  | String
 |===
 
-==== apiName: validate
+
+==== validate
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

@@ -163,24 +163,34 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (12 APIs):
+=== Query API Parameters (13 APIs):
 
-The Google Drive endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Drive endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 google-drive:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: drive-apps
+
+==== drive-about
+
+The drive-about method has no API parameters.
+
+
+==== drive-apps
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *appId* |  |  | String
 |===
 
-==== apiName: drive-changes
+
+==== drive-changes
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -188,14 +198,18 @@ google-drive:apiName/methodName
 | *contentChannel* |  |  | Channel
 |===
 
-==== apiName: drive-channels
+
+==== drive-channels
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *contentChannel* |  |  | Channel
 |===
 
-==== apiName: drive-children
+
+==== drive-children
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -204,7 +218,9 @@ google-drive:apiName/methodName
 | *folderId* |  |  | String
 |===
 
-==== apiName: drive-comments
+
+==== drive-comments
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -213,7 +229,9 @@ google-drive:apiName/methodName
 | *fileId* |  |  | String
 |===
 
-==== apiName: drive-files
+
+==== drive-files
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -224,7 +242,9 @@ google-drive:apiName/methodName
 | *mimeType* |  |  | String
 |===
 
-==== apiName: drive-parents
+
+==== drive-parents
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -233,7 +253,9 @@ google-drive:apiName/methodName
 | *parentId* |  |  | String
 |===
 
-==== apiName: drive-permissions
+
+==== drive-permissions
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -243,7 +265,9 @@ google-drive:apiName/methodName
 | *permissionId* |  |  | String
 |===
 
-==== apiName: drive-properties
+
+==== drive-properties
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -252,7 +276,9 @@ google-drive:apiName/methodName
 | *propertyKey* |  |  | String
 |===
 
-==== apiName: drive-realtime
+
+==== drive-realtime
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -260,7 +286,9 @@ google-drive:apiName/methodName
 | *mediaContent* |  |  | AbstractInputStreamContent
 |===
 
-==== apiName: drive-replies
+
+==== drive-replies
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -270,7 +298,9 @@ google-drive:apiName/methodName
 | *replyId* |  |  | String
 |===
 
-==== apiName: drive-revisions
+
+==== drive-revisions
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

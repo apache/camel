@@ -129,20 +129,22 @@ with the following path and query parameters:
 
 === Query API Parameters (17 APIs):
 
-The Braintree endpoint is an API based component and has conditional parameters based on which API method in use.
+The Braintree endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 braintree:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: addOn
+
+==== addOn
 
 The addOn method has no API parameters.
 
 
-==== apiName: address
+==== address
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -153,7 +155,7 @@ The addOn method has no API parameters.
 |===
 
 
-==== apiName: clientToken
+==== clientToken
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -162,7 +164,7 @@ The addOn method has no API parameters.
 |===
 
 
-==== apiName: creditCardVerification
+==== creditCardVerification
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -173,7 +175,7 @@ The addOn method has no API parameters.
 |===
 
 
-==== apiName: customer
+==== customer
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -185,12 +187,12 @@ The addOn method has no API parameters.
 |===
 
 
-==== apiName: discount
+==== discount
 
 The discount method has no API parameters.
 
 
-==== apiName: dispute
+==== dispute
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -206,7 +208,7 @@ The discount method has no API parameters.
 |===
 
 
-==== apiName: documentUpload
+==== documentUpload
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -215,7 +217,7 @@ The discount method has no API parameters.
 |===
 
 
-==== apiName: merchantAccount
+==== merchantAccount
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -227,7 +229,7 @@ The discount method has no API parameters.
 |===
 
 
-==== apiName: paymentMethod
+==== paymentMethod
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -239,7 +241,7 @@ The discount method has no API parameters.
 |===
 
 
-==== apiName: paymentMethodNonce
+==== paymentMethodNonce
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -250,12 +252,12 @@ The discount method has no API parameters.
 |===
 
 
-==== apiName: plan
+==== plan
 
 The plan method has no API parameters.
 
 
-==== apiName: report
+==== report
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -264,7 +266,7 @@ The plan method has no API parameters.
 |===
 
 
-==== apiName: settlementBatchSummary
+==== settlementBatchSummary
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -274,7 +276,7 @@ The plan method has no API parameters.
 |===
 
 
-==== apiName: subscription
+==== subscription
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -289,7 +291,7 @@ The plan method has no API parameters.
 |===
 
 
-==== apiName: transaction
+==== transaction
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -303,7 +305,7 @@ The plan method has no API parameters.
 |===
 
 
-==== apiName: webhookNotification
+==== webhookNotification
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===

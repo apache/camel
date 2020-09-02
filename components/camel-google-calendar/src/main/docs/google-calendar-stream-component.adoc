@@ -144,17 +144,20 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (7 APIs):
+=== Query API Parameters (8 APIs):
 
-The Google Calendar Stream endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Calendar Stream endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the  path parameter:
 
 ----
 google-calendar-stream:index
 ----
 
+The following lists each API method and its additional parameters.
 
-==== : acl
+
+==== acl
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -164,7 +167,9 @@ google-calendar-stream:index
 | *ruleId* |  |  | String
 |===
 
-==== : calendars
+
+==== calendars
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -172,14 +177,23 @@ google-calendar-stream:index
 | *content* |  |  | Calendar
 |===
 
-==== : channels
+
+==== channels
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *contentChannel* |  |  | Channel
 |===
 
-==== : events
+
+==== colors
+
+The colors method has no API parameters.
+
+
+==== events
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -191,14 +205,18 @@ google-calendar-stream:index
 | *text* |  |  | String
 |===
 
-==== : freebusy
+
+==== freebusy
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *content* |  |  | FreeBusyRequest
 |===
 
-==== : list
+
+==== list
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -207,7 +225,9 @@ google-calendar-stream:index
 | *contentChannel* |  |  | Channel
 |===
 
-==== : settings
+
+==== settings
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

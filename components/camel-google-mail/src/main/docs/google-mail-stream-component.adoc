@@ -140,15 +140,18 @@ with the following path and query parameters:
 
 === Query API Parameters (7 APIs):
 
-The Google Mail Stream endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Mail Stream endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the  path parameter:
 
 ----
 google-mail-stream:index
 ----
 
+The following lists each API method and its additional parameters.
 
-==== : attachments
+
+==== attachments
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -157,7 +160,9 @@ google-mail-stream:index
 | *userId* |  |  | String
 |===
 
-==== : drafts
+
+==== drafts
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -167,14 +172,18 @@ google-mail-stream:index
 | *userId* |  |  | String
 |===
 
-==== : history
+
+==== history
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *userId* |  |  | String
 |===
 
-==== : labels
+
+==== labels
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -183,7 +192,9 @@ google-mail-stream:index
 | *userId* |  |  | String
 |===
 
-==== : messages
+
+==== messages
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -196,7 +207,9 @@ google-mail-stream:index
 | *userId* |  |  | String
 |===
 
-==== : threads
+
+==== threads
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -205,7 +218,9 @@ google-mail-stream:index
 | *userId* |  |  | String
 |===
 
-==== : users
+
+==== users
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

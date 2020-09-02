@@ -149,15 +149,18 @@ with the following path and query parameters:
 
 === Query API Parameters (2 APIs):
 
-The Google Sheets endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Sheets endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 google-sheets:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: data
+
+==== data
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
@@ -172,7 +175,9 @@ google-sheets:apiName/methodName
 | *values* | The |  | ValueRange
 |===
 
-==== apiName: spreadsheets
+
+==== spreadsheets
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
