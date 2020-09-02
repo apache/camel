@@ -166,13 +166,13 @@ olingo2:apiName/methodName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *data* (common) |  |  | Object
-| *edm* (common) |  |  | Edm
-| *endpointHttpHeaders* (common) |  |  | Map
-| *keyPredicate* (common) |  |  | String
-| *queryParams* (common) |  |  | Map
-| *resourcePath* (common) |  |  | String
-| *responseHandler* (common) |  |  | Olingo2ResponseHandler
+| *data* |  |  | Object
+| *edm* |  |  | Edm
+| *endpointHttpHeaders* |  |  | Map
+| *keyPredicate* |  |  | String
+| *queryParams* |  |  | Map
+| *resourcePath* |  |  | String
+| *responseHandler* |  |  | Olingo2ResponseHandler
 |===
 // endpoint options: END
 

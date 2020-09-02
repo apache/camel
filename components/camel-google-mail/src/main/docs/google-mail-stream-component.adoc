@@ -152,65 +152,65 @@ google-mail-stream:index
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *id* (consumer) |  |  | String
-| *messageId* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
+| *id* |  |  | String
+| *messageId* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== : drafts
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (consumer) |  |  | Draft
-| *id* (consumer) |  |  | String
-| *mediaContent* (consumer) |  |  | AbstractInputStreamContent
-| *userId* (consumer) |  |  | String
+| *content* |  |  | Draft
+| *id* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
+| *userId* |  |  | String
 |===
 
 ==== : history
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *userId* (consumer) |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== : labels
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (consumer) |  |  | Label
-| *id* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
+| *content* |  |  | Label
+| *id* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== : messages
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *batchDeleteMessagesRequest* (consumer) |  |  | BatchDeleteMessagesRequest
-| *batchModifyMessagesRequest* (consumer) |  |  | BatchModifyMessagesRequest
-| *content* (consumer) |  |  | Message
-| *id* (consumer) |  |  | String
-| *mediaContent* (consumer) |  |  | AbstractInputStreamContent
-| *modifyMessageRequest* (consumer) |  |  | ModifyMessageRequest
-| *userId* (consumer) |  |  | String
+| *batchDeleteMessagesRequest* |  |  | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* |  |  | BatchModifyMessagesRequest
+| *content* |  |  | Message
+| *id* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
+| *modifyMessageRequest* |  |  | ModifyMessageRequest
+| *userId* |  |  | String
 |===
 
 ==== : threads
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (consumer) |  |  | ModifyThreadRequest
-| *id* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
+| *content* |  |  | ModifyThreadRequest
+| *id* |  |  | String
+| *userId* |  |  | String
 |===
 
 ==== : users
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (consumer) |  |  | WatchRequest
-| *userId* (consumer) |  |  | String
+| *content* |  |  | WatchRequest
+| *userId* |  |  | String
 |===
 // endpoint options: END
 

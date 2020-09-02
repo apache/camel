@@ -162,25 +162,25 @@ google-sheets-stream:apiName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *batchClearValuesRequest* (consumer) | The |  | BatchClearValuesRequest
-| *batchGetValuesByDataFilter Request* (consumer) | The |  | BatchGetValuesByDataFilterRequest
-| *batchUpdateValuesByDataFilter Request* (consumer) | The |  | BatchUpdateValuesByDataFilterRequest
-| *batchUpdateValuesRequest* (consumer) | The |  | BatchUpdateValuesRequest
-| *clearValuesRequest* (consumer) | The |  | ClearValuesRequest
-| *content* (consumer) | The |  | BatchClearValuesByDataFilterRequest
-| *range* (consumer) | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. |  | String
-| *spreadsheetId* (consumer) | The ID of the spreadsheet to update |  | String
-| *values* (consumer) | The |  | ValueRange
+| *batchClearValuesRequest* | The |  | BatchClearValuesRequest
+| *batchGetValuesByDataFilter Request* | The |  | BatchGetValuesByDataFilterRequest
+| *batchUpdateValuesByDataFilter Request* | The |  | BatchUpdateValuesByDataFilterRequest
+| *batchUpdateValuesRequest* | The |  | BatchUpdateValuesRequest
+| *clearValuesRequest* | The |  | ClearValuesRequest
+| *content* | The |  | BatchClearValuesByDataFilterRequest
+| *range* | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. |  | String
+| *spreadsheetId* | The ID of the spreadsheet to update |  | String
+| *values* | The |  | ValueRange
 |===
 
 ==== : spreadsheets
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *batchUpdateSpreadsheetRequest* (consumer) | The |  | BatchUpdateSpreadsheetRequest
-| *content* (consumer) | The |  | Spreadsheet
-| *getSpreadsheetByDataFilter Request* (consumer) | The |  | GetSpreadsheetByDataFilterRequest
-| *spreadsheetId* (consumer) | The spreadsheet to apply the updates to |  | String
+| *batchUpdateSpreadsheetRequest* | The |  | BatchUpdateSpreadsheetRequest
+| *content* | The |  | Spreadsheet
+| *getSpreadsheetByDataFilter Request* | The |  | GetSpreadsheetByDataFilterRequest
+| *spreadsheetId* | The spreadsheet to apply the updates to |  | String
 |===
 // endpoint options: END
 

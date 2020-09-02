@@ -158,61 +158,61 @@ google-calendar-stream:index
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (consumer) |  |  | String
-| *content* (consumer) |  |  | AclRule
-| *contentChannel* (consumer) |  |  | Channel
-| *ruleId* (consumer) |  |  | String
+| *calendarId* |  |  | String
+| *content* |  |  | AclRule
+| *contentChannel* |  |  | Channel
+| *ruleId* |  |  | String
 |===
 
 ==== : calendars
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (consumer) |  |  | String
-| *content* (consumer) |  |  | Calendar
+| *calendarId* |  |  | String
+| *content* |  |  | Calendar
 |===
 
 ==== : channels
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *contentChannel* (consumer) |  |  | Channel
+| *contentChannel* |  |  | Channel
 |===
 
 ==== : events
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (consumer) |  |  | String
-| *content* (consumer) |  |  | Event
-| *contentChannel* (consumer) |  |  | Channel
-| *destination* (consumer) |  |  | String
-| *eventId* (consumer) |  |  | String
-| *text* (consumer) |  |  | String
+| *calendarId* |  |  | String
+| *content* |  |  | Event
+| *contentChannel* |  |  | Channel
+| *destination* |  |  | String
+| *eventId* |  |  | String
+| *text* |  |  | String
 |===
 
 ==== : freebusy
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (consumer) |  |  | FreeBusyRequest
+| *content* |  |  | FreeBusyRequest
 |===
 
 ==== : list
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *calendarId* (consumer) |  |  | String
-| *content* (consumer) |  |  | CalendarListEntry
-| *contentChannel* (consumer) |  |  | Channel
+| *calendarId* |  |  | String
+| *content* |  |  | CalendarListEntry
+| *contentChannel* |  |  | Channel
 |===
 
 ==== : settings
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *contentChannel* (consumer) |  |  | Channel
-| *setting* (consumer) |  |  | String
+| *contentChannel* |  |  | Channel
+| *setting* |  |  | String
 |===
 // endpoint options: END
 

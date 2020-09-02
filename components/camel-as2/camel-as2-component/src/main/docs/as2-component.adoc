@@ -158,30 +158,30 @@ as2:apiName/methodName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *as2From* (common) | AS2 name of sender |  | String
-| *as2MessageStructure* (common) | The structure of AS2 to send; see |  | AS2MessageStructure
-| *as2To* (common) | AS2 name of recipient |  | String
-| *compressionAlgorithm* (common) | The algorithm used to compress the message or |  | AS2CompressionAlgorithm
-| *dispositionNotificationTo* (common) | An RFC2822 address to request a receipt or |  | String
-| *ediMessage* (common) | EDI message to transport |  | String
-| *ediMessageContentType* (common) | The content typw of EDI message |  | ContentType
-| *ediMessageTransferEncoding* (common) | The transfer encoding used to transport EDI message |  | String
-| *encryptingAlgorithm* (common) | The algorithm used to encrypt the message or |  | AS2EncryptionAlgorithm
-| *encryptingCertificateChain* (common) | The chain of certificates used to encrypt the message or |  | Certificate[]
-| *from* (common) | RFC2822 address of sender |  | String
-| *requestUri* (common) | Resource location to deliver message |  | String
-| *signedReceiptMicAlgorithms* (common) | The senders list of signing algorithms for signing receipt, in preferred order, or |  | String[]
-| *signingAlgorithm* (common) | The algorithm used to sign the message or |  | AS2SignatureAlgorithm
-| *signingCertificateChain* (common) | The chain of certificates used to sign the message or |  | Certificate[]
-| *signingPrivateKey* (common) | The private key used to sign EDI message |  | PrivateKey
-| *subject* (common) | Message subject |  | String
+| *as2From* | AS2 name of sender |  | String
+| *as2MessageStructure* | The structure of AS2 to send; see |  | AS2MessageStructure
+| *as2To* | AS2 name of recipient |  | String
+| *compressionAlgorithm* | The algorithm used to compress the message or |  | AS2CompressionAlgorithm
+| *dispositionNotificationTo* | An RFC2822 address to request a receipt or |  | String
+| *ediMessage* | EDI message to transport |  | String
+| *ediMessageContentType* | The content typw of EDI message |  | ContentType
+| *ediMessageTransferEncoding* | The transfer encoding used to transport EDI message |  | String
+| *encryptingAlgorithm* | The algorithm used to encrypt the message or |  | AS2EncryptionAlgorithm
+| *encryptingCertificateChain* | The chain of certificates used to encrypt the message or |  | Certificate[]
+| *from* | RFC2822 address of sender |  | String
+| *requestUri* | Resource location to deliver message |  | String
+| *signedReceiptMicAlgorithms* | The senders list of signing algorithms for signing receipt, in preferred order, or |  | String[]
+| *signingAlgorithm* | The algorithm used to sign the message or |  | AS2SignatureAlgorithm
+| *signingCertificateChain* | The chain of certificates used to sign the message or |  | Certificate[]
+| *signingPrivateKey* | The private key used to sign EDI message |  | PrivateKey
+| *subject* | Message subject |  | String
 |===
 
 ==== apiName: server
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *requestUriPattern* (common) |  |  | String
+| *requestUriPattern* |  |  | String
 |===
 // endpoint options: END
 

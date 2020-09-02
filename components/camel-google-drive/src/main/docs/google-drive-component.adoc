@@ -177,106 +177,106 @@ google-drive:apiName/methodName
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *appId* (common) |  |  | String
+| *appId* |  |  | String
 |===
 
 ==== apiName: drive-changes
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *changeId* (common) |  |  | String
-| *contentChannel* (common) |  |  | Channel
+| *changeId* |  |  | String
+| *contentChannel* |  |  | Channel
 |===
 
 ==== apiName: drive-channels
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *contentChannel* (common) |  |  | Channel
+| *contentChannel* |  |  | Channel
 |===
 
 ==== apiName: drive-children
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *childId* (common) |  |  | String
-| *content* (common) |  |  | ChildReference
-| *folderId* (common) |  |  | String
+| *childId* |  |  | String
+| *content* |  |  | ChildReference
+| *folderId* |  |  | String
 |===
 
 ==== apiName: drive-comments
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *commentId* (common) |  |  | String
-| *content* (common) |  |  | Comment
-| *fileId* (common) |  |  | String
+| *commentId* |  |  | String
+| *content* |  |  | Comment
+| *fileId* |  |  | String
 |===
 
 ==== apiName: drive-files
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | File
-| *contentChannel* (common) |  |  | Channel
-| *fileId* (common) |  |  | String
-| *mediaContent* (common) |  |  | AbstractInputStreamContent
-| *mimeType* (common) |  |  | String
+| *content* |  |  | File
+| *contentChannel* |  |  | Channel
+| *fileId* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
+| *mimeType* |  |  | String
 |===
 
 ==== apiName: drive-parents
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | ParentReference
-| *fileId* (common) |  |  | String
-| *parentId* (common) |  |  | String
+| *content* |  |  | ParentReference
+| *fileId* |  |  | String
+| *parentId* |  |  | String
 |===
 
 ==== apiName: drive-permissions
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | Permission
-| *email* (common) |  |  | String
-| *fileId* (common) |  |  | String
-| *permissionId* (common) |  |  | String
+| *content* |  |  | Permission
+| *email* |  |  | String
+| *fileId* |  |  | String
+| *permissionId* |  |  | String
 |===
 
 ==== apiName: drive-properties
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | Property
-| *fileId* (common) |  |  | String
-| *propertyKey* (common) |  |  | String
+| *content* |  |  | Property
+| *fileId* |  |  | String
+| *propertyKey* |  |  | String
 |===
 
 ==== apiName: drive-realtime
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *fileId* (common) |  |  | String
-| *mediaContent* (common) |  |  | AbstractInputStreamContent
+| *fileId* |  |  | String
+| *mediaContent* |  |  | AbstractInputStreamContent
 |===
 
 ==== apiName: drive-replies
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *commentId* (common) |  |  | String
-| *content* (common) |  |  | CommentReply
-| *fileId* (common) |  |  | String
-| *replyId* (common) |  |  | String
+| *commentId* |  |  | String
+| *content* |  |  | CommentReply
+| *fileId* |  |  | String
+| *replyId* |  |  | String
 |===
 
 ==== apiName: drive-revisions
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *content* (common) |  |  | Revision
-| *fileId* (common) |  |  | String
-| *revisionId* (common) |  |  | String
+| *content* |  |  | Revision
+| *fileId* |  |  | String
+| *revisionId* |  |  | String
 |===
 // endpoint options: END
 
