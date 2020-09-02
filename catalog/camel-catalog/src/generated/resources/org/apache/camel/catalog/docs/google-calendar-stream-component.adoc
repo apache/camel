@@ -140,6 +140,80 @@ with the following path and query parameters:
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
+
+
+
+
+=== Query API Parameters (7 APIs):
+
+The Google Calendar Stream endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the  path parameter:
+
+----
+google-calendar-stream:index
+----
+
+
+==== : acl
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (consumer) |  |  | String
+| *content* (consumer) |  |  | AclRule
+| *contentChannel* (consumer) |  |  | Channel
+| *ruleId* (consumer) |  |  | String
+|===
+
+==== : calendars
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (consumer) |  |  | String
+| *content* (consumer) |  |  | Calendar
+|===
+
+==== : channels
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentChannel* (consumer) |  |  | Channel
+|===
+
+==== : events
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (consumer) |  |  | String
+| *content* (consumer) |  |  | Event
+| *contentChannel* (consumer) |  |  | Channel
+| *destination* (consumer) |  |  | String
+| *eventId* (consumer) |  |  | String
+| *text* (consumer) |  |  | String
+|===
+
+==== : freebusy
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (consumer) |  |  | FreeBusyRequest
+|===
+
+==== : list
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (consumer) |  |  | String
+| *content* (consumer) |  |  | CalendarListEntry
+| *contentChannel* (consumer) |  |  | Channel
+|===
+
+==== : settings
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentChannel* (consumer) |  |  | Channel
+| *setting* (consumer) |  |  | String
+|===
 // endpoint options: END
 
 

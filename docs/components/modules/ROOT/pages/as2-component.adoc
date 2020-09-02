@@ -142,6 +142,49 @@ with the following path and query parameters:
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
+
+
+
+
+=== Query API Parameters (2 APIs):
+
+The AS2 endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the apiName path parameter:
+
+----
+as2:apiName/methodName
+----
+
+
+==== apiName: client
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *as2From* (common) | AS2 name of sender |  | String
+| *as2MessageStructure* (common) | The structure of AS2 to send; see |  | AS2MessageStructure
+| *as2To* (common) | AS2 name of recipient |  | String
+| *compressionAlgorithm* (common) | The algorithm used to compress the message or |  | AS2CompressionAlgorithm
+| *dispositionNotificationTo* (common) | An RFC2822 address to request a receipt or |  | String
+| *ediMessage* (common) | EDI message to transport |  | String
+| *ediMessageContentType* (common) | The content typw of EDI message |  | ContentType
+| *ediMessageTransferEncoding* (common) | The transfer encoding used to transport EDI message |  | String
+| *encryptingAlgorithm* (common) | The algorithm used to encrypt the message or |  | AS2EncryptionAlgorithm
+| *encryptingCertificateChain* (common) | The chain of certificates used to encrypt the message or |  | Certificate[]
+| *from* (common) | RFC2822 address of sender |  | String
+| *requestUri* (common) | Resource location to deliver message |  | String
+| *signedReceiptMicAlgorithms* (common) | The senders list of signing algorithms for signing receipt, in preferred order, or |  | String[]
+| *signingAlgorithm* (common) | The algorithm used to sign the message or |  | AS2SignatureAlgorithm
+| *signingCertificateChain* (common) | The chain of certificates used to sign the message or |  | Certificate[]
+| *signingPrivateKey* (common) | The private key used to sign EDI message |  | PrivateKey
+| *subject* (common) | Message subject |  | String
+|===
+
+==== apiName: server
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *requestUriPattern* (common) |  |  | String
+|===
 // endpoint options: END
 
 

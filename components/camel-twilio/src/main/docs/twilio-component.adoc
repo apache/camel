@@ -98,76 +98,506 @@ with the following path and query parameters:
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
+
+
+
+
+=== Query API Parameters (56 APIs):
+
+The Twilio endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the apiName path parameter:
+
+----
+twilio:apiName/methodName
+----
+
+
+==== apiName: account
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathSid* (common) | Fetch by unique Account Sid |  | String
+|===
+
+==== apiName: address
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *city* (common) | The city of the new address |  | String
+| *customerName* (common) | The name to associate with the new address |  | String
+| *isoCountry* (common) | The ISO country code of the new address |  | String
+| *pathAccountSid* (common) | The SID of the Account that will be responsible for the new Address resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+| *postalCode* (common) | The postal code of the new address |  | String
+| *region* (common) | The state or region of the new address |  | String
+| *street* (common) | The number and street address of the new address |  | String
+|===
+
+==== apiName: address-dependent-phone-number
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+| *pathAddressSid* (common) | The SID of the Address resource associated with the phone number |  | String
+|===
+
+==== apiName: application
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: available-phone-number-country
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account requesting the available phone number Country resource |  | String
+| *pathCountryCode* (common) | The ISO country code of the country to fetch available phone number information about |  | String
+|===
+
+==== apiName: available-phone-number-country-local
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account requesting the AvailablePhoneNumber resources |  | String
+| *pathCountryCode* (common) | The ISO Country code of the country from which to read phone numbers |  | String
+|===
+
+==== apiName: available-phone-number-country-mobile
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account requesting the AvailablePhoneNumber resources |  | String
+| *pathCountryCode* (common) | The ISO Country code of the country from which to read phone numbers |  | String
+|===
+
+==== apiName: available-phone-number-country-toll-free
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account requesting the AvailablePhoneNumber resources |  | String
+| *pathCountryCode* (common) | The ISO Country code of the country from which to read phone numbers |  | String
+|===
+
+==== apiName: call
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *applicationSid* (common) | The SID of the Application resource that will handle the call |  | String
+| *from* (common) | Twilio number from which to originate the call |  | Endpoint
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies this resource |  | String
+| *to* (common) | Phone number, SIP address, or client identifier to call |  | Endpoint
+| *twiml* (common) | TwiML instructions for the call |  | Twiml
+| *url* (common) | The absolute URL that returns TwiML for this call |  | URI
+|===
+
+==== apiName: call-feedback
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The unique sid that identifies this account |  | String
+| *pathCallSid* (common) | The call sid that uniquely identifies the call |  | String
+| *qualityScore* (common) | The call quality expressed as an integer from 1 to 5 |  | Integer
+|===
+
+==== apiName: call-feedback-summary
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *endDate* (common) | Only include feedback given on or before this date |  | LocalDate
+| *pathAccountSid* (common) | The unique sid that identifies this account |  | String
+| *pathSid* (common) | A string that uniquely identifies this feedback summary resource |  | String
+| *startDate* (common) | Only include feedback given on or after this date |  | LocalDate
+|===
+
+==== apiName: call-notification
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource to fetch |  | String
+| *pathCallSid* (common) | The Call SID of the resource to fetch |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: call-recording
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathCallSid* (common) | The SID of the Call to associate the resource with |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+| *status* (common) | The new status of the recording |  | Status
+|===
+
+==== apiName: conference
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource(s) to fetch |  | String
+| *pathSid* (common) | The unique string that identifies this resource |  | String
+|===
+
+==== apiName: conference-participant
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *from* (common) | The phone number, Client identifier, or username portion of SIP address that made this call. |  | PhoneNumber
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathCallSid* (common) | The Call SID or URL encoded label of the participant to delete |  | String
+| *pathConferenceSid* (common) | The SID of the participant's conference |  | String
+| *to* (common) | The phone number, SIP address or Client identifier that received this call. |  | PhoneNumber
+|===
+
+==== apiName: connect-app
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource to fetch |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: incoming-phone-number
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *areaCode* (common) | The desired area code for the new phone number |  | String
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+| *phoneNumber* (common) | The phone number to purchase in E.164 format |  | PhoneNumber
+|===
+
+==== apiName: incoming-phone-number-local
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *phoneNumber* (common) | The phone number to purchase in E.164 format |  | PhoneNumber
+|===
+
+==== apiName: incoming-phone-number-mobile
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *phoneNumber* (common) | The phone number to purchase in E.164 format |  | PhoneNumber
+|===
+
+==== apiName: incoming-phone-number-toll-free
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *phoneNumber* (common) | The phone number to purchase in E.164 format |  | PhoneNumber
+|===
+
+==== apiName: key
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: message
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *body* (common) | The text of the message you want to send. Can be up to 1,600 characters in length. |  | String
+| *from* (common) | The phone number that initiated the message |  | PhoneNumber
+| *mediaUrl* (common) | The URL of the media to send with the message |  | List
+| *messagingServiceSid* (common) | The SID of the Messaging Service you want to associate with the message |  | String
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+| *to* (common) | The destination phone number |  | PhoneNumber
+|===
+
+==== apiName: message-feedback
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathMessageSid* (common) | The SID of the Message resource for which the feedback was provided |  | String
+|===
+
+==== apiName: message-media
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource(s) to delete |  | String
+| *pathMessageSid* (common) | The SID of the Message resource that this Media resource belongs to |  | String
+| *pathSid* (common) | The unique string that identifies this resource |  | String
+|===
+
+==== apiName: new-key
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will be responsible for the new Key resource |  | String
+|===
+
+==== apiName: new-signing-key
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will be responsible for the new Key resource |  | String
+|===
+
+==== apiName: notification
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource to fetch |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: outgoing-caller-id
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: queue
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *friendlyName* (common) | A string to describe this resource |  | String
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies this resource |  | String
+|===
+
+==== apiName: queue-member
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource(s) to fetch |  | String
+| *pathCallSid* (common) | The Call SID of the resource(s) to fetch |  | String
+| *pathQueueSid* (common) | The SID of the Queue in which to find the members |  | String
+| *url* (common) | The absolute URL of the Queue resource |  | URI
+|===
+
+==== apiName: recording
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: recording-add-on-result
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathReferenceSid* (common) | The SID of the recording to which the result to delete belongs |  | String
+| *pathSid* (common) | The unique string that identifies the resource to delete |  | String
+|===
+
+==== apiName: recording-add-on-result-payload
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathAddOnResultSid* (common) | The SID of the AddOnResult to which the payloads to delete belongs |  | String
+| *pathReferenceSid* (common) | The SID of the recording to which the AddOnResult resource that contains the payloads to delete belongs |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: recording-transcription
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathRecordingSid* (common) | The SID of the recording that created the transcription to delete |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: short-code
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resource(s) to fetch |  | String
+| *pathSid* (common) | The unique string that identifies this resource |  | String
+|===
+
+==== apiName: signing-key
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The account_sid |  | String
+| *pathSid* (common) | The sid |  | String
+|===
+
+==== apiName: sip-credential-list
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *friendlyName* (common) | Human readable descriptive text |  | String
+| *pathAccountSid* (common) | The unique id of the Account that is responsible for this resource |  | String
+| *pathSid* (common) | Delete by unique credential list Sid |  | String
+|===
+
+==== apiName: sip-credential-list-credential
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *password* (common) | The password will not be returned in the response |  | String
+| *pathAccountSid* (common) | The unique id of the Account that is responsible for this resource |  | String
+| *pathCredentialListSid* (common) | The unique id that identifies the credential list to include the created credential |  | String
+| *pathSid* (common) | The unique id that identifies the resource to delete |  | String
+| *username* (common) | The username for this credential |  | String
+|===
+
+==== apiName: sip-domain
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *domainName* (common) | The unique address on Twilio to route SIP traffic |  | String
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: sip-domain-credential-list-mapping
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *credentialListSid* (common) | A string that identifies the CredentialList resource to map to the SIP domain |  | String
+| *pathAccountSid* (common) | The unique sid that identifies this account |  | String
+| *pathDomainSid* (common) | A string that identifies the SIP Domain for which the CredentialList resource will be mapped |  | String
+| *pathSid* (common) | A string that identifies the resource to delete |  | String
+|===
+
+==== apiName: sip-domain-ip-access-control-list-mapping
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ipAccessControlListSid* (common) | The unique id of the IP access control list to map to the SIP domain |  | String
+| *pathAccountSid* (common) | The unique id of the Account that is responsible for this resource |  | String
+| *pathDomainSid* (common) | A string that uniquely identifies the SIP Domain |  | String
+| *pathSid* (common) | A 34 character string that uniquely identifies the resource to delete. |  | String
+|===
+
+==== apiName: sip-ip-access-control-list
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *friendlyName* (common) | A human readable description of this resource |  | String
+| *pathAccountSid* (common) | The unique sid that identifies this account |  | String
+| *pathSid* (common) | A string that identifies the resource to delete |  | String
+|===
+
+==== apiName: sip-ip-access-control-list-ip-address
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *friendlyName* (common) | A human readable descriptive text for this resource, up to 64 characters long. |  | String
+| *ipAddress* (common) | An IP address in dotted decimal notation from which you want to accept traffic. Any SIP requests from this IP address will be allowed by Twilio. IPv4 only supported today. |  | String
+| *pathAccountSid* (common) | The unique sid that identifies this account |  | String
+| *pathIpAccessControlListSid* (common) | The IpAccessControlList Sid with which to associate the created IpAddress resource |  | String
+| *pathSid* (common) | A string that identifies the resource to delete |  | String
+|===
+
+==== apiName: token
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+|===
+
+==== apiName: transcription
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to delete |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+|===
+
+==== apiName: usage-record
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-all-time
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-daily
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-last-month
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-monthly
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-this-month
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-today
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-yearly
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-record-yesterday
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account that created the resources to read |  | String
+|===
+
+==== apiName: usage-trigger
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *callbackUrl* (common) | The URL we call when the trigger fires |  | URI
+| *pathAccountSid* (common) | The SID of the Account that will create the resource |  | String
+| *pathSid* (common) | The unique string that identifies the resource |  | String
+| *triggerValue* (common) | The usage value at which the trigger should fire |  | String
+| *usageCategory* (common) | The usage category the trigger watches |  | UsageCategory
+|===
+
+==== apiName: validation-request
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *pathAccountSid* (common) | The SID of the Account responsible for the new Caller ID |  | String
+| *phoneNumber* (common) | The phone number to verify in E.164 format |  | PhoneNumber
+|===
 // endpoint options: END
-
-
-
-== URI format
-
-[source,java]
--------------------------------------------------
-    twilio://endpoint-prefix/endpoint?[options]
--------------------------------------------------
-
-Endpoint prefix can be one of:
-
-* account
-* address
-* address-dependent-phone-number
-* application
-* available-phone-number-country
-* available-phone-number-country-local
-* available-phone-number-country-mobile
-* available-phone-number-country-toll-free
-* call
-* call-feedback
-* call-feedback-summary
-* call-notification
-* call-recording
-* conference
-* conference-participant
-* connect-app
-* incoming-phone-number
-* incoming-phone-number-local
-* incoming-phone-number-mobile
-* incoming-phone-number-toll-free
-* key
-* message
-* message-feedback
-* message-media
-* new-key
-* new-signing-key
-* notification
-* outgoing-caller-id
-* queue
-* queue-member
-* recording
-* recording-add-on-result
-* recording-add-on-result-payload
-* recording-transcription
-* short-code
-* signing-key
-* sip-credential-list
-* sip-credential-list-credential
-* sip-domain
-* sip-domain-credential-list-mapping
-* sip-domain-ip-access-control-list-mapping
-* sip-ip-access-control-list
-* sip-ip-access-control-list-ip-address
-* token
-* transcription
-* usage-record
-* usage-record-all-time
-* usage-record-daily
-* usage-record-last-month
-* usage-record-monthly
-* usage-record-this-month
-* usage-record-today
-* usage-record-yearly
-* usage-record-yesterday
-* usage-trigger
-* validation-request
-
 
 == Producer Endpoints:
 
