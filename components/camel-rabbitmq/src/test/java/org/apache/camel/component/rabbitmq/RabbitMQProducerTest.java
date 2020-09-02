@@ -59,7 +59,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesContentTypeHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.CONTENT_TYPE, "application/json");
+        message.setHeader(RabbitMQConstants.CONTENT_TYPE.key(), "application/json");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("application/json", props.getContentType());
     }
@@ -67,7 +67,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesCorrelationHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.CORRELATIONID, "124544");
+        message.setHeader(RabbitMQConstants.CORRELATIONID.key(), "124544");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("124544", props.getCorrelationId());
     }
@@ -75,7 +75,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesUserIdHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.USERID, "abcd");
+        message.setHeader(RabbitMQConstants.USERID.key(), "abcd");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("abcd", props.getUserId());
     }
@@ -83,7 +83,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesMessageIdHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.MESSAGE_ID, "abvasweaqQQ");
+        message.setHeader(RabbitMQConstants.MESSAGE_ID.key(), "abvasweaqQQ");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("abvasweaqQQ", props.getMessageId());
     }
@@ -91,7 +91,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesDeliveryModeHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.DELIVERY_MODE, "444");
+        message.setHeader(RabbitMQConstants.DELIVERY_MODE.key(), "444");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(444, props.getDeliveryMode().intValue());
     }
@@ -99,7 +99,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesClusterIdHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.CLUSTERID, "abtasg5r");
+        message.setHeader(RabbitMQConstants.CLUSTERID.key(), "abtasg5r");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("abtasg5r", props.getClusterId());
     }
@@ -107,7 +107,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesReplyToHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.REPLY_TO, "bbbbdfgdfg");
+        message.setHeader(RabbitMQConstants.REPLY_TO.key(), "bbbbdfgdfg");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("bbbbdfgdfg", props.getReplyTo());
     }
@@ -115,7 +115,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesPriorityHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.PRIORITY, "15");
+        message.setHeader(RabbitMQConstants.PRIORITY.key(), "15");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(15, props.getPriority().intValue());
     }
@@ -123,7 +123,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesExpirationHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.EXPIRATION, "thursday");
+        message.setHeader(RabbitMQConstants.EXPIRATION.key(), "thursday");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("thursday", props.getExpiration());
     }
@@ -131,7 +131,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesTypeHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.TYPE, "sometype");
+        message.setHeader(RabbitMQConstants.TYPE.key(), "sometype");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("sometype", props.getType());
     }
@@ -139,7 +139,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesContentEncodingHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.CONTENT_ENCODING, "qwergghdfdfgdfgg");
+        message.setHeader(RabbitMQConstants.CONTENT_ENCODING.key(), "qwergghdfdfgdfgg");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("qwergghdfdfgdfgg", props.getContentEncoding());
     }
@@ -147,7 +147,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesAppIdHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.APP_ID, "qweeqwe");
+        message.setHeader(RabbitMQConstants.APP_ID.key(), "qweeqwe");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals("qweeqwe", props.getAppId());
     }
@@ -155,7 +155,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesOverrideNameHeader() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, "qweeqwe");
+        message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key(), "qweeqwe");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertNull(props.getHeaders().get(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
     }
@@ -163,7 +163,7 @@ public class RabbitMQProducerTest {
     @Test
     public void testPropertiesUsesTimestampHeaderAsLongValue() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");
+        message.setHeader(RabbitMQConstants.TIMESTAMP.key(), "12345123");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(12345123, props.getTimestamp().getTime());
     }
@@ -172,7 +172,7 @@ public class RabbitMQProducerTest {
     public void testPropertiesUsesTimestampHeaderAsDateValue() throws IOException {
         Date timestamp = new Date();
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
-        message.setHeader(RabbitMQConstants.TIMESTAMP, timestamp);
+        message.setHeader(RabbitMQConstants.TIMESTAMP.key(), timestamp);
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(timestamp, props.getTimestamp());
     }

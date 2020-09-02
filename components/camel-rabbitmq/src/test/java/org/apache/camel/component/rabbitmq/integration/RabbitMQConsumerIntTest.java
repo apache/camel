@@ -79,7 +79,7 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     public void sentMessageIsReceived() throws InterruptedException, IOException, TimeoutException {
 
         to.expectedMessageCount(1);
-        to.expectedHeaderReceived(RabbitMQConstants.REPLY_TO, "myReply");
+        to.expectedHeaderReceived(RabbitMQConstants.REPLY_TO.key(), "myReply");
 
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
         properties.replyTo("myReply");
@@ -94,7 +94,7 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     public void sentMessageIsDeliveryModeSet() throws InterruptedException, IOException, TimeoutException {
 
         to.expectedMessageCount(1);
-        to.expectedHeaderReceived(RabbitMQConstants.DELIVERY_MODE, 1);
+        to.expectedHeaderReceived(RabbitMQConstants.DELIVERY_MODE.key(), 1);
 
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
         properties.deliveryMode(1);
@@ -110,7 +110,7 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
         Date timestamp = currentTimestampWithoutMillis();
 
         to.expectedMessageCount(1);
-        to.expectedHeaderReceived(RabbitMQConstants.TIMESTAMP, timestamp);
+        to.expectedHeaderReceived(RabbitMQConstants.TIMESTAMP.key(), timestamp);
 
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
         properties.timestamp(timestamp);

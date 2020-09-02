@@ -16,14 +16,9 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
-
-import javax.net.ssl.TrustManager;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
@@ -32,6 +27,13 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ExceptionHandler;
+import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
+import javax.net.ssl.TrustManager;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -45,10 +47,6 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
-import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
-import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
 /**
  * Send and receive messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
@@ -167,6 +165,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean guaranteedDeliveries;
     @UriParam(label = "producer")
     private boolean allowNullHeaders;
+    @UriParam(label = "producer")
+    private Map<String, Object> additionalHeaders;
+    @UriParam(label = "producer")
+    private Map<String, Object> additionalProperties;
     @UriParam(label = "producer")
     private boolean allowCustomHeaders = true;
     @UriParam(label = "consumer")
@@ -999,6 +1001,29 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.allowCustomHeaders = allowCustomHeaders;
     }
 
+    /**
+     * Map of additional headers. These headers will be set only when the 'allowCustomHeaders' is set to true
+     */
+    public void setAdditionalHeaders(Map<String, Object> additionalHeaders) {
+        this.additionalHeaders = additionalHeaders;
+    }
+
+    public Map<String, Object> getAdditionalHeaders() {
+        return additionalHeaders;
+    }
+
+    /**
+     * Map of additional properties. These are standard RabbitMQ properties as defined in
+     * {@link com.rabbitmq.client.AMQP.BasicProperties}. The map keys should be from
+     * {@link org.apache.camel.component.rabbitmq.RabbitMQConstants}. Any other keys will be ignored.
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
 
     public ExceptionHandler getConnectionFactoryExceptionHandler() {
         return connectionFactoryExceptionHandler;

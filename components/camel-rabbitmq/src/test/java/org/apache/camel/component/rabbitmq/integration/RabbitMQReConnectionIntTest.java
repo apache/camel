@@ -83,7 +83,7 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
         int failedMessages = 0;
         for (int i = 0; i < nbMessages; i++) {
             try {
-                directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY, "rk3");
+                directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY.key(), "rk3");
             } catch (CamelExecutionException e) {
                 log.debug("Can not send message", e);
                 failedMessages++;

@@ -110,7 +110,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, 4L);
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE.key(), 4L);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         // If message was rejected and not requeued, it will be published in
@@ -128,7 +128,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.expectedMessageCount(1);
 
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, false);
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE.key(), false);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         // If message was rejected and not requeued, it will be published in
@@ -146,7 +146,7 @@ public class RabbitMQRequeueIntTest extends AbstractRabbitMQIntTest {
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.setMinimumExpectedMessageCount(2);
 
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE.key(), true);
         deadLetterChannel.basicConsume(DEAD_LETTER_QUEUE_NAME, true, new DeadLetterConsumer(received));
 
         Awaitility.await().during(1, SECONDS).atMost(2, SECONDS).until(() -> received.size() >= 0);

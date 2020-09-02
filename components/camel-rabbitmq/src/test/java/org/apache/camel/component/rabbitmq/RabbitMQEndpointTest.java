@@ -81,10 +81,10 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
         byte[] body = new byte[20];
         Exchange exchange = endpoint.createRabbitExchange(envelope, properties, body);
-        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
-        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
-        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
-        assertEquals(redelivery, exchange.getIn().getHeader(RabbitMQConstants.REDELIVERY_TAG));
+        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME.key()));
+        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY.key()));
+        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG.key()));
+        assertEquals(redelivery, exchange.getIn().getHeader(RabbitMQConstants.REDELIVERY_TAG.key()));
         assertEquals(body, exchange.getIn().getBody());
     }
 
@@ -126,9 +126,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
         byte[] body = new byte[20];
         Exchange exchange = endpoint.createRabbitExchange(envelope, properties, body);
-        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
-        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
-        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME.key()));
+        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY.key()));
+        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG.key()));
         assertEquals("A string", exchange.getIn().getHeader("stringHeader"));
         assertEquals(new BigDecimal("12.34"), exchange.getIn().getHeader("bigDecimalHeader"));
         assertEquals(42, exchange.getIn().getHeader("integerHeader"));

@@ -145,7 +145,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 // and send back
                 msg.setBody(exchange.getException());
                 exchange.setOut(msg);
-                exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID, exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID));
+                exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID.key(), exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID.key()));
                 try {
                     consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
                 } catch (RuntimeCamelException e) {
@@ -159,7 +159,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
             } else {
                 boolean isRequeueHeaderSet = false;
                 try {
-                    isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
+                    isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE.key(), false, boolean.class);
                 } catch (Exception e) {
                     // ignore as its an invalid header
                 }

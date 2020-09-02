@@ -19,6 +19,10 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQEndpoint target = (RabbitMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": target.setAdditionalHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": target.setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "allowcustomheaders":
         case "allowCustomHeaders": target.setAllowCustomHeaders(property(camelContext, boolean.class, value)); return true;
@@ -138,6 +142,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("additionalHeaders", java.util.Map.class);
+        answer.put("additionalProperties", java.util.Map.class);
         answer.put("addresses", java.lang.String.class);
         answer.put("allowCustomHeaders", boolean.class);
         answer.put("allowMessageBodySerialization", boolean.class);
@@ -208,6 +214,10 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RabbitMQEndpoint target = (RabbitMQEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return target.getAdditionalHeaders();
+        case "additionalproperties":
+        case "additionalProperties": return target.getAdditionalProperties();
         case "addresses": return target.getAddresses();
         case "allowcustomheaders":
         case "allowCustomHeaders": return target.isAllowCustomHeaders();

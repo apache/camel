@@ -19,6 +19,10 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": target.setAdditionalHeaders(property(camelContext, java.util.Map.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": target.setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "addresses": target.setAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "allownullheaders":
         case "allowNullHeaders": target.setAllowNullHeaders(property(camelContext, boolean.class, value)); return true;
@@ -120,6 +124,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Map<String, Object> getAllOptions(Object target) {
         Map<String, Object> answer = new CaseInsensitiveMap();
+        answer.put("additionalHeaders", java.util.Map.class);
+        answer.put("additionalProperties", java.util.Map.class);
         answer.put("addresses", java.lang.String.class);
         answer.put("allowNullHeaders", boolean.class);
         answer.put("args", java.util.Map.class);
@@ -180,6 +186,10 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return target.getAdditionalHeaders();
+        case "additionalproperties":
+        case "additionalProperties": return target.getAdditionalProperties();
         case "addresses": return target.getAddresses();
         case "allownullheaders":
         case "allowNullHeaders": return target.isAllowNullHeaders();

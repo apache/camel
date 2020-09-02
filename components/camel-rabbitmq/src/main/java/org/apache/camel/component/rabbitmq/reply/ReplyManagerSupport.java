@@ -169,9 +169,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     // with it
                     if (holder.getOriginalCorrelationId() != null) {
                         if (exchange.hasOut()) {
-                            exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
+                            exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID.key(), holder.getOriginalCorrelationId());
                         } else {
-                            exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
+                            exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID.key(), holder.getOriginalCorrelationId());
                         }
                     }
                 }

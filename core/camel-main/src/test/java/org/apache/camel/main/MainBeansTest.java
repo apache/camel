@@ -16,13 +16,14 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.jupiter.api.Test;
 
 public class MainBeansTest {
 
@@ -41,6 +42,10 @@ public class MainBeansTest {
         // lookup by type
         main.addProperty("camel.beans.myfoo", "#type:org.apache.camel.main.MyFoo");
         main.addProperty("camel.beans.myfoo.name", "Donkey");
+        main.addProperty("camel.beans.myfoo.map[key1]", "value1");
+        main.addProperty("camel.beans.myfoo.map[key2]", "value2");
+        main.addProperty("camel.beans.myfoo.map[key3]", "value3");
+
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -54,6 +59,13 @@ public class MainBeansTest {
 
         assertEquals(123, myBQF.getCounter());
         assertEquals("Donkey", myFoo.getName());
+        assertEquals(3, myFoo.getMap().size());
+        assertTrue(myFoo.getMap().containsKey("key1"));
+        assertTrue(myFoo.getMap().containsKey("key2"));
+        assertTrue(myFoo.getMap().containsKey("key3"));
+        assertEquals("value1", myFoo.getMap().get("key1"));
+        assertEquals("value2", myFoo.getMap().get("key2"));
+        assertEquals("value3", myFoo.getMap().get("key3"));
 
         main.stop();
     }

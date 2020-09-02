@@ -63,7 +63,7 @@ public class RabbitMQRequeueHandledExceptionIntTest extends AbstractRabbitMQIntT
         producingMockEndpoint.expectedMessageCount(1);
         consumingMockEndpoint.setMinimumExpectedMessageCount(1);
 
-        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE, true);
+        directProducer.sendBodyAndHeader("Hello, World!", RabbitMQConstants.REQUEUE.key(), true);
 
         producingMockEndpoint.assertIsSatisfied();
         consumingMockEndpoint.assertIsSatisfied();

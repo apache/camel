@@ -1732,6 +1732,68 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Map of additional headers. These headers will be set only when the
+         * 'allowCustomHeaders' is set to true.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder additionalHeaders(
+                Map<String, Object> additionalHeaders) {
+            doSetProperty("additionalHeaders", additionalHeaders);
+            return this;
+        }
+        /**
+         * Map of additional headers. These headers will be set only when the
+         * 'allowCustomHeaders' is set to true.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder additionalHeaders(
+                String additionalHeaders) {
+            doSetProperty("additionalHeaders", additionalHeaders);
+            return this;
+        }
+        /**
+         * Map of additional properties. These are standard RabbitMQ properties
+         * as defined in com.rabbitmq.client.AMQP.BasicProperties. The map keys
+         * should be from org.apache.camel.component.rabbitmq.RabbitMQConstants.
+         * Any other keys will be ignored.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Map of additional properties. These are standard RabbitMQ properties
+         * as defined in com.rabbitmq.client.AMQP.BasicProperties. The map keys
+         * should be from org.apache.camel.component.rabbitmq.RabbitMQConstants.
+         * Any other keys will be ignored.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default RabbitMQEndpointProducerBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
          * Allow pass custom values to header.
          * 
          * The option is a: <code>boolean</code> type.

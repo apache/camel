@@ -77,7 +77,7 @@ public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
                 @Override
                 public void run() {
                     for (int i = 0; i < MESSAGE_COUNT; i++) {
-                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY, ROUTING_KEY);
+                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY.key(), ROUTING_KEY);
                     }
                 }
             }));

@@ -41,6 +41,8 @@ public class RabbitMQMessageConverter {
 
     private boolean allowNullHeaders;
     private boolean allowCustomHeaders;
+    private Map<String, Object> additionalHeaders;
+    private Map<String, Object> additionalProperties;
     private final HeaderFilterStrategy headerFilterStrategy = new RabbitMQHeaderFilterStrategy();
 
     /**
@@ -50,49 +52,47 @@ public class RabbitMQMessageConverter {
     public void mergeAmqpProperties(Exchange exchange, AMQP.BasicProperties properties) {
 
         if (properties.getType() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.TYPE, properties.getType());
+            exchange.getIn().setHeader(RabbitMQConstants.TYPE.key(), properties.getType());
         }
         if (properties.getAppId() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.APP_ID, properties.getAppId());
+            exchange.getIn().setHeader(RabbitMQConstants.APP_ID.key(), properties.getAppId());
         }
         if (properties.getClusterId() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.CLUSTERID, properties.getClusterId());
+            exchange.getIn().setHeader(RabbitMQConstants.CLUSTERID.key(), properties.getClusterId());
         }
         if (properties.getContentEncoding() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.CONTENT_ENCODING, properties.getContentEncoding());
+            exchange.getIn().setHeader(RabbitMQConstants.CONTENT_ENCODING.key(), properties.getContentEncoding());
         }
         if (properties.getContentType() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.CONTENT_TYPE, properties.getContentType());
+            exchange.getIn().setHeader(RabbitMQConstants.CONTENT_TYPE.key(), properties.getContentType());
         }
         if (properties.getCorrelationId() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID, properties.getCorrelationId());
+            exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID.key(), properties.getCorrelationId());
         }
         if (properties.getExpiration() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.EXPIRATION, properties.getExpiration());
+            exchange.getIn().setHeader(RabbitMQConstants.EXPIRATION.key(), properties.getExpiration());
         }
         if (properties.getMessageId() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.MESSAGE_ID, properties.getMessageId());
+            exchange.getIn().setHeader(RabbitMQConstants.MESSAGE_ID.key(), properties.getMessageId());
         }
         if (properties.getPriority() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.PRIORITY, properties.getPriority());
+            exchange.getIn().setHeader(RabbitMQConstants.PRIORITY.key(), properties.getPriority());
         }
         if (properties.getReplyTo() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.REPLY_TO, properties.getReplyTo());
+            exchange.getIn().setHeader(RabbitMQConstants.REPLY_TO.key(), properties.getReplyTo());
         }
         if (properties.getTimestamp() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.TIMESTAMP, properties.getTimestamp());
+            exchange.getIn().setHeader(RabbitMQConstants.TIMESTAMP.key(), properties.getTimestamp());
         }
         if (properties.getUserId() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.USERID, properties.getUserId());
+            exchange.getIn().setHeader(RabbitMQConstants.USERID.key(), properties.getUserId());
         }
         if (properties.getDeliveryMode() != null) {
-            exchange.getIn().setHeader(RabbitMQConstants.DELIVERY_MODE, properties.getDeliveryMode());
+            exchange.getIn().setHeader(RabbitMQConstants.DELIVERY_MODE.key(), properties.getDeliveryMode());
         }
     }
 
     public AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
-        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
-
         Message msg;
         if (exchange.hasOut()) {
             msg = exchange.getOut();
@@ -100,81 +100,22 @@ public class RabbitMQMessageConverter {
             msg = exchange.getIn();
         }
 
-        final Object contentType = msg.removeHeader(RabbitMQConstants.CONTENT_TYPE);
-        if (contentType != null) {
-            properties.contentType(contentType.toString());
-        }
-
-        final Object priority = msg.removeHeader(RabbitMQConstants.PRIORITY);
-        if (priority != null) {
-            properties.priority(Integer.parseInt(priority.toString()));
-        }
-
-        final Object messageId = msg.removeHeader(RabbitMQConstants.MESSAGE_ID);
-        if (messageId != null) {
-            properties.messageId(messageId.toString());
-        }
-
-        final Object clusterId = msg.removeHeader(RabbitMQConstants.CLUSTERID);
-        if (clusterId != null) {
-            properties.clusterId(clusterId.toString());
-        }
-
-        final Object replyTo = msg.removeHeader(RabbitMQConstants.REPLY_TO);
-        if (replyTo != null) {
-            properties.replyTo(replyTo.toString());
-        }
-
-        final Object correlationId = msg.removeHeader(RabbitMQConstants.CORRELATIONID);
-        if (correlationId != null) {
-            properties.correlationId(correlationId.toString());
-        }
-
-        final Object deliveryMode = msg.removeHeader(RabbitMQConstants.DELIVERY_MODE);
-        if (deliveryMode != null) {
-            properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
-        }
-
-        final Object userId = msg.removeHeader(RabbitMQConstants.USERID);
-        if (userId != null) {
-            properties.userId(userId.toString());
-        }
-
-        final Object type = msg.removeHeader(RabbitMQConstants.TYPE);
-        if (type != null) {
-            properties.type(type.toString());
-        }
-
-        final Object contentEncoding = msg.removeHeader(RabbitMQConstants.CONTENT_ENCODING);
-        if (contentEncoding != null) {
-            properties.contentEncoding(contentEncoding.toString());
-        }
-
-        final Object expiration = msg.removeHeader(RabbitMQConstants.EXPIRATION);
-        if (expiration != null) {
-            properties.expiration(expiration.toString());
-        }
-
-        final Object appId = msg.removeHeader(RabbitMQConstants.APP_ID);
-        if (appId != null) {
-            properties.appId(appId.toString());
-        }
-
-        final Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP);
-        if (timestamp != null) {
-            properties.timestamp(convertTimestamp(timestamp));
-        }
+        AMQP.BasicProperties.Builder properties = setBasicAmqpProperties(msg);
 
         final Map<String, Object> headers = msg.getHeaders();
+        // Add additional headers (if any)
+        if (additionalHeaders != null) {
+            headers.putAll(additionalHeaders);
+        }
         Map<String, Object> filteredHeaders = new HashMap<>();
 
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
             Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
 
-            // additionaly filter out the OVERRIDE header so it does not
+            // additionally filter out the OVERRIDE header so it does not
             // propagate
-            if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
+            if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key())) {
                 boolean filteredHeader;
                 if (!allowCustomHeaders) {
                     filteredHeader = headerFilterStrategy.applyFilterToCamelHeaders(header.getKey(), header.getValue(), exchange);
@@ -187,7 +128,7 @@ public class RabbitMQMessageConverter {
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
-                } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
+                } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME.key())) {
                     LOG.debug("Preventing header propagation: {} with value {}:", header.getKey(), header.getValue());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}", header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
@@ -196,6 +137,121 @@ public class RabbitMQMessageConverter {
         }
 
         properties.headers(filteredHeaders);
+
+        return properties;
+    }
+
+    private AMQP.BasicProperties.Builder setBasicAmqpProperties(Message msg) {
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        boolean hasAdditionalProps = (additionalProperties != null && !additionalProperties.isEmpty());
+
+        Object contentType = msg.removeHeader(RabbitMQConstants.CONTENT_TYPE.key());
+        if (contentType == null && hasAdditionalProps) {
+            contentType = additionalProperties.get(RabbitMQConstants.CONTENT_TYPE.key());
+        }
+        if (contentType != null) {
+            properties.contentType(contentType.toString());
+        }
+
+        Object priority = msg.removeHeader(RabbitMQConstants.PRIORITY.key());
+        if (priority == null && hasAdditionalProps) {
+            priority = additionalProperties.get(RabbitMQConstants.PRIORITY.key());
+        }
+        if (priority != null) {
+            properties.priority(Integer.parseInt(priority.toString()));
+        }
+
+        Object messageId = msg.removeHeader(RabbitMQConstants.MESSAGE_ID.key());
+        if (messageId == null && hasAdditionalProps) {
+            messageId = additionalProperties.get(RabbitMQConstants.MESSAGE_ID.key());
+        }
+        if (messageId != null) {
+            properties.messageId(messageId.toString());
+        }
+
+        Object clusterId = msg.removeHeader(RabbitMQConstants.CLUSTERID.key());
+        if (clusterId == null && hasAdditionalProps) {
+            clusterId = additionalProperties.get(RabbitMQConstants.CLUSTERID.key());
+        }
+        if (clusterId != null) {
+            properties.clusterId(clusterId.toString());
+        }
+
+        Object replyTo = msg.removeHeader(RabbitMQConstants.REPLY_TO.key());
+        if (replyTo == null && hasAdditionalProps) {
+            replyTo = additionalProperties.get(RabbitMQConstants.REPLY_TO.key());
+        }
+        if (replyTo != null) {
+            properties.replyTo(replyTo.toString());
+        }
+
+        Object correlationId = msg.removeHeader(RabbitMQConstants.CORRELATIONID.key());
+        if (correlationId == null && hasAdditionalProps) {
+            correlationId = additionalProperties.get(RabbitMQConstants.CORRELATIONID.key());
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Additional properties: {}", additionalProperties);
+            LOG.debug("setBasicAmqpProperties: Setting correlationId: {}", correlationId);
+        }
+        if (correlationId != null) {
+            properties.correlationId(correlationId.toString());
+        }
+
+        Object deliveryMode = msg.removeHeader(RabbitMQConstants.DELIVERY_MODE.key());
+        if (deliveryMode == null && hasAdditionalProps) {
+            deliveryMode = additionalProperties.get(RabbitMQConstants.DELIVERY_MODE.key());
+        }
+        if (deliveryMode != null) {
+            properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
+        }
+
+        Object userId = msg.removeHeader(RabbitMQConstants.USERID.key());
+        if (userId == null && hasAdditionalProps) {
+            userId = additionalProperties.get(RabbitMQConstants.USERID.key());
+        }
+        if (userId != null) {
+            properties.userId(userId.toString());
+        }
+
+        Object type = msg.removeHeader(RabbitMQConstants.TYPE.key());
+        if (type == null && hasAdditionalProps) {
+            type = additionalProperties.get(RabbitMQConstants.TYPE.key());
+        }
+        if (type != null) {
+            properties.type(type.toString());
+        }
+
+        Object contentEncoding = msg.removeHeader(RabbitMQConstants.CONTENT_ENCODING.key());
+        if (contentEncoding == null && hasAdditionalProps) {
+            contentEncoding = additionalProperties.get(RabbitMQConstants.CONTENT_ENCODING.key());
+        }
+        if (contentEncoding != null) {
+            properties.contentEncoding(contentEncoding.toString());
+        }
+
+        Object expiration = msg.removeHeader(RabbitMQConstants.EXPIRATION.key());
+        if (expiration == null && hasAdditionalProps) {
+            expiration = additionalProperties.get(RabbitMQConstants.EXPIRATION.key());
+        }
+        if (expiration != null) {
+            properties.expiration(expiration.toString());
+        }
+
+        Object appId = msg.removeHeader(RabbitMQConstants.APP_ID.key());
+        if (appId == null && hasAdditionalProps) {
+            appId = additionalProperties.get(RabbitMQConstants.APP_ID.key());
+        }
+        if (appId != null) {
+            properties.appId(appId.toString());
+        }
+
+        Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP.key());
+        if (timestamp == null && hasAdditionalProps) {
+            timestamp = additionalProperties.get(RabbitMQConstants.TIMESTAMP.key());
+        }
+        if (timestamp != null) {
+            properties.timestamp(convertTimestamp(timestamp));
+        }
 
         return properties;
     }
@@ -275,10 +331,10 @@ public class RabbitMQMessageConverter {
 
     private void populateRoutingInfoHeaders(final Message message, final Envelope envelope) {
         if (envelope != null) {
-            message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
-            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
-            message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
-            message.setHeader(RabbitMQConstants.REDELIVERY_TAG, envelope.isRedeliver());
+            message.setHeader(RabbitMQConstants.ROUTING_KEY.key(), envelope.getRoutingKey());
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME.key(), envelope.getExchange());
+            message.setHeader(RabbitMQConstants.DELIVERY_TAG.key(), envelope.getDeliveryTag());
+            message.setHeader(RabbitMQConstants.REDELIVERY_TAG.key(), envelope.isRedeliver());
         }
     }
 
@@ -348,5 +404,22 @@ public class RabbitMQMessageConverter {
 
     public void setAllowCustomHeaders(boolean allowCustomHeaders) {
         this.allowCustomHeaders = allowCustomHeaders;
+    }
+
+     public void setAdditionalHeaders(Map<String, Object> additionalHeaders) {
+        this.additionalHeaders = additionalHeaders;
+    }
+
+    public Map<String, Object> getAdditionalHeaders() {
+        return additionalHeaders;
+    }
+
+    public void setAdditionalProperties(
+        Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
     }
 }

@@ -134,7 +134,7 @@ public class RabbitMQSpringIntTest extends AbstractRabbitMQSpringIntTest {
     @Test
     public void testSendCustomConnectionFactory() throws Exception {
         String body = "Hello Rabbit";
-        template.sendBodyAndHeader(body, RabbitMQConstants.ROUTING_KEY, "rk2");
+        template.sendBodyAndHeader(body, RabbitMQConstants.ROUTING_KEY.key(), "rk2");
 
         openChannel();
         LastDeliveryConsumer consumer = new LastDeliveryConsumer(channel);

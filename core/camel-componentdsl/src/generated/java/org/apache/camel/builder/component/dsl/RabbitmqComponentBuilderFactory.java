@@ -382,6 +382,37 @@ public interface RabbitmqComponentBuilderFactory {
             return this;
         }
         /**
+         * Map of additional headers. These headers will be set only when the
+         * 'allowCustomHeaders' is set to true.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: producer
+         */
+        default RabbitmqComponentBuilder additionalHeaders(
+                java.util.Map<java.lang.String, java.lang.Object> additionalHeaders) {
+            doSetProperty("additionalHeaders", additionalHeaders);
+            return this;
+        }
+        /**
+         * Map of additional properties. These are standard RabbitMQ properties
+         * as defined in com.rabbitmq.client.AMQP.BasicProperties The map keys
+         * should be from org.apache.camel.component.rabbitmq.RabbitMQConstants.
+         * Any other keys will be ignored. When the message already contains
+         * these headers they will be given precedence over these properties.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: producer
+         */
+        default RabbitmqComponentBuilder additionalProperties(
+                java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
          * Allow pass null values to header.
          * 
          * The option is a: <code>boolean</code> type.
@@ -815,6 +846,8 @@ public interface RabbitmqComponentBuilderFactory {
             case "prefetchGlobal": ((RabbitMQComponent) component).setPrefetchGlobal((boolean) value); return true;
             case "prefetchSize": ((RabbitMQComponent) component).setPrefetchSize((int) value); return true;
             case "threadPoolSize": ((RabbitMQComponent) component).setThreadPoolSize((int) value); return true;
+            case "additionalHeaders": ((RabbitMQComponent) component).setAdditionalHeaders((java.util.Map) value); return true;
+            case "additionalProperties": ((RabbitMQComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "allowNullHeaders": ((RabbitMQComponent) component).setAllowNullHeaders((boolean) value); return true;
             case "channelPoolMaxSize": ((RabbitMQComponent) component).setChannelPoolMaxSize((int) value); return true;
             case "channelPoolMaxWait": ((RabbitMQComponent) component).setChannelPoolMaxWait((long) value); return true;
