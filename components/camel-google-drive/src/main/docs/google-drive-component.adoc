@@ -182,131 +182,131 @@ The drive-about method has no API parameters.
 
 ==== drive-apps
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *appId* |  |  | String
+| Name | Description | Type
+| *appId* |  | String
 |===
 
 
 ==== drive-changes
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *changeId* |  |  | String
-| *contentChannel* |  |  | Channel
+| Name | Description | Type
+| *changeId* |  | String
+| *contentChannel* |  | Channel
 |===
 
 
 ==== drive-channels
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *contentChannel* |  |  | Channel
+| Name | Description | Type
+| *contentChannel* |  | Channel
 |===
 
 
 ==== drive-children
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *childId* |  |  | String
-| *content* |  |  | ChildReference
-| *folderId* |  |  | String
+| Name | Description | Type
+| *childId* |  | String
+| *content* |  | ChildReference
+| *folderId* |  | String
 |===
 
 
 ==== drive-comments
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *commentId* |  |  | String
-| *content* |  |  | Comment
-| *fileId* |  |  | String
+| Name | Description | Type
+| *commentId* |  | String
+| *content* |  | Comment
+| *fileId* |  | String
 |===
 
 
 ==== drive-files
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | File
-| *contentChannel* |  |  | Channel
-| *fileId* |  |  | String
-| *mediaContent* |  |  | AbstractInputStreamContent
-| *mimeType* |  |  | String
+| Name | Description | Type
+| *content* |  | File
+| *contentChannel* |  | Channel
+| *fileId* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
+| *mimeType* |  | String
 |===
 
 
 ==== drive-parents
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | ParentReference
-| *fileId* |  |  | String
-| *parentId* |  |  | String
+| Name | Description | Type
+| *content* |  | ParentReference
+| *fileId* |  | String
+| *parentId* |  | String
 |===
 
 
 ==== drive-permissions
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | Permission
-| *email* |  |  | String
-| *fileId* |  |  | String
-| *permissionId* |  |  | String
+| Name | Description | Type
+| *content* |  | Permission
+| *email* |  | String
+| *fileId* |  | String
+| *permissionId* |  | String
 |===
 
 
 ==== drive-properties
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | Property
-| *fileId* |  |  | String
-| *propertyKey* |  |  | String
+| Name | Description | Type
+| *content* |  | Property
+| *fileId* |  | String
+| *propertyKey* |  | String
 |===
 
 
 ==== drive-realtime
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *fileId* |  |  | String
-| *mediaContent* |  |  | AbstractInputStreamContent
+| Name | Description | Type
+| *fileId* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
 |===
 
 
 ==== drive-replies
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *commentId* |  |  | String
-| *content* |  |  | CommentReply
-| *fileId* |  |  | String
-| *replyId* |  |  | String
+| Name | Description | Type
+| *commentId* |  | String
+| *content* |  | CommentReply
+| *fileId* |  | String
+| *replyId* |  | String
 |===
 
 
 ==== drive-revisions
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | Revision
-| *fileId* |  |  | String
-| *revisionId* |  |  | String
+| Name | Description | Type
+| *content* |  | Revision
+| *fileId* |  | String
+| *revisionId* |  | String
 |===
 // endpoint options: END
 

@@ -154,25 +154,28 @@ with the following path and query parameters:
 
 === Query API Parameters (1 APIs):
 
-The Olingo2 endpoint is an API based component and has conditional parameters based on which API method in use.
+The Olingo2 endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 olingo2:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: DEFAULT
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== DEFAULT
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *data* |  |  | Object
-| *edm* |  |  | Edm
-| *endpointHttpHeaders* |  |  | Map
-| *keyPredicate* |  |  | String
-| *queryParams* |  |  | Map
-| *resourcePath* |  |  | String
-| *responseHandler* |  |  | Olingo2ResponseHandler
+| Name | Description | Type
+| *data* |  | Object
+| *edm* |  | Edm
+| *endpointHttpHeaders* |  | Map
+| *keyPredicate* |  | String
+| *queryParams* |  | Map
+| *resourcePath* |  | String
+| *responseHandler* |  | Olingo2ResponseHandler
 |===
 // endpoint options: END
 

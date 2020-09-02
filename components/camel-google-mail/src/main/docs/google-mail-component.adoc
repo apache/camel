@@ -165,80 +165,80 @@ The following lists each API method and its additional parameters.
 
 ==== attachments
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *id* |  |  | String
-| *messageId* |  |  | String
-| *userId* |  |  | String
+| Name | Description | Type
+| *id* |  | String
+| *messageId* |  | String
+| *userId* |  | String
 |===
 
 
 ==== drafts
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | Draft
-| *id* |  |  | String
-| *mediaContent* |  |  | AbstractInputStreamContent
-| *userId* |  |  | String
+| Name | Description | Type
+| *content* |  | Draft
+| *id* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
+| *userId* |  | String
 |===
 
 
 ==== history
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *userId* |  |  | String
+| Name | Description | Type
+| *userId* |  | String
 |===
 
 
 ==== labels
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | Label
-| *id* |  |  | String
-| *userId* |  |  | String
+| Name | Description | Type
+| *content* |  | Label
+| *id* |  | String
+| *userId* |  | String
 |===
 
 
 ==== messages
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *batchDeleteMessagesRequest* |  |  | BatchDeleteMessagesRequest
-| *batchModifyMessagesRequest* |  |  | BatchModifyMessagesRequest
-| *content* |  |  | Message
-| *id* |  |  | String
-| *mediaContent* |  |  | AbstractInputStreamContent
-| *modifyMessageRequest* |  |  | ModifyMessageRequest
-| *userId* |  |  | String
+| Name | Description | Type
+| *batchDeleteMessagesRequest* |  | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* |  | BatchModifyMessagesRequest
+| *content* |  | Message
+| *id* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
+| *modifyMessageRequest* |  | ModifyMessageRequest
+| *userId* |  | String
 |===
 
 
 ==== threads
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | ModifyThreadRequest
-| *id* |  |  | String
-| *userId* |  |  | String
+| Name | Description | Type
+| *content* |  | ModifyThreadRequest
+| *id* |  | String
+| *userId* |  | String
 |===
 
 
 ==== users
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* |  |  | WatchRequest
-| *userId* |  |  | String
+| Name | Description | Type
+| *content* |  | WatchRequest
+| *userId* |  | String
 |===
 // endpoint options: END
 

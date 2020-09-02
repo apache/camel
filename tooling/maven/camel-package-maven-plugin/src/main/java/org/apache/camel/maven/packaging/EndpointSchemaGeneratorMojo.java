@@ -825,6 +825,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
     }
 
+    // CHECKSTYLE:OFF
     protected void findClassProperties(
             ComponentModel componentModel, Class<?> classElement,
             Set<String> excludes, String prefix,
@@ -1121,6 +1122,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
     }
+    // CHECKSTYLE:ON
 
     private static boolean isNullOrEmpty(Object value) {
         return value == null || "".equals(value) || "null".equals(value);
