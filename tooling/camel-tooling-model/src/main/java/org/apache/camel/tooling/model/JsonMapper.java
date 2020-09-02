@@ -98,6 +98,20 @@ public final class JsonMapper {
                 model.addEndpointOption(option);
             }
         }
+        JsonObject mprap = (JsonObject) obj.get("apiProperties");
+        if (mprap != null) {
+            for (Map.Entry<String, Object> entry : mprap.entrySet()) {
+                String key = entry.getKey();
+                JsonObject mp = (JsonObject) entry.getValue();
+                mp.forEach((k, v) -> {
+                    String mk = k;
+                    JsonObject mo = (JsonObject) v;
+                    ComponentModel.ApiOptionModel option = new ComponentModel.ApiOptionModel();
+                    parseOption(mo, option, mk);
+                    model.addApiOption(key, option);
+                });
+            }
+        }
         return model;
     }
 
@@ -149,6 +163,9 @@ public final class JsonMapper {
         wrapper.put("component", obj);
         wrapper.put("componentProperties", asJsonObject(model.getComponentOptions()));
         wrapper.put("properties", asJsonObject(model.getEndpointOptions()));
+        if (!model.getApiOptions().isEmpty()) {
+            wrapper.put("apiProperties", asJsonObject(model.getApiOptions()));
+        }
         return wrapper;
     }
 
@@ -373,6 +390,12 @@ public final class JsonMapper {
     public static JsonObject asJsonObject(List<? extends BaseOptionModel> options) {
         JsonObject json = new JsonObject();
         options.forEach(option -> json.put(option.getName(), asJsonObject(option)));
+        return json;
+    }
+
+    public static JsonObject asJsonObject(Map<String, List<ComponentModel.ApiOptionModel>> options) {
+        JsonObject json = new JsonObject();
+        options.forEach((k, v) -> json.put(k, asJsonObject(v)));
         return json;
     }
 
