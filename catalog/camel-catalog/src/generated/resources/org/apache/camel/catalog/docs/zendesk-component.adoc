@@ -104,6 +104,140 @@ with the following path and query parameters:
 | *token* (security) | The security token. |  | String
 | *username* (security) | The user name. |  | String
 |===
+
+
+
+
+=== Query API Parameters (1 APIs):
+
+The Zendesk endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the methodName path parameter:
+
+----
+zendesk:methodName
+----
+
+
+==== methodName: DEFAULT
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *article* (common) |  |  | Article
+| *articleAttachments* (common) |  |  | ArticleAttachments
+| *articleId* (common) |  |  | Long
+| *articleId0* (common) |  |  | Long
+| *attachment* (common) |  |  | Attachment
+| *attachments* (common) |  |  | List
+| *audit* (common) |  |  | Audit
+| *auditId* (common) |  |  | Long
+| *automation* (common) |  |  | Automation
+| *automationId* (common) |  |  | Long
+| *automationId0* (common) |  |  | Long
+| *category* (common) |  |  | Category
+| *categoryId* (common) |  |  | Long
+| *category_id* (common) |  |  | Long
+| *comment* (common) |  |  | Comment
+| *commentId* (common) |  |  | Long
+| *content* (common) |  |  | byte[]
+| *contentType* (common) |  |  | String
+| *email* (common) |  |  | String
+| *endTime* (common) |  |  | Date
+| *externalId* (common) |  |  | String
+| *field* (common) |  |  | Field
+| *file* (common) |  |  | File
+| *fileName* (common) |  |  | String
+| *forum* (common) |  |  | Forum
+| *forum_id* (common) |  |  | Long
+| *group* (common) |  |  | Group
+| *groupMembership* (common) |  |  | GroupMembership
+| *group_id* (common) |  |  | Long
+| *group_membership_id* (common) |  |  | Long
+| *id* (common) |  |  | Long
+| *idArticle* (common) |  |  | String
+| *identity* (common) |  |  | Identity
+| *identityId* (common) |  |  | Long
+| *ids* (common) |  |  | long[]
+| *includeArchived* (common) |  |  | Boolean
+| *inline* (common) |  |  | Boolean
+| *installationId* (common) |  |  | Integer
+| *item* (common) |  |  | DynamicContentItem
+| *itemId* (common) |  |  | Long
+| *json* (common) |  |  | String
+| *labels* (common) |  |  | List
+| *locale* (common) |  |  | String
+| *macro* (common) |  |  | Macro
+| *macroId* (common) |  |  | Long
+| *macroId0* (common) |  |  | Long
+| *monitorId* (common) |  |  | Long
+| *name* (common) |  |  | String
+| *newPassword* (common) |  |  | String
+| *notifySubscribers* (common) |  |  | Boolean
+| *oldPassword* (common) |  |  | String
+| *order* (common) |  |  | SortOrder
+| *organization* (common) |  |  | Organization
+| *organizationId* (common) |  |  | Long
+| *organizationList* (common) |  |  | List
+| *organizationMembership* (common) |  |  | OrganizationMembership
+| *organizationMembershipList* (common) |  |  | List
+| *organizationMemberships* (common) |  |  | OrganizationMembership[]
+| *organization_id* (common) |  |  | Long
+| *organization_membership_id* (common) |  |  | Long
+| *organizations* (common) |  |  | Organization[]
+| *page* (common) |  |  | Integer
+| *parameters* (common) |  |  | String
+| *params* (common) |  |  | Map
+| *password* (common) |  |  | String
+| *permissionGroup* (common) |  |  | PermissionGroup
+| *query* (common) |  |  | String
+| *request* (common) |  |  | Request
+| *requestId* (common) |  |  | Long
+| *role* (common) |  |  | String
+| *roles* (common) |  |  | String[]
+| *satisfactionRating* (common) |  |  | SatisfactionRating
+| *schedule* (common) |  |  | Schedule
+| *scheduleId* (common) |  |  | Long
+| *searchTerm* (common) |  |  | String
+| *section* (common) |  |  | Section
+| *sectionId* (common) |  |  | Long
+| *sortBy* (common) |  |  | String
+| *sortOrder* (common) |  |  | SortOrder
+| *startTime* (common) |  |  | Date
+| *status* (common) |  |  | JobStatus
+| *statuses* (common) |  |  | List
+| *suspendedTicket* (common) |  |  | SuspendedTicket
+| *tags* (common) |  |  | String[]
+| *target* (common) |  |  | Target
+| *targetId* (common) |  |  | Long
+| *ticket* (common) |  |  | Ticket
+| *ticketForm* (common) |  |  | TicketForm
+| *ticketId* (common) |  |  | Long
+| *ticketId0* (common) |  |  | Long
+| *ticketImport* (common) |  |  | TicketImport
+| *ticketList* (common) |  |  | List
+| *tickets* (common) |  |  | Ticket[]
+| *token* (common) |  |  | String
+| *topic* (common) |  |  | Topic
+| *translation* (common) |  |  | Translation
+| *translationId* (common) |  |  | Long
+| *trigger* (common) |  |  | Trigger
+| *triggerId* (common) |  |  | Long
+| *triggerId0* (common) |  |  | Long
+| *tweetId* (common) |  |  | Long
+| *type* (common) |  |  | Class
+| *unixEpochTime* (common) |  |  | Long
+| *upload* (common) |  |  | Upload
+| *user* (common) |  |  | User
+| *userId* (common) |  |  | Long
+| *userId0* (common) |  |  | Long
+| *userIdThatWillBeMerged* (common) |  |  | Long
+| *userIdThatWillRemain* (common) |  |  | Long
+| *userList* (common) |  |  | List
+| *userSegment* (common) |  |  | UserSegment
+| *user_id* (common) |  |  | Long
+| *users* (common) |  |  | User[]
+| *usersList* (common) |  |  | List
+| *variant* (common) |  |  | DynamicContentItemVariant
+|===
 // endpoint options: END
 
 

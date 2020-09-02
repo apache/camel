@@ -147,6 +147,84 @@ with the following path and query parameters:
 | *clientSecret* (security) | Client secret of the mail application |  | String
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
+
+
+
+
+=== Query API Parameters (7 APIs):
+
+The Google Mail endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the apiName path parameter:
+
+----
+google-mail:apiName/methodName
+----
+
+
+==== apiName: attachments
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *id* (common) |  |  | String
+| *messageId* (common) |  |  | String
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: drafts
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (common) |  |  | Draft
+| *id* (common) |  |  | String
+| *mediaContent* (common) |  |  | AbstractInputStreamContent
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: history
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: labels
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (common) |  |  | Label
+| *id* (common) |  |  | String
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: messages
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *batchDeleteMessagesRequest* (common) |  |  | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* (common) |  |  | BatchModifyMessagesRequest
+| *content* (common) |  |  | Message
+| *id* (common) |  |  | String
+| *mediaContent* (common) |  |  | AbstractInputStreamContent
+| *modifyMessageRequest* (common) |  |  | ModifyMessageRequest
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: threads
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (common) |  |  | ModifyThreadRequest
+| *id* (common) |  |  | String
+| *userId* (common) |  |  | String
+|===
+
+==== apiName: users
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (common) |  |  | WatchRequest
+| *userId* (common) |  |  | String
+|===
 // endpoint options: END
 
 

@@ -17,9 +17,9 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOptionModel> {
@@ -37,7 +37,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected boolean lenientProperties;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
-    protected final Map<String, List<ApiOptionModel>> apiOptions = new LinkedHashMap<>();
+    protected final Map<String, List<ApiOptionModel>> apiOptions = new TreeMap<>(); // lets sort by API names
 
     public ComponentModel() {
     }

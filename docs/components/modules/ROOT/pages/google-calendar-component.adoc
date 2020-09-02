@@ -139,6 +139,80 @@ with the following path and query parameters:
 | *clientSecret* (security) | Client secret of the calendar application |  | String
 | *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
+
+
+
+
+=== Query API Parameters (7 APIs):
+
+The Google Calendar endpoint is an API based component and has conditional parameters based on which API method in use.
+The API method is located in the endpoint URI as the apiName path parameter:
+
+----
+google-calendar:apiName/methodName
+----
+
+
+==== apiName: acl
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (common) |  |  | String
+| *content* (common) |  |  | AclRule
+| *contentChannel* (common) |  |  | Channel
+| *ruleId* (common) |  |  | String
+|===
+
+==== apiName: calendars
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (common) |  |  | String
+| *content* (common) |  |  | Calendar
+|===
+
+==== apiName: channels
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentChannel* (common) |  |  | Channel
+|===
+
+==== apiName: events
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (common) |  |  | String
+| *content* (common) |  |  | Event
+| *contentChannel* (common) |  |  | Channel
+| *destination* (common) |  |  | String
+| *eventId* (common) |  |  | String
+| *text* (common) |  |  | String
+|===
+
+==== apiName: freebusy
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *content* (common) |  |  | FreeBusyRequest
+|===
+
+==== apiName: list
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *calendarId* (common) |  |  | String
+| *content* (common) |  |  | CalendarListEntry
+| *contentChannel* (common) |  |  | Channel
+|===
+
+==== apiName: settings
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *contentChannel* (common) |  |  | Channel
+| *setting* (common) |  |  | String
+|===
 // endpoint options: END
 
 
