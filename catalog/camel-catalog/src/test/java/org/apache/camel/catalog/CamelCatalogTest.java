@@ -1182,6 +1182,30 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateApiEndpoint() throws Exception {
+        // there is a type converter that converts from and to to phone number
+        String uri = "twilio:call/create?applicationSid=123&from=#555&to=#999";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        // there is a type converter that converts from and to to phone number
+        uri = "twilio:call/create?applicationSid=123&from=#555&to=#999&unknown=true";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("unknown"));
+
+        // there is a type converter that converts from and to to phone number
+        uri = "zendesk:getTopicsByUser?userId=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "zendesk:getTopicsByUser?userId=123&unknown=true";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("unknown"));
+    }
+
+    @Test
     public void testValidateEndpointTimerDuration() throws Exception {
         String uri = "timer:foo?period=5s";
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);

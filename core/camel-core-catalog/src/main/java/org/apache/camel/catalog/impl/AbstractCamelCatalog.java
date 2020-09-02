@@ -52,6 +52,7 @@ import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -171,6 +172,13 @@ public abstract class AbstractCamelCatalog {
         // endpoint options have higher priority so overwrite component options
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
+
+        if (model.isApi()) {
+            String qualifier = model.getApiPropertyQualifier();
+            String key = properties.get(qualifier);
+            Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
+            rows.putAll(apiProperties);
+        }
 
         // the dataformat component refers to a data format so lets add the properties for the selected
         // data format to the list of rows
@@ -534,6 +542,17 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointOptions().forEach(o -> rows.put(o.getName(), o));
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
+        // is this an api component then there may be additional options
+        if (model.isApi()) {
+            String qualifier = model.getApiPropertyQualifier();
+            int pos = word.indexOf(qualifier);
+            if (pos != -1) {
+                String key = word2.size() > pos ? word2.get(pos) : null;
+                Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
+                rows.putAll(apiProperties);
+            }
+        }
+
         // word contains the syntax path elements
         Iterator<String> it = word2.iterator();
         for (int i = 0; i < word.size(); i++) {
@@ -625,6 +644,32 @@ public abstract class AbstractCamelCatalog {
             parameters.remove(key);
         }
 
+        return answer;
+    }
+
+    private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key) {
+        Map<String, BaseOptionModel> answer = new LinkedHashMap<>();
+        if (key != null) {
+            String matchKey = null;
+            if (model.getApiOptions().containsKey(key)) {
+                matchKey = key;
+            }
+            if (matchKey == null) {
+                key = StringHelper.camelCaseToDash(key);
+                if (model.getApiOptions().containsKey(key)) {
+                    matchKey = key;
+                }
+            }
+            if (matchKey == null) {
+                key = "DEFAULT";
+                if (model.getApiOptions().containsKey(key)) {
+                    matchKey = key;
+                }
+            }
+            if (matchKey != null) {
+                model.getApiOptions().get(matchKey).forEach(o -> answer.put(o.getName(), o));
+            }
+        }
         return answer;
     }
 

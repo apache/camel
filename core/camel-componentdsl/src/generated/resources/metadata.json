@@ -8233,7 +8233,7 @@
     "apiPropertyQualifier": "methodName",
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": true
+    "lenientProperties": false
   },
   "ZookeeperComponentBuilderFactory": {
     "kind": "component",
