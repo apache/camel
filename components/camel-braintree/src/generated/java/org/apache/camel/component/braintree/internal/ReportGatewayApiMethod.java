@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum ReportGatewayApiMethod implements ApiMethod {
 
-    TRANSACTIONLEVELFEES(
+    TRANSACTION_LEVEL_FEES(
         com.braintreegateway.Result.class,
         "transactionLevelFees",
         arg("request", com.braintreegateway.TransactionLevelFeeReportRequest.class));

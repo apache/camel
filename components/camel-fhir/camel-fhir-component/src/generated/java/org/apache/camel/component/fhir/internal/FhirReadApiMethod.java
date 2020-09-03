@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirReadApiMethod implements ApiMethod {
 
-    RESOURCEBYID(
+    RESOURCE_BY_ID(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resource", Class.class),
@@ -33,7 +33,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_1(
+    RESOURCE_BY_ID_1(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resource", Class.class),
@@ -44,7 +44,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_2(
+    RESOURCE_BY_ID_2(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resourceClass", String.class),
@@ -55,7 +55,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_3(
+    RESOURCE_BY_ID_3(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resourceClass", String.class),
@@ -66,7 +66,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_4(
+    RESOURCE_BY_ID_4(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resource", Class.class),
@@ -78,7 +78,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYID_5(
+    RESOURCE_BY_ID_5(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceById",
         arg("resourceClass", String.class),
@@ -90,7 +90,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYURL(
+    RESOURCE_BY_URL(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceByUrl",
         arg("resource", Class.class),
@@ -101,7 +101,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYURL_1(
+    RESOURCE_BY_URL_1(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceByUrl",
         arg("resource", Class.class),
@@ -112,7 +112,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYURL_2(
+    RESOURCE_BY_URL_2(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceByUrl",
         arg("resourceClass", String.class),
@@ -123,7 +123,7 @@ public enum FhirReadApiMethod implements ApiMethod {
         arg("throwError", Boolean.class),
         arg("extraParameters", java.util.Map.class)),
 
-    RESOURCEBYURL_3(
+    RESOURCE_BY_URL_3(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "resourceByUrl",
         arg("resourceClass", String.class),

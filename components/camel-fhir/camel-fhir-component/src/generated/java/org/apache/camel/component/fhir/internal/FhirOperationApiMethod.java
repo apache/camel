@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirOperationApiMethod implements ApiMethod {
 
-    ONINSTANCE(
+    ON_INSTANCE(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "onInstance",
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
@@ -33,7 +33,7 @@ public enum FhirOperationApiMethod implements ApiMethod {
         arg("returnType", Class.class),
         arg("extraParameters", java.util.Map.class)),
 
-    ONINSTANCEVERSION(
+    ON_INSTANCE_VERSION(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "onInstanceVersion",
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
@@ -44,7 +44,7 @@ public enum FhirOperationApiMethod implements ApiMethod {
         arg("returnType", Class.class),
         arg("extraParameters", java.util.Map.class)),
 
-    ONSERVER(
+    ON_SERVER(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "onServer",
         arg("name", String.class),
@@ -54,7 +54,7 @@ public enum FhirOperationApiMethod implements ApiMethod {
         arg("returnType", Class.class),
         arg("extraParameters", java.util.Map.class)),
 
-    ONTYPE(
+    ON_TYPE(
         org.hl7.fhir.instance.model.api.IBaseResource.class,
         "onType",
         arg("resourceType", Class.class),
@@ -65,7 +65,7 @@ public enum FhirOperationApiMethod implements ApiMethod {
         arg("returnType", Class.class),
         arg("extraParameters", java.util.Map.class)),
 
-    PROCESSMESSAGE(
+    PROCESS_MESSAGE(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "processMessage",
         arg("respondToUri", String.class),

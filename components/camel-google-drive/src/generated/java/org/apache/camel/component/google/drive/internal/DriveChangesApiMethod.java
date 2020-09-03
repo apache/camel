@@ -27,7 +27,7 @@ public enum DriveChangesApiMethod implements ApiMethod {
         "get",
         arg("changeId", String.class)),
 
-    GETSTARTPAGETOKEN(
+    GET_START_PAGE_TOKEN(
         com.google.api.services.drive.Drive.Changes.GetStartPageToken.class,
         "getStartPageToken"),
 
