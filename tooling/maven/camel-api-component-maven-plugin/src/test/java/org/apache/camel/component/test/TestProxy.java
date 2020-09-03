@@ -21,22 +21,47 @@ import java.util.List;
 import java.util.Map;
 
 public class TestProxy {
+
+    /**
+     * Just saying hi
+     */
     public String sayHi() {
         return "Hello!";
     }
 
+    /**
+     * Just saying hi
+     *
+     * @param hello should we say hello or hi
+     */
     public String sayHi(boolean hello) {
         return hello ? "Hello!" : "Hi!";
     }
 
+    /**
+     * Just saying hi
+     *
+     * @param name your name
+     */
     public String sayHi(final String name) {
         return "Hello " + name;
     }
 
+    /**
+     * Greeting method for me
+     *
+     * @param name your name
+     */
     public final String greetMe(final String name) {
         return "Greetings " + name;
     }
 
+    /**
+     * Greeting method for us
+     *
+     * @param name1 your name
+     * @param name2 my name
+     */
     public final String greetUs(final String name1, String name2) {
         return "Greetings " + name1 + ", " + name2;
     }

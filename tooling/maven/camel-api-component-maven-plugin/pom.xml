@@ -92,7 +92,6 @@
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
@@ -128,6 +127,13 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
             <version>${velocity-version}</version>
+        </dependency>
+
+        <!-- for java source parsing -->
+        <dependency>
+            <groupId>org.jboss.forge.roaster</groupId>
+            <artifactId>roaster-jdt</artifactId>
+            <version>${roaster-version}</version>
         </dependency>
 
         <!-- logging -->
