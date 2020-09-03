@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,22 +244,16 @@ public abstract class ApiMethodParser<T> {
         final Map<String, Integer> dups = new HashMap<>();
         for (ApiMethodModel model : result) {
             // locale independent upper case conversion
-            final String name = model.getName();
-            final char[] upperCase = new char[name.length()];
-            final char[] lowerCase = name.toCharArray();
-            for (int i = 0; i < upperCase.length; i++) {
-                upperCase[i] = Character.toUpperCase(lowerCase[i]);
-            }
-            String uniqueName = new String(upperCase);
-
+            String uniqueName = StringHelper.camelCaseToDash(model.getName());
+            // replace dash with underscore and upper case
+            uniqueName = uniqueName.replace('-', '_');
+            uniqueName = uniqueName.toUpperCase(Locale.ENGLISH);
             Integer suffix = dups.get(uniqueName);
             if (suffix == null) {
                 dups.put(uniqueName, 1);
             } else {
                 dups.put(uniqueName, suffix + 1);
-                StringBuilder builder = new StringBuilder(uniqueName);
-                builder.append("_").append(suffix);
-                uniqueName = builder.toString();
+                uniqueName = uniqueName + "_" + suffix;
             }
             model.uniqueName = uniqueName;
         }

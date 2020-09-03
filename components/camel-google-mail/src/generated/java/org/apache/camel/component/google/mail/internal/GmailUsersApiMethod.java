@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum GmailUsersApiMethod implements ApiMethod {
 
-    GETPROFILE(
+    GET_PROFILE(
         com.google.api.services.gmail.Gmail.Users.GetProfile.class,
         "getProfile",
         arg("userId", String.class)),

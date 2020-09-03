@@ -43,24 +43,24 @@ public enum SubscriptionGatewayApiMethod implements ApiMethod {
         "find",
         arg("id", String.class)),
 
-    RETRYCHARGE(
+    RETRY_CHARGE(
         com.braintreegateway.Result.class,
         "retryCharge",
         arg("subscriptionId", String.class)),
 
-    RETRYCHARGE_1(
+    RETRY_CHARGE_1(
         com.braintreegateway.Result.class,
         "retryCharge",
         arg("subscriptionId", String.class),
         arg("amount", java.math.BigDecimal.class)),
 
-    RETRYCHARGE_2(
+    RETRY_CHARGE_2(
         com.braintreegateway.Result.class,
         "retryCharge",
         arg("subscriptionId", String.class),
         arg("submitForSettlement", Boolean.class)),
 
-    RETRYCHARGE_3(
+    RETRY_CHARGE_3(
         com.braintreegateway.Result.class,
         "retryCharge",
         arg("subscriptionId", String.class),

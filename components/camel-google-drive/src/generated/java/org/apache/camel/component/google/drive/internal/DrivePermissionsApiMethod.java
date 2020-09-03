@@ -34,7 +34,7 @@ public enum DrivePermissionsApiMethod implements ApiMethod {
         arg("fileId", String.class),
         arg("permissionId", String.class)),
 
-    GETIDFOREMAIL(
+    GET_ID_FOR_EMAIL(
         com.google.api.services.drive.Drive.Permissions.GetIdForEmail.class,
         "getIdForEmail",
         arg("email", String.class)),

@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirSearchApiMethod implements ApiMethod {
 
-    SEARCHBYURL(
+    SEARCH_BY_URL(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "searchByUrl",
         arg("url", String.class),

@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirLoadPageApiMethod implements ApiMethod {
 
-    BYURL(
+    BY_URL(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "byUrl",
         arg("url", String.class),

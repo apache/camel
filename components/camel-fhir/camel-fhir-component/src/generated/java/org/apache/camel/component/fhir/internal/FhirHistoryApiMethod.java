@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum FhirHistoryApiMethod implements ApiMethod {
 
-    ONINSTANCE(
+    ON_INSTANCE(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "onInstance",
         arg("id", org.hl7.fhir.instance.model.api.IIdType.class),
@@ -32,7 +32,7 @@ public enum FhirHistoryApiMethod implements ApiMethod {
         arg("iCutoff", org.hl7.fhir.instance.model.api.IPrimitiveType.class),
         arg("extraParameters", java.util.Map.class)),
 
-    ONSERVER(
+    ON_SERVER(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "onServer",
         arg("returnType", Class.class),
@@ -41,7 +41,7 @@ public enum FhirHistoryApiMethod implements ApiMethod {
         arg("iCutoff", org.hl7.fhir.instance.model.api.IPrimitiveType.class),
         arg("extraParameters", java.util.Map.class)),
 
-    ONTYPE(
+    ON_TYPE(
         org.hl7.fhir.instance.model.api.IBaseBundle.class,
         "onType",
         arg("resourceType", Class.class),

@@ -22,7 +22,7 @@ import static org.apache.camel.support.component.ApiMethodArg.arg;
  */
 public enum BoxSearchManagerApiMethod implements ApiMethod {
 
-    SEARCHFOLDER(
+    SEARCH_FOLDER(
         java.util.Collection.class,
         "searchFolder",
         arg("folderId", String.class),
