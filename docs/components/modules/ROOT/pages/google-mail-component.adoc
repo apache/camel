@@ -109,7 +109,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 7 enums and the value can be one of: threads, messages, attachments, labels, history, drafts, users |  | GoogleMailApiName
+| *apiName* | *Required* What kind of operation to perform. There are 7 enums and the value can be one of: THREADS, MESSAGES, ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS |  | GoogleMailApiName
 | *methodName* | *Required* What sub operation to use for the selected operation. There are 16 enums and the value can be one of: attachments, create, delete, get, getProfile, gmailImport, insert, list, modify, patch, send, stop, trash, untrash, update, watch |  | String
 |===
 

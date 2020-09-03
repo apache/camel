@@ -79,7 +79,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: addOn, address, clientToken, creditCardVerification, customer, discount, dispute, documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan, report, settlementBatchSummary, subscription, transaction, webhookNotification |  | BraintreeApiName
+| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: ADD_ON, ADDRESS, CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION |  | BraintreeApiName
 | *methodName* | What sub operation to use for the selected operation |  | String
 |===
 
@@ -151,8 +151,8 @@ The addOn method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *customerId* | The id of the | String
-| *id* | The id of the | String
+| *customerId* | The id of the Customer | String
+| *id* | The id of the Address to delete | String
 | *request* | The request object | AddressRequest
 |===
 
@@ -183,7 +183,7 @@ The addOn method has no API parameters.
 |===
 | Name | Description | Type
 | *associationFilterId* | The id of the association filter to use | String
-| *id* | The id of the | String
+| *id* | The id of the Customer | String
 | *query* | The request query to use for search | CustomerSearchRequest
 | *request* | The request | CustomerRequest
 |===
@@ -285,9 +285,9 @@ The plan method has no API parameters.
 | Name | Description | Type
 | *amount* |  | BigDecimal
 | *customerId* |  | String
-| *id* | Of the | String
+| *id* | Of the Subscription to cancel | String
 | *request* | The request | SubscriptionRequest
-| *searchRequest* | The | SubscriptionSearchRequest
+| *searchRequest* | The SubscriptionSearchRequest | SubscriptionSearchRequest
 | *submitForSettlement* |  | Boolean
 | *subscriptionId* |  | String
 |===

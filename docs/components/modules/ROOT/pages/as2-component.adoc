@@ -81,7 +81,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 2 enums and the value can be one of: client, server |  | AS2ApiName
+| *apiName* | *Required* What kind of operation to perform. There are 2 enums and the value can be one of: CLIENT, SERVER |  | AS2ApiName
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 
