@@ -149,37 +149,42 @@ with the following path and query parameters:
 
 === Query API Parameters (2 APIs):
 
-The Google Sheets endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Sheets endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 google-sheets:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: data
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== data
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *batchClearValuesRequest* (common) | The |  | BatchClearValuesRequest
-| *batchGetValuesByDataFilter Request* (common) | The |  | BatchGetValuesByDataFilterRequest
-| *batchUpdateValuesByDataFilter Request* (common) | The |  | BatchUpdateValuesByDataFilterRequest
-| *batchUpdateValuesRequest* (common) | The |  | BatchUpdateValuesRequest
-| *clearValuesRequest* (common) | The |  | ClearValuesRequest
-| *content* (common) | The |  | BatchClearValuesByDataFilterRequest
-| *range* (common) | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. |  | String
-| *spreadsheetId* (common) | The ID of the spreadsheet to update |  | String
-| *values* (common) | The |  | ValueRange
+| Name | Description | Type
+| *batchClearValuesRequest* | The | BatchClearValuesRequest
+| *batchGetValuesByDataFilter Request* | The | BatchGetValuesByDataFilterRequest
+| *batchUpdateValuesByDataFilter Request* | The | BatchUpdateValuesByDataFilterRequest
+| *batchUpdateValuesRequest* | The | BatchUpdateValuesRequest
+| *clearValuesRequest* | The | ClearValuesRequest
+| *content* | The | BatchClearValuesByDataFilterRequest
+| *range* | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. | String
+| *spreadsheetId* | The ID of the spreadsheet to update | String
+| *values* | The | ValueRange
 |===
 
-==== apiName: spreadsheets
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== spreadsheets
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *batchUpdateSpreadsheetRequest* (common) | The |  | BatchUpdateSpreadsheetRequest
-| *content* (common) | The |  | Spreadsheet
-| *getSpreadsheetByDataFilter Request* (common) | The |  | GetSpreadsheetByDataFilterRequest
-| *spreadsheetId* (common) | The spreadsheet to apply the updates to |  | String
+| Name | Description | Type
+| *batchUpdateSpreadsheetRequest* | The | BatchUpdateSpreadsheetRequest
+| *content* | The | Spreadsheet
+| *getSpreadsheetByDataFilter Request* | The | GetSpreadsheetByDataFilterRequest
+| *spreadsheetId* | The spreadsheet to apply the updates to | String
 |===
 // endpoint options: END
 

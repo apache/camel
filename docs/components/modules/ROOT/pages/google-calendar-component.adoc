@@ -143,75 +143,95 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (7 APIs):
+=== Query API Parameters (8 APIs):
 
-The Google Calendar endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Calendar endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 google-calendar:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: acl
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | AclRule
-| *contentChannel* (common) |  |  | Channel
-| *ruleId* (common) |  |  | String
-|===
 
-==== apiName: calendars
-[width="100%",cols="2,5,^1,2",options="header"]
+==== acl
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | Calendar
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | AclRule
+| *contentChannel* |  | Channel
+| *ruleId* |  | String
 |===
 
-==== apiName: channels
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== calendars
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *contentChannel* (common) |  |  | Channel
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | Calendar
 |===
 
-==== apiName: events
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== channels
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | Event
-| *contentChannel* (common) |  |  | Channel
-| *destination* (common) |  |  | String
-| *eventId* (common) |  |  | String
-| *text* (common) |  |  | String
+| Name | Description | Type
+| *contentChannel* |  | Channel
 |===
 
-==== apiName: freebusy
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== colors
+
+The colors method has no API parameters.
+
+
+==== events
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (common) |  |  | FreeBusyRequest
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | Event
+| *contentChannel* |  | Channel
+| *destination* |  | String
+| *eventId* |  | String
+| *text* |  | String
 |===
 
-==== apiName: list
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== freebusy
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *calendarId* (common) |  |  | String
-| *content* (common) |  |  | CalendarListEntry
-| *contentChannel* (common) |  |  | Channel
+| Name | Description | Type
+| *content* |  | FreeBusyRequest
 |===
 
-==== apiName: settings
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== list
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *contentChannel* (common) |  |  | Channel
-| *setting* (common) |  |  | String
+| Name | Description | Type
+| *calendarId* |  | String
+| *content* |  | CalendarListEntry
+| *contentChannel* |  | Channel
+|===
+
+
+==== settings
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *contentChannel* |  | Channel
+| *setting* |  | String
 |===
 // endpoint options: END
 

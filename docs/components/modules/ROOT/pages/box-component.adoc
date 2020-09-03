@@ -158,164 +158,185 @@ with the following path and query parameters:
 
 === Query API Parameters (10 APIs):
 
-The Box endpoint is an API based component and has conditional parameters based on which API method in use.
+The Box endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 box:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: collaborations
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *collaborationId* (common) | The id of comment to change |  | String
-| *collaborator* (common) | The collaborator to add |  | BoxCollaborator
-| *email* (common) | The email address of the collaborator to add |  | String
-| *folderId* (common) | The id of folder to add collaboration to |  | String
-| *info* (common) |  |  | Info
-| *role* (common) | The role of the collaborator |  | Role
-|===
 
-==== apiName: comments
-[width="100%",cols="2,5,^1,2",options="header"]
+==== collaborations
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *commentId* (common) | The id of comment to change |  | String
-| *fileId* (common) | The id of file to rename |  | String
-| *message* (common) | The comment's message |  | String
+| Name | Description | Type
+| *collaborationId* | The id of comment to change | String
+| *collaborator* | The collaborator to add | BoxCollaborator
+| *email* | The email address of the collaborator to add | String
+| *folderId* | The id of folder to add collaboration to | String
+| *info* |  | Info
+| *role* | The role of the collaborator | Role
 |===
 
-==== apiName: event-logs
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== comments
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *after* (common) | The lower bound on the timestamp of the events returned |  | Date
-| *before* (common) | The upper bound on the timestamp of the events returned |  | Date
-| *position* (common) | The starting position of the event stream. May be |  | String
-| *types* (common) | An optional list of event types to filter by |  | Type[]
+| Name | Description | Type
+| *commentId* | The id of comment to change | String
+| *fileId* | The id of file to rename | String
+| *message* | The comment's message | String
 |===
 
-==== apiName: events
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== event-logs
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *startingPosition* (common) | The starting position of the event stream |  | Long
+| Name | Description | Type
+| *after* | The lower bound on the timestamp of the events returned | Date
+| *before* | The upper bound on the timestamp of the events returned | Date
+| *position* | The starting position of the event stream. May be | String
+| *types* | An optional list of event types to filter by | Type[]
 |===
 
-==== apiName: files
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== events
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *access* (common) | The access level of the shared link |  | Access
-| *check* (common) | If the file name is already used, call the uploadNewVersion instead. |  | Boolean
-| *content* (common) | A stream containing contents of the file to upload |  | InputStream
-| *created* (common) | The content created date that will be given to the uploaded file |  | Date
-| *destinationFolderId* (common) | The id of the destination folder |  | String
-| *fields* (common) | The information fields to retrieve; if |  | String[]
-| *fileContent* (common) | A stream containing contents of the file to upload |  | InputStream
-| *fileId* (common) | The id of file to copy |  | String
-| *fileName* (common) | The name to give the uploaded file |  | String
-| *fileSize* (common) | The size of the file's content used for monitoring the upload's progress |  | Long
-| *fileType* (common) | Either PNG of JPG |  | ThumbnailFileType
-| *info* (common) | The updated information |  | Info
-| *listener* (common) | A listener for monitoring the download's progress; if |  | ProgressListener
-| *maxHeight* (common) | Maximum height |  | Integer
-| *maxWidth* (common) | Maximum width |  | Integer
-| *metadata* (common) | The new metadata values |  | Metadata
-| *minHeight* (common) | Minimum height |  | Integer
-| *minWidth* (common) | Minimum width |  | Integer
-| *modified* (common) | The content modified date that will be given to the uploaded file |  | Date
-| *newFileName* (common) | The new name of file |  | String
-| *newName* (common) | Is |  | String
-| *output* (common) | The stream to which the file contents will be written |  | OutputStream
-| *parentFolderId* (common) | The id of parent folder |  | String
-| *permissions* (common) | Is |  | Permissions
-| *rangeEnd* (common) | The byte offset in file at which to stop the download; if |  | Long
-| *rangeStart* (common) | The byte offset in file at which to start the download; if |  | Long
-| *size* (common) | The size of the file's content used for monitoring the upload's progress.Skip navigation links |  | Long
-| *typeName* (common) | The metadata template type name; if |  | String
-| *unshareDate* (common) | The date and time at which time the created shared link will expire; if |  | Date
-| *version* (common) | The version of file to delete; initial version of file has value of |  | Integer
+| Name | Description | Type
+| *startingPosition* | The starting position of the event stream | Long
 |===
 
-==== apiName: folders
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== files
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *access* (common) | The access level of the shared link |  | Access
-| *destinationFolderId* (common) | The id of the destination folder |  | String
-| *fields* (common) | The information fields to retrieve; if |  | String[]
-| *folderId* (common) | The id of folder to copy |  | String
-| *folderName* (common) | The name of created folder |  | String
-| *info* (common) | The updated information |  | Info
-| *limit* (common) | The maximum number of children to retrieve after the offset; if |  | Long
-| *newFolderName* (common) | The new name of folder |  | String
-| *newName* (common) | Is |  | String
-| *offset* (common) | The index of first child item to retrieve; if |  | Long
-| *parentFolderId* (common) | The id of parent folder |  | String
-| *path* (common) | Sequence of Box folder names from parent folder to returned folder |  | String[]
-| *permissions* (common) | Is |  | Permissions
-| *unshareDate* (common) | The date and time at which time the created shared link will expire; if |  | Date
+| Name | Description | Type
+| *access* | The access level of the shared link | Access
+| *check* | If the file name is already used, call the uploadNewVersion instead. | Boolean
+| *content* | A stream containing contents of the file to upload | InputStream
+| *created* | The content created date that will be given to the uploaded file | Date
+| *destinationFolderId* | The id of the destination folder | String
+| *fields* | The information fields to retrieve; if | String[]
+| *fileContent* | A stream containing contents of the file to upload | InputStream
+| *fileId* | The id of file to copy | String
+| *fileName* | The name to give the uploaded file | String
+| *fileSize* | The size of the file's content used for monitoring the upload's progress | Long
+| *fileType* | Either PNG of JPG | ThumbnailFileType
+| *info* | The updated information | Info
+| *listener* | A listener for monitoring the download's progress; if | ProgressListener
+| *maxHeight* | Maximum height | Integer
+| *maxWidth* | Maximum width | Integer
+| *metadata* | The new metadata values | Metadata
+| *minHeight* | Minimum height | Integer
+| *minWidth* | Minimum width | Integer
+| *modified* | The content modified date that will be given to the uploaded file | Date
+| *newFileName* | The new name of file | String
+| *newName* | Is | String
+| *output* | The stream to which the file contents will be written | OutputStream
+| *parentFolderId* | The id of parent folder | String
+| *permissions* | Is | Permissions
+| *rangeEnd* | The byte offset in file at which to stop the download; if | Long
+| *rangeStart* | The byte offset in file at which to start the download; if | Long
+| *size* | The size of the file's content used for monitoring the upload's progress.Skip navigation links | Long
+| *typeName* | The metadata template type name; if | String
+| *unshareDate* | The date and time at which time the created shared link will expire; if | Date
+| *version* | The version of file to delete; initial version of file has value of | Integer
 |===
 
-==== apiName: groups
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== folders
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *description* (common) | The description of the new group |  | String
-| *externalSyncIdentifier* (common) | The external_sync_identifier of the new group |  | String
-| *groupId* (common) | The id of group |  | String
-| *groupInfo* (common) | The updated information |  | Info
-| *groupMembershipId* (common) | The id of group membership to delete |  | String
-| *info* (common) | The updated information |  | Info
-| *invitabilityLevel* (common) | The invitibility_level of the new group |  | String
-| *memberViewabilityLevel* (common) | The member_viewability_level of the new group |  | String
-| *name* (common) | The name of the new group |  | String
-| *provenance* (common) | The provenance of the new group |  | String
-| *role* (common) | The role of the user in this group. Can be |  | Role
-| *userId* (common) | The id of user to be added to group |  | String
+| Name | Description | Type
+| *access* | The access level of the shared link | Access
+| *destinationFolderId* | The id of the destination folder | String
+| *fields* | The information fields to retrieve; if | String[]
+| *folderId* | The id of folder to copy | String
+| *folderName* | The name of created folder | String
+| *info* | The updated information | Info
+| *limit* | The maximum number of children to retrieve after the offset; if | Long
+| *newFolderName* | The new name of folder | String
+| *newName* | Is | String
+| *offset* | The index of first child item to retrieve; if | Long
+| *parentFolderId* | The id of parent folder | String
+| *path* | Sequence of Box folder names from parent folder to returned folder | String[]
+| *permissions* | Is | Permissions
+| *unshareDate* | The date and time at which time the created shared link will expire; if | Date
 |===
 
-==== apiName: search
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== groups
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *folderId* (common) | The id of folder searched |  | String
-| *query* (common) | The search query |  | String
+| Name | Description | Type
+| *description* | The description of the new group | String
+| *externalSyncIdentifier* | The external_sync_identifier of the new group | String
+| *groupId* | The id of group | String
+| *groupInfo* | The updated information | Info
+| *groupMembershipId* | The id of group membership to delete | String
+| *info* | The updated information | Info
+| *invitabilityLevel* | The invitibility_level of the new group | String
+| *memberViewabilityLevel* | The member_viewability_level of the new group | String
+| *name* | The name of the new group | String
+| *provenance* | The provenance of the new group | String
+| *role* | The role of the user in this group. Can be | Role
+| *userId* | The id of user to be added to group | String
 |===
 
-==== apiName: tasks
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== search
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *action* (common) | The action the task assignee will be prompted to do |  | Action
-| *assignTo* (common) | The user to assign to task |  | BoxUser
-| *dueAt* (common) | The day at which this task is due |  | Date
-| *fileId* (common) | The id of file to add task to |  | String
-| *info* (common) | The updated information |  | Info
-| *message* (common) | An optional message to include with the task |  | String
-| *taskAssignmentId* (common) | The id of task assignment to delete.Skip navigation links |  | String
-| *taskId* (common) | The id of task to add assignment for |  | String
+| Name | Description | Type
+| *folderId* | The id of folder searched | String
+| *query* | The search query | String
 |===
 
-==== apiName: users
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== tasks
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *email* (common) | The email address to add as an alias |  | String
-| *emailAliasId* (common) | The id of the email alias to delete |  | String
-| *fields* (common) | The fields to retrieve. Leave this out for the standard fields. |  | String[]
-| *filterTerm* (common) | The filter term to lookup users by (login for external, login or name for managed); if |  | String
-| *force* (common) | Whether or not this user should be deleted even if they still own files |  | Boolean
-| *info* (common) | The updated information |  | Info
-| *login* (common) | The email address the user will use to login |  | String
-| *name* (common) | The name of the user |  | String
-| *notifyUser* (common) | Whether or not to send an email notification to the user that their account has been deleted |  | Boolean
-| *params* (common) | Additional user information |  | CreateUserParams
-| *sourceUserId* (common) | The user id of the user whose files will be the source for this operation.Skip navigation links |  | String
-| *userId* (common) | The id of user |  | String
+| Name | Description | Type
+| *action* | The action the task assignee will be prompted to do | Action
+| *assignTo* | The user to assign to task | BoxUser
+| *dueAt* | The day at which this task is due | Date
+| *fileId* | The id of file to add task to | String
+| *info* | The updated information | Info
+| *message* | An optional message to include with the task | String
+| *taskAssignmentId* | The id of task assignment to delete.Skip navigation links | String
+| *taskId* | The id of task to add assignment for | String
+|===
+
+
+==== users
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *email* | The email address to add as an alias | String
+| *emailAliasId* | The id of the email alias to delete | String
+| *fields* | The fields to retrieve. Leave this out for the standard fields. | String[]
+| *filterTerm* | The filter term to lookup users by (login for external, login or name for managed); if | String
+| *force* | Whether or not this user should be deleted even if they still own files | Boolean
+| *info* | The updated information | Info
+| *login* | The email address the user will use to login | String
+| *name* | The name of the user | String
+| *notifyUser* | Whether or not to send an email notification to the user that their account has been deleted | Boolean
+| *params* | Additional user information | CreateUserParams
+| *sourceUserId* | The user id of the user whose files will be the source for this operation.Skip navigation links | String
+| *userId* | The id of user | String
 |===
 // endpoint options: END
 

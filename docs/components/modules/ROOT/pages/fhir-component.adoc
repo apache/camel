@@ -174,166 +174,193 @@ with the following path and query parameters:
 
 === Query API Parameters (13 APIs):
 
-The FHIR endpoint is an API based component and has conditional parameters based on which API method in use.
+The FHIR endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 fhir:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: capabilities
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *extraParameters* (common) |  |  | Map
-| *type* (common) |  |  | Class
-|===
 
-==== apiName: create
-[width="100%",cols="2,5,^1,2",options="header"]
+==== capabilities
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) | See |  | Map
-| *preferReturn* (common) | Add a |  | PreferReturnEnum
-| *resource* (common) | The resource to create |  | IBaseResource
-| *resourceAsString* (common) | The resource to create |  | String
-| *url* (common) | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *type* |  | Class
 |===
 
-==== apiName: delete
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== create
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) | See |  | Map
-| *id* (common) | The |  | IIdType
-| *resource* (common) | The |  | IBaseResource
-| *stringId* (common) | It's id |  | String
-| *type* (common) | The resource type e.g Patient |  | String
-| *url* (common) | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *preferReturn* | Add a | PreferReturnEnum
+| *resource* | The resource to create | IBaseResource
+| *resourceAsString* | The resource to create | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
-==== apiName: history
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== delete
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *count* (common) |  |  | Integer
-| *cutoff* (common) |  |  | Date
-| *extraParameters* (common) |  |  | Map
-| *iCutoff* (common) |  |  | IPrimitiveType
-| *id* (common) |  |  | IIdType
-| *resourceType* (common) |  |  | Class
-| *returnType* (common) |  |  | Class
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *id* | The | IIdType
+| *resource* | The | IBaseResource
+| *stringId* | It's id | String
+| *type* | The resource type e.g Patient | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
-==== apiName: load-page
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== history
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *bundle* (common) |  |  | IBaseBundle
-| *extraParameters* (common) |  |  | Map
-| *returnType* (common) |  |  | Class
-| *url* (common) |  |  | String
+| Name | Description | Type
+| *count* |  | Integer
+| *cutoff* |  | Date
+| *extraParameters* |  | Map
+| *iCutoff* |  | IPrimitiveType
+| *id* |  | IIdType
+| *resourceType* |  | Class
+| *returnType* |  | Class
 |===
 
-==== apiName: meta
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== load-page
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) |  |  | Map
-| *id* (common) |  |  | IIdType
-| *meta* (common) |  |  | IBaseMetaType
-| *metaType* (common) |  |  | Class
-| *theResourceName* (common) |  |  | String
+| Name | Description | Type
+| *bundle* |  | IBaseBundle
+| *extraParameters* |  | Map
+| *returnType* |  | Class
+| *url* |  | String
 |===
 
-==== apiName: operation
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== meta
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *asynchronous* (common) |  |  | Boolean
-| *extraParameters* (common) |  |  | Map
-| *id* (common) |  |  | IIdType
-| *msgBundle* (common) |  |  | IBaseBundle
-| *name* (common) |  |  | String
-| *outputParameterType* (common) |  |  | Class
-| *parameters* (common) |  |  | IBaseParameters
-| *resourceType* (common) |  |  | Class
-| *respondToUri* (common) |  |  | String
-| *responseClass* (common) |  |  | Class
-| *returnType* (common) |  |  | Class
-| *useHttpGet* (common) |  |  | Boolean
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *meta* |  | IBaseMetaType
+| *metaType* |  | Class
+| *theResourceName* |  | String
 |===
 
-==== apiName: patch
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== operation
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) | See |  | Map
-| *id* (common) | The resource ID to patch |  | IIdType
-| *patchBody* (common) | The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 |  | String
-| *preferReturn* (common) | Add a |  | PreferReturnEnum
-| *stringId* (common) | The resource ID to patch |  | String
-| *url* (common) | The search URL to use. The format of this URL should be of the form |  | String
+| Name | Description | Type
+| *asynchronous* |  | Boolean
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *msgBundle* |  | IBaseBundle
+| *name* |  | String
+| *outputParameterType* |  | Class
+| *parameters* |  | IBaseParameters
+| *resourceType* |  | Class
+| *respondToUri* |  | String
+| *responseClass* |  | Class
+| *returnType* |  | Class
+| *useHttpGet* |  | Boolean
 |===
 
-==== apiName: read
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== patch
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) |  |  | Map
-| *iUrl* (common) |  |  | IIdType
-| *id* (common) |  |  | IIdType
-| *ifVersionMatches* (common) |  |  | String
-| *longId* (common) |  |  | Long
-| *resource* (common) |  |  | Class
-| *resourceClass* (common) |  |  | String
-| *returnNull* (common) |  |  | Boolean
-| *returnResource* (common) |  |  | IBaseResource
-| *stringId* (common) |  |  | String
-| *throwError* (common) |  |  | Boolean
-| *url* (common) |  |  | String
-| *version* (common) |  |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *id* | The resource ID to patch | IIdType
+| *patchBody* | The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
+| *preferReturn* | Add a | PreferReturnEnum
+| *stringId* | The resource ID to patch | String
+| *url* | The search URL to use. The format of this URL should be of the form | String
 |===
 
-==== apiName: search
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== read
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) | See |  | Map
-| *url* (common) | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *iUrl* |  | IIdType
+| *id* |  | IIdType
+| *ifVersionMatches* |  | String
+| *longId* |  | Long
+| *resource* |  | Class
+| *resourceClass* |  | String
+| *returnNull* |  | Boolean
+| *returnResource* |  | IBaseResource
+| *stringId* |  | String
+| *throwError* |  | Boolean
+| *url* |  | String
+| *version* |  | String
 |===
 
-==== apiName: transaction
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== search
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *bundle* (common) | Bundle to use in the transaction |  | IBaseBundle
-| *extraParameters* (common) | See |  | Map
-| *resources* (common) | Resources to use in the transaction |  | List
-| *stringBundle* (common) | Bundle to use in the transaction |  | String
+| Name | Description | Type
+| *extraParameters* | See | Map
+| *url* | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
 |===
 
-==== apiName: update
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== transaction
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) |  |  | Map
-| *id* (common) |  |  | IIdType
-| *preferReturn* (common) |  |  | PreferReturnEnum
-| *resource* (common) |  |  | IBaseResource
-| *resourceAsString* (common) |  |  | String
-| *stringId* (common) |  |  | String
-| *url* (common) |  |  | String
+| Name | Description | Type
+| *bundle* | Bundle to use in the transaction | IBaseBundle
+| *extraParameters* | See | Map
+| *resources* | Resources to use in the transaction | List
+| *stringBundle* | Bundle to use in the transaction | String
 |===
 
-==== apiName: validate
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== update
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *extraParameters* (common) |  |  | Map
-| *resource* (common) |  |  | IBaseResource
-| *resourceAsString* (common) |  |  | String
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *id* |  | IIdType
+| *preferReturn* |  | PreferReturnEnum
+| *resource* |  | IBaseResource
+| *resourceAsString* |  | String
+| *stringId* |  | String
+| *url* |  | String
+|===
+
+
+==== validate
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *extraParameters* |  | Map
+| *resource* |  | IBaseResource
+| *resourceAsString* |  | String
 |===
 // endpoint options: END
 
