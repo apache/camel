@@ -14,9 +14,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams(apiName = "address")
 @Configurer
 public final class AddressGatewayEndpointConfiguration extends BraintreeConfiguration {
-    @UriParam(description = "The id of the")
+    @UriParam(description = "The id of the Customer")
     private String customerId;
-    @UriParam(description = "The id of the")
+    @UriParam(description = "The id of the Address to delete")
     private String id;
     @UriParam(description = "The request object")
     private com.braintreegateway.AddressRequest request;

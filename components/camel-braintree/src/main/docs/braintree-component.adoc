@@ -149,8 +149,8 @@ The addOn method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *customerId* | The id of the | String
-| *id* | The id of the | String
+| *customerId* | The id of the Customer | String
+| *id* | The id of the Address to delete | String
 | *request* | The request object | AddressRequest
 |===
 
@@ -181,7 +181,7 @@ The addOn method has no API parameters.
 |===
 | Name | Description | Type
 | *associationFilterId* | The id of the association filter to use | String
-| *id* | The id of the | String
+| *id* | The id of the Customer | String
 | *query* | The request query to use for search | CustomerSearchRequest
 | *request* | The request | CustomerRequest
 |===
@@ -283,9 +283,9 @@ The plan method has no API parameters.
 | Name | Description | Type
 | *amount* |  | BigDecimal
 | *customerId* |  | String
-| *id* | Of the | String
+| *id* | Of the Subscription to cancel | String
 | *request* | The request | SubscriptionRequest
-| *searchRequest* | The | SubscriptionSearchRequest
+| *searchRequest* | The SubscriptionSearchRequest | SubscriptionSearchRequest
 | *submitForSettlement* |  | Boolean
 | *subscriptionId* |  | String
 |===

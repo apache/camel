@@ -18,11 +18,11 @@ public final class SubscriptionGatewayEndpointConfiguration extends BraintreeCon
     private java.math.BigDecimal amount;
     @UriParam
     private String customerId;
-    @UriParam(description = "Of the")
+    @UriParam(description = "Of the Subscription to cancel")
     private String id;
     @UriParam(description = "The request")
     private com.braintreegateway.SubscriptionRequest request;
-    @UriParam(description = "The")
+    @UriParam(description = "The SubscriptionSearchRequest")
     private com.braintreegateway.SubscriptionSearchRequest searchRequest;
     @UriParam
     private Boolean submitForSettlement;
