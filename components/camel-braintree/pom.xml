@@ -66,7 +66,7 @@
             <groupId>com.braintreepayments.gateway</groupId>
             <artifactId>braintree-java</artifactId>
             <version>${braintree-gateway-version}</version>
-            <type>javadoc</type>
+            <classifier>sources</classifier>
             <scope>provided</scope>
             <optional>true</optional>
             <exclusions>
@@ -118,49 +118,49 @@
                                 <api>
                                     <apiName>addOn</apiName>
                                     <proxyClass>com.braintreegateway.AddOnGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>address</apiName>
                                     <proxyClass>com.braintreegateway.AddressGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>clientToken</apiName>
                                     <proxyClass>com.braintreegateway.ClientTokenGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>creditCardVerification</apiName>
                                     <proxyClass>com.braintreegateway.CreditCardVerificationGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>customer</apiName>
                                     <proxyClass>com.braintreegateway.CustomerGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*ransparent.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>discount</apiName>
                                     <proxyClass>com.braintreegateway.DiscountGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>dispute</apiName>
                                     <proxyClass>com.braintreegateway.DisputeGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>documentUpload</apiName>
                                     <proxyClass>com.braintreegateway.DocumentUploadGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>merchantAccount</apiName>
                                     <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -182,9 +182,9 @@
                                 <api>
                                     <apiName>paymentMethod</apiName>
                                     <proxyClass>com.braintreegateway.PaymentMethodGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -205,36 +205,36 @@
                                 <api>
                                     <apiName>paymentMethodNonce</apiName>
                                     <proxyClass>com.braintreegateway.PaymentMethodNonceGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>plan</apiName>
                                     <proxyClass>com.braintreegateway.PlanGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>report</apiName>
                                     <proxyClass>com.braintreegateway.ReportGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>settlementBatchSummary</apiName>
                                     <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>subscription</apiName>
                                     <proxyClass>com.braintreegateway.SubscriptionGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>transaction</apiName>
                                     <proxyClass>com.braintreegateway.TransactionGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*TrData.*|.*ransparent.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -262,7 +262,7 @@
                                 <api>
                                     <apiName>webhookNotification</apiName>
                                     <proxyClass>com.braintreegateway.WebhookNotificationGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                             </apis>
                         </configuration>
