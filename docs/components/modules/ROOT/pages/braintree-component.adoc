@@ -129,148 +129,192 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (14 APIs):
+=== Query API Parameters (17 APIs):
 
-The Braintree endpoint is an API based component and has conditional parameters based on which API method in use.
+The Braintree endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the apiName path parameter:
 
 ----
 braintree:apiName/methodName
 ----
 
+The following lists each API method and its additional parameters.
 
-==== apiName: address
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *customerId* (common) | The id of the |  | String
-| *id* (common) | The id of the |  | String
-| *request* (common) | The request object |  | AddressRequest
-|===
 
-==== apiName: clientToken
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *request* (common) |  |  | ClientTokenRequest
-|===
+==== addOn
 
-==== apiName: creditCardVerification
-[width="100%",cols="2,5,^1,2",options="header"]
+The addOn method has no API parameters.
+
+
+==== address
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *id* (common) |  |  | String
-| *query* (common) |  |  | CreditCardVerificationSearchRequest
-| *request* (common) |  |  | CreditCardVerificationRequest
+| Name | Description | Type
+| *customerId* | The id of the | String
+| *id* | The id of the | String
+| *request* | The request object | AddressRequest
 |===
 
-==== apiName: customer
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== clientToken
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *associationFilterId* (common) | The id of the association filter to use |  | String
-| *id* (common) | The id of the |  | String
-| *query* (common) | The request query to use for search |  | CustomerSearchRequest
-| *request* (common) | The request |  | CustomerRequest
+| Name | Description | Type
+| *request* |  | ClientTokenRequest
 |===
 
-==== apiName: dispute
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== creditCardVerification
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (common) | The content of the text evidence for the dispute |  | String
-| *disputeId* (common) | The dispute id to add text evidence to |  | String
-| *documentId* (common) | The document id of a previously uploaded document |  | String
-| *evidenceId* (common) | The evidence id to remove |  | String
-| *fileEvidenceRequest* (common) | The file evidence request for the dispute |  | FileEvidenceRequest
-| *id* (common) | The dispute id to accept |  | String
-| *query* (common) | The query for what disputes to find |  | DisputeSearchRequest
-| *textEvidenceRequest* (common) | The text evidence request for the dispute |  | TextEvidenceRequest
+| Name | Description | Type
+| *id* |  | String
+| *query* |  | CreditCardVerificationSearchRequest
+| *request* |  | CreditCardVerificationRequest
 |===
 
-==== apiName: documentUpload
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== customer
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *request* (common) |  |  | DocumentUploadRequest
+| Name | Description | Type
+| *associationFilterId* | The id of the association filter to use | String
+| *id* | The id of the | String
+| *query* | The request query to use for search | CustomerSearchRequest
+| *request* | The request | CustomerRequest
 |===
 
-==== apiName: merchantAccount
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== discount
+
+The discount method has no API parameters.
+
+
+==== dispute
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *currencyRequest* (common) |  |  | MerchantAccountCreateForCurrencyRequest
-| *id* (common) |  |  | String
-| *page* (common) |  |  | Integer
-| *request* (common) |  |  | MerchantAccountRequest
+| Name | Description | Type
+| *content* | The content of the text evidence for the dispute | String
+| *disputeId* | The dispute id to add text evidence to | String
+| *documentId* | The document id of a previously uploaded document | String
+| *evidenceId* | The evidence id to remove | String
+| *fileEvidenceRequest* | The file evidence request for the dispute | FileEvidenceRequest
+| *id* | The dispute id to accept | String
+| *query* | The query for what disputes to find | DisputeSearchRequest
+| *textEvidenceRequest* | The text evidence request for the dispute | TextEvidenceRequest
 |===
 
-==== apiName: paymentMethod
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== documentUpload
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *deleteRequest* (common) |  |  | PaymentMethodDeleteRequest
-| *grantRequest* (common) |  |  | PaymentMethodGrantRequest
-| *request* (common) |  |  | PaymentMethodRequest
-| *token* (common) |  |  | String
+| Name | Description | Type
+| *request* |  | DocumentUploadRequest
 |===
 
-==== apiName: paymentMethodNonce
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== merchantAccount
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *paymentMethodNonce* (common) |  |  | String
-| *paymentMethodToken* (common) |  |  | String
-| *request* (common) |  |  | PaymentMethodNonceRequest
+| Name | Description | Type
+| *currencyRequest* |  | MerchantAccountCreateForCurrencyRequest
+| *id* |  | String
+| *page* |  | Integer
+| *request* |  | MerchantAccountRequest
 |===
 
-==== apiName: report
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== paymentMethod
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *request* (common) | The request |  | TransactionLevelFeeReportRequest
+| Name | Description | Type
+| *deleteRequest* |  | PaymentMethodDeleteRequest
+| *grantRequest* |  | PaymentMethodGrantRequest
+| *request* |  | PaymentMethodRequest
+| *token* |  | String
 |===
 
-==== apiName: settlementBatchSummary
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== paymentMethodNonce
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *groupByCustomField* (common) |  |  | String
-| *settlementDate* (common) |  |  | Calendar
+| Name | Description | Type
+| *paymentMethodNonce* |  | String
+| *paymentMethodToken* |  | String
+| *request* |  | PaymentMethodNonceRequest
 |===
 
-==== apiName: subscription
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== plan
+
+The plan method has no API parameters.
+
+
+==== report
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *amount* (common) |  |  | BigDecimal
-| *customerId* (common) |  |  | String
-| *id* (common) | Of the |  | String
-| *request* (common) | The request |  | SubscriptionRequest
-| *searchRequest* (common) | The |  | SubscriptionSearchRequest
-| *submitForSettlement* (common) |  |  | Boolean
-| *subscriptionId* (common) |  |  | String
+| Name | Description | Type
+| *request* | The request | TransactionLevelFeeReportRequest
 |===
 
-==== apiName: transaction
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== settlementBatchSummary
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *amount* (common) |  |  | BigDecimal
-| *cloneRequest* (common) |  |  | TransactionCloneRequest
-| *id* (common) | Of the transaction to cancel release from escrow of |  | String
-| *query* (common) | The search query |  | TransactionSearchRequest
-| *refundRequest* (common) |  |  | TransactionRefundRequest
-| *request* (common) | The request |  | TransactionRequest
+| Name | Description | Type
+| *groupByCustomField* |  | String
+| *settlementDate* |  | Calendar
 |===
 
-==== apiName: webhookNotification
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== subscription
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *challenge* (common) |  |  | String
-| *payload* (common) |  |  | String
-| *signature* (common) |  |  | String
+| Name | Description | Type
+| *amount* |  | BigDecimal
+| *customerId* |  | String
+| *id* | Of the | String
+| *request* | The request | SubscriptionRequest
+| *searchRequest* | The | SubscriptionSearchRequest
+| *submitForSettlement* |  | Boolean
+| *subscriptionId* |  | String
+|===
+
+
+==== transaction
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *amount* |  | BigDecimal
+| *cloneRequest* |  | TransactionCloneRequest
+| *id* | Of the transaction to cancel release from escrow of | String
+| *query* | The search query | TransactionSearchRequest
+| *refundRequest* |  | TransactionRefundRequest
+| *request* | The request | TransactionRequest
+|===
+
+
+==== webhookNotification
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *challenge* |  | String
+| *payload* |  | String
+| *signature* |  | String
 |===
 // endpoint options: END
 

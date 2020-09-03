@@ -142,77 +142,92 @@ with the following path and query parameters:
 
 === Query API Parameters (7 APIs):
 
-The Google Mail Stream endpoint is an API based component and has conditional parameters based on which API method in use.
+The Google Mail Stream endpoint is an API based component and has additional parameters based on which API method in use.
 The API method is located in the endpoint URI as the  path parameter:
 
 ----
 google-mail-stream:index
 ----
 
+The following lists each API method and its additional parameters.
 
-==== : attachments
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *id* (consumer) |  |  | String
-| *messageId* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
-|===
 
-==== : drafts
-[width="100%",cols="2,5,^1,2",options="header"]
+==== attachments
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (consumer) |  |  | Draft
-| *id* (consumer) |  |  | String
-| *mediaContent* (consumer) |  |  | AbstractInputStreamContent
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *id* |  | String
+| *messageId* |  | String
+| *userId* |  | String
 |===
 
-==== : history
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== drafts
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *content* |  | Draft
+| *id* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
+| *userId* |  | String
 |===
 
-==== : labels
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== history
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (consumer) |  |  | Label
-| *id* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *userId* |  | String
 |===
 
-==== : messages
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== labels
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *batchDeleteMessagesRequest* (consumer) |  |  | BatchDeleteMessagesRequest
-| *batchModifyMessagesRequest* (consumer) |  |  | BatchModifyMessagesRequest
-| *content* (consumer) |  |  | Message
-| *id* (consumer) |  |  | String
-| *mediaContent* (consumer) |  |  | AbstractInputStreamContent
-| *modifyMessageRequest* (consumer) |  |  | ModifyMessageRequest
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *content* |  | Label
+| *id* |  | String
+| *userId* |  | String
 |===
 
-==== : threads
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== messages
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (consumer) |  |  | ModifyThreadRequest
-| *id* (consumer) |  |  | String
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *batchDeleteMessagesRequest* |  | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* |  | BatchModifyMessagesRequest
+| *content* |  | Message
+| *id* |  | String
+| *mediaContent* |  | AbstractInputStreamContent
+| *modifyMessageRequest* |  | ModifyMessageRequest
+| *userId* |  | String
 |===
 
-==== : users
-[width="100%",cols="2,5,^1,2",options="header"]
+
+==== threads
+
+[width="100%",cols="2,5,3",options="header"]
 |===
-| Name | Description | Default | Type
-| *content* (consumer) |  |  | WatchRequest
-| *userId* (consumer) |  |  | String
+| Name | Description | Type
+| *content* |  | ModifyThreadRequest
+| *id* |  | String
+| *userId* |  | String
+|===
+
+
+==== users
+
+[width="100%",cols="2,5,3",options="header"]
+|===
+| Name | Description | Type
+| *content* |  | WatchRequest
+| *userId* |  | String
 |===
 // endpoint options: END
 
