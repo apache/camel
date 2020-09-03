@@ -35,6 +35,8 @@ public class ApiProxy {
 
     private FromJavadoc fromJavadoc;
 
+    private FromJavasource fromJavasource;
+
     private Substitution[] substitutions = new Substitution[0];
 
     private String excludeConfigNames;
@@ -79,6 +81,14 @@ public class ApiProxy {
 
     public void setFromJavadoc(FromJavadoc fromJavadoc) {
         this.fromJavadoc = fromJavadoc;
+    }
+
+    public FromJavasource getFromJavasource() {
+        return fromJavasource;
+    }
+
+    public void setFromJavasource(FromJavasource fromJavasource) {
+        this.fromJavasource = fromJavasource;
     }
 
     public Substitution[] getSubstitutions() {

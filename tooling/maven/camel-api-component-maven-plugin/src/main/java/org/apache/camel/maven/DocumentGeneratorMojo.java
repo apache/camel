@@ -57,7 +57,10 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo(name = "document", requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true,
       defaultPhase = LifecyclePhase.SITE, threadSafe = true)
+@Deprecated
 public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements MavenReport {
+
+    // TODO: remove me
 
     // document output directory
     @Parameter(property = PREFIX + "reportOutputDirectory",
