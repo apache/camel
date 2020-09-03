@@ -58,6 +58,9 @@ public class JavaSourceParser {
                 String result = signature.substring(pos + 1).trim();
                 // lets use FQN types
                 result = clazz.resolveType(result);
+                if (result == null || result.isEmpty()) {
+                    result = "void";
+                }
 
                 List<JavaDocTag> params = ms.getJavaDoc().getTags("@param");
 
@@ -80,7 +83,7 @@ public class JavaSourceParser {
                     // need documentation for this parameter
                     docs.put(name, getJavadocValue(params, name));
                 }
-                sb.append(");");
+                sb.append(")");
 
                 signature = sb.toString();
                 parameters.put(ms.getName(), docs);
@@ -94,8 +97,8 @@ public class JavaSourceParser {
     private static String getJavadocValue(List<JavaDocTag> params, String name) {
         for (JavaDocTag tag : params) {
             String key = tag.getValue();
-            if (key.startsWith(name + " ")) {
-                String desc = key.substring(name.length() + 1);
+            if (key.startsWith(name)) {
+                String desc = key.substring(name.length());
                 desc = sanitizeJavaDocValue(desc);
                 return desc;
             }
