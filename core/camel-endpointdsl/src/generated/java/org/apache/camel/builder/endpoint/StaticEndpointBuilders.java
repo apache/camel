@@ -2630,7 +2630,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      * 
-     * Syntax: <code>azure-storage-blob:/accountName/containerName</code>
+     * Syntax: <code>azure-storage-blob:accountName/containerName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
@@ -2638,7 +2638,7 @@ public class StaticEndpointBuilders {
      * Path parameter: containerName
      * The blob container name
      * 
-     * @param path /accountName/containerName
+     * @param path accountName/containerName
      */
     public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String path) {
@@ -2652,7 +2652,7 @@ public class StaticEndpointBuilders {
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
      * 
-     * Syntax: <code>azure-storage-blob:/accountName/containerName</code>
+     * Syntax: <code>azure-storage-blob:accountName/containerName</code>
      * 
      * Path parameter: accountName
      * Azure account name to be used for authentication with azure blob services
@@ -2662,7 +2662,7 @@ public class StaticEndpointBuilders {
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path /accountName/containerName
+     * @param path accountName/containerName
      */
     public static org.apache.camel.builder.endpoint.dsl.BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(
             String componentName,

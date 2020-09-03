@@ -110,7 +110,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 13 enums and the value can be one of: capabilities, create, delete, history, load-page, meta, operation, patch, read, search, transaction, update, validate |  | FhirApiName
+| *apiName* | *Required* What kind of operation to perform. There are 13 enums and the value can be one of: CAPABILITIES, CREATE, DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH, TRANSACTION, UPDATE, VALIDATE |  | FhirApiName
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 

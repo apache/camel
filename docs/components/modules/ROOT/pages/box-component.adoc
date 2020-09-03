@@ -102,7 +102,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 10 enums and the value can be one of: collaborations, comments, event-logs, files, folders, groups, events, search, tasks, users |  | BoxApiName
+| *apiName* | *Required* What kind of operation to perform. There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS |  | BoxApiName
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 

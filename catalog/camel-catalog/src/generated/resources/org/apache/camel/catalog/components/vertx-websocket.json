@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "vertx-websocket",
     "title": "Vert.x WebSocket",
-    "description": "Camel WebSocket support with Vert.x",
+    "description": "Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "websocket",
