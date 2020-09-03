@@ -11,13 +11,13 @@ import org.apache.camel.support.component.ApiName;
  */
 public enum BraintreeApiName implements ApiName {
 
-    ADDON("addOn"),
+    ADD_ON("addOn"),
 
     ADDRESS("address"),
 
-    CLIENTTOKEN("clientToken"),
+    CLIENT_TOKEN("clientToken"),
 
-    CREDITCARDVERIFICATION("creditCardVerification"),
+    CREDIT_CARD_VERIFICATION("creditCardVerification"),
 
     CUSTOMER("customer"),
 
@@ -25,25 +25,25 @@ public enum BraintreeApiName implements ApiName {
 
     DISPUTE("dispute"),
 
-    DOCUMENTUPLOAD("documentUpload"),
+    DOCUMENT_UPLOAD("documentUpload"),
 
-    MERCHANTACCOUNT("merchantAccount"),
+    MERCHANT_ACCOUNT("merchantAccount"),
 
-    PAYMENTMETHOD("paymentMethod"),
+    PAYMENT_METHOD("paymentMethod"),
 
-    PAYMENTMETHODNONCE("paymentMethodNonce"),
+    PAYMENT_METHOD_NONCE("paymentMethodNonce"),
 
     PLAN("plan"),
 
     REPORT("report"),
 
-    SETTLEMENTBATCHSUMMARY("settlementBatchSummary"),
+    SETTLEMENT_BATCH_SUMMARY("settlementBatchSummary"),
 
     SUBSCRIPTION("subscription"),
 
     TRANSACTION("transaction"),
 
-    WEBHOOKNOTIFICATION("webhookNotification");
+    WEBHOOK_NOTIFICATION("webhookNotification");
 
 
     private static final BraintreeApiName[] CACHED_ENUM_VALUES = values();
