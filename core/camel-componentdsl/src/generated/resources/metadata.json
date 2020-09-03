@@ -1256,7 +1256,7 @@
     "version": "3.4.4-SNAPSHOT",
     "scheme": "azure-storage-blob",
     "extendsScheme": "",
-    "syntax": "azure-storage-blob:containerName",
+    "syntax": "azure-storage-blob:accountName\/containerName",
     "async": false,
     "consumerOnly": false,
     "producerOnly": false,

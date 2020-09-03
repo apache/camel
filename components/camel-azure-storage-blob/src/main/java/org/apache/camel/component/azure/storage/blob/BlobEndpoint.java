@@ -36,7 +36,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Store and retrieve blobs from Azure Storage Blob Service using SDK v12.
  */
-@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service", syntax = "azure-storage-blob:containerName", category = {Category.CLOUD, Category.FILE})
+@UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-blob", title = "Azure Storage Blob Service",
+             syntax = "azure-storage-blob:accountName/containerName", category = { Category.CLOUD, Category.FILE })
 public class BlobEndpoint extends DefaultEndpoint {
 
     @UriParam
