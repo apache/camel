@@ -279,7 +279,6 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     }
 
     public static String getNullableOptionValues(String[] nullableOptions) {
-
         if (nullableOptions == null || nullableOptions.length == 0) {
             return "";
         }
