@@ -48,6 +48,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     protected FromJavadoc fromJavadoc = new FromJavadoc();
 
     /**
+     * Common Javasource code generation settings.
+     */
+    @Parameter
+    protected FromJavasource fromJavasource = new FromJavasource();
+
+    /**
      * Names of options that can be set to null value if not specified.
      */
     @Parameter
@@ -159,14 +165,20 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
         final File signatureFile = api.getFromSignatureFile();
         if (signatureFile != null) {
-
             final FileApiMethodGeneratorMojo fileMojo = new FileApiMethodGeneratorMojo();
             fileMojo.signatureFile = signatureFile;
             apiMethodGenerator = fileMojo;
-
         } else {
-
             final FromJavadoc apiFromJavadoc = api.getFromJavadoc();
+            final FromJavasource apiFromJavasource = api.getFromJavasource();
+
+            if (apiFromJavadoc == null && apiFromJavasource == null) {
+                throw new IllegalArgumentException("Must specify to use either fromJavadoc or fromJavasource");
+            }
+            if (apiFromJavadoc != null && apiFromJavasource != null) {
+                throw new IllegalArgumentException("Cannot use both fromJavadoc and fromJavasource");
+            }
+
             if (apiFromJavadoc != null) {
                 final JavadocApiMethodGeneratorMojo javadocMojo = new JavadocApiMethodGeneratorMojo();
                 javadocMojo.excludePackages = apiFromJavadoc.getExcludePackages() != null
@@ -179,8 +191,21 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                         ? apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
                 javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
                         ? apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
-
                 apiMethodGenerator = javadocMojo;
+            }
+            if (apiFromJavasource != null) {
+                final JavaSourceApiMethodGeneratorMojo javasourceMojo = new JavaSourceApiMethodGeneratorMojo();
+                javasourceMojo.excludePackages = apiFromJavasource.getExcludePackages() != null
+                        ? apiFromJavasource.getExcludePackages() : apiFromJavasource.getExcludePackages();
+                javasourceMojo.excludeClasses = apiFromJavasource.getExcludeClasses() != null
+                        ? apiFromJavasource.getExcludeClasses() : apiFromJavasource.getExcludeClasses();
+                javasourceMojo.includeMethods = apiFromJavasource.getIncludeMethods() != null
+                        ? apiFromJavasource.getIncludeMethods() : apiFromJavasource.getIncludeMethods();
+                javasourceMojo.excludeMethods = apiFromJavasource.getExcludeMethods() != null
+                        ? apiFromJavasource.getExcludeMethods() : apiFromJavasource.getExcludeMethods();
+                javasourceMojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
+                        ? apiFromJavasource.getIncludeStaticMethods() : apiFromJavasource.getIncludeStaticMethods();
+                apiMethodGenerator = javasourceMojo;
             }
         }
         return apiMethodGenerator;
