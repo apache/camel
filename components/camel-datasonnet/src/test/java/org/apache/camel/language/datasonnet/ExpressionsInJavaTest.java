@@ -34,7 +34,7 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
 
                         from("direct:expressionsInJava")
                                 .choice()
-                                    .when(datasonnet("payload == 'World'", "text/plain", "application/json"))
+                                    .when(datasonnet("payload == 'World'", "text/plain", "application/java"))
                                         .setBody(datasonnet("'Hello, ' + payload", "text/plain", "text/plain"))
                                     .otherwise()
                                         .setBody(datasonnet("'Good bye, ' + payload", "text/plain", "text/plain"))

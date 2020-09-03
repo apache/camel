@@ -119,7 +119,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         Exchange exchange = mock.assertExchangeReceived(mock.getReceivedCounter() - 1);
         Object response = exchange.getIn().getBody();
 
-        assertEquals(response, theGizmo);
+        assertEquals(theGizmo, response);
     }
 
     private void runCamelTest(Object payload, String expectedJson, String uri) throws Exception {

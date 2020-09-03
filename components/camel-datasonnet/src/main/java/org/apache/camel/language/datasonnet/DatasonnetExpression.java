@@ -1,100 +1,76 @@
 package org.apache.camel.language.datasonnet;
 
 import com.datasonnet.Mapper;
+import com.datasonnet.MapperBuilder;
+import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
-import com.datasonnet.document.JavaObjectDocument;
-import com.datasonnet.document.StringDocument;
-import com.datasonnet.spi.DataFormatPlugin;
+import com.datasonnet.document.MediaType;
+import com.datasonnet.document.MediaTypes;
 import com.datasonnet.spi.DataFormatService;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.datasonnet.spi.PluginException;
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.Resource;
-import io.github.classgraph.ResourceList;
 import io.github.classgraph.ScanResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.language.CML;
+import org.apache.camel.language.CML$;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DatasonnetExpression extends ExpressionAdapter implements GeneratedPropertyConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
-    private static final Map<String, String> classpathImports = new HashMap<>();
-    private static final ObjectMapper jacksonMapper = new ObjectMapper();
+    private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
 
     static {
         LOGGER.debug("One time classpath search...");
         try (ScanResult scanResult = new ClassGraph().whitelistPaths("/").scan()) {
             scanResult.getResourcesWithExtension("libsonnet")
-                    .forEachByteArray(new ResourceList.ByteArrayConsumer() {
-                        @Override
-                        public void accept(Resource resource, byte[] bytes) {
-                            LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
-                            classpathImports.put(
-                                    resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
-                        }
+                    .forEachByteArray((resource, bytes) -> {
+                        LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
+                        CLASSPATH_IMPORTS.put(
+                                resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
                     });
         }
-
-        jacksonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        jacksonMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
-    private final List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList("application/json"));
     private Collection<String> libraryPaths;
     private Expression metaExpression;
     private String expression;
-    private String inputMimeType;
-    private String outputMimeType;
+    private MediaType bodyType;
+    private MediaType outputType;
+    private Class<?> targetType;
 
     public DatasonnetExpression(String expression) {
         this.expression = expression;
-        findSupportedMimeTypes();
     }
 
     public DatasonnetExpression(Expression expression) {
         this.metaExpression = expression;
-        findSupportedMimeTypes();
     }
 
     public DatasonnetExpression usingLibraryPaths(Collection<String> paths) {
         libraryPaths = paths;
         return this;
-    }
-
-    // TODO: 7/21/20 maybe we can do this statically?
-    private void findSupportedMimeTypes() {
-        List<DataFormatPlugin> pluginsList = new DataFormatService().findPlugins();
-        for (DataFormatPlugin plugin : pluginsList) {
-            supportedMimeTypes.addAll(Arrays.asList(plugin.getSupportedIdentifiers()));
-        }
     }
 
     @Override
@@ -106,11 +82,18 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         switch (ignoreCase ? name.toLowerCase() : name) {
             case "inputMimeType":
             case "inputmimetype":
-                setInputMimeType(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                setInputMimeType(MediaType.valueOf((String) value));
                 return true;
             case "outputMimeType":
             case "outputmimetype":
-                setOutputMimeType(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                setOutputMimeType(MediaType.valueOf((String) value));
+                return true;
+            case "type":
+                try {
+                    setType(Class.forName((String) value));
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalArgumentException("Requested output class type not found", e);
+                }
                 return true;
         }
 
@@ -118,16 +101,87 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
     }
 
     @Override
+    public boolean matches(Exchange exchange) {
+        return evaluate(exchange, Boolean.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         try {
             if (metaExpression != null) {
                 expression = metaExpression.evaluate(exchange, String.class);
             }
 
+            Objects.requireNonNull(expression, "String expression property must be set!");
+
+            Map<String, Document<?>> inputs = new HashMap<>();
+
+            Document<?> headersDocument = mapToDocument(exchange.getMessage().getHeaders());
+            inputs.put("headers", headersDocument);
+            inputs.put("header", headersDocument);
+
+            Document<?> propertiesDocument = mapToDocument(exchange.getProperties());
+            inputs.put("exchangeProperty", propertiesDocument);
+
+            Document<?> body;
+
+            if (bodyType == null) {
+                //Try to auto-detect input mime type if it was not explicitly set
+                String typeHeader = exchange.getProperty("inputMimeType",
+                        exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
+                                "UNKNOWN_MIME_TYPE"), String.class);
+                if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                    bodyType = MediaType.valueOf(typeHeader);
+                }
+            }
+
+            if (exchange.getMessage().getBody() instanceof Document) {
+                body = (Document<?>) exchange.getMessage().getBody();
+            } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyType)) {
+                body = new DefaultDocument<>(exchange.getMessage().getBody());
+            } else {
+                body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyType);
+            }
+
+            inputs.put("body", body);
+
+            DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
+            Mapper mapper = language.getMapperFromCache(expression).orElseGet(() -> {
+                Mapper answer = new MapperBuilder(expression)
+                        .withInputNames(inputs.keySet())
+                        .withImports(resolveImports())
+                        .addLibrary(CML$.MODULE$)
+                        .build();
+                language.addScriptToCache(expression, answer);
+                return answer;
+            });
+
             // set exchange and variable resolver as thread locals for concurrency
             CML.exchange().set(exchange);
-            Object value = processMapping(exchange);
-            return exchange.getContext().getTypeConverter().convertTo(type, value);
+
+            if (outputType == null) {
+                //Try to auto-detect output mime type if it was not explicitly set
+                String typeHeader = exchange.getProperty("outputMimeType",
+                        exchange.getIn().getHeader("outputMimeType",
+                                "UNKNOWN_MIME_TYPE"), String.class);
+                if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                    outputType = MediaType.parseMediaType(typeHeader);
+                }
+            }
+
+            if (Document.class.equals(type)) {
+                return (T) mapper.transform(body, inputs, outputType, Object.class);
+            } else if (!type.equals(Object.class)) {
+                return mapper.transform(body, inputs, outputType, type).getContent();
+            } else if (targetType != null) {
+                // only if type _is_ Object.class and targetType exists use targetType
+                return (T) mapper.transform(body, inputs, outputType, targetType).getContent();
+            } else {
+                // else use type
+                return mapper.transform(body, inputs, outputType, type).getContent();
+            }
+
         } catch (Exception e) {
             throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression : " + expression, e);
         } finally {
@@ -135,79 +189,9 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         }
     }
 
-    public Object processMapping(Exchange exchange) throws Exception {
-        if (inputMimeType == null || "".equalsIgnoreCase(inputMimeType.trim())) {
-            //Try to auto-detect input mime type if it was not explicitly set
-            String overriddenInputMimeType = (String) exchange.getProperty("inputMimeType",
-                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
-                            "UNKNOWN_MIME_TYPE"));
-            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(overriddenInputMimeType) && overriddenInputMimeType != null) {
-                inputMimeType = overriddenInputMimeType;
-            }
-        }
-
-        if (!supportedMimeTypes.contains(inputMimeType)) {
-            LOGGER.warn("Input Mime Type " + inputMimeType + " is not supported or suitable plugin not found, using application/json");
-            inputMimeType = "application/json";
-        }
-
-        if (outputMimeType == null || "".equalsIgnoreCase(outputMimeType.trim())) {
-            //Try to auto-detect output mime type if it was not explicitly set
-            String overriddenOutputMimeType = (String) exchange.getProperty("outputMimeType",
-                    exchange.getIn().getHeader("outputMimeType",
-                            "UNKNOWN_MIME_TYPE"));
-            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(overriddenOutputMimeType) && overriddenOutputMimeType != null) {
-                outputMimeType = overriddenOutputMimeType;
-            }
-        }
-
-        if (!supportedMimeTypes.contains(outputMimeType)) {
-            LOGGER.warn("Output Mime Type " + outputMimeType + " is not supported or suitable plugin not found, using application/json");
-            outputMimeType = "application/json";
-        }
-
-        if (expression == null) {
-            throw new IllegalArgumentException("String expression property must be set!");
-        }
-
-        Map<String, Document> jsonnetVars = new HashMap<>();
-
-        Document headersDocument = mapToDocument(exchange.getMessage().getHeaders());
-        jsonnetVars.put("headers", headersDocument);
-        jsonnetVars.put("header", headersDocument);
-
-        Document propertiesDocument = mapToDocument(exchange.getProperties());
-        jsonnetVars.put("exchangeProperty", propertiesDocument);
-
-        Object body = (inputMimeType.contains("java") ? exchange.getMessage().getBody() : MessageHelper.extractBodyAsString(exchange.getMessage()));
-
-        LOGGER.debug("Input MIME type is " + inputMimeType);
-        LOGGER.debug("Output MIME type is: " + outputMimeType);
-        LOGGER.debug("Message Body is " + body);
-        LOGGER.debug("Variables are: " + jsonnetVars);
-
-        //TODO we need a better solution going forward but for now we just differentiate between Java and text-based formats
-        Document payload = createDocument(body, inputMimeType);
-        jsonnetVars.put("body", payload);
-
-        LOGGER.debug("Document is: " + (payload.canGetContentsAs(String.class) ? payload.getContentsAsString() : payload.getContentsAsObject()));
-
-        DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
-        Mapper mapper = language.getMapperFromCache(expression).orElseGet(() -> {
-            Mapper answer = new Mapper(expression, jsonnetVars.keySet(), resolveImports(), true, true, CML.asAdditionalLib());
-            language.addScriptToCache(expression, answer);
-            return answer;
-        });
-
-        Document mappedDoc = mapper.transform(payload, jsonnetVars, getOutputMimeType());
-        Object mappedBody = mappedDoc.canGetContentsAs(String.class) ? mappedDoc.getContentsAsString() : mappedDoc.getContentsAsObject();
-
-        return mappedBody;
-    }
-
     private Map<String, String> resolveImports() {
         if (libraryPaths == null) {
-            return classpathImports;
+            return CLASSPATH_IMPORTS;
         }
 
         Map<String, String> answer = new HashMap<>();
@@ -238,93 +222,62 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         return answer;
     }
 
-    private Document createDocument(Object content, String type) throws JsonProcessingException {
-        Document document = null;
-        boolean isObject = false;
-        String mimeType = type;
-        String documentContent = (content == null ? "" : content.toString());
-
-        LOGGER.debug("Before create Document Content is: " + documentContent);
-        LOGGER.debug("Before create mimeType is: " + mimeType);
-
-        if (mimeType.contains("/xml")) {
-            mimeType = "application/xml";
-        } else if (mimeType.contains("/csv")) {
-            mimeType = "application/csv";
-        } else if (mimeType.contains("/java")) {
-            mimeType = "application/java";
-            isObject = true;
-        } else {
-            mimeType = "application/json";
-            try {
-                if (documentContent == null || "".equalsIgnoreCase(documentContent)) {
-                    documentContent = "{}";
-                }
-                jacksonMapper.readTree(documentContent);
-                LOGGER.debug("Content is valid JSON");
-                //This is valid JSON
-            } catch (Exception e) {
-                //Not a valid JSON, convert
-                LOGGER.debug("Content is not valid JSON, converting to JSON string");
-                documentContent = jacksonMapper.writeValueAsString(content);
-            }
-        }
-
-        LOGGER.debug("Document Content is: " + documentContent);
-
-        document = isObject ? new JavaObjectDocument(content) : new StringDocument(documentContent, mimeType);
-
-        return document;
-    }
-
-    private Document mapToDocument(Map<String, Object> map) throws Exception {
+    private Document<Map<String, Object>> mapToDocument(Map<String, Object> map) throws PluginException {
         Iterator<Map.Entry<String, Object>> entryIterator = map.entrySet().iterator();
         Map<String, Object> propsMap = new HashMap<>();
 
         while (entryIterator.hasNext()) {
             Map.Entry<String, Object> entry = entryIterator.next();
+            String key = entry.getKey();
+            Object value = entry.getValue();
 
-            Object entryValue = entry.getValue();
-            String entryClassName = (entryValue != null ? entryValue.getClass().getName() : " NULL ");
-
-            if (entryValue != null && entryValue instanceof Serializable) {
-                try {
-                    jacksonMapper.writeValueAsString(entryValue);
-                    propsMap.put(entry.getKey(), entryValue);
-                } catch (Exception e) {
-                    LOGGER.debug("Header or property " + entry.getKey() + " cannot be serialized as JSON; removing : " + e.getMessage());
-                }
+            if (!(value instanceof Document)) {
+                propsMap.put(key, value);
             } else {
-                LOGGER.debug("Header or property " + entry.getKey() + " is null or not Serializable : " + entryClassName);
+                if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(((Document<?>) value).getMediaType())) {
+                    propsMap.put(key, ((Document<?>) value).getContent());
+                } else {
+                    // TODO: 9/2/20 where to get this from
+                    // TODO: 9/2/20 figure out how to avoid the conversion round trip
+                    DataFormatService service = null;
+                    ujson.Value read = service.thatAccepts((Document<?>) value)
+                            .orElseThrow(() -> new IllegalArgumentException("todo"))
+                            .read((Document<?>) value);
+                    Document<?> write = service.thatProduces(MediaTypes.APPLICATION_JAVA, Object.class)
+                            .orElseThrow(() -> new IllegalArgumentException("todo"))
+                            .write(read, MediaTypes.APPLICATION_JAVA, Object.class);
+                    propsMap.put(key, write);
+                }
             }
         }
 
-        Document document = new JavaObjectDocument(propsMap);
-        return document;
+        return new DefaultDocument<>(propsMap);
     }
 
-    public String getInputMimeType() {
-        return inputMimeType;
+    public MediaType getInputMimeType() {
+        return bodyType;
     }
 
     /**
      * TODO: 7/21/20 docs
+     *
      * @param inputMimeType docs
      */
-    public void setInputMimeType(String inputMimeType) {
-        this.inputMimeType = inputMimeType;
+    public void setInputMimeType(MediaType inputMimeType) {
+        this.bodyType = inputMimeType;
     }
 
-    public String getOutputMimeType() {
-        return outputMimeType;
+    public MediaType getOutputMimeType() {
+        return outputType;
     }
 
     /**
      * TODO: 7/21/20 docs
+     *
      * @param outputMimeType docs
      */
-    public void setOutputMimeType(String outputMimeType) {
-        this.outputMimeType = outputMimeType;
+    public void setOutputMimeType(MediaType outputMimeType) {
+        this.outputType = outputMimeType;
     }
 
     public Expression getMetaExpression() {
@@ -333,6 +286,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
     /**
      * TODO: 7/21/20 docs
+     *
      * @param metaExpression docs
      */
     public void setMetaExpression(Expression metaExpression) {
@@ -345,10 +299,24 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
     /**
      * TODO: 7/21/20 docs
+     *
      * @param libraryPaths docs
      */
     public void setLibraryPaths(Collection<String> libraryPaths) {
         this.libraryPaths = libraryPaths;
+    }
+
+    /**
+     * // TODO: 9/3/20 docs
+     *
+     * @return
+     */
+    public Class<?> getType() {
+        return this.targetType;
+    }
+
+    public void setType(Class<?> targetType) {
+        this.targetType = targetType;
     }
 
     @Override

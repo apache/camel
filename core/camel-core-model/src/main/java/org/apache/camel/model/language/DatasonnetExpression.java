@@ -22,6 +22,9 @@ public class DatasonnetExpression extends ExpressionDefinition {
     @XmlAttribute(name = "outputMimeType")
     private String outputMimeType;
 
+    @XmlAttribute(name = "type")
+    private String type;
+
     public DatasonnetExpression() {
     }
 
@@ -64,4 +67,19 @@ public class DatasonnetExpression extends ExpressionDefinition {
         this.outputMimeType = outputMimeType;
     }
 
+    /**
+     * TODO: 9/3/20 docs
+     * @return
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * TODO: 9/3/20 docs
+     * @param type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 }

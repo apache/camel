@@ -1,7 +1,6 @@
 /** DataSonnet
 version=1.0
-output.application/java.OutputClass=org.apache.camel.language.datasonnet.Gizmo
-output.application/java.DateFormat=yyyy-MM-dd
+output application/java; DateFormat=yyyy-MM-dd
 */
 {
     "name": payload.pojoName,
