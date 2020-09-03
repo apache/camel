@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JavaSourceParserTest {
 
     @Test
-    public void testGetMethods() throws Exception {
+    public void testGetMethodsAddress() throws Exception {
         final JavaSourceParser parser = new JavaSourceParser();
 
         parser.parse(JavaSourceParserTest.class.getResourceAsStream("/AddressGateway.java"));
@@ -55,6 +55,25 @@ public class JavaSourceParserTest {
                 parser.getMethods().get(1));
         assertEquals(1, parser.getParameters().get("create").size());
         assertEquals("The request", parser.getParameters().get("create").get("request"));
+
+        parser.reset();
+
+    }
+
+    @Test
+    public void testGetMethodsDispute() throws Exception {
+        final JavaSourceParser parser = new JavaSourceParser();
+
+        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"));
+        assertEquals(9, parser.getMethods().size());
+
+        assertEquals(
+                "public com.braintreegateway.Result addFileEvidence(String disputeId, String documentId)",
+                parser.getMethods().get(1));
+        assertEquals(3, parser.getParameters().get("addFileEvidence").size());
+        assertEquals("The dispute id to add text evidence to", parser.getParameters().get("addFileEvidence").get("disputeId"));
+        assertEquals("The document id of a previously uploaded document",
+                parser.getParameters().get("addFileEvidence").get("documentId"));
 
         parser.reset();
 

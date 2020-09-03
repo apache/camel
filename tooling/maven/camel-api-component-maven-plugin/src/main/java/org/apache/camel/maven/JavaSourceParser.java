@@ -86,7 +86,12 @@ public class JavaSourceParser {
                 sb.append(")");
 
                 signature = sb.toString();
-                parameters.put(ms.getName(), docs);
+                Map<String, String> existing = parameters.get(ms.getName());
+                if (existing != null) {
+                    existing.putAll(docs);
+                } else {
+                    parameters.put(ms.getName(), docs);
+                }
             }
 
             methods.add(signature);
