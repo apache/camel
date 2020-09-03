@@ -246,13 +246,6 @@ The following lists each API method and its additional parameters.
 // endpoint options: END
 
 
-== URI format
-
-[source,java]
---------------------------------------------
-    zendesk://endpoint?[options]
---------------------------------------------
-
 
 == Producer Endpoints:
 
