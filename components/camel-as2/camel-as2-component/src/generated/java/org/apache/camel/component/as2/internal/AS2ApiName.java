@@ -29,14 +29,9 @@ public enum AS2ApiName implements ApiName {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     public static AS2ApiName fromValue(String value) throws IllegalArgumentException {
         for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
-            if (CACHED_ENUM_VALUES[i].name.equalsIgnoreCase(value)) {
+            if (CACHED_ENUM_VALUES[i].toString().equalsIgnoreCase(value)) {
                 return CACHED_ENUM_VALUES[i];
             }
         }

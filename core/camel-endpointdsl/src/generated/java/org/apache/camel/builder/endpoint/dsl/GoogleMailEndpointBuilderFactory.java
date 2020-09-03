@@ -1082,8 +1082,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 7 enums and the value can be one of: threads, messages,
-         * attachments, labels, history, drafts, users
+         * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+         * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1108,8 +1108,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 7 enums and the value can be one of: threads, messages,
-         * attachments, labels, history, drafts, users
+         * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+         * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
