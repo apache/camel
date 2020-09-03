@@ -1648,9 +1648,9 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 10 enums and the value can be one of: collaborations,
-         * comments, event-logs, files, folders, groups, events, search, tasks,
-         * users
+         * There are 10 enums and the value can be one of: COLLABORATIONS,
+         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
+         * USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1673,9 +1673,9 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 10 enums and the value can be one of: collaborations,
-         * comments, event-logs, files, folders, groups, events, search, tasks,
-         * users
+         * There are 10 enums and the value can be one of: COLLABORATIONS,
+         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
+         * USERS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

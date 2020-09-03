@@ -77,7 +77,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: addOn, address, clientToken, creditCardVerification, customer, discount, dispute, documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan, report, settlementBatchSummary, subscription, transaction, webhookNotification |  | BraintreeApiName
+| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: ADDON, ADDRESS, CLIENTTOKEN, CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENTUPLOAD, MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN, REPORT, SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOKNOTIFICATION |  | BraintreeApiName
 | *methodName* | What sub operation to use for the selected operation |  | String
 |===
 

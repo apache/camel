@@ -1249,8 +1249,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 8 enums and the value can be one of: acl, list, calendars,
-         * channels, colors, freebusy, events, settings
+         * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+         * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1275,8 +1275,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 8 enums and the value can be one of: acl, list, calendars,
-         * channels, colors, freebusy, events, settings
+         * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+         * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

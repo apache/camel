@@ -311,7 +311,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 2 enums and the value can be one of: client, server
+     * There are 2 enums and the value can be one of: CLIENT, SERVER
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -334,7 +334,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 2 enums and the value can be one of: client, server
+     * There are 2 enums and the value can be one of: CLIENT, SERVER
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2899,8 +2899,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 10 enums and the value can be one of: collaborations, comments,
-     * event-logs, files, folders, groups, events, search, tasks, users
+     * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
+     * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2924,8 +2924,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 10 enums and the value can be one of: collaborations, comments,
-     * event-logs, files, folders, groups, events, search, tasks, users
+     * There are 10 enums and the value can be one of: COLLABORATIONS, COMMENTS,
+     * EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -2951,11 +2951,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 17 enums and the value can be one of: addOn, address,
-     * clientToken, creditCardVerification, customer, discount, dispute,
-     * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan,
-     * report, settlementBatchSummary, subscription, transaction,
-     * webhookNotification
+     * There are 17 enums and the value can be one of: ADDON, ADDRESS,
+     * CLIENTTOKEN, CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+     * DOCUMENTUPLOAD, MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN,
+     * REPORT, SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
+     * WEBHOOKNOTIFICATION
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -2978,11 +2978,11 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 17 enums and the value can be one of: addOn, address,
-     * clientToken, creditCardVerification, customer, discount, dispute,
-     * documentUpload, merchantAccount, paymentMethod, paymentMethodNonce, plan,
-     * report, settlementBatchSummary, subscription, transaction,
-     * webhookNotification
+     * There are 17 enums and the value can be one of: ADDON, ADDRESS,
+     * CLIENTTOKEN, CREDITCARDVERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
+     * DOCUMENTUPLOAD, MERCHANTACCOUNT, PAYMENTMETHOD, PAYMENTMETHODNONCE, PLAN,
+     * REPORT, SETTLEMENTBATCHSUMMARY, SUBSCRIPTION, TRANSACTION,
+     * WEBHOOKNOTIFICATION
      * 
      * Path parameter: methodName
      * What sub operation to use for the selected operation
@@ -5192,9 +5192,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: capabilities, create,
-     * delete, history, load-page, meta, operation, patch, read, search,
-     * transaction, update, validate
+     * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
+     * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
+     * TRANSACTION, UPDATE, VALIDATE
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5218,9 +5218,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: capabilities, create,
-     * delete, history, load-page, meta, operation, patch, read, search,
-     * transaction, update, validate
+     * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
+     * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
+     * TRANSACTION, UPDATE, VALIDATE
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5924,8 +5924,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 8 enums and the value can be one of: acl, list, calendars,
-     * channels, colors, freebusy, events, settings
+     * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+     * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -5951,8 +5951,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 8 enums and the value can be one of: acl, list, calendars,
-     * channels, colors, freebusy, events, settings
+     * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+     * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6022,10 +6022,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: drive-about, drive-apps,
-     * drive-changes, drive-channels, drive-children, drive-comments,
-     * drive-files, drive-parents, drive-permissions, drive-properties,
-     * drive-realtime, drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
+     * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
+     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6051,10 +6051,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 13 enums and the value can be one of: drive-about, drive-apps,
-     * drive-changes, drive-channels, drive-children, drive-comments,
-     * drive-files, drive-parents, drive-permissions, drive-properties,
-     * drive-realtime, drive-replies, drive-revisions
+     * There are 13 enums and the value can be one of: DRIVE_ABOUT, DRIVE_APPS,
+     * DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN, DRIVE_COMMENTS,
+     * DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS, DRIVE_PROPERTIES,
+     * DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6083,8 +6083,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 7 enums and the value can be one of: threads, messages,
-     * attachments, labels, history, drafts, users
+     * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+     * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6110,8 +6110,8 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 7 enums and the value can be one of: threads, messages,
-     * attachments, labels, history, drafts, users
+     * There are 7 enums and the value can be one of: THREADS, MESSAGES,
+     * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6228,7 +6228,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 2 enums and the value can be one of: spreadsheets, data
+     * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -6253,7 +6253,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 2 enums and the value can be one of: spreadsheets, data
+     * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10962,7 +10962,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 1 enums and the value can be one of:
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -10985,7 +10985,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 1 enums and the value can be one of:
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -11011,7 +11011,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 1 enums and the value can be one of:
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -11034,7 +11034,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 1 enums and the value can be one of:
+     * There are 1 enums and the value can be one of: DEFAULT
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -14345,26 +14345,26 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: account, address,
-     * application, available-phone-number-country, call, conference,
-     * connect-app, incoming-phone-number, key, message, new-key,
-     * new-signing-key, notification, outgoing-caller-id, queue, recording,
-     * short-code, signing-key, token, transcription, validation-request,
-     * address-dependent-phone-number, available-phone-number-country-local,
-     * available-phone-number-country-mobile,
-     * available-phone-number-country-toll-free, call-feedback,
-     * call-feedback-summary, call-notification, call-recording,
-     * conference-participant, incoming-phone-number-local,
-     * incoming-phone-number-mobile, incoming-phone-number-toll-free,
-     * message-feedback, message-media, queue-member, recording-add-on-result,
-     * recording-transcription, recording-add-on-result-payload,
-     * sip-credential-list, sip-domain, sip-ip-access-control-list,
-     * sip-credential-list-credential, sip-domain-credential-list-mapping,
-     * sip-domain-ip-access-control-list-mapping,
-     * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
-     * usage-record-all-time, usage-record-daily, usage-record-last-month,
-     * usage-record-monthly, usage-record-this-month, usage-record-today,
-     * usage-record-yearly, usage-record-yesterday
+     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
+     * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
+     * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
+     * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
+     * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
+     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
+     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
+     * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
+     * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
+     * SIP_CREDENTIAL_LIST, SIP_DOMAIN, SIP_IP_ACCESS_CONTROL_LIST,
+     * SIP_CREDENTIAL_LIST_CREDENTIAL, SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
+     * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
+     * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
+     * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
+     * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
+     * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -14389,26 +14389,26 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * There are 56 enums and the value can be one of: account, address,
-     * application, available-phone-number-country, call, conference,
-     * connect-app, incoming-phone-number, key, message, new-key,
-     * new-signing-key, notification, outgoing-caller-id, queue, recording,
-     * short-code, signing-key, token, transcription, validation-request,
-     * address-dependent-phone-number, available-phone-number-country-local,
-     * available-phone-number-country-mobile,
-     * available-phone-number-country-toll-free, call-feedback,
-     * call-feedback-summary, call-notification, call-recording,
-     * conference-participant, incoming-phone-number-local,
-     * incoming-phone-number-mobile, incoming-phone-number-toll-free,
-     * message-feedback, message-media, queue-member, recording-add-on-result,
-     * recording-transcription, recording-add-on-result-payload,
-     * sip-credential-list, sip-domain, sip-ip-access-control-list,
-     * sip-credential-list-credential, sip-domain-credential-list-mapping,
-     * sip-domain-ip-access-control-list-mapping,
-     * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
-     * usage-record-all-time, usage-record-daily, usage-record-last-month,
-     * usage-record-monthly, usage-record-this-month, usage-record-today,
-     * usage-record-yearly, usage-record-yesterday
+     * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
+     * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
+     * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
+     * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
+     * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
+     * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
+     * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
+     * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
+     * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
+     * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
+     * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER, RECORDING_ADD_ON_RESULT,
+     * RECORDING_TRANSCRIPTION, RECORDING_ADD_ON_RESULT_PAYLOAD,
+     * SIP_CREDENTIAL_LIST, SIP_DOMAIN, SIP_IP_ACCESS_CONTROL_LIST,
+     * SIP_CREDENTIAL_LIST_CREDENTIAL, SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
+     * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
+     * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
+     * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
+     * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
+     * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
@@ -15693,85 +15693,115 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 253 enums and the value can be one of: addTagToOrganisations,
-     * addTagToTicket, addTagToTopics, associateAttachmentsToArticle,
-     * changeUserPassword, createArticle, createArticleTranslation,
-     * createAutomation, createCategory, createCategoryTranslation,
-     * createComment, createDynamicContentItem, createDynamicContentItemVariant,
-     * createForum, createGroup, createGroupMembership, createMacro,
-     * createOrUpdateUser, createOrUpdateUsers, createOrUpdateUsersAsync,
-     * createOrganization, createOrganizationMembership,
-     * createOrganizationMemberships, createOrganizationMembershipsAsync,
-     * createOrganizations, createOrganizationsAsync, createPermissionGroup,
-     * createRequest, createSatisfactionRating, createSection,
-     * createSectionTranslation, createTarget, createTicket, createTicketAsync,
-     * createTicketField, createTicketForm, createTicketFromTweet,
-     * createTickets, createTicketsAsync, createTopic, createTrigger,
-     * createUpload, createUploadArticle, createUser, createUserIdentity,
-     * createUserSegment, createUsers, createUsersAsync, deleteArticle,
-     * deleteArticleAttachment, deleteAttachment, deleteAutomation,
-     * deleteCategory, deleteDynamicContentItem,
-     * deleteDynamicContentItemVariant, deleteForum, deleteGroup,
-     * deleteGroupMembership, deleteOrganization, deleteOrganizationMembership,
-     * deleteOrganizationMemberships, deletePermissionGroup, deleteSection,
-     * deleteSuspendedTicket, deleteTarget, deleteTicket, deleteTicketField,
-     * deleteTickets, deleteTopic, deleteTranslation, deleteTrigger,
-     * deleteUpload, deleteUser, deleteUserIdentity, deleteUserSegment,
-     * getArticle, getArticleFromSearch, getArticleSubscriptions,
-     * getArticleTranslations, getArticles, getArticlesFromAllLabels,
-     * getArticlesFromAnyLabels, getArticlesFromPage, getArticlesIncrementally,
-     * getAssignableGroupMemberships, getAssignableGroups, getAttachment,
-     * getAttachmentsFromArticle, getAuthenticatedUser,
-     * getAutoCompleteOrganizations, getAutomation, getAutomations, getBrands,
-     * getCCRequests, getCategories, getCategory, getCategoryTranslations,
-     * getComplianceDeletionStatuses, getCurrentUser, getCustomAgentRoles,
-     * getDeletedTickets, getDynamicContentItem, getDynamicContentItemVariant,
-     * getDynamicContentItemVariants, getDynamicContentItems, getForum,
-     * getForums, getGroup, getGroupMembership, getGroupMembershipByUser,
-     * getGroupMemberships, getGroupOrganization, getGroupUsers, getGroups,
-     * getHelpCenterLocales, getHolidaysForSchedule,
-     * getIncrementalTicketsResult, getJobStatus, getJobStatusAsync,
-     * getJobStatuses, getJobStatusesAsync, getMacro, getMacros,
-     * getOpenRequests, getOrganization, getOrganizationFields,
-     * getOrganizationMembership, getOrganizationMembershipByUser,
-     * getOrganizationMembershipForUser, getOrganizationMemberships,
-     * getOrganizationMembershipsForOrg, getOrganizationMembershipsForUser,
-     * getOrganizationTickets, getOrganizationUsers, getOrganizations,
-     * getOrganizationsIncrementally, getPermissionGroup, getPermissionGroups,
-     * getRecentTickets, getRequest, getRequestComment, getRequestComments,
-     * getRequests, getSatisfactionRating, getSatisfactionRatings, getSchedule,
-     * getSchedules, getSearchResults, getSection, getSectionSubscriptions,
-     * getSectionTranslations, getSections, getSolvedRequests,
-     * getSuspendedTickets, getTarget, getTargets, getTicket, getTicketAudit,
-     * getTicketAudits, getTicketCollaborators, getTicketComments,
-     * getTicketField, getTicketFields, getTicketForm, getTicketForms,
-     * getTicketIncidents, getTicketMetric, getTicketMetricByTicket,
-     * getTicketMetrics, getTickets, getTicketsByExternalId,
-     * getTicketsFromSearch, getTicketsIncrementally, getTopic, getTopics,
-     * getTopicsByUser, getTrigger, getTriggers, getTwitterMonitors, getUser,
-     * getUserCCDTickets, getUserFields, getUserIdentities, getUserIdentity,
-     * getUserRelatedInfo, getUserRequestedTickets, getUserRequests,
-     * getUserSegment, getUserSegments, getUserSegmentsApplicable,
-     * getUserSubscriptions, getUsers, getUsersByRole, getUsersIncrementally,
-     * importTicket, importTopic, lookupOrganizationsByExternalId,
-     * lookupUserByEmail, lookupUserByExternalId, macrosShowChangesToTicket,
-     * macrosShowTicketAfterChanges, makePrivateTicketAudit, markTicketAsSpam,
-     * mergeUsers, notifyApp, permanentlyDeleteTicket, permanentlyDeleteTickets,
-     * permanentlyDeleteUser, queueCreateTicketAsync,
-     * removeTagFromOrganisations, removeTagFromTicket, removeTagFromTopics,
-     * requestVerifyUserIdentity, resetUserPassword,
-     * setGroupMembershipAsDefault, setOrganizationMembershipAsDefault,
-     * setTagOnOrganisations, setTagOnTicket, setTagOnTopics,
-     * setUserPrimaryIdentity, suspendUser, trustTicketAudit, unsuspendUser,
-     * updateArticle, updateArticleTranslation, updateAutomation,
-     * updateCategory, updateCategoryTranslation, updateDynamicContentItem,
-     * updateDynamicContentItemVariant, updateForum, updateGroup,
-     * updateInstallation, updateMacro, updateOrganization, updateOrganizations,
-     * updateOrganizationsAsync, updatePermissionGroup, updateRequest,
-     * updateSection, updateSectionTranslation, updateTicket, updateTicketField,
-     * updateTickets, updateTicketsAsync, updateTopic, updateTrigger,
-     * updateUser, updateUserIdentity, updateUserSegment, updateUsers,
-     * updateUsersAsync, verifyUserIdentity
+     * There are 342 enums and the value can be one of: ADDTAGTOORGANISATIONS,
+     * ADDTAGTOTICKET, ADDTAGTOTOPICS, ASSOCIATEATTACHMENTSTOARTICLE,
+     * CHANGEUSERPASSWORD, CREATEARTICLE, CREATEARTICLE_1,
+     * CREATEARTICLETRANSLATION, CREATEAUTOMATION, CREATECATEGORY,
+     * CREATECATEGORYTRANSLATION, CREATECOMMENT, CREATEDYNAMICCONTENTITEM,
+     * CREATEDYNAMICCONTENTITEMVARIANT, CREATEFORUM, CREATEGROUP,
+     * CREATEGROUPMEMBERSHIP, CREATEGROUPMEMBERSHIP_1, CREATEMACRO,
+     * CREATEORUPDATEUSER, CREATEORUPDATEUSERS, CREATEORUPDATEUSERS_1,
+     * CREATEORUPDATEUSERSASYNC, CREATEORGANIZATION,
+     * CREATEORGANIZATIONMEMBERSHIP, CREATEORGANIZATIONMEMBERSHIP_1,
+     * CREATEORGANIZATIONMEMBERSHIPS, CREATEORGANIZATIONMEMBERSHIPS_1,
+     * CREATEORGANIZATIONMEMBERSHIPSASYNC, CREATEORGANIZATIONS,
+     * CREATEORGANIZATIONS_1, CREATEORGANIZATIONSASYNC, CREATEPERMISSIONGROUP,
+     * CREATEREQUEST, CREATESATISFACTIONRATING, CREATESATISFACTIONRATING_1,
+     * CREATESECTION, CREATESECTIONTRANSLATION, CREATETARGET, CREATETICKET,
+     * CREATETICKETASYNC, CREATETICKETFIELD, CREATETICKETFORM,
+     * CREATETICKETFROMTWEET, CREATETICKETS, CREATETICKETS_1,
+     * CREATETICKETSASYNC, CREATETOPIC, CREATETRIGGER, CREATEUPLOAD,
+     * CREATEUPLOAD_1, CREATEUPLOAD_2, CREATEUPLOADARTICLE,
+     * CREATEUPLOADARTICLE_1, CREATEUSER, CREATEUSERIDENTITY,
+     * CREATEUSERIDENTITY_1, CREATEUSERSEGMENT, CREATEUSERS, CREATEUSERS_1,
+     * CREATEUSERSASYNC, DELETEARTICLE, DELETEARTICLEATTACHMENT,
+     * DELETEARTICLEATTACHMENT_1, DELETEATTACHMENT, DELETEATTACHMENT_1,
+     * DELETEAUTOMATION, DELETECATEGORY, DELETEDYNAMICCONTENTITEM,
+     * DELETEDYNAMICCONTENTITEMVARIANT, DELETEFORUM, DELETEGROUP, DELETEGROUP_1,
+     * DELETEGROUPMEMBERSHIP, DELETEGROUPMEMBERSHIP_1, DELETEGROUPMEMBERSHIP_2,
+     * DELETEGROUPMEMBERSHIP_3, DELETEORGANIZATION, DELETEORGANIZATION_1,
+     * DELETEORGANIZATIONMEMBERSHIP, DELETEORGANIZATIONMEMBERSHIP_1,
+     * DELETEORGANIZATIONMEMBERSHIP_2, DELETEORGANIZATIONMEMBERSHIPS,
+     * DELETEPERMISSIONGROUP, DELETEPERMISSIONGROUP_1, DELETESECTION,
+     * DELETESUSPENDEDTICKET, DELETESUSPENDEDTICKET_1, DELETETARGET,
+     * DELETETICKET, DELETETICKET_1, DELETETICKETFIELD, DELETETICKETFIELD_1,
+     * DELETETICKETS, DELETETOPIC, DELETETRANSLATION, DELETETRANSLATION_1,
+     * DELETETRIGGER, DELETEUPLOAD, DELETEUPLOAD_1, DELETEUSER, DELETEUSER_1,
+     * DELETEUSERIDENTITY, DELETEUSERIDENTITY_1, DELETEUSERIDENTITY_2,
+     * DELETEUSERSEGMENT, DELETEUSERSEGMENT_1, GETARTICLE, GETARTICLEFROMSEARCH,
+     * GETARTICLEFROMSEARCH_1, GETARTICLESUBSCRIPTIONS,
+     * GETARTICLESUBSCRIPTIONS_1, GETARTICLETRANSLATIONS, GETARTICLES,
+     * GETARTICLES_1, GETARTICLES_2, GETARTICLES_3, GETARTICLESFROMALLLABELS,
+     * GETARTICLESFROMANYLABELS, GETARTICLESFROMPAGE, GETARTICLESINCREMENTALLY,
+     * GETASSIGNABLEGROUPMEMBERSHIPS, GETASSIGNABLEGROUPMEMBERSHIPS_1,
+     * GETASSIGNABLEGROUPS, GETATTACHMENT, GETATTACHMENT_1,
+     * GETATTACHMENTSFROMARTICLE, GETAUTHENTICATEDUSER,
+     * GETAUTOCOMPLETEORGANIZATIONS, GETAUTOMATION, GETAUTOMATIONS, GETBRANDS,
+     * GETCCREQUESTS, GETCATEGORIES, GETCATEGORY, GETCATEGORYTRANSLATIONS,
+     * GETCOMPLIANCEDELETIONSTATUSES, GETCURRENTUSER, GETCUSTOMAGENTROLES,
+     * GETDELETEDTICKETS, GETDELETEDTICKETS_1, GETDYNAMICCONTENTITEM,
+     * GETDYNAMICCONTENTITEMVARIANT, GETDYNAMICCONTENTITEMVARIANTS,
+     * GETDYNAMICCONTENTITEMS, GETFORUM, GETFORUMS, GETFORUMS_1, GETGROUP,
+     * GETGROUPMEMBERSHIP, GETGROUPMEMBERSHIP_1, GETGROUPMEMBERSHIPBYUSER,
+     * GETGROUPMEMBERSHIPS, GETGROUPMEMBERSHIPS_1, GETGROUPORGANIZATION,
+     * GETGROUPUSERS, GETGROUPS, GETHELPCENTERLOCALES, GETHOLIDAYSFORSCHEDULE,
+     * GETHOLIDAYSFORSCHEDULE_1, GETINCREMENTALTICKETSRESULT, GETJOBSTATUS,
+     * GETJOBSTATUSASYNC, GETJOBSTATUSES, GETJOBSTATUSESASYNC, GETMACRO,
+     * GETMACROS, GETOPENREQUESTS, GETORGANIZATION, GETORGANIZATIONFIELDS,
+     * GETORGANIZATIONMEMBERSHIP, GETORGANIZATIONMEMBERSHIPBYUSER,
+     * GETORGANIZATIONMEMBERSHIPFORUSER, GETORGANIZATIONMEMBERSHIPS,
+     * GETORGANIZATIONMEMBERSHIPSFORORG, GETORGANIZATIONMEMBERSHIPSFORUSER,
+     * GETORGANIZATIONTICKETS, GETORGANIZATIONUSERS, GETORGANIZATIONS,
+     * GETORGANIZATIONSINCREMENTALLY, GETPERMISSIONGROUP, GETPERMISSIONGROUPS,
+     * GETRECENTTICKETS, GETREQUEST, GETREQUESTCOMMENT, GETREQUESTCOMMENT_1,
+     * GETREQUESTCOMMENT_2, GETREQUESTCOMMENTS, GETREQUESTCOMMENTS_1,
+     * GETREQUESTS, GETSATISFACTIONRATING, GETSATISFACTIONRATINGS, GETSCHEDULE,
+     * GETSCHEDULE_1, GETSCHEDULES, GETSEARCHRESULTS, GETSEARCHRESULTS_1,
+     * GETSEARCHRESULTS_2, GETSEARCHRESULTS_3, GETSEARCHRESULTS_4, GETSECTION,
+     * GETSECTIONSUBSCRIPTIONS, GETSECTIONSUBSCRIPTIONS_1,
+     * GETSECTIONTRANSLATIONS, GETSECTIONS, GETSECTIONS_1, GETSECTIONS_2,
+     * GETSOLVEDREQUESTS, GETSUSPENDEDTICKETS, GETTARGET, GETTARGETS, GETTICKET,
+     * GETTICKETAUDIT, GETTICKETAUDIT_1, GETTICKETAUDIT_2, GETTICKETAUDITS,
+     * GETTICKETAUDITS_1, GETTICKETCOLLABORATORS, GETTICKETCOMMENTS,
+     * GETTICKETCOMMENTS_1, GETTICKETFIELD, GETTICKETFIELDS, GETTICKETFORM,
+     * GETTICKETFORMS, GETTICKETINCIDENTS, GETTICKETMETRIC,
+     * GETTICKETMETRICBYTICKET, GETTICKETMETRICS, GETTICKETS, GETTICKETS_1,
+     * GETTICKETSBYEXTERNALID, GETTICKETSBYEXTERNALID_1, GETTICKETSFROMSEARCH,
+     * GETTICKETSINCREMENTALLY, GETTICKETSINCREMENTALLY_1, GETTOPIC, GETTOPICS,
+     * GETTOPICS_1, GETTOPICS_2, GETTOPICS_3, GETTOPICSBYUSER, GETTRIGGER,
+     * GETTRIGGERS, GETTWITTERMONITORS, GETUSER, GETUSERCCDTICKETS,
+     * GETUSERFIELDS, GETUSERIDENTITIES, GETUSERIDENTITIES_1, GETUSERIDENTITY,
+     * GETUSERIDENTITY_1, GETUSERIDENTITY_2, GETUSERRELATEDINFO,
+     * GETUSERREQUESTEDTICKETS, GETUSERREQUESTS, GETUSERREQUESTS_1,
+     * GETUSERSEGMENT, GETUSERSEGMENTS, GETUSERSEGMENTS_1,
+     * GETUSERSEGMENTSAPPLICABLE, GETUSERSUBSCRIPTIONS, GETUSERSUBSCRIPTIONS_1,
+     * GETUSERS, GETUSERSBYROLE, GETUSERSINCREMENTALLY, IMPORTTICKET,
+     * IMPORTTOPIC, LOOKUPORGANIZATIONSBYEXTERNALID, LOOKUPUSERBYEMAIL,
+     * LOOKUPUSERBYEXTERNALID, MACROSSHOWCHANGESTOTICKET,
+     * MACROSSHOWTICKETAFTERCHANGES, MAKEPRIVATETICKETAUDIT,
+     * MAKEPRIVATETICKETAUDIT_1, MAKEPRIVATETICKETAUDIT_2, MARKTICKETASSPAM,
+     * MARKTICKETASSPAM_1, MERGEUSERS, NOTIFYAPP, PERMANENTLYDELETETICKET,
+     * PERMANENTLYDELETETICKET_1, PERMANENTLYDELETETICKETS,
+     * PERMANENTLYDELETEUSER, PERMANENTLYDELETEUSER_1, QUEUECREATETICKETASYNC,
+     * REMOVETAGFROMORGANISATIONS, REMOVETAGFROMTICKET, REMOVETAGFROMTOPICS,
+     * REQUESTVERIFYUSERIDENTITY, REQUESTVERIFYUSERIDENTITY_1,
+     * REQUESTVERIFYUSERIDENTITY_2, RESETUSERPASSWORD, RESETUSERPASSWORD_1,
+     * SETGROUPMEMBERSHIPASDEFAULT, SETORGANIZATIONMEMBERSHIPASDEFAULT,
+     * SETTAGONORGANISATIONS, SETTAGONTICKET, SETTAGONTOPICS,
+     * SETUSERPRIMARYIDENTITY, SETUSERPRIMARYIDENTITY_1,
+     * SETUSERPRIMARYIDENTITY_2, SUSPENDUSER, TRUSTTICKETAUDIT,
+     * TRUSTTICKETAUDIT_1, TRUSTTICKETAUDIT_2, UNSUSPENDUSER, UPDATEARTICLE,
+     * UPDATEARTICLETRANSLATION, UPDATEAUTOMATION, UPDATECATEGORY,
+     * UPDATECATEGORYTRANSLATION, UPDATEDYNAMICCONTENTITEM,
+     * UPDATEDYNAMICCONTENTITEMVARIANT, UPDATEFORUM, UPDATEGROUP,
+     * UPDATEINSTALLATION, UPDATEMACRO, UPDATEORGANIZATION, UPDATEORGANIZATIONS,
+     * UPDATEORGANIZATIONS_1, UPDATEORGANIZATIONSASYNC, UPDATEPERMISSIONGROUP,
+     * UPDATEREQUEST, UPDATESECTION, UPDATESECTIONTRANSLATION, UPDATETICKET,
+     * UPDATETICKETFIELD, UPDATETICKETS, UPDATETICKETS_1, UPDATETICKETSASYNC,
+     * UPDATETOPIC, UPDATETRIGGER, UPDATEUSER, UPDATEUSERIDENTITY,
+     * UPDATEUSERIDENTITY_1, UPDATEUSERSEGMENT, UPDATEUSERS, UPDATEUSERS_1,
+     * UPDATEUSERSASYNC, VERIFYUSERIDENTITY, VERIFYUSERIDENTITY_1,
+     * VERIFYUSERIDENTITY_2
      * 
      * @param path methodName
      */
@@ -15791,85 +15821,115 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 253 enums and the value can be one of: addTagToOrganisations,
-     * addTagToTicket, addTagToTopics, associateAttachmentsToArticle,
-     * changeUserPassword, createArticle, createArticleTranslation,
-     * createAutomation, createCategory, createCategoryTranslation,
-     * createComment, createDynamicContentItem, createDynamicContentItemVariant,
-     * createForum, createGroup, createGroupMembership, createMacro,
-     * createOrUpdateUser, createOrUpdateUsers, createOrUpdateUsersAsync,
-     * createOrganization, createOrganizationMembership,
-     * createOrganizationMemberships, createOrganizationMembershipsAsync,
-     * createOrganizations, createOrganizationsAsync, createPermissionGroup,
-     * createRequest, createSatisfactionRating, createSection,
-     * createSectionTranslation, createTarget, createTicket, createTicketAsync,
-     * createTicketField, createTicketForm, createTicketFromTweet,
-     * createTickets, createTicketsAsync, createTopic, createTrigger,
-     * createUpload, createUploadArticle, createUser, createUserIdentity,
-     * createUserSegment, createUsers, createUsersAsync, deleteArticle,
-     * deleteArticleAttachment, deleteAttachment, deleteAutomation,
-     * deleteCategory, deleteDynamicContentItem,
-     * deleteDynamicContentItemVariant, deleteForum, deleteGroup,
-     * deleteGroupMembership, deleteOrganization, deleteOrganizationMembership,
-     * deleteOrganizationMemberships, deletePermissionGroup, deleteSection,
-     * deleteSuspendedTicket, deleteTarget, deleteTicket, deleteTicketField,
-     * deleteTickets, deleteTopic, deleteTranslation, deleteTrigger,
-     * deleteUpload, deleteUser, deleteUserIdentity, deleteUserSegment,
-     * getArticle, getArticleFromSearch, getArticleSubscriptions,
-     * getArticleTranslations, getArticles, getArticlesFromAllLabels,
-     * getArticlesFromAnyLabels, getArticlesFromPage, getArticlesIncrementally,
-     * getAssignableGroupMemberships, getAssignableGroups, getAttachment,
-     * getAttachmentsFromArticle, getAuthenticatedUser,
-     * getAutoCompleteOrganizations, getAutomation, getAutomations, getBrands,
-     * getCCRequests, getCategories, getCategory, getCategoryTranslations,
-     * getComplianceDeletionStatuses, getCurrentUser, getCustomAgentRoles,
-     * getDeletedTickets, getDynamicContentItem, getDynamicContentItemVariant,
-     * getDynamicContentItemVariants, getDynamicContentItems, getForum,
-     * getForums, getGroup, getGroupMembership, getGroupMembershipByUser,
-     * getGroupMemberships, getGroupOrganization, getGroupUsers, getGroups,
-     * getHelpCenterLocales, getHolidaysForSchedule,
-     * getIncrementalTicketsResult, getJobStatus, getJobStatusAsync,
-     * getJobStatuses, getJobStatusesAsync, getMacro, getMacros,
-     * getOpenRequests, getOrganization, getOrganizationFields,
-     * getOrganizationMembership, getOrganizationMembershipByUser,
-     * getOrganizationMembershipForUser, getOrganizationMemberships,
-     * getOrganizationMembershipsForOrg, getOrganizationMembershipsForUser,
-     * getOrganizationTickets, getOrganizationUsers, getOrganizations,
-     * getOrganizationsIncrementally, getPermissionGroup, getPermissionGroups,
-     * getRecentTickets, getRequest, getRequestComment, getRequestComments,
-     * getRequests, getSatisfactionRating, getSatisfactionRatings, getSchedule,
-     * getSchedules, getSearchResults, getSection, getSectionSubscriptions,
-     * getSectionTranslations, getSections, getSolvedRequests,
-     * getSuspendedTickets, getTarget, getTargets, getTicket, getTicketAudit,
-     * getTicketAudits, getTicketCollaborators, getTicketComments,
-     * getTicketField, getTicketFields, getTicketForm, getTicketForms,
-     * getTicketIncidents, getTicketMetric, getTicketMetricByTicket,
-     * getTicketMetrics, getTickets, getTicketsByExternalId,
-     * getTicketsFromSearch, getTicketsIncrementally, getTopic, getTopics,
-     * getTopicsByUser, getTrigger, getTriggers, getTwitterMonitors, getUser,
-     * getUserCCDTickets, getUserFields, getUserIdentities, getUserIdentity,
-     * getUserRelatedInfo, getUserRequestedTickets, getUserRequests,
-     * getUserSegment, getUserSegments, getUserSegmentsApplicable,
-     * getUserSubscriptions, getUsers, getUsersByRole, getUsersIncrementally,
-     * importTicket, importTopic, lookupOrganizationsByExternalId,
-     * lookupUserByEmail, lookupUserByExternalId, macrosShowChangesToTicket,
-     * macrosShowTicketAfterChanges, makePrivateTicketAudit, markTicketAsSpam,
-     * mergeUsers, notifyApp, permanentlyDeleteTicket, permanentlyDeleteTickets,
-     * permanentlyDeleteUser, queueCreateTicketAsync,
-     * removeTagFromOrganisations, removeTagFromTicket, removeTagFromTopics,
-     * requestVerifyUserIdentity, resetUserPassword,
-     * setGroupMembershipAsDefault, setOrganizationMembershipAsDefault,
-     * setTagOnOrganisations, setTagOnTicket, setTagOnTopics,
-     * setUserPrimaryIdentity, suspendUser, trustTicketAudit, unsuspendUser,
-     * updateArticle, updateArticleTranslation, updateAutomation,
-     * updateCategory, updateCategoryTranslation, updateDynamicContentItem,
-     * updateDynamicContentItemVariant, updateForum, updateGroup,
-     * updateInstallation, updateMacro, updateOrganization, updateOrganizations,
-     * updateOrganizationsAsync, updatePermissionGroup, updateRequest,
-     * updateSection, updateSectionTranslation, updateTicket, updateTicketField,
-     * updateTickets, updateTicketsAsync, updateTopic, updateTrigger,
-     * updateUser, updateUserIdentity, updateUserSegment, updateUsers,
-     * updateUsersAsync, verifyUserIdentity
+     * There are 342 enums and the value can be one of: ADDTAGTOORGANISATIONS,
+     * ADDTAGTOTICKET, ADDTAGTOTOPICS, ASSOCIATEATTACHMENTSTOARTICLE,
+     * CHANGEUSERPASSWORD, CREATEARTICLE, CREATEARTICLE_1,
+     * CREATEARTICLETRANSLATION, CREATEAUTOMATION, CREATECATEGORY,
+     * CREATECATEGORYTRANSLATION, CREATECOMMENT, CREATEDYNAMICCONTENTITEM,
+     * CREATEDYNAMICCONTENTITEMVARIANT, CREATEFORUM, CREATEGROUP,
+     * CREATEGROUPMEMBERSHIP, CREATEGROUPMEMBERSHIP_1, CREATEMACRO,
+     * CREATEORUPDATEUSER, CREATEORUPDATEUSERS, CREATEORUPDATEUSERS_1,
+     * CREATEORUPDATEUSERSASYNC, CREATEORGANIZATION,
+     * CREATEORGANIZATIONMEMBERSHIP, CREATEORGANIZATIONMEMBERSHIP_1,
+     * CREATEORGANIZATIONMEMBERSHIPS, CREATEORGANIZATIONMEMBERSHIPS_1,
+     * CREATEORGANIZATIONMEMBERSHIPSASYNC, CREATEORGANIZATIONS,
+     * CREATEORGANIZATIONS_1, CREATEORGANIZATIONSASYNC, CREATEPERMISSIONGROUP,
+     * CREATEREQUEST, CREATESATISFACTIONRATING, CREATESATISFACTIONRATING_1,
+     * CREATESECTION, CREATESECTIONTRANSLATION, CREATETARGET, CREATETICKET,
+     * CREATETICKETASYNC, CREATETICKETFIELD, CREATETICKETFORM,
+     * CREATETICKETFROMTWEET, CREATETICKETS, CREATETICKETS_1,
+     * CREATETICKETSASYNC, CREATETOPIC, CREATETRIGGER, CREATEUPLOAD,
+     * CREATEUPLOAD_1, CREATEUPLOAD_2, CREATEUPLOADARTICLE,
+     * CREATEUPLOADARTICLE_1, CREATEUSER, CREATEUSERIDENTITY,
+     * CREATEUSERIDENTITY_1, CREATEUSERSEGMENT, CREATEUSERS, CREATEUSERS_1,
+     * CREATEUSERSASYNC, DELETEARTICLE, DELETEARTICLEATTACHMENT,
+     * DELETEARTICLEATTACHMENT_1, DELETEATTACHMENT, DELETEATTACHMENT_1,
+     * DELETEAUTOMATION, DELETECATEGORY, DELETEDYNAMICCONTENTITEM,
+     * DELETEDYNAMICCONTENTITEMVARIANT, DELETEFORUM, DELETEGROUP, DELETEGROUP_1,
+     * DELETEGROUPMEMBERSHIP, DELETEGROUPMEMBERSHIP_1, DELETEGROUPMEMBERSHIP_2,
+     * DELETEGROUPMEMBERSHIP_3, DELETEORGANIZATION, DELETEORGANIZATION_1,
+     * DELETEORGANIZATIONMEMBERSHIP, DELETEORGANIZATIONMEMBERSHIP_1,
+     * DELETEORGANIZATIONMEMBERSHIP_2, DELETEORGANIZATIONMEMBERSHIPS,
+     * DELETEPERMISSIONGROUP, DELETEPERMISSIONGROUP_1, DELETESECTION,
+     * DELETESUSPENDEDTICKET, DELETESUSPENDEDTICKET_1, DELETETARGET,
+     * DELETETICKET, DELETETICKET_1, DELETETICKETFIELD, DELETETICKETFIELD_1,
+     * DELETETICKETS, DELETETOPIC, DELETETRANSLATION, DELETETRANSLATION_1,
+     * DELETETRIGGER, DELETEUPLOAD, DELETEUPLOAD_1, DELETEUSER, DELETEUSER_1,
+     * DELETEUSERIDENTITY, DELETEUSERIDENTITY_1, DELETEUSERIDENTITY_2,
+     * DELETEUSERSEGMENT, DELETEUSERSEGMENT_1, GETARTICLE, GETARTICLEFROMSEARCH,
+     * GETARTICLEFROMSEARCH_1, GETARTICLESUBSCRIPTIONS,
+     * GETARTICLESUBSCRIPTIONS_1, GETARTICLETRANSLATIONS, GETARTICLES,
+     * GETARTICLES_1, GETARTICLES_2, GETARTICLES_3, GETARTICLESFROMALLLABELS,
+     * GETARTICLESFROMANYLABELS, GETARTICLESFROMPAGE, GETARTICLESINCREMENTALLY,
+     * GETASSIGNABLEGROUPMEMBERSHIPS, GETASSIGNABLEGROUPMEMBERSHIPS_1,
+     * GETASSIGNABLEGROUPS, GETATTACHMENT, GETATTACHMENT_1,
+     * GETATTACHMENTSFROMARTICLE, GETAUTHENTICATEDUSER,
+     * GETAUTOCOMPLETEORGANIZATIONS, GETAUTOMATION, GETAUTOMATIONS, GETBRANDS,
+     * GETCCREQUESTS, GETCATEGORIES, GETCATEGORY, GETCATEGORYTRANSLATIONS,
+     * GETCOMPLIANCEDELETIONSTATUSES, GETCURRENTUSER, GETCUSTOMAGENTROLES,
+     * GETDELETEDTICKETS, GETDELETEDTICKETS_1, GETDYNAMICCONTENTITEM,
+     * GETDYNAMICCONTENTITEMVARIANT, GETDYNAMICCONTENTITEMVARIANTS,
+     * GETDYNAMICCONTENTITEMS, GETFORUM, GETFORUMS, GETFORUMS_1, GETGROUP,
+     * GETGROUPMEMBERSHIP, GETGROUPMEMBERSHIP_1, GETGROUPMEMBERSHIPBYUSER,
+     * GETGROUPMEMBERSHIPS, GETGROUPMEMBERSHIPS_1, GETGROUPORGANIZATION,
+     * GETGROUPUSERS, GETGROUPS, GETHELPCENTERLOCALES, GETHOLIDAYSFORSCHEDULE,
+     * GETHOLIDAYSFORSCHEDULE_1, GETINCREMENTALTICKETSRESULT, GETJOBSTATUS,
+     * GETJOBSTATUSASYNC, GETJOBSTATUSES, GETJOBSTATUSESASYNC, GETMACRO,
+     * GETMACROS, GETOPENREQUESTS, GETORGANIZATION, GETORGANIZATIONFIELDS,
+     * GETORGANIZATIONMEMBERSHIP, GETORGANIZATIONMEMBERSHIPBYUSER,
+     * GETORGANIZATIONMEMBERSHIPFORUSER, GETORGANIZATIONMEMBERSHIPS,
+     * GETORGANIZATIONMEMBERSHIPSFORORG, GETORGANIZATIONMEMBERSHIPSFORUSER,
+     * GETORGANIZATIONTICKETS, GETORGANIZATIONUSERS, GETORGANIZATIONS,
+     * GETORGANIZATIONSINCREMENTALLY, GETPERMISSIONGROUP, GETPERMISSIONGROUPS,
+     * GETRECENTTICKETS, GETREQUEST, GETREQUESTCOMMENT, GETREQUESTCOMMENT_1,
+     * GETREQUESTCOMMENT_2, GETREQUESTCOMMENTS, GETREQUESTCOMMENTS_1,
+     * GETREQUESTS, GETSATISFACTIONRATING, GETSATISFACTIONRATINGS, GETSCHEDULE,
+     * GETSCHEDULE_1, GETSCHEDULES, GETSEARCHRESULTS, GETSEARCHRESULTS_1,
+     * GETSEARCHRESULTS_2, GETSEARCHRESULTS_3, GETSEARCHRESULTS_4, GETSECTION,
+     * GETSECTIONSUBSCRIPTIONS, GETSECTIONSUBSCRIPTIONS_1,
+     * GETSECTIONTRANSLATIONS, GETSECTIONS, GETSECTIONS_1, GETSECTIONS_2,
+     * GETSOLVEDREQUESTS, GETSUSPENDEDTICKETS, GETTARGET, GETTARGETS, GETTICKET,
+     * GETTICKETAUDIT, GETTICKETAUDIT_1, GETTICKETAUDIT_2, GETTICKETAUDITS,
+     * GETTICKETAUDITS_1, GETTICKETCOLLABORATORS, GETTICKETCOMMENTS,
+     * GETTICKETCOMMENTS_1, GETTICKETFIELD, GETTICKETFIELDS, GETTICKETFORM,
+     * GETTICKETFORMS, GETTICKETINCIDENTS, GETTICKETMETRIC,
+     * GETTICKETMETRICBYTICKET, GETTICKETMETRICS, GETTICKETS, GETTICKETS_1,
+     * GETTICKETSBYEXTERNALID, GETTICKETSBYEXTERNALID_1, GETTICKETSFROMSEARCH,
+     * GETTICKETSINCREMENTALLY, GETTICKETSINCREMENTALLY_1, GETTOPIC, GETTOPICS,
+     * GETTOPICS_1, GETTOPICS_2, GETTOPICS_3, GETTOPICSBYUSER, GETTRIGGER,
+     * GETTRIGGERS, GETTWITTERMONITORS, GETUSER, GETUSERCCDTICKETS,
+     * GETUSERFIELDS, GETUSERIDENTITIES, GETUSERIDENTITIES_1, GETUSERIDENTITY,
+     * GETUSERIDENTITY_1, GETUSERIDENTITY_2, GETUSERRELATEDINFO,
+     * GETUSERREQUESTEDTICKETS, GETUSERREQUESTS, GETUSERREQUESTS_1,
+     * GETUSERSEGMENT, GETUSERSEGMENTS, GETUSERSEGMENTS_1,
+     * GETUSERSEGMENTSAPPLICABLE, GETUSERSUBSCRIPTIONS, GETUSERSUBSCRIPTIONS_1,
+     * GETUSERS, GETUSERSBYROLE, GETUSERSINCREMENTALLY, IMPORTTICKET,
+     * IMPORTTOPIC, LOOKUPORGANIZATIONSBYEXTERNALID, LOOKUPUSERBYEMAIL,
+     * LOOKUPUSERBYEXTERNALID, MACROSSHOWCHANGESTOTICKET,
+     * MACROSSHOWTICKETAFTERCHANGES, MAKEPRIVATETICKETAUDIT,
+     * MAKEPRIVATETICKETAUDIT_1, MAKEPRIVATETICKETAUDIT_2, MARKTICKETASSPAM,
+     * MARKTICKETASSPAM_1, MERGEUSERS, NOTIFYAPP, PERMANENTLYDELETETICKET,
+     * PERMANENTLYDELETETICKET_1, PERMANENTLYDELETETICKETS,
+     * PERMANENTLYDELETEUSER, PERMANENTLYDELETEUSER_1, QUEUECREATETICKETASYNC,
+     * REMOVETAGFROMORGANISATIONS, REMOVETAGFROMTICKET, REMOVETAGFROMTOPICS,
+     * REQUESTVERIFYUSERIDENTITY, REQUESTVERIFYUSERIDENTITY_1,
+     * REQUESTVERIFYUSERIDENTITY_2, RESETUSERPASSWORD, RESETUSERPASSWORD_1,
+     * SETGROUPMEMBERSHIPASDEFAULT, SETORGANIZATIONMEMBERSHIPASDEFAULT,
+     * SETTAGONORGANISATIONS, SETTAGONTICKET, SETTAGONTOPICS,
+     * SETUSERPRIMARYIDENTITY, SETUSERPRIMARYIDENTITY_1,
+     * SETUSERPRIMARYIDENTITY_2, SUSPENDUSER, TRUSTTICKETAUDIT,
+     * TRUSTTICKETAUDIT_1, TRUSTTICKETAUDIT_2, UNSUSPENDUSER, UPDATEARTICLE,
+     * UPDATEARTICLETRANSLATION, UPDATEAUTOMATION, UPDATECATEGORY,
+     * UPDATECATEGORYTRANSLATION, UPDATEDYNAMICCONTENTITEM,
+     * UPDATEDYNAMICCONTENTITEMVARIANT, UPDATEFORUM, UPDATEGROUP,
+     * UPDATEINSTALLATION, UPDATEMACRO, UPDATEORGANIZATION, UPDATEORGANIZATIONS,
+     * UPDATEORGANIZATIONS_1, UPDATEORGANIZATIONSASYNC, UPDATEPERMISSIONGROUP,
+     * UPDATEREQUEST, UPDATESECTION, UPDATESECTIONTRANSLATION, UPDATETICKET,
+     * UPDATETICKETFIELD, UPDATETICKETS, UPDATETICKETS_1, UPDATETICKETSASYNC,
+     * UPDATETOPIC, UPDATETRIGGER, UPDATEUSER, UPDATEUSERIDENTITY,
+     * UPDATEUSERIDENTITY_1, UPDATEUSERSEGMENT, UPDATEUSERS, UPDATEUSERS_1,
+     * UPDATEUSERSASYNC, VERIFYUSERIDENTITY, VERIFYUSERIDENTITY_1,
+     * VERIFYUSERIDENTITY_2
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -40,12 +40,9 @@ public enum UsageRecordYearlyApiMethod implements ApiMethod {
     @Override
     public String getName() { return apiMethod.getName(); }
 
-    @Override
-    public String toString() { return apiMethod.getName(); }
-
     public static UsageRecordYearlyApiMethod fromValue(String value) throws IllegalArgumentException {
         for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
-            if (CACHED_ENUM_VALUES[i].getName().equalsIgnoreCase(value)) {
+            if (CACHED_ENUM_VALUES[i].toString().equalsIgnoreCase(value)) {
                 return CACHED_ENUM_VALUES[i];
             }
         }

@@ -1259,10 +1259,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: drive-about,
-         * drive-apps, drive-changes, drive-channels, drive-children,
-         * drive-comments, drive-files, drive-parents, drive-permissions,
-         * drive-properties, drive-realtime, drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
+         * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
+         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1287,10 +1287,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: drive-about,
-         * drive-apps, drive-changes, drive-channels, drive-children,
-         * drive-comments, drive-files, drive-parents, drive-permissions,
-         * drive-properties, drive-realtime, drive-replies, drive-revisions
+         * There are 13 enums and the value can be one of: DRIVE_ABOUT,
+         * DRIVE_APPS, DRIVE_CHANGES, DRIVE_CHANNELS, DRIVE_CHILDREN,
+         * DRIVE_COMMENTS, DRIVE_FILES, DRIVE_PARENTS, DRIVE_PERMISSIONS,
+         * DRIVE_PROPERTIES, DRIVE_REALTIME, DRIVE_REPLIES, DRIVE_REVISIONS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
