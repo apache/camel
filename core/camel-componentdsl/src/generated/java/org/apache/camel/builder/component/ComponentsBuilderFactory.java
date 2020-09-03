@@ -3805,7 +3805,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Vert.x HTTP Client (camel-vertx-http)
-     * Camel HTTP client support with Vert.x
+     * Send requests to external HTTP servers using Vert.x
      * 
      * Category: http
      * Since: 3.5

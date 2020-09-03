@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "vertx-http",
     "title": "Vert.x HTTP Client",
-    "description": "Camel HTTP client support with Vert.x",
+    "description": "Send requests to external HTTP servers using Vert.x",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "http",
