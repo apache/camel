@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+//CHECKSTYLE:OFF
 package com.braintreegateway;
 
 import com.braintreegateway.exceptions.NotFoundException;
@@ -259,3 +260,4 @@ public class DisputeGateway {
         return new PaginatedResult<Dispute>(response.findInteger("total-items"), response.findInteger("page-size"), disputes);
     }
 }
+//CHECKSTYLE:ON
