@@ -19,8 +19,10 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -269,19 +271,11 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         if (enumValue == null || enumValue.isEmpty()) {
             return "DEFAULT";
         }
-        StringBuilder builder = new StringBuilder();
-        if (!Character.isJavaIdentifierStart(enumValue.charAt(0))) {
-            builder.append('_');
-        }
-        for (char c : enumValue.toCharArray()) {
-            char upperCase = Character.toUpperCase(c);
-            if (!Character.isJavaIdentifierPart(upperCase)) {
-                builder.append('_');
-            } else {
-                builder.append(upperCase);
-            }
-        }
-        return builder.toString();
+        String value = StringHelper.camelCaseToDash(enumValue);
+        // replace dash with underscore and upper case
+        value = value.replace('-', '_');
+        value = value.toUpperCase(Locale.ENGLISH);
+        return value;
     }
 
     public static String getNullableOptionValues(String[] nullableOptions) {
