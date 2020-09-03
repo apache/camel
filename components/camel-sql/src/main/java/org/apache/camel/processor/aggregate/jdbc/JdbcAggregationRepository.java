@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregate.jdbc;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -331,7 +332,13 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                         new Object[]{key}, new int[]{Types.VARCHAR});
 
                     byte[] marshalledExchange = (byte[]) columns.get(EXCHANGE);
-                    long version = (long) columns.get(VERSION);
+                    long version;
+                    Object versionObj = columns.get(VERSION);
+                    if (versionObj instanceof BigDecimal) {
+                        version = ((BigDecimal) versionObj).longValue();
+                    } else {
+                        version = (long) versionObj;
+                    }
 
                     Exchange result = codec.unmarshallExchange(camelContext, marshalledExchange);
                     result.setProperty(VERSION_PROPERTY, version);
