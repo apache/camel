@@ -49,8 +49,8 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.ADDON, new ApiMethodHelper<AddOnGatewayApiMethod>(AddOnGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(AddOnGatewayApiMethod.class, BraintreeApiName.ADDON);
+        apiHelpers.put(BraintreeApiName.ADD_ON, new ApiMethodHelper<AddOnGatewayApiMethod>(AddOnGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(AddOnGatewayApiMethod.class, BraintreeApiName.ADD_ON);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -59,13 +59,13 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.CLIENTTOKEN, new ApiMethodHelper<ClientTokenGatewayApiMethod>(ClientTokenGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(ClientTokenGatewayApiMethod.class, BraintreeApiName.CLIENTTOKEN);
+        apiHelpers.put(BraintreeApiName.CLIENT_TOKEN, new ApiMethodHelper<ClientTokenGatewayApiMethod>(ClientTokenGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(ClientTokenGatewayApiMethod.class, BraintreeApiName.CLIENT_TOKEN);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.CREDITCARDVERIFICATION, new ApiMethodHelper<CreditCardVerificationGatewayApiMethod>(CreditCardVerificationGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(CreditCardVerificationGatewayApiMethod.class, BraintreeApiName.CREDITCARDVERIFICATION);
+        apiHelpers.put(BraintreeApiName.CREDIT_CARD_VERIFICATION, new ApiMethodHelper<CreditCardVerificationGatewayApiMethod>(CreditCardVerificationGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(CreditCardVerificationGatewayApiMethod.class, BraintreeApiName.CREDIT_CARD_VERIFICATION);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -84,23 +84,23 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.DOCUMENTUPLOAD, new ApiMethodHelper<DocumentUploadGatewayApiMethod>(DocumentUploadGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(DocumentUploadGatewayApiMethod.class, BraintreeApiName.DOCUMENTUPLOAD);
+        apiHelpers.put(BraintreeApiName.DOCUMENT_UPLOAD, new ApiMethodHelper<DocumentUploadGatewayApiMethod>(DocumentUploadGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(DocumentUploadGatewayApiMethod.class, BraintreeApiName.DOCUMENT_UPLOAD);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.MERCHANTACCOUNT, new ApiMethodHelper<MerchantAccountGatewayApiMethod>(MerchantAccountGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(MerchantAccountGatewayApiMethod.class, BraintreeApiName.MERCHANTACCOUNT);
+        apiHelpers.put(BraintreeApiName.MERCHANT_ACCOUNT, new ApiMethodHelper<MerchantAccountGatewayApiMethod>(MerchantAccountGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(MerchantAccountGatewayApiMethod.class, BraintreeApiName.MERCHANT_ACCOUNT);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.PAYMENTMETHOD, new ApiMethodHelper<PaymentMethodGatewayApiMethod>(PaymentMethodGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(PaymentMethodGatewayApiMethod.class, BraintreeApiName.PAYMENTMETHOD);
+        apiHelpers.put(BraintreeApiName.PAYMENT_METHOD, new ApiMethodHelper<PaymentMethodGatewayApiMethod>(PaymentMethodGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(PaymentMethodGatewayApiMethod.class, BraintreeApiName.PAYMENT_METHOD);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.PAYMENTMETHODNONCE, new ApiMethodHelper<PaymentMethodNonceGatewayApiMethod>(PaymentMethodNonceGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(PaymentMethodNonceGatewayApiMethod.class, BraintreeApiName.PAYMENTMETHODNONCE);
+        apiHelpers.put(BraintreeApiName.PAYMENT_METHOD_NONCE, new ApiMethodHelper<PaymentMethodNonceGatewayApiMethod>(PaymentMethodNonceGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(PaymentMethodNonceGatewayApiMethod.class, BraintreeApiName.PAYMENT_METHOD_NONCE);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -114,8 +114,8 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.SETTLEMENTBATCHSUMMARY, new ApiMethodHelper<SettlementBatchSummaryGatewayApiMethod>(SettlementBatchSummaryGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(SettlementBatchSummaryGatewayApiMethod.class, BraintreeApiName.SETTLEMENTBATCHSUMMARY);
+        apiHelpers.put(BraintreeApiName.SETTLEMENT_BATCH_SUMMARY, new ApiMethodHelper<SettlementBatchSummaryGatewayApiMethod>(SettlementBatchSummaryGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(SettlementBatchSummaryGatewayApiMethod.class, BraintreeApiName.SETTLEMENT_BATCH_SUMMARY);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
@@ -129,8 +129,8 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(BraintreeApiName.WEBHOOKNOTIFICATION, new ApiMethodHelper<WebhookNotificationGatewayApiMethod>(WebhookNotificationGatewayApiMethod.class, aliases, nullableArgs));
-        apiMethods.put(WebhookNotificationGatewayApiMethod.class, BraintreeApiName.WEBHOOKNOTIFICATION);
+        apiHelpers.put(BraintreeApiName.WEBHOOK_NOTIFICATION, new ApiMethodHelper<WebhookNotificationGatewayApiMethod>(WebhookNotificationGatewayApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(WebhookNotificationGatewayApiMethod.class, BraintreeApiName.WEBHOOK_NOTIFICATION);
 
         setApiHelpers(apiHelpers);
         setApiMethods(apiMethods);
@@ -139,16 +139,16 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
     public BraintreeConfiguration getEndpointConfiguration(BraintreeApiName apiName) {
         BraintreeConfiguration result = null;
         switch (apiName) {
-            case ADDON:
+            case ADD_ON:
                 result = new AddOnGatewayEndpointConfiguration();
                 break;
             case ADDRESS:
                 result = new AddressGatewayEndpointConfiguration();
                 break;
-            case CLIENTTOKEN:
+            case CLIENT_TOKEN:
                 result = new ClientTokenGatewayEndpointConfiguration();
                 break;
-            case CREDITCARDVERIFICATION:
+            case CREDIT_CARD_VERIFICATION:
                 result = new CreditCardVerificationGatewayEndpointConfiguration();
                 break;
             case CUSTOMER:
@@ -160,16 +160,16 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
             case DISPUTE:
                 result = new DisputeGatewayEndpointConfiguration();
                 break;
-            case DOCUMENTUPLOAD:
+            case DOCUMENT_UPLOAD:
                 result = new DocumentUploadGatewayEndpointConfiguration();
                 break;
-            case MERCHANTACCOUNT:
+            case MERCHANT_ACCOUNT:
                 result = new MerchantAccountGatewayEndpointConfiguration();
                 break;
-            case PAYMENTMETHOD:
+            case PAYMENT_METHOD:
                 result = new PaymentMethodGatewayEndpointConfiguration();
                 break;
-            case PAYMENTMETHODNONCE:
+            case PAYMENT_METHOD_NONCE:
                 result = new PaymentMethodNonceGatewayEndpointConfiguration();
                 break;
             case PLAN:
@@ -178,7 +178,7 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
             case REPORT:
                 result = new ReportGatewayEndpointConfiguration();
                 break;
-            case SETTLEMENTBATCHSUMMARY:
+            case SETTLEMENT_BATCH_SUMMARY:
                 result = new SettlementBatchSummaryGatewayEndpointConfiguration();
                 break;
             case SUBSCRIPTION:
@@ -187,7 +187,7 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
             case TRANSACTION:
                 result = new TransactionGatewayEndpointConfiguration();
                 break;
-            case WEBHOOKNOTIFICATION:
+            case WEBHOOK_NOTIFICATION:
                 result = new WebhookNotificationGatewayEndpointConfiguration();
                 break;
         }
