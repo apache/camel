@@ -3816,7 +3816,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
-     * Camel WebSocket support with Vert.x
+     * Expose WebSocket endpoints and connect to remote WebSocket servers using
+     * Vert.x
      * 
      * Category: websocket
      * Since: 3.5

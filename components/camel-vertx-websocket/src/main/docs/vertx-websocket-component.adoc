@@ -2,7 +2,7 @@
 = Vert.x WebSocket Component
 :docTitle: Vert.x WebSocket
 :artifactId: camel-vertx-websocket
-:description: Camel WebSocket support with Vert.x
+:description: Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x
 :since: 3.5
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
