@@ -29,7 +29,7 @@
     <artifactId>camel-vertx-websocket</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Vert.x :: WebSocket</name>
-    <description>Camel WebSocket support with Vert.x</description>
+    <description>Expose WebSocket endpoints and connect to remote WebSocket servers using Vert.x</description>
 
     <properties>
     </properties>
