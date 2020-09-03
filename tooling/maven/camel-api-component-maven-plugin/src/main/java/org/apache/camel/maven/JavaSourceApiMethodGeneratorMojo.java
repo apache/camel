@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.support.component.ApiMethodParser;
@@ -106,26 +105,14 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                             && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
                             && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
 
-                        final int leftBracket = method.indexOf('(');
-                        final String name = method.substring(0, leftBracket);
-                        final String args = method.substring(leftBracket + 1, method.length() - 1);
-                        String[] types;
-                        if (args.isEmpty()) {
-                            types = new String[0];
-                        } else {
-                            // get raw types from args
-                            final List<String> rawTypes = new ArrayList<>();
-                            final Matcher argTypesMatcher = RAW_ARGTYPES_PATTERN.matcher(args);
-                            while (argTypesMatcher.find()) {
-                                rawTypes.add(argTypesMatcher.group(1));
-                            }
-                            types = rawTypes.toArray(new String[rawTypes.size()]);
-                        }
-                        final String resultType = getResultType(aClass, name, types);
-                        if (resultType != null) {
+                        method = method.replace("public ", "");
+                        int whitespace = method.indexOf(' ');
+                        int leftBracket = method.indexOf('(');
+                        String resultType = method.substring(0, whitespace);
+                        String name = method.substring(whitespace + 1, leftBracket);
+                        if (!"void".equals(resultType)) {
                             SignatureModel model = new SignatureModel();
-                            String signature = resultType + " " + name + methodMap.get(method);
-                            model.setSignature(signature);
+                            model.setSignature(method);
                             Map<String, String> params = parser.getParameters().get(name);
                             model.setParameters(params);
                             result.put(method, model);

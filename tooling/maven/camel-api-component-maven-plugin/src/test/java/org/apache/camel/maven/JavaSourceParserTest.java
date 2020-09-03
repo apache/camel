@@ -33,11 +33,28 @@ public class JavaSourceParserTest {
         assertEquals(4, parser.getMethods().size());
 
         assertEquals(
-                "public com.braintreegateway.Result create(String customerId, com.braintreegateway.AddressRequest request);",
+                "public com.braintreegateway.Result create(String customerId, com.braintreegateway.AddressRequest request)",
                 parser.getMethods().get(0));
         assertEquals(2, parser.getParameters().get("create").size());
         assertEquals("The id of the Customer", parser.getParameters().get("create").get("customerId"));
         assertEquals("The request object", parser.getParameters().get("create").get("request"));
+
+        parser.reset();
+
+    }
+
+    @Test
+    public void testGetMethodsCustomer() throws Exception {
+        final JavaSourceParser parser = new JavaSourceParser();
+
+        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/CustomerGateway.java"));
+        assertEquals(7, parser.getMethods().size());
+
+        assertEquals(
+                "public com.braintreegateway.Result create(com.braintreegateway.CustomerRequest request)",
+                parser.getMethods().get(1));
+        assertEquals(1, parser.getParameters().get("create").size());
+        assertEquals("The request", parser.getParameters().get("create").get("request"));
 
         parser.reset();
 
