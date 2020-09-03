@@ -2,7 +2,7 @@
 = Vert.x HTTP Client Component
 :docTitle: Vert.x HTTP Client
 :artifactId: camel-vertx-http
-:description: Camel HTTP client support with Vert.x
+:description: Send requests to external HTTP servers using Vert.x
 :since: 3.5
 :supportLevel: Preview
 :component-header: Only producer is supported
