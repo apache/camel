@@ -67,7 +67,7 @@ public class ArgumentSubstitutionParserTest {
 
         final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
         assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
-        assertEquals("SAYHI_1", sayHi1.getUniqueName());
+        assertEquals("SAY_HI_1", sayHi1.getUniqueName());
 
         ApiMethodParser.ApiMethodModel sayHiResource = methodModels.get(9);
         assertEquals(java.util.Date.class, sayHiResource.getResultType());
