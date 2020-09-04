@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.Yearly
  */
-@ApiParams(apiName = "usage-record-yearly", apiMethods = "read")
+@ApiParams(apiName = "usage-record-yearly", apiMethods = "reader")
 @UriParams
 @Configurer
 public final class UsageRecordYearlyEndpointConfiguration extends TwilioConfiguration {

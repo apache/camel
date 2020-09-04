@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.Yesterday
  */
-@ApiParams(apiName = "usage-record-yesterday", apiMethods = "read")
+@ApiParams(apiName = "usage-record-yesterday", apiMethods = "reader")
 @UriParams
 @Configurer
 public final class UsageRecordYesterdayEndpointConfiguration extends TwilioConfiguration {

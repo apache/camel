@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.NewSigningKey
  */
-@ApiParams(apiName = "new-signing-key", apiMethods = "create")
+@ApiParams(apiName = "new-signing-key", apiMethods = "creator")
 @UriParams
 @Configurer
 public final class NewSigningKeyEndpointConfiguration extends TwilioConfiguration {

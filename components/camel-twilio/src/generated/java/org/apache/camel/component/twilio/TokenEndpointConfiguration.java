@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Token
  */
-@ApiParams(apiName = "token", apiMethods = "create")
+@ApiParams(apiName = "token", apiMethods = "creator")
 @UriParams
 @Configurer
 public final class TokenEndpointConfiguration extends TwilioConfiguration {

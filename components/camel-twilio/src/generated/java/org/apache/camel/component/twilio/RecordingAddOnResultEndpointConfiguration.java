@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.recording.AddOnResult
  */
-@ApiParams(apiName = "recording-add-on-result", apiMethods = "delete,fetch,read")
+@ApiParams(apiName = "recording-add-on-result", apiMethods = "deleter,fetcher,reader")
 @UriParams
 @Configurer
 public final class RecordingAddOnResultEndpointConfiguration extends TwilioConfiguration {

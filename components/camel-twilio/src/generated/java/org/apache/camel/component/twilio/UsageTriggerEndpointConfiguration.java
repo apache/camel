@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.Trigger
  */
-@ApiParams(apiName = "usage-trigger", apiMethods = "create,delete,fetch,read,update")
+@ApiParams(apiName = "usage-trigger", apiMethods = "creator,deleter,fetcher,reader,updater")
 @UriParams
 @Configurer
 public final class UsageTriggerEndpointConfiguration extends TwilioConfiguration {
