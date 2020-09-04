@@ -75,7 +75,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         });
 
         Integer cacheSize = exchange.getIn().getBody(Integer.class);
-        assertEquals(cacheSize, new Integer(2));
+        assertEquals(cacheSize, Integer.valueOf(2));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -144,9 +144,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -193,7 +193,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -217,9 +217,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -260,7 +260,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -287,9 +287,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 map.put(KEY_TWO, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.MAP, map);
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUTALL);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -368,7 +368,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -391,9 +391,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -481,7 +481,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
             }
@@ -629,7 +629,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -650,9 +650,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -693,7 +693,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -715,9 +715,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
                 exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.REPLACE);
             }
@@ -755,7 +755,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -775,9 +775,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -816,7 +816,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
@@ -837,9 +837,9 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                 exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_TWO);
                 exchange.getIn().setHeader(InfinispanConstants.OLD_VALUE, VALUE_ONE);
-                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, new Long(LIFESPAN_FOR_MAX_IDLE));
+                exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME, Long.valueOf(LIFESPAN_FOR_MAX_IDLE));
                 exchange.getIn().setHeader(InfinispanConstants.LIFESPAN_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
-                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, new Long(MAX_IDLE_TIME));
+                exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME, Long.valueOf(MAX_IDLE_TIME));
                 exchange.getIn().setHeader(InfinispanConstants.MAX_IDLE_TIME_UNIT, TimeUnit.MILLISECONDS.toString());
             }
         });
