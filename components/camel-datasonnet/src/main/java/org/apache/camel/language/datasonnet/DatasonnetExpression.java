@@ -39,8 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatasonnetBuilder extends ExpressionAdapter implements ExpressionResultTypeAware, GeneratedPropertyConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetBuilder.class);
+public class DatasonnetExpression extends ExpressionAdapter implements ExpressionResultTypeAware, GeneratedPropertyConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
 
     static {
@@ -62,11 +62,11 @@ public class DatasonnetBuilder extends ExpressionAdapter implements ExpressionRe
     private Class<?> resultType;
     private Collection<String> libraryPaths;
 
-    public DatasonnetBuilder(String expression) {
+    public DatasonnetExpression(String expression) {
         this.expression = expression;
     }
 
-    public DatasonnetBuilder(Expression expression) {
+    public DatasonnetExpression(Expression expression) {
         this.metaExpression = expression;
     }
 
@@ -320,45 +320,6 @@ public class DatasonnetBuilder extends ExpressionAdapter implements ExpressionRe
      */
     public void setResultType(Class<?> targetType) {
         this.resultType = targetType;
-    }
-
-    // Builder methods
-    // -------------------------------------------------------------------------
-
-    public static DatasonnetBuilder datasonnet(String expression) {
-        return new DatasonnetBuilder(expression);
-    }
-
-    public static DatasonnetBuilder datasonnet(Expression expression) {
-        return new DatasonnetBuilder(expression);
-    }
-
-    public static DatasonnetBuilder datasonnet(String expression, Class<?> resultType) {
-        return new DatasonnetBuilder(expression).resultType(resultType);
-    }
-
-    public static DatasonnetBuilder datasonnet(Expression expression, Class<?> resultType) {
-        return new DatasonnetBuilder(expression).resultType(resultType);
-    }
-
-    public DatasonnetBuilder resultType(Class<?> resultType) {
-        setResultType(resultType);
-        return this;
-    }
-
-    public DatasonnetBuilder bodyMediaType(MediaType bodyMediaType) {
-        setBodyMediaType(bodyMediaType);
-        return this;
-    }
-
-    public DatasonnetBuilder outputMediaType(MediaType outputMediaType) {
-        setOutputMediaType(outputMediaType);
-        return this;
-    }
-
-    public DatasonnetBuilder withLibrariesAt(String... paths) {
-        setLibraryPaths(Arrays.asList(paths));
-        return this;
     }
 
     @Override

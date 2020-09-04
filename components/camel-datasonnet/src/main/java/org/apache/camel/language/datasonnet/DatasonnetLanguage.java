@@ -14,19 +14,19 @@ public class DatasonnetLanguage extends LanguageSupport {
     // See: {@link GroovyLanguage}
     private final Map<String, Mapper> mapperCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
 
-    public static DatasonnetBuilder datasonnet(String expression) {
+    public static DatasonnetExpression datasonnet(String expression) {
         return new DatasonnetLanguage().createExpression(expression);
     }
 
     @Override
-    public DatasonnetBuilder createPredicate(String expression) {
+    public DatasonnetExpression createPredicate(String expression) {
         return createExpression(expression);
     }
 
     @Override
-    public DatasonnetBuilder createExpression(String expression) {
+    public DatasonnetExpression createExpression(String expression) {
         expression = loadResource(expression);
-        return new DatasonnetBuilder(expression);
+        return new DatasonnetExpression(expression);
     }
 
     Optional<Mapper> getMapperFromCache(String script) {
