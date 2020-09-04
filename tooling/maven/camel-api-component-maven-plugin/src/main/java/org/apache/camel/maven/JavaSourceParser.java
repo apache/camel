@@ -72,6 +72,10 @@ public class JavaSourceParser {
                     ParameterSource ps = list.get(i);
                     String name = ps.getName();
                     String type = ps.getType().getQualifiedNameWithGenerics();
+                    if (Character.isUpperCase(type.charAt(0))) {
+                        // okay no package name so its a local inner class
+                        type = clazz.getPackage() + "." + type;
+                    }
                     if (type.startsWith("java.lang.")) {
                         type = type.substring(10);
                     }

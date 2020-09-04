@@ -404,26 +404,31 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                     argType = argType.substring(1);
                 }
 
-                // try loading as is first
-                try {
-                    parameterizedType.append(getCanonicalName(getProjectClassLoader().loadClass(argType)));
-                } catch (ClassNotFoundException e) {
-
-                    // try loading with default java.lang package prefix
+                if ("URL".equals(argType)) {
+                    parameterizedType.append("java.net.URL");
+                } else if ("URI".equals(argType)) {
+                    parameterizedType.append("java.net.URI");
+                } else {
+                    // try loading as is first
                     try {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Could not load " + argType + ", trying to load java.lang." + argType);
-                        }
-                        parameterizedType.append(
-                                getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
-                    } catch (ClassNotFoundException e1) {
-                        parameterizedType.append("?");
-                        // if the length of the artType is 1, we think that it's variable type parameter (like T in List<T>)
-                        // not perfect solution, but should work in most of the cases
-                        if (argType.trim().length() > 1) {
-                            log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
-                                     + ", unable to load parametric type argument " + argType,
-                                    e1);
+                        parameterizedType.append(getCanonicalName(getProjectClassLoader().loadClass(argType)));
+                    } catch (ClassNotFoundException e) {
+                        // try loading with default java.lang package prefix
+                        try {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Could not load " + argType + ", trying to load java.lang." + argType);
+                            }
+                            parameterizedType.append(
+                                    getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
+                        } catch (ClassNotFoundException e1) {
+                            parameterizedType.append("?");
+                            // if the length of the artType is 1, we think that it's variable type parameter (like T in List<T>)
+                            // not perfect solution, but should work in most of the cases
+                            if (argType.trim().length() > 1) {
+                                log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
+                                         + ", unable to load parametric type argument " + argType,
+                                        e1);
+                            }
                         }
                     }
                 }
