@@ -17,7 +17,7 @@ The following features has been removed due they become not compatible with OSGi
 
 === Customizers
 
-The customizer, which are objects used to configure some of the Camel services such as component, language ad data formats, that were previously limited to Camel Spring Boot, are now consistently used across runtimes. 
+Customizers, which are objects used to configure some of the Camel services such as component, language and data formats, that were previously limited to Camel Spring Boot, are now consistently used across runtimes.
 To make that possible, the interfaces have been changed and they do not use generics anymore.
 
 Impacted interfaces:
@@ -81,7 +81,7 @@ public class Application {
 
     public static void main(String args) throws Exception {
         Main main = new Main();
-        main..addConfigurationClass(MyConfiguration.class);
+        main.addConfigurationClass(MyConfiguration.class);
         main.run(args);
     }
 
@@ -98,5 +98,5 @@ public class Application {
 
 [NOTE]
 ====
-As coneguence of this change, the Camel Spring Boot starters have been ameneded to use Customizers instead of creating instances of components, languages or data formats.
+As a consequence of this change, the Camel Spring Boot starters have been amended to use Customizers instead of creating instances of components, languages or data formats.
 ====
