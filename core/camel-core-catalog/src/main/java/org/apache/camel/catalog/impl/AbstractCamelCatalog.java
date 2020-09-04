@@ -272,7 +272,8 @@ public abstract class AbstractCamelCatalog {
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
                     boolean found = false;
                     for (String s : enums) {
-                        if (value.equalsIgnoreCase(s)) {
+                        String valueEC = StringHelper.asEnumConstantValue(value);
+                        if (value.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                             found = true;
                             break;
                         }
@@ -1100,8 +1101,10 @@ public abstract class AbstractCamelCatalog {
             List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
                 boolean found = false;
+                String valueEC = StringHelper.asEnumConstantValue(value);
                 for (String s : enums) {
-                    if (value.equalsIgnoreCase(s)) {
+                    // equals as is or using the enum naming style
+                    if (value.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                         found = true;
                         break;
                     }

@@ -877,4 +877,19 @@ public final class StringHelper {
         }
     }
 
+    /**
+     * Converts the value to an enum constant value that is in the form of upper cased with underscore.
+     */
+    public static String asEnumConstantValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+        value = StringHelper.camelCaseToDash(value);
+        // replace double dashes
+        value = value.replaceAll("-+", "-");
+        // replace dash with underscore and upper case
+        value = value.replace('-', '_').toUpperCase(Locale.ENGLISH);
+        return value;
+    }
+
 }
