@@ -10,11 +10,11 @@
 
 The PGP Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
-encryption and decryption of messages using Camel's familiar marshall
+encryption and decryption of messages using Camel's familiar marshal
 and unmarshal formatting mechanism. It assumes marshalling to mean
-encryption to cyphertext and unmarshalling to mean decryption back to
+encryption to ciphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
-(shared-key) encryption and decyption.
+(shared-key) encryption and decryption.
 
 == PGPDataFormat Options
 
