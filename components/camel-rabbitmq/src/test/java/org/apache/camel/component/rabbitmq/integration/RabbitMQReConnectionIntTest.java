@@ -23,6 +23,7 @@ import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,7 +68,7 @@ public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
             public void configure() throws Exception {
                 from("direct:rabbitMQ").id("producingRoute").onException(AlreadyClosedException.class, ConnectException.class)
                         .maximumRedeliveries(10).redeliveryDelay(500L).end()
-                        .log("Sending message").inOnly(rabbitMQEndpoint).to(producingMockEndpoint);
+                        .log("Sending message").to(ExchangePattern.InOnly, rabbitMQEndpoint).to(producingMockEndpoint);
                 from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").to(consumingMockEndpoint);
             }
         };
