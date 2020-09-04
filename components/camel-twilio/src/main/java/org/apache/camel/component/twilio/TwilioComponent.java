@@ -57,7 +57,7 @@ public class TwilioComponent extends AbstractApiComponent<TwilioApiName, TwilioC
 
     @Override
     protected TwilioApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return TwilioApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(TwilioApiName.class, apiNameStr);
     }
 
     @Override

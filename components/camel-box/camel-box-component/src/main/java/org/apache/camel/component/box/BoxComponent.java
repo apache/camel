@@ -45,7 +45,7 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
 
     @Override
     protected BoxApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BoxApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(BoxApiName.class, apiNameStr);
     }
 
     /**

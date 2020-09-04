@@ -28,9 +28,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents the component that manages {@link AS2Endpoint}.
- */
 @Component("as2")
 public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection> {
 
@@ -46,7 +43,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
 
     @Override
     protected AS2ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return AS2ApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(AS2ApiName.class, apiNameStr);
     }
 
     @Override

@@ -51,7 +51,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
 
     @Override
     protected BraintreeApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BraintreeApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(BraintreeApiName.class, apiNameStr);
     }
 
     @Override

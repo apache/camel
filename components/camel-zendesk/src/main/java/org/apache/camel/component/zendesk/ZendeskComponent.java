@@ -57,7 +57,7 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     @Override
     protected ZendeskApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return ZendeskApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(ZendeskApiName.class, apiNameStr);
     }
 
     /**
@@ -183,7 +183,8 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     protected Endpoint createEndpoint(
             String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
-        endpointConfiguration.setMethodName(ZendeskApiMethod.fromValue(methodName));
+
+        endpointConfiguration.setMethodName(getCamelContext().getTypeConverter().convertTo(ZendeskApiMethod.class, methodName));
 
         if (endpointConfiguration.getServerUrl() == null) {
             endpointConfiguration.setServerUrl(serverUrl);

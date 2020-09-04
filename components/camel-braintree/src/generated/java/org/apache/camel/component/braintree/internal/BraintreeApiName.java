@@ -4,9 +4,7 @@
  */
 package org.apache.camel.component.braintree.internal;
 
-import java.util.Locale;
 import org.apache.camel.support.component.ApiName;
-import org.apache.camel.util.StringHelper;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Braintree
@@ -48,8 +46,6 @@ public enum BraintreeApiName implements ApiName {
     WEBHOOK_NOTIFICATION("webhookNotification");
 
 
-    private static final BraintreeApiName[] CACHED_ENUM_VALUES = values();
-    
     private final String name;
 
     private BraintreeApiName(String name) {
@@ -59,27 +55,6 @@ public enum BraintreeApiName implements ApiName {
     @Override
     public String getName() {
         return name;
-    }
-
-    public static BraintreeApiName fromValue(String value) throws IllegalArgumentException {
-        value = getEnumConstant(value);
-        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
-            if (CACHED_ENUM_VALUES[i].toString().equalsIgnoreCase(value)) {
-                return CACHED_ENUM_VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
-
-    private static String getEnumConstant(String enumValue) {
-        if (enumValue == null || enumValue.isEmpty()) {
-            return "DEFAULT";
-        }
-        String value = StringHelper.camelCaseToDash(enumValue);
-        // replace dash with underscore and upper case
-        value = value.replace('-', '_');
-        value = value.toUpperCase(Locale.ENGLISH);
-        return value;
     }
 
 }

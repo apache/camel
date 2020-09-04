@@ -52,7 +52,7 @@ public class GoogleMailComponent
 
     @Override
     protected GoogleMailApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleMailApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 
     public Gmail getClient(GoogleMailConfiguration googleMailConfiguration) {
