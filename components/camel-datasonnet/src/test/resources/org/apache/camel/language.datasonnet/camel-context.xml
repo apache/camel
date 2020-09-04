@@ -26,7 +26,7 @@
             </setProperty>
 
             <transform>
-                <datasonnet inputMimeType="application/json" outputMimeType="application/json">resource:classpath:simpleMapping.ds</datasonnet>
+                <datasonnet bodyMediaType="application/json" outputMediaType="application/json">resource:classpath:simpleMapping.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -34,7 +34,7 @@
         <route id="transformXML">
             <from uri="direct:transformXML"/>
             <transform>
-                <datasonnet inputMimeType="application/xml" outputMimeType="application/json">resource:classpath:readXMLExtTest.ds</datasonnet>
+                <datasonnet bodyMediaType="application/xml" outputMediaType="application/json">resource:classpath:readXMLExtTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -42,7 +42,7 @@
         <route id="transformCSV">
             <from uri="direct:transformCSV"/>
             <transform>
-                <datasonnet inputMimeType="application/csv" outputMimeType="application/json">resource:classpath:readCSVTest.ds</datasonnet>
+                <datasonnet bodyMediaType="application/csv" outputMediaType="application/json">resource:classpath:readCSVTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -64,7 +64,7 @@
             </setProperty>
 
             <transform>
-                <datasonnet inputMimeType="application/json" outputMimeType="application/json"><![CDATA[
+                <datasonnet bodyMediaType="application/json" outputMediaType="application/json"><![CDATA[
 {
     "uid": payload.userId,
     "uname": payload.name,
@@ -83,7 +83,7 @@
                 <route id="namedImports">
             <from uri="direct:namedImports"/>
             <transform>
-                <datasonnet inputMimeType="application/json" outputMimeType="application/json">resource:classpath:namedImports.ds</datasonnet>
+                <datasonnet bodyMediaType="application/json" outputMediaType="application/json">resource:classpath:namedImports.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -91,7 +91,7 @@
         <route id="readJava">
             <from uri="direct:readJava"/>
             <transform>
-                <datasonnet inputMimeType="application/java" outputMimeType="application/json">resource:classpath:readJavaTest.ds</datasonnet>
+                <datasonnet bodyMediaType="application/java" outputMediaType="application/json">resource:classpath:readJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -99,7 +99,7 @@
         <route id="writeJava">
             <from uri="direct:writeJava"/>
             <transform>
-                <datasonnet inputMimeType="application/json" outputMimeType="application/java" resultTypeName="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
+                <datasonnet bodyMediaType="application/json" outputMediaType="application/java" resultTypeName="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>
@@ -107,14 +107,14 @@
         <route id="expressionLanguage">
             <from uri="direct:expressionLanguage"/>
 
-            <setHeader name="outputMimeType">
+            <setHeader name="CamelDatasonnetOutputMediaType">
                 <constant>text/plain</constant>
             </setHeader>
             <setHeader name="HelloHeader">
                 <language language="datasonnet">"Hello, " + payload</language>
             </setHeader>
 
-            <setHeader name="outputMimeType">
+            <setHeader name="CamelDatasonnetOutputMediaType">
                 <constant>application/json</constant>
             </setHeader>
             <setBody>
@@ -133,11 +133,11 @@
         <route id="nullInput">
             <from uri="direct:nullInput"/>
 
-            <setHeader name="inputMimeType">
+            <setHeader name="CamelDatasonnetBodyMediaType">
                 <constant>application/json</constant>
             </setHeader>
 
-            <setHeader name="outputMimeType">
+            <setHeader name="CamelDatasonnetOutputMediaType">
                 <constant>application/json</constant>
             </setHeader>
 

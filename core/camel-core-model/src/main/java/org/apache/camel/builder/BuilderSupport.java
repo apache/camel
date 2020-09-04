@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JoorExpression;
@@ -134,29 +135,33 @@ public abstract class BuilderSupport {
     /**
      * Returns a Datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(String value) {
-        return DatasonnetBuilder.datasonnet(value);
+    public ValueBuilder datasonnet(String value) {
+        return new ValueBuilder(new DatasonnetExpression(value));
     }
 
     /**
      * Returns a Datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(Expression expression) {
-        return DatasonnetBuilder.datasonnet(expression);
+    public ValueBuilder datasonnet(Expression value) {
+        return new ValueBuilder(new DatasonnetExpression(value));
     }
 
     /**
      * Returns a Datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(String value, Class<?> resultType) {
-        return DatasonnetBuilder.datasonnet(value, resultType);
+    public ValueBuilder datasonnet(String value, Class<?> resultType) {
+        DatasonnetExpression exp = new DatasonnetExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
     }
 
     /**
      * Returns a Datasonnet expression value builder
      */
-    public DatasonnetBuilder datasonnet(Expression expression, Class<?> resultType) {
-        return DatasonnetBuilder.datasonnet(expression, resultType);
+    public ValueBuilder datasonnet(Expression value, Class<?> resultType) {
+        DatasonnetExpression exp = new DatasonnetExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
     }
 
     /**

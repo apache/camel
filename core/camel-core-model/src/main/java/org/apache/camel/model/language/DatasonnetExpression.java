@@ -17,11 +17,11 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DatasonnetExpression extends ExpressionDefinition {
 
-    @XmlAttribute(name = "inputMimeType")
-    private String inputMimeType;
+    @XmlAttribute(name = "bodyMediaType")
+    private String bodyMediaType;
 
-    @XmlAttribute(name = "outputMimeType")
-    private String outputMimeType;
+    @XmlAttribute(name = "outputMediaType")
+    private String outputMediaType;
 
     @XmlAttribute(name = "resultTypeName")
     private String resultTypeName;
@@ -45,30 +45,30 @@ public class DatasonnetExpression extends ExpressionDefinition {
         return "datasonnet";
     }
 
-    public String getInputMimeType() {
-        return inputMimeType;
+    public String getBodyMediaType() {
+        return bodyMediaType;
     }
 
     /**
      * TODO: 7/21/20 docs
      * 
-     * @param inputMimeType docs
+     * @param bodyMediaType docs
      */
-    public void setInputMimeType(String inputMimeType) {
-        this.inputMimeType = inputMimeType;
+    public void setBodyMediaType(String bodyMediaType) {
+        this.bodyMediaType = bodyMediaType;
     }
 
-    public String getOutputMimeType() {
-        return outputMimeType;
+    public String getOutputMediaType() {
+        return outputMediaType;
     }
 
     /**
      * TODO: 7/21/20 docs
      * 
-     * @param outputMimeType docs
+     * @param outputMediaType docs
      */
-    public void setOutputMimeType(String outputMimeType) {
-        this.outputMimeType = outputMimeType;
+    public void setOutputMediaType(String outputMediaType) {
+        this.outputMediaType = outputMediaType;
     }
 
     public Class<?> getResultType() {

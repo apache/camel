@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.language.CML;
 import org.apache.camel.language.CML$;
+import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
@@ -37,8 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatasonnetExpression extends ExpressionAdapter implements GeneratedPropertyConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
+public class DatasonnetBuilder extends ExpressionAdapter implements ExpressionResultTypeAware, GeneratedPropertyConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetBuilder.class);
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
 
     static {
@@ -53,24 +55,19 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         }
     }
 
-    private Collection<String> libraryPaths;
-    private Expression metaExpression;
     private String expression;
-    private MediaType bodyType;
-    private MediaType outputType;
-    private Class<?> targetType;
+    private Expression metaExpression;
+    private MediaType bodyMediaType;
+    private MediaType outputMediaType;
+    private Class<?> resultType;
+    private Collection<String> libraryPaths;
 
-    public DatasonnetExpression(String expression) {
+    public DatasonnetBuilder(String expression) {
         this.expression = expression;
     }
 
-    public DatasonnetExpression(Expression expression) {
+    public DatasonnetBuilder(Expression expression) {
         this.metaExpression = expression;
-    }
-
-    public DatasonnetExpression usingLibraryPaths(Collection<String> paths) {
-        libraryPaths = paths;
-        return this;
     }
 
     @Override
@@ -80,22 +77,22 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         }
 
         switch (ignoreCase ? name.toLowerCase() : name) {
-            case "inputMimeType":
-            case "inputmimetype":
-                setInputMimeType(MediaType.valueOf((String) value));
+            case "bodyMediaType":
+            case "bodymediatype":
+                setBodyMediaType(MediaType.valueOf((String) value));
                 return true;
-            case "outputMimeType":
-            case "outputmimetype":
-                setOutputMimeType(MediaType.valueOf((String) value));
+            case "outputMediaType":
+            case "outputmediatype":
+                setOutputMediaType(MediaType.valueOf((String) value));
                 return true;
             case "resultType":
             case "resulttype":
-                setType((Class<?>) value);
+                setResultType((Class<?>) value);
                 return true;
             case "resultTypeName":
             case "resulttypename":
                 try {
-                    setType(Class.forName((String) value));
+                    setResultType(Class.forName((String) value));
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException("Requested result type class not found", e);
                 }
@@ -107,7 +104,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
     @Override
     public boolean matches(Exchange exchange) {
-        this.outputType = MediaTypes.APPLICATION_JAVA;
+        this.outputMediaType = MediaTypes.APPLICATION_JAVA;
         return evaluate(exchange, Boolean.class);
     }
 
@@ -132,23 +129,23 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
             Document<?> body;
 
-            if (bodyType == null) {
+            if (bodyMediaType == null) {
                 //Try to auto-detect input mime type if it was not explicitly set
-                String typeHeader = exchange.getProperty("inputMimeType",
+                String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
                         exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
                                 "UNKNOWN_MIME_TYPE"),
                         String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
-                    bodyType = MediaType.valueOf(typeHeader);
+                    bodyMediaType = MediaType.valueOf(typeHeader);
                 }
             }
 
             if (exchange.getMessage().getBody() instanceof Document) {
                 body = (Document<?>) exchange.getMessage().getBody();
-            } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyType)) {
+            } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMediaType)) {
                 body = new DefaultDocument<>(exchange.getMessage().getBody());
             } else {
-                body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyType);
+                body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMediaType);
             }
 
             inputs.put("body", body);
@@ -167,29 +164,29 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
             // set exchange and variable resolver as thread locals for concurrency
             CML.exchange().set(exchange);
 
-            if (outputType == null) {
+            if (outputMediaType == null) {
                 //Try to auto-detect output mime type if it was not explicitly set
-                String typeHeader = exchange.getProperty("outputMimeType",
-                        exchange.getIn().getHeader("outputMimeType",
+                String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,
+                        exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE,
                                 "UNKNOWN_MIME_TYPE"),
                         String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
-                    outputType = MediaType.parseMediaType(typeHeader);
+                    outputMediaType = MediaType.parseMediaType(typeHeader);
                 } else {
-                    outputType = MediaTypes.APPLICATION_JAVA;
+                    outputMediaType = MediaTypes.APPLICATION_JAVA;
                 }
             }
 
             if (Document.class.equals(type)) {
-                return (T) mapper.transform(body, inputs, outputType, Object.class);
+                return (T) mapper.transform(body, inputs, outputMediaType, Object.class);
             } else if (!type.equals(Object.class)) {
-                return mapper.transform(body, inputs, outputType, type).getContent();
-            } else if (targetType != null) {
+                return mapper.transform(body, inputs, outputMediaType, type).getContent();
+            } else if (resultType != null) {
                 // only if type _is_ Object.class and targetType exists use targetType
-                return (T) mapper.transform(body, inputs, outputType, targetType).getContent();
+                return (T) mapper.transform(body, inputs, outputMediaType, resultType).getContent();
             } else {
                 // else use type
-                return mapper.transform(body, inputs, outputType, type).getContent();
+                return mapper.transform(body, inputs, outputMediaType, type).getContent();
             }
 
         } catch (Exception e) {
@@ -264,8 +261,11 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         return new DefaultDocument<>(propsMap);
     }
 
-    public MediaType getInputMimeType() {
-        return bodyType;
+    // Getter/Setter methods
+    // -------------------------------------------------------------------------
+
+    public MediaType getBodyMediaType() {
+        return bodyMediaType;
     }
 
     /**
@@ -273,12 +273,12 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
      *
      * @param inputMimeType docs
      */
-    public void setInputMimeType(MediaType inputMimeType) {
-        this.bodyType = inputMimeType;
+    public void setBodyMediaType(MediaType inputMimeType) {
+        this.bodyMediaType = inputMimeType;
     }
 
-    public MediaType getOutputMimeType() {
-        return outputType;
+    public MediaType getOutputMediaType() {
+        return outputMediaType;
     }
 
     /**
@@ -286,21 +286,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
      *
      * @param outputMimeType docs
      */
-    public void setOutputMimeType(MediaType outputMimeType) {
-        this.outputType = outputMimeType;
-    }
-
-    public Expression getMetaExpression() {
-        return metaExpression;
-    }
-
-    /**
-     * TODO: 7/21/20 docs
-     *
-     * @param metaExpression docs
-     */
-    public void setMetaExpression(Expression metaExpression) {
-        this.metaExpression = metaExpression;
+    public void setOutputMediaType(MediaType outputMimeType) {
+        this.outputMediaType = outputMimeType;
     }
 
     public Collection<String> getLibraryPaths() {
@@ -316,22 +303,66 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
         this.libraryPaths = libraryPaths;
     }
 
-    /**
-     * // TODO: 9/3/20 docs
-     *
-     * @return
-     */
-    public Class<?> getType() {
-        return this.targetType;
+    @Override
+    public String getExpressionText() {
+        return this.expression;
     }
 
-    public void setType(Class<?> targetType) {
-        this.targetType = targetType;
+    @Override
+    public Class<?> getResultType() {
+        return this.resultType;
+    }
+
+    /**
+     * TODO: 9/4/20 docs
+     * 
+     * @param targetType
+     */
+    public void setResultType(Class<?> targetType) {
+        this.resultType = targetType;
+    }
+
+    // Builder methods
+    // -------------------------------------------------------------------------
+
+    public static DatasonnetBuilder datasonnet(String expression) {
+        return new DatasonnetBuilder(expression);
+    }
+
+    public static DatasonnetBuilder datasonnet(Expression expression) {
+        return new DatasonnetBuilder(expression);
+    }
+
+    public static DatasonnetBuilder datasonnet(String expression, Class<?> resultType) {
+        return new DatasonnetBuilder(expression).resultType(resultType);
+    }
+
+    public static DatasonnetBuilder datasonnet(Expression expression, Class<?> resultType) {
+        return new DatasonnetBuilder(expression).resultType(resultType);
+    }
+
+    public DatasonnetBuilder resultType(Class<?> resultType) {
+        setResultType(resultType);
+        return this;
+    }
+
+    public DatasonnetBuilder bodyMediaType(MediaType bodyMediaType) {
+        setBodyMediaType(bodyMediaType);
+        return this;
+    }
+
+    public DatasonnetBuilder outputMediaType(MediaType outputMediaType) {
+        setOutputMediaType(outputMediaType);
+        return this;
+    }
+
+    public DatasonnetBuilder withLibrariesAt(String... paths) {
+        setLibraryPaths(Arrays.asList(paths));
+        return this;
     }
 
     @Override
     public String toString() {
         return "datasonnet: " + expression;
     }
-
 }
