@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.TagElement;
 import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -105,7 +106,7 @@ public class JavaSourceParser {
 
     private static String getJavadocValue(List<JavaDocTag> params, String name) {
         for (JavaDocTag tag : params) {
-            String key = tag.getValue();
+            String key = getRoasterJavadocFixed(tag);
             if (key.startsWith(name)) {
                 String desc = key.substring(name.length());
                 desc = sanitizeJavaDocValue(desc);
@@ -113,6 +114,17 @@ public class JavaSourceParser {
             }
         }
         return "";
+    }
+
+    private static String getRoasterJavadocFixed(JavaDocTag tag) {
+        TagElement te = (TagElement) tag.getInternal();
+        StringBuilder sb = new StringBuilder();
+        for (Object fragment : te.fragments()) {
+            sb.append(fragment);
+            sb.append(" ");
+        }
+        return sb.toString().trim();
+
     }
 
     private static String sanitizeJavaDocValue(String desc) {
