@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.StringHelper.camelCaseToDash;
+import static org.apache.camel.util.StringHelper.splitWords;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringHelperTest {
@@ -43,5 +44,17 @@ public class StringHelperTest {
 
         assertEquals("use-mdc-logging", camelCaseToDash("UseMDCLogging"));
         assertEquals("mdc-logging-keys-pattern", camelCaseToDash("MDCLoggingKeysPattern"));
+    }
+
+    @Test
+    public void testSplitWords() throws Exception {
+        String[] arr = splitWords("apiName/methodName");
+        assertEquals(2, arr.length);
+        assertEquals("apiName", arr[0]);
+        assertEquals("methodName", arr[1]);
+
+        arr = splitWords("hello");
+        assertEquals(1, arr.length);
+        assertEquals("hello", arr[0]);
     }
 }

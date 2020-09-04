@@ -17,7 +17,7 @@
     "syntax": "google-calendar:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

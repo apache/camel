@@ -892,4 +892,11 @@ public final class StringHelper {
         return value;
     }
 
+    /**
+     * Split the text on words, eg hello/world => becomes array with hello in index 0, and world in index 1.
+     */
+    public static String[] splitWords(String text) {
+        return text.split("[\\W]+");
+    }
+
 }

@@ -174,8 +174,9 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         if (model.isApi()) {
-            String qualifier = model.getApiPropertyQualifier();
-            String key = properties.get(qualifier);
+            // TODO: combo of apiName/methodName
+            String[] qualifieres = StringHelper.splitWords(model.getApiPropertyQualifier());
+            String key = properties.get(qualifieres[0]);
             Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
             rows.putAll(apiProperties);
         }
@@ -545,8 +546,9 @@ public abstract class AbstractCamelCatalog {
 
         // is this an api component then there may be additional options
         if (model.isApi()) {
-            String qualifier = model.getApiPropertyQualifier();
-            int pos = word.indexOf(qualifier);
+            // TODO: combo of apiName/methodName
+            String[] qualifieres = StringHelper.splitWords(model.getApiPropertyQualifier());
+            int pos = word.indexOf(qualifieres[0]);
             if (pos != -1) {
                 String key = word2.size() > pos ? word2.get(pos) : null;
                 Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
