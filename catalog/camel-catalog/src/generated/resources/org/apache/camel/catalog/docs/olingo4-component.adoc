@@ -151,14 +151,14 @@ with the following path and query parameters:
 
 === Query API Parameters (1 APIs):
 
-The Olingo4 endpoint is an API based component and has additional parameters based on which API method in use.
-The API method is located in the endpoint URI as the apiName path parameter:
+The Olingo4 endpoint is an API based component and has additional parameters based on which API name and method in use.
+The API name and method is located in the endpoint URI as the apiName/methodName path parameters:
 
 ----
 olingo4:apiName/methodName
 ----
 
-The following lists each API method and its additional parameters.
+The following lists each API name and method and its additional parameters.
 
 
 ==== DEFAULT

@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxCollaborationsManager
  */
-@ApiParams(apiName = "collaborations", apiMethods = "add,addByEmail,delete,info,collaborations,pendingCollaborations,updateInfo")
+@ApiParams(apiName = "collaborations", apiMethods = "addFolderCollaboration,addFolderCollaborationByEmail,deleteCollaboration,getCollaborationInfo,getFolderCollaborations,getPendingCollaborations,updateCollaborationInfo")
 @UriParams
 @Configurer
 public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConfiguration {
