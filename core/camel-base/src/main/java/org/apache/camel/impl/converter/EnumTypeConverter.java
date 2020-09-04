@@ -17,11 +17,13 @@
 package org.apache.camel.impl.converter;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A type converter which is used to convert from String to enum type
@@ -40,6 +42,18 @@ public class EnumTypeConverter extends TypeConverterSupport {
             Class<Enum> enumClass = (Class<Enum>) type;
 
             // we want to match case insensitive for enums
+            for (Enum enumValue : enumClass.getEnumConstants()) {
+                if (enumValue.name().equalsIgnoreCase(text)) {
+                    return type.cast(enumValue);
+                }
+            }
+
+            // add support for using dash or camel cased to common used upper cased underscore style for enum constants
+            text = StringHelper.camelCaseToDash(text);
+            // replace double dashes
+            text = text.replaceAll("-+", "-");
+            // replace dash with underscore and upper case
+            text = text.replace('-', '_').toUpperCase(Locale.ENGLISH);
             for (Enum enumValue : enumClass.getEnumConstants()) {
                 if (enumValue.name().equalsIgnoreCase(text)) {
                     return type.cast(enumValue);
