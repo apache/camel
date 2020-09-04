@@ -39,6 +39,7 @@ import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 /**
  * Parses Javadoc HTML to get Method Signatures from Method Summary. Supports 8 and 11 Javadoc formats.
  */
+@Deprecated
 public class JavadocParser extends Parser {
 
     private static final String NON_BREAKING_SPACE = "\u00A0";
