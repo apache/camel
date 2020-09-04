@@ -180,7 +180,7 @@
     "syntax": "as2:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -1584,7 +1584,7 @@
     "syntax": "box:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": true
@@ -1607,7 +1607,7 @@
     "syntax": "braintree:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -2812,7 +2812,7 @@
     "syntax": "fhir:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3161,7 +3161,7 @@
     "syntax": "google-calendar:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3207,7 +3207,7 @@
     "syntax": "google-drive:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3230,7 +3230,7 @@
     "syntax": "google-mail:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -3299,7 +3299,7 @@
     "syntax": "google-sheets:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5748,7 +5748,7 @@
     "syntax": "olingo2:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -5771,7 +5771,7 @@
     "syntax": "olingo4:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
@@ -7585,7 +7585,7 @@
     "syntax": "twilio:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName",
+    "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

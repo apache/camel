@@ -37,7 +37,8 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Manage spreadsheets in Google Sheets.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
-             syntax = "google-sheets:apiName/methodName", apiPropertyQualifier = "apiName", consumerPrefix = "consumer",
+             syntax = "google-sheets:apiName/methodName", apiPropertyQualifier = "apiName/methodName",
+             consumerPrefix = "consumer",
              category = { Category.API, Category.CLOUD, Category.SHEETS })
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 

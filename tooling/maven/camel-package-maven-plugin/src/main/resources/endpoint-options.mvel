@@ -34,14 +34,14 @@ The @{title} endpoint has no query parameters.
 
 === Query API Parameters (@{apiOptions.size()} APIs):
 
-The @{title} endpoint is an API based component and has additional parameters based on which API method in use.
-The API method is located in the endpoint URI as the @{apiPropertyQualifier} path parameter:
+The @{title} endpoint is an API based component and has additional parameters based on which API name and method in use.
+The API name and method is located in the endpoint URI as the @{apiPropertyQualifier} path parameters:
 
 ----
 @{syntax}
 ----
 
-The following lists each API method and its additional parameters.
+The following lists each API name and method and its additional parameters.
 
 @foreach{api : apiOptions.entrySet()}
 ==== @{api.key}
