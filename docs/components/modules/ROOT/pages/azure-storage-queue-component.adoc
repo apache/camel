@@ -93,7 +93,7 @@ The Azure Storage Queue Service component supports 16 options, which are listed 
 The Azure Storage Queue Service endpoint is configured using URI syntax:
 
 ----
-azure-storage-queue:queueName
+azure-storage-queue:accountName/queueName
 ----
 
 with the following path and query parameters:

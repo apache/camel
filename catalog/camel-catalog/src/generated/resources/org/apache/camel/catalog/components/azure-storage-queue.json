@@ -14,7 +14,7 @@
     "version": "3.5.0-SNAPSHOT",
     "scheme": "azure-storage-queue",
     "extendsScheme": "",
-    "syntax": "azure-storage-queue:queueName",
+    "syntax": "azure-storage-queue:accountName\/queueName",
     "async": false,
     "api": false,
     "apiPropertyQualifier": "",
