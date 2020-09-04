@@ -325,7 +325,7 @@ public class CdiCamelExtension implements Extension {
         return beans.stream()
                 // Is there a Camel bean with the @Default qualifier?
                 // Excluding internal components...
-                .filter(bean -> !bean.getBeanClass().getPackage().equals(getClass().getPackage()))
+                .filter(bean -> !getClass().getPackage().equals(bean.getBeanClass().getPackage()))
                 .filter(hasType(CamelContextAware.class).or(hasType(Component.class))
                         .or(hasType(RouteContainer.class).or(hasType(RoutesBuilder.class))))
                 .map(Bean::getQualifiers)
@@ -345,7 +345,7 @@ public class CdiCamelExtension implements Extension {
                 // Or an injection point for Camel primitives?
                 || beans.stream()
                         // Excluding internal components...
-                        .filter(bean -> !bean.getBeanClass().getPackage().equals(getClass().getPackage()))
+                        .filter(bean -> !getClass().getPackage().equals(bean.getBeanClass().getPackage()))
                         .map(Bean::getInjectionPoints)
                         .flatMap(Set::stream)
                         .filter(ip -> getRawType(ip.getType()).getName().startsWith("org.apache.camel"))
