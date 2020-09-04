@@ -1,12 +1,12 @@
 package org.apache.camel.language.datasonnet;
 
+import java.util.Properties;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-
-import java.util.Properties;
 
 public class PropertiesTest extends CamelTestSupport {
     @Test

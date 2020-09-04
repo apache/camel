@@ -1,5 +1,19 @@
 package org.apache.camel.language.datasonnet;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+
 import com.datasonnet.Mapper;
 import com.datasonnet.MapperBuilder;
 import com.datasonnet.document.DefaultDocument;
@@ -22,20 +36,6 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
 
 public class DatasonnetExpression extends ExpressionAdapter implements GeneratedPropertyConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
@@ -130,7 +130,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
                 //Try to auto-detect input mime type if it was not explicitly set
                 String typeHeader = exchange.getProperty("inputMimeType",
                         exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
-                                "UNKNOWN_MIME_TYPE"), String.class);
+                                "UNKNOWN_MIME_TYPE"),
+                        String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
                     bodyType = MediaType.valueOf(typeHeader);
                 }
@@ -164,7 +165,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
                 //Try to auto-detect output mime type if it was not explicitly set
                 String typeHeader = exchange.getProperty("outputMimeType",
                         exchange.getIn().getHeader("outputMimeType",
-                                "UNKNOWN_MIME_TYPE"), String.class);
+                                "UNKNOWN_MIME_TYPE"),
+                        String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
                     outputType = MediaType.parseMediaType(typeHeader);
                 }

@@ -24,15 +24,15 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-            return new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        from("direct:chainExpressions")
-                                .setHeader("ScriptHeader", constant("{ hello: \"World\"}"))
-                                .setBody(datasonnet(simple("${header.ScriptHeader}")))
-                                .to("mock:direct:response");
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:chainExpressions")
+                        .setHeader("ScriptHeader", constant("{ hello: \"World\"}"))
+                        .setBody(datasonnet(simple("${header.ScriptHeader}")))
+                        .to("mock:direct:response");
 
-                        from("direct:expressionsInJava")
+                from("direct:expressionsInJava")
                                 .choice()
                                     .when(datasonnet("payload == 'World'", "text/plain", "application/java"))
                                         .setBody(datasonnet("'Hello, ' + payload", "text/plain", "text/plain"))
@@ -40,8 +40,8 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
                                         .setBody(datasonnet("'Good bye, ' + payload", "text/plain", "text/plain"))
                                     .end()
                                 .to("mock:direct:response");
-                    }
-                };
+            }
+        };
     }
 
     @Test

@@ -63,19 +63,21 @@ public class Gizmo {
     @Override
     public String toString() {
         return "Gizmo{" +
-                "name='" + name + '\'' +
-                ", quantity=" + quantity +
-                ", colors=" + colors +
-                ", inStock=" + inStock +
-                ", manufacturer=" + manufacturer +
-                ", date=" + date +
-                '}';
+               "name='" + name + '\'' +
+               ", quantity=" + quantity +
+               ", colors=" + colors +
+               ", inStock=" + inStock +
+               ", manufacturer=" + manufacturer +
+               ", date=" + date +
+               '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Gizmo gizmo = (Gizmo) o;
         return getQuantity() == gizmo.getQuantity() &&
                 isInStock() == gizmo.isInStock() &&

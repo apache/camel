@@ -69,6 +69,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
 
     /**
      * TODO: 9/3/20 docs
+     * 
      * @return
      */
     public String getType() {
@@ -77,6 +78,7 @@ public class DatasonnetExpression extends ExpressionDefinition {
 
     /**
      * TODO: 9/3/20 docs
+     * 
      * @param type
      */
     public void setType(String type) {

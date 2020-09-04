@@ -1,5 +1,9 @@
 package org.apache.camel.language.datasonnet;
 
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
@@ -8,10 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -81,7 +81,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         theGizmo.setName("gizmo");
         theGizmo.setQuantity(123);
         theGizmo.setInStock(true);
-        theGizmo.setColors(Arrays.asList("red","white","blue"));
+        theGizmo.setColors(Arrays.asList("red", "white", "blue"));
 
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setManufacturerName("ACME Corp.");
@@ -102,7 +102,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         theGizmo.setName("gizmo");
         theGizmo.setQuantity(123);
         theGizmo.setInStock(true);
-        theGizmo.setColors(Arrays.asList("red","white","blue"));
+        theGizmo.setColors(Arrays.asList("red", "white", "blue"));
 
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setManufacturerName("ACME Corp.");
