@@ -84,6 +84,15 @@ public class TestProxy {
         return builder.toString();
     }
 
+    public final String greetWildcard(String... names) {
+        StringBuilder builder = new StringBuilder("Greetings ");
+        for (String name : names) {
+            builder.append(name).append(", ");
+        }
+        builder.delete(builder.length() - 2, builder.length());
+        return builder.toString();
+    }
+
     public final <K, V> String greetAll(Map<K, V> peopleMap) {
         return null;
     }
