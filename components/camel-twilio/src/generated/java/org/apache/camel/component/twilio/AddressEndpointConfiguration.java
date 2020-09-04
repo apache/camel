@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Address
  */
-@ApiParams(apiName = "address", apiMethods = "creator,deleter,fetcher,reader,updater")
+@ApiParams(apiName = "address", apiMethods = "create,delete,fetch,read,update")
 @UriParams
 @Configurer
 public final class AddressEndpointConfiguration extends TwilioConfiguration {

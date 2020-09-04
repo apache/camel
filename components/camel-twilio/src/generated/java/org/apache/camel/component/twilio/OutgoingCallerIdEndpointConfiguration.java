@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.OutgoingCallerId
  */
-@ApiParams(apiName = "outgoing-caller-id", apiMethods = "deleter,fetcher,reader,updater")
+@ApiParams(apiName = "outgoing-caller-id", apiMethods = "delete,fetch,read,update")
 @UriParams
 @Configurer
 public final class OutgoingCallerIdEndpointConfiguration extends TwilioConfiguration {

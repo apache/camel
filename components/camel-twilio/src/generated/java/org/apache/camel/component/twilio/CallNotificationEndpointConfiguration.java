@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.call.Notification
  */
-@ApiParams(apiName = "call-notification", apiMethods = "fetcher,reader")
+@ApiParams(apiName = "call-notification", apiMethods = "fetch,read")
 @UriParams
 @Configurer
 public final class CallNotificationEndpointConfiguration extends TwilioConfiguration {

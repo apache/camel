@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxUsersManager
  */
-@ApiParams(apiName = "users", apiMethods = "addUserEmailAlias,createAppUser,createEnterpriseUser,deleteUser,deleteUserEmailAlias,getAllEnterpriseOrExternalUsers,getCurrentUser,getUserEmailAlias,getUserInfo,moveFolderToUser,updateUserInfo")
+@ApiParams(apiName = "users", apiMethods = "addEmailAlias,create,create,delete,deleteEmailAlias,users,currentUser,emailAlias,info,moveFolderToUser,updateInfo")
 @UriParams
 @Configurer
 public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration {
