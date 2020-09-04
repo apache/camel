@@ -51,7 +51,7 @@ public class GoogleDriveComponent
 
     @Override
     protected GoogleDriveApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleDriveApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(GoogleDriveApiName.class, apiNameStr);
     }
 
     public Drive getClient(GoogleDriveConfiguration googleDriveConfiguration) {

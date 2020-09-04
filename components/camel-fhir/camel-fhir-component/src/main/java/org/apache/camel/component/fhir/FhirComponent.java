@@ -48,7 +48,7 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
 
     @Override
     protected FhirApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return FhirApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(FhirApiName.class, apiNameStr);
     }
 
     @Override

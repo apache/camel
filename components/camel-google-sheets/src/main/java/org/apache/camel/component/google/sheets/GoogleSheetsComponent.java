@@ -53,7 +53,7 @@ public class GoogleSheetsComponent
 
     @Override
     protected GoogleSheetsApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleSheetsApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(GoogleSheetsApiName.class, apiNameStr);
     }
 
     public Sheets getClient(GoogleSheetsConfiguration config) {

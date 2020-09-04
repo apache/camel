@@ -53,7 +53,7 @@ public class GoogleCalendarComponent
 
     @Override
     protected GoogleCalendarApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleCalendarApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(GoogleCalendarApiName.class, apiNameStr);
     }
 
     public Calendar getClient(GoogleCalendarConfiguration config) {

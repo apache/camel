@@ -6,14 +6,12 @@ package org.apache.camel.component.as2.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.camel.component.as2.api.AS2ClientManager;
 
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
-import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
 
@@ -43,8 +41,6 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
         arg("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class),
         arg("encryptingCertificateChain", new java.security.cert.Certificate[0].getClass()));
 
-    private static final AS2ClientManagerApiMethod[] CACHED_ENUM_VALUES = values();
-
     private final ApiMethod apiMethod;
 
     private AS2ClientManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
@@ -53,27 +49,6 @@ public enum AS2ClientManagerApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
-
-    public static AS2ClientManagerApiMethod fromValue(String value) throws IllegalArgumentException {
-        value = getEnumConstant(value);
-        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
-            if (CACHED_ENUM_VALUES[i].toString().equalsIgnoreCase(value)) {
-                return CACHED_ENUM_VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
-
-    private static String getEnumConstant(String enumValue) {
-        if (enumValue == null || enumValue.isEmpty()) {
-            return "DEFAULT";
-        }
-        String value = StringHelper.camelCaseToDash(enumValue);
-        // replace dash with underscore and upper case
-        value = value.replace('-', '_');
-        value = value.toUpperCase(Locale.ENGLISH);
-        return value;
-    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }

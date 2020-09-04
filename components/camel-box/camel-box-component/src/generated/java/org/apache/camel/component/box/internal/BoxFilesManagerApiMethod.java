@@ -6,14 +6,12 @@ package org.apache.camel.component.box.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.camel.component.box.api.BoxFilesManager;
 
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodImpl;
-import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.component.ApiMethodArg.arg;
 
@@ -173,8 +171,6 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("fileSize", Long.class),
         arg("listener", com.box.sdk.ProgressListener.class));
 
-    private static final BoxFilesManagerApiMethod[] CACHED_ENUM_VALUES = values();
-
     private final ApiMethod apiMethod;
 
     private BoxFilesManagerApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
@@ -183,27 +179,6 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
 
     @Override
     public String getName() { return apiMethod.getName(); }
-
-    public static BoxFilesManagerApiMethod fromValue(String value) throws IllegalArgumentException {
-        value = getEnumConstant(value);
-        for (int i = 0; i < CACHED_ENUM_VALUES.length; i++) {
-            if (CACHED_ENUM_VALUES[i].toString().equalsIgnoreCase(value)) {
-                return CACHED_ENUM_VALUES[i];
-            }
-        }
-        throw new IllegalArgumentException("Invalid value " + value);
-    }
-
-    private static String getEnumConstant(String enumValue) {
-        if (enumValue == null || enumValue.isEmpty()) {
-            return "DEFAULT";
-        }
-        String value = StringHelper.camelCaseToDash(enumValue);
-        // replace dash with underscore and upper case
-        value = value.replace('-', '_');
-        value = value.toUpperCase(Locale.ENGLISH);
-        return value;
-    }
 
     @Override
     public Class<?> getResultType() { return apiMethod.getResultType(); }
