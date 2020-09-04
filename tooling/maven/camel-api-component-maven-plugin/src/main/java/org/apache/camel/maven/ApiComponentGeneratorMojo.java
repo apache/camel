@@ -167,9 +167,10 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
         final File signatureFile = api.getFromSignatureFile();
         if (signatureFile != null) {
-            final FileApiMethodGeneratorMojo fileMojo = new FileApiMethodGeneratorMojo();
-            fileMojo.signatureFile = signatureFile;
-            apiMethodGenerator = fileMojo;
+            final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo();
+            mojo.signatureFile = signatureFile;
+            mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
+            apiMethodGenerator = mojo;
         } else {
             final FromJavadoc apiFromJavadoc = api.getFromJavadoc();
             final FromJavasource apiFromJavasource = api.getFromJavasource();
@@ -182,32 +183,36 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             }
 
             if (apiFromJavadoc != null) {
-                final JavadocApiMethodGeneratorMojo javadocMojo = new JavadocApiMethodGeneratorMojo();
-                javadocMojo.excludePackages = apiFromJavadoc.getExcludePackages() != null
+                final JavadocApiMethodGeneratorMojo mojo = new JavadocApiMethodGeneratorMojo();
+                mojo.excludePackages = apiFromJavadoc.getExcludePackages() != null
                         ? apiFromJavadoc.getExcludePackages() : fromJavadoc.getExcludePackages();
-                javadocMojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null
+                mojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null
                         ? apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
-                javadocMojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null
+                mojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null
                         ? apiFromJavadoc.getIncludeMethods() : fromJavadoc.getIncludeMethods();
-                javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null
+                mojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null
                         ? apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
-                javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
+                mojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
                         ? apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
-                apiMethodGenerator = javadocMojo;
+                mojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
+                        ? apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
+                mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
+                apiMethodGenerator = mojo;
             }
             if (apiFromJavasource != null) {
-                final JavaSourceApiMethodGeneratorMojo javasourceMojo = new JavaSourceApiMethodGeneratorMojo();
-                javasourceMojo.excludePackages = apiFromJavasource.getExcludePackages() != null
-                        ? apiFromJavasource.getExcludePackages() : apiFromJavasource.getExcludePackages();
-                javasourceMojo.excludeClasses = apiFromJavasource.getExcludeClasses() != null
-                        ? apiFromJavasource.getExcludeClasses() : apiFromJavasource.getExcludeClasses();
-                javasourceMojo.includeMethods = apiFromJavasource.getIncludeMethods() != null
-                        ? apiFromJavasource.getIncludeMethods() : apiFromJavasource.getIncludeMethods();
-                javasourceMojo.excludeMethods = apiFromJavasource.getExcludeMethods() != null
-                        ? apiFromJavasource.getExcludeMethods() : apiFromJavasource.getExcludeMethods();
-                javasourceMojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
-                        ? apiFromJavasource.getIncludeStaticMethods() : apiFromJavasource.getIncludeStaticMethods();
-                apiMethodGenerator = javasourceMojo;
+                final JavaSourceApiMethodGeneratorMojo mojo = new JavaSourceApiMethodGeneratorMojo();
+                mojo.excludePackages = apiFromJavasource.getExcludePackages() != null
+                        ? apiFromJavasource.getExcludePackages() : fromJavasource.getExcludePackages();
+                mojo.excludeClasses = apiFromJavasource.getExcludeClasses() != null
+                        ? apiFromJavasource.getExcludeClasses() : fromJavasource.getExcludeClasses();
+                mojo.includeMethods = apiFromJavasource.getIncludeMethods() != null
+                        ? apiFromJavasource.getIncludeMethods() : fromJavasource.getIncludeMethods();
+                mojo.excludeMethods = apiFromJavasource.getExcludeMethods() != null
+                        ? apiFromJavasource.getExcludeMethods() : fromJavasource.getExcludeMethods();
+                mojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
+                        ? apiFromJavasource.getIncludeStaticMethods() : fromJavasource.getIncludeStaticMethods();
+                mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
+                apiMethodGenerator = mojo;
             }
         }
         return apiMethodGenerator;

@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.conference.Participant
  */
-@ApiParams(apiName = "conference-participant", apiMethods = "creator,deleter,fetcher,reader,updater")
+@ApiParams(apiName = "conference-participant", apiMethods = "create,delete,fetch,read,update")
 @UriParams
 @Configurer
 public final class ConferenceParticipantEndpointConfiguration extends TwilioConfiguration {

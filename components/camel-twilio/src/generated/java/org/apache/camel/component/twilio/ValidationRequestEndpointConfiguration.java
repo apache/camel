@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.ValidationRequest
  */
-@ApiParams(apiName = "validation-request", apiMethods = "creator")
+@ApiParams(apiName = "validation-request", apiMethods = "create")
 @UriParams
 @Configurer
 public final class ValidationRequestEndpointConfiguration extends TwilioConfiguration {

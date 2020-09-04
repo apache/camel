@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.Domain
  */
-@ApiParams(apiName = "sip-domain", apiMethods = "creator,deleter,fetcher,reader,updater")
+@ApiParams(apiName = "sip-domain", apiMethods = "create,delete,fetch,read,update")
 @UriParams
 @Configurer
 public final class SipDomainEndpointConfiguration extends TwilioConfiguration {

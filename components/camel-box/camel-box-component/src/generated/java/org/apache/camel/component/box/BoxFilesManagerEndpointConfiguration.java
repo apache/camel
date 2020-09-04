@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxFilesManager
  */
-@ApiParams(apiName = "files", apiMethods = "checkUpload,copyFile,createFileMetadata,createFileSharedLink,deleteFile,deleteFileMetadata,deleteFileVersion,downloadFile,downloadPreviousFileVersion,getDownloadURL,getFileInfo,getFileMetadata,getFilePreviewLink,getFileThumbnail,getFileVersions,moveFile,promoteFileVersion,renameFile,updateFileInfo,updateFileMetadata,uploadFile,uploadNewFileVersion")
+@ApiParams(apiName = "files", apiMethods = "canUpload,copy,createMetadata,link,delete,deleteMetadata,deleteVersion,download,downloadVersion,getDownloadURL,info,metadata,getFilePreviewLink,thumbnail,versions,move,promoteVersion,rename,updateInfo,updateMetadata,upload,uploadVersion")
 @UriParams
 @Configurer
 public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration {

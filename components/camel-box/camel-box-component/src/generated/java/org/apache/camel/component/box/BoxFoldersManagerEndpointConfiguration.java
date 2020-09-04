@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxFoldersManager
  */
-@ApiParams(apiName = "folders", apiMethods = "copyFolder,createFolder,createFolderSharedLink,deleteFolder,getFolder,getFolderInfo,getFolderItems,getRootFolder,moveFolder,renameFolder,updateFolderInfo")
+@ApiParams(apiName = "folders", apiMethods = "copy,create,link,delete,folder,info,items,root,move,rename,updateInfo")
 @UriParams
 @Configurer
 public final class BoxFoldersManagerEndpointConfiguration extends BoxConfiguration {

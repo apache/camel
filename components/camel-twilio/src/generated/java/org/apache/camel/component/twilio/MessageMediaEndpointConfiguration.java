@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.message.Media
  */
-@ApiParams(apiName = "message-media", apiMethods = "deleter,fetcher,reader")
+@ApiParams(apiName = "message-media", apiMethods = "delete,fetch,read")
 @UriParams
 @Configurer
 public final class MessageMediaEndpointConfiguration extends TwilioConfiguration {

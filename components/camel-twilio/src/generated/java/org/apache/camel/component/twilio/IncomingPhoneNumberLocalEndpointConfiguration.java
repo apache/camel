@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.incomingphonenumber.Local
  */
-@ApiParams(apiName = "incoming-phone-number-local", apiMethods = "creator,reader")
+@ApiParams(apiName = "incoming-phone-number-local", apiMethods = "create,read")
 @UriParams
 @Configurer
 public final class IncomingPhoneNumberLocalEndpointConfiguration extends TwilioConfiguration {

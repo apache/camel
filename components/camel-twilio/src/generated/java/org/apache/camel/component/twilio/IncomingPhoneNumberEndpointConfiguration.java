@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.IncomingPhoneNumber
  */
-@ApiParams(apiName = "incoming-phone-number", apiMethods = "creator,deleter,fetcher,reader,updater")
+@ApiParams(apiName = "incoming-phone-number", apiMethods = "create,delete,fetch,read,update")
 @UriParams
 @Configurer
 public final class IncomingPhoneNumberEndpointConfiguration extends TwilioConfiguration {

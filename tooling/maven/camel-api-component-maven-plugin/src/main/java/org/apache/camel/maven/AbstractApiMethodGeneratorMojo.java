@@ -18,6 +18,7 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,12 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     @Parameter
     protected String apiName;
+
+    /**
+     * Method alias patterns for all APIs.
+     */
+    @Parameter
+    protected List<ApiMethodAlias> aliases = Collections.emptyList();
 
     // cached fields
     private Class<?> proxyType;
@@ -177,6 +184,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("apiName", apiName);
+
+        // TODO: we should include alias information as well
+        
         String apiMethodNames = models.stream().map(ApiMethodParser.ApiMethodModel::getName)
                 .distinct()
                 .sorted()
@@ -190,7 +200,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         Map<String, ApiMethodArg> parameters = new TreeMap<>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodArg argument : model.getArguments()) {
-
                 final String name = argument.getName();
                 final Class<?> type = argument.getType();
                 final String typeName = type.getCanonicalName();
@@ -229,6 +238,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
         context.put("parameters", parameters);
         return context;
+    }
+
+    private String replaceAlias(String name) {
+        for (ApiMethodAlias alias : aliases) {
+            if (name.matches(alias.getMethodPattern())) {
+                return alias.getMethodAlias();
+            }
+        }
+        return name;
     }
 
     private File getConfigurationFile() throws MojoExecutionException {
