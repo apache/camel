@@ -42,6 +42,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  */
 @Mojo(name = "fromJavadoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
       defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+@Deprecated
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {

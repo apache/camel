@@ -186,7 +186,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         context.put("apiName", apiName);
 
         // TODO: we should include alias information as well
-        
+
         String apiMethodNames = models.stream().map(ApiMethodParser.ApiMethodModel::getName)
                 .distinct()
                 .sorted()
