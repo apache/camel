@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  * Azure SDK v12.
  */
 @UriEndpoint(firstVersion = "3.3.0", scheme = "azure-storage-queue", title = "Azure Storage Queue Service",
-             syntax = "azure-storage-queue:queueName", category = { Category.CLOUD, Category.MESSAGING })
+             syntax = "azure-storage-queue:accountName/queueName", category = { Category.CLOUD, Category.MESSAGING })
 public class QueueEndpoint extends DefaultEndpoint {
 
     private QueueServiceClient queueServiceClient;
