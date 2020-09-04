@@ -14,3 +14,89 @@ signatures in the Camel components which may change some of the existing singatu
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
+
+=== Customizers
+
+The customizer, which are objects used to configure some of the Camel services such as component, language ad data formats, that were previously limited to Camel Spring Boot, are now consistently used across runtimes. 
+To make that possible, the interfaces have been changed and they do not use generics anymore.
+
+Impacted interfaces:
+
+* org.apache.camel.spi.ComponentCustomizer
+* org.apache.camel.spi.LanguageCustomizer
+* org.apache.camel.spi.DataFormatCustomizer
+
+As example the signature of the `ComponentCustomizer` interface in Camel 3.5 is:
+
+[source,java]
+----
+@FunctionalInterface
+public interface ComponentCustomizer<T extends Component> {
+    /**
+     * Customize the specified {@link Component}.
+     *
+     * @param component the component to customize
+     */
+    void customize(T component);
+}
+----
+
+And below the Camel 3.6 version:
+
+[source,java]
+----
+@FunctionalInterface
+public interface ComponentCustomizer {
+    /**
+     * Customize the specified {@link Component}.
+     *
+     * @param name   the unique name of the component
+     * @param target the component to configure
+     */
+    void configure(String name, Component target);
+
+    /**
+     * Checks whether this customizer should be applied to the given {@link Component}.
+     *
+     * @param  name   the unique name of the component
+     * @param  target the component to configure
+     * @return        <tt>true</tt> if the customizer should be applied
+     */
+    default boolean isEnabled(String name, Component target) {
+        return true;
+    }
+
+    @Override
+    default int getOrder() {
+        return 0;
+    }
+}
+----
+
+As the customizer are now taken into account as part of the standard lifecycle of the `CamelContext`, to programmatically configure a component, it is enough to register the appropriate customizer in the `Registry` as example:
+
+[source,java]
+----
+public class Application {
+
+    public static void main(String args) throws Exception {
+        Main main = new Main();
+        main..addConfigurationClass(MyConfiguration.class);
+        main.run(args);
+    }
+
+    public static class MyConfiguration {
+        @BindToRegistry
+        public ComponentCustomizer logCustomizer() {
+            // Use a fluent Component Customizer builder to ease the process of creating an customizer.
+            return ComponentCustomizer.builder(LogComponent.class)
+                    .build(component -> component.setExchangeFormatter(new DefaultExchangeFormatter()));
+        }
+    }
+}
+----
+
+[NOTE]
+====
+As coneguence of this change, the Camel Spring Boot starters have been ameneded to use Customizers instead of creating instances of components, languages or data formats.
+====
