@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven;
 
+import java.io.FileInputStream;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,8 +77,19 @@ public class JavaSourceParserTest {
         assertEquals("The document id of a previously uploaded document",
                 parser.getParameters().get("addFileEvidence").get("documentId"));
 
-        parser.reset();
+    }
 
+    @Test
+    public void testWildcard() throws Exception {
+        final JavaSourceParser parser = new JavaSourceParser();
+
+        parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/TestProxy.java"));
+        assertEquals(11, parser.getMethods().size());
+
+        assertEquals(
+                "public java.lang.String greetWildcard(String... names)",
+                parser.getMethods().get(7));
+        parser.reset();
     }
 
 }
