@@ -56,7 +56,7 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     }
 
     @Override
-    protected ZendeskApiName getApiName(String apiNameStr) throws IllegalArgumentException {
+    protected ZendeskApiName getApiName(String apiNameStr) {
         return getCamelContext().getTypeConverter().convertTo(ZendeskApiName.class, apiNameStr);
     }
 

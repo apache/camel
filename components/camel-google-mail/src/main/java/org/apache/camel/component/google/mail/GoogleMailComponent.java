@@ -51,7 +51,7 @@ public class GoogleMailComponent
     }
 
     @Override
-    protected GoogleMailApiName getApiName(String apiNameStr) throws IllegalArgumentException {
+    protected GoogleMailApiName getApiName(String apiNameStr) {
         return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 

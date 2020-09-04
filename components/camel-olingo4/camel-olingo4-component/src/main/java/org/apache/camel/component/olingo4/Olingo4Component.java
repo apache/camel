@@ -61,7 +61,7 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
     }
 
     @Override
-    protected Olingo4ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
+    protected Olingo4ApiName getApiName(String apiNameStr) {
         return getCamelContext().getTypeConverter().convertTo(Olingo4ApiName.class, apiNameStr);
     }
 
