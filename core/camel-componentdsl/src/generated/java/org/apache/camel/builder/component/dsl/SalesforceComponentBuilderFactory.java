@@ -406,7 +406,6 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * Group: common
          */
-        @Deprecated
         default SalesforceComponentBuilder packages(java.lang.String packages) {
             doSetProperty("packages", packages);
             return this;
