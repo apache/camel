@@ -1263,7 +1263,7 @@ public interface QueueEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-azure-storage-queue
          * 
-         * Syntax: <code>azure-storage-queue:queueName</code>
+         * Syntax: <code>azure-storage-queue:accountName/queueName</code>
          * 
          * Path parameter: accountName
          * Azure account name to be used for authentication with azure queue
@@ -1272,7 +1272,7 @@ public interface QueueEndpointBuilderFactory {
          * Path parameter: queueName
          * The queue resource name
          * 
-         * @param path queueName
+         * @param path accountName/queueName
          */
         default QueueEndpointBuilder azureStorageQueue(String path) {
             return QueueEndpointBuilderFactory.endpointBuilder("azure-storage-queue", path);
@@ -1286,7 +1286,7 @@ public interface QueueEndpointBuilderFactory {
          * Since: 3.3
          * Maven coordinates: org.apache.camel:camel-azure-storage-queue
          * 
-         * Syntax: <code>azure-storage-queue:queueName</code>
+         * Syntax: <code>azure-storage-queue:accountName/queueName</code>
          * 
          * Path parameter: accountName
          * Azure account name to be used for authentication with azure queue
@@ -1297,7 +1297,7 @@ public interface QueueEndpointBuilderFactory {
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
-         * @param path queueName
+         * @param path accountName/queueName
          */
         default QueueEndpointBuilder azureStorageQueue(
                 String componentName,
