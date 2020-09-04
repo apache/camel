@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.mail;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.gmail.Gmail$Users$Threads
  */
-@UriParams(apiName = "threads")
+@ApiParams(apiName = "threads", apiMethods = "delete,get,list,modify,trash,untrash")
+@UriParams
 @Configurer
 public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam

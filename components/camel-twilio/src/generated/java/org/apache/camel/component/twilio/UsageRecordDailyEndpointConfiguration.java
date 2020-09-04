@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.Daily
  */
-@UriParams(apiName = "usage-record-daily")
+@ApiParams(apiName = "usage-record-daily", apiMethods = "reader")
+@UriParams
 @Configurer
 public final class UsageRecordDailyEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account that created the resources to read")

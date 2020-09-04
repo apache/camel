@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.call.Feedback
  */
-@UriParams(apiName = "call-feedback")
+@ApiParams(apiName = "call-feedback", apiMethods = "creator,fetcher,updater")
+@UriParams
 @Configurer
 public final class CallFeedbackEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The unique sid that identifies this account")

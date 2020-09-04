@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodParser;
@@ -176,6 +177,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("apiName", apiName);
+        String apiMethodNames = models.stream().map(ApiMethodParser.ApiMethodModel::getName)
+                .distinct()
+                .sorted()
+                .collect(Collectors.joining(","));
+        context.put("apiMethods", apiMethodNames);
         context.put("configName", getConfigName());
         context.put("componentName", componentName);
         context.put("componentPackage", componentPackage);

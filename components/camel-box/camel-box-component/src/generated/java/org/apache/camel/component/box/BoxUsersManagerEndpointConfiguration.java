@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxUsersManager
  */
-@UriParams(apiName = "users")
+@ApiParams(apiName = "users", apiMethods = "addUserEmailAlias,createAppUser,createEnterpriseUser,deleteUser,deleteUserEmailAlias,getAllEnterpriseOrExternalUsers,getCurrentUser,getUserEmailAlias,getUserInfo,moveFolderToUser,updateUserInfo")
+@UriParams
 @Configurer
 public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The email address to add as an alias")

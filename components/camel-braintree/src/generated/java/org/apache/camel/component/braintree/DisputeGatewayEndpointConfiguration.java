@@ -5,13 +5,15 @@
 package org.apache.camel.component.braintree;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.braintreegateway.DisputeGateway
  */
-@UriParams(apiName = "dispute")
+@ApiParams(apiName = "dispute", apiMethods = "accept,addFileEvidence,addTextEvidence,finalize,find,removeEvidence,search")
+@UriParams
 @Configurer
 public final class DisputeGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The content of the text evidence for the dispute")

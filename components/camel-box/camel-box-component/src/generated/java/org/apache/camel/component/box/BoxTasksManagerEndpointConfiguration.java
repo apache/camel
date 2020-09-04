@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxTasksManager
  */
-@UriParams(apiName = "tasks")
+@ApiParams(apiName = "tasks", apiMethods = "addAssignmentToTask,addFileTask,deleteTask,deleteTaskAssignment,getFileTasks,getTaskAssignmentInfo,getTaskAssignments,getTaskInfo,updateTaskInfo")
+@UriParams
 @Configurer
 public final class BoxTasksManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The action the task assignee will be prompted to do")

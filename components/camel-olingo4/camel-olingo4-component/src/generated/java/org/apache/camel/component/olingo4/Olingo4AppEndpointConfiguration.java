@@ -5,13 +5,15 @@
 package org.apache.camel.component.olingo4;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.olingo4.api.Olingo4App
  */
-@UriParams(apiName = "DEFAULT")
+@ApiParams(apiName = "DEFAULT", apiMethods = "action,batch,create,delete,merge,patch,read,update,uread")
+@UriParams
 @Configurer
 public final class Olingo4AppEndpointConfiguration extends Olingo4Configuration {
     @UriParam

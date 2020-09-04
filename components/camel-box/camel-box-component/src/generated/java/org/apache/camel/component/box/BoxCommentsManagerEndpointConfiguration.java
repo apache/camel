@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxCommentsManager
  */
-@UriParams(apiName = "comments")
+@ApiParams(apiName = "comments", apiMethods = "addFileComment,changeCommentMessage,deleteComment,getCommentInfo,getFileComments,replyToComment")
+@UriParams
 @Configurer
 public final class BoxCommentsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The id of comment to change")

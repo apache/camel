@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirMeta
  */
-@UriParams(apiName = "meta")
+@ApiParams(apiName = "meta", apiMethods = "add,delete,getFromResource,getFromServer,getFromType")
+@UriParams
 @Configurer
 public final class FhirMetaEndpointConfiguration extends FhirConfiguration {
     @UriParam

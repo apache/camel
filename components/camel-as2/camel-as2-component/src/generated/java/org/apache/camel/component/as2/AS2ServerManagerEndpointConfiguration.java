@@ -5,13 +5,15 @@
 package org.apache.camel.component.as2;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.as2.api.AS2ServerManager
  */
-@UriParams(apiName = "server")
+@ApiParams(apiName = "server", apiMethods = "listen")
+@UriParams
 @Configurer
 public final class AS2ServerManagerEndpointConfiguration extends AS2Configuration {
     @UriParam

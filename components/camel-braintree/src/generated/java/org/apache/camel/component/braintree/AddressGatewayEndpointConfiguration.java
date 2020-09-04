@@ -5,13 +5,15 @@
 package org.apache.camel.component.braintree;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.braintreegateway.AddressGateway
  */
-@UriParams(apiName = "address")
+@ApiParams(apiName = "address", apiMethods = "create,delete,find,update")
+@UriParams
 @Configurer
 public final class AddressGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The id of the Customer")

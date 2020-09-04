@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirOperation
  */
-@UriParams(apiName = "operation")
+@ApiParams(apiName = "operation", apiMethods = "onInstance,onInstanceVersion,onServer,onType,processMessage")
+@UriParams
 @Configurer
 public final class FhirOperationEndpointConfiguration extends FhirConfiguration {
     @UriParam

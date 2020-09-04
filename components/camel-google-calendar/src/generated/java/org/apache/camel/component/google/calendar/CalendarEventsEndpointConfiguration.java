@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.calendar;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.calendar.Calendar$Events
  */
-@UriParams(apiName = "events")
+@ApiParams(apiName = "events", apiMethods = "calendarImport,delete,get,insert,instances,list,move,patch,quickAdd,update,watch")
+@UriParams
 @Configurer
 public final class CalendarEventsEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam

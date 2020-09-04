@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxFilesManager
  */
-@UriParams(apiName = "files")
+@ApiParams(apiName = "files", apiMethods = "checkUpload,copyFile,createFileMetadata,createFileSharedLink,deleteFile,deleteFileMetadata,deleteFileVersion,downloadFile,downloadPreviousFileVersion,getDownloadURL,getFileInfo,getFileMetadata,getFilePreviewLink,getFileThumbnail,getFileVersions,moveFile,promoteFileVersion,renameFile,updateFileInfo,updateFileMetadata,uploadFile,uploadNewFileVersion")
+@UriParams
 @Configurer
 public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The access level of the shared link")

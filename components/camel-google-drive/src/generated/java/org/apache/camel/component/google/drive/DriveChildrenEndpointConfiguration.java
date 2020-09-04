@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Children
  */
-@UriParams(apiName = "drive-children")
+@ApiParams(apiName = "drive-children", apiMethods = "delete,get,insert,list")
+@UriParams
 @Configurer
 public final class DriveChildrenEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

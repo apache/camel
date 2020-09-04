@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Changes
  */
-@UriParams(apiName = "drive-changes")
+@ApiParams(apiName = "drive-changes", apiMethods = "get,getStartPageToken,list,watch")
+@UriParams
 @Configurer
 public final class DriveChangesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

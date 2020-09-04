@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxGroupsManager
  */
-@UriParams(apiName = "groups")
+@ApiParams(apiName = "groups", apiMethods = "addGroupMembership,createGroup,deleteGroup,deleteGroupMembership,getAllGroups,getGroupInfo,getGroupMembershipInfo,getGroupMemberships,updateGroupInfo,updateGroupMembershipInfo")
+@UriParams
 @Configurer
 public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The description of the new group")

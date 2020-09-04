@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.call.FeedbackSummary
  */
-@UriParams(apiName = "call-feedback-summary")
+@ApiParams(apiName = "call-feedback-summary", apiMethods = "creator,deleter,fetcher")
+@UriParams
 @Configurer
 public final class CallFeedbackSummaryEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "Only include feedback given on or before this date")

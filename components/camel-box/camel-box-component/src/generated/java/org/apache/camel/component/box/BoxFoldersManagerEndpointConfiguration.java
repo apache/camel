@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxFoldersManager
  */
-@UriParams(apiName = "folders")
+@ApiParams(apiName = "folders", apiMethods = "copyFolder,createFolder,createFolderSharedLink,deleteFolder,getFolder,getFolderInfo,getFolderItems,getRootFolder,moveFolder,renameFolder,updateFolderInfo")
+@UriParams
 @Configurer
 public final class BoxFoldersManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The access level of the shared link")

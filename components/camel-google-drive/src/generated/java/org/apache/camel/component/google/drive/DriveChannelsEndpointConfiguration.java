@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Channels
  */
-@UriParams(apiName = "drive-channels")
+@ApiParams(apiName = "drive-channels", apiMethods = "stop")
+@UriParams
 @Configurer
 public final class DriveChannelsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

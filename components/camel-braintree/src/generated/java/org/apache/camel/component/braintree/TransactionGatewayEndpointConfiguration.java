@@ -5,13 +5,15 @@
 package org.apache.camel.component.braintree;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.braintreegateway.TransactionGateway
  */
-@UriParams(apiName = "transaction")
+@ApiParams(apiName = "transaction", apiMethods = "cancelRelease,cloneTransaction,credit,find,holdInEscrow,refund,releaseFromEscrow,sale,search,submitForPartialSettlement,submitForSettlement,updateDetails,voidTransaction")
+@UriParams
 @Configurer
 public final class TransactionGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
