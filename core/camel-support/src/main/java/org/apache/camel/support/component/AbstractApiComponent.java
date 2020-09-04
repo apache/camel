@@ -100,7 +100,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         }
     }
 
-    protected abstract E getApiName(String apiNameStr) throws IllegalArgumentException;
+    protected abstract E getApiName(String apiNameStr);
 
     protected abstract Endpoint createEndpoint(String uri, String methodName, E apiName, T endpointConfiguration);
 

@@ -42,7 +42,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     }
 
     @Override
-    protected AS2ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
+    protected AS2ApiName getApiName(String apiNameStr) {
         return getCamelContext().getTypeConverter().convertTo(AS2ApiName.class, apiNameStr);
     }
 
