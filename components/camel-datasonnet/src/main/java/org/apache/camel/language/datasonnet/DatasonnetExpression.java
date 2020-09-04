@@ -88,11 +88,16 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
             case "outputmimetype":
                 setOutputMimeType(MediaType.valueOf((String) value));
                 return true;
-            case "type":
+            case "resultType":
+            case "resulttype":
+                setType((Class<?>) value);
+                return true;
+            case "resultTypeName":
+            case "resulttypename":
                 try {
                     setType(Class.forName((String) value));
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalArgumentException("Requested output class type not found", e);
+                    throw new IllegalArgumentException("Requested result type class not found", e);
                 }
                 return true;
         }
@@ -102,6 +107,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
 
     @Override
     public boolean matches(Exchange exchange) {
+        this.outputType = MediaTypes.APPLICATION_JAVA;
         return evaluate(exchange, Boolean.class);
     }
 
@@ -169,6 +175,8 @@ public class DatasonnetExpression extends ExpressionAdapter implements Generated
                         String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
                     outputType = MediaType.parseMediaType(typeHeader);
+                } else {
+                    outputType = MediaTypes.APPLICATION_JAVA;
                 }
             }
 

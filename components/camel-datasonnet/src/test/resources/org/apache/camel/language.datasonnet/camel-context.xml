@@ -99,7 +99,7 @@
         <route id="writeJava">
             <from uri="direct:writeJava"/>
             <transform>
-                <datasonnet inputMimeType="application/json" outputMimeType="application/java" type="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
+                <datasonnet inputMimeType="application/json" outputMimeType="application/java" resultTypeName="org.apache.camel.language.datasonnet.Gizmo">resource:classpath:writeJavaTest.ds</datasonnet>
             </transform>
             <to uri="mock:direct:end"/>
         </route>

@@ -47,7 +47,8 @@ public class DatasonnetExpressionReifier extends ExpressionReifier<DatasonnetExp
         Map<String, Object> properties = new HashMap<>();
         properties.put("inputMimeType", definition.getInputMimeType());
         properties.put("outputMimeType", definition.getOutputMimeType());
-        properties.put("type", definition.getType());
+        properties.put("resultType", definition.getResultType());
+        properties.put("resultTypeName", definition.getResultTypeName());
         setProperties(target, properties);
     }
 

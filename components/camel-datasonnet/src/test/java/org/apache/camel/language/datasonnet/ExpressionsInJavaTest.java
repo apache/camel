@@ -34,10 +34,10 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
 
                 from("direct:expressionsInJava")
                                 .choice()
-                                    .when(datasonnet("payload == 'World'", "text/plain", "application/java"))
-                                        .setBody(datasonnet("'Hello, ' + payload", "text/plain", "text/plain"))
+                                    .when(datasonnet("payload == 'World'"))
+                                        .setBody(datasonnet("'Hello, ' + payload"))
                                     .otherwise()
-                                        .setBody(datasonnet("'Good bye, ' + payload", "text/plain", "text/plain"))
+                                        .setBody(datasonnet("'Good bye, ' + payload"))
                                     .end()
                                 .to("mock:direct:response");
             }

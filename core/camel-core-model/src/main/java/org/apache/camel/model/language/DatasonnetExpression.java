@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
@@ -22,8 +23,11 @@ public class DatasonnetExpression extends ExpressionDefinition {
     @XmlAttribute(name = "outputMimeType")
     private String outputMimeType;
 
-    @XmlAttribute(name = "type")
-    private String type;
+    @XmlAttribute(name = "resultTypeName")
+    private String resultTypeName;
+
+    @XmlTransient
+    private Class<?> resultType;
 
     public DatasonnetExpression() {
     }
@@ -67,21 +71,29 @@ public class DatasonnetExpression extends ExpressionDefinition {
         this.outputMimeType = outputMimeType;
     }
 
-    /**
-     * TODO: 9/3/20 docs
-     * 
-     * @return
-     */
-    public String getType() {
-        return type;
+    public Class<?> getResultType() {
+        return resultType;
     }
 
     /**
-     * TODO: 9/3/20 docs
-     * 
-     * @param type
+     * Sets the class of the result type (type from output).
+     * <p/>
+     * The default result type is Document
      */
-    public void setType(String type) {
-        this.type = type;
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public String getResultTypeName() {
+        return resultTypeName;
+    }
+
+    /**
+     * Sets the class name of the result type (type from output)
+     * <p/>
+     * The default result type is Document
+     */
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
     }
 }
