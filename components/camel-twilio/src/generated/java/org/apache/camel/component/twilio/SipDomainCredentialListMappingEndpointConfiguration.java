@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.domain.CredentialListMapping
  */
-@ApiParams(apiName = "sip-domain-credential-list-mapping", apiMethods = "create,delete,fetch,read")
+@ApiParams(apiName = "sip-domain-credential-list-mapping", apiMethods = "creator,deleter,fetcher,reader")
 @UriParams
 @Configurer
 public final class SipDomainCredentialListMappingEndpointConfiguration extends TwilioConfiguration {

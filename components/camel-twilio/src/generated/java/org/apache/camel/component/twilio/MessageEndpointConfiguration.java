@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Message
  */
-@ApiParams(apiName = "message", apiMethods = "create,delete,fetch,read,update")
+@ApiParams(apiName = "message", apiMethods = "creator,deleter,fetcher,reader,updater")
 @UriParams
 @Configurer
 public final class MessageEndpointConfiguration extends TwilioConfiguration {

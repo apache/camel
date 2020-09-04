@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.queue.Member
  */
-@ApiParams(apiName = "queue-member", apiMethods = "fetch,read,update")
+@ApiParams(apiName = "queue-member", apiMethods = "fetcher,reader,updater")
 @UriParams
 @Configurer
 public final class QueueMemberEndpointConfiguration extends TwilioConfiguration {
