@@ -167,14 +167,14 @@ with the following path and query parameters:
 
 === Query API Parameters (13 APIs):
 
-The Google Drive endpoint is an API based component and has additional parameters based on which API method in use.
-The API method is located in the endpoint URI as the apiName path parameter:
+The Google Drive endpoint is an API based component and has additional parameters based on which API name and method in use.
+The API name and method is located in the endpoint URI as the apiName/methodName path parameters:
 
 ----
 google-drive:apiName/methodName
 ----
 
-The following lists each API method and its additional parameters.
+The following lists each API name and method and its additional parameters.
 
 
 ==== drive-about

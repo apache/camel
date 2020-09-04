@@ -289,7 +289,7 @@ quartz://myGroup/myTimerName?trigger.repeatInterval=2000&trigger.misfireInstruct
 
 And likewise you can configure the cron trigger with one of its misfire instructions as well:
 ----
-quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?trigger.misfireInstruction=2
+quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?&trigger.misfireInstruction=2
 ----
 
 The simple and cron triggers has the following misfire instructions representative:

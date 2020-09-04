@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxGroupsManager
  */
-@ApiParams(apiName = "groups", apiMethods = "addMembership,create,delete,deleteMembership,groups,info,membershipInfo,memberships,updateGroupInfo,updateMembershipInfo")
+@ApiParams(apiName = "groups", apiMethods = "addGroupMembership,createGroup,deleteGroup,deleteGroupMembership,getAllGroups,getGroupInfo,getGroupMembershipInfo,getGroupMemberships,updateGroupInfo,updateGroupMembershipInfo")
 @UriParams
 @Configurer
 public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguration {
