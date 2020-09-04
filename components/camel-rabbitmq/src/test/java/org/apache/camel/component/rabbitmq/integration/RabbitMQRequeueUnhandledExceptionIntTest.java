@@ -18,6 +18,7 @@ package org.apache.camel.component.rabbitmq.integration;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,11 +51,12 @@ public class RabbitMQRequeueUnhandledExceptionIntTest extends AbstractRabbitMQIn
 
             @Override
             public void configure() throws Exception {
-                from("direct:rabbitMQ").id("producingRoute").log("Sending message").inOnly(rabbitMQEndpoint)
+                from("direct:rabbitMQ").id("producingRoute").log("Sending message")
+                        .to(ExchangePattern.InOnly, rabbitMQEndpoint)
                         .to(producingMockEndpoint);
 
                 from(rabbitMQEndpoint).onException(Exception.class).handled(false).end().id("consumingRoute")
-                        .log("Receiving message").inOnly(consumingMockEndpoint)
+                        .log("Receiving message").to(ExchangePattern.InOnly, consumingMockEndpoint)
                         .throwException(new Exception("Simulated unhandled exception"));
             }
         };

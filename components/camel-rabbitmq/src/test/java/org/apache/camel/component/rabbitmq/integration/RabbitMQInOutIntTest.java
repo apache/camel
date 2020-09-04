@@ -31,6 +31,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -99,7 +100,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
             public void configure() throws Exception {
 
                 from("direct:rabbitMQ").id("producingRoute").setHeader("routeHeader", simple("routeHeader"))
-                        .inOut(rabbitMQEndpoint);
+                        .to(ExchangePattern.InOut, rabbitMQEndpoint);
 
                 from(rabbitMQEndpoint).id("consumingRoute").log("Receiving message").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -132,7 +133,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
                 });
 
                 from("direct:rabbitMQNoAutoAck").id("producingRouteNoAutoAck").setHeader("routeHeader", simple("routeHeader"))
-                        .inOut(noAutoAckEndpoint);
+                        .to(ExchangePattern.InOut, noAutoAckEndpoint);
 
                 from(noAutoAckEndpoint).id("consumingRouteNoAutoAck").to(resultEndpoint)
                         .throwException(new IllegalStateException("test exception"));
