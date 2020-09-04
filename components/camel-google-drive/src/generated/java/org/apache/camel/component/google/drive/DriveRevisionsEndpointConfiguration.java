@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Revisions
  */
-@UriParams(apiName = "drive-revisions")
+@ApiParams(apiName = "drive-revisions", apiMethods = "delete,get,list,patch,update")
+@UriParams
 @Configurer
 public final class DriveRevisionsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

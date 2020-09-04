@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Message
  */
-@UriParams(apiName = "message")
+@ApiParams(apiName = "message", apiMethods = "creator,deleter,fetcher,reader,updater")
+@UriParams
 @Configurer
 public final class MessageEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The text of the message you want to send. Can be up to 1,600 characters in length.")

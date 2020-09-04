@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.calendar;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.calendar.Calendar$Freebusy
  */
-@UriParams(apiName = "freebusy")
+@ApiParams(apiName = "freebusy", apiMethods = "query")
+@UriParams
 @Configurer
 public final class CalendarFreebusyEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam

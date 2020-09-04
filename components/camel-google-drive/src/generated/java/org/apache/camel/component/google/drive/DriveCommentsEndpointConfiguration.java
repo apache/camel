@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Comments
  */
-@UriParams(apiName = "drive-comments")
+@ApiParams(apiName = "drive-comments", apiMethods = "delete,get,insert,list,patch,update")
+@UriParams
 @Configurer
 public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

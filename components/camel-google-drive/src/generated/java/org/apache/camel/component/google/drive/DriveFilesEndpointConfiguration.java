@@ -5,13 +5,15 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Files
  */
-@UriParams(apiName = "drive-files")
+@ApiParams(apiName = "drive-files", apiMethods = "copy,delete,emptyTrash,export,generateIds,get,insert,list,patch,touch,trash,untrash,update,watch")
+@UriParams
 @Configurer
 public final class DriveFilesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam

@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirPatch
  */
-@UriParams(apiName = "patch")
+@ApiParams(apiName = "patch", apiMethods = "patchById,patchByUrl")
+@UriParams
 @Configurer
 public final class FhirPatchEndpointConfiguration extends FhirConfiguration {
     @UriParam(description = "See")

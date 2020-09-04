@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirUpdate
  */
-@UriParams(apiName = "update")
+@ApiParams(apiName = "update", apiMethods = "resource,resourceBySearchUrl")
+@UriParams
 @Configurer
 public final class FhirUpdateEndpointConfiguration extends FhirConfiguration {
     @UriParam

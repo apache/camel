@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.Call
  */
-@UriParams(apiName = "call")
+@ApiParams(apiName = "call", apiMethods = "creator,deleter,fetcher,reader,updater")
+@UriParams
 @Configurer
 public final class CallEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Application resource that will handle the call")

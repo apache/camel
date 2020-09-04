@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.domain.CredentialListMapping
  */
-@UriParams(apiName = "sip-domain-credential-list-mapping")
+@ApiParams(apiName = "sip-domain-credential-list-mapping", apiMethods = "creator,deleter,fetcher,reader")
+@UriParams
 @Configurer
 public final class SipDomainCredentialListMappingEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "A string that identifies the CredentialList resource to map to the SIP domain")

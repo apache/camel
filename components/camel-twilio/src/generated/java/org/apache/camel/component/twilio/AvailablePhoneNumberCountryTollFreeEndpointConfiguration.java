@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.availablephonenumbercountry.TollFree
  */
-@UriParams(apiName = "available-phone-number-country-toll-free")
+@ApiParams(apiName = "available-phone-number-country-toll-free", apiMethods = "reader")
+@UriParams
 @Configurer
 public final class AvailablePhoneNumberCountryTollFreeEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account requesting the AvailablePhoneNumber resources")

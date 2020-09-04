@@ -5,13 +5,15 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.box.api.BoxCollaborationsManager
  */
-@UriParams(apiName = "collaborations")
+@ApiParams(apiName = "collaborations", apiMethods = "addFolderCollaboration,addFolderCollaborationByEmail,deleteCollaboration,getCollaborationInfo,getFolderCollaborations,getPendingCollaborations,updateCollaborationInfo")
+@UriParams
 @Configurer
 public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam(description = "The id of comment to change")

@@ -24,16 +24,27 @@ import java.lang.annotation.Target;
 
 /**
  * Used to annotate a nested configuration parameter type (such as a nested Configuration object) which can then be used
- * on a Component, Endpoint and/or Consumer and then be configured via Camel URI query arguments.
+ * on a API based component, endpoint.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.TYPE })
-public @interface UriParams {
+public @interface ApiParams {
 
     /**
-     * Returns the prefix used to access nested properties of this configuration object
+     * The API name (grouping) of this configuration class.
+     *
+     * This is only applicable for API based components where configurations are separated by API names and methods
+     * (grouping).
      */
-    String prefix() default "";
+    String apiName() default "";
+
+    /**
+     * The API methods (separated by comma) that the API provides of this configuration class.
+     *
+     * This is only applicable for API based components where configurations are separated by API names and methods
+     * (grouping).
+     */
+    String apiMethods() default "";
 
 }

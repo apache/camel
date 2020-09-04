@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirLoadPage
  */
-@UriParams(apiName = "load-page")
+@ApiParams(apiName = "load-page", apiMethods = "byUrl,next,previous")
+@UriParams
 @Configurer
 public final class FhirLoadPageEndpointConfiguration extends FhirConfiguration {
     @UriParam

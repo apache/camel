@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddress
  */
-@UriParams(apiName = "sip-ip-access-control-list-ip-address")
+@ApiParams(apiName = "sip-ip-access-control-list-ip-address", apiMethods = "creator,deleter,fetcher,reader,updater")
+@UriParams
 @Configurer
 public final class SipIpAccessControlListIpAddressEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "A human readable descriptive text for this resource, up to 64 characters long.")

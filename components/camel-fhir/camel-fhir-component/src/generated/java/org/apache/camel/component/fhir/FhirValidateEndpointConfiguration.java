@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirValidate
  */
-@UriParams(apiName = "validate")
+@ApiParams(apiName = "validate", apiMethods = "resource")
+@UriParams
 @Configurer
 public final class FhirValidateEndpointConfiguration extends FhirConfiguration {
     @UriParam

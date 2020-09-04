@@ -5,13 +5,15 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local
  */
-@UriParams(apiName = "available-phone-number-country-local")
+@ApiParams(apiName = "available-phone-number-country-local", apiMethods = "reader")
+@UriParams
 @Configurer
 public final class AvailablePhoneNumberCountryLocalEndpointConfiguration extends TwilioConfiguration {
     @UriParam(description = "The SID of the Account requesting the AvailablePhoneNumber resources")

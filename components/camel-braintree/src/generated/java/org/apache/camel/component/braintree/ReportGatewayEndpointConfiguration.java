@@ -5,13 +5,15 @@
 package org.apache.camel.component.braintree;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for com.braintreegateway.ReportGateway
  */
-@UriParams(apiName = "report")
+@ApiParams(apiName = "report", apiMethods = "transactionLevelFees")
+@UriParams
 @Configurer
 public final class ReportGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam(description = "The request")

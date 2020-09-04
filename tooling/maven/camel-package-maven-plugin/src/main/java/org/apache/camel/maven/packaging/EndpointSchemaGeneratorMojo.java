@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 import org.apache.camel.Category;
 import org.apache.camel.maven.packaging.generics.ClassUtil;
 import org.apache.camel.maven.packaging.generics.GenericsUtil;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -96,6 +97,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     public static final DotName URI_ENDPOINT = DotName.createSimple(UriEndpoint.class.getName());
     public static final DotName COMPONENT = DotName.createSimple(Component.class.getName());
     public static final DotName URI_PARAMS = DotName.createSimple(UriParams.class.getName());
+    public static final DotName API_PARAMS = DotName.createSimple(ApiParams.class.getName());
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC
             = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
@@ -283,13 +285,14 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * others)
      */
     private void enhanceComponentModelWithApiModel(ComponentModel componentModel) {
-        for (AnnotationInstance ai : getIndex().getAnnotations(URI_PARAMS)) {
+        for (AnnotationInstance ai : getIndex().getAnnotations(API_PARAMS)) {
             Class<?> classElement = loadClass(ai.target().asClass().name().toString());
-            final UriParams uriParams = classElement.getAnnotation(UriParams.class);
-            if (uriParams != null) {
-                String apiName = uriParams.apiName();
+            final ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
+            if (apiParams != null) {
+                String apiName = apiParams.apiName();
                 if (!Strings.isNullOrEmpty(apiName)) {
-                    String extraPrefix = uriParams.prefix();
+                    final UriParams uriParams = classElement.getAnnotation(UriParams.class);
+                    String extraPrefix = uriParams != null ? uriParams.prefix() : "";
                     findClassProperties(componentModel, classElement, Collections.EMPTY_SET, extraPrefix,
                             null, null, false);
                 }
@@ -835,9 +838,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         while (true) {
             String apiName = null;
             boolean apiOption = false;
-            UriParams uriParams = classElement.getAnnotation(UriParams.class);
-            if (uriParams != null) {
-                apiName = uriParams.apiName();
+            ApiParams apiParams = classElement.getAnnotation(ApiParams.class);
+            if (apiParams != null) {
+                apiName = apiParams.apiName();
                 apiOption = !Strings.isNullOrEmpty(apiName);
             }
 

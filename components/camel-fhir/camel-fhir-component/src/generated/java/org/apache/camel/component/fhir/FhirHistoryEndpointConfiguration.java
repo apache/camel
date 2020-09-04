@@ -5,13 +5,15 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
  * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirHistory
  */
-@UriParams(apiName = "history")
+@ApiParams(apiName = "history", apiMethods = "onInstance,onServer,onType")
+@UriParams
 @Configurer
 public final class FhirHistoryEndpointConfiguration extends FhirConfiguration {
     @UriParam
