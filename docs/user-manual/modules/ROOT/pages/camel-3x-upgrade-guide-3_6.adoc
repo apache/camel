@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.5 to 3.6
 
+=== API components upgrade
+
+The `camel-braintree`, `camel-twilio` and `camel-zendesk` has updated to newer versions and regenerated their API
+signatures in the Camel components which may change some of the existing singatures and as well bring in new.
+
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
