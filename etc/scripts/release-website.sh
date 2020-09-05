@@ -26,7 +26,7 @@ COMPLIST=( "camel-spring:spring"
   "camel-cxf:cxf"
   "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
-  "camel-blueprint:blueprint" )
+  "karaf/camel-blueprint:blueprint" )
 SITE_DIR="${DOWNLOAD}/websites/production/camel"
 WEBSITE_URL="https://svn.apache.org/repos/infra/websites/production/camel/content"
 GIT_WEBSITE_URL="https://gitbox.apache.org/repos/asf/camel-website.git"
