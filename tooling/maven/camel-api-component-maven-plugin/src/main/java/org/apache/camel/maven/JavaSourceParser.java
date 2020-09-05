@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaDocTag;
-import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
@@ -50,7 +49,7 @@ public class JavaSourceParser {
             if (!ms.isPublic() || ms.isConstructor()) {
                 continue;
             }
-            String signature = toSignatureRoasterFix(ms);
+            String signature = ms.toSignature();
             // roaster signatures has return values at end
             // public create(String, AddressRequest) : Result
 
@@ -178,26 +177,4 @@ public class JavaSourceParser {
         return parameters;
     }
 
-    private static String toSignatureRoasterFix(MethodSource ms) {
-        StringBuilder signature = new StringBuilder();
-        signature.append(Visibility.PACKAGE_PRIVATE.equals(ms.getVisibility().scope())
-                ? ""
-                : ms.getVisibility()
-                        .scope());
-        signature.append(" ");
-        signature.append(ms.getName()).append("(");
-        List<ParameterSource<?>> parameters = ms.getParameters();
-        for (ParameterSource<?> p : parameters) {
-            signature.append(p.getType().getName());
-            if (p.isVarArgs()) {
-                signature.append("...");
-            }
-            if (parameters.indexOf(p) < (parameters.size() - 1)) {
-                signature.append(", ");
-            }
-        }
-
-        signature.append(") : ").append((ms.getReturnType() == null ? "void" : ms.getReturnType().getName()));
-        return signature.toString();
-    }
 }
