@@ -80,8 +80,8 @@ public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
 
     private PlusResponse createSampleRequestResponsePair() {
         PlusRequest request = new PlusRequest();
-        request.setA(new Integer(1));
-        request.setB(new Integer(2));
+        request.setA(Integer.valueOf(1));
+        request.setB(Integer.valueOf(2));
 
         PlusResponse result = (PlusResponse) template.requestBody("direct:testHeader", request);
 

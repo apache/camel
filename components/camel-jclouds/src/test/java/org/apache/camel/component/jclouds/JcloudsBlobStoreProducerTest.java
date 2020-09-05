@@ -87,7 +87,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.sendBody("direct:put-and-count", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(1), result);
+        assertEquals(Long.valueOf(1), result);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOB);
         Object result = template.requestBodyAndHeader("direct:put-and-remove", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(0), result);
+        assertEquals(Long.valueOf(0), result);
     }
 
     @Test
@@ -106,12 +106,12 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.sendBody("direct:put-and-clear", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(1), result);
+        assertEquals(Long.valueOf(1), result);
         template.requestBodyAndHeader("direct:put-and-clear", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.CLEAR_CONTAINER);
         result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(0), result);
+        assertEquals(Long.valueOf(0), result);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.sendBody("direct:put-and-delete-container", message);
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(1), result);
+        assertEquals(Long.valueOf(1), result);
         template.requestBodyAndHeader("direct:put-and-delete-container", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.DELETE_CONTAINER);
     }
@@ -142,7 +142,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.sendBody("direct:put", "test message");
         Object result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(1), result);
+        assertEquals(Long.valueOf(1), result);
         List blobsToRemove = new ArrayList<>();
         blobsToRemove.add(TEST_BLOB_IN_DIR);
         Map<String, Object> headers = new HashMap<>();
@@ -152,7 +152,7 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
         template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
         result = template.requestBodyAndHeader("direct:put-and-count", null, JcloudsConstants.OPERATION,
                 JcloudsConstants.COUNT_BLOBS, Long.class);
-        assertEquals(new Long(0), result);
+        assertEquals(Long.valueOf(0), result);
     }
 
     @Override

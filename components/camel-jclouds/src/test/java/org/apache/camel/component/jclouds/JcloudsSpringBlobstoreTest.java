@@ -79,19 +79,19 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
     @Test
     public void testBlobStoreCount() throws InterruptedException {
         Long count = template.requestBody("direct:count", "Some message", Long.class);
-        assertEquals(new Long(1), count);
+        assertEquals(Long.valueOf(1), count);
     }
 
     @Test
     public void testBlobStoreRemove() throws InterruptedException {
         Long count = template.requestBody("direct:remove", "Some message", Long.class);
-        assertEquals(new Long(0), count);
+        assertEquals(Long.valueOf(0), count);
     }
 
     @Test
     public void testBlobStoreClear() throws InterruptedException {
         Long count = template.requestBody("direct:clear", "Some message", Long.class);
-        assertEquals(new Long(0), count);
+        assertEquals(Long.valueOf(0), count);
     }
 
     @Test
@@ -118,6 +118,6 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);
         template.sendBodyAndHeaders("direct:remove-blobs", null, headers);
         Long count = template.requestBody("direct:count-after-remove-blobs", null, Long.class);
-        assertEquals(new Long(0), count);
+        assertEquals(Long.valueOf(0), count);
     }
 }

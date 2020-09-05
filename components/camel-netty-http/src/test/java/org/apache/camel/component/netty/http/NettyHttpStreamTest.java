@@ -107,7 +107,7 @@ final class Helper {
             total += read;
         }
 
-        exchange.getIn().setBody(new Long(total));
+        exchange.getIn().setBody(Long.valueOf(total));
     }
 
     public static CompletableFuture<Void> asyncProcessStream(Exchange exchange) {
