@@ -148,7 +148,7 @@ public abstract class ApiMethodParser<T> {
             // void is not a valid return type
             String rt = returnType != null ? returnType : methodMatcher.group(1);
             // use Object as return type which is what the existing behaviour was using
-            final Class<?> resultType = !"void".equals(rt) ? forName(rt) : Object.class;
+            final Class<?> resultType = !"void".equals(rt) ? forName(rt) : void.class;
             final String name = methodMatcher.group(7);
             final String argSignature = methodMatcher.group(8);
 

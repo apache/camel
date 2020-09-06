@@ -84,7 +84,7 @@
                                     <apiName />
                                     <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
                                     <fromJavasource>
-                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets
+                                        <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets|createMappe
                                         </excludeMethods>
                                     </fromJavasource>
                                     <substitutions>
