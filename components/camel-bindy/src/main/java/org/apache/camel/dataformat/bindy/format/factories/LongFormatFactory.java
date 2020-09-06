@@ -50,7 +50,7 @@ public class LongFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Long parse(String string) throws Exception {
-            return new Long(string);
+            return Long.valueOf(string);
         }
 
     }

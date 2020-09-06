@@ -50,7 +50,7 @@ public class ShortFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Short parse(String string) throws Exception {
-            return new Short(string);
+            return Short.valueOf(string);
         }
 
     }

@@ -46,6 +46,6 @@ public class GoraUtilsTest {
     public void getAttributeAsLongShouldSReturnTheCorrectValue() throws Exception {
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setLimit(3L);
-        assertEquals(new Long(3), GoraUtils.getAttributeAsLong(GoraAttribute.GORA_QUERY_LIMIT, conf));
+        assertEquals(Long.valueOf(3), GoraUtils.getAttributeAsLong(GoraAttribute.GORA_QUERY_LIMIT, conf));
     }
 }

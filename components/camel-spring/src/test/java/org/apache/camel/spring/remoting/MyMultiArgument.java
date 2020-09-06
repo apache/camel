@@ -24,7 +24,7 @@ public class MyMultiArgument {
     MyMultiArgumentServiceInterface myMultiArgumentServiceInterface;
 
     public void doSomethingMultiple() {
-        myMultiArgumentServiceInterface.doSomething("Hello World 1", "Hello World 2", new Long(3));
+        myMultiArgumentServiceInterface.doSomething("Hello World 1", "Hello World 2", Long.valueOf(3));
     }
 
 }
