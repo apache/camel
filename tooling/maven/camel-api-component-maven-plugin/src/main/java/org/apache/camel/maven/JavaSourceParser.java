@@ -22,12 +22,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaDocTag;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
+import org.jboss.forge.roaster.model.source.TypeVariableSource;
 
 import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 
@@ -74,7 +77,7 @@ public class JavaSourceParser {
                 for (int i = 0; i < list.size(); i++) {
                     ParameterSource ps = list.get(i);
                     String name = ps.getName();
-                    String type = resolveType(clazz, ps.getType().getQualifiedNameWithGenerics());
+                    String type = resolveType(clazz, ms, ps.getType());
                     if (type.startsWith("java.lang.")) {
                         type = type.substring(10);
                     }
@@ -105,6 +108,34 @@ public class JavaSourceParser {
             methods.add(signature);
             methodText.put(ms.getName(), signature);
         }
+    }
+
+    private static String resolveType(JavaClassSource clazz, MethodSource ms, Type type) {
+        String name = type.getName();
+        // if the type is from a type variable (eg T extends Foo generic style)
+        // then the type should be returned as-is
+        TypeVariableSource tv = ms.getTypeVariable(name);
+        if (tv == null) {
+            clazz.getTypeVariable(name);
+        }
+        if (tv != null) {
+            return type.getName();
+        }
+
+        String answer = resolveType(clazz, name);
+        List<Type> types = type.getTypeArguments();
+        if (!types.isEmpty()) {
+            if (type.isArray()) {
+                answer = type.getQualifiedNameWithGenerics();
+            } else {
+                StringJoiner sj = new StringJoiner(", ");
+                for (Type arg : types) {
+                    sj.add(resolveType(clazz, ms, arg));
+                }
+                answer = answer + "<" + sj.toString() + ">";
+            }
+        }
+        return answer;
     }
 
     private static String resolveType(JavaClassSource clazz, String type) {

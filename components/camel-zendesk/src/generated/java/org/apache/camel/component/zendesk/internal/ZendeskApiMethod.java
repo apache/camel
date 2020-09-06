@@ -114,10 +114,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         "createMacro",
         arg("macro", org.zendesk.client.v2.model.Macro.class)),
 
-    CREATE_MAPPER(
-        com.fasterxml.jackson.databind.ObjectMapper.class,
-        "createMapper"),
-
     CREATE_OR_UPDATE_USER(
         org.zendesk.client.v2.model.User.class,
         "createOrUpdateUser",
