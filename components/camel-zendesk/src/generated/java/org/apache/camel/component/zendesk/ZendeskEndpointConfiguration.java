@@ -87,7 +87,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long itemId;
     @UriParam
-    private java.util.List labels;
+    private java.util.List<String> labels;
     @UriParam
     private String locale;
     @UriParam
@@ -109,11 +109,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long organizationId;
     @UriParam
-    private java.util.List organizationList;
+    private java.util.List<org.zendesk.client.v2.model.Organization> organizationList;
     @UriParam
     private org.zendesk.client.v2.model.OrganizationMembership organizationMembership;
     @UriParam
-    private java.util.List organizationMembershipList;
+    private java.util.List<org.zendesk.client.v2.model.OrganizationMembership> organizationMembershipList;
     @UriParam
     private org.zendesk.client.v2.model.OrganizationMembership[] organizationMemberships;
     @UriParam
@@ -127,7 +127,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private String parameters;
     @UriParam
-    private java.util.Map params;
+    private java.util.Map<String,Object> params;
     @UriParam
     private org.zendesk.client.v2.model.hc.PermissionGroup permissionGroup;
     @UriParam
@@ -161,7 +161,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.JobStatus status;
     @UriParam
-    private java.util.List statuses;
+    private java.util.List<org.zendesk.client.v2.model.JobStatus> statuses;
     @UriParam
     private String[] tags;
     @UriParam
@@ -177,7 +177,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.TicketImport ticketImport;
     @UriParam
-    private java.util.List ticketList;
+    private java.util.List<org.zendesk.client.v2.model.Ticket> ticketList;
     @UriParam
     private org.zendesk.client.v2.model.Ticket[] tickets;
     @UriParam
@@ -193,7 +193,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long tweetId;
     @UriParam
-    private Class type;
+    private Class<?> type;
     @UriParam
     private Long unixEpochTime;
     @UriParam
@@ -207,7 +207,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long userIdThatWillRemain;
     @UriParam
-    private java.util.List userList;
+    private java.util.List<org.zendesk.client.v2.model.User> userList;
     @UriParam
     private org.zendesk.client.v2.model.hc.UserSegment userSegment;
     @UriParam
@@ -215,7 +215,7 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.User[] users;
     @UriParam
-    private java.util.List usersList;
+    private java.util.List<org.zendesk.client.v2.model.User> usersList;
     @UriParam
     private org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant variant;
 
@@ -499,11 +499,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.itemId = itemId;
     }
 
-    public java.util.List getLabels() {
+    public java.util.List<String> getLabels() {
         return labels;
     }
 
-    public void setLabels(java.util.List labels) {
+    public void setLabels(java.util.List<String> labels) {
         this.labels = labels;
     }
 
@@ -587,11 +587,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.organizationId = organizationId;
     }
 
-    public java.util.List getOrganizationList() {
+    public java.util.List<org.zendesk.client.v2.model.Organization> getOrganizationList() {
         return organizationList;
     }
 
-    public void setOrganizationList(java.util.List organizationList) {
+    public void setOrganizationList(java.util.List<org.zendesk.client.v2.model.Organization> organizationList) {
         this.organizationList = organizationList;
     }
 
@@ -603,11 +603,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.organizationMembership = organizationMembership;
     }
 
-    public java.util.List getOrganizationMembershipList() {
+    public java.util.List<org.zendesk.client.v2.model.OrganizationMembership> getOrganizationMembershipList() {
         return organizationMembershipList;
     }
 
-    public void setOrganizationMembershipList(java.util.List organizationMembershipList) {
+    public void setOrganizationMembershipList(java.util.List<org.zendesk.client.v2.model.OrganizationMembership> organizationMembershipList) {
         this.organizationMembershipList = organizationMembershipList;
     }
 
@@ -659,11 +659,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.parameters = parameters;
     }
 
-    public java.util.Map getParams() {
+    public java.util.Map<String,Object> getParams() {
         return params;
     }
 
-    public void setParams(java.util.Map params) {
+    public void setParams(java.util.Map<String,Object> params) {
         this.params = params;
     }
 
@@ -795,11 +795,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.status = status;
     }
 
-    public java.util.List getStatuses() {
+    public java.util.List<org.zendesk.client.v2.model.JobStatus> getStatuses() {
         return statuses;
     }
 
-    public void setStatuses(java.util.List statuses) {
+    public void setStatuses(java.util.List<org.zendesk.client.v2.model.JobStatus> statuses) {
         this.statuses = statuses;
     }
 
@@ -859,11 +859,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.ticketImport = ticketImport;
     }
 
-    public java.util.List getTicketList() {
+    public java.util.List<org.zendesk.client.v2.model.Ticket> getTicketList() {
         return ticketList;
     }
 
-    public void setTicketList(java.util.List ticketList) {
+    public void setTicketList(java.util.List<org.zendesk.client.v2.model.Ticket> ticketList) {
         this.ticketList = ticketList;
     }
 
@@ -923,11 +923,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.tweetId = tweetId;
     }
 
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
-    public void setType(Class type) {
+    public void setType(Class<?> type) {
         this.type = type;
     }
 
@@ -979,11 +979,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.userIdThatWillRemain = userIdThatWillRemain;
     }
 
-    public java.util.List getUserList() {
+    public java.util.List<org.zendesk.client.v2.model.User> getUserList() {
         return userList;
     }
 
-    public void setUserList(java.util.List userList) {
+    public void setUserList(java.util.List<org.zendesk.client.v2.model.User> userList) {
         this.userList = userList;
     }
 
@@ -1011,11 +1011,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.users = users;
     }
 
-    public java.util.List getUsersList() {
+    public java.util.List<org.zendesk.client.v2.model.User> getUsersList() {
         return usersList;
     }
 
-    public void setUsersList(java.util.List usersList) {
+    public void setUsersList(java.util.List<org.zendesk.client.v2.model.User> usersList) {
         this.usersList = usersList;
     }
 
