@@ -566,5 +566,28 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "labels":
+        case "Labels": return java.lang.String.class;
+        case "organizationlist":
+        case "OrganizationList": return org.zendesk.client.v2.model.Organization.class;
+        case "organizationmembershiplist":
+        case "OrganizationMembershipList": return org.zendesk.client.v2.model.OrganizationMembership.class;
+        case "params":
+        case "Params": return java.lang.Object.class;
+        case "statuses":
+        case "Statuses": return org.zendesk.client.v2.model.JobStatus.class;
+        case "ticketlist":
+        case "TicketList": return org.zendesk.client.v2.model.Ticket.class;
+        case "userlist":
+        case "UserList": return org.zendesk.client.v2.model.User.class;
+        case "userslist":
+        case "UsersList": return org.zendesk.client.v2.model.User.class;
+        default: return null;
+        }
+    }
 }
 
