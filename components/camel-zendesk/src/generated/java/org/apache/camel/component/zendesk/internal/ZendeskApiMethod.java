@@ -38,19 +38,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("id", long.class),
         arg("tags", new String[0].getClass())),
 
-    ASSOCIATE_ATTACHMENTS_TO_ARTICLE(
-        void.class,
-        "associateAttachmentsToArticle",
-        arg("idArticle", String.class),
-        arg("attachments", java.util.List.class)),
-
-    CHANGE_USER_PASSWORD(
-        void.class,
-        "changeUserPassword",
-        arg("user", org.zendesk.client.v2.model.User.class),
-        arg("oldPassword", String.class),
-        arg("newPassword", String.class)),
-
     CREATE_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
         "createArticle",
@@ -126,6 +113,10 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Macro.class,
         "createMacro",
         arg("macro", org.zendesk.client.v2.model.Macro.class)),
+
+    CREATE_MAPPER(
+        com.fasterxml.jackson.databind.ObjectMapper.class,
+        "createMapper"),
 
     CREATE_OR_UPDATE_USER(
         org.zendesk.client.v2.model.User.class,
@@ -352,246 +343,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.asynchttpclient.ListenableFuture.class,
         "createUsersAsync",
         arg("userList", java.util.List.class)),
-
-    DELETE_ARTICLE(
-        void.class,
-        "deleteArticle",
-        arg("article", org.zendesk.client.v2.model.hc.Article.class)),
-
-    DELETE_ARTICLE_ATTACHMENT(
-        void.class,
-        "deleteArticleAttachment",
-        arg("articleAttachments", org.zendesk.client.v2.model.hc.ArticleAttachments.class)),
-
-    DELETE_ARTICLE_ATTACHMENT_1(
-        void.class,
-        "deleteArticleAttachment",
-        arg("id", long.class)),
-
-    DELETE_ATTACHMENT(
-        void.class,
-        "deleteAttachment",
-        arg("attachment", org.zendesk.client.v2.model.Attachment.class)),
-
-    DELETE_ATTACHMENT_1(
-        void.class,
-        "deleteAttachment",
-        arg("id", long.class)),
-
-    DELETE_AUTOMATION(
-        void.class,
-        "deleteAutomation",
-        arg("automationId0", long.class)),
-
-    DELETE_CATEGORY(
-        void.class,
-        "deleteCategory",
-        arg("category", org.zendesk.client.v2.model.hc.Category.class)),
-
-    DELETE_DYNAMIC_CONTENT_ITEM(
-        void.class,
-        "deleteDynamicContentItem",
-        arg("item", org.zendesk.client.v2.model.dynamic.DynamicContentItem.class)),
-
-    DELETE_DYNAMIC_CONTENT_ITEM_VARIANT(
-        void.class,
-        "deleteDynamicContentItemVariant",
-        arg("itemId", Long.class),
-        arg("variant", org.zendesk.client.v2.model.dynamic.DynamicContentItemVariant.class)),
-
-    DELETE_FORUM(
-        void.class,
-        "deleteForum",
-        arg("forum", org.zendesk.client.v2.model.Forum.class)),
-
-    DELETE_GROUP(
-        void.class,
-        "deleteGroup",
-        arg("group", org.zendesk.client.v2.model.Group.class)),
-
-    DELETE_GROUP_1(
-        void.class,
-        "deleteGroup",
-        arg("id", long.class)),
-
-    DELETE_GROUP_MEMBERSHIP(
-        void.class,
-        "deleteGroupMembership",
-        arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
-
-    DELETE_GROUP_MEMBERSHIP_1(
-        void.class,
-        "deleteGroupMembership",
-        arg("id", long.class)),
-
-    DELETE_GROUP_MEMBERSHIP_2(
-        void.class,
-        "deleteGroupMembership",
-        arg("user_id", long.class),
-        arg("groupMembership", org.zendesk.client.v2.model.GroupMembership.class)),
-
-    DELETE_GROUP_MEMBERSHIP_3(
-        void.class,
-        "deleteGroupMembership",
-        arg("user_id", long.class),
-        arg("group_membership_id", long.class)),
-
-    DELETE_ORGANIZATION(
-        void.class,
-        "deleteOrganization",
-        arg("id", long.class)),
-
-    DELETE_ORGANIZATION_1(
-        void.class,
-        "deleteOrganization",
-        arg("organization", org.zendesk.client.v2.model.Organization.class)),
-
-    DELETE_ORGANIZATION_MEMBERSHIP(
-        void.class,
-        "deleteOrganizationMembership",
-        arg("id", long.class)),
-
-    DELETE_ORGANIZATION_MEMBERSHIP_1(
-        void.class,
-        "deleteOrganizationMembership",
-        arg("user_id", long.class),
-        arg("organizationMembership", org.zendesk.client.v2.model.OrganizationMembership.class)),
-
-    DELETE_ORGANIZATION_MEMBERSHIP_2(
-        void.class,
-        "deleteOrganizationMembership",
-        arg("user_id", long.class),
-        arg("organization_membership_id", long.class)),
-
-    DELETE_ORGANIZATION_MEMBERSHIPS(
-        void.class,
-        "deleteOrganizationMemberships",
-        arg("id", long.class),
-        arg("ids", new long[0].getClass())),
-
-    DELETE_PERMISSION_GROUP(
-        void.class,
-        "deletePermissionGroup",
-        arg("id", long.class)),
-
-    DELETE_PERMISSION_GROUP_1(
-        void.class,
-        "deletePermissionGroup",
-        arg("permissionGroup", org.zendesk.client.v2.model.hc.PermissionGroup.class)),
-
-    DELETE_SECTION(
-        void.class,
-        "deleteSection",
-        arg("section", org.zendesk.client.v2.model.hc.Section.class)),
-
-    DELETE_SUSPENDED_TICKET(
-        void.class,
-        "deleteSuspendedTicket",
-        arg("id", long.class)),
-
-    DELETE_SUSPENDED_TICKET_1(
-        void.class,
-        "deleteSuspendedTicket",
-        arg("suspendedTicket", org.zendesk.client.v2.model.SuspendedTicket.class)),
-
-    DELETE_TARGET(
-        void.class,
-        "deleteTarget",
-        arg("targetId", long.class)),
-
-    DELETE_TICKET(
-        void.class,
-        "deleteTicket",
-        arg("id", long.class)),
-
-    DELETE_TICKET_1(
-        void.class,
-        "deleteTicket",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
-
-    DELETE_TICKET_FIELD(
-        void.class,
-        "deleteTicketField",
-        arg("field", org.zendesk.client.v2.model.Field.class)),
-
-    DELETE_TICKET_FIELD_1(
-        void.class,
-        "deleteTicketField",
-        arg("id", long.class)),
-
-    DELETE_TICKETS(
-        void.class,
-        "deleteTickets",
-        arg("id", long.class),
-        arg("ids", new long[0].getClass())),
-
-    DELETE_TOPIC(
-        void.class,
-        "deleteTopic",
-        arg("topic", org.zendesk.client.v2.model.Topic.class)),
-
-    DELETE_TRANSLATION(
-        void.class,
-        "deleteTranslation",
-        arg("translation", org.zendesk.client.v2.model.hc.Translation.class)),
-
-    DELETE_TRANSLATION_1(
-        void.class,
-        "deleteTranslation",
-        arg("translationId", Long.class)),
-
-    DELETE_TRIGGER(
-        void.class,
-        "deleteTrigger",
-        arg("triggerId", long.class)),
-
-    DELETE_UPLOAD(
-        void.class,
-        "deleteUpload",
-        arg("token", String.class)),
-
-    DELETE_UPLOAD_1(
-        void.class,
-        "deleteUpload",
-        arg("upload", org.zendesk.client.v2.model.Attachment.Upload.class)),
-
-    DELETE_USER(
-        void.class,
-        "deleteUser",
-        arg("id", long.class)),
-
-    DELETE_USER_1(
-        void.class,
-        "deleteUser",
-        arg("user", org.zendesk.client.v2.model.User.class)),
-
-    DELETE_USER_IDENTITY(
-        void.class,
-        "deleteUserIdentity",
-        arg("user", org.zendesk.client.v2.model.User.class),
-        arg("identity", org.zendesk.client.v2.model.Identity.class)),
-
-    DELETE_USER_IDENTITY_1(
-        void.class,
-        "deleteUserIdentity",
-        arg("user", org.zendesk.client.v2.model.User.class),
-        arg("identityId", long.class)),
-
-    DELETE_USER_IDENTITY_2(
-        void.class,
-        "deleteUserIdentity",
-        arg("userId", long.class),
-        arg("identityId", long.class)),
-
-    DELETE_USER_SEGMENT(
-        void.class,
-        "deleteUserSegment",
-        arg("id", long.class)),
-
-    DELETE_USER_SEGMENT_1(
-        void.class,
-        "deleteUserSegment",
-        arg("userSegment", org.zendesk.client.v2.model.hc.UserSegment.class)),
 
     GET_ARTICLE(
         org.zendesk.client.v2.model.hc.Article.class,
@@ -1409,44 +1160,11 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("ticketId", long.class),
         arg("macroId", long.class)),
 
-    MAKE_PRIVATE_TICKET_AUDIT(
-        void.class,
-        "makePrivateTicketAudit",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
-        arg("audit", org.zendesk.client.v2.model.Audit.class)),
-
-    MAKE_PRIVATE_TICKET_AUDIT_1(
-        void.class,
-        "makePrivateTicketAudit",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
-        arg("id", long.class)),
-
-    MAKE_PRIVATE_TICKET_AUDIT_2(
-        void.class,
-        "makePrivateTicketAudit",
-        arg("ticketId", long.class),
-        arg("auditId", long.class)),
-
-    MARK_TICKET_AS_SPAM(
-        void.class,
-        "markTicketAsSpam",
-        arg("id", long.class)),
-
-    MARK_TICKET_AS_SPAM_1(
-        void.class,
-        "markTicketAsSpam",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class)),
-
     MERGE_USERS(
         org.zendesk.client.v2.model.User.class,
         "mergeUsers",
         arg("userIdThatWillRemain", long.class),
         arg("userIdThatWillBeMerged", long.class)),
-
-    NOTIFY_APP(
-        void.class,
-        "notifyApp",
-        arg("json", String.class)),
 
     PERMANENTLY_DELETE_TICKET(
         org.zendesk.client.v2.model.JobStatus.class,
@@ -1515,18 +1233,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("userId", long.class),
         arg("identityId", long.class)),
 
-    RESET_USER_PASSWORD(
-        void.class,
-        "resetUserPassword",
-        arg("id", long.class),
-        arg("password", String.class)),
-
-    RESET_USER_PASSWORD_1(
-        void.class,
-        "resetUserPassword",
-        arg("user", org.zendesk.client.v2.model.User.class),
-        arg("password", String.class)),
-
     SET_GROUP_MEMBERSHIP_AS_DEFAULT(
         java.util.List.class,
         "setGroupMembershipAsDefault",
@@ -1579,24 +1285,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.User.class,
         "suspendUser",
         arg("id", long.class)),
-
-    TRUST_TICKET_AUDIT(
-        void.class,
-        "trustTicketAudit",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
-        arg("audit", org.zendesk.client.v2.model.Audit.class)),
-
-    TRUST_TICKET_AUDIT_1(
-        void.class,
-        "trustTicketAudit",
-        arg("ticket", org.zendesk.client.v2.model.Ticket.class),
-        arg("id", long.class)),
-
-    TRUST_TICKET_AUDIT_2(
-        void.class,
-        "trustTicketAudit",
-        arg("ticketId", long.class),
-        arg("auditId", long.class)),
 
     UNSUSPEND_USER(
         org.zendesk.client.v2.model.User.class,
@@ -1653,12 +1341,6 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Group.class,
         "updateGroup",
         arg("group", org.zendesk.client.v2.model.Group.class)),
-
-    UPDATE_INSTALLATION(
-        void.class,
-        "updateInstallation",
-        arg("installationId", int.class),
-        arg("json", String.class)),
 
     UPDATE_MACRO(
         org.zendesk.client.v2.model.Macro.class,

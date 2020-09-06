@@ -57,9 +57,25 @@ public class JavaSourceParser {
             if (pos != -1) {
                 String result = signature.substring(pos + 1).trim();
                 // lets use FQN types
-                result = clazz.resolveType(result);
+                if (!"void".equals(result)) {
+                    result = clazz.resolveType(result);
+                }
                 if (result == null || result.isEmpty()) {
                     result = "void";
+                }
+                if (Character.isUpperCase(result.charAt(0))) {
+                    // okay so its maybe an inner class and has import so we need to resolve this more complex
+                    pos = result.lastIndexOf('.');
+                    if (pos != -1) {
+                        String base = result.substring(0, pos);
+                        String remainder = result.substring(pos + 1);
+                        base = clazz.resolveType(base);
+                        result = base + "$" + remainder;
+                    } else {
+                        result = result.replace('.', '$');
+                        // okay no package name so its a local inner class
+                        result = clazz.getPackage() + "." + result;
+                    }
                 }
 
                 List<JavaDocTag> params = ms.getJavaDoc().getTags("@param");
@@ -72,16 +88,28 @@ public class JavaSourceParser {
                     ParameterSource ps = list.get(i);
                     String name = ps.getName();
                     String type = ps.getType().getQualifiedNameWithGenerics();
+                    type = clazz.resolveType(type);
                     if (Character.isUpperCase(type.charAt(0))) {
-                        // okay no package name so its a local inner class
-                        type = clazz.getPackage() + "." + type;
+                        // okay so its maybe an inner class and has import so we need to resolve this more complex
+                        pos = result.lastIndexOf('.');
+                        if (pos != -1) {
+                            String base = type.substring(0, pos);
+                            String remainder = type.substring(pos + 1);
+                            base = clazz.resolveType(base);
+                            type = base + "$" + remainder;
+                        } else {
+                            type = type.replace('.', '$');
+                            // okay no package name so its a local inner class
+                            type = clazz.getPackage() + "." + type;
+                        }
                     }
                     if (type.startsWith("java.lang.")) {
                         type = type.substring(10);
                     }
                     sb.append(type);
-                    if (ps.isVarArgs()) {
-                        sb.append("...");
+                    if (ps.isVarArgs() || ps.getType().isArray()) {
+                        // the old way with javadoc did not use varargs in the signature, so lets transform this to an array style
+                        sb.append("[]");
                     }
                     sb.append(" ").append(name);
                     if (i < list.size() - 1) {
