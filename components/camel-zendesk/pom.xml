@@ -83,10 +83,10 @@
                                 <api>
                                     <apiName />
                                     <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>isClosed|close|getTicketsByStatus|createGroups|importTickets
                                         </excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>deleteSuspendedTicket|checkHasId</method>
@@ -195,7 +195,7 @@
                         <groupId>com.cloudbees.thirdparty</groupId>
                         <artifactId>zendesk-java-client</artifactId>
                         <version>${zendesk-client-version}</version>
-                        <type>javadoc</type>
+                        <classifier>sources</classifier>
                     </dependency>
                 </dependencies>
             </plugin>
