@@ -79,10 +79,15 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
              aClass = aClass.getSuperclass()) {
 
             log.debug("Processing " + aClass.getName());
-            final String sourcePath = aClass.getName().replace('.', '/') + ".java";
+            String sourcePath = aClass.getName();
+            int pos = sourcePath.indexOf('$');
+            if (pos != -1) {
+                sourcePath = sourcePath.substring(0, pos);
+            }
+            sourcePath = sourcePath.replace('.', '/') + ".java";
 
             // read source java text for class
-
+            log.debug("Loading source: " + sourcePath);
             try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(sourcePath)) {
                 if (inputStream == null) {
                     log.debug("Java source not found on classpath for " + aClass.getName());
@@ -99,7 +104,6 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                 }
 
                 // get public method signature
-                final Map<String, String> methodMap = parser.getMethodText();
                 for (String method : parser.getMethods()) {
                     if (!result.containsKey(method)
                             && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
@@ -108,15 +112,12 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                         method = method.replace("public ", "");
                         int whitespace = method.indexOf(' ');
                         int leftBracket = method.indexOf('(');
-                        String resultType = method.substring(0, whitespace);
                         String name = method.substring(whitespace + 1, leftBracket);
-                        if (!"void".equals(resultType)) {
-                            SignatureModel model = new SignatureModel();
-                            model.setSignature(method);
-                            Map<String, String> params = parser.getParameters().get(name);
-                            model.setParameters(params);
-                            result.put(method, model);
-                        }
+                        SignatureModel model = new SignatureModel();
+                        model.setSignature(method);
+                        Map<String, String> params = parser.getParameters().get(name);
+                        model.setParameters(params);
+                        result.put(method, model);
                     }
                 }
             } catch (Exception e) {
