@@ -12,18 +12,22 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel EndpointConfiguration for org.zendesk.client.v2.Zendesk
  */
-@ApiParams(apiName = "DEFAULT", apiMethods = "addTagToOrganisations,addTagToTicket,addTagToTopics,createArticle,createArticleTranslation,createAutomation,createCategory,createCategoryTranslation,createComment,createDynamicContentItem,createDynamicContentItemVariant,createForum,createGroup,createGroupMembership,createMacro,createOrUpdateUser,createOrUpdateUsers,createOrUpdateUsersAsync,createOrganization,createOrganizationMembership,createOrganizationMemberships,createOrganizationMembershipsAsync,createOrganizations,createOrganizationsAsync,createPermissionGroup,createRequest,createSatisfactionRating,createSection,createSectionTranslation,createTarget,createTicket,createTicketAsync,createTicketField,createTicketForm,createTicketFromTweet,createTickets,createTicketsAsync,createTopic,createTrigger,createUpload,createUploadArticle,createUser,createUserIdentity,createUserSegment,createUsers,createUsersAsync,getArticle,getArticleFromSearch,getArticleSubscriptions,getArticleTranslations,getArticles,getArticlesFromAllLabels,getArticlesFromAnyLabels,getArticlesFromPage,getArticlesIncrementally,getAssignableGroupMemberships,getAssignableGroups,getAttachment,getAttachmentsFromArticle,getAuthenticatedUser,getAutoCompleteOrganizations,getAutomation,getAutomations,getBrands,getCCRequests,getCategories,getCategory,getCategoryTranslations,getComplianceDeletionStatuses,getCurrentUser,getCustomAgentRoles,getDeletedTickets,getDynamicContentItem,getDynamicContentItemVariant,getDynamicContentItemVariants,getDynamicContentItems,getForum,getForums,getGroup,getGroupMembership,getGroupMembershipByUser,getGroupMemberships,getGroupOrganization,getGroupUsers,getGroups,getHelpCenterLocales,getHolidaysForSchedule,getIncrementalTicketsResult,getJobStatus,getJobStatusAsync,getJobStatuses,getJobStatusesAsync,getMacro,getMacros,getOpenRequests,getOrganization,getOrganizationFields,getOrganizationMembership,getOrganizationMembershipByUser,getOrganizationMembershipForUser,getOrganizationMemberships,getOrganizationMembershipsForOrg,getOrganizationMembershipsForUser,getOrganizationTickets,getOrganizationUsers,getOrganizations,getOrganizationsIncrementally,getPermissionGroup,getPermissionGroups,getRecentTickets,getRequest,getRequestComment,getRequestComments,getRequests,getSatisfactionRating,getSatisfactionRatings,getSchedule,getSchedules,getSearchResults,getSection,getSectionSubscriptions,getSectionTranslations,getSections,getSolvedRequests,getSuspendedTickets,getTarget,getTargets,getTicket,getTicketAudit,getTicketAudits,getTicketCollaborators,getTicketComments,getTicketField,getTicketFields,getTicketForm,getTicketForms,getTicketIncidents,getTicketMetric,getTicketMetricByTicket,getTicketMetrics,getTickets,getTicketsByExternalId,getTicketsFromSearch,getTicketsIncrementally,getTopic,getTopics,getTopicsByUser,getTrigger,getTriggers,getTwitterMonitors,getUser,getUserCCDTickets,getUserFields,getUserIdentities,getUserIdentity,getUserRelatedInfo,getUserRequestedTickets,getUserRequests,getUserSegment,getUserSegments,getUserSegmentsApplicable,getUserSubscriptions,getUsers,getUsersByRole,getUsersIncrementally,importTicket,importTopic,lookupOrganizationsByExternalId,lookupUserByEmail,lookupUserByExternalId,macrosShowChangesToTicket,macrosShowTicketAfterChanges,mergeUsers,permanentlyDeleteTicket,permanentlyDeleteTickets,permanentlyDeleteUser,queueCreateTicketAsync,removeTagFromOrganisations,removeTagFromTicket,removeTagFromTopics,requestVerifyUserIdentity,setGroupMembershipAsDefault,setOrganizationMembershipAsDefault,setTagOnOrganisations,setTagOnTicket,setTagOnTopics,setUserPrimaryIdentity,suspendUser,unsuspendUser,updateArticle,updateArticleTranslation,updateAutomation,updateCategory,updateCategoryTranslation,updateDynamicContentItem,updateDynamicContentItemVariant,updateForum,updateGroup,updateMacro,updateOrganization,updateOrganizations,updateOrganizationsAsync,updatePermissionGroup,updateRequest,updateSection,updateSectionTranslation,updateTicket,updateTicketField,updateTickets,updateTicketsAsync,updateTopic,updateTrigger,updateUser,updateUserIdentity,updateUserSegment,updateUsers,updateUsersAsync,verifyUserIdentity")
+@ApiParams(apiName = "DEFAULT", apiMethods = "addTagToOrganisations,addTagToTicket,addTagToTopics,associateAttachmentsToArticle,changeUserPassword,createArticle,createArticleTranslation,createAutomation,createCategory,createCategoryTranslation,createComment,createDynamicContentItem,createDynamicContentItemVariant,createForum,createGroup,createGroupMembership,createMacro,createOrUpdateUser,createOrUpdateUsers,createOrUpdateUsersAsync,createOrganization,createOrganizationMembership,createOrganizationMemberships,createOrganizationMembershipsAsync,createOrganizations,createOrganizationsAsync,createPermissionGroup,createRequest,createSatisfactionRating,createSection,createSectionTranslation,createTarget,createTicket,createTicketAsync,createTicketField,createTicketForm,createTicketFromTweet,createTickets,createTicketsAsync,createTopic,createTrigger,createUpload,createUploadArticle,createUser,createUserIdentity,createUserSegment,createUsers,createUsersAsync,deleteArticle,deleteArticleAttachment,deleteAttachment,deleteAutomation,deleteCategory,deleteDynamicContentItem,deleteDynamicContentItemVariant,deleteForum,deleteGroup,deleteGroupMembership,deleteOrganization,deleteOrganizationMembership,deleteOrganizationMemberships,deletePermissionGroup,deleteSection,deleteSuspendedTicket,deleteTarget,deleteTicket,deleteTicketField,deleteTickets,deleteTopic,deleteTranslation,deleteTrigger,deleteUpload,deleteUser,deleteUserIdentity,deleteUserSegment,getArticle,getArticleFromSearch,getArticleSubscriptions,getArticleTranslations,getArticles,getArticlesFromAllLabels,getArticlesFromAnyLabels,getArticlesFromPage,getArticlesIncrementally,getAssignableGroupMemberships,getAssignableGroups,getAttachment,getAttachmentsFromArticle,getAuthenticatedUser,getAutoCompleteOrganizations,getAutomation,getAutomations,getBrands,getCCRequests,getCategories,getCategory,getCategoryTranslations,getComplianceDeletionStatuses,getCurrentUser,getCustomAgentRoles,getDeletedTickets,getDynamicContentItem,getDynamicContentItemVariant,getDynamicContentItemVariants,getDynamicContentItems,getForum,getForums,getGroup,getGroupMembership,getGroupMembershipByUser,getGroupMemberships,getGroupOrganization,getGroupUsers,getGroups,getHelpCenterLocales,getHolidaysForSchedule,getIncrementalTicketsResult,getJobStatus,getJobStatusAsync,getJobStatuses,getJobStatusesAsync,getMacro,getMacros,getOpenRequests,getOrganization,getOrganizationFields,getOrganizationMembership,getOrganizationMembershipByUser,getOrganizationMembershipForUser,getOrganizationMemberships,getOrganizationMembershipsForOrg,getOrganizationMembershipsForUser,getOrganizationTickets,getOrganizationUsers,getOrganizations,getOrganizationsIncrementally,getPermissionGroup,getPermissionGroups,getRecentTickets,getRequest,getRequestComment,getRequestComments,getRequests,getSatisfactionRating,getSatisfactionRatings,getSchedule,getSchedules,getSearchResults,getSection,getSectionSubscriptions,getSectionTranslations,getSections,getSolvedRequests,getSuspendedTickets,getTarget,getTargets,getTicket,getTicketAudit,getTicketAudits,getTicketCollaborators,getTicketComments,getTicketField,getTicketFields,getTicketForm,getTicketForms,getTicketIncidents,getTicketMetric,getTicketMetricByTicket,getTicketMetrics,getTickets,getTicketsByExternalId,getTicketsFromSearch,getTicketsIncrementally,getTopic,getTopics,getTopicsByUser,getTrigger,getTriggers,getTwitterMonitors,getUser,getUserCCDTickets,getUserFields,getUserIdentities,getUserIdentity,getUserRelatedInfo,getUserRequestedTickets,getUserRequests,getUserSegment,getUserSegments,getUserSegmentsApplicable,getUserSubscriptions,getUsers,getUsersByRole,getUsersIncrementally,importTicket,importTopic,lookupOrganizationsByExternalId,lookupUserByEmail,lookupUserByExternalId,macrosShowChangesToTicket,macrosShowTicketAfterChanges,makePrivateTicketAudit,markTicketAsSpam,mergeUsers,notifyApp,permanentlyDeleteTicket,permanentlyDeleteTickets,permanentlyDeleteUser,queueCreateTicketAsync,removeTagFromOrganisations,removeTagFromTicket,removeTagFromTopics,requestVerifyUserIdentity,resetUserPassword,setGroupMembershipAsDefault,setOrganizationMembershipAsDefault,setTagOnOrganisations,setTagOnTicket,setTagOnTopics,setUserPrimaryIdentity,suspendUser,trustTicketAudit,unsuspendUser,updateArticle,updateArticleTranslation,updateAutomation,updateCategory,updateCategoryTranslation,updateDynamicContentItem,updateDynamicContentItemVariant,updateForum,updateGroup,updateInstallation,updateMacro,updateOrganization,updateOrganizations,updateOrganizationsAsync,updatePermissionGroup,updateRequest,updateSection,updateSectionTranslation,updateTicket,updateTicketField,updateTickets,updateTicketsAsync,updateTopic,updateTrigger,updateUser,updateUserIdentity,updateUserSegment,updateUsers,updateUsersAsync,verifyUserIdentity")
 @UriParams
 @Configurer
 public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.hc.Article article;
     @UriParam
+    private org.zendesk.client.v2.model.hc.ArticleAttachments articleAttachments;
+    @UriParam
     private Long articleId;
     @UriParam
     private Long articleId0;
     @UriParam
     private org.zendesk.client.v2.model.Attachment attachment;
+    @UriParam
+    private java.util.List<org.zendesk.client.v2.model.Attachment> attachments;
     @UriParam
     private org.zendesk.client.v2.model.Audit audit;
     @UriParam
@@ -32,6 +36,8 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     private org.zendesk.client.v2.model.Automation automation;
     @UriParam
     private Long automationId;
+    @UriParam
+    private Long automationId0;
     @UriParam
     private org.zendesk.client.v2.model.hc.Category category;
     @UriParam
@@ -73,6 +79,8 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Long id;
     @UriParam
+    private String idArticle;
+    @UriParam
     private org.zendesk.client.v2.model.Identity identity;
     @UriParam
     private Long identityId;
@@ -83,9 +91,13 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private Boolean inline;
     @UriParam
+    private Integer installationId;
+    @UriParam
     private org.zendesk.client.v2.model.dynamic.DynamicContentItem item;
     @UriParam
     private Long itemId;
+    @UriParam
+    private String json;
     @UriParam
     private java.util.List<String> labels;
     @UriParam
@@ -101,7 +113,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private String name;
     @UriParam
+    private String newPassword;
+    @UriParam
     private Boolean notifySubscribers;
+    @UriParam
+    private String oldPassword;
     @UriParam
     private org.zendesk.client.v2.model.SortOrder order;
     @UriParam
@@ -128,6 +144,8 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     private String parameters;
     @UriParam
     private java.util.Map<String,Object> params;
+    @UriParam
+    private String password;
     @UriParam
     private org.zendesk.client.v2.model.hc.PermissionGroup permissionGroup;
     @UriParam
@@ -163,9 +181,13 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private java.util.List<org.zendesk.client.v2.model.JobStatus> statuses;
     @UriParam
+    private org.zendesk.client.v2.model.SuspendedTicket suspendedTicket;
+    @UriParam
     private String[] tags;
     @UriParam
     private org.zendesk.client.v2.model.targets.Target target;
+    @UriParam
+    private Long targetId;
     @UriParam
     private org.zendesk.client.v2.model.Ticket ticket;
     @UriParam
@@ -187,7 +209,11 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     @UriParam
     private org.zendesk.client.v2.model.hc.Translation translation;
     @UriParam
+    private Long translationId;
+    @UriParam
     private org.zendesk.client.v2.model.Trigger trigger;
+    @UriParam
+    private Long triggerId;
     @UriParam
     private Long triggerId0;
     @UriParam
@@ -196,6 +222,8 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
     private Class<?> type;
     @UriParam
     private Long unixEpochTime;
+    @UriParam
+    private org.zendesk.client.v2.model.Attachment.Upload upload;
     @UriParam
     private org.zendesk.client.v2.model.User user;
     @UriParam
@@ -227,6 +255,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.article = article;
     }
 
+    public org.zendesk.client.v2.model.hc.ArticleAttachments getArticleAttachments() {
+        return articleAttachments;
+    }
+
+    public void setArticleAttachments(org.zendesk.client.v2.model.hc.ArticleAttachments articleAttachments) {
+        this.articleAttachments = articleAttachments;
+    }
+
     public Long getArticleId() {
         return articleId;
     }
@@ -249,6 +285,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setAttachment(org.zendesk.client.v2.model.Attachment attachment) {
         this.attachment = attachment;
+    }
+
+    public java.util.List<org.zendesk.client.v2.model.Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(java.util.List<org.zendesk.client.v2.model.Attachment> attachments) {
+        this.attachments = attachments;
     }
 
     public org.zendesk.client.v2.model.Audit getAudit() {
@@ -281,6 +325,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setAutomationId(Long automationId) {
         this.automationId = automationId;
+    }
+
+    public Long getAutomationId0() {
+        return automationId0;
+    }
+
+    public void setAutomationId0(Long automationId0) {
+        this.automationId0 = automationId0;
     }
 
     public org.zendesk.client.v2.model.hc.Category getCategory() {
@@ -443,6 +495,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.id = id;
     }
 
+    public String getIdArticle() {
+        return idArticle;
+    }
+
+    public void setIdArticle(String idArticle) {
+        this.idArticle = idArticle;
+    }
+
     public org.zendesk.client.v2.model.Identity getIdentity() {
         return identity;
     }
@@ -483,6 +543,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.inline = inline;
     }
 
+    public Integer getInstallationId() {
+        return installationId;
+    }
+
+    public void setInstallationId(Integer installationId) {
+        this.installationId = installationId;
+    }
+
     public org.zendesk.client.v2.model.dynamic.DynamicContentItem getItem() {
         return item;
     }
@@ -497,6 +565,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
     }
 
     public java.util.List<String> getLabels() {
@@ -555,12 +631,28 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.name = name;
     }
 
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
     public Boolean getNotifySubscribers() {
         return notifySubscribers;
     }
 
     public void setNotifySubscribers(Boolean notifySubscribers) {
         this.notifySubscribers = notifySubscribers;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
     public org.zendesk.client.v2.model.SortOrder getOrder() {
@@ -665,6 +757,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setParams(java.util.Map<String,Object> params) {
         this.params = params;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public org.zendesk.client.v2.model.hc.PermissionGroup getPermissionGroup() {
@@ -803,6 +903,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.statuses = statuses;
     }
 
+    public org.zendesk.client.v2.model.SuspendedTicket getSuspendedTicket() {
+        return suspendedTicket;
+    }
+
+    public void setSuspendedTicket(org.zendesk.client.v2.model.SuspendedTicket suspendedTicket) {
+        this.suspendedTicket = suspendedTicket;
+    }
+
     public String[] getTags() {
         return tags;
     }
@@ -817,6 +925,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setTarget(org.zendesk.client.v2.model.targets.Target target) {
         this.target = target;
+    }
+
+    public Long getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
     }
 
     public org.zendesk.client.v2.model.Ticket getTicket() {
@@ -899,12 +1015,28 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
         this.translation = translation;
     }
 
+    public Long getTranslationId() {
+        return translationId;
+    }
+
+    public void setTranslationId(Long translationId) {
+        this.translationId = translationId;
+    }
+
     public org.zendesk.client.v2.model.Trigger getTrigger() {
         return trigger;
     }
 
     public void setTrigger(org.zendesk.client.v2.model.Trigger trigger) {
         this.trigger = trigger;
+    }
+
+    public Long getTriggerId() {
+        return triggerId;
+    }
+
+    public void setTriggerId(Long triggerId) {
+        this.triggerId = triggerId;
     }
 
     public Long getTriggerId0() {
@@ -937,6 +1069,14 @@ public final class ZendeskEndpointConfiguration extends ZendeskConfiguration {
 
     public void setUnixEpochTime(Long unixEpochTime) {
         this.unixEpochTime = unixEpochTime;
+    }
+
+    public org.zendesk.client.v2.model.Attachment.Upload getUpload() {
+        return upload;
+    }
+
+    public void setUpload(org.zendesk.client.v2.model.Attachment.Upload upload) {
+        this.upload = upload;
     }
 
     public org.zendesk.client.v2.model.User getUser() {
