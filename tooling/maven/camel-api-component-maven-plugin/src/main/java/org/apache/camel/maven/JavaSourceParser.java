@@ -189,6 +189,8 @@ public class JavaSourceParser {
                     return clazz.getQualifiedName() + "$" + child.replace('.', '$');
                 }
             }
+            String resolvedType = rootClazz.resolveType(parent);
+            return resolvedType + "$" + child;
         }
 
         // okay attempt to resolve the type
