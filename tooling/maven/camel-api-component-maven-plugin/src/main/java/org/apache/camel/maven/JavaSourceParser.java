@@ -46,7 +46,8 @@ public class JavaSourceParser {
     private String errorMessage;
 
     public synchronized void parse(InputStream in, String innerClass) throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(in);
+        JavaClassSource rootClazz = (JavaClassSource) Roaster.parse(in);
+        JavaClassSource clazz = rootClazz;
 
         if (innerClass != null) {
             // we want the inner class from the parent class
@@ -55,7 +56,7 @@ public class JavaSourceParser {
                 clazz = (JavaClassSource) nested;
             }
             if (nested == null) {
-                errorMessage = "Cannot find inner class " + innerClass + " in class: " + clazz.getQualifiedName();
+                errorMessage = "Cannot find inner class " + innerClass + " in class: " + rootClazz.getQualifiedName();
                 return;
             }
         }
@@ -74,12 +75,11 @@ public class JavaSourceParser {
                 String result = signature.substring(pos + 1).trim();
                 // lets use FQN types
                 if (!"void".equals(result)) {
-                    result = clazz.resolveType(result);
+                    result = resolveType(rootClazz, clazz, result);
                 }
-                if (result == null || result.isEmpty()) {
+                if (result.isEmpty()) {
                     result = "void";
                 }
-                result = resolveType(clazz, result);
 
                 List<JavaDocTag> params = ms.getJavaDoc().getTags("@param");
 
@@ -90,7 +90,7 @@ public class JavaSourceParser {
                 for (int i = 0; i < list.size(); i++) {
                     ParameterSource ps = list.get(i);
                     String name = ps.getName();
-                    String type = resolveType(clazz, ms, ps.getType());
+                    String type = resolveType(rootClazz, clazz, ms, ps.getType());
                     if (type.startsWith("java.lang.")) {
                         type = type.substring(10);
                     }
@@ -123,7 +123,7 @@ public class JavaSourceParser {
         }
     }
 
-    private static String resolveType(JavaClassSource clazz, MethodSource ms, Type type) {
+    private static String resolveType(JavaClassSource rootClazz, JavaClassSource clazz, MethodSource ms, Type type) {
         String name = type.getName();
         // if the type is from a type variable (eg T extends Foo generic style)
         // then the type should be returned as-is
@@ -135,7 +135,7 @@ public class JavaSourceParser {
             return type.getName();
         }
 
-        String answer = resolveType(clazz, name);
+        String answer = resolveType(rootClazz, clazz, name);
         List<Type> types = type.getTypeArguments();
         if (!types.isEmpty()) {
             if (type.isArray()) {
@@ -143,7 +143,7 @@ public class JavaSourceParser {
             } else {
                 StringJoiner sj = new StringJoiner(", ");
                 for (Type arg : types) {
-                    sj.add(resolveType(clazz, ms, arg));
+                    sj.add(resolveType(rootClazz, clazz, ms, arg));
                 }
                 answer = answer + "<" + sj.toString() + ">";
             }
@@ -151,26 +151,28 @@ public class JavaSourceParser {
         return answer;
     }
 
-    private static String resolveType(JavaClassSource clazz, String type) {
+    private static String resolveType(JavaClassSource rootClazz, JavaClassSource clazz, String type) {
         if ("void".equals(type)) {
             return "void";
         }
-        type = clazz.resolveType(type);
-        int pos = type.lastIndexOf('.');
-        if (Character.isUpperCase(type.charAt(0))) {
-            // okay so its maybe an inner class and has import so we need to resolve this more complex
-            if (pos != -1) {
-                String base = type.substring(0, pos);
-                String remainder = type.substring(pos + 1);
-                base = clazz.resolveType(base);
-                type = base + "$" + remainder;
-            } else {
-                type = type.replace('.', '$');
-                // okay no package name so its a local inner class
-                type = clazz.getPackage() + "." + type;
-            }
+
+        // workaround bug in Roaster about resolving type that was an inner class
+        // is this an inner class
+        boolean inner = rootClazz.getNestedType(type) != null;
+        if (inner) {
+            return rootClazz.getQualifiedName() + "$" + type;
         }
-        return type;
+        inner = clazz.getNestedType(type) != null;
+        if (inner) {
+            return clazz.getQualifiedName() + "$" + type;
+        }
+
+        // okay attempt to resolve the type
+        String resolvedType = clazz.resolveType(type);
+        if (resolvedType.equals(type)) {
+            resolvedType = rootClazz.resolveType(type);
+        }
+        return resolvedType;
     }
 
     private static String getJavadocValue(List<JavaDocTag> params, String name) {
