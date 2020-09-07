@@ -166,6 +166,30 @@ public class JavaSourceParser {
         if (inner) {
             return clazz.getQualifiedName() + "$" + type;
         }
+        int dot = type.indexOf('.');
+        if (Character.isUpperCase(type.charAt(0)) && dot != -1) {
+            // okay its likely a inner class with a nested sub type, so resolving is even more complex
+            String parent = type.substring(0, dot);
+            String child = type.substring(dot + 1);
+            inner = rootClazz.getNestedType(parent) != null;
+            if (inner) {
+                return rootClazz.getQualifiedName() + "$" + type.replace('.', '$');
+            }
+            inner = clazz.getNestedType(type) != null;
+            if (inner) {
+                return clazz.getQualifiedName() + "$" + type.replace('.', '$');
+            }
+            if (parent.equals(rootClazz.getName())) {
+                inner = rootClazz.getNestedType(child) != null;
+                if (inner) {
+                    return rootClazz.getQualifiedName() + "$" + child.replace('.', '$');
+                }
+                inner = clazz.getNestedType(child) != null;
+                if (inner) {
+                    return clazz.getQualifiedName() + "$" + child.replace('.', '$');
+                }
+            }
+        }
 
         // okay attempt to resolve the type
         String resolvedType = clazz.resolveType(type);
