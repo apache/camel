@@ -174,6 +174,7 @@ public class JavaSourceParser {
 
     private static String sanitizeJavaDocValue(String desc) {
         // remove leading - and whitespaces
+        desc = desc.trim();
         while (desc.startsWith("-")) {
             desc = desc.substring(1);
             desc = desc.trim();
