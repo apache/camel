@@ -6,7 +6,7 @@
 :artifactId: camel-jta
 :description: Using Camel With JTA Transaction Manager
 :since: 3.4
-:supportLevel: Preview
+:supportLevel: Stable
 
 *Since Camel {since}*
 
