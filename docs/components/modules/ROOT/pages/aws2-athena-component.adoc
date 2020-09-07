@@ -6,7 +6,7 @@
 :artifactId: camel-aws2-athena
 :description: Access AWS Athena service using AWS SDK version 2.x.
 :since: 3.4
-:supportLevel: Preview
+:supportLevel: Stable
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AWS 2
