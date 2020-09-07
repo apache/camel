@@ -54,7 +54,7 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
 
     protected String getFromAnnotation(Annotation annotation, String attribute) {
         try {
-            Method method = annotation.getClass().getMethod(attribute);
+            Method method = annotation.annotationType().getDeclaredMethod(attribute);
             Object value = ObjectHelper.invokeMethod(method, annotation);
             if (value == null) {
                 throw new IllegalArgumentException("Cannot determine the " + attribute + " from the annotation: " + annotation);
