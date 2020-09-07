@@ -16,17 +16,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CalendarEventsEndpointConfiguration extends GoogleCalendarConfiguration {
-    @UriParam
+    @UriParam(description = "Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword.")
     private String calendarId;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.calendar.model.Event")
     private com.google.api.services.calendar.model.Event content;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.calendar.model.Channel")
     private com.google.api.services.calendar.model.Channel contentChannel;
-    @UriParam
+    @UriParam(description = "Calendar identifier of the target calendar where the event is to be moved to")
     private String destination;
-    @UriParam
+    @UriParam(description = "Event identifier")
     private String eventId;
-    @UriParam
+    @UriParam(description = "The text describing the event to be created")
     private String text;
 
     public String getCalendarId() {
