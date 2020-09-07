@@ -38,7 +38,7 @@ behavior of the default load balancing policy.
 
 === camel-sjms
 
-The default value for `keepAliveDelay` is changed from `-1` to `5000` in the batch jms consumer.
+The default value for `keepAliveDelay` was changed from `-1` to `5000` in the batch jms consumer.
 
 === camel-weather
 
@@ -48,7 +48,7 @@ A new parameter `geoLocationProvider` was introduced to allow the use of a custo
 
 === Camel Karaf
 
-The following features has been removed due they become not compatible with OSGi: `camel-couchbase`.
+The following feature has been removed due to no longer being compatible with OSGi: `camel-couchbase`.
 
 === LifecycleStrategy
 
