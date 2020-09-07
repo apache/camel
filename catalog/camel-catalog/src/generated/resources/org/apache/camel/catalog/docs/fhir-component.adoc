@@ -197,11 +197,11 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *extraParameters* | See | Map
-| *preferReturn* | Add a | PreferReturnEnum
+| *extraParameters* | See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| *preferReturn* | Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() , may be null | PreferReturnEnum
 | *resource* | The resource to create | IBaseResource
 | *resourceAsString* | The resource to create | String
-| *url* | The search URL to use. The format of this URL should be of the form | String
+| *url* | The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null | String
 |===
 
 
@@ -210,12 +210,12 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *extraParameters* | See | Map
-| *id* | The | IIdType
-| *resource* | The | IBaseResource
+| *extraParameters* | See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| *id* | The IIdType referencing the resource | IIdType
+| *resource* | The IBaseResource to delete | IBaseResource
 | *stringId* | It's id | String
 | *type* | The resource type e.g Patient | String
-| *url* | The search URL to use. The format of this URL should be of the form | String
+| *url* | The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
 
@@ -284,12 +284,12 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *extraParameters* | See | Map
+| *extraParameters* | See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | *id* | The resource ID to patch | IIdType
 | *patchBody* | The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
-| *preferReturn* | Add a | PreferReturnEnum
+| *preferReturn* | Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
 | *stringId* | The resource ID to patch | String
-| *url* | The search URL to use. The format of this URL should be of the form | String
+| *url* | The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
 |===
 
 
@@ -319,7 +319,7 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *extraParameters* | See | Map
+| *extraParameters* | See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | *url* | The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
 |===
 
@@ -330,7 +330,7 @@ The following lists each API name and method and its additional parameters.
 |===
 | Name | Description | Type
 | *bundle* | Bundle to use in the transaction | IBaseBundle
-| *extraParameters* | See | Map
+| *extraParameters* | See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
 | *resources* | Resources to use in the transaction | List
 | *stringBundle* | Bundle to use in the transaction | String
 |===

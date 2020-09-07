@@ -160,10 +160,10 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *calendarId* |  | String
-| *content* |  | AclRule
-| *contentChannel* |  | Channel
-| *ruleId* |  | String
+| *calendarId* | Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| *content* | The com.google.api.services.calendar.model.AclRule | AclRule
+| *contentChannel* | The com.google.api.services.calendar.model.Channel | Channel
+| *ruleId* | ACL rule identifier | String
 |===
 
 
@@ -172,8 +172,8 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *calendarId* |  | String
-| *content* |  | Calendar
+| *calendarId* | Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| *content* | The com.google.api.services.calendar.model.Calendar | Calendar
 |===
 
 
@@ -182,7 +182,7 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *contentChannel* |  | Channel
+| *contentChannel* | The com.google.api.services.calendar.model.Channel | Channel
 |===
 
 
@@ -196,12 +196,12 @@ The colors method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *calendarId* |  | String
-| *content* |  | Event
-| *contentChannel* |  | Channel
-| *destination* |  | String
-| *eventId* |  | String
-| *text* |  | String
+| *calendarId* | Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| *content* | The com.google.api.services.calendar.model.Event | Event
+| *contentChannel* | The com.google.api.services.calendar.model.Channel | Channel
+| *destination* | Calendar identifier of the target calendar where the event is to be moved to | String
+| *eventId* | Event identifier | String
+| *text* | The text describing the event to be created | String
 |===
 
 
@@ -210,7 +210,7 @@ The colors method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | FreeBusyRequest
+| *content* | The com.google.api.services.calendar.model.FreeBusyRequest | FreeBusyRequest
 |===
 
 
@@ -219,9 +219,9 @@ The colors method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *calendarId* |  | String
-| *content* |  | CalendarListEntry
-| *contentChannel* |  | Channel
+| *calendarId* | Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| *content* | The com.google.api.services.calendar.model.CalendarListEntry | CalendarListEntry
+| *contentChannel* | The com.google.api.services.calendar.model.Channel | Channel
 |===
 
 
@@ -230,8 +230,8 @@ The colors method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *contentChannel* |  | Channel
-| *setting* |  | String
+| *contentChannel* | The com.google.api.services.calendar.model.Channel | Channel
+| *setting* | The id of the user setting | String
 |===
 // endpoint options: END
 

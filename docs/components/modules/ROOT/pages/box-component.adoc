@@ -200,7 +200,7 @@ The following lists each API name and method and its additional parameters.
 | Name | Description | Type
 | *after* | The lower bound on the timestamp of the events returned | Date
 | *before* | The upper bound on the timestamp of the events returned | Date
-| *position* | The starting position of the event stream. May be | String
+| *position* | The starting position of the event stream. May be null in which case all events within bounds returned. | String
 | *types* | An optional list of event types to filter by | Type[]
 |===
 
@@ -224,14 +224,14 @@ The following lists each API name and method and its additional parameters.
 | *content* | A stream containing contents of the file to upload | InputStream
 | *created* | The content created date that will be given to the uploaded file | Date
 | *destinationFolderId* | The id of the destination folder | String
-| *fields* | The information fields to retrieve; if | String[]
+| *fields* | The information fields to retrieve; if null all information fields are retrieved. | String[]
 | *fileContent* | A stream containing contents of the file to upload | InputStream
 | *fileId* | The id of file to copy | String
 | *fileName* | The name to give the uploaded file | String
 | *fileSize* | The size of the file's content used for monitoring the upload's progress | Long
 | *fileType* | Either PNG of JPG | ThumbnailFileType
 | *info* | The updated information | Info
-| *listener* | A listener for monitoring the download's progress; if | ProgressListener
+| *listener* | A listener for monitoring the download's progress; if null the download's progress will not be monitored. | ProgressListener
 | *maxHeight* | Maximum height | Integer
 | *maxWidth* | Maximum width | Integer
 | *metadata* | The new metadata values | Metadata
@@ -239,16 +239,16 @@ The following lists each API name and method and its additional parameters.
 | *minWidth* | Minimum width | Integer
 | *modified* | The content modified date that will be given to the uploaded file | Date
 | *newFileName* | The new name of file | String
-| *newName* | Is | String
+| *newName* | The new name for copied file; if newName is null, the copied file has same name as the original. | String
 | *output* | The stream to which the file contents will be written | OutputStream
 | *parentFolderId* | The id of parent folder | String
-| *permissions* | Is | Permissions
-| *rangeEnd* | The byte offset in file at which to stop the download; if | Long
-| *rangeStart* | The byte offset in file at which to start the download; if | Long
-| *size* | The size of the file's content used for monitoring the upload's progress.Skip navigation links | Long
-| *typeName* | The metadata template type name; if | String
-| *unshareDate* | The date and time at which time the created shared link will expire; if | Date
-| *version* | The version of file to delete; initial version of file has value of | Integer
+| *permissions* | The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
+| *rangeEnd* | The byte offset in file at which to stop the download; if null the entire contents of file will be downloaded. | Long
+| *rangeStart* | The byte offset in file at which to start the download; if null the entire contents of file will be downloaded. | Long
+| *size* | The size of the file's content used for monitoring the upload's progress | Long
+| *typeName* | The metadata template type name; if null the global properties template type is used. | String
+| *unshareDate* | The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
+| *version* | The version of file to delete; initial version of file has value of 0, second version of file is 1 and so on. | Integer
 |===
 
 
@@ -259,18 +259,18 @@ The following lists each API name and method and its additional parameters.
 | Name | Description | Type
 | *access* | The access level of the shared link | Access
 | *destinationFolderId* | The id of the destination folder | String
-| *fields* | The information fields to retrieve; if | String[]
+| *fields* | The information fields to retrieve; if null all information fields are retrieved. | String[]
 | *folderId* | The id of folder to copy | String
 | *folderName* | The name of created folder | String
 | *info* | The updated information | Info
-| *limit* | The maximum number of children to retrieve after the offset; if | Long
+| *limit* | The maximum number of children to retrieve after the offset; if null all child items are retrieved. | Long
 | *newFolderName* | The new name of folder | String
-| *newName* | Is | String
-| *offset* | The index of first child item to retrieve; if | Long
+| *newName* | The new name for copied folder; if newName is null, the copied folder has same name as the original. | String
+| *offset* | The index of first child item to retrieve; if null all child items are retrieved. | Long
 | *parentFolderId* | The id of parent folder | String
 | *path* | Sequence of Box folder names from parent folder to returned folder | String[]
-| *permissions* | Is | Permissions
-| *unshareDate* | The date and time at which time the created shared link will expire; if | Date
+| *permissions* | The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
+| *unshareDate* | The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
 |===
 
 
@@ -289,7 +289,7 @@ The following lists each API name and method and its additional parameters.
 | *memberViewabilityLevel* | The member_viewability_level of the new group | String
 | *name* | The name of the new group | String
 | *provenance* | The provenance of the new group | String
-| *role* | The role of the user in this group. Can be | Role
+| *role* | The role of the user in this group. Can be null to assign the default role. | Role
 | *userId* | The id of user to be added to group | String
 |===
 
@@ -315,7 +315,7 @@ The following lists each API name and method and its additional parameters.
 | *fileId* | The id of file to add task to | String
 | *info* | The updated information | Info
 | *message* | An optional message to include with the task | String
-| *taskAssignmentId* | The id of task assignment to delete.Skip navigation links | String
+| *taskAssignmentId* | The id of task assignment to delete | String
 | *taskId* | The id of task to add assignment for | String
 |===
 
@@ -328,14 +328,14 @@ The following lists each API name and method and its additional parameters.
 | *email* | The email address to add as an alias | String
 | *emailAliasId* | The id of the email alias to delete | String
 | *fields* | The fields to retrieve. Leave this out for the standard fields. | String[]
-| *filterTerm* | The filter term to lookup users by (login for external, login or name for managed); if | String
+| *filterTerm* | The filter term to lookup users by (login for external, login or name for managed); if null all managed users are returned. | String
 | *force* | Whether or not this user should be deleted even if they still own files | Boolean
 | *info* | The updated information | Info
 | *login* | The email address the user will use to login | String
 | *name* | The name of the user | String
 | *notifyUser* | Whether or not to send an email notification to the user that their account has been deleted | Boolean
 | *params* | Additional user information | CreateUserParams
-| *sourceUserId* | The user id of the user whose files will be the source for this operation.Skip navigation links | String
+| *sourceUserId* | The user id of the user whose files will be the source for this operation | String
 | *userId* | The id of user | String
 |===
 // endpoint options: END
