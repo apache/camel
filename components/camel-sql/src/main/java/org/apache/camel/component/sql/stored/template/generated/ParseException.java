@@ -38,6 +38,7 @@ public class ParseException extends Exception {
      */
 
     public ParseException() {
+        super();
     }
 
     /** Constructor with message. */
