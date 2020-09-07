@@ -34,7 +34,7 @@ public class ApiComponentModelTest {
 
         Assertions.assertNotNull(model);
         Assertions.assertTrue(model.isApi());
-        Assertions.assertEquals("apiName", model.getApiPropertyQualifier());
+        Assertions.assertEquals("apiName/methodName", model.getApiPropertyQualifier());
         Assertions.assertEquals(56, model.getApiOptions().size());
         Assertions.assertEquals(7, model.getApiOptions().get("call").size());
     }
