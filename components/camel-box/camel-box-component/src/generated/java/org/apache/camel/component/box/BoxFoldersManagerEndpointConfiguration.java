@@ -20,7 +20,7 @@ public final class BoxFoldersManagerEndpointConfiguration extends BoxConfigurati
     private com.box.sdk.BoxSharedLink.Access access;
     @UriParam(description = "The id of the destination folder")
     private String destinationFolderId;
-    @UriParam(description = "The information fields to retrieve; if")
+    @UriParam(description = "The information fields to retrieve; if null all information fields are retrieved.")
     private String[] fields;
     @UriParam(description = "The id of folder to copy")
     private String folderId;
@@ -28,21 +28,21 @@ public final class BoxFoldersManagerEndpointConfiguration extends BoxConfigurati
     private String folderName;
     @UriParam(description = "The updated information")
     private com.box.sdk.BoxFolder.Info info;
-    @UriParam(description = "The maximum number of children to retrieve after the offset; if")
+    @UriParam(description = "The maximum number of children to retrieve after the offset; if null all child items are retrieved.")
     private Long limit;
     @UriParam(description = "The new name of folder")
     private String newFolderName;
-    @UriParam(description = "Is")
+    @UriParam(description = "The new name for copied folder; if newName is null, the copied folder has same name as the original.")
     private String newName;
-    @UriParam(description = "The index of first child item to retrieve; if")
+    @UriParam(description = "The index of first child item to retrieve; if null all child items are retrieved.")
     private Long offset;
     @UriParam(description = "The id of parent folder")
     private String parentFolderId;
     @UriParam(description = "Sequence of Box folder names from parent folder to returned folder")
     private String[] path;
-    @UriParam(description = "Is")
+    @UriParam(description = "The permissions of the created link; if permissions is null then the created shared link is create with default permissions.")
     private com.box.sdk.BoxSharedLink.Permissions permissions;
-    @UriParam(description = "The date and time at which time the created shared link will expire; if")
+    @UriParam(description = "The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created.")
     private java.util.Date unshareDate;
 
     public com.box.sdk.BoxSharedLink.Access getAccess() {

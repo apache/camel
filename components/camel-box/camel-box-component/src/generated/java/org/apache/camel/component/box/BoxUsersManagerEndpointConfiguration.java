@@ -22,7 +22,7 @@ public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration
     private String emailAliasId;
     @UriParam(description = "The fields to retrieve. Leave this out for the standard fields.")
     private String[] fields;
-    @UriParam(description = "The filter term to lookup users by (login for external, login or name for managed); if")
+    @UriParam(description = "The filter term to lookup users by (login for external, login or name for managed); if null all managed users are returned.")
     private String filterTerm;
     @UriParam(description = "Whether or not this user should be deleted even if they still own files")
     private Boolean force;
@@ -36,7 +36,7 @@ public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration
     private Boolean notifyUser;
     @UriParam(description = "Additional user information")
     private com.box.sdk.CreateUserParams params;
-    @UriParam(description = "The user id of the user whose files will be the source for this operation.Skip navigation links")
+    @UriParam(description = "The user id of the user whose files will be the source for this operation")
     private String sourceUserId;
     @UriParam(description = "The id of user")
     private String userId;

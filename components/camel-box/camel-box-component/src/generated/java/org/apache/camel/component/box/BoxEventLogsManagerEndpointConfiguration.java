@@ -20,7 +20,7 @@ public final class BoxEventLogsManagerEndpointConfiguration extends BoxConfigura
     private java.util.Date after;
     @UriParam(description = "The upper bound on the timestamp of the events returned")
     private java.util.Date before;
-    @UriParam(description = "The starting position of the event stream. May be")
+    @UriParam(description = "The starting position of the event stream. May be null in which case all events within bounds returned.")
     private String position;
     @UriParam(description = "An optional list of event types to filter by")
     private com.box.sdk.BoxEvent.Type[] types;

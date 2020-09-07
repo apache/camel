@@ -36,7 +36,7 @@ public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguratio
     private String name;
     @UriParam(description = "The provenance of the new group")
     private String provenance;
-    @UriParam(description = "The role of the user in this group. Can be")
+    @UriParam(description = "The role of the user in this group. Can be null to assign the default role.")
     private com.box.sdk.BoxGroupMembership.Role role;
     @UriParam(description = "The id of user to be added to group")
     private String userId;
