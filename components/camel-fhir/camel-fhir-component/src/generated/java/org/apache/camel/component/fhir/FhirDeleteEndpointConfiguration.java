@@ -16,17 +16,17 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class FhirDeleteEndpointConfiguration extends FhirConfiguration {
-    @UriParam(description = "See")
+    @UriParam(description = "See ExtraParameters for a full list of parameters that can be passed, may be NULL")
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-    @UriParam(description = "The")
+    @UriParam(description = "The IIdType referencing the resource")
     private org.hl7.fhir.instance.model.api.IIdType id;
-    @UriParam(description = "The")
+    @UriParam(description = "The IBaseResource to delete")
     private org.hl7.fhir.instance.model.api.IBaseResource resource;
     @UriParam(description = "It's id")
     private String stringId;
     @UriParam(description = "The resource type e.g Patient")
     private String type;
-    @UriParam(description = "The search URL to use. The format of this URL should be of the form")
+    @UriParam(description = "The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366")
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {
