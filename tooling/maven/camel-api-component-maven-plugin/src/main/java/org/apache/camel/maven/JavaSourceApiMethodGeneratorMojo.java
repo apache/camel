@@ -80,8 +80,10 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
 
             log.debug("Processing " + aClass.getName());
             String sourcePath = aClass.getName();
+            String nestedClass = null;
             int pos = sourcePath.indexOf('$');
             if (pos != -1) {
+                nestedClass = sourcePath.substring(pos + 1);
                 sourcePath = sourcePath.substring(0, pos);
             }
             sourcePath = sourcePath.replace('.', '/') + ".java";
@@ -95,7 +97,7 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                 }
 
                 JavaSourceParser parser = new JavaSourceParser();
-                parser.parse(inputStream);
+                parser.parse(inputStream, nestedClass);
 
                 // look for parse errors
                 final String parseError = parser.getErrorMessage();

@@ -31,7 +31,7 @@ public class JavaSourceParserTest {
     public void testGetMethodsAddress() throws Exception {
         final JavaSourceParser parser = new JavaSourceParser();
 
-        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/AddressGateway.java"));
+        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/AddressGateway.java"), null);
         assertEquals(4, parser.getMethods().size());
 
         assertEquals(
@@ -49,7 +49,7 @@ public class JavaSourceParserTest {
     public void testGetMethodsCustomer() throws Exception {
         final JavaSourceParser parser = new JavaSourceParser();
 
-        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/CustomerGateway.java"));
+        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/CustomerGateway.java"), null);
         assertEquals(7, parser.getMethods().size());
 
         assertEquals(
@@ -66,7 +66,7 @@ public class JavaSourceParserTest {
     public void testGetMethodsDispute() throws Exception {
         final JavaSourceParser parser = new JavaSourceParser();
 
-        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"));
+        parser.parse(JavaSourceParserTest.class.getResourceAsStream("/DisputeGateway.java"), null);
         assertEquals(9, parser.getMethods().size());
 
         assertEquals(
@@ -83,13 +83,28 @@ public class JavaSourceParserTest {
     public void testWildcard() throws Exception {
         final JavaSourceParser parser = new JavaSourceParser();
 
-        parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/TestProxy.java"));
+        parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/TestProxy.java"), null);
         assertEquals(11, parser.getMethods().size());
 
         // varargs is transformed to an array type as that is what works
         assertEquals(
                 "public java.lang.String greetWildcard(String[] names)",
                 parser.getMethods().get(7));
+        parser.reset();
+    }
+
+    @Test
+    public void testNested() throws Exception {
+        final JavaSourceParser parser = new JavaSourceParser();
+
+        parser.parse(new FileInputStream("src/test/java/org/apache/camel/component/test/NestedProxy.java"), "Order");
+        assertEquals(1, parser.getMethods().size());
+
+        assertEquals(
+                "public java.lang.String getOrderById(int id)",
+                parser.getMethods().get(0));
+        assertEquals(1, parser.getParameters().get("getOrderById").size());
+        assertEquals("The order id", parser.getParameters().get("getOrderById").get("id"));
         parser.reset();
     }
 

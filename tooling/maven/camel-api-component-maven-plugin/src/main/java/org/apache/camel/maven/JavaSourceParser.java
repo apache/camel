@@ -28,6 +28,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.jboss.forge.roaster.model.source.TypeVariableSource;
@@ -44,8 +45,20 @@ public class JavaSourceParser {
     private Map<String, Map<String, String>> parameters = new LinkedHashMap<>();
     private String errorMessage;
 
-    public synchronized void parse(InputStream in) throws Exception {
+    public synchronized void parse(InputStream in, String innerClass) throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(in);
+
+        if (innerClass != null) {
+            // we want the inner class from the parent class
+            JavaSource nested = clazz.getNestedType(innerClass);
+            if (nested instanceof JavaClassSource) {
+                clazz = (JavaClassSource) nested;
+            }
+            if (nested == null) {
+                errorMessage = "Cannot find inner class " + innerClass + " in class: " + clazz.getQualifiedName();
+                return;
+            }
+        }
 
         for (MethodSource ms : clazz.getMethods()) {
             // should not be constructor and must be public
