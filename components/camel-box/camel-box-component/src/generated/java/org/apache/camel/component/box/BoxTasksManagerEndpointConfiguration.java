@@ -28,7 +28,7 @@ public final class BoxTasksManagerEndpointConfiguration extends BoxConfiguration
     private com.box.sdk.BoxTask.Info info;
     @UriParam(description = "An optional message to include with the task")
     private String message;
-    @UriParam(description = "The id of task assignment to delete.Skip navigation links")
+    @UriParam(description = "The id of task assignment to delete")
     private String taskAssignmentId;
     @UriParam(description = "The id of task to add assignment for")
     private String taskId;

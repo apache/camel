@@ -26,7 +26,7 @@ public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration
     private java.util.Date created;
     @UriParam(description = "The id of the destination folder")
     private String destinationFolderId;
-    @UriParam(description = "The information fields to retrieve; if")
+    @UriParam(description = "The information fields to retrieve; if null all information fields are retrieved.")
     private String[] fields;
     @UriParam(description = "A stream containing contents of the file to upload")
     private java.io.InputStream fileContent;
@@ -40,7 +40,7 @@ public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration
     private com.box.sdk.BoxFile.ThumbnailFileType fileType;
     @UriParam(description = "The updated information")
     private com.box.sdk.BoxFile.Info info;
-    @UriParam(description = "A listener for monitoring the download's progress; if")
+    @UriParam(description = "A listener for monitoring the download's progress; if null the download's progress will not be monitored.")
     private com.box.sdk.ProgressListener listener;
     @UriParam(description = "Maximum height")
     private Integer maxHeight;
@@ -56,25 +56,25 @@ public final class BoxFilesManagerEndpointConfiguration extends BoxConfiguration
     private java.util.Date modified;
     @UriParam(description = "The new name of file")
     private String newFileName;
-    @UriParam(description = "Is")
+    @UriParam(description = "The new name for copied file; if newName is null, the copied file has same name as the original.")
     private String newName;
     @UriParam(description = "The stream to which the file contents will be written")
     private java.io.OutputStream output;
     @UriParam(description = "The id of parent folder")
     private String parentFolderId;
-    @UriParam(description = "Is")
+    @UriParam(description = "The permissions of the created link; if permissions is null then the created shared link is create with default permissions.")
     private com.box.sdk.BoxSharedLink.Permissions permissions;
-    @UriParam(description = "The byte offset in file at which to stop the download; if")
+    @UriParam(description = "The byte offset in file at which to stop the download; if null the entire contents of file will be downloaded.")
     private Long rangeEnd;
-    @UriParam(description = "The byte offset in file at which to start the download; if")
+    @UriParam(description = "The byte offset in file at which to start the download; if null the entire contents of file will be downloaded.")
     private Long rangeStart;
-    @UriParam(description = "The size of the file's content used for monitoring the upload's progress.Skip navigation links")
+    @UriParam(description = "The size of the file's content used for monitoring the upload's progress")
     private Long size;
-    @UriParam(description = "The metadata template type name; if")
+    @UriParam(description = "The metadata template type name; if null the global properties template type is used.")
     private String typeName;
-    @UriParam(description = "The date and time at which time the created shared link will expire; if")
+    @UriParam(description = "The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created.")
     private java.util.Date unshareDate;
-    @UriParam(description = "The version of file to delete; initial version of file has value of")
+    @UriParam(description = "The version of file to delete; initial version of file has value of 0, second version of file is 1 and so on.")
     private Integer version;
 
     public com.box.sdk.BoxSharedLink.Access getAccess() {
