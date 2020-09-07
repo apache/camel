@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class CalendarFreebusyEndpointConfiguration extends GoogleCalendarConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.calendar.model.FreeBusyRequest")
     private com.google.api.services.calendar.model.FreeBusyRequest content;
 
     public com.google.api.services.calendar.model.FreeBusyRequest getContent() {
