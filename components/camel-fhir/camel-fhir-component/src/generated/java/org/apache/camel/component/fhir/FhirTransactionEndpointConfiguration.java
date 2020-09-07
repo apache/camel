@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
 public final class FhirTransactionEndpointConfiguration extends FhirConfiguration {
     @UriParam(description = "Bundle to use in the transaction")
     private org.hl7.fhir.instance.model.api.IBaseBundle bundle;
-    @UriParam(description = "See")
+    @UriParam(description = "See ExtraParameters for a full list of parameters that can be passed, may be NULL")
     private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
     @UriParam(description = "Resources to use in the transaction")
     private java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> resources;
