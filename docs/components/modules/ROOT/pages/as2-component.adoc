@@ -164,20 +164,20 @@ The following lists each API name and method and its additional parameters.
 |===
 | Name | Description | Type
 | *as2From* | AS2 name of sender | String
-| *as2MessageStructure* | The structure of AS2 to send; see | AS2MessageStructure
+| *as2MessageStructure* | The structure of AS2 to send; see AS2MessageStructure | AS2MessageStructure
 | *as2To* | AS2 name of recipient | String
-| *compressionAlgorithm* | The algorithm used to compress the message or | AS2CompressionAlgorithm
-| *dispositionNotificationTo* | An RFC2822 address to request a receipt or | String
+| *compressionAlgorithm* | The algorithm used to compress the message or null if sending EDI message uncompressed | AS2CompressionAlgorithm
+| *dispositionNotificationTo* | An RFC2822 address to request a receipt or null if no receipt requested | String
 | *ediMessage* | EDI message to transport | String
 | *ediMessageContentType* | The content typw of EDI message | ContentType
 | *ediMessageTransferEncoding* | The transfer encoding used to transport EDI message | String
-| *encryptingAlgorithm* | The algorithm used to encrypt the message or | AS2EncryptionAlgorithm
-| *encryptingCertificateChain* | The chain of certificates used to encrypt the message or | Certificate[]
+| *encryptingAlgorithm* | The algorithm used to encrypt the message or null if sending EDI message unencrypted | AS2EncryptionAlgorithm
+| *encryptingCertificateChain* | The chain of certificates used to encrypt the message or null if sending EDI message unencrypted | Certificate[]
 | *from* | RFC2822 address of sender | String
 | *requestUri* | Resource location to deliver message | String
-| *signedReceiptMicAlgorithms* | The senders list of signing algorithms for signing receipt, in preferred order, or | String[]
-| *signingAlgorithm* | The algorithm used to sign the message or | AS2SignatureAlgorithm
-| *signingCertificateChain* | The chain of certificates used to sign the message or | Certificate[]
+| *signedReceiptMicAlgorithms* | The senders list of signing algorithms for signing receipt, in preferred order, or null if requesting an unsigned receipt. | String[]
+| *signingAlgorithm* | The algorithm used to sign the message or null if sending EDI message unsigned | AS2SignatureAlgorithm
+| *signingCertificateChain* | The chain of certificates used to sign the message or null if sending EDI message unsigned | Certificate[]
 | *signingPrivateKey* | The private key used to sign EDI message | PrivateKey
 | *subject* | Message subject | String
 |===
