@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 // assert that the generated files directory exists
-File sourceDir = new File( basedir, "target/generated-sources/camel-component" );
+File sourceDir = new File( basedir, "src/generated/java" );
 File testDir = new File( basedir, "target/generated-test-sources/camel-component" );
 
 assert sourceDir.isDirectory()

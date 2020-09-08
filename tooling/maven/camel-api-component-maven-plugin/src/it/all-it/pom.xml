@@ -57,7 +57,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
+      <artifactId>camel-test-junit5</artifactId>
       <version>@project.version@</version>
       <!-- compile scope to avoid having to move AbstractTestTestSupport to src/test/java -->
       <scope>compile</scope>
@@ -66,6 +66,23 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>@maven-compiler-plugin-version@</version>
+        <configuration>
+          <source>@jdk.version@</source>
+          <target>@jdk.version@</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>@maven-surefire-plugin-version@</version>
+        <configuration>
+          <failIfNoTests>false</failIfNoTests>
+        </configuration>
+      </plugin>
       <!-- execute api-component plugin -->
       <plugin>
         <groupId>@project.groupId@</groupId>
@@ -209,21 +226,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
-        <configuration>
-          <outPackage>${outPackage}</outPackage>
-          <componentPackage>${componentPackage}</componentPackage>
-          <scheme>${scheme}</scheme>
-          <componentName>${componentName}</componentName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 
 </project>
