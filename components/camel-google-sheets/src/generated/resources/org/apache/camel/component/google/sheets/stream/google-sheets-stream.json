@@ -17,7 +17,7 @@
     "syntax": "google-sheets-stream:apiName",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
+    "apiPropertyQualifier": "apiName",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false,

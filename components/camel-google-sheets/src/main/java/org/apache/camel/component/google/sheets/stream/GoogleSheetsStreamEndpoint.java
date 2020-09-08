@@ -21,6 +21,7 @@ import java.util.List;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,9 +38,9 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-sheets-stream",
              title = "Google Sheets Stream",
-             syntax = "google-sheets-stream:apiName",
+             syntax = "google-sheets-stream:apiName", apiPropertyQualifier = "apiName",
              consumerOnly = true,
-             label = "api,cloud,sheets")
+             category = { Category.API, Category.CLOUD, Category.SHEETS })
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
