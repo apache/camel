@@ -29,15 +29,15 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:chainExpressions")
                         .setHeader("ScriptHeader", constant("{ hello: \"World\"}"))
-                        .setBody(datasonnet(simple("${header.ScriptHeader}")))
+                        .setBody(datasonnet(simple("${header.ScriptHeader}", String.class)))
                         .to("mock:direct:response");
 
                 from("direct:expressionsInJava")
                                 .choice()
                                     .when(datasonnet("payload == 'World'"))
-                                        .setBody(datasonnet("'Hello, ' + payload"))
+                                        .setBody(datasonnet("'Hello, ' + payload", String.class))
                                     .otherwise()
-                                        .setBody(datasonnet("'Good bye, ' + payload"))
+                                        .setBody(datasonnet("'Good bye, ' + payload", String.class))
                                     .end()
                                 .to("mock:direct:response");
             }

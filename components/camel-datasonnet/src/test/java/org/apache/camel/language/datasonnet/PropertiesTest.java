@@ -28,7 +28,7 @@ public class PropertiesTest extends CamelTestSupport {
                 context.getPropertiesComponent().setInitialProperties(prop);
 
                 from("direct:in")
-                        .setBody(datasonnet("cml.properties('foo')"))
+                        .setBody(datasonnet("cml.properties('foo')", String.class))
                         .to("mock:camel");
             }
         };

@@ -28,6 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 import org.apache.commons.io.IOUtils;
@@ -112,68 +113,73 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
             Objects.requireNonNull(expression, "String expression property must be set!");
 
-            if (bodyMediaType == null) {
-                //Try to auto-detect input mime type if it was not explicitly set
-                String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
-                        exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
-                                "UNKNOWN_MIME_TYPE"),
-                        String.class);
-                if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
-                    bodyMediaType = MediaType.valueOf(typeHeader);
-                }
-            }
-
-            Document<?> body;
-            if (exchange.getMessage().getBody() instanceof Document) {
-                body = (Document<?>) exchange.getMessage().getBody();
-            } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMediaType)) {
-                body = new DefaultDocument<>(exchange.getMessage().getBody());
+            Document<?> result = doEvaluate(exchange);
+            // TODO: 9/8/20 see if we can offload some of this to a Document specific custom type converter
+            if (!type.equals(Object.class)) {
+                return ExchangeHelper.convertToType(exchange, type, result.getContent());
+            } else if (resultType == null || resultType.equals(Document.class)) {
+                return (T) result;
             } else {
-                body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMediaType);
+                return (T) result.getContent();
             }
-
-            Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
-
-            DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
-            Mapper mapper = language.cache(expression, () ->
-                    new MapperBuilder(expression)
-                            .withInputNames(inputs.keySet())
-                            .withImports(resolveImports())
-                            .addLibrary(CML$.MODULE$)
-                            .build());
-
-            // pass exchange to CML lib using thread as context
-            CML.exchange().set(exchange);
-
-            if (outputMediaType == null) {
-                //Try to auto-detect output mime type if it was not explicitly set
-                String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,
-                        exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE,
-                                "UNKNOWN_MIME_TYPE"),
-                        String.class);
-                if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
-                    outputMediaType = MediaType.valueOf(typeHeader);
-                } else {
-                    outputMediaType = MediaTypes.APPLICATION_JAVA;
-                }
-            }
-
-            if (Document.class.equals(type)) {
-                return (T) mapper.transform(body, inputs, outputMediaType, Object.class);
-            } else if (!type.equals(Object.class)) {
-                return mapper.transform(body, inputs, outputMediaType, type).getContent();
-            } else if (resultType != null) {
-                // only if type _is_ Object.class and targetType exists use targetType
-                return (T) mapper.transform(body, inputs, outputMediaType, resultType).getContent();
-            } else {
-                // else use type
-                return mapper.transform(body, inputs, outputMediaType, type).getContent();
-            }
-
         } catch (Exception e) {
             throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression : " + expression, e);
         } finally {
             CML.exchange().remove();
+        }
+    }
+
+    private Document<?> doEvaluate(Exchange exchange) {
+        if (bodyMediaType == null) {
+            //Try to auto-detect input mime type if it was not explicitly set
+            String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
+                    exchange.getIn().getHeader(Exchange.CONTENT_TYPE,
+                            "UNKNOWN_MIME_TYPE"),
+                    String.class);
+            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                bodyMediaType = MediaType.valueOf(typeHeader);
+            }
+        }
+
+        Document<?> body;
+        if (exchange.getMessage().getBody() instanceof Document) {
+            body = (Document<?>) exchange.getMessage().getBody();
+        } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMediaType)) {
+            body = new DefaultDocument<>(exchange.getMessage().getBody());
+        } else {
+            body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMediaType);
+        }
+
+        Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
+
+        DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
+        Mapper mapper = language.cache(expression, () ->
+                new MapperBuilder(expression)
+                        .withInputNames(inputs.keySet())
+                        .withImports(resolveImports())
+                        .addLibrary(CML$.MODULE$)
+                        .build());
+
+        // pass exchange to CML lib using thread as context
+        CML.exchange().set(exchange);
+
+        if (outputMediaType == null) {
+            //Try to auto-detect output mime type if it was not explicitly set
+            String typeHeader = exchange.getProperty(DatasonnetConstants.OUTPUT_MEDIATYPE,
+                    exchange.getIn().getHeader(DatasonnetConstants.OUTPUT_MEDIATYPE,
+                            "UNKNOWN_MIME_TYPE"),
+                    String.class);
+            if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
+                outputMediaType = MediaType.valueOf(typeHeader);
+            } else {
+                outputMediaType = MediaTypes.APPLICATION_JAVA;
+            }
+        }
+
+        if (resultType == null || resultType.equals(Document.class)) {
+            return mapper.transform(body, inputs, outputMediaType, Object.class);
+        } else {
+            return mapper.transform(body, inputs, outputMediaType, resultType);
         }
     }
 
