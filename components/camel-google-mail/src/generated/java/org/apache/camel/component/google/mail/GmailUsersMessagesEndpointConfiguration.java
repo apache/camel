@@ -16,19 +16,19 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersMessagesEndpointConfiguration extends GoogleMailConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.gmail.model.BatchDeleteMessagesRequest")
     private com.google.api.services.gmail.model.BatchDeleteMessagesRequest batchDeleteMessagesRequest;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.gmail.model.BatchModifyMessagesRequest")
     private com.google.api.services.gmail.model.BatchModifyMessagesRequest batchModifyMessagesRequest;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.gmail.model.Message media metadata or null if none")
     private com.google.api.services.gmail.model.Message content;
-    @UriParam
+    @UriParam(description = "The ID of the message to delete")
     private String id;
-    @UriParam
+    @UriParam(description = "The media HTTP content or null if none")
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.gmail.model.ModifyMessageRequest")
     private com.google.api.services.gmail.model.ModifyMessageRequest modifyMessageRequest;
-    @UriParam
+    @UriParam(description = "The user's email address. The special value me can be used to indicate the authenticated user. default: me")
     private String userId;
 
     public com.google.api.services.gmail.model.BatchDeleteMessagesRequest getBatchDeleteMessagesRequest() {

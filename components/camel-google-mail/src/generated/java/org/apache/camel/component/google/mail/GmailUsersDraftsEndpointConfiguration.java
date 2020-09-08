@@ -16,13 +16,13 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.gmail.model.Draft media metadata or null if none")
     private com.google.api.services.gmail.model.Draft content;
-    @UriParam
+    @UriParam(description = "The ID of the draft to delete")
     private String id;
-    @UriParam
+    @UriParam(description = "The media HTTP content or null if none")
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
-    @UriParam
+    @UriParam(description = "The user's email address. The special value me can be used to indicate the authenticated user. default: me")
     private String userId;
 
     public com.google.api.services.gmail.model.Draft getContent() {
