@@ -88,7 +88,7 @@ them.
 
 To a large extent the two objects share an identical structure, with only
 the address representation being different. It would be very helpful if
-there were a practical way to to automate this kind of mapping, such
+there were a practical way to automate this kind of mapping, such
 that the similar properties could get mapped automatically and only the
 inconsistencies requiring custom mapping.
 
