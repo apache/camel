@@ -105,6 +105,18 @@ public interface VertxWebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * To provide a custom vertx router to use on the WebSocket server.
+         * 
+         * The option is a: <code>io.vertx.ext.web.Router</code> type.
+         * 
+         * Group: advanced
+         */
+        default VertxWebsocketComponentBuilder router(
+                io.vertx.ext.web.Router router) {
+            doSetProperty("router", router);
+            return this;
+        }
+        /**
          * To use an existing vertx instead of creating a new instance.
          * 
          * The option is a: <code>io.vertx.core.Vertx</code> type.
@@ -160,6 +172,7 @@ public interface VertxWebsocketComponentBuilderFactory {
             case "bridgeErrorHandler": ((VertxWebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((VertxWebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((VertxWebsocketComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "router": ((VertxWebsocketComponent) component).setRouter((io.vertx.ext.web.Router) value); return true;
             case "vertx": ((VertxWebsocketComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "vertxOptions": ((VertxWebsocketComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "useGlobalSslContextParameters": ((VertxWebsocketComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
