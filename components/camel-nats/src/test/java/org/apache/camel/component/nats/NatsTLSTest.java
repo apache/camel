@@ -17,27 +17,28 @@
 package org.apache.camel.component.nats;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
 
-/* 
- * The keystore used in this test it's from https://github.com/nats-io/jnats/tree/master/src/test/resources, in particular
- * the tls_1222.conf file. Running this test will require use the server-cert.pem and server-key.pem in your gnatsd running instance.
- */
-@Disabled("Require a running Nats server")
-public class NatsProducerTLSTest extends CamelTestSupport {
+public class NatsTLSTest extends NatsTLSAuthTestSupport {
 
     @BindToRegistry("ssl")
     SSLContextParameters ssl = createSSLContextParameters();
 
+    @EndpointInject("mock:received")
+    MockEndpoint mockReceived;
+
     @Test
-    public void sendTest() throws Exception {
-        template.sendBody("direct:send", "pippo");
+    public void sendReceiveNatsRoundTripShouldSucceed() throws Exception {
+        mockReceived.expectedBodiesReceived("pippo");
+        template.requestBody("direct:send", "pippo");
+        mockReceived.assertIsSatisfied();
     }
 
     private SSLContextParameters createSSLContextParameters() {
@@ -51,15 +52,23 @@ public class NatsProducerTLSTest extends CamelTestSupport {
         keyManagersParameters.setKeyStore(keyStore);
         sslContextParameters.setKeyManagers(keyManagersParameters);
 
+        TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
+        KeyStoreParameters trustStore = new KeyStoreParameters();
+        trustStore.setPassword("password");
+        trustStore.setResource("org/apache/camel/component/nats/truststore.jks");
+        trustManagersParameters.setKeyStore(trustStore);
+        sslContextParameters.setTrustManagers(trustManagersParameters);
+
         return sslContextParameters;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("direct:send").to("nats:topic=test?servers=localhost:4222&sslContextParameters=#ssl&secure=true");
+            public void configure() {
+                from("direct:send").to("nats:test?sslContextParameters=#ssl&secure=true");
+                from("nats:test?sslContextParameters=#ssl&secure=true").to("mock:received");
             }
         };
     }
