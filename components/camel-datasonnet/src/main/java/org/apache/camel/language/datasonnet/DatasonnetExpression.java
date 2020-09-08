@@ -8,10 +8,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,16 +20,12 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
-import com.datasonnet.spi.DataFormatService;
-import com.datasonnet.spi.PluginException;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.language.CML;
-import org.apache.camel.language.CML$;
 import org.apache.camel.spi.ExpressionResultTypeAware;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionAdapter;
@@ -49,8 +44,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             scanResult.getResourcesWithExtension("libsonnet")
                     .forEachByteArray((resource, bytes) -> {
                         LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
-                        CLASSPATH_IMPORTS.put(
-                                resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
+                        CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
                     });
         }
     }
@@ -118,17 +112,6 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
             Objects.requireNonNull(expression, "String expression property must be set!");
 
-            Map<String, Document<?>> inputs = new HashMap<>();
-
-            Document<?> headersDocument = mapToDocument(exchange.getMessage().getHeaders());
-            inputs.put("headers", headersDocument);
-            inputs.put("header", headersDocument);
-
-            Document<?> propertiesDocument = mapToDocument(exchange.getProperties());
-            inputs.put("exchangeProperty", propertiesDocument);
-
-            Document<?> body;
-
             if (bodyMediaType == null) {
                 //Try to auto-detect input mime type if it was not explicitly set
                 String typeHeader = exchange.getProperty(DatasonnetConstants.BODY_MEDIATYPE,
@@ -140,6 +123,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                 }
             }
 
+            Document<?> body;
             if (exchange.getMessage().getBody() instanceof Document) {
                 body = (Document<?>) exchange.getMessage().getBody();
             } else if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(bodyMediaType)) {
@@ -148,20 +132,17 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                 body = new DefaultDocument<>(MessageHelper.extractBodyAsString(exchange.getMessage()), bodyMediaType);
             }
 
-            inputs.put("body", body);
+            Map<String, Document<?>> inputs = Collections.singletonMap("body", body);
 
             DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
-            Mapper mapper = language.getMapperFromCache(expression).orElseGet(() -> {
-                Mapper answer = new MapperBuilder(expression)
-                        .withInputNames(inputs.keySet())
-                        .withImports(resolveImports())
-                        .addLibrary(CML$.MODULE$)
-                        .build();
-                language.addScriptToCache(expression, answer);
-                return answer;
-            });
+            Mapper mapper = language.cache(expression, () ->
+                    new MapperBuilder(expression)
+                            .withInputNames(inputs.keySet())
+                            .withImports(resolveImports())
+                            .addLibrary(CML$.MODULE$)
+                            .build());
 
-            // set exchange and variable resolver as thread locals for concurrency
+            // pass exchange to CML lib using thread as context
             CML.exchange().set(exchange);
 
             if (outputMediaType == null) {
@@ -171,7 +152,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                                 "UNKNOWN_MIME_TYPE"),
                         String.class);
                 if (!"UNKNOWN_MIME_TYPE".equalsIgnoreCase(typeHeader) && typeHeader != null) {
-                    outputMediaType = MediaType.parseMediaType(typeHeader);
+                    outputMediaType = MediaType.valueOf(typeHeader);
                 } else {
                     outputMediaType = MediaTypes.APPLICATION_JAVA;
                 }
@@ -229,38 +210,6 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         return answer;
     }
 
-    private Document<Map<String, Object>> mapToDocument(Map<String, Object> map) throws PluginException {
-        Iterator<Map.Entry<String, Object>> entryIterator = map.entrySet().iterator();
-        Map<String, Object> propsMap = new HashMap<>();
-
-        while (entryIterator.hasNext()) {
-            Map.Entry<String, Object> entry = entryIterator.next();
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (!(value instanceof Document)) {
-                propsMap.put(key, value);
-            } else {
-                if (MediaTypes.APPLICATION_JAVA.equalsTypeAndSubtype(((Document<?>) value).getMediaType())) {
-                    propsMap.put(key, ((Document<?>) value).getContent());
-                } else {
-                    // TODO: 9/2/20 where to get this from
-                    // TODO: 9/2/20 figure out how to avoid the conversion round trip
-                    DataFormatService service = null;
-                    ujson.Value read = service.thatAccepts((Document<?>) value)
-                            .orElseThrow(() -> new IllegalArgumentException("todo"))
-                            .read((Document<?>) value);
-                    Document<?> write = service.thatProduces(MediaTypes.APPLICATION_JAVA, Object.class)
-                            .orElseThrow(() -> new IllegalArgumentException("todo"))
-                            .write(read, MediaTypes.APPLICATION_JAVA, Object.class);
-                    propsMap.put(key, write);
-                }
-            }
-        }
-
-        return new DefaultDocument<>(propsMap);
-    }
-
     // Getter/Setter methods
     // -------------------------------------------------------------------------
 
@@ -315,7 +264,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
 
     /**
      * TODO: 9/4/20 docs
-     * 
+     *
      * @param targetType
      */
     public void setResultType(Class<?> targetType) {

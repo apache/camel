@@ -2,6 +2,8 @@ package org.apache.camel.language.datasonnet;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import com.datasonnet.Mapper;
 import org.apache.camel.spi.annotations.Language;
@@ -29,11 +31,11 @@ public class DatasonnetLanguage extends LanguageSupport {
         return new DatasonnetExpression(expression);
     }
 
-    Optional<Mapper> getMapperFromCache(String script) {
+    Optional<Mapper> lookup(String script) {
         return Optional.ofNullable(mapperCache.get(script));
     }
 
-    void addScriptToCache(String script, Mapper mapper) {
-        mapperCache.put(script, mapper);
+    Mapper cache(String script, Supplier<Mapper> mapperSupplier) {
+        return mapperCache.computeIfAbsent(script, (k) -> mapperSupplier.get());
     }
 }

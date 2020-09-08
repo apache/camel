@@ -68,10 +68,10 @@
 {
     "uid": payload.userId,
     "uname": payload.name,
-    "testVar": exchangeProperty.test,
-    "isActive": exchangeProperty.isActive,
-    "count": exchangeProperty.count,
-    "fullName": exchangeProperty["1. Full Name"]
+    "testVar": cml.exchangeProperty('test'),
+    "isActive": cml.exchangeProperty('isActive'),
+    "count": cml.exchangeProperty('count'),
+    "fullName": cml.exchangeProperty('1. Full Name')
 }
 ]]>
                 </datasonnet>
@@ -121,7 +121,7 @@
                 <language language="datasonnet">
                     <![CDATA[
                     {
-                        test: headers.HelloHeader
+                        test: cml.header('HelloHeader')
                     }
                     ]]>
                 </language>
