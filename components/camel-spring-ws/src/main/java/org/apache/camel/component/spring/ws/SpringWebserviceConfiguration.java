@@ -32,7 +32,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.ws.WebServiceMessageFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
-import org.springframework.ws.soap.addressing.server.annotation.Action;
 import org.springframework.ws.transport.WebServiceMessageSender;
 import org.springframework.xml.xpath.XPathExpression;
 
@@ -68,8 +67,6 @@ public class SpringWebserviceConfiguration {
     @UriParam(label = "producer")
     private URI replyTo;
     @UriParam(label = "producer")
-    private MessageIdStrategy messageIdStrategy;
-    @UriParam(label = "producer")
     private int timeout = -1;
     @UriParam(label = "producer")
     private boolean allowResponseHeaderOverride;
@@ -88,6 +85,8 @@ public class SpringWebserviceConfiguration {
     private CamelSpringWSEndpointMapping endpointMapping;
     @UriParam(label = "consumer")
     private CamelEndpointDispatcher endpointDispatcher;
+    @UriParam(label = "consumer")
+    private MessageIdStrategy messageIdStrategy;
 
     public WebServiceTemplate getWebServiceTemplate() {
         return webServiceTemplate;
@@ -308,7 +307,7 @@ public class SpringWebserviceConfiguration {
     /**
      * Signifies the value for the response WS-Addressing <code>Action</code> header that is provided by the method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setOutputAction(URI outputAction) {
         this.outputAction = outputAction;
@@ -328,7 +327,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the faultAction response WS-Addressing <code>Fault Action</code> header that is provided
      * by the method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setFaultAction(String fault) throws URISyntaxException {
         if (StringUtils.hasText(fault)) {
@@ -340,7 +339,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the faultAction response WS-Addressing <code>Fault Action</code> header that is provided
      * by the method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setFaultAction(URI fault) {
         this.faultAction = fault;
@@ -354,7 +353,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the faultAction response WS-Addressing <code>FaultTo</code> header that is provided by
      * the method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setFaultTo(String faultTo) throws URISyntaxException {
         if (StringUtils.hasText(faultTo)) {
@@ -366,7 +365,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the faultAction response WS-Addressing <code>FaultTo</code> header that is provided by
      * the method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setFaultTo(URI faultTo) {
         this.faultTo = faultTo;
@@ -380,7 +379,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the replyTo response WS-Addressing <code>ReplyTo</code> header that is provided by the
      * method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setReplyTo(String replyToAction) throws URISyntaxException {
         if (StringUtils.hasText(replyToAction)) {
@@ -392,7 +391,7 @@ public class SpringWebserviceConfiguration {
      * Signifies the value for the replyTo response WS-Addressing <code>ReplyTo</code> header that is provided by the
      * method.
      *
-     * @see {@link Action}
+     * See org.springframework.ws.soap.addressing.server.annotation.Action annotation for more details.
      */
     public void setReplyTo(URI replyToAction) {
         this.replyTo = replyToAction;
@@ -415,7 +414,7 @@ public class SpringWebserviceConfiguration {
     }
 
     /**
-     * Option to provide a custom MessageIdStrategy to control generation of unique message ids.
+     * Option to provide a custom MessageIdStrategy to control generation of WS-Addressing unique message ids.
      */
     public void setMessageIdStrategy(MessageIdStrategy messageIdStrategy) {
         this.messageIdStrategy = messageIdStrategy;
@@ -429,8 +428,6 @@ public class SpringWebserviceConfiguration {
      * Option to override soap response header in in/out exchange with header info from the actual service layer. If the
      * invoked service appends or rewrites the soap header this option when set to true, allows the modified soap header
      * to be overwritten in in/out message headers
-     * 
-     * @param allowResponseHeaderOverride - true, will override header with spring-ws response message header
      */
     public void setAllowResponseHeaderOverride(boolean allowResponseHeaderOverride) {
         this.allowResponseHeaderOverride = allowResponseHeaderOverride;
@@ -444,9 +441,6 @@ public class SpringWebserviceConfiguration {
      * Option to override soap response attachments in in/out exchange with attachments from the actual service layer.
      * If the invoked service appends or rewrites the soap attachments this option when set to true, allows the modified
      * soap attachments to be overwritten in in/out message attachments
-     * 
-     * @param allowResponseAttachmentOverride - true, will override attachments with spring-ws response message
-     *                                        attachments
      */
     public void setAllowResponseAttachmentOverride(boolean allowResponseAttachmentOverride) {
         this.allowResponseAttachmentOverride = allowResponseAttachmentOverride;
