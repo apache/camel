@@ -179,6 +179,34 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: consumer
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
+                Object messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: consumer
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
+                String messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
@@ -438,7 +466,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing Fault
-         * Action header that is provided by the method.
+         * Action header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
@@ -451,7 +481,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing Fault
-         * Action header that is provided by the method.
+         * Action header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
@@ -464,7 +496,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing
-         * FaultTo header that is provided by the method.
+         * FaultTo header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
@@ -476,7 +510,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the faultAction response WS-Addressing
-         * FaultTo header that is provided by the method.
+         * FaultTo header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
@@ -557,34 +593,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Option to provide a custom MessageIdStrategy to control generation of
-         * unique message ids.
-         * 
-         * The option is a:
-         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
-         * 
-         * Group: producer
-         */
-        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
-                Object messageIdStrategy) {
-            doSetProperty("messageIdStrategy", messageIdStrategy);
-            return this;
-        }
-        /**
-         * Option to provide a custom MessageIdStrategy to control generation of
-         * unique message ids.
-         * 
-         * The option will be converted to a
-         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
-         * 
-         * Group: producer
-         */
-        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
-                String messageIdStrategy) {
-            doSetProperty("messageIdStrategy", messageIdStrategy);
-            return this;
-        }
-        /**
          * Option to provide a custom WebServiceMessageSender. For example to
          * perform authentication or use alternative transports.
          * 
@@ -616,7 +624,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the response WS-Addressing Action header that
-         * is provided by the method.
+         * is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
@@ -629,7 +639,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the response WS-Addressing Action header that
-         * is provided by the method.
+         * is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
@@ -642,7 +654,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the replyTo response WS-Addressing ReplyTo
-         * header that is provided by the method.
+         * header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option is a: <code>java.net.URI</code> type.
          * 
@@ -654,7 +668,9 @@ public interface SpringWebserviceEndpointBuilderFactory {
         }
         /**
          * Signifies the value for the replyTo response WS-Addressing ReplyTo
-         * header that is provided by the method.
+         * header that is provided by the method. See
+         * org.springframework.ws.soap.addressing.server.annotation.Action
+         * annotation for more details.
          * 
          * The option will be converted to a <code>java.net.URI</code> type.
          * 
