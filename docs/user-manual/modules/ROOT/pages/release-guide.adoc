@@ -366,7 +366,7 @@ This will release the artifacts.
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
 
-. Remove the old distribution version from the Apache webstie:
+. Remove the old distribution version from the Apache website:
 
   svn rm https://dist.apache.org/repos/dist/release/camel/apache-camel/OLD_CAMEL_VERSION -m "Removed the old release"
 
