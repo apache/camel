@@ -16,11 +16,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class GmailUsersMessagesAttachmentsEndpointConfiguration extends GoogleMailConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the attachment")
     private String id;
-    @UriParam
+    @UriParam(description = "The ID of the message containing the attachment")
     private String messageId;
-    @UriParam
+    @UriParam(description = "The user's email address. The special value me can be used to indicate the authenticated user. default: me")
     private String userId;
 
     public String getId() {
