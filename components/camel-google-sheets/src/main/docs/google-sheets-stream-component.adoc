@@ -151,7 +151,7 @@ with the following path and query parameters:
 === Query API Parameters (2 APIs):
 
 The Google Sheets Stream endpoint is an API based component and has additional parameters based on which API name and method in use.
-The API name and method is located in the endpoint URI as the  path parameters:
+The API name and method is located in the endpoint URI as the apiName path parameters:
 
 ----
 google-sheets-stream:apiName
