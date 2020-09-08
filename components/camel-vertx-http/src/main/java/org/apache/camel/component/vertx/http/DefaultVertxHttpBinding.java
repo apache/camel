@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -107,6 +108,12 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
 
     @Override
     public void populateRequestHeaders(Exchange exchange, HttpRequest<Buffer> request, HeaderFilterStrategy strategy) {
+        // Ensure the Content-Type header is always added if the corresponding exchange header is present
+        String contentType = ExchangeHelper.getContentType(exchange);
+        if (ObjectHelper.isNotEmpty(contentType)) {
+            request.putHeader(Exchange.CONTENT_TYPE, contentType);
+        }
+
         // Transfer exchange headers to the HTTP request while applying the filter strategy
         Message message = exchange.getMessage();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
