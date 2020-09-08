@@ -669,16 +669,6 @@ And of course the `||` is also supported. The sample would be:
 simple("${in.header.title} contains 'Camel' || ${in.header.type'} == 'gold'")
 -----
 
-*Notice:* Currently `&&` or `||` can only be used *once* in a simple
-language expression. This might change in the future. +
- So you *cannot* do:
-
-[source,java]
------
-simple("${in.header.title} contains 'Camel' && ${in.header.type'} == 'gold' && ${in.header.number} range 100..200")
------
-
-
 == Samples
 
 In the Spring XML sample below we filter based on a header value:
