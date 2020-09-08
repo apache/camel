@@ -278,7 +278,6 @@
                             <goals>
                                 <goal>clean</goal>
                                 <goal>verify</goal>
-                                <goal>site</goal>
                             </goals>
                         </configuration>
                         <executions>
