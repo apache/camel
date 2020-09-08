@@ -153,7 +153,7 @@ with the following path and query parameters:
 === Query API Parameters (2 APIs):
 
 The Google Sheets Stream endpoint is an API based component and has additional parameters based on which API name and method in use.
-The API name and method is located in the endpoint URI as the  path parameters:
+The API name and method is located in the endpoint URI as the apiName path parameters:
 
 ----
 google-sheets-stream:apiName
@@ -167,15 +167,15 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *batchClearValuesRequest* | The | BatchClearValuesRequest
-| *batchGetValuesByDataFilter Request* | The | BatchGetValuesByDataFilterRequest
-| *batchUpdateValuesByDataFilter Request* | The | BatchUpdateValuesByDataFilterRequest
-| *batchUpdateValuesRequest* | The | BatchUpdateValuesRequest
-| *clearValuesRequest* | The | ClearValuesRequest
-| *content* | The | BatchClearValuesByDataFilterRequest
+| *batchClearValuesRequest* | The com.google.api.services.sheets.v4.model.BatchClearValuesRequest | BatchClearValuesRequest
+| *batchGetValuesByDataFilter Request* | The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
+| *batchUpdateValuesByDataFilter Request* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
+| *batchUpdateValuesRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest | BatchUpdateValuesRequest
+| *clearValuesRequest* | The com.google.api.services.sheets.v4.model.ClearValuesRequest | ClearValuesRequest
+| *content* | The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest | BatchClearValuesByDataFilterRequest
 | *range* | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. | String
 | *spreadsheetId* | The ID of the spreadsheet to update | String
-| *values* | The | ValueRange
+| *values* | The com.google.api.services.sheets.v4.model.ValueRange | ValueRange
 |===
 
 
@@ -184,9 +184,9 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *batchUpdateSpreadsheetRequest* | The | BatchUpdateSpreadsheetRequest
-| *content* | The | Spreadsheet
-| *getSpreadsheetByDataFilter Request* | The | GetSpreadsheetByDataFilterRequest
+| *batchUpdateSpreadsheetRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest | BatchUpdateSpreadsheetRequest
+| *content* | The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
+| *getSpreadsheetByDataFilter Request* | The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
 | *spreadsheetId* | The spreadsheet to apply the updates to | String
 |===
 // endpoint options: END
