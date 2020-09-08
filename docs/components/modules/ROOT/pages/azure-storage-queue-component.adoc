@@ -55,7 +55,7 @@ For example in order to get a message content from the queue `messageQueue`
 in the `camelazure` storage account and, use the following snippet:
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-queue:/camelazure/messageQueue?accountName=yourAccountName&accessKey=yourAccessKey").
+from("azure-storage-queue://camelazure/messageQueue?accountName=yourAccountName&accessKey=yourAccessKey").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
