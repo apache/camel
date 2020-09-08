@@ -45,7 +45,7 @@ public class RestConfigurationDefinition {
     private String component;
 
     @XmlAttribute
-    @Metadata(label = "consumer", defaultValue = "swagger")
+    @Metadata(label = "consumer")
     private String apiComponent;
 
     @XmlAttribute
@@ -160,7 +160,10 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * The name of the Camel component to use as the REST API (such as swagger)
+     * The name of the Camel component to use as the REST API (such as swagger) If no API Component has been explicit
+     * configured, then Camel will lookup if there is a Camel component responsible for servicing and generating the
+     * REST API documentation, or if a org.apache.camel.spi.RestApiProcessorFactory is registered in the registry. If
+     * either one is found, then that is being used.
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
