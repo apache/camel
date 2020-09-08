@@ -27,7 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.openapi.RestOpenApiComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxHttpRestProducerTest extends VertxHttpTestSupport {
 
