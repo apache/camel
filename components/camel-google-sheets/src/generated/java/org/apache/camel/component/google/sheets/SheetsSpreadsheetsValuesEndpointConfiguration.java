@@ -16,23 +16,23 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class SheetsSpreadsheetsValuesEndpointConfiguration extends GoogleSheetsConfiguration {
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.BatchClearValuesRequest")
     private com.google.api.services.sheets.v4.model.BatchClearValuesRequest batchClearValuesRequest;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest")
     private com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest batchGetValuesByDataFilterRequest;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest")
     private com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest batchUpdateValuesByDataFilterRequest;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest")
     private com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest batchUpdateValuesRequest;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.ClearValuesRequest")
     private com.google.api.services.sheets.v4.model.ClearValuesRequest clearValuesRequest;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest")
     private com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest content;
     @UriParam(description = "The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table.")
     private String range;
     @UriParam(description = "The ID of the spreadsheet to update")
     private String spreadsheetId;
-    @UriParam(description = "The")
+    @UriParam(description = "The com.google.api.services.sheets.v4.model.ValueRange")
     private com.google.api.services.sheets.v4.model.ValueRange values;
 
     public com.google.api.services.sheets.v4.model.BatchClearValuesRequest getBatchClearValuesRequest() {
