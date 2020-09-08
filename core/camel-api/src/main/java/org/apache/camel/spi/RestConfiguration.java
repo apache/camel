@@ -97,18 +97,18 @@ public class RestConfiguration {
     }
 
     /**
-     * Gets the name of the Camel component to use as the REST API (such as swagger)
+     * Gets the name of the Camel component to use as the REST API (such as swagger or openapi).
      *
-     * @return the component name, or <tt>null</tt> to let Camel use the default name <tt>swagger</tt>
+     * @return the component name
      */
     public String getApiComponent() {
         return apiComponent;
     }
 
     /**
-     * Sets the name of the Camel component to use as the REST API (such as swagger)
+     * Sets the name of the Camel component to use as the REST API (such as swagger or openapi)
      *
-     * @param apiComponent the name of the component (such as swagger)
+     * @param apiComponent the name of the component (such as swagger or openapi)
      */
     public void setApiComponent(String apiComponent) {
         this.apiComponent = apiComponent;
