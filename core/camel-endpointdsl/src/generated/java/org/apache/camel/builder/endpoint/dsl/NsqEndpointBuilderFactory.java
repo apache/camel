@@ -141,6 +141,32 @@ public interface NsqEndpointBuilderFactory {
             return this;
         }
         /**
+         * A Custom NSQ lookup implementation.
+         * 
+         * The option is a:
+         * <code>com.github.brainlag.nsq.lookup.NSQLookup</code> type.
+         * 
+         * Group: consumer
+         */
+        default NsqEndpointConsumerBuilder customNSQLookup(
+                Object customNSQLookup) {
+            doSetProperty("customNSQLookup", customNSQLookup);
+            return this;
+        }
+        /**
+         * A Custom NSQ lookup implementation.
+         * 
+         * The option will be converted to a
+         * <code>com.github.brainlag.nsq.lookup.NSQLookup</code> type.
+         * 
+         * Group: consumer
+         */
+        default NsqEndpointConsumerBuilder customNSQLookup(
+                String customNSQLookup) {
+            doSetProperty("customNSQLookup", customNSQLookup);
+            return this;
+        }
+        /**
          * The lookup interval.
          * 
          * The option is a: <code>long</code> type.

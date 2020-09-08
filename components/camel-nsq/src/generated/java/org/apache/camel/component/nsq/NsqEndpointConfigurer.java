@@ -26,6 +26,8 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channel": target.getConfiguration().setChannel(property(camelContext, java.lang.String.class, value)); return true;
+        case "customnsqlookup":
+        case "customNSQLookup": target.getConfiguration().setCustomNSQLookup(property(camelContext, com.github.brainlag.nsq.lookup.NSQLookup.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -61,6 +63,7 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("channel", java.lang.String.class);
+        answer.put("customNSQLookup", com.github.brainlag.nsq.lookup.NSQLookup.class);
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
@@ -89,6 +92,8 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channel": return target.getConfiguration().getChannel();
+        case "customnsqlookup":
+        case "customNSQLookup": return target.getConfiguration().getCustomNSQLookup();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
