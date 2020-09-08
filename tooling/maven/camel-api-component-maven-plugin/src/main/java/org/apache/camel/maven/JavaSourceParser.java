@@ -28,7 +28,6 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.jboss.forge.roaster.model.source.TypeVariableSource;
@@ -51,11 +50,8 @@ public class JavaSourceParser {
 
         if (innerClass != null) {
             // we want the inner class from the parent class
-            JavaSource nested = clazz.getNestedType(innerClass);
-            if (nested instanceof JavaClassSource) {
-                clazz = (JavaClassSource) nested;
-            }
-            if (nested == null) {
+            clazz = findInnerClass(rootClazz, innerClass);
+            if (clazz == null) {
                 errorMessage = "Cannot find inner class " + innerClass + " in class: " + rootClazz.getQualifiedName();
                 return;
             }
@@ -121,6 +117,20 @@ public class JavaSourceParser {
             methods.add(signature);
             methodText.put(ms.getName(), signature);
         }
+    }
+
+    private static JavaClassSource findInnerClass(JavaClassSource rootClazz, String innerClass) {
+        String[] parts = innerClass.split("\\$");
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            JavaClassSource nested = (JavaClassSource) rootClazz.getNestedType(part);
+            if (nested != null && i < parts.length - 1) {
+                rootClazz = nested;
+            } else {
+                return nested;
+            }
+        }
+        return null;
     }
 
     private static String resolveType(JavaClassSource rootClazz, JavaClassSource clazz, MethodSource ms, Type type) {
