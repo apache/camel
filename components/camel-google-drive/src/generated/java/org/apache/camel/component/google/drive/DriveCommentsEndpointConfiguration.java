@@ -16,11 +16,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the comment")
     private String commentId;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.Comment")
     private com.google.api.services.drive.model.Comment content;
-    @UriParam
+    @UriParam(description = "The ID of the file")
     private String fileId;
 
     public String getCommentId() {

@@ -16,11 +16,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DrivePropertiesEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.Property")
     private com.google.api.services.drive.model.Property content;
-    @UriParam
+    @UriParam(description = "The ID of the file")
     private String fileId;
-    @UriParam
+    @UriParam(description = "The key of the property")
     private String propertyKey;
 
     public com.google.api.services.drive.model.Property getContent() {
