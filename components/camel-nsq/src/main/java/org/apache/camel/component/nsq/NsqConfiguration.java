@@ -228,15 +228,15 @@ public class NsqConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-	public NSQLookup getCustomNSQLookup() {
-		return customNSQLookup;
-	}
+    public NSQLookup getCustomNSQLookup() {
+        return customNSQLookup;
+    }
 
     /**
      * Set a custom NSQLookup implementation
      */
-	public void setCustomNSQLookup(NSQLookup customNSQLookup) {
-		this.customNSQLookup = customNSQLookup;
-	}
+    public void setCustomNSQLookup(NSQLookup customNSQLookup) {
+        this.customNSQLookup = customNSQLookup;
+    }
 
 }

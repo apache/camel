@@ -63,14 +63,14 @@ public class NsqConsumer extends DefaultConsumer {
         super.doStart();
         LOG.debug("Starting NSQ Consumer");
         executor = getEndpoint().createExecutor();
-        
+
         NSQLookup lookup;
 
         LOG.debug("Getting NSQ Connection");
         if (ObjectHelper.isEmpty(configuration.getCustomNSQLookup())) {
             lookup = new DefaultNSQLookup();
         } else {
-        	lookup = configuration.getCustomNSQLookup();
+            lookup = configuration.getCustomNSQLookup();
         }
 
         for (ServerAddress server : configuration.getServerAddresses()) {
