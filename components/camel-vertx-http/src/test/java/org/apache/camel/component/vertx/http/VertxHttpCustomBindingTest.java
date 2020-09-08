@@ -66,7 +66,7 @@ public class VertxHttpCustomBindingTest extends VertxHttpTestSupport {
 
             @Override
             public Object processResponseBody(
-                    VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly)
+                    VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result, boolean exceptionOnly)
                     throws Exception {
                 return null;
             }

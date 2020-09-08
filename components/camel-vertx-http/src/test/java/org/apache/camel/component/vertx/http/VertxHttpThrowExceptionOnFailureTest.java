@@ -37,8 +37,7 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         assertTrue(exchange.isFailed());
 
         Map<String, Object> headers = exchange.getMessage().getHeaders();
-        assertEquals(500, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Internal Server Error", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        assertTrue(headers.isEmpty());
 
         HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
         assertEquals(500, exception.getStatusCode());
@@ -52,8 +51,7 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         assertTrue(exchange.isFailed());
 
         Map<String, Object> headers = exchange.getMessage().getHeaders();
-        assertEquals(500, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Internal Server Error", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        assertTrue(headers.isEmpty());
 
         HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
         assertEquals(500, exception.getStatusCode());
@@ -68,8 +66,7 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         assertTrue(exchange.isFailed());
 
         Map<String, Object> headers = exchange.getMessage().getHeaders();
-        assertEquals(201, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Created", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        assertTrue(headers.isEmpty());
 
         HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
         assertEquals(201, exception.getStatusCode());
@@ -87,13 +84,9 @@ public class VertxHttpThrowExceptionOnFailureTest extends VertxHttpTestSupport {
         });
         assertTrue(exchange.isFailed());
 
-        Map<String, Object> headers = exchange.getMessage().getHeaders();
-        assertEquals(500, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Internal Server Error", headers.get(Exchange.HTTP_RESPONSE_TEXT));
-
         HttpOperationFailedException exception = exchange.getException(HttpOperationFailedException.class);
-        assertEquals(500, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Internal Server Error", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals(500, exception.getStatusCode());
+        assertEquals("Internal Server Error", exception.getStatusText());
         assertEquals(getTestServerUrl() + "/redirect", exception.getUri());
     }
 

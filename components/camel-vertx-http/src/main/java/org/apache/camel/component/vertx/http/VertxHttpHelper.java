@@ -145,8 +145,14 @@ public final class VertxHttpHelper {
      * Verifies whether the Content-Type exchange header value matches an expected value
      */
     public static boolean isContentTypeMatching(Exchange exchange, String expected) {
-        String contentType = ExchangeHelper.getContentType(exchange);
-        return contentType != null && contentType.equals(expected);
+        return isContentTypeMatching(expected, ExchangeHelper.getContentType(exchange));
+    }
+
+    /**
+     * Verifies whether the expected Content-Type value matches an expected value
+     */
+    public static boolean isContentTypeMatching(String expected, String actual) {
+        return actual != null && expected.equals(actual);
     }
 
     /**

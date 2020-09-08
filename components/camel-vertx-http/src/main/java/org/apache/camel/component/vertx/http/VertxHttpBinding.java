@@ -49,9 +49,10 @@ public interface VertxHttpBinding {
     void populateResponseHeaders(Exchange exchange, HttpResponse<Buffer> response, HeaderFilterStrategy headerFilterStrategy);
 
     /**
-     * Processes the received {@link Buffer} response body
+     * Processes the received {@link Buffer} response body in the {@link HttpResponse}
      */
-    Object processResponseBody(VertxHttpEndpoint endpoint, Exchange exchange, Buffer responseBody, boolean exceptionOnly)
+    Object processResponseBody(
+            VertxHttpEndpoint endpoint, Exchange exchange, HttpResponse<Buffer> result, boolean exceptionOnly)
             throws Exception;
 
     /**

@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.vertx.http;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -39,10 +36,6 @@ public class VertxHttpTransferExceptionTest extends VertxHttpTestSupport {
         assertNotNull(exception);
         assertTrue(exception instanceof IllegalStateException);
         assertEquals("Forced Exception", exception.getMessage());
-
-        Message message = exchange.getMessage();
-        Map<String, Object> headers = message.getHeaders();
-        assertEquals(VertxHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, headers.get(Exchange.CONTENT_TYPE));
     }
 
     @Override
