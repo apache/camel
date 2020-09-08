@@ -19,6 +19,7 @@ package org.apache.camel.component.nsq;
 import java.util.Set;
 
 import com.github.brainlag.nsq.ServerAddress;
+import com.github.brainlag.nsq.lookup.NSQLookup;
 import com.google.common.collect.Sets;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -56,6 +57,8 @@ public class NsqConfiguration {
     @UriParam(label = "consumer", defaultValue = "-1", javaType = "java.time.Duration",
               description = "The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default")
     private long messageTimeout = -1;
+    @UriParam(label = "consumer", description = "A Custom NSQ lookup implementation")
+    private NSQLookup customNSQLookup;
     @UriParam(description = "A String to identify the kind of client")
     private String userAgent;
     @UriParam(label = "security")
@@ -224,5 +227,16 @@ public class NsqConfiguration {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
+
+	public NSQLookup getCustomNSQLookup() {
+		return customNSQLookup;
+	}
+
+    /**
+     * Set a custom NSQLookup implementation
+     */
+	public void setCustomNSQLookup(NSQLookup customNSQLookup) {
+		this.customNSQLookup = customNSQLookup;
+	}
 
 }
