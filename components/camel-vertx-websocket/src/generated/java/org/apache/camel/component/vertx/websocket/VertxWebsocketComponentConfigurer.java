@@ -25,6 +25,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "router": target.setRouter(property(camelContext, io.vertx.ext.web.Router.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
@@ -40,6 +41,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("bridgeErrorHandler", boolean.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("router", io.vertx.ext.web.Router.class);
         answer.put("useGlobalSslContextParameters", boolean.class);
         answer.put("vertx", io.vertx.core.Vertx.class);
         answer.put("vertxOptions", io.vertx.core.VertxOptions.class);
@@ -56,6 +58,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "router": return target.getRouter();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "vertx": return target.getVertx();
