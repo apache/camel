@@ -157,9 +157,9 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *id* |  | String
-| *messageId* |  | String
-| *userId* |  | String
+| *id* | The ID of the attachment | String
+| *messageId* | The ID of the message containing the attachment | String
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -168,10 +168,10 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | Draft
-| *id* |  | String
-| *mediaContent* |  | AbstractInputStreamContent
-| *userId* |  | String
+| *content* | The com.google.api.services.gmail.model.Draft media metadata or null if none | Draft
+| *id* | The ID of the draft to delete | String
+| *mediaContent* | The media HTTP content or null if none | AbstractInputStreamContent
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -180,7 +180,7 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *userId* |  | String
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -189,9 +189,9 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | Label
-| *id* |  | String
-| *userId* |  | String
+| *content* | The com.google.api.services.gmail.model.Label | Label
+| *id* | The ID of the label to delete | String
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -200,13 +200,13 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *batchDeleteMessagesRequest* |  | BatchDeleteMessagesRequest
-| *batchModifyMessagesRequest* |  | BatchModifyMessagesRequest
-| *content* |  | Message
-| *id* |  | String
-| *mediaContent* |  | AbstractInputStreamContent
-| *modifyMessageRequest* |  | ModifyMessageRequest
-| *userId* |  | String
+| *batchDeleteMessagesRequest* | The com.google.api.services.gmail.model.BatchDeleteMessagesRequest | BatchDeleteMessagesRequest
+| *batchModifyMessagesRequest* | The com.google.api.services.gmail.model.BatchModifyMessagesRequest | BatchModifyMessagesRequest
+| *content* | The com.google.api.services.gmail.model.Message media metadata or null if none | Message
+| *id* | The ID of the message to delete | String
+| *mediaContent* | The media HTTP content or null if none | AbstractInputStreamContent
+| *modifyMessageRequest* | The com.google.api.services.gmail.model.ModifyMessageRequest | ModifyMessageRequest
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -215,9 +215,9 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | ModifyThreadRequest
-| *id* |  | String
-| *userId* |  | String
+| *content* | The com.google.api.services.gmail.model.ModifyThreadRequest | ModifyThreadRequest
+| *id* | ID of the Thread to delete | String
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
 
@@ -226,8 +226,8 @@ The following lists each API name and method and its additional parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | WatchRequest
-| *userId* |  | String
+| *content* | The com.google.api.services.gmail.model.WatchRequest | WatchRequest
+| *userId* | The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 // endpoint options: END
 
