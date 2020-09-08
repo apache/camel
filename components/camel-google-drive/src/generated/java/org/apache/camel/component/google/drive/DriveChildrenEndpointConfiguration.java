@@ -16,11 +16,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveChildrenEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the child")
     private String childId;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.ChildReference")
     private com.google.api.services.drive.model.ChildReference content;
-    @UriParam
+    @UriParam(description = "The ID of the folder")
     private String folderId;
 
     public String getChildId() {

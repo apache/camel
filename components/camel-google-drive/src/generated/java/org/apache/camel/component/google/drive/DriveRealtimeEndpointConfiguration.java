@@ -16,9 +16,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveRealtimeEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the file that the Realtime API data model is associated with")
     private String fileId;
-    @UriParam
+    @UriParam(description = "The media HTTP content or null if none")
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
 
     public String getFileId() {

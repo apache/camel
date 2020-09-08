@@ -185,7 +185,7 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *appId* |  | String
+| *appId* | The ID of the app | String
 |===
 
 
@@ -194,8 +194,8 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *changeId* |  | String
-| *contentChannel* |  | Channel
+| *changeId* | The ID of the change | String
+| *contentChannel* | The com.google.api.services.drive.model.Channel | Channel
 |===
 
 
@@ -204,7 +204,7 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *contentChannel* |  | Channel
+| *contentChannel* | The com.google.api.services.drive.model.Channel | Channel
 |===
 
 
@@ -213,9 +213,9 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *childId* |  | String
-| *content* |  | ChildReference
-| *folderId* |  | String
+| *childId* | The ID of the child | String
+| *content* | The com.google.api.services.drive.model.ChildReference | ChildReference
+| *folderId* | The ID of the folder | String
 |===
 
 
@@ -224,9 +224,9 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *commentId* |  | String
-| *content* |  | Comment
-| *fileId* |  | String
+| *commentId* | The ID of the comment | String
+| *content* | The com.google.api.services.drive.model.Comment | Comment
+| *fileId* | The ID of the file | String
 |===
 
 
@@ -235,11 +235,11 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | File
-| *contentChannel* |  | Channel
-| *fileId* |  | String
-| *mediaContent* |  | AbstractInputStreamContent
-| *mimeType* |  | String
+| *content* | The com.google.api.services.drive.model.File | File
+| *contentChannel* | The com.google.api.services.drive.model.Channel | Channel
+| *fileId* | The ID of the file to copy | String
+| *mediaContent* | The media HTTP content or null if none | AbstractInputStreamContent
+| *mimeType* | The MIME type of the format requested for this export | String
 |===
 
 
@@ -248,9 +248,9 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | ParentReference
-| *fileId* |  | String
-| *parentId* |  | String
+| *content* | The com.google.api.services.drive.model.ParentReference | ParentReference
+| *fileId* | The ID of the file | String
+| *parentId* | The ID of the parent | String
 |===
 
 
@@ -259,10 +259,10 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | Permission
-| *email* |  | String
-| *fileId* |  | String
-| *permissionId* |  | String
+| *content* | The com.google.api.services.drive.model.Permission | Permission
+| *email* | The email address for which to return a permission ID | String
+| *fileId* | The ID for the file or Team Drive | String
+| *permissionId* | The ID for the permission | String
 |===
 
 
@@ -271,9 +271,9 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | Property
-| *fileId* |  | String
-| *propertyKey* |  | String
+| *content* | The com.google.api.services.drive.model.Property | Property
+| *fileId* | The ID of the file | String
+| *propertyKey* | The key of the property | String
 |===
 
 
@@ -282,8 +282,8 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *fileId* |  | String
-| *mediaContent* |  | AbstractInputStreamContent
+| *fileId* | The ID of the file that the Realtime API data model is associated with | String
+| *mediaContent* | The media HTTP content or null if none | AbstractInputStreamContent
 |===
 
 
@@ -292,10 +292,10 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *commentId* |  | String
-| *content* |  | CommentReply
-| *fileId* |  | String
-| *replyId* |  | String
+| *commentId* | The ID of the comment | String
+| *content* | The com.google.api.services.drive.model.CommentReply | CommentReply
+| *fileId* | The ID of the file | String
+| *replyId* | The ID of the reply | String
 |===
 
 
@@ -304,9 +304,9 @@ The drive-about method has no API parameters.
 [width="100%",cols="2,5,3",options="header"]
 |===
 | Name | Description | Type
-| *content* |  | Revision
-| *fileId* |  | String
-| *revisionId* |  | String
+| *content* | The com.google.api.services.drive.model.Revision | Revision
+| *fileId* | The ID of the file | String
+| *revisionId* | The ID of the revision | String
 |===
 // endpoint options: END
 

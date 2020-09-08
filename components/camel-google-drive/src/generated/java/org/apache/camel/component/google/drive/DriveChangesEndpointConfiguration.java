@@ -16,9 +16,9 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveChangesEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the change")
     private String changeId;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.Channel")
     private com.google.api.services.drive.model.Channel contentChannel;
 
     public String getChangeId() {

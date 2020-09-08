@@ -16,15 +16,15 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveFilesEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.File")
     private com.google.api.services.drive.model.File content;
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.Channel")
     private com.google.api.services.drive.model.Channel contentChannel;
-    @UriParam
+    @UriParam(description = "The ID of the file to copy")
     private String fileId;
-    @UriParam
+    @UriParam(description = "The media HTTP content or null if none")
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
-    @UriParam
+    @UriParam(description = "The MIME type of the format requested for this export")
     private String mimeType;
 
     public com.google.api.services.drive.model.File getContent() {

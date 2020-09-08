@@ -16,11 +16,11 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveRevisionsEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The com.google.api.services.drive.model.Revision")
     private com.google.api.services.drive.model.Revision content;
-    @UriParam
+    @UriParam(description = "The ID of the file")
     private String fileId;
-    @UriParam
+    @UriParam(description = "The ID of the revision")
     private String revisionId;
 
     public com.google.api.services.drive.model.Revision getContent() {

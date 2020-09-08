@@ -16,7 +16,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 @Configurer
 public final class DriveAppsEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam
+    @UriParam(description = "The ID of the app")
     private String appId;
 
     public String getAppId() {
