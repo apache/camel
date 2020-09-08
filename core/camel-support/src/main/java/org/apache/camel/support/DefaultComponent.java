@@ -60,8 +60,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW[({].*&&.*[)}]");
 
-    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/configurer/";
-
     private volatile PropertyConfigurer componentPropertyConfigurer;
     private volatile PropertyConfigurer endpointPropertyConfigurer;
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
@@ -69,6 +67,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     @Metadata(label = "advanced",
               description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
+    @Deprecated
     private boolean basicPropertyBinding;
     @Metadata(label = "consumer",
               description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
