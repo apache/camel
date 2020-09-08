@@ -95,6 +95,11 @@ import static org.apache.camel.util.StringHelper.notEmpty;
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**
+     * Regex pattern used to extract path parts from OpenApi specification paths
+     */
+    private static final Pattern PATH_EXTRACTOR = Pattern.compile("/([^{}/]+)");
+
+    /**
      * Remaining parameters specified in the Endpoint URI.
      */
     Map<String, Object> parameters = Collections.emptyMap();
@@ -216,28 +221,50 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
                                            + "`. Operations defined in the specification are: " + supportedOperations);
     }
 
+    /**
+     * Generates an operationId from provided OpenApi specification path and operation
+     */
+    private void generateMissingOperationId(String path, OasOperation operation) {
+        if (null == operation.operationId) {
+            final StringBuilder idBuilder = new StringBuilder(operation.getMethod().toLowerCase());
+            final Matcher matcher = PATH_EXTRACTOR.matcher(path);
+            while (matcher.find()) {
+                idBuilder.append('-').append(matcher.group(1));
+            }
+            operation.operationId = idBuilder.toString();
+        }
+    }
+
     private Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {
         Map<HttpMethod, OasOperation> result = new LinkedHashMap<>();
+        final String uriPath = path.getPath();
 
         if (path.get != null) {
+            generateMissingOperationId(uriPath, path.get);
             result.put(HttpMethod.GET, path.get);
         }
         if (path.put != null) {
+            generateMissingOperationId(uriPath, path.put);
             result.put(HttpMethod.PUT, path.put);
         }
         if (path.post != null) {
+            generateMissingOperationId(uriPath, path.post);
             result.put(HttpMethod.POST, path.post);
         }
         if (path.delete != null) {
+            generateMissingOperationId(uriPath, path.delete);
             result.put(HttpMethod.DELETE, path.delete);
         }
         if (path.patch != null) {
+            generateMissingOperationId(uriPath, path.patch);
             result.put(HttpMethod.PATCH, path.patch);
         }
         if (path.head != null) {
+            generateMissingOperationId(uriPath, path.head);
             result.put(HttpMethod.HEAD, path.head);
         }
         if (path.options != null) {
+            generateMissingOperationId(uriPath, path.options);
             result.put(HttpMethod.OPTIONS, path.options);
         }
 
