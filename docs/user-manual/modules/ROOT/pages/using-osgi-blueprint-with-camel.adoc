@@ -39,7 +39,7 @@ elements (compared to the Spring xml syntax):
 * beanPostProcessor are specific to Spring and aren't allowed
 
 However, using blueprint when you deploy your applications in an OSGi
-enviroment has several advantages:
+environment has several advantages:
 
 * when upgrading to a new camel version, you don't have to change the
 namespace, as the correct version will be selected based on the camel
