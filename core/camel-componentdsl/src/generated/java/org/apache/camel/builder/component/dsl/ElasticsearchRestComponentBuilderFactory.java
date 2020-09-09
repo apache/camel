@@ -78,6 +78,7 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ElasticsearchRestComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

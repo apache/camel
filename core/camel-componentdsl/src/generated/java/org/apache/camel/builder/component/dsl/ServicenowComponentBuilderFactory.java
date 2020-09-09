@@ -419,6 +419,7 @@ public interface ServicenowComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ServicenowComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -158,6 +158,7 @@ public interface SedaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SedaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

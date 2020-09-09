@@ -195,6 +195,7 @@ public interface EtcdStatsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default EtcdStatsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

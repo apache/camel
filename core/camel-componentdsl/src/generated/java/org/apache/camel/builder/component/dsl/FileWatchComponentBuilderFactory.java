@@ -151,6 +151,7 @@ public interface FileWatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FileWatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

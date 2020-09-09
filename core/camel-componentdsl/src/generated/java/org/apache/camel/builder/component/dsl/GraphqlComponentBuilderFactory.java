@@ -78,6 +78,7 @@ public interface GraphqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GraphqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

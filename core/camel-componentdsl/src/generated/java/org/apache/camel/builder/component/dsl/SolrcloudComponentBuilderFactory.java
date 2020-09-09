@@ -78,6 +78,7 @@ public interface SolrcloudComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SolrcloudComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

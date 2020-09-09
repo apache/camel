@@ -250,6 +250,7 @@ public interface CaffeineLoadcacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CaffeineLoadcacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

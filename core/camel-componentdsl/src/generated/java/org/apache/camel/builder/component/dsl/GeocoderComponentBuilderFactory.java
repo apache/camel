@@ -80,6 +80,7 @@ public interface GeocoderComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GeocoderComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

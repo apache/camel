@@ -135,6 +135,7 @@ public interface ElsqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ElsqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

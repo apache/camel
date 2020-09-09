@@ -197,6 +197,7 @@ public interface AtomixValueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtomixValueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -248,6 +248,7 @@ public interface Olingo2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Olingo2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

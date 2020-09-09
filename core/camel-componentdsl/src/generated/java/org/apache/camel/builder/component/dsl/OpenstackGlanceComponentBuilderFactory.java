@@ -78,6 +78,7 @@ public interface OpenstackGlanceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OpenstackGlanceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

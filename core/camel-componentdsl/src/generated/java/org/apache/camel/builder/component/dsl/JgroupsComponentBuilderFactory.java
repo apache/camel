@@ -136,6 +136,7 @@ public interface JgroupsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JgroupsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

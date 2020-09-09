@@ -99,6 +99,7 @@ public interface IpfsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IpfsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

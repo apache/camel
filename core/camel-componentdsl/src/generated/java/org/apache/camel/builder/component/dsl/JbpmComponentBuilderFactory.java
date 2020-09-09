@@ -94,6 +94,7 @@ public interface JbpmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JbpmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

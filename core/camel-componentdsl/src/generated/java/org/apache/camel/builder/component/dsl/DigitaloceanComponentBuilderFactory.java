@@ -78,6 +78,7 @@ public interface DigitaloceanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DigitaloceanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

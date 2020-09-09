@@ -99,6 +99,7 @@ public interface ThriftComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ThriftComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -97,6 +97,7 @@ public interface SpringEventComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SpringEventComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

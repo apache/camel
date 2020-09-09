@@ -95,6 +95,7 @@ public interface AtmosComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtmosComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

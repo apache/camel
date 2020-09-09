@@ -157,6 +157,7 @@ public interface StubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default StubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

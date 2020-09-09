@@ -506,6 +506,7 @@ public interface Web3jComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Web3jComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

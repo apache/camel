@@ -96,6 +96,7 @@ public interface SipsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SipsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

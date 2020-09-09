@@ -190,6 +190,7 @@ public interface AtomixMultimapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtomixMultimapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

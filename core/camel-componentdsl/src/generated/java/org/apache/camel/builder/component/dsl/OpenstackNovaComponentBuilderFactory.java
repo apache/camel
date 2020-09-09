@@ -78,6 +78,7 @@ public interface OpenstackNovaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OpenstackNovaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

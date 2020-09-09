@@ -158,6 +158,7 @@ public interface DockerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DockerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

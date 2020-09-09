@@ -76,6 +76,7 @@ public interface CmSmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CmSmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

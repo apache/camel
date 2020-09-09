@@ -78,6 +78,7 @@ public interface SapNetweaverComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SapNetweaverComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

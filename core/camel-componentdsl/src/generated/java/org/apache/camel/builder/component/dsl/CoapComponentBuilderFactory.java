@@ -94,6 +94,7 @@ public interface CoapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CoapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

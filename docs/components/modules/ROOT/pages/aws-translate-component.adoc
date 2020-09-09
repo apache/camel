@@ -59,7 +59,7 @@ The AWS Translate component supports 15 options, which are listed below.
 | *sourceLanguage* (producer) | Source language to use |  | String
 | *targetLanguage* (producer) | Target language to use |  | String
 | *translateClient* (producer) | To use a existing configured AWS Translate as client |  | AmazonTranslate
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 

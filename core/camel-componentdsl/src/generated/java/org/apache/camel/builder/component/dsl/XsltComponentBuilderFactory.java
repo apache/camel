@@ -91,6 +91,7 @@ public interface XsltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XsltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

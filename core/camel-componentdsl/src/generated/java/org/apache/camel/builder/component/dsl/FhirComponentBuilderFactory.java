@@ -154,6 +154,7 @@ public interface FhirComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FhirComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

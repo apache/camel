@@ -1077,6 +1077,7 @@ public interface ActivemqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ActivemqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

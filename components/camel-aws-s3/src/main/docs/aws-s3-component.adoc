@@ -89,7 +89,7 @@ The AWS S3 Storage Service component supports 39 options, which are listed below
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
 | *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

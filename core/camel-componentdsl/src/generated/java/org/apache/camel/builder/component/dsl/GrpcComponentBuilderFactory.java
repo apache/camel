@@ -94,6 +94,7 @@ public interface GrpcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GrpcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

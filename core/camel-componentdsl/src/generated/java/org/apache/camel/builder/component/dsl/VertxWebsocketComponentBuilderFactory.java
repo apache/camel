@@ -99,6 +99,7 @@ public interface VertxWebsocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default VertxWebsocketComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

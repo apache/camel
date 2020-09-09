@@ -80,6 +80,7 @@ public interface KubernetesPersistentVolumesClaimsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesPersistentVolumesClaimsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

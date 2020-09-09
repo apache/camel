@@ -97,6 +97,7 @@ public interface TwitterSearchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TwitterSearchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

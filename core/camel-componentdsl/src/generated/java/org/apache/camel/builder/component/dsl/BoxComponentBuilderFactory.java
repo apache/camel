@@ -142,6 +142,7 @@ public interface BoxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BoxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

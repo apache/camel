@@ -150,6 +150,7 @@ public interface ServletComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ServletComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

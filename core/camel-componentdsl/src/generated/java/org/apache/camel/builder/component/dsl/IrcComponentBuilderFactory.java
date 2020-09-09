@@ -94,6 +94,7 @@ public interface IrcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IrcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

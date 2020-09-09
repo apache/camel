@@ -115,6 +115,7 @@ public interface IgniteEventsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IgniteEventsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

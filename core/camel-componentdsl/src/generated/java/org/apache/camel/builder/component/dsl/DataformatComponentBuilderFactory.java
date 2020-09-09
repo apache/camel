@@ -78,6 +78,7 @@ public interface DataformatComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DataformatComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

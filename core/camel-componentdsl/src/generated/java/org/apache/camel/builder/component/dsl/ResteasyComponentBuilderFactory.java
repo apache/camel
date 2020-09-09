@@ -127,6 +127,7 @@ public interface ResteasyComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ResteasyComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

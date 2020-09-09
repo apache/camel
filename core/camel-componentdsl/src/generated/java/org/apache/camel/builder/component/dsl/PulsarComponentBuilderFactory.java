@@ -523,6 +523,7 @@ public interface PulsarComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PulsarComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

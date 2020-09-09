@@ -75,6 +75,7 @@ public interface WekaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WekaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -162,6 +162,7 @@ public interface EtcdWatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default EtcdWatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

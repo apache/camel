@@ -78,6 +78,7 @@ public interface OpenstackCinderComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OpenstackCinderComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

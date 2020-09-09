@@ -113,6 +113,7 @@ public interface MybatisComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MybatisComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

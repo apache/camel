@@ -97,6 +97,7 @@ public interface PgeventComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PgeventComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

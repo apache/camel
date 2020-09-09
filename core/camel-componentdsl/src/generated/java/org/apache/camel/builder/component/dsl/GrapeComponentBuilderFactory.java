@@ -78,6 +78,7 @@ public interface GrapeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GrapeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

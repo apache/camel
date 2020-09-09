@@ -78,6 +78,7 @@ public interface RestApiComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RestApiComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

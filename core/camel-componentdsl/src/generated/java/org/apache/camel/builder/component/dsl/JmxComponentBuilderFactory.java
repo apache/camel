@@ -74,6 +74,7 @@ public interface JmxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JmxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

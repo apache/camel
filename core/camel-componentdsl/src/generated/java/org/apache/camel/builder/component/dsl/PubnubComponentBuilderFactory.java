@@ -99,6 +99,7 @@ public interface PubnubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PubnubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -78,6 +78,7 @@ public interface ControlbusComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ControlbusComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

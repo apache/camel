@@ -225,6 +225,7 @@ public interface CryptoComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CryptoComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

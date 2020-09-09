@@ -97,6 +97,7 @@ public interface AsteriskComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AsteriskComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

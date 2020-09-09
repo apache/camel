@@ -78,6 +78,7 @@ public interface LanguageComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LanguageComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -438,6 +438,7 @@ public interface ImapsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ImapsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

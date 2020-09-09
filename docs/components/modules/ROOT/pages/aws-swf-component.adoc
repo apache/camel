@@ -59,7 +59,7 @@ The AWS Simple Workflow (SWF) component supports 30 options, which are listed be
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
 | *activityTypeRegistration Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map

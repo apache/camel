@@ -78,6 +78,7 @@ public interface ChatscriptComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ChatscriptComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

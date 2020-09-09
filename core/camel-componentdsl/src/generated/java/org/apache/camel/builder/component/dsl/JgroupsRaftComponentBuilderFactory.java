@@ -148,6 +148,7 @@ public interface JgroupsRaftComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JgroupsRaftComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -138,6 +138,7 @@ public interface WebsocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WebsocketComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

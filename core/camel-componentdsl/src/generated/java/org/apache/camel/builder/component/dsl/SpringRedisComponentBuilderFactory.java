@@ -97,6 +97,7 @@ public interface SpringRedisComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SpringRedisComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

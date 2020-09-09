@@ -146,6 +146,7 @@ public interface SshComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SshComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -74,6 +74,7 @@ public interface RssComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RssComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

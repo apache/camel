@@ -97,6 +97,7 @@ public interface OptaplannerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OptaplannerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

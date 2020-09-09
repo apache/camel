@@ -177,6 +177,7 @@ public interface RestSwaggerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RestSwaggerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

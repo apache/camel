@@ -97,6 +97,7 @@ public interface NitriteComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default NitriteComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

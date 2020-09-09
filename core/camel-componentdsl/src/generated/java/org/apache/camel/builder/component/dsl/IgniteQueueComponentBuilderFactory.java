@@ -117,6 +117,7 @@ public interface IgniteQueueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IgniteQueueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

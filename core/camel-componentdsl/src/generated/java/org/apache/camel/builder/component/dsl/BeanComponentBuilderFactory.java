@@ -113,6 +113,7 @@ public interface BeanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BeanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

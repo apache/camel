@@ -154,6 +154,7 @@ public interface VertxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default VertxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

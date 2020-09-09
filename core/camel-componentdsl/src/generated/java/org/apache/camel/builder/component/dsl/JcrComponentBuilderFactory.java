@@ -94,6 +94,7 @@ public interface JcrComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JcrComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

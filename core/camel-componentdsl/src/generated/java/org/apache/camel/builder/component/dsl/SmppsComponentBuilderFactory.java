@@ -392,6 +392,7 @@ public interface SmppsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SmppsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

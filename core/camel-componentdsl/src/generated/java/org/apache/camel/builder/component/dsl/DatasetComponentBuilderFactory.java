@@ -97,6 +97,7 @@ public interface DatasetComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DatasetComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

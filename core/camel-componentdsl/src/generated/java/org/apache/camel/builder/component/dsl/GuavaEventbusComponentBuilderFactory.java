@@ -126,6 +126,7 @@ public interface GuavaEventbusComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GuavaEventbusComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

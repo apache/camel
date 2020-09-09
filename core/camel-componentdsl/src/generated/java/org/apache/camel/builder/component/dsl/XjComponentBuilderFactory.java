@@ -91,6 +91,7 @@ public interface XjComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XjComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

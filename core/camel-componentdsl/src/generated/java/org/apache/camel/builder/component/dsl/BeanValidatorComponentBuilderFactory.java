@@ -91,6 +91,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BeanValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -117,6 +117,7 @@ public interface IgniteComputeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IgniteComputeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

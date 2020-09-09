@@ -112,6 +112,7 @@ public interface FreemarkerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FreemarkerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

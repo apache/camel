@@ -78,6 +78,7 @@ public interface SchematronComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SchematronComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

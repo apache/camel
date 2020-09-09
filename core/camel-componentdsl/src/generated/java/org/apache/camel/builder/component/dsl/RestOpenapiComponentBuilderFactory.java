@@ -176,6 +176,7 @@ public interface RestOpenapiComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RestOpenapiComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

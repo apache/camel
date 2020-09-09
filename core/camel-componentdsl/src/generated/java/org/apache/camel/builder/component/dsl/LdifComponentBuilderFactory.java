@@ -75,6 +75,7 @@ public interface LdifComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LdifComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

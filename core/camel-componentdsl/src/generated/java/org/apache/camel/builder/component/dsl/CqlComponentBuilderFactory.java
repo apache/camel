@@ -98,6 +98,7 @@ public interface CqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -77,6 +77,7 @@ public interface KuduComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KuduComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

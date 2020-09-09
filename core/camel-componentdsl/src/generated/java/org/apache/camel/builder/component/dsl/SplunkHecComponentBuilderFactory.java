@@ -80,6 +80,7 @@ public interface SplunkHecComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SplunkHecComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

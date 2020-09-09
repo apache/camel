@@ -150,6 +150,7 @@ public interface EtcdKeysComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default EtcdKeysComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

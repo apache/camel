@@ -155,6 +155,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ReactiveStreamsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

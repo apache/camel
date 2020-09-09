@@ -97,6 +97,7 @@ public interface XqueryComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XqueryComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

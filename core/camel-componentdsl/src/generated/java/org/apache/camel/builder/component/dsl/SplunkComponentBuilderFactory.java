@@ -97,6 +97,7 @@ public interface SplunkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SplunkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

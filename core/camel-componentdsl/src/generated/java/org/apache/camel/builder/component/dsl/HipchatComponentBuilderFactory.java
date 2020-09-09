@@ -97,6 +97,7 @@ public interface HipchatComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HipchatComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -59,7 +59,7 @@ The AWS DynamoDB component supports 17 options, which are listed below.
 | *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *region* (producer) | The region in which DDB client needs to work |  | String
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

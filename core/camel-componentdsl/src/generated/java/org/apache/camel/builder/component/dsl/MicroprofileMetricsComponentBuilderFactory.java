@@ -78,6 +78,7 @@ public interface MicroprofileMetricsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MicroprofileMetricsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

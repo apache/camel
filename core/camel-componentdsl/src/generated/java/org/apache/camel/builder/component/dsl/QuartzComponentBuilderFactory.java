@@ -156,6 +156,7 @@ public interface QuartzComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default QuartzComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -78,6 +78,7 @@ public interface XchangeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XchangeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

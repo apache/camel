@@ -97,6 +97,7 @@ public interface MongodbGridfsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MongodbGridfsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

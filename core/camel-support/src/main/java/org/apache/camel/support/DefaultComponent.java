@@ -279,6 +279,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional
      * capabilities.
      */
+    @Deprecated
     public boolean isBasicPropertyBinding() {
         return basicPropertyBinding;
     }
@@ -287,6 +288,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional
      * capabilities.
      */
+    @Deprecated
     public void setBasicPropertyBinding(boolean basicPropertyBinding) {
         this.basicPropertyBinding = basicPropertyBinding;
     }

@@ -143,6 +143,7 @@ public interface StompComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default StompComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

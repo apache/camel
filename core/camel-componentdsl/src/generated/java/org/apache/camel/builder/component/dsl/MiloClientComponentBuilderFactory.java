@@ -148,6 +148,7 @@ public interface MiloClientComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MiloClientComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

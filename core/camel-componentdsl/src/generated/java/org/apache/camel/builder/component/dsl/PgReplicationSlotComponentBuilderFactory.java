@@ -78,6 +78,7 @@ public interface PgReplicationSlotComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PgReplicationSlotComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

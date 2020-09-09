@@ -78,6 +78,7 @@ public interface ValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

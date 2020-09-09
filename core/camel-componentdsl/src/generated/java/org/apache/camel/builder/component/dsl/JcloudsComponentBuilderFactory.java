@@ -125,6 +125,7 @@ public interface JcloudsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JcloudsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

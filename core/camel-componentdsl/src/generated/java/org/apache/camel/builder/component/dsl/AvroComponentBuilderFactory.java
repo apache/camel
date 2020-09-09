@@ -168,6 +168,7 @@ public interface AvroComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AvroComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

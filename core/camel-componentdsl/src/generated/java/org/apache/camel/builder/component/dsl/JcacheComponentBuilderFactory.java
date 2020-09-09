@@ -160,6 +160,7 @@ public interface JcacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JcacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

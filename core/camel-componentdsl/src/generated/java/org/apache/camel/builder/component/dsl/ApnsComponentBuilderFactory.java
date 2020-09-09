@@ -108,6 +108,7 @@ public interface ApnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ApnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

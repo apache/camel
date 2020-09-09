@@ -248,6 +248,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DebeziumSqlserverComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -124,6 +124,7 @@ public interface DirectVmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DirectVmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

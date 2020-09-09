@@ -90,6 +90,7 @@ public interface SqlStoredComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SqlStoredComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -97,6 +97,7 @@ public interface BrowseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BrowseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

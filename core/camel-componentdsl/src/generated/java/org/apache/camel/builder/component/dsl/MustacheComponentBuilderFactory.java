@@ -112,6 +112,7 @@ public interface MustacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MustacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -92,6 +92,7 @@ public interface JsltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JsltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

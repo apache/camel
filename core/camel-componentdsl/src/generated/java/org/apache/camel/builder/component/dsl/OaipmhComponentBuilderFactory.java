@@ -97,6 +97,7 @@ public interface OaipmhComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OaipmhComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

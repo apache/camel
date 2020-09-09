@@ -189,6 +189,7 @@ public interface ArangodbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ArangodbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

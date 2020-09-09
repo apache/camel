@@ -94,6 +94,7 @@ public interface GitComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GitComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

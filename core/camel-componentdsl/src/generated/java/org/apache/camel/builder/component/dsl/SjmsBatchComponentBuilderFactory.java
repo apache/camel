@@ -100,6 +100,7 @@ public interface SjmsBatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SjmsBatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

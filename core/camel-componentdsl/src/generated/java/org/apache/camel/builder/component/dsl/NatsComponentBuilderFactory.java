@@ -118,6 +118,7 @@ public interface NatsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default NatsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

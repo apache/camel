@@ -78,6 +78,7 @@ public interface BonitaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BonitaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

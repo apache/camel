@@ -155,6 +155,7 @@ public interface VmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default VmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -94,6 +94,7 @@ public interface HdfsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HdfsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

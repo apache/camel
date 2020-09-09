@@ -94,6 +94,7 @@ public interface SftpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SftpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

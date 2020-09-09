@@ -256,6 +256,7 @@ public interface JettyComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JettyComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

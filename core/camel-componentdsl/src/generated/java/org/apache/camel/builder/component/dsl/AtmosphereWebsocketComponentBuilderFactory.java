@@ -172,6 +172,7 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtmosphereWebsocketComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

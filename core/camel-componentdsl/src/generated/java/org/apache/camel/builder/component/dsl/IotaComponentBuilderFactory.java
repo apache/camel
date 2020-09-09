@@ -75,6 +75,7 @@ public interface IotaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IotaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

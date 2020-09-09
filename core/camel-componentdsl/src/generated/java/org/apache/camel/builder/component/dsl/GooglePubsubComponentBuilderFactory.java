@@ -133,6 +133,7 @@ public interface GooglePubsubComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GooglePubsubComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

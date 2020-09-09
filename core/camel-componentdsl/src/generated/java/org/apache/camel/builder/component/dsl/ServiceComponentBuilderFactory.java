@@ -78,6 +78,7 @@ public interface ServiceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ServiceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -75,6 +75,7 @@ public interface SagaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SagaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

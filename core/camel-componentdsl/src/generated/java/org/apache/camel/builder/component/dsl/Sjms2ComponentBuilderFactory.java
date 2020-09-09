@@ -135,6 +135,7 @@ public interface Sjms2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Sjms2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

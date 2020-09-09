@@ -187,6 +187,7 @@ public interface AzureQueueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AzureQueueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -75,6 +75,7 @@ public interface MsvComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MsvComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

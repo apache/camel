@@ -630,6 +630,7 @@ public interface NettyComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default NettyComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

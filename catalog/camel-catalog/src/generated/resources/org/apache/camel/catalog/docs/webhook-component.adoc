@@ -57,7 +57,7 @@ The Webhook component supports 8 options, which are listed below.
 | *webhookComponentName* (consumer) | The Camel Rest component to use for the REST transport, such as netty-http. |  | String
 | *webhookExternalUrl* (consumer) | The URL of the current service as seen by the webhook provider |  | String
 | *webhookPath* (consumer) | The path where the webhook endpoint will be exposed (relative to basePath, if any) |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | Set the default configuration for the webhook meta-component. |  | WebhookConfiguration
 |===
 // component options: END

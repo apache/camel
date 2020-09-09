@@ -130,6 +130,7 @@ public interface LuceneComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LuceneComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -77,6 +77,7 @@ public interface DjlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DjlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

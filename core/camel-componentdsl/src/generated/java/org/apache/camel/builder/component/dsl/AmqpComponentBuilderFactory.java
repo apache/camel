@@ -1033,6 +1033,7 @@ public interface AmqpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AmqpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

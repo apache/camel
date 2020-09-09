@@ -75,6 +75,7 @@ public interface StaxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default StaxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

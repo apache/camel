@@ -75,6 +75,7 @@ public interface PdfComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PdfComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

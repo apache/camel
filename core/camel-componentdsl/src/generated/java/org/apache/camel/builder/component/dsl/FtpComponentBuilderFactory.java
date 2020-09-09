@@ -94,6 +94,7 @@ public interface FtpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FtpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -76,6 +76,7 @@ public interface FopComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FopComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

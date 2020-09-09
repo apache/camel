@@ -89,6 +89,7 @@ public interface ScpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ScpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -400,6 +400,7 @@ public interface PahoComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PahoComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

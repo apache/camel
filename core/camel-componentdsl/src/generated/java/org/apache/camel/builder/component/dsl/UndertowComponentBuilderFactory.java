@@ -112,6 +112,7 @@ public interface UndertowComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default UndertowComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

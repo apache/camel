@@ -78,6 +78,7 @@ public interface WorkdayComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WorkdayComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

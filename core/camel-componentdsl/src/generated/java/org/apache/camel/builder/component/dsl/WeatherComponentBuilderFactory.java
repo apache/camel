@@ -97,6 +97,7 @@ public interface WeatherComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WeatherComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

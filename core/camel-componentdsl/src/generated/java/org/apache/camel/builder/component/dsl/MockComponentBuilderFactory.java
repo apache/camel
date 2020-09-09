@@ -75,6 +75,7 @@ public interface MockComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MockComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

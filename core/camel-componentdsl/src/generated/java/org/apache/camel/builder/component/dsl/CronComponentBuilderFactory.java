@@ -76,6 +76,7 @@ public interface CronComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CronComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

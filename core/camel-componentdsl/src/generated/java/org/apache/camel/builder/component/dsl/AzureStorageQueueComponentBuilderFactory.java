@@ -174,6 +174,7 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AzureStorageQueueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

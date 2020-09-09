@@ -233,6 +233,7 @@ public interface GangliaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GangliaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

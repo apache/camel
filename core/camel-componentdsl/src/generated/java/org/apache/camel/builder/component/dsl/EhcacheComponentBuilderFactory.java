@@ -210,6 +210,7 @@ public interface EhcacheComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default EhcacheComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

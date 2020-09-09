@@ -78,6 +78,7 @@ public interface SpringLdapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SpringLdapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

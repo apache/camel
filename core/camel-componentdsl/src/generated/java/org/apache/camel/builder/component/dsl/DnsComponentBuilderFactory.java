@@ -75,6 +75,7 @@ public interface DnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
