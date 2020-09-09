@@ -4467,37 +4467,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>revapi</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.revapi</groupId>
-                        <artifactId>revapi-maven-plugin</artifactId>
-                        <version>${revapi-maven-plugin-version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.revapi</groupId>
-                                <artifactId>revapi-java</artifactId>
-                                <version>${revapi-java-version}</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <analysisConfigurationFiles>
-                                <file>${project.basedir}/src/revapi/ignore.json</file>
-                            </analysisConfigurationFiles>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>dependencycheck</id>
