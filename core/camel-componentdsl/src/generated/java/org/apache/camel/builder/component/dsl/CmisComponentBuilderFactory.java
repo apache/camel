@@ -94,6 +94,7 @@ public interface CmisComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CmisComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

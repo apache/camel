@@ -97,6 +97,7 @@ public interface KubernetesJobComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesJobComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

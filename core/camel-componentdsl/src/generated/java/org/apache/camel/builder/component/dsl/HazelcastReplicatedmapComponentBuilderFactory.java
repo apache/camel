@@ -97,6 +97,7 @@ public interface HazelcastReplicatedmapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HazelcastReplicatedmapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

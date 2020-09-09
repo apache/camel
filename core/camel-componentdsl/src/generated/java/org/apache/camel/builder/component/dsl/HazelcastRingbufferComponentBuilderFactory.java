@@ -78,6 +78,7 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HazelcastRingbufferComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

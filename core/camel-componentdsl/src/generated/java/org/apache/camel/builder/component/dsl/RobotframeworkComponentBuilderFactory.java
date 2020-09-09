@@ -688,6 +688,7 @@ public interface RobotframeworkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RobotframeworkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -132,7 +132,7 @@ The Mail component supports 42 options, which are listed below.
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
 | *attachmentsContentTransfer EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
 | *authenticator* (advanced) | The authenticator for login. If set then the password and username are ignored. Can be used for tokens which can expire and therefore must be read dynamically. |  | MailAuthenticator
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | Sets the Mail configuration |  | MailConfiguration
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
 | *contentType* (advanced) | The mail message content type. Use text/html for HTML mails. | text/plain | String

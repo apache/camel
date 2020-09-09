@@ -78,6 +78,7 @@ public interface OpenshiftBuildsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OpenshiftBuildsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

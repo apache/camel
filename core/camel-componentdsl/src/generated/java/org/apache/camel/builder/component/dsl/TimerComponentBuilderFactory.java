@@ -74,6 +74,7 @@ public interface TimerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TimerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

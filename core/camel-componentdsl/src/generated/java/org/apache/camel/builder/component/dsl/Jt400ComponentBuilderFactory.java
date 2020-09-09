@@ -98,6 +98,7 @@ public interface Jt400ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Jt400ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

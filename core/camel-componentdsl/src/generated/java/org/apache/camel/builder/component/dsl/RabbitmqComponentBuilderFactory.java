@@ -576,6 +576,7 @@ public interface RabbitmqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RabbitmqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

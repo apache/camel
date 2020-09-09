@@ -95,6 +95,7 @@ public interface SlackComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SlackComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

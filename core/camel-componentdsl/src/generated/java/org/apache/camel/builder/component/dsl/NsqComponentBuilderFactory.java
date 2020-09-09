@@ -107,6 +107,7 @@ public interface NsqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default NsqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -134,6 +134,7 @@ public interface GoogleSheetsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoogleSheetsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

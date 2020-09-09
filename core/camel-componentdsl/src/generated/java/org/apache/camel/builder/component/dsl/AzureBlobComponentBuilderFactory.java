@@ -297,6 +297,7 @@ public interface AzureBlobComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AzureBlobComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

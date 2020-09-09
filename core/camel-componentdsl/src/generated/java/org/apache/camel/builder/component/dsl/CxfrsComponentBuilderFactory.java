@@ -97,6 +97,7 @@ public interface CxfrsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CxfrsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

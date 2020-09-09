@@ -99,6 +99,7 @@ public interface DropboxComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DropboxComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

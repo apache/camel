@@ -110,6 +110,7 @@ public interface ChunkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ChunkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

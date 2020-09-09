@@ -97,6 +97,7 @@ public interface CoapsTcpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CoapsTcpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

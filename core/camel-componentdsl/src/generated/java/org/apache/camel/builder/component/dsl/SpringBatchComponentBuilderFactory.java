@@ -105,6 +105,7 @@ public interface SpringBatchComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SpringBatchComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

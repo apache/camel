@@ -97,6 +97,7 @@ public interface SpringIntegrationComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SpringIntegrationComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

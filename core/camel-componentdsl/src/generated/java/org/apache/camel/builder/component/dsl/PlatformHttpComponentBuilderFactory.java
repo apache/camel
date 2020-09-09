@@ -78,6 +78,7 @@ public interface PlatformHttpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default PlatformHttpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

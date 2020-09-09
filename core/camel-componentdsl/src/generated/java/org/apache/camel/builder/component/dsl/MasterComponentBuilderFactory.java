@@ -78,6 +78,7 @@ public interface MasterComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MasterComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

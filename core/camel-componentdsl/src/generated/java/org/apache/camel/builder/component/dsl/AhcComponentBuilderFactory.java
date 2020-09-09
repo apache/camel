@@ -92,6 +92,7 @@ public interface AhcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AhcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

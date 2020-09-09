@@ -96,6 +96,7 @@ public interface SnmpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SnmpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

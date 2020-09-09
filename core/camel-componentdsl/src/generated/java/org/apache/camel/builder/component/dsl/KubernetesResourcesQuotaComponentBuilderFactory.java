@@ -78,6 +78,7 @@ public interface KubernetesResourcesQuotaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesResourcesQuotaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

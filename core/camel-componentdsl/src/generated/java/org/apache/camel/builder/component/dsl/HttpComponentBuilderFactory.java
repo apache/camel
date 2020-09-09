@@ -109,6 +109,7 @@ public interface HttpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HttpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

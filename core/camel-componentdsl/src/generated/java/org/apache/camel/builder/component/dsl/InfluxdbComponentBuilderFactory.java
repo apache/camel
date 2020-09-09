@@ -89,6 +89,7 @@ public interface InfluxdbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default InfluxdbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

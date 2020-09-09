@@ -193,6 +193,7 @@ public interface WordpressComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WordpressComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

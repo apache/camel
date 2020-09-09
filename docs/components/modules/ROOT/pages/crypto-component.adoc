@@ -110,7 +110,7 @@ The Crypto (JCE) component supports 21 options, which are listed below.
 | *publicKeyName* (producer) | references that should be resolved when the context changes |  | String
 | *secureRandomName* (producer) | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *signatureHeaderName* (producer) | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bufferSize* (advanced) | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *certificate* (advanced) | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
 | *clearHeaders* (advanced) | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true, and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset. | true | boolean

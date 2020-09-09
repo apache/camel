@@ -97,6 +97,7 @@ public interface TwilioComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TwilioComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

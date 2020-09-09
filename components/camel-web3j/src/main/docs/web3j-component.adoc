@@ -83,7 +83,7 @@ The Web3j Ethereum Blockchain component supports 38 options, which are listed be
 | *transactionHash* (producer) | The information about a transaction requested by transaction hash. |  | String
 | *ttl* (producer) | The time to live in seconds of a whisper message. |  | BigInteger
 | *value* (producer) | The value sent within a transaction. |  | BigInteger
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===
 // component options: END
 

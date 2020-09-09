@@ -208,6 +208,7 @@ public interface Aws2MqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Aws2MqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

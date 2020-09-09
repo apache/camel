@@ -78,6 +78,7 @@ public interface SchedulerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SchedulerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

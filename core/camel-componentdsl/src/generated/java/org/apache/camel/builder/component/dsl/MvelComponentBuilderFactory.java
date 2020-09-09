@@ -109,6 +109,7 @@ public interface MvelComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MvelComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

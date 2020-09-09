@@ -97,6 +97,7 @@ public interface WebsocketJsr356ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WebsocketJsr356ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

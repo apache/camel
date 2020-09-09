@@ -187,6 +187,7 @@ public interface GoogleCalendarComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoogleCalendarComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

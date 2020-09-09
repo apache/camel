@@ -99,6 +99,7 @@ public interface CouchbaseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CouchbaseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

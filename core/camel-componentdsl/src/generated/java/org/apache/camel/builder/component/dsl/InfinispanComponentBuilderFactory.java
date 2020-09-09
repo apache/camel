@@ -219,6 +219,7 @@ public interface InfinispanComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default InfinispanComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

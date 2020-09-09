@@ -99,6 +99,7 @@ public interface CometdComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CometdComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

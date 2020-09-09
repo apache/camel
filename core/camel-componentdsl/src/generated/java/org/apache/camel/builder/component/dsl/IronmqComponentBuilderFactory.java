@@ -99,6 +99,7 @@ public interface IronmqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IronmqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

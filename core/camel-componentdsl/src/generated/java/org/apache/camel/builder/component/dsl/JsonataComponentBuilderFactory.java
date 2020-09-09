@@ -78,6 +78,7 @@ public interface JsonataComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JsonataComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

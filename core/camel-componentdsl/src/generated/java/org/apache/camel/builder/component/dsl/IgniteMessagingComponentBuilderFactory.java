@@ -136,6 +136,7 @@ public interface IgniteMessagingComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default IgniteMessagingComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

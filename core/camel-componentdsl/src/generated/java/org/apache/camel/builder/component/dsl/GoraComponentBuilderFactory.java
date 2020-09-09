@@ -94,6 +94,7 @@ public interface GoraComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoraComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

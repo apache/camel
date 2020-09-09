@@ -78,7 +78,7 @@ The Jetty component supports 32 options, which are listed below.
 | *useXForwardedForHeader* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
 | *threadPool* (consumer) | To use a custom thread pool for the server. This option should only be used in special circumstances. |  | ThreadPool
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *errorHandler* (advanced) | This option is used to set the ErrorHandler that Jetty server uses. |  | ErrorHandler
 | *httpBinding* (advanced) | Not to be used - use JettyHttpBinding instead. |  | HttpBinding
 | *httpConfiguration* (advanced) | Jetty component does not use HttpConfiguration. |  | HttpConfiguration

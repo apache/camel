@@ -97,6 +97,7 @@ public interface BeanstalkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BeanstalkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

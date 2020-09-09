@@ -65,7 +65,7 @@ The Azure Storage Queue Service (Deprecated) component supports 13 options, whic
 | *messageVisibilityDelay* (producer) | Message Visibility Delay in seconds |  | int
 | *operation* (producer) | Queue service operation hint to the producer. There are 8 enums and the value can be one of: listQueues, createQueue, deleteQueue, addMessage, retrieveMessage, peekMessage, updateMessage, deleteMessage | listQueues | QueueServiceOperations
 | *queuePrefix* (producer) | Set a prefix which can be used for listing the queues |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | The Queue Service configuration |  | QueueServiceConfiguration
 | *credentialsAccountKey* (security) | Set the storage account key used during authentication phase |  | String
 | *credentialsAccountName* (security) | Set the storage account name used during authentication phase |  | String

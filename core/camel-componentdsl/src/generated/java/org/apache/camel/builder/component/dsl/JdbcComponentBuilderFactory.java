@@ -87,6 +87,7 @@ public interface JdbcComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JdbcComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -97,6 +97,7 @@ public interface BraintreeComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default BraintreeComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

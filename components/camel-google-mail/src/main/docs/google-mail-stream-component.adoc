@@ -69,7 +69,7 @@ The Google Mail Stream component supports 13 options, which are listed below.
 | *maxResults* (consumer) | Max results to be returned | 10 | long
 | *query* (consumer) | The query to execute on gmail box | is:unread | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientFactory* (advanced) | The client Factory |  | GoogleMailClientFactory
 | *configuration* (advanced) | The configuration |  | GoogleMailStreamConfiguration
 |===

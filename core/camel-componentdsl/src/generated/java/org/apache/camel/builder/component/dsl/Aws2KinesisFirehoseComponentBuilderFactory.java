@@ -205,6 +205,7 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Aws2KinesisFirehoseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

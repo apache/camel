@@ -94,6 +94,7 @@ public interface XmppComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XmppComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

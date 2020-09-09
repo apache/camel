@@ -99,6 +99,7 @@ public interface KubernetesHpaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesHpaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

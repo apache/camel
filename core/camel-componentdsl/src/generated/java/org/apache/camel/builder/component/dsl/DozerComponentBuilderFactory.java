@@ -76,6 +76,7 @@ public interface DozerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DozerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

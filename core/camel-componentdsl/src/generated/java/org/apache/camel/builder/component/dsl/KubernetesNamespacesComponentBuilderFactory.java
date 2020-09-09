@@ -99,6 +99,7 @@ public interface KubernetesNamespacesComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesNamespacesComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

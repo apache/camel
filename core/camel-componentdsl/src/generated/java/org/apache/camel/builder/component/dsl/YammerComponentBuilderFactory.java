@@ -195,6 +195,7 @@ public interface YammerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default YammerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

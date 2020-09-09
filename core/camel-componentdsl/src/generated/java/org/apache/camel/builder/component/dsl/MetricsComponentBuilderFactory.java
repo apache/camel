@@ -80,6 +80,7 @@ public interface MetricsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MetricsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

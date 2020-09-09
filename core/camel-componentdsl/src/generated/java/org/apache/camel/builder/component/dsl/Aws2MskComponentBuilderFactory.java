@@ -207,6 +207,7 @@ public interface Aws2MskComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Aws2MskComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

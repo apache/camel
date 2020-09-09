@@ -340,6 +340,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AzureEventhubsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

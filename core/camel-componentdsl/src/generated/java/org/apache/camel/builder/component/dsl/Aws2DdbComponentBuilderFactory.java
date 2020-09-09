@@ -260,6 +260,7 @@ public interface Aws2DdbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Aws2DdbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

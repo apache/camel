@@ -248,6 +248,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DebeziumMongodbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

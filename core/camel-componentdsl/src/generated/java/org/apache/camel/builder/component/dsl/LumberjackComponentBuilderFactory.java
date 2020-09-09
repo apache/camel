@@ -76,6 +76,7 @@ public interface LumberjackComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LumberjackComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

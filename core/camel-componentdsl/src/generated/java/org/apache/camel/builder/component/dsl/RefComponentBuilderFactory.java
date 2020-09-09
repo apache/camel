@@ -96,6 +96,7 @@ public interface RefComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RefComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

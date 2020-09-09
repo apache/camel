@@ -113,6 +113,7 @@ public interface ClasComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ClasComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

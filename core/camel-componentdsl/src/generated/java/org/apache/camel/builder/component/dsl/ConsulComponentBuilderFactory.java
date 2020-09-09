@@ -257,6 +257,7 @@ public interface ConsulComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ConsulComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

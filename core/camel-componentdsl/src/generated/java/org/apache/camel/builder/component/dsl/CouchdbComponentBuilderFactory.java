@@ -100,6 +100,7 @@ public interface CouchdbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CouchdbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

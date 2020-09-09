@@ -79,6 +79,7 @@ public interface HazelcastAtomicvalueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HazelcastAtomicvalueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -80,6 +80,7 @@ public interface OpenstackKeystoneComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default OpenstackKeystoneComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

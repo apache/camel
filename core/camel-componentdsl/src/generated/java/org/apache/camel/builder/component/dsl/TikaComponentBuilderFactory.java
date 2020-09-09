@@ -75,6 +75,7 @@ public interface TikaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TikaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

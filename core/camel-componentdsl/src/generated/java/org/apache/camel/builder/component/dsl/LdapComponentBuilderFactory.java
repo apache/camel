@@ -75,6 +75,7 @@ public interface LdapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LdapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

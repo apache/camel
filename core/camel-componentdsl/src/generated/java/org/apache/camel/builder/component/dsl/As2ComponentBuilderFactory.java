@@ -94,6 +94,7 @@ public interface As2ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default As2ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

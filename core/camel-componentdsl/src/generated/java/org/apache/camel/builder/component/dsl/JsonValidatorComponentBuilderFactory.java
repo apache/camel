@@ -78,6 +78,7 @@ public interface JsonValidatorComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JsonValidatorComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

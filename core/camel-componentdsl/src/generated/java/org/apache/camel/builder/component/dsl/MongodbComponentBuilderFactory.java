@@ -110,6 +110,7 @@ public interface MongodbComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MongodbComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

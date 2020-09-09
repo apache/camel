@@ -108,6 +108,7 @@ public interface HbaseComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HbaseComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

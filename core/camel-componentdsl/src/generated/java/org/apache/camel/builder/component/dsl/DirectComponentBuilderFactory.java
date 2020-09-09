@@ -123,6 +123,7 @@ public interface DirectComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DirectComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

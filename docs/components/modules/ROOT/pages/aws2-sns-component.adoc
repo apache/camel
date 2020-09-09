@@ -70,7 +70,7 @@ The AWS 2 Simple Notification System (SNS) component supports 20 options, which 
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

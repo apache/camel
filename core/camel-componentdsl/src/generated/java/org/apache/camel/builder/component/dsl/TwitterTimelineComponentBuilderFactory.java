@@ -97,6 +97,7 @@ public interface TwitterTimelineComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TwitterTimelineComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -61,7 +61,7 @@ The AWS 2 Identity and Access Management (IAM) component supports 14 options, wh
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the IAM client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
 | *region* (producer) | The region in which IAM client needs to work. When using this parameter, the configuration will expect the lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id() | aws-global | String
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

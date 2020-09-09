@@ -148,6 +148,7 @@ public interface GoogleDriveComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoogleDriveComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

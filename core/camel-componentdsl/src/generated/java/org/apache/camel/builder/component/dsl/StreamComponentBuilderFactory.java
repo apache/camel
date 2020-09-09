@@ -97,6 +97,7 @@ public interface StreamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default StreamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

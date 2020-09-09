@@ -118,6 +118,7 @@ public interface ZookeeperMasterComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ZookeeperMasterComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

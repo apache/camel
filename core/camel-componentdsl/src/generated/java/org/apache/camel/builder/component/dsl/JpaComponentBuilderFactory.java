@@ -154,6 +154,7 @@ public interface JpaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JpaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

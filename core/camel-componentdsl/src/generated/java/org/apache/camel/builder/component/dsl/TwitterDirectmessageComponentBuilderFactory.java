@@ -97,6 +97,7 @@ public interface TwitterDirectmessageComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TwitterDirectmessageComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

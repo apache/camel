@@ -1017,6 +1017,7 @@ public interface JmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

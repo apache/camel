@@ -102,6 +102,7 @@ public interface SparkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SparkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

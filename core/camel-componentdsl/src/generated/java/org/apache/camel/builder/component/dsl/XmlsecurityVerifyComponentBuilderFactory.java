@@ -329,6 +329,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XmlsecurityVerifyComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

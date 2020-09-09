@@ -261,6 +261,7 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoogleSheetsStreamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

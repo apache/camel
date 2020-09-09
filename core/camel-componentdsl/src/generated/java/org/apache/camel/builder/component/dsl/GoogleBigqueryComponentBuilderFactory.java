@@ -116,6 +116,7 @@ public interface GoogleBigqueryComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default GoogleBigqueryComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

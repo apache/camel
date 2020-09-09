@@ -435,6 +435,7 @@ public interface Pop3ComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Pop3ComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

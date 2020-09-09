@@ -96,7 +96,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 |===
 // component options: END

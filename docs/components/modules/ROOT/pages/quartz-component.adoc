@@ -68,7 +68,7 @@ The Quartz component supports 13 options, which are listed below.
 | *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Map
 | *propertiesFile* (consumer) | File name of the properties to load from the classpath |  | String
 | *propertiesRef* (consumer) | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
 | *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
 | *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean

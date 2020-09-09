@@ -421,6 +421,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AzureStorageBlobComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

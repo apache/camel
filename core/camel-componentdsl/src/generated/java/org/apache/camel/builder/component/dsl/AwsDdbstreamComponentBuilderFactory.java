@@ -210,6 +210,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AwsDdbstreamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

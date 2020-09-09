@@ -1151,6 +1151,7 @@ public interface KafkaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KafkaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -94,6 +94,7 @@ public interface XsltSaxonComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XsltSaxonComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

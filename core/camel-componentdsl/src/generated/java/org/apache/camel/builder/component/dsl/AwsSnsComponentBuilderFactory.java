@@ -278,6 +278,7 @@ public interface AwsSnsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AwsSnsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

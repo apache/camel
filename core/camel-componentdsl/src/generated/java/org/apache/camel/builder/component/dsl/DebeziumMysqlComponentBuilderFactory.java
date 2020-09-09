@@ -248,6 +248,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DebeziumMysqlComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -435,6 +435,7 @@ public interface ImapComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ImapComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

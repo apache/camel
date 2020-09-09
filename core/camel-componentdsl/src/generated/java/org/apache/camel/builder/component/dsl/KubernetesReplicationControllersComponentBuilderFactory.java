@@ -99,6 +99,7 @@ public interface KubernetesReplicationControllersComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default KubernetesReplicationControllersComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

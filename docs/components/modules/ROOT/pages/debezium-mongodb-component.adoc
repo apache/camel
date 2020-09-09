@@ -68,7 +68,7 @@ The Debezium MongoDB Connector component supports 49 options, which are listed b
 | *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
 | *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
 | *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *collectionBlacklist* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'collection.blacklist' description. |  | String
 | *collectionWhitelist* (mongodb) | The collections for which changes are to be captured |  | String
 | *connectBackoffInitialDelayMs* (mongodb) | The initial delay when trying to reconnect to a primary after a connection cannot be made or when no primary is available. Defaults to 1 second (1000 ms). | 1s | long

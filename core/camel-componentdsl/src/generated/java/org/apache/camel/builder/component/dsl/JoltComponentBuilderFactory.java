@@ -92,6 +92,7 @@ public interface JoltComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JoltComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

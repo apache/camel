@@ -314,6 +314,7 @@ public interface FacebookComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FacebookComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

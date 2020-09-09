@@ -157,6 +157,7 @@ public interface JooqComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JooqComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

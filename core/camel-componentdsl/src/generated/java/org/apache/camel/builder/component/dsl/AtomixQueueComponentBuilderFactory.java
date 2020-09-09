@@ -186,6 +186,7 @@ public interface AtomixQueueComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtomixQueueComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

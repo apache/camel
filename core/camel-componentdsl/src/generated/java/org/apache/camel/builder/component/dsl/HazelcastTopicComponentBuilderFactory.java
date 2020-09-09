@@ -97,6 +97,7 @@ public interface HazelcastTopicComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default HazelcastTopicComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -76,6 +76,7 @@ public interface DrillComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DrillComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

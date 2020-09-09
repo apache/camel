@@ -80,6 +80,7 @@ public interface MicrometerComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MicrometerComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

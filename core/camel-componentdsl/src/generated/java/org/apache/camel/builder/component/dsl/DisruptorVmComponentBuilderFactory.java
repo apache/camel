@@ -179,6 +179,7 @@ public interface DisruptorVmComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DisruptorVmComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

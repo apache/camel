@@ -202,6 +202,7 @@ public interface AwsIamComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AwsIamComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -672,6 +672,7 @@ public interface SalesforceComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SalesforceComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

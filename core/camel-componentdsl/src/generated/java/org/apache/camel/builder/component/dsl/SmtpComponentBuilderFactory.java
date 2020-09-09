@@ -435,6 +435,7 @@ public interface SmtpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SmtpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -75,6 +75,7 @@ public interface LprComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LprComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

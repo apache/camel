@@ -94,6 +94,7 @@ public interface MllpComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MllpComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

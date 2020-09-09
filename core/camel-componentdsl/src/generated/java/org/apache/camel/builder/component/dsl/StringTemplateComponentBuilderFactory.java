@@ -112,6 +112,7 @@ public interface StringTemplateComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default StringTemplateComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -102,6 +102,7 @@ public interface NagiosComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default NagiosComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

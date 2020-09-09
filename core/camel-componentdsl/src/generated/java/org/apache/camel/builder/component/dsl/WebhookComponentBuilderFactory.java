@@ -143,6 +143,7 @@ public interface WebhookComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default WebhookComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

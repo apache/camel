@@ -624,6 +624,7 @@ public interface MinioComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MinioComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

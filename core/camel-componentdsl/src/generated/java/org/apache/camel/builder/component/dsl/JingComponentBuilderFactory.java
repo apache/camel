@@ -77,6 +77,7 @@ public interface JingComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JingComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -94,7 +94,7 @@ The AWS 2 S3 Storage Service component supports 42 options, which are listed bel
 | *awsKMSKeyId* (producer) | Define the id of KMS key to use in case KMS is enabled |  | String
 | *useAwsKMS* (producer) | Define if KMS must be used or not | false | boolean
 | *useCustomerKey* (producer) | Define if Customer Key must be used or not | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===

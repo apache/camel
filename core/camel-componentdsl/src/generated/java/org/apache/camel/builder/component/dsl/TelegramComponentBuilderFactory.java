@@ -110,6 +110,7 @@ public interface TelegramComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default TelegramComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

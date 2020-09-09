@@ -113,6 +113,7 @@ public interface Iec60870ClientComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default Iec60870ClientComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

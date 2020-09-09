@@ -80,6 +80,7 @@ public interface DatasetTestComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DatasetTestComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

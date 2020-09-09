@@ -74,6 +74,7 @@ public interface AtomComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default AtomComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

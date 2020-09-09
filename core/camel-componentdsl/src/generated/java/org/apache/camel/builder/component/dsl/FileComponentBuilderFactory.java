@@ -94,6 +94,7 @@ public interface FileComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FileComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

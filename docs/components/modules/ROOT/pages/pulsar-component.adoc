@@ -77,7 +77,7 @@ The Pulsar component supports 35 options, which are listed below.
 | *producerName* (producer) | Name of the producer. If unset, lets Pulsar select a unique identifier. |  | String
 | *sendTimeoutMs* (producer) | Send timeout in milliseconds | 30000 | int
 | *autoConfiguration* (advanced) | The pulsar auto configuration |  | AutoConfiguration
-| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *pulsarClient* (advanced) | The pulsar client |  | PulsarClient
 |===
 // component options: END

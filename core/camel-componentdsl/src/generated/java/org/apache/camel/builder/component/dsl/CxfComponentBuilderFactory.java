@@ -111,6 +111,7 @@ public interface CxfComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CxfComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

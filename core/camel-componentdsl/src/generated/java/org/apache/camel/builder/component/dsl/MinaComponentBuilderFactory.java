@@ -227,6 +227,7 @@ public interface MinaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default MinaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

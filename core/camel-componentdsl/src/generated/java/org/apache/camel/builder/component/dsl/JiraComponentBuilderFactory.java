@@ -117,6 +117,7 @@ public interface JiraComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default JiraComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

@@ -97,6 +97,7 @@ public interface SoroushComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default SoroushComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

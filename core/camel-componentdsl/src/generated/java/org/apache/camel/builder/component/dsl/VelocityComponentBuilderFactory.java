@@ -112,6 +112,7 @@ public interface VelocityComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default VelocityComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

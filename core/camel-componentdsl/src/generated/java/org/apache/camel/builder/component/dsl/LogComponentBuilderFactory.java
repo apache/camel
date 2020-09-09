@@ -75,6 +75,7 @@ public interface LogComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default LogComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

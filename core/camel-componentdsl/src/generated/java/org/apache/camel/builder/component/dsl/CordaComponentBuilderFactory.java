@@ -235,6 +235,7 @@ public interface CordaComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CordaComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

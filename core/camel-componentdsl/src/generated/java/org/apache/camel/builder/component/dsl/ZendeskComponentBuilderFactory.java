@@ -108,6 +108,7 @@ public interface ZendeskComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ZendeskComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

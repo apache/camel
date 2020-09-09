@@ -173,6 +173,7 @@ public interface RestEndpointComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default RestEndpointComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

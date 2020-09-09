@@ -79,6 +79,7 @@ public interface CryptoCmsComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default CryptoCmsComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

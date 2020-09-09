@@ -485,6 +485,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default XmlsecuritySignComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

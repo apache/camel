@@ -117,6 +117,7 @@ public interface FlinkComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FlinkComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

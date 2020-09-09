@@ -248,6 +248,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default DebeziumPostgresComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

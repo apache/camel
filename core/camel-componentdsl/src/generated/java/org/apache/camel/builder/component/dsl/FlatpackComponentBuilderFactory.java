@@ -97,6 +97,7 @@ public interface FlatpackComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default FlatpackComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

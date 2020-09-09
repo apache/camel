@@ -75,6 +75,7 @@ public interface ExecComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default ExecComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);

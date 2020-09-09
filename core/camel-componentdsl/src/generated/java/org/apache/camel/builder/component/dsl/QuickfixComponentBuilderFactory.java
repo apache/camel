@@ -113,6 +113,7 @@ public interface QuickfixComponentBuilderFactory {
          * Default: false
          * Group: advanced
          */
+        @Deprecated
         default QuickfixComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
