@@ -124,6 +124,18 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JmsComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Specifies whether to test the connection on startup. This ensures
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
@@ -248,18 +260,6 @@ public interface JmsComponentBuilderFactory {
         default JmsComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
-            return this;
-        }
-        /**
-         * Provides an explicit ReplyTo destination, which overrides any
-         * incoming value of Message.getJMSReplyTo().
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default JmsComponentBuilder replyTo(java.lang.String replyTo) {
-            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -1608,6 +1608,7 @@ public interface JmsComponentBuilderFactory {
             case "disableReplyTo": getOrCreateConfiguration((JmsComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((JmsComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((JmsComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "replyTo": getOrCreateConfiguration((JmsComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((JmsComponent) component).setTestConnectionOnStartup((boolean) value); return true;
             case "acknowledgementModeName": getOrCreateConfiguration((JmsComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
             case "asyncConsumer": getOrCreateConfiguration((JmsComponent) component).setAsyncConsumer((boolean) value); return true;
@@ -1616,7 +1617,6 @@ public interface JmsComponentBuilderFactory {
             case "cacheLevelName": getOrCreateConfiguration((JmsComponent) component).setCacheLevelName((java.lang.String) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setConcurrentConsumers((int) value); return true;
             case "maxConcurrentConsumers": getOrCreateConfiguration((JmsComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "replyTo": getOrCreateConfiguration((JmsComponent) component).setReplyTo((java.lang.String) value); return true;
             case "replyToDeliveryPersistent": getOrCreateConfiguration((JmsComponent) component).setReplyToDeliveryPersistent((boolean) value); return true;
             case "selector": getOrCreateConfiguration((JmsComponent) component).setSelector((java.lang.String) value); return true;
             case "subscriptionDurable": getOrCreateConfiguration((JmsComponent) component).setSubscriptionDurable((boolean) value); return true;

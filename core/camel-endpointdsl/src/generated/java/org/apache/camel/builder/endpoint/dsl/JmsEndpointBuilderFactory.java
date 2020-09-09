@@ -170,6 +170,18 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JmsEndpointConsumerBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Specifies whether to test the connection on startup. This ensures
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
@@ -391,18 +403,6 @@ public interface JmsEndpointBuilderFactory {
         default JmsEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
-            return this;
-        }
-        /**
-         * Provides an explicit ReplyTo destination, which overrides any
-         * incoming value of Message.getJMSReplyTo().
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default JmsEndpointConsumerBuilder replyTo(String replyTo) {
-            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -2291,6 +2291,18 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
             doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JmsEndpointProducerBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -4379,6 +4391,18 @@ public interface JmsEndpointBuilderFactory {
          */
         default JmsEndpointBuilder jmsMessageType(String jmsMessageType) {
             doSetProperty("jmsMessageType", jmsMessageType);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default JmsEndpointBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
