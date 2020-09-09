@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.hbase.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-
 /**
  * A simplified representation of HBase KeyValue objects, which uses the actual Objects instead of byte arrays. It is
  * used in order to abstract the conversion strategy from CellMappingStrategy. It is also used as a template to specify
@@ -42,7 +40,6 @@ public class HBaseCell {
         return family;
     }
 
-    @XmlAttribute(name = "family")
     public void setFamily(String family) {
         this.family = family;
     }
@@ -51,7 +48,6 @@ public class HBaseCell {
         return qualifier;
     }
 
-    @XmlAttribute(name = "qualifier")
     public void setQualifier(String qualifier) {
         this.qualifier = qualifier;
     }
@@ -68,7 +64,6 @@ public class HBaseCell {
         return valueType;
     }
 
-    @XmlAttribute(name = "type")
     public void setValueType(Class<?> valueType) {
         if (valueType == null) {
             throw new IllegalArgumentException("Value type can not be null");
