@@ -140,6 +140,18 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default AmqpComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Specifies whether to test the connection on startup. This ensures
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
@@ -264,18 +276,6 @@ public interface AmqpComponentBuilderFactory {
         default AmqpComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
-            return this;
-        }
-        /**
-         * Provides an explicit ReplyTo destination, which overrides any
-         * incoming value of Message.getJMSReplyTo().
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AmqpComponentBuilder replyTo(java.lang.String replyTo) {
-            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -1625,6 +1625,7 @@ public interface AmqpComponentBuilderFactory {
             case "durableSubscriptionName": getOrCreateConfiguration((AMQPComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "includeAmqpAnnotations": ((AMQPComponent) component).setIncludeAmqpAnnotations((boolean) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((AMQPComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "replyTo": getOrCreateConfiguration((AMQPComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((AMQPComponent) component).setTestConnectionOnStartup((boolean) value); return true;
             case "acknowledgementModeName": getOrCreateConfiguration((AMQPComponent) component).setAcknowledgementModeName((java.lang.String) value); return true;
             case "asyncConsumer": getOrCreateConfiguration((AMQPComponent) component).setAsyncConsumer((boolean) value); return true;
@@ -1633,7 +1634,6 @@ public interface AmqpComponentBuilderFactory {
             case "cacheLevelName": getOrCreateConfiguration((AMQPComponent) component).setCacheLevelName((java.lang.String) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setConcurrentConsumers((int) value); return true;
             case "maxConcurrentConsumers": getOrCreateConfiguration((AMQPComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "replyTo": getOrCreateConfiguration((AMQPComponent) component).setReplyTo((java.lang.String) value); return true;
             case "replyToDeliveryPersistent": getOrCreateConfiguration((AMQPComponent) component).setReplyToDeliveryPersistent((boolean) value); return true;
             case "selector": getOrCreateConfiguration((AMQPComponent) component).setSelector((java.lang.String) value); return true;
             case "subscriptionDurable": getOrCreateConfiguration((AMQPComponent) component).setSubscriptionDurable((boolean) value); return true;
