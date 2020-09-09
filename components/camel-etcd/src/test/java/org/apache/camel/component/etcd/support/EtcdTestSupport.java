@@ -34,7 +34,7 @@ import org.testcontainers.containers.GenericContainer;
 
 public abstract class EtcdTestSupport extends ContainerAwareTestSupport {
     public static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
-    public static final String CONTAINER_IMAGE = "quay.io/coreos/etcd:v2.3.7";
+    public static final String CONTAINER_IMAGE = "quay.io/coreos/etcd:v2.3.8";
     public static final String CONTAINER_NAME = "etcd";
     public static final int ETCD_CLIENT_PORT = 2379;
     public static final int ETCD_PEER_PORT = 2380;
