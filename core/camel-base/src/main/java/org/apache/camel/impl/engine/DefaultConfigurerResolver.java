@@ -62,9 +62,9 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         try {
             type = findConfigurer(name, context);
             if (type == null) {
-                if (name.endsWith("CamelContext")) {
+                if (name.contains("CamelContext")) {
                     // fallback special for camel context itself as we have an extended configurer
-                    type = findConfigurer("org.apache.camel.impl.ExtendedCamelContext", context);
+                    type = findConfigurer(ExtendedCamelContext.class.getName(), context);
                 }
                 if (type == null) {
                     // not found

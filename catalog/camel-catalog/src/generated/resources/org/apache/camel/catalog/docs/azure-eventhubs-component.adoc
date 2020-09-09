@@ -228,6 +228,20 @@ from("direct:start")
 .to("azure-eventhubs:?connectionString=RAW({{connectionString}})"
 ```
 
+Also, the component supports as well *aggregation* of messages by sending events as *iterable* of either Exchanges/Messages or normal data (e.g: list of Strings). For example:
+```
+from("direct:start")
+.process(exchange -> {
+        final List<String> messages = new LinkedList<>();
+        messages.add("Test String Message 1");
+        messages.add("Test String Message 2");
+
+        exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
+        exchange.getIn().setBody(messages);
+})
+.to("azure-eventhubs:?connectionString=RAW({{connectionString}})"
+```
+
 === Development Notes (Important)
 When developing on this component, you will need to obtain your Azure accessKey in order to run the integration tests. In addition to the mocked unit tests
 you *will need to run the integration tests with every change you make or even client upgrade as the Azure client can break things even on minor versions upgrade.*
