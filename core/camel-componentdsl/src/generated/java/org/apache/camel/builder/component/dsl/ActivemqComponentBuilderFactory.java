@@ -141,6 +141,18 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default ActivemqComponentBuilder replyTo(java.lang.String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Specifies whether to test the connection on startup. This ensures
          * that when Camel starts that all the JMS consumers have a valid
          * connection to the JMS broker. If a connection cannot be granted then
@@ -303,18 +315,6 @@ public interface ActivemqComponentBuilderFactory {
         default ActivemqComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
             doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
-            return this;
-        }
-        /**
-         * Provides an explicit ReplyTo destination, which overrides any
-         * incoming value of Message.getJMSReplyTo().
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default ActivemqComponentBuilder replyTo(java.lang.String replyTo) {
-            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -1690,6 +1690,7 @@ public interface ActivemqComponentBuilderFactory {
             case "disableReplyTo": getOrCreateConfiguration((ActiveMQComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((ActiveMQComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((ActiveMQComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
+            case "replyTo": getOrCreateConfiguration((ActiveMQComponent) component).setReplyTo((java.lang.String) value); return true;
             case "testConnectionOnStartup": getOrCreateConfiguration((ActiveMQComponent) component).setTestConnectionOnStartup((boolean) value); return true;
             case "usePooledConnection": ((ActiveMQComponent) component).setUsePooledConnection((boolean) value); return true;
             case "useSingleConnection": ((ActiveMQComponent) component).setUseSingleConnection((boolean) value); return true;
@@ -1700,7 +1701,6 @@ public interface ActivemqComponentBuilderFactory {
             case "cacheLevelName": getOrCreateConfiguration((ActiveMQComponent) component).setCacheLevelName((java.lang.String) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((ActiveMQComponent) component).setConcurrentConsumers((int) value); return true;
             case "maxConcurrentConsumers": getOrCreateConfiguration((ActiveMQComponent) component).setMaxConcurrentConsumers((int) value); return true;
-            case "replyTo": getOrCreateConfiguration((ActiveMQComponent) component).setReplyTo((java.lang.String) value); return true;
             case "replyToDeliveryPersistent": getOrCreateConfiguration((ActiveMQComponent) component).setReplyToDeliveryPersistent((boolean) value); return true;
             case "selector": getOrCreateConfiguration((ActiveMQComponent) component).setSelector((java.lang.String) value); return true;
             case "subscriptionDurable": getOrCreateConfiguration((ActiveMQComponent) component).setSubscriptionDurable((boolean) value); return true;

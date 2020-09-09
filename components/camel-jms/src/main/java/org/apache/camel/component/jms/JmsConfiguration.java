@@ -319,8 +319,8 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "advanced",
               description = "Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.")
     private boolean useMessageIDAsCorrelationID;
-    @UriParam(label = "consumer",
-              description = "Provides an explicit ReplyTo destination, which overrides any incoming value of Message.getJMSReplyTo().")
+    @UriParam(label = "common",
+              description = "Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer).")
     private String replyTo;
     @UriParam(label = "producer,advanced",
               description = "Sets the JMS Selector using the fixed name to be used so you can filter out your own replies"
