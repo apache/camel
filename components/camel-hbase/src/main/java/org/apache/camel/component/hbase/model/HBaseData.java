@@ -19,9 +19,6 @@ package org.apache.camel.component.hbase.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "data")
 public class HBaseData {
 
     private List<HBaseRow> rows = new LinkedList<>();
