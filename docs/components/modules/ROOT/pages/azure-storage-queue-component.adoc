@@ -55,7 +55,7 @@ For example in order to get a message content from the queue `messageQueue`
 in the `storageAccount` storage account and, use the following snippet:
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourURLEncodedAccessKey").
+from("azure-storage-queue://storageAccount/messageQueue?accessKey=yourAccessKey").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
