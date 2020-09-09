@@ -17,12 +17,16 @@
 package org.apache.camel.component.azure.eventhubs.operations;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
 import com.azure.messaging.eventhubs.models.SendOptions;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.azure.eventhubs.EventHubsConfiguration;
 import org.apache.camel.component.azure.eventhubs.EventHubsConfigurationOptionsProxy;
 import org.apache.camel.util.ObjectHelper;
@@ -97,16 +101,52 @@ public class EventHubsProducerOperations {
                 .setPartitionKey(partitionKey);
     }
 
+    @SuppressWarnings("unchecked")
     private Iterable<EventData> createEventData(final Exchange exchange) {
-        final byte[] data = exchange.getIn().getBody(byte[].class);
+        // check if our exchange is list or contain some values
+        if (exchange.getIn().getBody() instanceof Iterable) {
+            return createEventDataFromIterable((Iterable<Object>) exchange.getIn().getBody(),
+                    exchange.getContext().getTypeConverter());
+        }
+
+        // we have only a single event here
+        return Collections.singletonList(createEventDataFromExchange(exchange));
+    }
+
+    private Iterable<EventData> createEventDataFromIterable(final Iterable<Object> inputData, final TypeConverter converter) {
+        final List<EventData> finalEventData = new LinkedList<>();
+
+        inputData.forEach(data -> {
+            if (data instanceof Exchange) {
+                finalEventData.add(createEventDataFromExchange((Exchange) data));
+            } else if (data instanceof Message) {
+                finalEventData.add(createEventDataFromMessage((Message) data));
+            } else {
+                finalEventData.add(createEventDataFromObject(data, converter));
+            }
+        });
+
+        return finalEventData;
+    }
+
+    private EventData createEventDataFromExchange(final Exchange exchange) {
+        return createEventDataFromMessage(exchange.getIn());
+    }
+
+    private EventData createEventDataFromMessage(final Message message) {
+        return createEventDataFromObject(message.getBody(), message.getExchange().getContext().getTypeConverter());
+    }
+
+    private EventData createEventDataFromObject(final Object inputData, final TypeConverter converter) {
+        final byte[] data = converter.convertTo(byte[].class, inputData);
 
         if (ObjectHelper.isEmpty(data)) {
             throw new IllegalArgumentException(
                     String.format("Cannot convert message body %s to byte[]. You will need "
                                   + "to make sure the data encoded in byte[] or add a Camel TypeConverter to convert the data to byte[]",
-                            exchange.getIn().getBody()));
+                            inputData));
         }
-        // for now we only support single event
-        return Collections.singletonList(new EventData(data));
+
+        return new EventData(data);
     }
 }
