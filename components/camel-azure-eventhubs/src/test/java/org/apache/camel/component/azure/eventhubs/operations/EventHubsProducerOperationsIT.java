@@ -17,6 +17,8 @@
 package org.apache.camel.component.azure.eventhubs.operations;
 
 import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,7 @@ import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -40,6 +43,8 @@ import org.junit.jupiter.api.TestInstance;
 class EventHubsProducerOperationsIT extends CamelTestSupport {
 
     private EventHubsConfiguration configuration;
+    private EventHubProducerAsyncClient producerAsyncClient;
+    private EventHubConsumerAsyncClient consumerAsyncClient;
 
     @BeforeAll
     public void prepare() throws Exception {
@@ -48,15 +53,14 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         configuration = new EventHubsConfiguration();
         configuration.setConnectionString(properties.getProperty("connectionString"));
         configuration.setConsumerGroupName(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME);
+
+        producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
+        consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
     }
 
     @Test
     public void testSendEventWithSpecificPartition() {
-        final EventHubProducerAsyncClient producerAsyncClient
-                = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
-        final EventHubConsumerAsyncClient consumerAsyncClient
-                = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
         final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
         final Exchange exchange = new DefaultExchange(context);
 
@@ -84,7 +88,100 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
 
                     return eventExists;
                 });
+    }
 
+    @Test
+    public void testIterableExchangesSendEventsWithSpecificPartition() {
+        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
+
+        final Exchange exchange1 = new DefaultExchange(context);
+        final Exchange exchange2 = new DefaultExchange(context);
+
+        exchange1.getIn().setBody("Exchange Message 1");
+        exchange2.getIn().setBody("Exchange Message 2");
+
+        final List<Exchange> exchanges = new LinkedList<>();
+        exchanges.add(exchange1);
+        exchanges.add(exchange2);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(exchanges);
+
+        operations.sendEvents(exchange, doneSync -> {
+        });
+
+        Awaitility.await()
+                .atMost(40, TimeUnit.SECONDS)
+                .pollDelay(Duration.ofSeconds(2))
+                .pollInterval(Duration.ofSeconds(2))
+                .until(() -> {
+                    final Boolean event1Exists = consumerAsyncClient
+                            .receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                                    && partitionEvent.getData().getBodyAsString()
+                                            .contains("Exchange Message 1"))
+                            .block();
+
+                    final Boolean event2Exists = consumerAsyncClient
+                            .receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                                    && partitionEvent.getData().getBodyAsString()
+                                            .contains("Exchange Message 2"))
+                            .block();
+
+                    if (event1Exists == null || event2Exists == null) {
+                        return false;
+                    }
+
+                    return event1Exists && event2Exists;
+                });
+    }
+
+    @Test
+    public void testIterableStringSendEventsWithSpecificPartition() {
+        final EventHubsProducerOperations operations = new EventHubsProducerOperations(producerAsyncClient, configuration);
+        final String firstPartition = producerAsyncClient.getPartitionIds().blockLast();
+
+        final List<String> messages = new LinkedList<>();
+        messages.add("Test String Message 1");
+        messages.add("Test String Message 2");
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(messages);
+
+        operations.sendEvents(exchange, doneSync -> {
+        });
+
+        Awaitility.await()
+                .atMost(40, TimeUnit.SECONDS)
+                .pollDelay(Duration.ofSeconds(2))
+                .pollInterval(Duration.ofSeconds(2))
+                .until(() -> {
+                    final Boolean event1Exists = consumerAsyncClient
+                            .receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                                    && partitionEvent.getData().getBodyAsString()
+                                            .contains("Test String Message 1"))
+                            .block();
+
+                    final Boolean event2Exists = consumerAsyncClient
+                            .receiveFromPartition(firstPartition, EventPosition.earliest())
+                            .any(partitionEvent -> partitionEvent.getPartitionContext().getPartitionId().equals(firstPartition)
+                                    && partitionEvent.getData().getBodyAsString()
+                                            .contains("Test String Message 2"))
+                            .block();
+
+                    if (event1Exists == null || event2Exists == null) {
+                        return false;
+                    }
+
+                    return event1Exists && event2Exists;
+                });
+    }
+
+    @AfterAll
+    public void tearDown() {
         producerAsyncClient.close();
         consumerAsyncClient.close();
     }
