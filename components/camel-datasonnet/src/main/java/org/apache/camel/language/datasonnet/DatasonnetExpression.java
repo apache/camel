@@ -157,7 +157,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                 new MapperBuilder(expression)
                         .withInputNames(inputs.keySet())
                         .withImports(resolveImports())
-                        .addLibrary(CML$.MODULE$)
+                        .withLibrary(CML$.MODULE$)
                         .build());
 
         // pass exchange to CML lib using thread as context
