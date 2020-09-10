@@ -27,7 +27,8 @@ public class Aws2S3BaseTest extends ContainerAwareTestSupport {
                 .withNetworkAliases(CONTAINER_NAME)
                 .withEnv("SERVICES", "s3")
                 .withExposedPorts(4572)
-                .waitingFor(Wait.forListeningPort());
+                .waitingFor(Wait.forListeningPort())
+                .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
     }
 
     public String getS3Url() {
@@ -37,16 +38,20 @@ public class Aws2S3BaseTest extends ContainerAwareTestSupport {
                 getContainerPort(CONTAINER_NAME, 4572));
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        AWS2S3Component s3 = context.getComponent("aws2-s3", AWS2S3Component.class);
+    public S3Client getS3Client() {
         S3Client s3Client = S3Client
                 .builder()
                 .endpointOverride(URI.create("http://" + getS3Url()))
                 .region(Region.EU_WEST_1)
                 .build();
-        s3.getConfiguration().setAmazonS3Client(s3Client);
+        return s3Client;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        AWS2S3Component s3 = context.getComponent("aws2-s3", AWS2S3Component.class);
+        s3.getConfiguration().setAmazonS3Client(getS3Client());
         return context;
     }
 }
