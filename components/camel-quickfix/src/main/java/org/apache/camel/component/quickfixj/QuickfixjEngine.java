@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,8 +27,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.JMException;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,70 +106,32 @@ public class QuickfixjEngine extends ServiceSupport {
         ThreadPerSession;
     }
 
-    /**
-     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String)} constructor as the
-     *             {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown)
-                                                                                            throws ConfigError,
-                                                                                            FieldConvertError, IOException,
-                                                                                            JMException {
-
-        this(uri, settingsResourceName, forcedShutdown, null, null, null);
+    public QuickfixjEngine(CamelContext camelContext, String uri, String settingsResourceName) throws Exception {
+        this(camelContext, uri, settingsResourceName, null, null, null);
     }
 
-    public QuickfixjEngine(String uri, String settingsResourceName) throws ConfigError, FieldConvertError, IOException,
-                                                                    JMException {
-        this(uri, settingsResourceName, null, null, null);
-    }
-
-    /**
-     * @deprecated Better make use of the
-     *             {@link #QuickfixjEngine(String, String, MessageStoreFactory, LogFactory, MessageFactory)} constructor
-     *             as the {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown,
-                           MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException,
-                                                                  JMException {
-        this(uri, loadSettings(settingsResourceName), forcedShutdown, messageStoreFactoryOverride,
-             sessionLogFactoryOverride, messageFactoryOverride);
-    }
-
-    public QuickfixjEngine(String uri, String settingsResourceName, MessageStoreFactory messageStoreFactoryOverride,
+    public QuickfixjEngine(CamelContext camelContext, String uri, String settingsResourceName,
+                           MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException,
-                                                                  JMException {
-        this(uri, loadSettings(settingsResourceName), messageStoreFactoryOverride, sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride) throws Exception {
+        this(camelContext, uri, loadSettings(camelContext, settingsResourceName), messageStoreFactoryOverride,
+             sessionLogFactoryOverride,
              messageFactoryOverride);
     }
 
-    /**
-     * @deprecated Better make use of the
-     *             {@link #QuickfixjEngine(String, SessionSettings, MessageStoreFactory, LogFactory, MessageFactory)}
-     *             constructor as the {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, SessionSettings settings, boolean forcedShutdown,
-                           MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException,
-                                                                  JMException {
-        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride);
-    }
-
-    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride,
+    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+                           MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException,
-                                                                  JMException {
-        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride, false);
+                           MessageFactory messageFactoryOverride) throws Exception {
+        this(camelContext, uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride,
+             false);
     }
 
-    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride,
+    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+                           MessageStoreFactory messageStoreFactoryOverride,
                            LogFactory sessionLogFactoryOverride,
                            MessageFactory messageFactoryOverride,
-                           boolean lazy) throws ConfigError, FieldConvertError, IOException, JMException {
+                           boolean lazy) throws Exception {
         addEventListener(messageCorrelator);
 
         this.uri = uri;
@@ -264,11 +226,8 @@ public class QuickfixjEngine extends ServiceSupport {
         initialized.set(true);
     }
 
-    static SessionSettings loadSettings(String settingsResourceName) throws ConfigError {
-        InputStream inputStream = ObjectHelper.loadResourceAsStream(settingsResourceName);
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Could not load " + settingsResourceName);
-        }
+    protected static SessionSettings loadSettings(CamelContext camelContext, String settingsResourceName) throws Exception {
+        InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, settingsResourceName);
         return new SessionSettings(inputStream);
     }
 

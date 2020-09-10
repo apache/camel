@@ -16,20 +16,16 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.management.JMException;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import quickfix.ConfigError;
-import quickfix.FieldConvertError;
 import quickfix.FixVersions;
 import quickfix.Message;
 import quickfix.MessageUtils;
@@ -51,16 +47,18 @@ public class QuickfixjProducerTest {
     private SessionID sessionID;
     private Message inboundFixMessage;
     private QuickfixjEngine quickfixjEngine;
+    private CamelContext context;
 
     @BeforeEach
-    public void setUp() throws ConfigError, FieldConvertError, IOException, JMException {
+    public void setUp() throws Exception {
         mockExchange = Mockito.mock(Exchange.class);
         mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);
         mockCamelMessage = Mockito.mock(org.apache.camel.Message.class);
         Mockito.when(mockExchange.getIn()).thenReturn(mockCamelMessage);
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOnly);
+        context = Mockito.mock(CamelContext.class);
 
-        quickfixjEngine = TestSupport.createEngine();
+        quickfixjEngine = TestSupport.createEngine(context);
         Mockito.when(mockEndpoint.getEngine()).thenReturn(quickfixjEngine);
 
         inboundFixMessage = new Message();

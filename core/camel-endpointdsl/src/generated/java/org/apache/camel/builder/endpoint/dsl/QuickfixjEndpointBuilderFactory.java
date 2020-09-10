@@ -606,8 +606,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * Syntax: <code>quickfix:configurationName</code>
          * 
          * Path parameter: configurationName (required)
-         * The configFile is the name of the QuickFIX/J configuration to use for
-         * the FIX engine (located as a resource found in your classpath).
+         * Path to the quickfix configuration file. You can prefix with:
+         * classpath, file, http, ref, or bean. classpath, file and http loads
+         * the configuration file using these protocols (classpath is default).
+         * ref will lookup the configuration file in the registry. bean will
+         * call a method on a bean to be used as the configuration. For bean you
+         * can specify the method name after dot, eg bean:myBean.myMethod
          * 
          * @param path configurationName
          */
@@ -626,8 +630,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * Syntax: <code>quickfix:configurationName</code>
          * 
          * Path parameter: configurationName (required)
-         * The configFile is the name of the QuickFIX/J configuration to use for
-         * the FIX engine (located as a resource found in your classpath).
+         * Path to the quickfix configuration file. You can prefix with:
+         * classpath, file, http, ref, or bean. classpath, file and http loads
+         * the configuration file using these protocols (classpath is default).
+         * ref will lookup the configuration file in the registry. bean will
+         * call a method on a bean to be used as the configuration. For bean you
+         * can specify the method name after dot, eg bean:myBean.myMethod
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
