@@ -36,7 +36,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
 
         template.sendBodyAndHeader("file:target/in", "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         File file = new File(FTP_ROOT_DIR + "/out/sub/hello.txt");
         assertTrue(file.exists(), "File should exists " + file);
