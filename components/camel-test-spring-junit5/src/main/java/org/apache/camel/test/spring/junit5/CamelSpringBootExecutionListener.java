@@ -28,6 +28,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
     protected static ThreadLocal<ConfigurableApplicationContext> threadApplicationContext = new ThreadLocal<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelSpringBootExecutionListener.class);
+    private static final String PROPERTY_SKIP_STARTING_CAMEL_CONTEXT = "skipStartingCamelContext";
 
     /**
      * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
@@ -40,6 +41,12 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
     }
 
     @Override
+    public void beforeTestClass(TestContext testContext) throws Exception {
+        // prevent other extensions to start the Camel context
+        preventContextStart();
+    }
+
+    @Override
     public void prepareTestInstance(TestContext testContext) throws Exception {
         LOG.info("CamelSpringBootExecutionListener preparing: {}", testContext.getTestClass());
 
@@ -49,13 +56,8 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleDisableJmx(null, testClass);
         CamelAnnotationsHandler.handleExcludeRoutes(null, testClass);
 
-        // we are customizing the Camel context with
-        // CamelAnnotationsHandler so we do not want to start it
-        // automatically, which would happen when SpringCamelContext
-        // is added to Spring ApplicationContext, so we set the flag
-        // not to start it just yet
-        SpringCamelContext.setNoStart(true);
-        System.setProperty("skipStartingCamelContext", "true");
+        // prevent the Camel context to be started to be able to extend it.
+        preventContextStart();
         ConfigurableApplicationContext context = (ConfigurableApplicationContext) testContext.getApplicationContext();
 
         CamelAnnotationsHandler.handleUseOverridePropertiesWithPropertiesComponent(context, testClass);
@@ -67,8 +69,19 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         CamelAnnotationsHandler.handleMockEndpoints(context, testClass);
         CamelAnnotationsHandler.handleMockEndpointsAndSkip(context, testClass);
 
-        System.clearProperty("skipStartingCamelContext");
+        System.clearProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT);
         SpringCamelContext.setNoStart(false);
+    }
+
+    /**
+     * Sets the {@link SpringCamelContext#setNoStart(boolean)} and the system property
+     * <code>skipStartingCamelContext</code>to <code>true</code> to let us customizing the Camel context with
+     * {@link CamelAnnotationsHandler} before it has been started. It's needed as early as possible to prevent other
+     * extensions to start it <b>and</b> before every test run.
+     */
+    private void preventContextStart() {
+        SpringCamelContext.setNoStart(true);
+        System.setProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT, "true");
     }
 
     @Override
@@ -83,7 +96,7 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         threadApplicationContext.set(context);
 
         // mark Camel to be startable again and start Camel
-        System.clearProperty("skipStartingCamelContext");
+        System.clearProperty(PROPERTY_SKIP_STARTING_CAMEL_CONTEXT);
 
         // route coverage need to know the test method
         CamelAnnotationsHandler.handleRouteCoverage(context, testClass, s -> testName);
