@@ -22,7 +22,6 @@ import java.net.URLClassLoader;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
@@ -91,7 +90,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(context));
 
         Message message = new Message();
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
@@ -109,7 +108,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(new DefaultCamelContext()));
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", new QuickfixjComponent(context));
 
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
 
@@ -226,7 +225,7 @@ public class QuickfixjConvertersTest extends CamelTestSupport {
 
         TestSupport.writeSettings(settings, settingsFile);
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(context, "quickfix:test", settingsFile.getName());
         quickfixjEngine.start();
     }
 }

@@ -21,14 +21,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.management.JMException;
-
+import org.apache.camel.CamelContext;
 import org.mockito.Mockito;
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultSessionFactory;
-import quickfix.FieldConvertError;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStore;
@@ -93,11 +91,11 @@ public final class TestSupport {
         return factory.create(sessionID, settings);
     }
 
-    public static QuickfixjEngine createEngine() throws ConfigError, FieldConvertError, IOException, JMException {
-        return createEngine(false);
+    public static QuickfixjEngine createEngine(CamelContext camelContext) throws Exception {
+        return createEngine(camelContext, false);
     }
 
-    public static QuickfixjEngine createEngine(boolean lazy) throws ConfigError, FieldConvertError, IOException, JMException {
+    public static QuickfixjEngine createEngine(CamelContext camelContext, boolean lazy) throws Exception {
         SessionID sessionID = new SessionID("FIX.4.4:SENDER->TARGET");
 
         MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
@@ -115,6 +113,7 @@ public final class TestSupport {
         settings.setBool(sessionID, Session.SETTING_USE_DATA_DICTIONARY, false);
 
         return new QuickfixjEngine(
+                camelContext,
                 "", settings,
                 mockMessageStoreFactory,
                 Mockito.mock(LogFactory.class),

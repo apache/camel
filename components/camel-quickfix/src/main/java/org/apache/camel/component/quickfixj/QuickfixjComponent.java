@@ -81,7 +81,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     if (configuration != null) {
                         settings = configuration.createSessionSettings();
                     } else {
-                        settings = QuickfixjEngine.loadSettings(remaining);
+                        settings = QuickfixjEngine.loadSettings(getCamelContext(), remaining);
                     }
                     Boolean lazyCreateEngineForEndpoint
                             = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
@@ -89,6 +89,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                         lazyCreateEngineForEndpoint = isLazyCreateEngines();
                     }
                     engine = new QuickfixjEngine(
+                            getCamelContext(),
                             uri, settings, messageStoreFactory, logFactory, messageFactory,
                             lazyCreateEngineForEndpoint);
 
