@@ -77,7 +77,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");

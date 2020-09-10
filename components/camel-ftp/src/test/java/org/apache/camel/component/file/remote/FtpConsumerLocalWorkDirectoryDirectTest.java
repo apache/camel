@@ -64,7 +64,7 @@ public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSuppor
     @Test
     public void testLocalWorkDirectory() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
-        assertTrue(notify.matchesMockWaitTime(), "Should process one file");
+        assertTrue(notify.matchesWaitTime(), "Should process one file");
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");
