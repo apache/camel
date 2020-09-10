@@ -174,11 +174,11 @@ with the information.
 * Response code is 400+, Camel regards it as an external server failure
 and will throw a `HttpOperationFailedException` with the information.
 
-*throwExceptionOnFailure*
+==== throwExceptionOnFailure
+
 The option, `throwExceptionOnFailure`, can be set to `false` to prevent
 the `HttpOperationFailedException` from being thrown for failed response
-codes. This allows you to get any response from the remote server. +
-There is a sample below demonstrating this.
+codes. This allows you to get any response from the remote server.
 
 ==== Exceptions
 
