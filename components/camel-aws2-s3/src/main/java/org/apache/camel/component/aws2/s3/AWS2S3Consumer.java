@@ -281,7 +281,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     builder.append(getConfiguration().getDestinationBucketPrefix());
                 }
                 builder.append(key);
-                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketPrefix())) {
+                if (ObjectHelper.isNotEmpty(getConfiguration().getDestinationBucketSuffix())) {
                     builder.append(getConfiguration().getDestinationBucketSuffix());
                 }
                 getAmazonS3Client().copyObject(CopyObjectRequest.builder().destinationKey(builder.toString())
