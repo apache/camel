@@ -39,7 +39,6 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.minio.client.MinioClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -86,9 +85,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        minioClient = isNotEmpty(getConfiguration().getMinioClient())
-                ? getConfiguration().getMinioClient()
-                : MinioClientFactory.getClient(getConfiguration()).getMinioClient();
+        minioClient
+                = isNotEmpty(getConfiguration().getMinioClient()) ? getConfiguration().getMinioClient() : createMinioClient();
 
         String objectName = getConfiguration().getObjectName();
 
@@ -130,10 +128,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         return createExchange(getExchangePattern(), minioObject, objectName);
     }
 
-    public Exchange createExchange(
-            ExchangePattern pattern,
-            InputStream minioObject, String objectName)
-            throws Exception {
+    public Exchange createExchange(ExchangePattern pattern, InputStream minioObject, String objectName) throws Exception {
         LOG.trace("Getting object with objectName {} from bucket {}...", objectName, getConfiguration().getBucketName());
 
         Exchange exchange = super.createExchange(pattern);
@@ -174,6 +169,32 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
 
     public void setMinioClient(MinioClient minioClient) {
         this.minioClient = minioClient;
+    }
+
+    MinioClient createMinioClient() {
+        if (isNotEmpty(configuration.getEndpoint())) {
+            MinioClient.Builder minioClientRequest = MinioClient.builder();
+
+            if (isNotEmpty(configuration.getProxyPort())) {
+                minioClientRequest.endpoint(configuration.getEndpoint(), configuration.getProxyPort(),
+                        configuration.isSecure());
+            } else {
+                minioClientRequest.endpoint(configuration.getEndpoint());
+            }
+            if (isNotEmpty(configuration.getAccessKey()) && isNotEmpty(configuration.getSecretKey())) {
+                minioClientRequest.credentials(configuration.getAccessKey(), configuration.getSecretKey());
+            }
+            if (isNotEmpty(configuration.getRegion())) {
+                minioClientRequest.region(configuration.getRegion());
+            }
+            if (isNotEmpty(configuration.getCustomHttpClient())) {
+                minioClientRequest.httpClient(configuration.getCustomHttpClient());
+            }
+            return minioClientRequest.build();
+
+        } else {
+            throw new IllegalArgumentException("Endpoint must be specified");
+        }
     }
 
     private String readInputStream(InputStream minioObject) throws IOException {
