@@ -171,7 +171,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                 }
                 List<ConfigurerOption> options = processClass(fqn);
                 generateConfigurer(fqn, targetFqn, options, sourcesOutputDir);
-                generateMetaInfConfigurer(targetFqn, resourcesOutputDir);
+                generateMetaInfConfigurer(fqn, targetFqn, resourcesOutputDir);
             } catch (Exception e) {
                 throw new MojoExecutionException("Error processing class: " + fqn, e);
             }
@@ -390,11 +390,10 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         }
     }
 
-    private void generateMetaInfConfigurer(String name, File resourcesOutputDir) {
-        int pos = name.lastIndexOf('.');
-        String pn = name.substring(0, pos);
-        String en = name.substring(pos + 1);
-        String fqn = name;
+    private void generateMetaInfConfigurer(String fqn, String targetFqn, File resourcesOutputDir) {
+        int pos = targetFqn.lastIndexOf('.');
+        String pn = targetFqn.substring(0, pos);
+        String en = targetFqn.substring(pos + 1);
         try (Writer w = new StringWriter()) {
             w.append("# " + GENERATED_MSG + "\n");
             w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");

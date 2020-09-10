@@ -130,10 +130,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (targetConfigurer == null) {
             String name = target.getClass().getName();
-            if (target instanceof ExtendedCamelContext) {
-                // special for camel context itself as we have an extended configurer
-                name = ExtendedCamelContext.class.getName();
-            }
             // see if there is a configurer for it
             targetConfigurer = context.adapt(ExtendedCamelContext.class)
                     .getConfigurerResolver().resolvePropertyConfigurer(name, context);
@@ -147,10 +143,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
         if (sourceConfigurer == null) {
             String name = source.getClass().getName();
-            if (source instanceof ExtendedCamelContext) {
-                // special for camel context itself as we have an extended configurer
-                name = ExtendedCamelContext.class.getName();
-            }
             // see if there is a configurer for it
             sourceConfigurer = context.adapt(ExtendedCamelContext.class)
                     .getConfigurerResolver().resolvePropertyConfigurer(name, context);
@@ -187,11 +179,6 @@ public abstract class BaseMainSupport extends BaseService {
 
         if (configurer == null) {
             String name = target.getClass().getName();
-            if (target instanceof ExtendedCamelContext) {
-                // special for camel context itself as we have an extended configurer
-                name = ExtendedCamelContext.class.getName();
-            }
-
             // see if there is a configurer for it
             configurer = context.adapt(ExtendedCamelContext.class)
                     .getConfigurerResolver().resolvePropertyConfigurer(name, context);
