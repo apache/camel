@@ -36,7 +36,7 @@ import org.testcontainers.utility.Base58;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ElasticsearchBaseTest extends ContainerAwareTestSupport {
 
-    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.3.2";
+    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.8.0";
     public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
     public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
 
