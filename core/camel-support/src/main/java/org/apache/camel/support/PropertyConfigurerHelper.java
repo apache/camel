@@ -55,11 +55,6 @@ public final class PropertyConfigurerHelper {
 
         if (configurer == null) {
             String name = target.getClass().getName();
-            if (target instanceof ExtendedCamelContext) {
-                // special for camel context itself as we have an extended configurer
-                name = ExtendedCamelContext.class.getName();
-            }
-
             // see if there is a configurer for it
             configurer = context.adapt(ExtendedCamelContext.class)
                     .getConfigurerResolver()
@@ -81,11 +76,6 @@ public final class PropertyConfigurerHelper {
         ObjectHelper.notNull(context, "context");
 
         String name = targetType.getName();
-        if (ExtendedCamelContext.class.isAssignableFrom(targetType)) {
-            // special for camel context itself as we have an extended configurer
-            name = ExtendedCamelContext.class.getName();
-        }
-
         // see if there is a configurer for it
         return context.adapt(ExtendedCamelContext.class)
                 .getConfigurerResolver()
