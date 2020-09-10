@@ -48,7 +48,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xpath/hello.xml");
         assertFalse(file.exists(), "File should not exists " + file);
@@ -67,7 +67,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xpath/hello2.xml");
         assertFalse(file.exists(), "File should not exists " + file);

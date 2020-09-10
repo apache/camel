@@ -48,7 +48,7 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/done");

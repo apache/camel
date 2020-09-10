@@ -111,7 +111,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertEquals(12, events.size());
         ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));

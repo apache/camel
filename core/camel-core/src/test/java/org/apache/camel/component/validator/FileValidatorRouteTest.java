@@ -50,7 +50,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
         assertTrue(FileUtil.deleteFile(new File("target/data/validator/valid.xml")), "Should be able to delete the file");
     }
 
@@ -65,7 +65,7 @@ public class FileValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
 
         // should be able to delete the file
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
         assertTrue(FileUtil.deleteFile(new File("target/data/validator/invalid.xml")), "Should be able to delete the file");
     }
 

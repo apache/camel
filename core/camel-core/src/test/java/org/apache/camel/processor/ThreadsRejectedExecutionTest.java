@@ -120,7 +120,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         }
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         int inflight = context.getInflightRepository().size();
         assertEquals(0, inflight);
@@ -146,7 +146,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         }
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         int inflight = context.getInflightRepository().size();
         assertEquals(0, inflight);
@@ -172,7 +172,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         }
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         int inflight = context.getInflightRepository().size();
         assertEquals(0, inflight);
@@ -198,7 +198,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         }
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         int inflight = context.getInflightRepository().size();
         assertEquals(0, inflight);
@@ -230,7 +230,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         }
         assertMockEndpointsSatisfied();
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         int inflight = context.getInflightRepository().size();
         assertEquals(0, inflight);

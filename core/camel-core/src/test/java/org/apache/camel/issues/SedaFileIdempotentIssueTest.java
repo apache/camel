@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Registry;
@@ -74,7 +75,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
                 onException(RuntimeException.class).process(new ShutDown());
 
                 from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
-                        .to("log:begin").inOut("seda:process");
+                        .to("log:begin").to(ExchangePattern.InOut, "seda:process");
 
                 from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }

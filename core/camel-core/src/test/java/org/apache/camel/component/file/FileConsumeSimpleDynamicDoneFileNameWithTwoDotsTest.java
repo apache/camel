@@ -53,7 +53,7 @@ public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends Context
         template.sendBodyAndHeader("file:" + TARGET_DIR_NAME, "done-body", Exchange.FILE_NAME, "test.twodot.done");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertFalse(new File(TARGET_DIR_NAME, "test.twodot.txt").exists(), "Input file should be deleted");
         assertFalse(new File(TARGET_DIR_NAME, "test.twodot.done").exists(), "Done file should be deleted");

@@ -49,7 +49,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         await("postPollCheck invocation").atMost(1, TimeUnit.SECONDS).until(myFile::isPost);
     }

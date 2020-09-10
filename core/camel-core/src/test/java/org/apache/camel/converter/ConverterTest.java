@@ -60,7 +60,7 @@ public class ConverterTest extends TestSupport {
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         @Override
         public void setAsText(String text) throws IllegalArgumentException {
-            setValue(new Integer(text));
+            setValue(Integer.valueOf(text));
         }
 
         @Override
@@ -80,7 +80,7 @@ public class ConverterTest extends TestSupport {
     public void testIntegerPropertyEditorConversion() throws Exception {
         Integer value = converter.convertTo(Integer.class, "1000");
         assertNotNull(value);
-        assertEquals(new Integer(1000), (Object) value, "Converted to Integer");
+        assertEquals(Integer.valueOf(1000), (Object) value, "Converted to Integer");
 
         String text = converter.convertTo(String.class, value);
         assertEquals("1000", text, "Converted to String");

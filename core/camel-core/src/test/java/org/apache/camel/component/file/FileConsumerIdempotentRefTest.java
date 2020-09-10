@@ -72,7 +72,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();

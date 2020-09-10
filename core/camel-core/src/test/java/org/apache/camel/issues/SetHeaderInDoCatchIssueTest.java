@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,7 +38,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("CamsResponse", exchange.getOut().getHeader("Status"));
+        assertEquals("CamsResponse", exchange.getMessage().getHeader("Status"));
     }
 
     @Test
@@ -101,7 +102,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
                 context.setTracing(true);
 
                 from("direct:start").doTry().to("bean:A").setHeader("CamelJmsDestinationName", constant("queue:outQueue"))
-                        .inOut("bean:B").setHeader("Status", constant("CamsResponse"))
+                        .to(ExchangePattern.InOut, "bean:B").setHeader("Status", constant("CamsResponse"))
                         .doCatch(ExchangeTimedOutException.class).setHeader("Status", constant("TimeOut"))
                         .doCatch(Exception.class).setHeader("Status", constant("ExceptionGeneral"))
                         .end().to("bean:C").transform(body());

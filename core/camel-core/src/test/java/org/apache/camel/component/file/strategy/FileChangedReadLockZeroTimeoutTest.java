@@ -58,7 +58,7 @@ public class FileChangedReadLockZeroTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/changed/in", "Hello Again World", Exchange.FILE_NAME, "hello2.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
     }
 
     @Override

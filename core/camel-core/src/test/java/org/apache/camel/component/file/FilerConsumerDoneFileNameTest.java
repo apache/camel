@@ -59,7 +59,7 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/done");

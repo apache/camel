@@ -43,7 +43,7 @@ public class FileConsumeBackoffMultiplierTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
     }
 
     @Override

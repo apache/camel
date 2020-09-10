@@ -275,24 +275,24 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
         // with endpoint as string uri
         FluentProducerTemplate template = DefaultFluentProducerTemplate.on(context);
 
-        final Integer expectedResult = new Integer(123);
+        final Integer expectedResult = Integer.valueOf(123);
 
         assertEquals(expectedResult,
-                template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
+                template.withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello")
+        assertEquals(expectedResult, template.withHeader("foo", "bar").withBody("Hello")
                 .to("direct:inout").request(Integer.class));
 
         assertEquals(expectedResult,
-                template.clearBody().clearHeaders().withBody("Hello").to("direct:inout").request(Integer.class));
+                template.withBody("Hello").to("direct:inout").request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello")
+        assertEquals(expectedResult, template.withBody("Hello")
                 .to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withHeader("foo", "bar").withBody("Hello")
+        assertEquals(expectedResult, template.withHeader("foo", "bar").withBody("Hello")
                 .to(context.getEndpoint("direct:inout")).request(Integer.class));
 
-        assertEquals(expectedResult, template.clearBody().clearHeaders().withBody("Hello")
+        assertEquals(expectedResult, template.withBody("Hello")
                 .to(context.getEndpoint("direct:inout")).request(Integer.class));
     }
 
@@ -390,7 +390,7 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                         throw new IllegalArgumentException("Expected body of type Integer");
                     }
                 }).to("mock:result");
-                from("direct:out").process(exchange -> exchange.getOut().setBody("Bye Bye World")).to("mock:result");
+                from("direct:out").process(exchange -> exchange.getMessage().setBody("Bye Bye World")).to("mock:result");
 
                 from("direct:exception").process(exchange -> {
                     throw new IllegalArgumentException("Forced exception by unit test");

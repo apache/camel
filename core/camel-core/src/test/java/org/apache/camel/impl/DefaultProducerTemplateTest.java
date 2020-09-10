@@ -265,7 +265,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                 from("direct:out").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye Bye World");
+                        exchange.getMessage().setBody("Bye Bye World");
                     }
                 }).to("mock:result");
 

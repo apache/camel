@@ -44,7 +44,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();
