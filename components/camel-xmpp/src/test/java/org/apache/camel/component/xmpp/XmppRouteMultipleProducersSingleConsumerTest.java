@@ -18,27 +18,11 @@ package org.apache.camel.component.xmpp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled("This test is flaky on CI server")
-public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSupport {
+public class XmppRouteMultipleProducersSingleConsumerTest extends XmppBaseTest {
     protected MockEndpoint goodEndpoint;
     protected MockEndpoint badEndpoint;
-    private EmbeddedXmppTestServer embeddedXmppTestServer;
-
-    @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
-        embeddedXmppTestServer.bindSSLContextTo(registry);
-
-        return registry;
-    }
 
     @Test
     public void testProducerGetsEverything() throws Exception {
@@ -84,29 +68,17 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     }
 
     protected String getProducer1Uri() {
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+        return "xmpp://localhost:" + xmppServer.getUrl()
                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+        return "xmpp://localhost:" + xmppServer.getUrl()
                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
-        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+        return "xmpp://localhost:" + xmppServer.getUrl()
                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
-    }
-
-    @Override
-    public void doPreSetup() throws Exception {
-        embeddedXmppTestServer = new EmbeddedXmppTestServer();
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-        embeddedXmppTestServer.stop();
     }
 }
