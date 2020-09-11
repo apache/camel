@@ -40,7 +40,7 @@ sessions even prior to version 2.19.
 ==  Exchange Scope
 
 The third option to define a session scope is on
-xref:exchange.adoc[Exchange]level. This is particularly useful for
+xref:exchange.adoc[Exchange] level. This is particularly useful for
 scenarios where the server session is really maintaining state.
 
 In this case the route could e.g. first do a login call, then some
