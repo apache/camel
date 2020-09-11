@@ -439,7 +439,7 @@ The default value is `true` to be backwards compatible as before. For
 example the following sample shows how to do this with Java DSL and XML
 DSL
 
-And the sample sample with XML DSL
+And the sample with XML DSL
 
 [[deadLetterChannel-Samples]]
 == Samples
