@@ -532,7 +532,7 @@ configured already.
 |waitForTaskToComplete |*@deprecated (removed in Camel 2.4):* Option to specify if the caller
 should wait for the async task to be complete or not before continuing.
 The following 3 options is supported: *Always*, *Never* or
-*IfReplyExpected*. The first two options is self explained. The last
+*IfReplyExpected*. The first two options are self-explained. The last
 will only wait if the message is Request Reply
 based. The default option is *IfReplyExpected*.
 |=======================================================================
