@@ -638,7 +638,7 @@ example to enable pretty print in the json data format.
 set. See below for the default values which are in used. If a custom
 header is set then that value takes precedence over the default value.
 
-You can set multiple options of the same level, so you can can for
+You can set multiple options of the same level, so you can for
 example configure 2 component options, and 3 endpoint options etc.
 
  
