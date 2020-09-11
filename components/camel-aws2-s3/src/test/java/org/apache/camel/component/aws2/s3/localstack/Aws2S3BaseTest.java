@@ -24,6 +24,8 @@ import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.containers.GenericContainer;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
@@ -58,6 +60,7 @@ public class Aws2S3BaseTest extends ContainerAwareTestSupport {
         S3Client s3Client = S3Client
                 .builder()
                 .endpointOverride(URI.create("http://" + getS3Url()))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
                 .region(Region.EU_WEST_1)
                 .build();
         return s3Client;
