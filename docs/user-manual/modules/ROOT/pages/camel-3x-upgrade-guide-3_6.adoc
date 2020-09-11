@@ -102,7 +102,7 @@ As a consequence of this change, the Camel Spring Boot starters have been amende
 ====
 
 
-=== Camel Caffein
+=== Camel Caffeine
 
 To configure the component to use a pre-configured cache, it is not more required to use the now removed `cache` option as the component perorm a look-up from the registry based on the `cacheName` URI param.
 
