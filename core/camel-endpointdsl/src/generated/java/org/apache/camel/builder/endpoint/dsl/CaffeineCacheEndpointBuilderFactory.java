@@ -52,30 +52,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
             return this;
         }
         /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineCacheEndpointBuilder cache(Object cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option will be converted to a
-         * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineCacheEndpointBuilder cache(String cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option is a:

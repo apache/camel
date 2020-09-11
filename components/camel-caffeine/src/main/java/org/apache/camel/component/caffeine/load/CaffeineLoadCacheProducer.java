@@ -32,8 +32,8 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
     private final CaffeineConfiguration configuration;
     private final LoadingCache cache;
 
-    public CaffeineLoadCacheProducer(CaffeineLoadCacheEndpoint endpoint, String cacheName, CaffeineConfiguration configuration,
-                                     LoadingCache cache) throws Exception {
+    public CaffeineLoadCacheProducer(CaffeineLoadCacheEndpoint endpoint, CaffeineConfiguration configuration,
+                                     LoadingCache cache) {
         super(endpoint, CaffeineConstants.ACTION, configuration::getAction);
         this.configuration = configuration;
         this.cache = cache;

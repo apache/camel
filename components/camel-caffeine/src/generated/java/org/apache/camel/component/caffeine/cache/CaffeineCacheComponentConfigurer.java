@@ -29,7 +29,6 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
-        case "cache": getOrCreateConfiguration(target).setCache(property(camelContext, com.github.benmanes.caffeine.cache.Cache.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": getOrCreateConfiguration(target).setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.caffeine.CaffeineConfiguration.class, value)); return true;
@@ -67,7 +66,6 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("action", java.lang.String.class);
         answer.put("basicPropertyBinding", boolean.class);
-        answer.put("cache", com.github.benmanes.caffeine.cache.Cache.class);
         answer.put("cacheLoader", com.github.benmanes.caffeine.cache.CacheLoader.class);
         answer.put("configuration", org.apache.camel.component.caffeine.CaffeineConfiguration.class);
         answer.put("createCacheIfNotExist", boolean.class);
@@ -93,7 +91,6 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         case "action": return getOrCreateConfiguration(target).getAction();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
-        case "cache": return getOrCreateConfiguration(target).getCache();
         case "cacheloader":
         case "cacheLoader": return getOrCreateConfiguration(target).getCacheLoader();
         case "configuration": return target.getConfiguration();
