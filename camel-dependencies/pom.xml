@@ -569,7 +569,6 @@
     <wiremock-version>2.24.1</wiremock-version>
     <woodstox-core-version>6.1.1</woodstox-core-version>
     <woodstox-version>4.4.1</woodstox-version>
-    <wsdl4j-version>1.6.3</wsdl4j-version>
     <xalan-version>2.7.2</xalan-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
     <xbean-spring-version>4.14</xbean-spring-version>
