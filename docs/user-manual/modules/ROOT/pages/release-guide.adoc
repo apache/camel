@@ -392,7 +392,7 @@ This will release the artifacts.
 
 * On https://github.com/apache/camel-website/tree/master/static/schema the xsd related to blueprint,cxf,spring-security and spring
 must be pushed to make them available to end users.
-* The blueprint one are under the camel-karaf release
+* The blueprint one is under the camel-karaf release
 
 [[Tagging-examples]]
 == Tagging examples
