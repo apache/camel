@@ -142,7 +142,7 @@ errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
 == MessageHistory API
 
 When message history is enabled during routing Camel captures how the Exchange is routed, as a `org.apache.camel.MessageHistory` entity
-that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information abut the
+that is stored on the Exchange. On the `org.apache.camel.MessageHistory` there is information about the
 route id, processor id, timestamp, and elapsed time it took to process the Exchange by the processor.
 
 You can access the message history from Java code:
