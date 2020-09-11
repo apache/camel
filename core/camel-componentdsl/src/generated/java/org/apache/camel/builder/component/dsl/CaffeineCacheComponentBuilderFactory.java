@@ -61,19 +61,6 @@ public interface CaffeineCacheComponentBuilderFactory {
             return this;
         }
         /**
-         * To configure an already instantiated cache to be used.
-         * 
-         * The option is a:
-         * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
-         * 
-         * Group: producer
-         */
-        default CaffeineCacheComponentBuilder cache(
-                com.github.benmanes.caffeine.cache.Cache cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * To configure a CacheLoader in case of a LoadCache use.
          * 
          * The option is a:
@@ -315,7 +302,6 @@ public interface CaffeineCacheComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "action": getOrCreateConfiguration((CaffeineCacheComponent) component).setAction((java.lang.String) value); return true;
-            case "cache": getOrCreateConfiguration((CaffeineCacheComponent) component).setCache((com.github.benmanes.caffeine.cache.Cache) value); return true;
             case "cacheLoader": getOrCreateConfiguration((CaffeineCacheComponent) component).setCacheLoader((com.github.benmanes.caffeine.cache.CacheLoader) value); return true;
             case "createCacheIfNotExist": getOrCreateConfiguration((CaffeineCacheComponent) component).setCreateCacheIfNotExist((boolean) value); return true;
             case "evictionType": getOrCreateConfiguration((CaffeineCacheComponent) component).setEvictionType((org.apache.camel.component.caffeine.EvictionType) value); return true;

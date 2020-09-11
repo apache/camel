@@ -100,3 +100,23 @@ public class Application {
 ====
 As a consequence of this change, the Camel Spring Boot starters have been amended to use Customizers instead of creating instances of components, languages or data formats.
 ====
+
+
+=== Camel Caffein
+
+To configure the component to use a pre-configured cache, it is not more required to use the now removed `cache` option as the component perorm a look-up from the registry based on the `cacheName` URI param.
+
+As example, the following code:
+
+
+[source,java]
+----
+.to("caffeine-cache://cache?cache=#myCache&action=PUT&key=1")
+----
+
+Should eb repolaced by:
+
+[source,java]
+----
+.to("caffeine-cache://myCache?action=PUT&key=1")
+----

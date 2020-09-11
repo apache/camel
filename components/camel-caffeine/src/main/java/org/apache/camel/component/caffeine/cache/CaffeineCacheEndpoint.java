@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -48,8 +50,7 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     private Cache cache;
 
-    CaffeineCacheEndpoint(String uri, CaffeineCacheComponent component, String cacheName,
-                          CaffeineConfiguration configuration) throws Exception {
+    CaffeineCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
 
         this.cacheName = cacheName;
@@ -58,15 +59,14 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new CaffeineCacheProducer(this, this.cacheName, configuration, cache);
+        return new CaffeineCacheProducer(this, configuration, cache);
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (ObjectHelper.isNotEmpty(configuration.getCache())) {
-            cache = configuration.getCache();
-        } else {
-            Caffeine<Object, Object> builder = Caffeine.newBuilder();
+        cache = CamelContextHelper.lookup(getCamelContext(), cacheName, Cache.class);
+        if (cache == null) {
+            Caffeine<?, ?> builder = Caffeine.newBuilder();
             if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
                 builder.initialCapacity(configuration.getInitialCapacity());
                 builder.maximumSize(configuration.getMaximumSize());
@@ -78,7 +78,7 @@ public class CaffeineCacheEndpoint extends DefaultEndpoint {
                 if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
                     builder.recordStats();
                 } else {
-                    builder.recordStats(() -> configuration.getStatsCounter());
+                    builder.recordStats(configuration::getStatsCounter);
                 }
             }
             if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {
