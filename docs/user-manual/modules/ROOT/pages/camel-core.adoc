@@ -54,5 +54,6 @@ class inside the package references a class of a package above it. These
 diagrams were built with an architecture tool called structure 101. We
 have an offer from the manufacturer headway software to supply us with
 licenses for all camel developers that are interested. If you want a
-license, please contact me (Christian Schneider, chris@die-schneider.net). I will then try to organize a license for you. +
+license please contact me (Christian Schneider chris at
+die-schneider.net). I will then try to organize a license for you. +
  image::architecture_incl_violations.png[image]
