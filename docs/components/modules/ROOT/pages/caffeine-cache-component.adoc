@@ -43,7 +43,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine Cache component supports 18 options, which are listed below.
+The Caffeine Cache component supports 17 options, which are listed below.
 
 
 
@@ -51,7 +51,6 @@ The Caffeine Cache component supports 18 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
-| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | *evictionType* (producer) | Set the eviction Type for this cache. There are 2 enums and the value can be one of: size_based, time_based | SIZE_BASED | EvictionType
@@ -92,14 +91,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (18 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
-| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *createCacheIfNotExist* (producer) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
 | *evictionType* (producer) | Set the eviction Type for this cache. There are 2 enums and the value can be one of: size_based, time_based | SIZE_BASED | EvictionType
@@ -131,8 +129,8 @@ protected RouteBuilder createRouteBuilder() throws Exception {
     return new RouteBuilder() {
         public void configure() {
             from("direct://start")
-                .toF("caffeine-cache://%s?cache=#cache&action=PUT&key=1", "test")
-                .toF("caffeine-cache://%s?cache=#cache&key=1&action=GET", "test")
+                .to("caffeine-cache://cache?action=PUT&key=1")
+                .to("caffeine-cache://cache?key=1&action=GET")
                 .log("Test! ${body}")
                 .to("mock:result");
         }
