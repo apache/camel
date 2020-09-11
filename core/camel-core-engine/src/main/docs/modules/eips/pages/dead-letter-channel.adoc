@@ -429,7 +429,7 @@ option `allowRedeliveryWhileStopping` which you can use to control if
 redelivery is allowed or not; notice that any in progress redelivery
 will still be executed. This option can only disallow any redelivery to
 be executed *after* the stopping of a route/shutdown of Camel has been
-triggered. If a redelivery is dissallowed then a
+triggered. If a redelivery is disallowed then a
 `RejectedExecutionException` is set on the xref:latest@manual:ROOT:exchange.adoc[Exchange]
 and the processing of the xref:latest@manual:ROOT:exchange.adoc[Exchange] stops. This means
 any consumer will see the xref:latest@manual:ROOT:exchange.adoc[Exchange] as failed due the
