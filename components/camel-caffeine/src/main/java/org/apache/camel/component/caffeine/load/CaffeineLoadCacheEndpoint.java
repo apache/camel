@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.camel.Category;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -48,8 +50,7 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
 
     private LoadingCache cache;
 
-    CaffeineLoadCacheEndpoint(String uri, CaffeineLoadCacheComponent component, String cacheName,
-                              CaffeineConfiguration configuration) throws Exception {
+    CaffeineLoadCacheEndpoint(String uri, Component component, String cacheName, CaffeineConfiguration configuration) {
         super(uri, component);
 
         this.cacheName = cacheName;
@@ -58,14 +59,13 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new CaffeineLoadCacheProducer(this, this.cacheName, configuration, cache);
+        return new CaffeineLoadCacheProducer(this, configuration, cache);
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (ObjectHelper.isNotEmpty(configuration.getCache())) {
-            cache = (LoadingCache) configuration.getCache();
-        } else {
+        cache = CamelContextHelper.lookup(getCamelContext(), cacheName, LoadingCache.class);
+        if (cache == null) {
             Caffeine<Object, Object> builder = Caffeine.newBuilder();
             if (configuration.getEvictionType() == EvictionType.SIZE_BASED) {
                 builder.initialCapacity(configuration.getInitialCapacity());
@@ -78,7 +78,7 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
                 if (ObjectHelper.isEmpty(configuration.getStatsCounter())) {
                     builder.recordStats();
                 } else {
-                    builder.recordStats(() -> configuration.getStatsCounter());
+                    builder.recordStats(configuration::getStatsCounter);
                 }
             }
             if (ObjectHelper.isNotEmpty(configuration.getRemovalListener())) {

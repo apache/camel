@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.caffeine;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
@@ -36,8 +35,6 @@ public class CaffeineConfiguration implements Cloneable {
     private String keyType;
     @UriParam(label = "advanced")
     private String valueType;
-    @UriParam(label = "producer")
-    private Cache cache;
     @UriParam(label = "producer")
     private CacheLoader cacheLoader;
     @UriParam(label = "producer")
@@ -115,17 +112,6 @@ public class CaffeineConfiguration implements Cloneable {
      */
     public void setValueType(String valueType) {
         this.valueType = valueType;
-    }
-
-    public Cache getCache() {
-        return cache;
-    }
-
-    /**
-     * To configure an already instantiated cache to be used
-     */
-    public void setCache(Cache cache) {
-        this.cache = cache;
     }
 
     public CacheLoader getCacheLoader() {

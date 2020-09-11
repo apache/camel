@@ -206,7 +206,8 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start").toF("caffeine-loadcache://%s?cache=#cache", "test")
+                from("direct://start")
+                        .to("caffeine-loadcache://cache")
                         .to("log:org.apache.camel.component.caffeine?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }
