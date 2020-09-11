@@ -44,7 +44,7 @@ public class Aws2S3BaseTest extends ContainerAwareTestSupport {
         return new GenericContainer(CONTAINER_IMAGE)
                 .withNetworkAliases(CONTAINER_NAME)
                 .withEnv("SERVICES", "s3")
-                .withExposedPorts(4572)
+                .withExposedPorts(4566)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
     }
@@ -53,7 +53,7 @@ public class Aws2S3BaseTest extends ContainerAwareTestSupport {
         return String.format(
                 "%s:%d",
                 getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 4572));
+                getContainerPort(CONTAINER_NAME, 4566));
     }
 
     public S3Client getS3Client() {
