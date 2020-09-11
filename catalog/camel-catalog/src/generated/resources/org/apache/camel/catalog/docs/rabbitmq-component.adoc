@@ -341,16 +341,17 @@ from("rabbitmq:A?queue=IN&declare=false&autoDelete=false&arg.queue.x-message-ttl
 
 You would think that it would be a straight forward operation. However, if the source queue has a routing key set in the headers, it will pass down to the destination and not be overriden with the URI query parameters. Because the exchange is the same and the routing key is the same, an infinitely growing loop is created.
 
-Either make a second exchange for the producer to avoid the headers to pass through or manually access the exchange headers in a processor and get rid of the misbehaving key. (Example is written in Kotlin)
+Either make a second exchange for the producer to avoid the headers to pass through or manually access the exchange headers in a processor and get rid of the misbehaving key.
 
-[source,kotlin]
+[source,java]
 ----
 from("rabbitmq:A?queue=IN&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000")
   // ...
-  .process(Processor { exchange: Exchange ->
-    val input = exchange.`in`.body as InputModel
-    exchange.`in`.removeHeader("rabbitmq.ROUTING_KEY")
-    exchange.`in`.body = OutputModel(...)
+  .process(e -> {
+    InputModel input = e.getMessage().getBody(InputModel.class);
+    e.getMessage().removeHeader("rabbitmq.ROUTING_KEY");
+    OutputModel output = ...
+    e.getMessage().setBody(output);
   })
   // ...
   .to("rabbitmq:A?queue=OUT&routingKey=OUT&declare=false&autoDelete=false&arg.queue.x-message-ttl=20000");
