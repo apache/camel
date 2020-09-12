@@ -33,6 +33,9 @@
     <description>Creates a new Camel project with OSGi blueprint support. Ready to be deployed in OSGi.</description>
     <packaging>maven-archetype</packaging>
 
+    <properties>
+        <archetype.test.settingsFile>src/test/resources/settings.xml</archetype.test.settingsFile> <!-- Needed to download Karaf snapshots -->
+    </properties>
     <build>
         <extensions>
             <extension>
@@ -56,6 +59,15 @@
                 </includes>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
     </build>
 
 </project>
