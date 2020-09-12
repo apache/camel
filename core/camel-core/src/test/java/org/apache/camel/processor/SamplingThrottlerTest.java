@@ -47,7 +47,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         List<Exchange> sentExchanges = new ArrayList<>();
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
         mock.assertIsSatisfied();
 
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
@@ -70,7 +70,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
         mock.assertIsSatisfied();
 
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
@@ -165,7 +165,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
 
                 from("direct:sample-configured").sample(1, TimeUnit.SECONDS).to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured-via-dsl").sample(1, TimeUnit.SECONDS).to("mock:result");
 
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 

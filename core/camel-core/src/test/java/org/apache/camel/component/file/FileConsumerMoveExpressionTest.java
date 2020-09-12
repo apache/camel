@@ -70,7 +70,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/filelanguage/", "Hello World", Exchange.FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/" + id + ".bak");
@@ -95,7 +95,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/filelanguage/", "Bye World", Exchange.FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/data/filelanguage/backup-" + id + "-report2.bak");

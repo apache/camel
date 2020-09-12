@@ -52,7 +52,7 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure UoW has been run
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
         assertEquals(0, sync.isOnComplete());

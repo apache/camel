@@ -37,7 +37,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
 
         template.sendBodyAndHeader("file:target/data/messages/input/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         assertMockEndpointsSatisfied();
 

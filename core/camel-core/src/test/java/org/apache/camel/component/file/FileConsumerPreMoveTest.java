@@ -55,7 +55,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset and drop the same file again
         mock.reset();

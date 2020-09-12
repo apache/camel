@@ -84,7 +84,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         public Exchange aggregate(Exchange original, Exchange resource) {
             Object resourceResponse = resource.getIn().getBody();
             if (original.getPattern().isOutCapable()) {
-                original.getOut().setBody(resourceResponse);
+                original.getMessage().setBody(resourceResponse);
                 original.getProperties().putAll(resource.getProperties());
             } else {
                 original.getIn().setBody(resourceResponse);

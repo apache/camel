@@ -36,12 +36,12 @@ public class PipelineTest extends ContextTestSupport {
     private static final class InToOut implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().copyFrom(exchange.getIn());
+            exchange.getMessage().copyFrom(exchange.getIn());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
                 counter = 0;
             }
-            exchange.getOut().setHeader("copy-counter", counter + 1);
+            exchange.getMessage().setHeader("copy-counter", counter + 1);
         }
     }
 

@@ -157,7 +157,7 @@ public abstract class TestSupport {
      */
     @Deprecated
     public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
-        return assertMessageHeader(exchange.getOut(), name, expected);
+        return assertMessageHeader(exchange.getMessage(), name, expected);
     }
 
     /**
@@ -195,14 +195,14 @@ public abstract class TestSupport {
 
         Object actual;
         if (expected == null) {
-            actual = exchange.getOut().getMandatoryBody();
+            actual = exchange.getMessage().getMandatoryBody();
             assertEquals(expected, actual, "output body of: " + exchange);
         } else {
-            actual = exchange.getOut().getMandatoryBody(expected.getClass());
+            actual = exchange.getMessage().getMandatoryBody(expected.getClass());
         }
         assertEquals(expected, actual, "output body of: " + exchange);
 
-        LOG.debug("Received response: {} with out: {}", exchange, exchange.getOut());
+        LOG.debug("Received response: {} with out: {}", exchange, exchange.getMessage());
     }
 
     public static Object assertMessageHeader(Message message, String name, Object expected) {

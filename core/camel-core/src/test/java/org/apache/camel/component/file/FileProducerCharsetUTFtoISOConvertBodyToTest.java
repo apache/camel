@@ -70,7 +70,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
 
     @Test
     public void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/charset/output.txt");
         assertTrue(file.exists(), "File should exist");

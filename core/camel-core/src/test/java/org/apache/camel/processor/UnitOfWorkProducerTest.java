@@ -66,7 +66,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // there should be 2 completed events
         // one for the producer template, and another for the Camel route
@@ -82,7 +82,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // there should be 1 completed events as direct endpoint will be like a
         // direct method call

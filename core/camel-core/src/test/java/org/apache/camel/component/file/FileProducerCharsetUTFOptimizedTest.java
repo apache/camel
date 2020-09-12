@@ -63,7 +63,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
 
     @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/charset/output.txt");
         assertTrue(file.exists(), "File should exist");

@@ -61,7 +61,7 @@ public class FileConsumerPollStrategyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // give file consumer a bit time
         Thread.sleep(20);

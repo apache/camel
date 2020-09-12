@@ -50,7 +50,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // assert the file is not moved
         File file = new File("target/data/movefile/hello.txt");
