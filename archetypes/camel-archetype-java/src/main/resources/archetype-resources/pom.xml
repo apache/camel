@@ -102,7 +102,7 @@
         <version>${camel-version}</version>
         <configuration>
           <logClasspath>true</logClasspath>
-          <mainClass>${package}.MyApplication</mainClass>
+          <mainClass>${package}.MainApp</mainClass>
         </configuration>
       </plugin>
 
