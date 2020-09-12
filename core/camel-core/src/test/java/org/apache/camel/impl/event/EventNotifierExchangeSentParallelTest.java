@@ -33,7 +33,7 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
 
         // wait for the message to be fully done using oneExchangeDone
         assertMockEndpointsSatisfied();
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         // stop Camel to let all the events complete
         context.stop();

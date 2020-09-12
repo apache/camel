@@ -44,7 +44,7 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "A,B,C");
 
-        assertEquals(true, notify.matchesMockWaitTime());
+        assertEquals(true, notify.matchesWaitTime());
 
         assertEquals(3, counter.get());
     }

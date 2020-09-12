@@ -73,7 +73,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // content of file should be Hello London
         String content = IOConverter.toString(new File("target/data/done/london.txt"), null);

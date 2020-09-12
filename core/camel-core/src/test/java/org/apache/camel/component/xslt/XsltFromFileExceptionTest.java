@@ -48,7 +48,7 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xslt/hello.xml");
         assertFalse(file.exists(), "File should not exists " + file);
@@ -67,7 +67,7 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xslt/hello2.xml");
         assertFalse(file.exists(), "File should not exists " + file);

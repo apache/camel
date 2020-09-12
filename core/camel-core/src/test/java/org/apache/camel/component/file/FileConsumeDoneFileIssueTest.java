@@ -59,7 +59,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 
@@ -87,7 +87,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("bar");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 
@@ -118,7 +118,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         context.getRouteController().startRoute("bar");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         Thread.sleep(50);
 

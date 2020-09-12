@@ -47,7 +47,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "bar");
 
         assertMockEndpointsSatisfied();
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);
@@ -60,7 +60,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "kaboom", "yes");
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         assertEquals("onFailureA", sync);
         assertEquals("onFailureA", lastOne);

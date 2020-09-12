@@ -60,7 +60,7 @@ public class RouteContextProcessorTest extends ContextTestSupport {
 
         ProducerTemplate template = context.createProducerTemplate();
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
-            template.sendBodyAndHeader("seda:fork", "Test Message: " + i, "seqnum", new Long(i));
+            template.sendBodyAndHeader("seda:fork", "Test Message: " + i, "seqnum", Long.valueOf(i));
         }
 
         long expectedTime = NUMBER_OF_MESSAGES * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME)

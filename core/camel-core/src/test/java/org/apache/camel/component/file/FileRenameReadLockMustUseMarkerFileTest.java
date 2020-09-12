@@ -52,7 +52,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         // and lock file should be deleted
         File lock = new File("target/data/rename/bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);

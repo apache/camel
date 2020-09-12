@@ -61,7 +61,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the poll strategy commit is executed after the exchange is done
         Thread.sleep(100);

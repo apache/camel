@@ -97,7 +97,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             assertEquals("Simulated fatal error", e.getCause().getMessage());
         }
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // onCompletion is async so we gotta wait a bit for the file to be
         // deleted

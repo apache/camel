@@ -47,7 +47,7 @@ public class TokenPairPredicateTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/pair/hello.xml");
         assertFalse(file.exists(), "File should not exists " + file);

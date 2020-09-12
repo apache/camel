@@ -42,7 +42,7 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         processor.process(exchange);
 
-        assertEquals("body", exchange.getOut().getBody(), "UnmarshalProcessor did not copy OUT from IN message");
+        assertEquals("body", exchange.getMessage().getBody(), "UnmarshalProcessor did not copy OUT from IN message");
     }
 
     @Test
@@ -70,8 +70,8 @@ public class UnmarshalProcessorTest extends TestSupport {
         Processor processor = new UnmarshalProcessor(new MyDataFormat(out));
 
         processor.process(exchange);
-        assertSame(out, exchange.getOut(), "UnmarshalProcessor did not make use of the returned OUT message");
-        assertSame(out.getBody(), exchange.getOut().getBody(),
+        assertSame(out, exchange.getMessage(), "UnmarshalProcessor did not make use of the returned OUT message");
+        assertSame(out.getBody(), exchange.getMessage().getBody(),
                 "UnmarshalProcessor did change the body bound to the OUT message");
     }
 
@@ -82,7 +82,7 @@ public class UnmarshalProcessorTest extends TestSupport {
         Processor processor = new UnmarshalProcessor(new MyDataFormat(unmarshalled));
 
         processor.process(exchange);
-        assertSame(unmarshalled, exchange.getOut().getBody(),
+        assertSame(unmarshalled, exchange.getMessage().getBody(),
                 "UnmarshalProcessor did not make use of the returned object being returned while unmarshalling");
     }
 

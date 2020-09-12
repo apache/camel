@@ -27,6 +27,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 public class ConsumingAppender extends AbstractAppender {
@@ -37,7 +38,8 @@ public class ConsumingAppender extends AbstractAppender {
     }
 
     public ConsumingAppender(String name, String pattern, Consumer<LogEvent> consumer) {
-        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build());
+        super(name, null, PatternLayout.newBuilder().withPattern(pattern).build(), true,
+              Property.EMPTY_ARRAY);
         this.consumer = consumer;
     }
 

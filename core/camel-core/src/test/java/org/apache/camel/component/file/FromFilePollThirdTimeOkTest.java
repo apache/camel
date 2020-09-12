@@ -50,7 +50,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
         assertEquals(3, counter);
 
         // assert the file is deleted

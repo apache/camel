@@ -139,10 +139,10 @@ public class SetExchangePatternTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // Send to an endpoint using InOut
-                from("direct:testInOut").inOut("mock:result");
+                from("direct:testInOut").to(ExchangePattern.InOut, "mock:result");
 
                 // Send to an endpoint using InOut
-                from("direct:testInOnly").inOnly("mock:result");
+                from("direct:testInOnly").to(ExchangePattern.InOnly, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it from
                 // direct:inOnly to mock:result endpoint

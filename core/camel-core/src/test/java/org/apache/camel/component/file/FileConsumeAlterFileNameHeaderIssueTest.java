@@ -63,7 +63,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
@@ -92,7 +92,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
@@ -118,7 +118,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
@@ -147,7 +147,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the original file should have been moved, as the file consumer should
         // be resilient against
