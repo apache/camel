@@ -190,10 +190,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                     Exchange exchange = getEndpoint().createExchange(s3Object, s3ObjectSummary.key());
                     answer.add(exchange);
                 } else {
-                    /**
-                     * If includeFolders != true and the object is not included, it is safe to close the object here. 
-                     * If includeFolders == true, the exchage will close the object.
-                     */
+                    // If includeFolders != true and the object is not included, it is safe to close the object here. 
+                    // If includeFolders == true, the exchange will close the object.
                     IOHelper.close(s3Object);
                 }
             }
