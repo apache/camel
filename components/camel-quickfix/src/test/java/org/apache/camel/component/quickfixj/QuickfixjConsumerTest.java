@@ -68,7 +68,7 @@ public class QuickfixjConsumerTest {
         consumer.onExchange(mockExchange);
 
         // No expected interaction with processor since component is not started
-        Mockito.verifyZeroInteractions(mockProcessor);
+        Mockito.verifyNoInteractions(mockProcessor);
 
         consumer.start();
         Mockito.verify(mockEndpoint).ensureInitialized();
