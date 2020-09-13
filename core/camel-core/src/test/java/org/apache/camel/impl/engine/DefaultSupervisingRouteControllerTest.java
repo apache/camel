@@ -148,7 +148,6 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         private String name;
 
         public MyJmsEndpoint(String name) {
-            super();
             this.name = name;
         }
 

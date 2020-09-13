@@ -81,7 +81,6 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
     private class MyJmsEndpoint extends SedaEndpoint {
 
         public MyJmsEndpoint() {
-            super();
         }
 
         @Override
