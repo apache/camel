@@ -67,10 +67,6 @@
         </mailingList>
     </mailingLists>
 
-    <prerequisites>
-        <maven>3.5.0</maven>
-    </prerequisites>
-
     <modules>
         <module>parent</module>
         <module>camel-dependencies</module>
@@ -200,6 +196,25 @@
         <defaultGoal>install</defaultGoal>
 
         <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>enforce-maven</id>
+                  <goals>
+                    <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                      <requireMavenVersion>
+                        <version>3.5.0</version>
+                      </requireMavenVersion>
+                    </rules>    
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
