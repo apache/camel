@@ -89,7 +89,6 @@ public class SpringSupervisingRouteControllerTest extends SpringTestSupport {
         private String name;
 
         public MyJmsEndpoint(String name) {
-            super();
             this.name = name;
         }
 

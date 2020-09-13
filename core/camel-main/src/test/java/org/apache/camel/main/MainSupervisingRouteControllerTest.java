@@ -147,7 +147,6 @@ public class MainSupervisingRouteControllerTest {
         private String name;
 
         public MyJmsEndpoint(String name) {
-            super();
             this.name = name;
         }
 

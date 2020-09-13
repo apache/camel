@@ -23,7 +23,6 @@ public class TestDocumentEntity extends DocumentEntity {
     private long number;
 
     public TestDocumentEntity() {
-        super();
     }
 
     public TestDocumentEntity(String foo) {

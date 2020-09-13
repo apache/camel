@@ -126,7 +126,6 @@ public class ManagedSupervisingRouteControllerTest extends ManagementTestSupport
     private class MyJmsEndpoint extends SedaEndpoint {
 
         public MyJmsEndpoint() {
-            super();
         }
 
         @Override
