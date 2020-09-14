@@ -3,7 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel)
 [![Javadocs](http://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](http://www.javadoc.io/doc/org.apache.camel/camel-core)
 [![Stack Overflow](https://img.shields.io/:stack%20overflow-apache--camel-brightgreen.svg)](http://stackoverflow.com/questions/tagged/apache-camel)
-[![Gitter](https://img.shields.io/gitter/room/apache/apache-camel.js.svg)](https://gitter.im/apache/apache-camel)
+[![Chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://camel.zulipchat.com/)
 [![Master Build](https://github.com/apache/camel/workflows/build/badge.svg)](https://github.com/apache/camel/actions?query=workflow%3A%22build%22)
 [![Twitter](https://img.shields.io/twitter/follow/ApacheCamel.svg?label=Follow&style=social)](https://twitter.com/ApacheCamel)
 
@@ -83,7 +83,7 @@ Issue tracker: <https://issues.apache.org/jira/projects/CAMEL>
 
 Mailing list: <http://camel.apache.org/mailing-lists.html>
 
-Chat: <https://gitter.im/apache/apache-camel>
+Chat: <https://camel.zulipchat.com/>
 
 StackOverflow: <https://stackoverflow.com/questions/tagged/apache-camel>
 
