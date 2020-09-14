@@ -321,8 +321,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     // CHECKSTYLE:OFF
     protected Set<String> executeComponents() throws Exception {
-        Path coreDir = this.coreDir.toPath();
-        Path componentsDir = this.componentsDir.toPath();
         Path componentsOutDir = this.componentsOutDir.toPath();
 
         getLog().info("Copying all Camel component json descriptors");
