@@ -73,12 +73,6 @@
       <artifactId>camel-test-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit-jupiter-version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -249,6 +243,10 @@
             <componentPackage>${componentPackage}</componentPackage>
             <outPackage>${outPackage}</outPackage>
           </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
