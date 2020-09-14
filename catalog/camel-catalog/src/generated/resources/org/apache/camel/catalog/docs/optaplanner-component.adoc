@@ -78,17 +78,19 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configFile* | *Required* Specifies the location to the solver file |  | String
+| *configFile* | *Required* Specifies the location to the solver file. If useSolverManager=FALSE, Camel uses this file and create the Solver. If useSolverManager=TRUE and SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER} : this file is ignored by Camel usage of SolverManager. SolverManager can be injected by DI in Quarkus or Spring. |  | String
 |===
 
 
-=== Query Parameters (9 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *problemId* (common) | In case of using SolverManager : the problem id | 1L | Long
 | *solverId* (common) | Specifies the solverId to user for the solver instance key | DEFAULT_SOLVER | String
+| *useSolverManager* (common) | use SolverManager instead of XML file config. Use this mode on Quarkus app. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
