@@ -231,7 +231,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     /**
      * Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is
-     * greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the
+     * greater than slowCallDurationThreshold Duration. When the percentage of slow calls is equal or greater the
      * threshold, the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that
