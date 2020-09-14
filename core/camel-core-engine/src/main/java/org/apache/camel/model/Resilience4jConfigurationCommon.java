@@ -178,7 +178,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Configures configures the minimum number of calls which are required (per sliding window period) before the
+     * Configures the minimum number of calls which are required (per sliding window period) before the
      * CircuitBreaker can calculate the error rate. For example, if {@code minimumNumberOfCalls} is 10, then at least 10
      * calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the
      * CircuitBreaker will not transition to open even if all 9 calls have failed.
@@ -231,7 +231,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
 
     /**
      * Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is
-     * greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the
+     * greater than slowCallDurationThreshold Duration. When the percentage of slow calls is equal or greater the
      * threshold, the CircuitBreaker transitions to open and starts short-circuiting calls.
      * <p>
      * The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that
