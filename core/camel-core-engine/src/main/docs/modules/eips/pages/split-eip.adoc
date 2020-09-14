@@ -660,7 +660,7 @@ so the sub message will report the error on the shared unit of work. When the Sp
 it checks the state of the shared unit of work and checks if any errors occurred.
 And if an error occurred it will set the exception on the Exchange and mark it for rollback.
 The error handler will yet again kick in, as the Exchange has been marked as rollback and it had an exception as well.
-No redelivery attempts is performed (as it was marked for rollback) and the Exchange will be moved into the dead letter queue.
+No redelivery attempts are performed (as it was marked for rollback) and the Exchange will be moved into the dead letter queue.
 
 Using this from XML DSL is just as easy as you just have to set the `shareUnitOfWork` attribute to true:
 
