@@ -31,7 +31,7 @@ There are many ways you can help make Camel a better piece of software - please 
 
 There are various ways of communicating with the Camel community.
 - Join us on the [Discussion Forums](https://camel.465427.n5.nabble.com) and take part in any conversations
-- Pop by on [Gitter](https://gitter.im/apache/apache-camel) and say hi
+- Pop by on [Zulip](https://camel.zulipchat.com) and say hi
 
 
 ## Improving the documentation
