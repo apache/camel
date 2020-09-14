@@ -10,7 +10,7 @@ refrain from immediately opening a ticket in the issue tracker unless
 you are certain it's a problem in the Camel software. If you are in
 doubt, we appreciate asking the
 xref:mailing-lists.adoc[mailing list], or
-https://gitter.im/apache/apache-camel[Gitter chat] first.
+https://camel.zulipchat.com[Chat room] first.
 
 [TIP]
 ====
@@ -24,7 +24,7 @@ bullets advised there first.
 
 We prefer people to get in touch first using the
 xref:mailing-lists.adoc[mailing list], or
-https://gitter.im/apache/apache-camel[Gitter chat]. Or take time to read
+https://camel.zulipchat.com[Chat room]. Or take time to read
 xref:faq:index.adoc[FAQs], or search in the mailing list archives to find answers.
 Unfortunately some people create a JIRA ticket as first thing. *Please
 don't do that!* Only if you are sure it really is a bug, etc. JIRA tickets

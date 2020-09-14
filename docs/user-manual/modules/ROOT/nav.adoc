@@ -29,7 +29,7 @@
 * Community
 ** xref:contributing.adoc[Contributing]
 ** xref:release-guide.adoc[Release guide]
-** https://gitter.im/apache/apache-camel[Gitter Chat]
+** https://camel.zulipchat.com[Chat room]
 ** xref:mailing-lists.adoc[Mailing Lists]
 ** xref:support.adoc[Support]
 ** xref:team.adoc[Team]

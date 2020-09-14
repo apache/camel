@@ -46,7 +46,7 @@ There are various ways of communicating with the Camel community.
 
 For questions and guidance around contributing subscribe to the developer's mailing list by sending an e-mail to dev-subscribe@camel.apache.org.
 
-We can also be reached on the Gitter chat at https://gitter.im/apache/apache-camel/.
+We can also be reached on the Zulip chat at https://camel.zulipchat.com.
 
 We track issues using https://issues.apache.org/jira/browse/CAMEL[ASF Jira], look for https://issues.apache.org/jira/issues/?filter=12348073[some easy to resolve issues] or issues we https://issues.apache.org/jira/issues/?filter=12348074[need help with].
 
