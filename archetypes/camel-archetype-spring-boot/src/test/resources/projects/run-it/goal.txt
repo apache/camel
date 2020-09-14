@@ -1,0 +1,1 @@
+install spring-boot:run -Dmaven.test.skip=true -Dspring-boot.run.arguments="--camel.springboot.duration-max-messages=1,--camel.springboot.duration-max-seconds=10"
