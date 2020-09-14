@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel.archetypes</groupId>
     <artifactId>camel-archetype-api-component</artifactId>
-    <name>Camel :: Archetypes :: Component</name>
+    <name>Camel :: Archetypes :: API Component</name>
     <description>Creates a new Camel component that wraps one or more API proxies.</description>
     <packaging>maven-archetype</packaging>
 
