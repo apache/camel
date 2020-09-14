@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,6 +146,13 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
 
         // whether to sync pom
         Object val = project.getContextValue("syncPomFile");
+        if (val != null) {
+            File parent = project.getBasedir().getParentFile();
+            File components = findCamelDirectory(project.getBasedir(), "components");
+            if (Objects.equals(parent, components)) {
+                val = false;
+            }
+        }
 
         // Update all component pom sync point
         if (count > 0 && (val == null || val.equals("true"))) {
