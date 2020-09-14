@@ -178,7 +178,7 @@ public class Resilience4jConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Configures configures the minimum number of calls which are required (per sliding window period) before the
+     * Configures the minimum number of calls which are required (per sliding window period) before the
      * CircuitBreaker can calculate the error rate. For example, if {@code minimumNumberOfCalls} is 10, then at least 10
      * calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the
      * CircuitBreaker will not transition to open even if all 9 calls have failed.
