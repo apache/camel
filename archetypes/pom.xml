@@ -45,6 +45,18 @@
         <module>camel-archetype-spring-boot</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>archetypes-skip-tests</id>
+            <activation>
+                <property><name>skipTests</name></property>
+            </activation>
+            <properties>
+                <archetype.test.skip>true</archetype.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
 
@@ -106,5 +118,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
