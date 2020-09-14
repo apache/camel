@@ -230,7 +230,7 @@ It may happen that due to a delay in the execution of the _direct:newOrder_ rout
 
 So, when the compensating action _direct:cancelOrder_ is called, it may not find the Order record that should be cancelled.
 It is important, in order to guarantee full global consistency, that *any main action and its corresponding compensating action are commutative*,
-i.e. if compensation occurs before the main action it shoud have the same effect.
+i.e. if compensation occurs before the main action it should have the same effect.
 
 Another possible approach, when using a commutative behavior is not possible,
 is to consistently fail in the compensating action until data produced by the main action is found (or the maximum number of retries is exhausted):
