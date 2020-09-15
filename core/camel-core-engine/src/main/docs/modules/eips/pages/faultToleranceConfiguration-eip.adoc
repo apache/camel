@@ -13,7 +13,7 @@ The Fault Tolerance Configuration EIP supports 13 options which are listed below
 |===
 | Name | Description | Default | Type
 | *circuitBreakerRef* | Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use. |  | String
-| *delay* | Control how long the circuit breaker stays open. The value are in seconds and the default is 5 seconds. | 5s | String
+| *delay* | Control how long the circuit breaker stays open. The default is 5 seconds. | 5s | String
 | *successThreshold* | Controls the number of trial calls which are allowed when the circuit breaker is half-open | 1 | Integer
 | *requestVolumeThreshold* | Controls the size of the rolling window used when the circuit breaker is closed | 20 | Integer
 | *failureRatio* | Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage. | 50 | Integer
