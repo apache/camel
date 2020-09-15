@@ -156,7 +156,7 @@ public class IAM2Producer extends DefaultProducer {
         } else {
             ListAccessKeysResponse response;
             try {
-                response = iamClient.listAccessKeys();
+                response = iamClient.listAccessKeys(ListAccessKeysRequest.builder().build());
             } catch (AwsServiceException ase) {
                 LOG.trace("List Access Keys command returned the error code {}", ase.getMessage());
                 throw ase;
