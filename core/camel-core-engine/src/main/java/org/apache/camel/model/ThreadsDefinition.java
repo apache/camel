@@ -279,7 +279,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     }
 
     /**
-     * Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size
+     * Whether idle core threads are allowed to timeout and therefore can shrink the pool size below the core pool size
      * <p/>
      * Is by default <tt>false</tt>
      *
