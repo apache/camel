@@ -771,31 +771,41 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Endpoint getEndpoint(String uri) {
-        return doGetEndpoint(uri, false, false);
+        return doGetEndpoint(uri, null, false, false);
     }
 
     @Override
     public Endpoint getEndpoint(NormalizedEndpointUri uri) {
-        return doGetEndpoint(uri.getUri(), true, false);
+        return doGetEndpoint(uri.getUri(), null, true, false);
     }
 
     @Override
     public Endpoint getPrototypeEndpoint(String uri) {
-        return doGetEndpoint(uri, false, true);
+        return doGetEndpoint(uri, null, false, true);
     }
 
     @Override
     public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
-        return doGetEndpoint(uri.getUri(), true, true);
+        return doGetEndpoint(uri.getUri(), null, true, true);
     }
 
-    protected Endpoint doGetEndpoint(String uri, boolean normalized, boolean prototype) {
-        // ensure CamelContext are initialized before we can get a component
+    @Override
+    public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
+        return doGetEndpoint(uri, parameters, false, false);
+    }
+
+    @Override
+    public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
+        return doGetEndpoint(uri.getUri(), parameters, true, false);
+    }
+
+    protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized, boolean prototype) {
+        // ensure CamelContext are initialized before we can get an endpoint
         build();
 
         StringHelper.notEmpty(uri, "uri");
 
-        LOG.trace("Getting endpoint with uri: {}", uri);
+        LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
 
         // in case path has property placeholders then try to let property
         // component resolve those
@@ -846,11 +856,9 @@ public abstract class AbstractCamelContext extends BaseService
                     LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
 
                     // Have the component create the endpoint if it can.
-                    if (component.useRawUri()) {
-                        answer = component.createEndpoint(rawUri);
-                    } else {
-                        answer = component.createEndpoint(uri);
-                    }
+                    answer = component.createEndpoint(
+                            component.useRawUri() ? rawUri : uri,
+                            parameters);
 
                     if (answer != null && LOG.isDebugEnabled()) {
                         LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,
@@ -889,105 +897,6 @@ public abstract class AbstractCamelContext extends BaseService
         // unknown scheme
         if (answer == null) {
             throw new NoSuchEndpointException(uri);
-        }
-
-        return answer;
-    }
-
-    @Override
-    public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
-        return doGetEndpoint(uri, parameters, false);
-    }
-
-    @Override
-    public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
-        return doGetEndpoint(uri.getUri(), parameters, true);
-    }
-
-    protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized) {
-        // ensure CamelContext are initialized before we can get an endpoint
-        init();
-
-        StringHelper.notEmpty(uri, "uri");
-
-        LOG.trace("Getting endpoint with uri: {} and parameters: {}", uri, parameters);
-
-        // in case path has property placeholders then try to let property
-        // component resolve those
-        if (!normalized) {
-            try {
-                uri = resolvePropertyPlaceholders(uri);
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
-        }
-
-        final String rawUri = uri;
-
-        // normalize uri so we can do endpoint hits with minor mistakes and
-        // parameters is not in the same order
-        if (!normalized) {
-            uri = EndpointHelper.normalizeEndpointUri(uri);
-        }
-
-        LOG.trace("Getting endpoint with raw uri: {}, normalized uri: {}", rawUri, uri);
-
-        Endpoint answer;
-        String scheme = null;
-        // use optimized method to get the endpoint uri
-        EndpointKey key = getEndpointKeyPreNormalized(uri);
-        answer = endpoints.get(key);
-        if (answer == null) {
-            try {
-                scheme = StringHelper.before(uri, ":");
-                if (scheme == null) {
-                    // it may refer to a logical endpoint
-                    answer = getRegistry().lookupByNameAndType(uri, Endpoint.class);
-                    if (answer != null) {
-                        return answer;
-                    } else {
-                        throw new NoSuchEndpointException(uri);
-                    }
-                }
-                LOG.trace("Endpoint uri: {} is from component with name: {}", uri, scheme);
-                Component component = getComponent(scheme);
-                ServiceHelper.initService(component);
-
-                // Ask the component to resolve the endpoint.
-                if (component != null) {
-                    LOG.trace("Creating endpoint from uri: {} using component: {}", uri, component);
-
-                    // Have the component create the endpoint if it can.
-                    if (component.useRawUri()) {
-                        answer = component.createEndpoint(rawUri, parameters);
-                    } else {
-                        answer = component.createEndpoint(uri, parameters);
-                    }
-
-                    if (answer != null && LOG.isDebugEnabled()) {
-                        LOG.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer,
-                                component);
-                    }
-                }
-
-                if (answer == null) {
-                    // no component then try in registry and elsewhere
-                    answer = createEndpoint(uri);
-                    LOG.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
-                }
-
-                if (answer != null) {
-                    addService(answer);
-                    answer = addEndpointToRegistry(uri, answer);
-                }
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
-        }
-
-        // unknown scheme
-        if (answer == null) {
-            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
         }
 
         return answer;
