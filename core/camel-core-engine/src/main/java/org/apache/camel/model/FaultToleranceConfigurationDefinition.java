@@ -56,10 +56,18 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Control how long the circuit breaker stays open. The value are in seconds and the default is 60 seconds.
+     * Control how long the circuit breaker stays open. The default is 5 seconds.
      */
     public FaultToleranceConfigurationDefinition delay(long delay) {
         setDelay(Long.toString(delay));
+        return this;
+    }
+
+    /**
+     * Control how long the circuit breaker stays open. The default is 5 seconds.
+     */
+    public FaultToleranceConfigurationDefinition delay(String delay) {
+        setDelay(delay);
         return this;
     }
 
@@ -99,10 +107,18 @@ public class FaultToleranceConfigurationDefinition extends FaultToleranceConfigu
     }
 
     /**
-     * Configures the thread execution timeout (millis). Default value is 1000 millis (1 second).
+     * Configures the thread execution timeout. Default value is 1 second.
      */
     public FaultToleranceConfigurationDefinition timeoutDuration(long timeoutDuration) {
         setTimeoutDuration(Long.toString(timeoutDuration));
+        return this;
+    }
+
+    /**
+     * Configures the thread execution timeout. Default value is 1 second.
+     */
+    public FaultToleranceConfigurationDefinition timeoutDuration(String timeoutDuration) {
+        setTimeoutDuration(timeoutDuration);
         return this;
     }
 

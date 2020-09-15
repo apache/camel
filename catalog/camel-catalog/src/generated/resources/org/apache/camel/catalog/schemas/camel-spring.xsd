@@ -4136,8 +4136,8 @@ breaker options are not in use.
         <xs:attribute name="delay" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Control how long the circuit breaker stays open. The values are in seconds and
-the default value is 5 seconds. Default value: 5s
+Control how long the circuit breaker stays open. The default is 5 seconds.
+Default value: 5s
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
