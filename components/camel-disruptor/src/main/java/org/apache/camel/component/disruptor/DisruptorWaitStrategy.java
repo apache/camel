@@ -85,6 +85,10 @@ public enum DisruptorWaitStrategy {
         this.waitStrategyClass = waitStrategyClass;
     }
 
+    public Class<? extends WaitStrategy> getWaitStrategyClass() {
+        return this.waitStrategyClass;
+    }
+
     public WaitStrategy createWaitStrategyInstance() throws Exception {
         return waitStrategyClass.getConstructor().newInstance();
     }
