@@ -153,15 +153,19 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     /**
      * Manages the temporary file for the file input stream caches.
      * 
-     * Collects all FileInputStreamCache instances of the temporary file. Counts the number of exchanges which have a
-     * FileInputStreamCache instance of the temporary file. Deletes the temporary file, if all exchanges are done.
+     * Collects all FileInputStreamCache instances of the temporary file. Counts
+     * the number of exchanges which have a FileInputStreamCache instance of the
+     * temporary file. Deletes the temporary file, if all exchanges are done.
      * 
      * @see CachedOutputStream
      */
     static class TempFileManager {
 
         private static final Logger LOG = LoggerFactory.getLogger(TempFileManager.class);
-        /** Indicator whether the file input stream caches are closed on completion of the exchanges. */
+        /**
+         * Indicator whether the file input stream caches are closed on
+         * completion of the exchanges.
+         */
         private final boolean closedOnCompletion;
         private AtomicInteger exchangeCounter = new AtomicInteger();
         private File tempFile;
@@ -214,9 +218,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                             try {
                                 cleanUpTempFile();
                             } catch (Exception e) {
-                                LOG.warn("Error deleting temporary cache file: " + tempFile
-                                         + ". This exception will be ignored.",
-                                        e);
+                                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
                             }
                         }
                     }
@@ -227,11 +229,15 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     }
                 };
                 UnitOfWork streamCacheUnitOfWork = exchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
-                if (streamCacheUnitOfWork != null) {
+                if (streamCacheUnitOfWork != null && streamCacheUnitOfWork.getRoute() != null) {
                     // The stream cache must sometimes not be closed when the exchange is deleted. This is for example the
                     // case in the splitter and multi-cast case with AggregationStrategy where the result of the sub-routes
                     // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed with
                     // the Unit of Work of the main route.
+                    // streamCacheUnitOfWork.getRoute() != null means that the unit of work is still active and the done method
+                    // was not yet called: It can happen that streamCacheUnitOfWork.getRoute() == null in the split or 
+                    // multi-cast case when there is a timeout on the main route and an exchange of the sub-route is added after
+                    // the timeout. This we have to avoid because the stream cache would never be closed then.
                     streamCacheUnitOfWork.addSynchronization(onCompletion);
                 } else {
                     // add on completion so we can cleanup after the exchange is done such as deleting temporary files
