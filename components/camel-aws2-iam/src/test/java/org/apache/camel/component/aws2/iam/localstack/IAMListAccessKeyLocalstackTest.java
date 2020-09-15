@@ -24,12 +24,7 @@ import org.apache.camel.component.aws2.iam.IAM2Constants;
 import org.apache.camel.component.aws2.iam.IAM2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import software.amazon.awssdk.services.iam.model.CreateUserRequest;
-import software.amazon.awssdk.services.iam.model.CreateUserResponse;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IAMListAccessKeyLocalstackTest extends Aws2IAMBaseTest {
 
@@ -73,8 +68,7 @@ public class IAMListAccessKeyLocalstackTest extends Aws2IAMBaseTest {
                 from("direct:createUser").to("aws2-iam://test?operation=createUser");
                 from("direct:createAccessKey").to("aws2-iam://test?operation=createAccessKey");
                 from("direct:listKeys").to("aws2-iam://test?operation=listAccessKeys&pojoRequest=true")
-                         .to("mock:result");
-
+                        .to("mock:result");
 
             }
         };
