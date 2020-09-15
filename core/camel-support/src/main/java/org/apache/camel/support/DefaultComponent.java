@@ -131,6 +131,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // an endpoint and want to have the parameter values without the RAW tokens
         URISupport.resolveRawParameterValues(parameters);
 
+        // use encoded or raw uri?
+        uri = useRawUri() ? uri : encodedUri;
+
         validateURI(uri, path, parameters);
         if (LOG.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
@@ -174,92 +177,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             validateParameters(uri, parameters, null);
         }
 
-        afterConfiguration(uri, path, endpoint, parameters);
-        return endpoint;
-    }
-
-    @Override
-    public Endpoint createEndpoint(String uri) throws Exception {
-        // need to encode before its safe to parse with java.net.Uri
-        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
-        URI u = new URI(encodedUri);
-        String path;
-        if (u.getScheme() != null) {
-            // if there is a scheme then there is also a path
-            path = URISupport.extractRemainderPath(u, useRawUri());
-        } else {
-            // this uri has no context-path as the leading text is the component name (scheme)
-            path = null;
-        }
-
-        Map<String, Object> parameters;
-        if (useRawUri()) {
-            // when using raw uri then the query is taking from the uri as is
-            String query;
-            int idx = uri.indexOf('?');
-            if (idx > -1) {
-                query = uri.substring(idx + 1);
-            } else {
-                query = u.getRawQuery();
-            }
-            // and use method parseQuery
-            parameters = URISupport.parseQuery(query, true);
-        } else {
-            // however when using the encoded (default mode) uri then the query,
-            // is taken from the URI (ensures values is URI encoded)
-            // and use method parseParameters
-            parameters = URISupport.parseParameters(u);
-        }
-        // parameters using raw syntax: RAW(value)
-        // should have the token removed, so its only the value we have in parameters, as we are about to create
-        // an endpoint and want to have the parameter values without the RAW tokens
-        URISupport.resolveRawParameterValues(parameters);
-
-        // use encoded or raw uri?
-        uri = useRawUri() ? uri : encodedUri;
-
-        validateURI(uri, path, parameters);
-        if (LOG.isTraceEnabled()) {
-            // at trace level its okay to have parameters logged, that may contain passwords
-            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri),
-                    URISupport.sanitizePath(path), parameters);
-        } else if (LOG.isDebugEnabled()) {
-            // but at debug level only output sanitized uris
-            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
-        }
-
-        // extract these global options and infer their value based on global/component level configuration
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding
-                ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
-        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler
-                ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
-        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer
-                ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
-
-        Endpoint endpoint = createEndpoint(uri, path, parameters);
-        if (endpoint == null) {
-            return null;
-        }
-        // inject camel context
-        endpoint.setCamelContext(getCamelContext());
-
-        // and setup those global options afterwards
-        if (endpoint instanceof DefaultEndpoint) {
-            DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            de.setBasicPropertyBinding(basic);
-            de.setBridgeErrorHandler(bridge);
-            de.setLazyStartProducer(lazy);
-        }
-
-        // configure remainder of the parameters
-        setProperties(endpoint, parameters);
-
-        // if endpoint is strict (not lenient) and we have unknown parameters configured then
-        // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
-        if (!endpoint.isLenientProperties()) {
-            validateParameters(uri, parameters, null);
-        }
-
         // allow custom configuration after properties has been configured
         if (endpoint instanceof AfterPropertiesConfigured) {
             ((AfterPropertiesConfigured) endpoint).afterPropertiesConfigured(getCamelContext());
@@ -267,6 +184,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
         afterConfiguration(uri, path, endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    public Endpoint createEndpoint(String uri) throws Exception {
+        return createEndpoint(uri, null);
     }
 
     @Override
