@@ -153,9 +153,8 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     /**
      * Manages the temporary file for the file input stream caches.
      * 
-     * Collects all FileInputStreamCache instances of the temporary file. Counts
-     * the number of exchanges which have a FileInputStreamCache instance of the
-     * temporary file. Deletes the temporary file, if all exchanges are done.
+     * Collects all FileInputStreamCache instances of the temporary file. Counts the number of exchanges which have a
+     * FileInputStreamCache instance of the temporary file. Deletes the temporary file, if all exchanges are done.
      * 
      * @see CachedOutputStream
      */
@@ -163,8 +162,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
 
         private static final Logger LOG = LoggerFactory.getLogger(TempFileManager.class);
         /**
-         * Indicator whether the file input stream caches are closed on
-         * completion of the exchanges.
+         * Indicator whether the file input stream caches are closed on completion of the exchanges.
          */
         private final boolean closedOnCompletion;
         private AtomicInteger exchangeCounter = new AtomicInteger();
@@ -218,7 +216,9 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                             try {
                                 cleanUpTempFile();
                             } catch (Exception e) {
-                                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                                LOG.warn("Error deleting temporary cache file: " + tempFile
+                                         + ". This exception will be ignored.",
+                                        e);
                             }
                         }
                     }
