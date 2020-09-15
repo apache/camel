@@ -290,10 +290,8 @@ public abstract class BaseOptionModel {
         return text;
     }
 
-    public String getShortName(int watermark) {
-        String text = Strings.wrapCamelCaseWords(name, watermark, " ");
-        // ensure the option name starts with lower-case
-        return Character.toLowerCase(text.charAt(0)) + text.substring(1);
+    public String getShortName() {
+        return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
 }

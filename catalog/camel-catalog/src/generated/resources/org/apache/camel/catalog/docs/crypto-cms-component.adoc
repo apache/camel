@@ -55,8 +55,8 @@ The Crypto CMS component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *envelopedDataDecryptor Configuration* (advanced) | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. |  | EnvelopedDataDecryptorConfiguration
-| *signedDataVerifier Configuration* (advanced) | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. |  | SignedDataVerifierConfiguration
+| *envelopedDataDecryptorConfiguration* (advanced) | To configure the shared EnvelopedDataDecryptorConfiguration, which determines the uri parameters for the decrypt operation. |  | EnvelopedDataDecryptorConfiguration
+| *signedDataVerifierConfiguration* (advanced) | To configure the shared SignedDataVerifierConfiguration, which determines the uri parameters for the verify operation. |  | SignedDataVerifierConfiguration
 |===
 // component options: END
 
@@ -97,7 +97,7 @@ with the following path and query parameters:
 | *originatorInformationProvider* (encrypt) | Provider for the originator info. See \https://tools.ietf.org/html/rfc5652#section-6.1. The default value is null. |  | OriginatorInformationProvider
 | *recipient* (encrypt) | Recipient Info: reference to a bean which implements the interface org.apache.camel.component.crypto.cms.api.TransRecipientInfo |  | List
 | *secretKeyLength* (encrypt) | Key length for the secret symmetric key used for the content encryption. Only used if the specified content-encryption algorithm allows keys of different sizes. If contentEncryptionAlgorithm=AES/CBC/PKCS5Padding or Camellia/CBC/PKCS5Padding then 128; if contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding then 192, 128; if strong encryption is enabled then for AES/CBC/PKCS5Padding and Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are possible. |  | int
-| *unprotectedAttributesGenerator Provider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See \https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGeneratorProvider
+| *unprotectedAttributesGeneratorProvider* (encrypt) | Provider of the generator for the unprotected attributes. The default value is null which means no unprotected attribute is added to the Enveloped Data object. See \https://tools.ietf.org/html/rfc5652#section-6.1. |  | AttributesGeneratorProvider
 | *toBase64* (encrypt_sign) | Indicates whether the Signed Data or Enveloped Data instance shall be base 64 encoded. Default value is false. | false | Boolean
 | *includeContent* (sign) | Indicates whether the signed content should be included into the Signed Data instance. If false then a detached Signed Data instance is created in the header CamelCryptoCmsSignedData. | true | Boolean
 | *signer* (sign) | Signer information: reference to bean(s) which implements org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values can be separated by comma |  | String

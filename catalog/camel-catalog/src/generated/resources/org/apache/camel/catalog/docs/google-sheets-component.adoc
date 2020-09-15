@@ -165,8 +165,8 @@ The following lists each API name and method and its additional parameters.
 |===
 | Name | Description | Type
 | *batchClearValuesRequest* | The com.google.api.services.sheets.v4.model.BatchClearValuesRequest | BatchClearValuesRequest
-| *batchGetValuesByDataFilter Request* | The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
-| *batchUpdateValuesByDataFilter Request* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
+| *batchGetValuesByDataFilterRequest* | The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
+| *batchUpdateValuesByDataFilterRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
 | *batchUpdateValuesRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest | BatchUpdateValuesRequest
 | *clearValuesRequest* | The com.google.api.services.sheets.v4.model.ClearValuesRequest | ClearValuesRequest
 | *content* | The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest | BatchClearValuesByDataFilterRequest
@@ -183,7 +183,7 @@ The following lists each API name and method and its additional parameters.
 | Name | Description | Type
 | *batchUpdateSpreadsheetRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest | BatchUpdateSpreadsheetRequest
 | *content* | The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
-| *getSpreadsheetByDataFilter Request* | The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
+| *getSpreadsheetByDataFilterRequest* | The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
 | *spreadsheetId* | The spreadsheet to apply the updates to | String
 |===
 // endpoint options: END
