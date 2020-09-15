@@ -54,7 +54,7 @@ The Pulsar component supports 35 options, which are listed below.
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
-| *negativeAckRedeliveryDelay Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
+| *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
@@ -71,7 +71,7 @@ The Pulsar component supports 35 options, which are listed below.
 | *initialSequenceId* (producer) | The first message published will have a sequence Id of initialSequenceId 1. | -1 | long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *maxPendingMessages* (producer) | Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true | 1000 | int
-| *maxPendingMessagesAcross Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
+| *maxPendingMessagesAcross{zwsp}Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
 | *messageRouter* (producer) | Custom Message Router to use |  | MessageRouter
 | *messageRoutingMode* (producer) | Message Routing Mode to use. There are 3 enums and the value can be one of: SinglePartition, RoundRobinPartition, CustomPartition | RoundRobinPartition | MessageRoutingMode
 | *producerName* (producer) | Name of the producer. If unset, lets Pulsar select a unique identifier. |  | String
@@ -123,7 +123,7 @@ with the following path and query parameters:
 | *consumerQueueSize* (consumer) | Size of the consumer queue - defaults to 10 | 10 | int
 | *deadLetterTopic* (consumer) | Name of the topic where the messages which fail maxRedeliverCount times will be sent. Note: if not set, default topic name will be topicName-subscriptionName-DLQ |  | String
 | *maxRedeliverCount* (consumer) | Maximum number of times that a message will be redelivered before being sent to the dead letter queue. If this value is not set, no Dead Letter Policy will be created |  | Integer
-| *negativeAckRedeliveryDelay Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
+| *negativeAckRedeliveryDelay{zwsp}Micros* (consumer) | Set the negative acknowledgement delay | 60000000 | long
 | *numberOfConsumers* (consumer) | Number of consumers - defaults to 1 | 1 | int
 | *subscriptionInitialPosition* (consumer) | Control the initial position in the topic of a newly created subscription. Default is latest message. There are 2 enums and the value can be one of: EARLIEST, LATEST | LATEST | SubscriptionInitialPosition
 | *subscriptionName* (consumer) | Name of the subscription to use | subs | String
@@ -141,7 +141,7 @@ with the following path and query parameters:
 | *initialSequenceId* (producer) | The first message published will have a sequence Id of initialSequenceId 1. | -1 | long
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *maxPendingMessages* (producer) | Size of the pending massages queue. When the queue is full, by default, any further sends will fail unless blockIfQueueFull=true | 1000 | int
-| *maxPendingMessagesAcross Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
+| *maxPendingMessagesAcross{zwsp}Partitions* (producer) | The maximum number of pending messages for partitioned topics. The maxPendingMessages value will be reduced if (number of partitions maxPendingMessages) exceeds this value. Partitioned topics have a pending message queue for each partition. | 50000 | int
 | *messageRouter* (producer) | Custom Message Router to use |  | MessageRouter
 | *messageRoutingMode* (producer) | Message Routing Mode to use. There are 3 enums and the value can be one of: SinglePartition, RoundRobinPartition, CustomPartition | RoundRobinPartition | MessageRoutingMode
 | *producerName* (producer) | Name of the producer. If unset, lets Pulsar select a unique identifier. |  | String

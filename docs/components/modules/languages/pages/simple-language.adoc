@@ -374,7 +374,7 @@ simple("${body.address.zip} > 1000")
 
 The parser is limited to only support a single operator.
 
-To enable it the left value must be enclosed in $\{ }. The syntax is:
+To enable it the left value must be enclosed in ${ }. The syntax is:
 
 [source]
 --------------------------
@@ -382,7 +382,7 @@ ${leftValue} OP rightValue
 --------------------------
 
 Where the `rightValue` can be a String literal enclosed in `' '`,
-`null`, a constant value or another expression enclosed in $\{ }.
+`null`, a constant value or another expression enclosed in ${ }.
 
 IMPORTANT: There *must* be spaces around the operator.
 
@@ -479,7 +479,7 @@ following three special escaping instead.
 
 |\r |To use carriage return character.
 
-|\} |To use the } character as text
+|} |To use the } character as text
 |===
 
 And the following logical operators can be used to group expressions:
@@ -710,7 +710,7 @@ from("direct:hello")
     .to("mock:reply");
 ----
 
-Notice that we must use $\{ } placeholders in the expression now to
+Notice that we must use ${ } placeholders in the expression now to
 allow Camel to parse it correctly.
 
 And this sample uses the date command to output current date.

@@ -58,7 +58,7 @@ The XSLT Saxon component supports 10 options, which are listed below.
 | *saxonConfigurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
-| *transformerFactory ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
+| *transformerFactory{zwsp}ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 |===
@@ -106,7 +106,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transformerFactory* (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
 | *transformerFactoryClass* (advanced) | To use a custom XSLT transformer factory, specified as a FQN class name |  | String
-| *transformerFactory ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
+| *transformerFactory{zwsp}ConfigurationStrategy* (advanced) | A configuration strategy to apply on freshly created instances of TransformerFactory. |  | TransformerFactoryConfigurationStrategy
 | *uriResolver* (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
 |===
 // endpoint options: END
