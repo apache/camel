@@ -85,7 +85,7 @@ public class FaultToleranceConfigurationCommon extends IdentifiedType {
     }
 
     /**
-     * Control how long the circuit breaker stays open. The values are in seconds and the default value is 5 seconds.
+     * Control how long the circuit breaker stays open. The default is 5 seconds.
      */
     public void setDelay(String delay) {
         this.delay = delay;

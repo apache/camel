@@ -59,7 +59,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     /**
-     * A list of class names for specific exceptions to monitor. If no exceptions is configured then all exceptions is
+     * A list of class names for specific exceptions to monitor. If no exceptions are configured then all exceptions are
      * monitored
      */
     public void setExceptions(List<String> exceptions) {
@@ -71,7 +71,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     }
 
     /**
-     * A list of specific exceptions to monitor. If no exceptions is configured then all exceptions is monitored
+     * A list of specific exceptions to monitor. If no exceptions are configured then all exceptions are monitored
      */
     public void setExceptionTypes(List<Class<?>> exceptionTypes) {
         this.exceptionTypes = exceptionTypes;
