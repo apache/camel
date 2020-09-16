@@ -166,7 +166,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Path root = findCamelDirectory(baseDir, "core/camel-endpointdsl").toPath();
+        File camelDir = findCamelDirectory(baseDir, "core/camel-endpointdsl");
+        if (camelDir == null) {
+            getLog().info("No core/camel-endpointdsl folder found, skipping execution");
+            return;
+        }
+        Path root = camelDir.toPath();
         if (sourcesOutputDir == null) {
             sourcesOutputDir = root.resolve("src/generated/java").toFile();
         }
