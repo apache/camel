@@ -10742,7 +10742,7 @@ for an unbounded queue.
         <xs:attribute name="allowCoreThreadTimeOut" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Whether idle core threads is allowed to timeout and therefore can shrink the
+Whether idle core threads are allowed to timeout and therefore can shrink the
 pool size below the core pool size Is by default false. Default value: false
             ]]></xs:documentation>
           </xs:annotation>

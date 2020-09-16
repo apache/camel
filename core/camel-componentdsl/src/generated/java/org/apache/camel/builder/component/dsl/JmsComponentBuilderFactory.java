@@ -524,7 +524,7 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Specifies the delivery mode to be used. Possibles values are those
+         * Specifies the delivery mode to be used. Possible values are those
          * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
          * 
