@@ -28,12 +28,6 @@ content:
       start_path: core/camel-core-engine/src/main/docs
     - url: ./../
       branches: HEAD
-      start_path: core/camel-core-languages/src/main/docs
-    - url: ./../
-      branches: HEAD
-      start_path: core/camel-xml-jaxp/src/main/docs
-    - url: ./../
-      branches: HEAD
       start_path: docs/components
 
 asciidoc:
