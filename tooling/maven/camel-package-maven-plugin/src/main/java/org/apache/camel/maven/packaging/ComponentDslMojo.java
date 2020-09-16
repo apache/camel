@@ -120,7 +120,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
 
         File camelDir = findCamelDirectory(baseDir, "core/camel-componentdsl");
         if (camelDir == null) {
-            getLog().info("No core/camel-componentdsl folder found, skipping execution");
+            getLog().debug("No core/camel-componentdsl folder found, skipping execution");
             return;
         }
         Path root = camelDir.toPath();
