@@ -368,7 +368,7 @@ The default mode is that both of them are in override mode, and they are check i
 The check stops at first found property value for the key.
 
 You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
-options on the properties component.
+options on the property's component.
 
 == Using property placeholders for any kind of attribute in the XML DSL
 
