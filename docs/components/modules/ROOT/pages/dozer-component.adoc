@@ -288,7 +288,7 @@ An example of mapping a message header into a target field:
   <mapping>
     <class-a>org.apache.camel.component.dozer.ExpressionMapper</class-a>
     <class-b>org.example.B</class-b>
-    <field custom-converter-id="_expressionMapping" custom-converter-param="simple:\${header.customerNumber}">
+    <field custom-converter-id="_expressionMapping" custom-converter-param="simple:${header.customerNumber}">
       <a>expression</a>
       <b>custId</b>
     </field>
