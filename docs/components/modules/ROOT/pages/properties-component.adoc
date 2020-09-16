@@ -186,7 +186,7 @@ fresh such as:
 </camelContext>
 ----
 
-Setting the properties location through the location tag works just fine but sometime you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
+Setting the properties location through the location tag works just fine but sometimes you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
 
 [source,xml]
 ----
