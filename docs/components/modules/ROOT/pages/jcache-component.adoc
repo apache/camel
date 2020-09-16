@@ -94,7 +94,7 @@ The JCache component supports 8 options, which are listed below.
 | Name | Description | Default | Type
 | *cacheConfiguration* (common) | A Configuration for the Cache |  | Configuration
 | *cacheConfigurationProperties* (common) | Properties to configure jcache |  | Map
-| *cacheConfigurationProperties Ref* (common) | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
+| *cacheConfigurationProperties{zwsp}Ref* (common) | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
 | *cachingProvider* (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
 | *configurationUri* (common) | An implementation specific URI for the CacheManager |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -218,7 +218,7 @@ The _.log()_ at the beginning and at the end of the route is always called, but 
 
 == KeyExpression
 
-By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("$\{body\})_.
+By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("$\{body})_.
  We can set a different Camel Expression as _keyExpression_ which will be evaluated to determine the key.
  For example if we try to find an _order_ by an _orderId_ which is in the message headers,
  set _header("orderId")_ (or _simple("${header.orderId})_ as _keyExpression_.

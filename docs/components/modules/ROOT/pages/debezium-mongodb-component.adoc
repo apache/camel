@@ -78,7 +78,7 @@ The Debezium MongoDB Connector component supports 49 options, which are listed b
 | *databaseBlacklist* (mongodb) | The databases for which changes are to be excluded |  | String
 | *databaseHistoryFileFilename* (mongodb) | The path to the file that will be used to record the database history |  | String
 | *databaseWhitelist* (mongodb) | The databases for which changes are to be captured |  | String
-| *eventProcessingFailureHandling Mode* (mongodb) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
+| *eventProcessingFailureHandling{zwsp}Mode* (mongodb) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
 | *fieldBlacklist* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.blacklist' description. |  | String
 | *fieldRenames* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.renames' description. |  | String
 | *heartbeatIntervalMs* (mongodb) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
@@ -93,7 +93,7 @@ The Debezium MongoDB Connector component supports 49 options, which are listed b
 | *mongodbPassword* (mongodb) | *Required* Password to be used when connecting to MongoDB, if necessary. |  | String
 | *mongodbPollIntervalSec* (mongodb) | Frequency in seconds to look for new, removed, or changed replica sets. Defaults to 30 seconds. | 30 | int
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
-| *mongodbSslInvalidHostname Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
+| *mongodbSslInvalidHostname{zwsp}Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
 | *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
 | *provideTransactionMetadata* (mongodb) | Enables transaction metadata extraction together with event counting | false | boolean
@@ -158,7 +158,7 @@ with the following path and query parameters:
 | *databaseBlacklist* (mongodb) | The databases for which changes are to be excluded |  | String
 | *databaseHistoryFileFilename* (mongodb) | The path to the file that will be used to record the database history |  | String
 | *databaseWhitelist* (mongodb) | The databases for which changes are to be captured |  | String
-| *eventProcessingFailureHandling Mode* (mongodb) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
+| *eventProcessingFailureHandling{zwsp}Mode* (mongodb) | Specify how failures during processing of events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its position is raised, causing the connector to be stopped; 'warn' the problematic event and its position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
 | *fieldBlacklist* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.blacklist' description. |  | String
 | *fieldRenames* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.renames' description. |  | String
 | *heartbeatIntervalMs* (mongodb) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
@@ -173,7 +173,7 @@ with the following path and query parameters:
 | *mongodbPassword* (mongodb) | *Required* Password to be used when connecting to MongoDB, if necessary. |  | String
 | *mongodbPollIntervalSec* (mongodb) | Frequency in seconds to look for new, removed, or changed replica sets. Defaults to 30 seconds. | 30 | int
 | *mongodbSslEnabled* (mongodb) | Should connector use SSL to connect to MongoDB instances | false | boolean
-| *mongodbSslInvalidHostname Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
+| *mongodbSslInvalidHostname{zwsp}Allowed* (mongodb) | Whether invalid host names are allowed when using SSL. If true the connection will not prevent man-in-the-middle attacks | false | boolean
 | *mongodbUser* (mongodb) | Database user for connecting to MongoDB, if necessary. |  | String
 | *pollIntervalMs* (mongodb) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500ms | long
 | *provideTransactionMetadata* (mongodb) | Enables transaction metadata extraction together with event counting | false | boolean
