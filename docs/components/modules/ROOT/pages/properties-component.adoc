@@ -104,7 +104,7 @@ with comma such as:
 pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
 ----
 
-You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
+You can set which location can be discarded if missing by setting the ``optional`` attribute, which is false by default, i.e:
 
 [source,java]
 ----
