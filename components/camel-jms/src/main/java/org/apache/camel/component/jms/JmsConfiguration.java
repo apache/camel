@@ -219,7 +219,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean deliveryPersistent = true;
     @UriParam(enums = "1,2", label = "producer",
               description = "Specifies the delivery mode to be used."
-                            + " Possibles values are those defined by javax.jms.DeliveryMode."
+                            + " Possible values are those defined by javax.jms.DeliveryMode."
                             + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
     private Integer deliveryMode;
     @UriParam(defaultValue = "true", label = "consumer",
@@ -1295,7 +1295,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the delivery mode to be used. Possibles values are those defined by javax.jms.DeliveryMode.
+     * Specifies the delivery mode to be used. Possible values are those defined by javax.jms.DeliveryMode.
      * NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
     public void setDeliveryMode(Integer deliveryMode) {
