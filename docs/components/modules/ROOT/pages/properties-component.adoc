@@ -31,7 +31,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.properties.ignore-missing-location* | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | Boolean
 | *camel.component.properties.initial-properties* | Sets initial properties which will be used before any locations are resolved. The option is a java.util.Properties type. |  | String
 | *camel.component.properties.location* | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
-| *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exist. The option is a java.util.Properties type. |  | String
+| *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exists. The option is a java.util.Properties type. |  | String
 | *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
 | *camel.component.properties.system-properties-mode* | Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override). The default mode (override) is to use system properties if present, and override any existing properties. OS environment variable mode is checked before JVM system property mode | 2 | Integer
 |===
@@ -67,7 +67,7 @@ The property placeholder is generally in use when doing:
 * using Blueprint PropertyPlaceholder with Camel
 xref:properties-component.adoc[Properties] component
 * using `@PropertyInject` to inject a property in a POJO
-* Using default value if a property does not exists
+* Using default value if a property does not exist
 * Include out of the box functions, to lookup property
 values from OS environment variables, JVM system properties, or the
 service idiom.
