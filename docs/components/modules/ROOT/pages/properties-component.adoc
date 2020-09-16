@@ -434,7 +434,7 @@ Notice how we can use the Camel syntax for placeholders `{{` and `}}` in the
 Camel route, which will lookup the value from OSGi blueprint.
 
 The blueprint syntax for placeholders is `${ }`. So outside the
-`<camelContext>` you must use the `${ }` syntax. Where as inside
+`<camelContext>` you must use the `${ }` syntax. Whereas inside
 `<camelContext>` you must use `{{` and `}}` syntax.
 
 OSGi blueprint allows you to configure the syntax, so you can actually
