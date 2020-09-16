@@ -660,11 +660,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-xml-jaxp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-catalog</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -681,11 +676,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-engine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-core-languages</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
