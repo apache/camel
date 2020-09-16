@@ -41,3 +41,9 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: mvn sourcecheck
         run: ./mvnw -V --no-transfer-progress -Psourcecheck -Dcheckstyle.failOnViolation=true -DskipTests checkstyle:checkstyle verify
+      - name: Check if there are uncommited changes
+        id: changes
+        uses: UnicornGlobal/has-changes-action@v1.0.11
+      - name: Fail if git tree is dirty
+        if: steps.changes.outputs.changed == 1
+        run: echo "Maven build will override some files, which are not commited yet. Please run maven build and commit generated sources." && exit 1
