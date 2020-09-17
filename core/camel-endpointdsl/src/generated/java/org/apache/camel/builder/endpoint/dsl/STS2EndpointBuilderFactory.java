@@ -114,7 +114,7 @@ public interface STS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> type.
          * 
          * Required: true
-         * Default: assumeRole
+         * Default: assume-role
          * Group: producer
          */
         default STS2EndpointBuilder operation(STS2Operations operation) {
@@ -128,7 +128,7 @@ public interface STS2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> type.
          * 
          * Required: true
-         * Default: assumeRole
+         * Default: assume-role
          * Group: producer
          */
         default STS2EndpointBuilder operation(String operation) {

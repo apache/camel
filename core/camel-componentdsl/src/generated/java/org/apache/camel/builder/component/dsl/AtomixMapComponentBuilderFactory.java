@@ -90,7 +90,7 @@ public interface AtomixMapComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap.Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapComponentBuilder defaultAction(

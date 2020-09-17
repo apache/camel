@@ -138,7 +138,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
@@ -160,7 +160,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
@@ -762,7 +762,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointProducerBuilder splittingPolicy(
@@ -784,7 +784,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointProducerBuilder splittingPolicy(
@@ -1693,7 +1693,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointBuilder splittingPolicy(
@@ -1715,7 +1715,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppEndpointBuilder splittingPolicy(String splittingPolicy) {

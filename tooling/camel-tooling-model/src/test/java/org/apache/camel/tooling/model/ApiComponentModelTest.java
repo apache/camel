@@ -36,7 +36,17 @@ public class ApiComponentModelTest {
         Assertions.assertTrue(model.isApi());
         Assertions.assertEquals("apiName/methodName", model.getApiPropertyQualifier());
         Assertions.assertEquals(56, model.getApiOptions().size());
-        Assertions.assertEquals(7, model.getApiOptions().get("call").size());
+        ApiModel am = model.getApiOptions().stream().filter(a -> a.getName().equals("call")).findFirst().orElse(null);
+        Assertions.assertNotNull(am);
+        Assertions.assertEquals("call", am.getName());
+        Assertions.assertEquals(null, am.getDescription());
+        Assertions.assertEquals(5, am.getAliases().size());
+        Assertions.assertEquals("^creator$=create", am.getAliases().get(0));
+        ApiMethodModel amm = am.getMethods().stream().filter(a -> a.getName().equals("creator")).findFirst().orElse(null);
+        Assertions.assertNotNull(amm);
+        Assertions.assertEquals("creator", amm.getName());
+        Assertions.assertEquals("Create a CallCreator to execute create", amm.getDescription());
+        Assertions.assertEquals(6, amm.getSignatures().size());
     }
 
     /**

@@ -27,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Collaborations Manager
- * <p>
  * Provides operations to manage Box collaborations.
- *
  */
 public class BoxCollaborationsManager {
 

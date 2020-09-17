@@ -569,7 +569,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder runLoggingLevel(
@@ -584,7 +584,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder runLoggingLevel(
@@ -713,7 +713,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -726,7 +726,7 @@ public interface Olingo2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1874,7 +1874,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 1 enums and the value can be one of: DEFAULT
+         * There are 1 enums and the value can be one of: default
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1896,7 +1896,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 1 enums and the value can be one of: DEFAULT
+         * There are 1 enums and the value can be one of: default
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

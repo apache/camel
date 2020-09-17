@@ -161,7 +161,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
 | *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
-| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. There are 2 enums and the value can be one of: LINE, NULL | LINE | TextLineDelimiter
+| *delimiter* (codec) | The delimiter to use for the textline codec. Possible values are LINE and NULL. There are 2 enums and the value can be one of: line, null | line | TextLineDelimiter
 | *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | List
 | *encoding* (codec) | The encoding (a charset name) to use for the textline codec. If not provided, Camel will use the JVM default Charset. |  | String
 | *textline* (codec) | Only used for TCP. If no codec is specified, you can use this flag to indicate a text line based codec; if not specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed to be serialized by default. | false | boolean
@@ -238,7 +238,7 @@ with the following path and query parameters:
 | *compression* (consumer) | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | boolean
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
 | *httpMethodRestrict* (consumer) | To disable HTTP methods on the Netty HTTP consumer. You can specify multiple separated by comma. |  | String
 | *logWarnOnBadRequest* (consumer) | Whether Netty HTTP server should log a WARN if decoding the HTTP request failed and a HTTP Status 400 (bad request) is returned. | true | boolean
 | *mapHeaders* (consumer) | If this option is enabled, then during binding from Netty to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.netty.http.NettyHttpMessage message with the method getHttpRequest() that returns the Netty HTTP request io.netty.handler.codec.http.HttpRequest instance. | true | boolean

@@ -61,7 +61,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointConsumerBuilder command(Command command) {
@@ -76,7 +76,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointConsumerBuilder command(String command) {
@@ -378,7 +378,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointProducerBuilder command(Command command) {
@@ -393,7 +393,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointProducerBuilder command(String command) {
@@ -615,7 +615,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointBuilder command(Command command) {
@@ -630,7 +630,7 @@ public interface RedisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default RedisEndpointBuilder command(String command) {

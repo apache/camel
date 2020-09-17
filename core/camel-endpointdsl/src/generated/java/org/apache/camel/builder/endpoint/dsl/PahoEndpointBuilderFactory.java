@@ -328,7 +328,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointConsumerBuilder persistence(
@@ -342,7 +342,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointConsumerBuilder persistence(String persistence) {
@@ -1278,7 +1278,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointProducerBuilder persistence(
@@ -1292,7 +1292,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointProducerBuilder persistence(String persistence) {
@@ -2169,7 +2169,7 @@ public interface PahoEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointBuilder persistence(PahoPersistence persistence) {
@@ -2182,7 +2182,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: MEMORY
+         * Default: memory
          * Group: common
          */
         default PahoEndpointBuilder persistence(String persistence) {

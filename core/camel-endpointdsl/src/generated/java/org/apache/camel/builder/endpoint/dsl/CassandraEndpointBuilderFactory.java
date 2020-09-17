@@ -483,7 +483,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
@@ -498,7 +498,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
@@ -627,7 +627,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -640,7 +640,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(String timeUnit) {

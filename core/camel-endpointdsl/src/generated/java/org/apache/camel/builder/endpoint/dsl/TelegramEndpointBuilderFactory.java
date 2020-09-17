@@ -209,7 +209,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyType(
@@ -224,7 +224,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyType(String proxyType) {
@@ -425,7 +425,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
@@ -440,7 +440,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
@@ -569,7 +569,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -582,7 +582,7 @@ public interface TelegramEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -964,7 +964,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyType(
@@ -979,7 +979,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyType(String proxyType) {
@@ -1187,7 +1187,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointBuilder proxyType(TelegramProxyType proxyType) {
@@ -1201,7 +1201,7 @@ public interface TelegramEndpointBuilderFactory {
          * <code>org.apache.camel.component.telegram.TelegramProxyType</code>
          * type.
          * 
-         * Default: HTTP
+         * Default: http
          * Group: proxy
          */
         default TelegramEndpointBuilder proxyType(String proxyType) {

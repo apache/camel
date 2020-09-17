@@ -90,7 +90,7 @@ public interface AtomixSetComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet.Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetComponentBuilder defaultAction(

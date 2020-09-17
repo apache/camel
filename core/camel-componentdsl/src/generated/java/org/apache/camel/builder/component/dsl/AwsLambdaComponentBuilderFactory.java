@@ -105,7 +105,7 @@ public interface AwsLambdaComponentBuilderFactory {
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
          * 
-         * Default: invokeFunction
+         * Default: invoke-function
          * Group: producer
          */
         default AwsLambdaComponentBuilder operation(

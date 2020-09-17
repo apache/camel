@@ -5,24 +5,31 @@
 package org.apache.camel.component.fhir;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for org.apache.camel.component.fhir.api.FhirTransaction
+ * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirTransaction}.
  */
-@ApiParams(apiName = "transaction", apiMethods = "withBundle,withResources")
+@ApiParams(apiName = "transaction", description = "API for sending a transaction (collection of resources) to the server to be executed as a single unit",
+           apiMethods = {@ApiMethod(methodName = "withBundle", description="Use the given raw text (should be a Bundle resource) as the transaction input", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle withBundle(org.hl7.fhir.instance.model.api.IBaseBundle bundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "String withBundle(String stringBundle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "withResources", description="Use a list of resources as the transaction input", signatures={"java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> withResources(java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> resources, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer
 public final class FhirTransactionEndpointConfiguration extends FhirConfiguration {
-    @UriParam(description = "Bundle to use in the transaction")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "withBundle", description="Bundle to use in the transaction")})
     private org.hl7.fhir.instance.model.api.IBaseBundle bundle;
-    @UriParam(description = "See ExtraParameters for a full list of parameters that can be passed, may be NULL")
-    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters;
-    @UriParam(description = "Resources to use in the transaction")
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "withBundle", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "withBundle", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "withResources", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})
+    private java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters;
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "withResources", description="Resources to use in the transaction")})
     private java.util.List<org.hl7.fhir.instance.model.api.IBaseResource> resources;
-    @UriParam(description = "Bundle to use in the transaction")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "withBundle", description="Bundle to use in the transaction")})
     private String stringBundle;
 
     public org.hl7.fhir.instance.model.api.IBaseBundle getBundle() {
@@ -33,11 +40,11 @@ public final class FhirTransactionEndpointConfiguration extends FhirConfiguratio
         this.bundle = bundle;
     }
 
-    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> getExtraParameters() {
+    public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {
         return extraParameters;
     }
 
-    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters,Object> extraParameters) {
+    public void setExtraParameters(java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters) {
         this.extraParameters = extraParameters;
     }
 

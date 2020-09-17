@@ -85,7 +85,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder defaultAction(
@@ -99,7 +99,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointConsumerBuilder defaultAction(
@@ -552,7 +552,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder defaultAction(
@@ -566,7 +566,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointProducerBuilder defaultAction(
@@ -967,7 +967,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointBuilder defaultAction(Action defaultAction) {
@@ -980,7 +980,7 @@ public interface AtomixSetEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.set.AtomixSet$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixSetEndpointBuilder defaultAction(String defaultAction) {

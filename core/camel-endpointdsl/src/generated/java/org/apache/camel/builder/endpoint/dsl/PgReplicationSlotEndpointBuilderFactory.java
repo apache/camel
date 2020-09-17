@@ -331,7 +331,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder runLoggingLevel(
@@ -346,7 +346,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder runLoggingLevel(
@@ -475,7 +475,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -488,7 +488,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder timeUnit(String timeUnit) {

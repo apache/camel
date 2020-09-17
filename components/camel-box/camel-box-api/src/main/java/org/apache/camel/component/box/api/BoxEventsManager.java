@@ -24,13 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Events Manager
- * 
- * <p>
  * Provides operations to manage Box events.
- * 
- * 
- *
  */
 public class BoxEventsManager {
 

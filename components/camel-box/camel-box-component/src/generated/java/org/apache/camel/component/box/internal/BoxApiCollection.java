@@ -108,7 +108,7 @@ public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfigu
         aliases.put("getFolderInfo", "info");
         aliases.put("getFolderItems", "items");
         aliases.put("updateFolderInfo", "updateInfo");
-        nullableArgs = Arrays.asList("offset", "limit", "fields");
+        nullableArgs = Arrays.asList("offset", "limit", "fields", "newName");
         apiHelpers.put(BoxApiName.FOLDERS, new ApiMethodHelper<BoxFoldersManagerApiMethod>(BoxFoldersManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(BoxFoldersManagerApiMethod.class, BoxApiName.FOLDERS);
 

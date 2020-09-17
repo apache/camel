@@ -232,7 +232,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointConsumerBuilder separator(PathSeparator separator) {
@@ -247,7 +247,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointConsumerBuilder separator(String separator) {
@@ -290,7 +290,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
@@ -305,7 +305,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
@@ -1226,7 +1226,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
@@ -1244,7 +1244,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
@@ -1671,7 +1671,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
@@ -1686,7 +1686,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
@@ -1814,7 +1814,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1827,7 +1827,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -3223,7 +3223,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointProducerBuilder separator(PathSeparator separator) {
@@ -3238,7 +3238,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointProducerBuilder separator(String separator) {
@@ -3281,7 +3281,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
@@ -3296,7 +3296,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
@@ -3352,7 +3352,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default FtpsEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
@@ -3379,7 +3379,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default FtpsEndpointProducerBuilder fileExist(String fileExist) {
@@ -4760,7 +4760,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointBuilder separator(PathSeparator separator) {
@@ -4775,7 +4775,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default FtpsEndpointBuilder separator(String separator) {
@@ -4818,7 +4818,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointBuilder transferLoggingLevel(
@@ -4833,7 +4833,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: common
          */
         default FtpsEndpointBuilder transferLoggingLevel(

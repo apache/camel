@@ -153,7 +153,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
@@ -178,7 +178,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(String outputType) {
@@ -673,7 +673,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
@@ -688,7 +688,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
@@ -815,7 +815,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -828,7 +828,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1338,7 +1338,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
@@ -1363,7 +1363,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointProducerBuilder outputType(String outputType) {
@@ -1881,7 +1881,7 @@ public interface SqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointBuilder outputType(SqlOutputType outputType) {
@@ -1906,7 +1906,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
-         * Default: SelectList
+         * Default: select-list
          * Group: common
          */
         default SqlEndpointBuilder outputType(String outputType) {

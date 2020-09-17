@@ -30,13 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Search Manager
- * 
- * <p>
  * Provides operations to manage Box searches.
- * 
- * 
- *
  */
 public class BoxSearchManager {
 

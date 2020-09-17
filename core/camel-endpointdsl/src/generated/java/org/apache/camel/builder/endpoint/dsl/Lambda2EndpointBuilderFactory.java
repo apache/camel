@@ -117,7 +117,7 @@ public interface Lambda2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
          * type.
          * 
-         * Default: invokeFunction
+         * Default: invoke-function
          * Group: producer
          */
         default Lambda2EndpointBuilder operation(Lambda2Operations operation) {
@@ -132,7 +132,7 @@ public interface Lambda2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.lambda.Lambda2Operations</code>
          * type.
          * 
-         * Default: invokeFunction
+         * Default: invoke-function
          * Group: producer
          */
         default Lambda2EndpointBuilder operation(String operation) {

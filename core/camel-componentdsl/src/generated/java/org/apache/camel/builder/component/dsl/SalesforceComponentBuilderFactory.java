@@ -297,7 +297,7 @@ public interface SalesforceComponentBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceComponentBuilder notFoundBehaviour(

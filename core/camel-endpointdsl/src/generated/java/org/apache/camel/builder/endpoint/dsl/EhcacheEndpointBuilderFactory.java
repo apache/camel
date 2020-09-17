@@ -174,7 +174,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventFiring</code> type.
          * 
-         * Default: ASYNCHRONOUS
+         * Default: asynchronous
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
@@ -188,7 +188,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.ehcache.event.EventFiring</code> type.
          * 
-         * Default: ASYNCHRONOUS
+         * Default: asynchronous
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(String eventFiring) {
@@ -200,7 +200,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
          * 
-         * Default: ORDERED
+         * Default: ordered
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
@@ -214,7 +214,7 @@ public interface EhcacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.ehcache.event.EventOrdering</code> type.
          * 
-         * Default: ORDERED
+         * Default: ordered
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(

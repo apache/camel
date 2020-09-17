@@ -18,6 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.util.regex.Pattern;
 
+import org.apache.camel.tooling.model.ApiMethodModel;
+import org.apache.camel.tooling.model.ApiModel;
+
 public final class MvelHelper {
 
     public static final MvelHelper INSTANCE = new MvelHelper();
@@ -39,5 +42,31 @@ public final class MvelHelper {
         final String escapedUrls = URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
 
         return escapedUrls;
+    }
+
+    public static String componentName(String scheme) {
+        String text = SchemaHelper.dashToCamelCase(scheme);
+        // first char should be upper cased
+        return Character.toUpperCase(text.charAt(0)) + text.substring(1);
+    }
+
+    public static String formatSignature(String signature) {
+        signature = signature.replace('$', '.');
+        return signature + ";";
+    }
+
+    public static String apiMethodAlias(ApiModel api, ApiMethodModel method) {
+        String name = method.getName();
+        for (String alias : api.getAliases()) {
+            int pos = alias.indexOf('=');
+            String pattern = alias.substring(0, pos);
+            String aliasMethod = alias.substring(pos + 1);
+            // match ignore case
+            if (Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(name).matches()) {
+                return aliasMethod;
+            }
+        }
+        // empty if no alias
+        return "";
     }
 }

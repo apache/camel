@@ -552,7 +552,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: logging
          */
         default JmsEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -567,7 +567,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: logging
          */
         default JmsEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -813,7 +813,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder consumerType(
@@ -836,7 +836,7 @@ public interface JmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder consumerType(

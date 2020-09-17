@@ -72,7 +72,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 | *configuration* (producer) | The component configuration. |  | Athena2Configuration
 | *database* (producer) | The Athena database to use. |  | String
 | *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
-| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: SSE_S3, SSE_KMS, CSE_KMS, null |  | EncryptionOption
+| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: sse-s3, sse-kms, cse-kms, null |  | EncryptionOption
 | *includeTrace* (producer) | Include useful trace information at the beginning of queries as an SQL comment (prefixed with --). | false | boolean
 | *initialDelay* (producer) | Milliseconds before the first poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1000 | long
 | *kmsKey* (producer) | For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID. |  | String
@@ -80,9 +80,9 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 | *maxAttempts* (producer) | Maximum number of times to attempt a query. Set to 1 to disable retries. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1 | int
 | *maxResults* (producer) | Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, will use the Athena API default for the given operation. |  | Integer
 | *nextToken* (producer) | Pagination token to use in the case where the response from the previous request was truncated. |  | String
-| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: getQueryExecution, getQueryResults, listQueryExecutions, startQueryExecution | startQueryExecution | Athena2Operations
+| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: get-query-execution, get-query-results, list-query-executions, start-query-execution | start-query-execution | Athena2Operations
 | *outputLocation* (producer) | The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/. Ensure this value ends with a forward slash ('/'). |  | String
-| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: StreamList, SelectList, S3Pointer | StreamList | Athena2OutputType
+| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: stream-list, select-list, s3-pointer | stream-list | Athena2OutputType
 | *proxyHost* (producer) | To define a proxy host when instantiating the Athena client. |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Athena client. |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Athena client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
@@ -139,7 +139,7 @@ with the following path and query parameters:
 | *amazonAthenaClient* (producer) | The AmazonAthena instance to use as the client. |  | AthenaClient
 | *database* (producer) | The Athena database to use. |  | String
 | *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
-| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: SSE_S3, SSE_KMS, CSE_KMS, null |  | EncryptionOption
+| *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: sse-s3, sse-kms, cse-kms, null |  | EncryptionOption
 | *includeTrace* (producer) | Include useful trace information at the beginning of queries as an SQL comment (prefixed with --). | false | boolean
 | *initialDelay* (producer) | Milliseconds before the first poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1000 | long
 | *kmsKey* (producer) | For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID. |  | String
@@ -147,9 +147,9 @@ with the following path and query parameters:
 | *maxAttempts* (producer) | Maximum number of times to attempt a query. Set to 1 to disable retries. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 1 | int
 | *maxResults* (producer) | Max number of results to return for the given operation (if supported by the Athena API endpoint). If not set, will use the Athena API default for the given operation. |  | Integer
 | *nextToken* (producer) | Pagination token to use in the case where the response from the previous request was truncated. |  | String
-| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: getQueryExecution, getQueryResults, listQueryExecutions, startQueryExecution | startQueryExecution | Athena2Operations
+| *operation* (producer) | The Athena API function to call. There are 4 enums and the value can be one of: get-query-execution, get-query-results, list-query-executions, start-query-execution | start-query-execution | Athena2Operations
 | *outputLocation* (producer) | The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/. Ensure this value ends with a forward slash ('/'). |  | String
-| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: StreamList, SelectList, S3Pointer | StreamList | Athena2OutputType
+| *outputType* (producer) | How query results should be returned. One of StreamList (default - return a GetQueryResultsIterable that can page through all results), SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results), S3Pointer (return an S3 path pointing to the results). There are 3 enums and the value can be one of: stream-list, select-list, s3-pointer | stream-list | Athena2OutputType
 | *proxyHost* (producer) | To define a proxy host when instantiating the Athena client. |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Athena client. |  | Integer
 | *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Athena client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol

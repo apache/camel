@@ -26,13 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Comments Manager
- * 
- * <p>
  * Provides operations to manage Box comments.
- * 
- * 
- *
  */
 public class BoxCommentsManager {
 
@@ -55,7 +49,7 @@ public class BoxCommentsManager {
     /**
      * Add comment to file.
      * 
-     * @param  fileId  - the id of file to rename.
+     * @param  fileId  - the id of file.
      * @param  message - the comment's message.
      * @return         The commented file.
      */

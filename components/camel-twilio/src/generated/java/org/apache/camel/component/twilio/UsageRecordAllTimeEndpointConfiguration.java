@@ -5,18 +5,22 @@
 package org.apache.camel.component.twilio;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for com.twilio.rest.api.v2010.account.usage.record.AllTime
+ * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.usage.record.AllTime}.
  */
-@ApiParams(apiName = "usage-record-all-time", apiMethods = "reader")
+@ApiParams(apiName = "usage-record-all-time", description = "",
+           apiMethods = {@ApiMethod(methodName = "reader", description="Create a AllTimeReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.AllTimeReader reader()", "com.twilio.rest.api.v2010.account.usage.record.AllTimeReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer
 public final class UsageRecordAllTimeEndpointConfiguration extends TwilioConfiguration {
-    @UriParam(description = "The SID of the Account that created the resources to read")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})
     private String pathAccountSid;
 
     public String getPathAccountSid() {

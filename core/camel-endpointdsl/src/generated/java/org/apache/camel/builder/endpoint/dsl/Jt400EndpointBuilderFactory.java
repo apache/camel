@@ -202,7 +202,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$MessageAction</code> type.
          * 
-         * Default: OLD
+         * Default: old
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder messageAction(
@@ -218,7 +218,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$MessageAction</code> type.
          * 
-         * Default: OLD
+         * Default: old
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder messageAction(String messageAction) {
@@ -257,7 +257,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
          * 
-         * Default: EQ
+         * Default: eq
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
@@ -270,7 +270,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
          * 
-         * Default: EQ
+         * Default: eq
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder searchType(String searchType) {
@@ -499,7 +499,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
@@ -514,7 +514,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
@@ -643,7 +643,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -656,7 +656,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1459,8 +1459,8 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Whether to work with data queues or remote program call
-         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
-         * MSGQ
+         * There are 4 enums and the value can be one of: dtaq, pgm, srvpgm,
+         * msgq
          * 
          * @param path userID:password/systemName/objectPath.type
          */
@@ -1494,8 +1494,8 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * Whether to work with data queues or remote program call
-         * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM,
-         * MSGQ
+         * There are 4 enums and the value can be one of: dtaq, pgm, srvpgm,
+         * msgq
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

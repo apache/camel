@@ -163,7 +163,7 @@ public interface MinaComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default MinaComponentBuilder noReplyLogLevel(

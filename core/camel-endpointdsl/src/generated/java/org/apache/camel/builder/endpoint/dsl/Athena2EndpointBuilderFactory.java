@@ -353,7 +353,7 @@ public interface Athena2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
          * type.
          * 
-         * Default: startQueryExecution
+         * Default: start-query-execution
          * Group: producer
          */
         default Athena2EndpointBuilder operation(Athena2Operations operation) {
@@ -367,7 +367,7 @@ public interface Athena2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
          * type.
          * 
-         * Default: startQueryExecution
+         * Default: start-query-execution
          * Group: producer
          */
         default Athena2EndpointBuilder operation(String operation) {
@@ -398,7 +398,7 @@ public interface Athena2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
          * type.
          * 
-         * Default: StreamList
+         * Default: stream-list
          * Group: producer
          */
         default Athena2EndpointBuilder outputType(Athena2OutputType outputType) {
@@ -416,7 +416,7 @@ public interface Athena2EndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
          * type.
          * 
-         * Default: StreamList
+         * Default: stream-list
          * Group: producer
          */
         default Athena2EndpointBuilder outputType(String outputType) {

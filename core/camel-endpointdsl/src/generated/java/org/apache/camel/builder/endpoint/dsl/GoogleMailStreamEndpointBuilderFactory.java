@@ -436,7 +436,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder runLoggingLevel(
@@ -451,7 +451,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder runLoggingLevel(
@@ -580,7 +580,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -593,7 +593,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder timeUnit(String timeUnit) {

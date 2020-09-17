@@ -85,7 +85,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
@@ -99,7 +99,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
@@ -552,7 +552,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
@@ -566,7 +566,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
@@ -967,7 +967,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(Action defaultAction) {
@@ -980,7 +980,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(String defaultAction) {

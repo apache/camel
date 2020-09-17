@@ -246,7 +246,7 @@ public interface Aws2AthenaComponentBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
          * type.
          * 
-         * Default: startQueryExecution
+         * Default: start-query-execution
          * Group: producer
          */
         default Aws2AthenaComponentBuilder operation(
@@ -279,7 +279,7 @@ public interface Aws2AthenaComponentBuilderFactory {
          * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
          * type.
          * 
-         * Default: StreamList
+         * Default: stream-list
          * Group: producer
          */
         default Aws2AthenaComponentBuilder outputType(

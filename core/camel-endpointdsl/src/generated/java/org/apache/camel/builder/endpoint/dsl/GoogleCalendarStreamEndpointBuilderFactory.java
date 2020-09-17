@@ -502,7 +502,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
@@ -517,7 +517,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
@@ -647,7 +647,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -660,7 +660,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder timeUnit(String timeUnit) {

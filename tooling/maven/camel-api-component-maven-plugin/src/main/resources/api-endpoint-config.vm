@@ -37,23 +37,23 @@
 package ${componentPackage};
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for $proxyType.Name
+ * Camel endpoint configuration for {@link $proxyType.Name}.
  */
-@ApiParams(apiName = "$helper.getApiName($apiName)", apiMethods = "$apiMethods")
+@ApiParams(apiName = "$helper.getApiName($apiName)", description = "$helper.getApiDescription($apiDescription)",
+           apiMethods = $helper.getApiMethods($models), aliases = $helper.getAliases())
 @UriParams
 @Configurer
 public final class $configName extends ${componentName}Configuration {
 #foreach( $parameter in $parameters.entrySet() )
-#if( $helper.hasDoc($parameter.Value) )
-    @UriParam(description = "$helper.getDoc($parameter.Value)")
-#else
     @UriParam
-#end
+    @ApiParam(optional = $helper.isOptionalParameter($parameter.Value), apiMethods = $helper.getApiMethodsForParam($models, $parameter.Value))
     private $helper.getCanonicalName($parameter.Value) $parameter.Key;
 #end
 ## getters and setters

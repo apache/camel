@@ -341,7 +341,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
@@ -356,7 +356,7 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
@@ -485,7 +485,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -498,7 +498,7 @@ public interface SlackEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(String timeUnit) {

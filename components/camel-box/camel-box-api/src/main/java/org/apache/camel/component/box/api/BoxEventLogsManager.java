@@ -29,13 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Event Logs Manager
- * 
- * <p>
  * Provides operations to read Box enterprise (admin) event logs.
- * 
- * 
- *
  */
 public class BoxEventLogsManager {
 

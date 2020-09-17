@@ -164,7 +164,7 @@ public interface AwsKinesisComponentBuilderFactory {
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
          * 
-         * Default: TRIM_HORIZON
+         * Default: trim-horizon
          * Group: consumer
          */
         default AwsKinesisComponentBuilder iteratorType(

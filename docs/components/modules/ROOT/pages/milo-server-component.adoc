@@ -62,7 +62,7 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *securityPolicies* (security) | Security policies |  | Set
 | *securityPoliciesById* (security) | Security policies by URI or name. Multiple policies can be separated by comma. |  | String
 | *userAuthenticationCredentials* (security) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
-| *usernameSecurityPolicyUri* (security) | Set the UserTokenPolicy used when. There are 6 enums and the value can be one of: None, Basic128Rsa15, Basic256, Basic256Sha256, Aes128_Sha256_RsaOaep, Aes256_Sha256_RsaPss |  | SecurityPolicy
+| *usernameSecurityPolicyUri* (security) | Set the UserTokenPolicy used when. There are 6 enums and the value can be one of: none, basic128-rsa15, basic256, basic256-sha256, aes128-sha256-rsa-oaep, aes256-sha256-rsa-pss |  | SecurityPolicy
 |===
 // component options: END
 
@@ -112,7 +112,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

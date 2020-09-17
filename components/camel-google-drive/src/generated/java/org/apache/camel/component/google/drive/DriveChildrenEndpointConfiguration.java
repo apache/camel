@@ -5,22 +5,28 @@
 package org.apache.camel.component.google.drive;
 
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.ApiMethod;
+import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel EndpointConfiguration for com.google.api.services.drive.Drive$Children
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Children}.
  */
-@ApiParams(apiName = "drive-children", apiMethods = "delete,get,insert,list")
+@ApiParams(apiName = "drive-children", description = "The children collection of methods",
+           apiMethods = {@ApiMethod(methodName = "delete", description="Removes a child from a folder", signatures={"com.google.api.services.drive.Drive$Children$Delete delete(String folderId, String childId)"}), @ApiMethod(methodName = "get", description="Gets a specific child reference", signatures={"com.google.api.services.drive.Drive$Children$Get get(String folderId, String childId)"}), @ApiMethod(methodName = "insert", description="Inserts a file into a folder", signatures={"com.google.api.services.drive.Drive$Children$Insert insert(String folderId, com.google.api.services.drive.model.ChildReference content)"}), @ApiMethod(methodName = "list", description="Lists a folder's children", signatures={"com.google.api.services.drive.Drive$Children$List list(String folderId)"})}, aliases = {})
 @UriParams
 @Configurer
 public final class DriveChildrenEndpointConfiguration extends GoogleDriveConfiguration {
-    @UriParam(description = "The ID of the child")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the child"), @ApiMethod(methodName = "get", description="The ID of the child")})
     private String childId;
-    @UriParam(description = "The com.google.api.services.drive.model.ChildReference")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "insert", description="The com.google.api.services.drive.model.ChildReference")})
     private com.google.api.services.drive.model.ChildReference content;
-    @UriParam(description = "The ID of the folder")
+    @UriParam
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the folder"), @ApiMethod(methodName = "get", description="The ID of the folder"), @ApiMethod(methodName = "insert", description="The ID of the folder"), @ApiMethod(methodName = "list", description="The ID of the folder")})
     private String folderId;
 
     public String getChildId() {

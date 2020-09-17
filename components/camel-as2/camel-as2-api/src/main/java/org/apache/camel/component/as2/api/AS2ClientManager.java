@@ -41,11 +41,7 @@ import org.bouncycastle.operator.OutputCompressor;
 import org.bouncycastle.operator.OutputEncryptor;
 
 /**
- * AS2 Client Manager
- *
- * <p>
  * Sends EDI Messages over HTTP
- *
  */
 public class AS2ClientManager {
 

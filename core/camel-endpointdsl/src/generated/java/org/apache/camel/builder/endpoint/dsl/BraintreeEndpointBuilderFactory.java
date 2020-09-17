@@ -430,7 +430,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder runLoggingLevel(
@@ -445,7 +445,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder runLoggingLevel(
@@ -574,7 +574,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -587,7 +587,7 @@ public interface BraintreeEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1416,11 +1416,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
-         * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
-         * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
-         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
-         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
+         * There are 17 enums and the value can be one of: add-on, address,
+         * client-token, credit-card-verification, customer, discount, dispute,
+         * document-upload, merchant-account, payment-method,
+         * payment-method-nonce, plan, report, settlement-batch-summary,
+         * subscription, transaction, webhook-notification
          * 
          * Path parameter: methodName
          * What sub operation to use for the selected operation
@@ -1442,11 +1442,11 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 17 enums and the value can be one of: ADD_ON, ADDRESS,
-         * CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE,
-         * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
-         * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
-         * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
+         * There are 17 enums and the value can be one of: add-on, address,
+         * client-token, credit-card-verification, customer, discount, dispute,
+         * document-upload, merchant-account, payment-method,
+         * payment-method-nonce, plan, report, settlement-batch-summary,
+         * subscription, transaction, webhook-notification
          * 
          * Path parameter: methodName
          * What sub operation to use for the selected operation

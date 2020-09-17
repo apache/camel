@@ -119,11 +119,14 @@
                                 <api>
                                     <apiName />
                                     <proxyClass>org.apache.camel.component.olingo4.api.Olingo4App</proxyClass>
-                                    <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
+                                    <fromJavasource>
+                                        <includeMethods>read|uread|delete|create|update|patch|merge|batch|action</includeMethods>
+                                    </fromJavasource>
                                     <extraOptions>
                                         <extraOption>
                                             <name>keyPredicate</name>
                                             <type>java.lang.String</type>
+                                            <description>OData Key predicate</description>
                                         </extraOption>
                                     </extraOptions>
                                     <nullableOptions>
@@ -138,6 +141,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-olingo4-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

@@ -681,7 +681,7 @@ public interface VmEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
          * 
-         * Default: IfReplyExpected
+         * Default: if-reply-expected
          * Group: producer
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
@@ -700,7 +700,7 @@ public interface VmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
-         * Default: IfReplyExpected
+         * Default: if-reply-expected
          * Group: producer
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(

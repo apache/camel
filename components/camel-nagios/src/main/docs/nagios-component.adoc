@@ -59,7 +59,7 @@ The Nagios component supports 7 options, which are listed below.
 | *timeout* (producer) | Sending timeout in millis. | 5000 | int
 | *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *configuration* (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
-| *encryption* (security) | To specify an encryption method. There are 7 enums and the value can be one of: NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH |  | Encryption
+| *encryption* (security) | To specify an encryption method. There are 7 enums and the value can be one of: none, triple-des, xor, rijndael128, rijndael192, rijndael256, blowfish |  | Encryption
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // component options: END
@@ -102,7 +102,7 @@ with the following path and query parameters:
 | *timeout* (producer) | Sending timeout in millis. | 5000 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *encryption* (security) | To specify an encryption method. There are 7 enums and the value can be one of: NONE, TRIPLE_DES, XOR, RIJNDAEL128, RIJNDAEL192, RIJNDAEL256, BLOWFISH |  | Encryption
+| *encryption* (security) | To specify an encryption method. There are 7 enums and the value can be one of: none, triple-des, xor, rijndael128, rijndael192, rijndael256, blowfish |  | Encryption
 | *password* (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |===
 // endpoint options: END

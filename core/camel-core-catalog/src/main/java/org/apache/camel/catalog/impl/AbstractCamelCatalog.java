@@ -42,6 +42,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
+import org.apache.camel.tooling.model.ApiModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -654,23 +655,12 @@ public abstract class AbstractCamelCatalog {
         Map<String, BaseOptionModel> answer = new LinkedHashMap<>();
         if (key != null) {
             String matchKey = null;
-            if (model.getApiOptions().containsKey(key)) {
-                matchKey = key;
-            }
-            if (matchKey == null) {
-                key = StringHelper.camelCaseToDash(key);
-                if (model.getApiOptions().containsKey(key)) {
-                    matchKey = key;
+            String dashKey = StringHelper.camelCaseToDash(key);
+            for (ApiModel am : model.getApiOptions()) {
+                String aKey = am.getName();
+                if (aKey.equals(key) || aKey.equals(dashKey) || "DEFAULT".equals(key)) {
+                    am.getMethods().forEach(m -> m.getOptions().forEach(o -> answer.put(o.getName(), o)));
                 }
-            }
-            if (matchKey == null) {
-                key = "DEFAULT";
-                if (model.getApiOptions().containsKey(key)) {
-                    matchKey = key;
-                }
-            }
-            if (matchKey != null) {
-                model.getApiOptions().get(matchKey).forEach(o -> answer.put(o.getName(), o));
             }
         }
         return answer;

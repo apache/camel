@@ -620,9 +620,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
-         * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * There are 9 enums and the value can be one of: closepullrequest,
+         * pullrequestcomment, commit, pullrequest, tag, pullrequeststate,
+         * pullrequestfiles, getcommitfile, createissue
          * 
          * Path parameter: branchName
          * Name of branch
@@ -644,9 +644,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
-         * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * There are 9 enums and the value can be one of: closepullrequest,
+         * pullrequestcomment, commit, pullrequest, tag, pullrequeststate,
+         * pullrequestfiles, getcommitfile, createissue
          * 
          * Path parameter: branchName
          * Name of branch

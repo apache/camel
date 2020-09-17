@@ -118,7 +118,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointConsumerBuilder resultsFormat(
@@ -132,7 +132,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointConsumerBuilder resultsFormat(String resultsFormat) {
@@ -450,7 +450,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
@@ -465,7 +465,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
@@ -594,7 +594,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -607,7 +607,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1035,7 +1035,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointProducerBuilder resultsFormat(
@@ -1049,7 +1049,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointProducerBuilder resultsFormat(String resultsFormat) {
@@ -1454,7 +1454,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointBuilder resultsFormat(ResultFormat resultsFormat) {
@@ -1467,7 +1467,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
-         * Default: DOM
+         * Default: dom
          * Group: common
          */
         default XQueryEndpointBuilder resultsFormat(String resultsFormat) {

@@ -29,13 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Tasks Manager
- * 
- * <p>
  * Provides operations to manage Box tasks.
- * 
- * 
- *
  */
 public class BoxTasksManager {
 

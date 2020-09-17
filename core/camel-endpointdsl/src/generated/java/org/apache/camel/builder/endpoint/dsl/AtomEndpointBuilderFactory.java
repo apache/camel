@@ -478,7 +478,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AtomEndpointBuilder runLoggingLevel(LoggingLevel runLoggingLevel) {
@@ -492,7 +492,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AtomEndpointBuilder runLoggingLevel(String runLoggingLevel) {
@@ -616,7 +616,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AtomEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -629,7 +629,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AtomEndpointBuilder timeUnit(String timeUnit) {

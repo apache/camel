@@ -322,7 +322,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default: InOut
+         * Default: in-out
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
@@ -336,7 +336,7 @@ public interface MllpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
          * 
-         * Default: InOut
+         * Default: in-out
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(

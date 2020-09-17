@@ -85,7 +85,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
@@ -99,7 +99,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
@@ -530,7 +530,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
@@ -544,7 +544,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
@@ -923,7 +923,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(Action defaultAction) {
@@ -936,7 +936,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
          * 
-         * Default: ADD
+         * Default: add
          * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(String defaultAction) {

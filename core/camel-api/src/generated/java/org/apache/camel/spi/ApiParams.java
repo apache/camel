@@ -25,6 +25,9 @@ import java.lang.annotation.Target;
 /**
  * Used to annotate a nested configuration parameter type (such as a nested Configuration object) which can then be used
  * on a API based component, endpoint.
+ *
+ * This is only applicable for API based components where configurations are separated by API names and methods
+ * (grouping).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -33,18 +36,27 @@ public @interface ApiParams {
 
     /**
      * The API name (grouping) of this configuration class.
-     *
-     * This is only applicable for API based components where configurations are separated by API names and methods
-     * (grouping).
      */
     String apiName() default "";
 
     /**
-     * The API methods (separated by comma) that the API provides of this configuration class.
-     *
-     * This is only applicable for API based components where configurations are separated by API names and methods
-     * (grouping).
+     * Returns a description of the API.
+     * <p/>
+     * This is used for documentation and tooling only.
      */
-    String apiMethods() default "";
+    String description() default "";
+
+    /**
+     * The API methods that the API provides of this configuration class.
+     */
+    ApiMethod[] apiMethods();
+
+    /**
+     * Returns the method alias(s) of this api method. The syntax for an alias is pattern=name where pattern is a
+     * regular expression.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String[] aliases() default "";
 
 }

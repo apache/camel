@@ -20,16 +20,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.camel.support.component.ApiMethodArg;
 import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.camel.support.component.ArgumentSubstitutionParser;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -52,11 +55,20 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @Parameter
     protected String apiName;
 
+    @Parameter
+    protected String apiDescription;
+
     /**
      * Method alias patterns for all APIs.
      */
     @Parameter
     protected List<ApiMethodAlias> aliases = Collections.emptyList();
+
+    /**
+     * Names of options that can be set to null value if not specified.
+     */
+    @Parameter
+    protected String[] nullableOptions;
 
     // cached fields
     private Class<?> proxyType;
@@ -87,18 +99,21 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         Map<String, Map<String, String>> parameters = new HashMap<>();
         List<SignatureModel> data = getSignatureList();
         for (SignatureModel model : data) {
+            // we get the api description via the method signature (not ideal but that's the way of the old parser API)
+            this.apiDescription = model.getApiDescription();
             signatures.add(model.getSignature());
             String method = StringHelper.before(model.getSignature(), "(");
             if (method != null && method.contains(" ")) {
                 method = StringHelper.after(method, " ");
             }
             if (method != null) {
-                parameters.put(method, model.getParameters());
+                parameters.put(method, model.getParameterDescriptions());
             }
+            parser.getDescriptions().put(method, model.getMethodDescription());
+            parser.addSignatureArguments(model.getSignature(), model.getParameterTypes());
         }
         parser.setSignatures(signatures);
         parser.setParameters(parameters);
-
         parser.setClassLoader(getProjectClassLoader());
 
         // parse signatures
@@ -184,17 +199,11 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = getCommonContext(models);
         context.put("apiName", apiName);
-
-        // TODO: we should include alias information as well
-
-        String apiMethodNames = models.stream().map(ApiMethodParser.ApiMethodModel::getName)
-                .distinct()
-                .sorted()
-                .collect(Collectors.joining(","));
-        context.put("apiMethods", apiMethodNames);
+        context.put("apiDescription", apiDescription);
         context.put("configName", getConfigName());
         context.put("componentName", componentName);
         context.put("componentPackage", componentPackage);
+        context.put("nullableOptions", nullableOptions);
 
         // generate parameter names and types for configuration, sorted by parameter name
         Map<String, ApiMethodArg> parameters = new TreeMap<>();
@@ -232,7 +241,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                                     argWithTypes, name, e.getMessage()),
                             e);
                 }
-                parameters.put(name, new ApiMethodArg(name, argType, typeArgs, option.getDescription()));
+                parameters.put(name, new ApiMethodArg(name, argType, typeArgs, argWithTypes, option.getDescription()));
             }
         }
 
@@ -290,11 +299,71 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     public static String getType(Class<?> clazz) {
         if (clazz.isArray()) {
-            // create a zero length array and get the class from the instance
-            return "new " + getCanonicalName(clazz).replaceAll("\\[\\]", "[0]") + ".getClass()";
+            if (clazz.getComponentType().isPrimitive()) {
+                return getCanonicalName(clazz) + ".class";
+            } else {
+                // create a zero length array and get the class from the instance
+                return "new " + getCanonicalName(clazz).replaceAll("\\[\\]", "[0]") + ".getClass()";
+            }
         } else {
             return getCanonicalName(clazz) + ".class";
         }
+    }
+
+    public String getAliases() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        if (!aliases.isEmpty()) {
+            StringJoiner sj = new StringJoiner(", ");
+            aliases.forEach(a -> sj.add("\"" + a.getMethodPattern() + "=" + a.getMethodAlias() + "\""));
+            sb.append(sj.toString());
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public static String getApiMethodsForParam(List<ApiMethodParser.ApiMethodModel> models, ApiMethodArg argument) {
+        StringBuilder sb = new StringBuilder();
+
+        // avoid duplicate methods as we only want them listed once
+        Set<String> names = new HashSet<>();
+
+        String key = argument.getName();
+        // if the given argument does not belong to any method with the same argument name,
+        // then it mean it should belong to all methods; this is typically extra options that has been declared in the
+        // pom.xml file
+        boolean noneMatch = models.stream().noneMatch(m -> m.getArguments().stream().noneMatch(a -> a.getName().equals(key)));
+
+        models.forEach(p -> {
+            ApiMethodArg match = p.getArguments().stream().filter(a -> a.getName().equals(key)).findFirst().orElse(null);
+            if (match != null && names.add(p.getName())) {
+                // favour desc from the matched argument list
+                String desc = match.getDescription();
+                if (desc == null) {
+                    desc = argument.getDescription();
+                }
+                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append("\"");
+                if (ObjectHelper.isNotEmpty(desc)) {
+                    sb.append(", description=\"").append(desc).append("\"");
+                }
+                sb.append(")");
+                sb.append(", ");
+            } else if (noneMatch) {
+                // favour desc from argument
+                String desc = argument.getDescription();
+                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append("\"");
+                if (ObjectHelper.isNotEmpty(desc)) {
+                    sb.append(", description=\"").append(desc).append("\"");
+                }
+                sb.append(")");
+                sb.append(", ");
+            }
+        });
+        String answer = sb.toString();
+        if (answer.endsWith(", ")) {
+            answer = answer.substring(0, answer.length() - 2);
+        }
+        return "{" + answer + "}";
     }
 
     public static String getTestName(ApiMethodParser.ApiMethodModel model) {
@@ -357,6 +426,72 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         return apiName;
     }
 
+    public String getApiDescription(String apiDescription) {
+        if (apiDescription == null) {
+            return "";
+        }
+        return apiDescription;
+    }
+
+    public boolean isOptionalParameter(ApiMethodArg argument) {
+        String name = argument.getName();
+        if (nullableOptions != null) {
+            for (String nu : nullableOptions) {
+                if (name.equalsIgnoreCase(nu)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public String getApiMethods(List<ApiMethodParser.ApiMethodModel> models) {
+        models.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+
+        // avoid duplicate methods as we only want them listed once
+        Set<String> names = new HashSet<>();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (int i = 0; i < models.size(); i++) {
+            ApiMethodParser.ApiMethodModel model = models.get(i);
+            String name = model.getName();
+            if (names.add(name)) {
+                sb.append("@ApiMethod(methodName = \"").append(model.getName()).append("\"");
+                String desc = model.getDescription();
+                if (ObjectHelper.isNotEmpty(desc)) {
+                    sb.append(", description=\"").append(desc).append("\"");
+                }
+                List<String> signatures = getSignatures(models, name);
+                if (!signatures.isEmpty()) {
+                    sb.append(", signatures={");
+                    StringJoiner sj = new StringJoiner(", ");
+                    signatures.forEach(s -> sj.add("\"" + s + "\""));
+                    sb.append(sj.toString());
+                    sb.append("}");
+                }
+                sb.append(")");
+                if (i < models.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private List<String> getSignatures(List<ApiMethodParser.ApiMethodModel> models, String methodName) {
+        List<String> list = new ArrayList<>();
+        for (ApiMethodParser.ApiMethodModel model : models) {
+            if (model.getName().equals(methodName)) {
+                if (model.getSignature() != null) {
+                    list.add(model.getSignature());
+                }
+            }
+        }
+        return list;
+    }
+
     public static String getDefaultArgValue(Class<?> aClass) {
         if (aClass.isPrimitive()) {
             // lookup default primitive value string
@@ -376,72 +511,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     }
 
     public String getCanonicalName(ApiMethodArg argument) throws MojoExecutionException {
-
-        // replace primitives with wrapper classes
+        // replace primitives with wrapper classes (as that makes them option and avoid boolean because false by default)
         final Class<?> type = argument.getType();
         if (type.isPrimitive()) {
             return getCanonicalName(ClassUtils.primitiveToWrapper(type));
         }
 
-        // get default name prefix
-        String canonicalName = getCanonicalName(type);
-
-        final String typeArgs = argument.getTypeArgs();
-        if (typeArgs != null) {
-
-            // add generic type arguments
-            StringBuilder parameterizedType = new StringBuilder(canonicalName);
-            parameterizedType.append('<');
-
-            // Note: its ok to split, since we don't support parsing nested type arguments
-            final String[] argTypes = typeArgs.split(",");
-            final int nTypes = argTypes.length;
-            int i = 0;
-            for (String argType : argTypes) {
-
-                // javadoc sometimes contains zero-width spaces
-                if (argType.charAt(0) == '\u200b') {
-                    argType = argType.substring(1);
-                }
-
-                if ("URL".equals(argType)) {
-                    parameterizedType.append("java.net.URL");
-                } else if ("URI".equals(argType)) {
-                    parameterizedType.append("java.net.URI");
-                } else {
-                    // try loading as is first
-                    try {
-                        parameterizedType.append(getCanonicalName(getProjectClassLoader().loadClass(argType)));
-                    } catch (ClassNotFoundException e) {
-                        // try loading with default java.lang package prefix
-                        try {
-                            if (log.isDebugEnabled()) {
-                                log.debug("Could not load " + argType + ", trying to load java.lang." + argType);
-                            }
-                            parameterizedType.append(
-                                    getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
-                        } catch (ClassNotFoundException e1) {
-                            parameterizedType.append("?");
-                            // if the length of the artType is 1 or 2, we think that it's variable type parameter (like T in List<T>)
-                            // not perfect solution, but should work in most of the cases
-                            if (argType.trim().length() > 2) {
-                                log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
-                                         + ", unable to load parametric type argument " + argType,
-                                        e1);
-                            }
-                        }
-                    }
-                }
-
-                if (++i < nTypes) {
-                    parameterizedType.append(",");
-                }
-            }
-
-            parameterizedType.append('>');
-            canonicalName = parameterizedType.toString();
-        }
-
-        return canonicalName;
+        String fqn = argument.getRawTypeArgs();
+        // the type may use $ for classloader, so replace it back with dot
+        fqn = fqn.replace('$', '.');
+        return fqn;
     }
 }

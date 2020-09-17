@@ -64,7 +64,7 @@ public interface FhirComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirComponentBuilder fhirVersion(java.lang.String fhirVersion) {
@@ -306,7 +306,7 @@ public interface FhirComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default FhirComponentBuilder validationMode(

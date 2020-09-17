@@ -1141,7 +1141,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
@@ -1156,7 +1156,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
@@ -1286,7 +1286,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1299,7 +1299,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder timeUnit(String timeUnit) {

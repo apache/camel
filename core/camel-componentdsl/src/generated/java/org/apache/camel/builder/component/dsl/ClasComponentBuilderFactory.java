@@ -97,7 +97,7 @@ public interface ClasComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
-         * Default: Singleton
+         * Default: singleton
          * Group: producer
          */
         default ClasComponentBuilder scope(org.apache.camel.BeanScope scope) {

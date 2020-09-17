@@ -432,7 +432,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
@@ -447,7 +447,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
@@ -576,7 +576,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -589,7 +589,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -825,7 +825,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
          * type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder executorType(
@@ -841,7 +841,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder executorType(String executorType) {

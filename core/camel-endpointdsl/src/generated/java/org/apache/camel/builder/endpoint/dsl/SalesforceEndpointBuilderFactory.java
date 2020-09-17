@@ -376,7 +376,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
@@ -394,7 +394,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
@@ -1323,7 +1323,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
@@ -1341,7 +1341,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
@@ -2189,7 +2189,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointBuilder notFoundBehaviour(
@@ -2207,7 +2207,7 @@ public interface SalesforceEndpointBuilderFactory {
          * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
          * type.
          * 
-         * Default: EXCEPTION
+         * Default: exception
          * Group: common
          */
         default SalesforceEndpointBuilder notFoundBehaviour(

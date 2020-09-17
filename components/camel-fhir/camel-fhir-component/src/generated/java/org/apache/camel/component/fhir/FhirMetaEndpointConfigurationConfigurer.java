@@ -65,6 +65,8 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         case "ProxyPort": target.setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyuser":
         case "ProxyUser": target.setProxyUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "resourcetype":
+        case "ResourceType": target.setResourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "serverurl":
         case "ServerUrl": target.setServerUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "sessioncookie":
@@ -73,8 +75,6 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         case "SocketTimeout": target.setSocketTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "summary":
         case "Summary": target.setSummary(property(camelContext, java.lang.String.class, value)); return true;
-        case "theresourcename":
-        case "TheResourceName": target.setTheResourceName(property(camelContext, java.lang.String.class, value)); return true;
         case "username":
         case "Username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "validationmode":
@@ -109,11 +109,11 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         answer.put("ProxyPassword", java.lang.String.class);
         answer.put("ProxyPort", java.lang.Integer.class);
         answer.put("ProxyUser", java.lang.String.class);
+        answer.put("ResourceType", java.lang.String.class);
         answer.put("ServerUrl", java.lang.String.class);
         answer.put("SessionCookie", java.lang.String.class);
         answer.put("SocketTimeout", java.lang.Integer.class);
         answer.put("Summary", java.lang.String.class);
-        answer.put("TheResourceName", java.lang.String.class);
         answer.put("Username", java.lang.String.class);
         answer.put("ValidationMode", java.lang.String.class);
         return answer;
@@ -169,6 +169,8 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         case "ProxyPort": return target.getProxyPort();
         case "proxyuser":
         case "ProxyUser": return target.getProxyUser();
+        case "resourcetype":
+        case "ResourceType": return target.getResourceType();
         case "serverurl":
         case "ServerUrl": return target.getServerUrl();
         case "sessioncookie":
@@ -177,8 +179,6 @@ public class FhirMetaEndpointConfigurationConfigurer extends org.apache.camel.su
         case "SocketTimeout": return target.getSocketTimeout();
         case "summary":
         case "Summary": return target.getSummary();
-        case "theresourcename":
-        case "TheResourceName": return target.getTheResourceName();
         case "username":
         case "Username": return target.getUsername();
         case "validationmode":

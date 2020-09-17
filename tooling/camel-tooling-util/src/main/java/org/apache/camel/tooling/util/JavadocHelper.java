@@ -89,9 +89,16 @@ public final class JavadocHelper {
         String s = sb.toString();
         // remove all XML tags
         s = s.replaceAll("<.*?>", "");
+        // remove {@link inlined javadoc links which is special handled
+        s = s.replaceAll("\\{@link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("\\{@link\\s([\\w]+)}", "$1");
+        // also remove the commonly mistake to do with @{link
+        s = s.replaceAll("@\\{link\\s\\w+\\s(\\w+)}", "$1");
+        s = s.replaceAll("@\\{link\\s([\\w]+)}", "$1");
+
         // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
         // use #? to remove leading # in case its a local reference
-        s = s.replaceAll("\\{\\@\\w+\\s#?([\\w.#(\\d,)]+)\\}", "$1");
+        s = s.replaceAll("\\{@\\w+\\s#?([\\w.#(\\d,)]+)}", "$1");
 
         // create a new line
         StringBuilder cb = new StringBuilder();

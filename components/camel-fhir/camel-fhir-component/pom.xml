@@ -156,7 +156,7 @@
                                 <api>
                                     <apiName>capabilities</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
-                                    <fromSignatureFile>signatures/capabilities-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -182,7 +182,7 @@
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
-                                    <fromSignatureFile>signatures/history-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>cutoff</nullableOption>
@@ -193,7 +193,7 @@
                                 <api>
                                     <apiName>load-page</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
-                                    <fromSignatureFile>signatures/load-page-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -201,7 +201,7 @@
                                 <api>
                                     <apiName>meta</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
-                                    <fromSignatureFile>signatures/meta-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -209,7 +209,7 @@
                                 <api>
                                     <apiName>operation</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
-                                    <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                         <nullableOption>parameters</nullableOption>

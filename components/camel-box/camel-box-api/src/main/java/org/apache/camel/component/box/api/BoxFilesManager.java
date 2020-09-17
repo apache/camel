@@ -39,13 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Files Manager
- *
- * <p>
  * Provides operations to manage Box files.
- *
- *
- *
  */
 public class BoxFilesManager {
 
@@ -630,16 +624,17 @@ public class BoxFilesManager {
     }
 
     /**
-     * Get an expiring URL for creating an embedded preview session. The URL will expire after 60 seconds and the
-     * preview session will expire after 60 minutes.
+     * Retrieves a thumbnail, or smaller image representation, of this file. Sizes of 32x32, 64x64, 128x128, and 256x256
+     * can be returned in the .png format and sizes of 32x32, 94x94, 160x160, and 320x320 can be returned in the .jpg
+     * format.
      *
-     * @param  fileId    - the id of the file to get preview link on.
-     * @param  fileType  - either PNG of JPG.
-     * @param  minWidth  - minimum width.
-     * @param  minHeight - minimum height.
-     * @param  maxWidth  - maximum width.
-     * @param  maxHeight - maximum height.
-     * @return           The byte array of the thumbnail image.
+     * @param  fileId    - the id of the file to get thumbnail.
+     * @param  fileType  either PNG of JPG
+     * @param  minWidth  minimum width
+     * @param  minHeight minimum height
+     * @param  maxWidth  maximum width
+     * @param  maxHeight maximum height
+     * @return           the byte array of the thumbnail image
      */
     public byte[] getFileThumbnail(
             String fileId, BoxFile.ThumbnailFileType fileType, Integer minWidth,

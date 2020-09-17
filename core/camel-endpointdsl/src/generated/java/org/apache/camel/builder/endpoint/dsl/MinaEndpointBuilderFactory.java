@@ -602,7 +602,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
@@ -617,7 +617,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(

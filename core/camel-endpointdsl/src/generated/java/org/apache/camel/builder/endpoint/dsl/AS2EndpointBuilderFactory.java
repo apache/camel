@@ -805,7 +805,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder runLoggingLevel(
@@ -820,7 +820,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder runLoggingLevel(
@@ -947,7 +947,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -960,7 +960,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -2456,7 +2456,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: CLIENT, SERVER
+         * There are 2 enums and the value can be one of: client, server
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2478,7 +2478,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: CLIENT, SERVER
+         * There are 2 enums and the value can be one of: client, server
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
