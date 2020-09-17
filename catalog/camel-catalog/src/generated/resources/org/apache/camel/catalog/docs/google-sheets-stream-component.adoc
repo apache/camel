@@ -158,50 +158,6 @@ google-sheets-stream:apiName
 The following lists each API name and method and its additional parameters.
 
 
-==== data
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *batchClearValuesRequest* | The com.google.api.services.sheets.v4.model.BatchClearValuesRequest | BatchClearValuesRequest
-| *batchGetValuesByDataFilter{zwsp}Request* | The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
-| *batchUpdateValuesByDataFilter{zwsp}Request* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
-| *batchUpdateValuesRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest | BatchUpdateValuesRequest
-| *clearValuesRequest* | The com.google.api.services.sheets.v4.model.ClearValuesRequest | ClearValuesRequest
-| *content* | The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest | BatchClearValuesByDataFilterRequest
-| *range* | The A1 notation of a range to search for a logical table of data. Values will be appended after the last row of the table. | String
-| *spreadsheetId* | The ID of the spreadsheet to update | String
-| *values* | The com.google.api.services.sheets.v4.model.ValueRange | ValueRange
-|===
-
-
-==== spreadsheets
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *batchUpdateSpreadsheetRequest* | The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest | BatchUpdateSpreadsheetRequest
-| *content* | The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
-| *getSpreadsheetByDataFilter{zwsp}Request* | The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
-| *spreadsheetId* | The spreadsheet to apply the updates to | String
-|===
-// endpoint options: END
-
-
-
-
-=== Query API Parameters (2 APIs):
-
-The Google Sheets Stream endpoint is an API based component and has additional parameters based on which API name and method in use.
-The API name and method is located in the endpoint URI as the apiName path parameters:
-
-----
-google-sheets-stream:apiName
-----
-
-The following lists each API name and method and its additional parameters.
-
-
 ==== spreadsheets
 
 
@@ -247,7 +203,7 @@ The spreadsheets API method(s) has the following set of parameters listed in the
 | batchUpdate | *spreadsheetId* |  The spreadsheet to apply the updates to | String
 | create | *content* |  The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
 | get | *spreadsheetId* |  The spreadsheet to request | String
-| getByDataFilter | *getSpreadsheetByDataFilter Request* |  The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
+| getByDataFilter | *getSpreadsheetByDataFilter{zwsp}Request* |  The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
 | getByDataFilter | *spreadsheetId* |  The spreadsheet to request | String
 |===
 
@@ -328,11 +284,11 @@ The data API method(s) has the following set of parameters listed in the table b
 | batchClearByDataFilter | *content* |  The com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest | BatchClearValuesByDataFilterRequest
 | batchClearByDataFilter | *spreadsheetId* |  The ID of the spreadsheet to update | String
 | batchGet | *spreadsheetId* |  The ID of the spreadsheet to retrieve data from | String
-| batchGetByDataFilter | *batchGetValuesByDataFilter Request* |  The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
+| batchGetByDataFilter | *batchGetValuesByDataFilter{zwsp}Request* |  The com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest | BatchGetValuesByDataFilterRequest
 | batchGetByDataFilter | *spreadsheetId* |  The ID of the spreadsheet to retrieve data from | String
 | batchUpdate | *batchUpdateValuesRequest* |  The com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest | BatchUpdateValuesRequest
 | batchUpdate | *spreadsheetId* |  The ID of the spreadsheet to update | String
-| batchUpdateByDataFilter | *batchUpdateValuesByDataFilter Request* |  The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
+| batchUpdateByDataFilter | *batchUpdateValuesByDataFilter{zwsp}Request* |  The com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest | BatchUpdateValuesByDataFilterRequest
 | batchUpdateByDataFilter | *spreadsheetId* |  The ID of the spreadsheet to update | String
 | clear | *clearValuesRequest* |  The com.google.api.services.sheets.v4.model.ClearValuesRequest | ClearValuesRequest
 | clear | *range* |  The A1 notation of the values to clear. | String
