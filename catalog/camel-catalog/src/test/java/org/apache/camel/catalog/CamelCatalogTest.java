@@ -1194,16 +1194,15 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("unknown"));
 
-        // there is a type converter that converts from and to to phone number
-        uri = "zendesk:getTopicsByUser?userId=123";
+        uri = "zendesk:getTopicsByUser?user_id=123";
         result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
 
-        uri = "zendesk:GET_TOPICS_BY_USER?userId=123";
+        uri = "zendesk:GET_TOPICS_BY_USER?user_id=123";
         result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
 
-        uri = "zendesk:get-topics-by-user?userId=123&unknown=true";
+        uri = "zendesk:get-topics-by-user?user_id=123&unknown=true";
         result = catalog.validateEndpointProperties(uri);
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("unknown"));
