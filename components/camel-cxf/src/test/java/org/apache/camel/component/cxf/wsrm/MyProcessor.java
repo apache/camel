@@ -31,7 +31,7 @@ public class MyProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         logger.info("***** Entering Processor *******");
         String name = exchange.getIn().getBody(String.class);
-        exchange.getOut().setBody("Hello " + name);
+        exchange.getMessage().setBody("Hello " + name);
         logger.info("***** Leaving Processor *******");
     }
 

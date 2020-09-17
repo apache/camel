@@ -101,7 +101,7 @@ public class PayLoadConvertToPOJOTest extends CamelTestSupport {
 
                         GetPersonResponse reply = new GetPersonResponse();
                         reply.setPersonId(request.getPersonId());
-                        exchange.getOut().setBody(reply);
+                        exchange.getMessage().setBody(reply);
                     }
 
                 });

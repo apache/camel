@@ -39,7 +39,7 @@ public class MyProcessor implements Processor {
             }
             parameters.add(0, "Ordered ammount " + amount);
             //reuse the MessageContentList at this time to test CAMEL-4113
-            exchange.getOut().setBody(parameters);
+            exchange.getMessage().setBody(parameters);
         } else {
             List<Object> parameters = in.getBody(List.class);
             int amount = (Integer) parameters.remove(0);
@@ -47,7 +47,7 @@ public class MyProcessor implements Processor {
             securityOrder.value = "secureParts";
             parameters.add(0, "Ordered ammount " + amount);
             //reuse the MessageContentList at this time to test CAMEL-4113
-            exchange.getOut().setBody(parameters);
+            exchange.getMessage().setBody(parameters);
         }
     }
 }

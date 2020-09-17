@@ -137,8 +137,8 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             Object obj = exchange.getIn().getBody();
             //xpath expression directly results in a: String  
             String content = (String) XPathBuilder.xpath("//xml/text()").stringResult().evaluate(context, obj, Object.class);
-            exchange.getOut().setBody(content);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(content);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
@@ -150,8 +150,8 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             //xpath expression results in a: net.sf.saxon.dom.DOMNodeList
             //after which it is converted to a String
             String content = XPathBuilder.xpath("//xml/text()").evaluate(context, obj, String.class);
-            exchange.getOut().setBody(content);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(content);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
@@ -164,8 +164,8 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) obj;
             Element el = payload.getBody().get(0);
             Text textnode = (Text) el.getFirstChild();
-            exchange.getOut().setBody(textnode.getNodeValue());
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(textnode.getNodeValue());
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
@@ -187,8 +187,8 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
                 textnode = (Text) textnode.getNextSibling();
             }
 
-            exchange.getOut().setBody(b.toString());
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setBody(b.toString());
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         }
     }
 
@@ -198,9 +198,9 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             Object obj = exchange.getIn().getBody();
             String content = (String) obj;
             String msgOut = constructSoapMessage(content);
-            exchange.getOut().setBody(msgOut);
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().setHeader(HEADER_SIZE, "" + content.length());
+            exchange.getMessage().setBody(msgOut);
+            exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
+            exchange.getMessage().setHeader(HEADER_SIZE, "" + content.length());
         }
     }
 
@@ -220,11 +220,11 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         Exchange exchgOut = template.send(builder.getTestAddress(), exchgIn);
 
         //Verify
-        String result = exchgOut.getOut().getBody(String.class);
+        String result = exchgOut.getMessage().getBody(String.class);
         assertNotNull(result, "response on http call");
 
         //check for data loss in received input (after xpath)
-        String headerSize = exchgOut.getOut().getHeader(HEADER_SIZE, String.class);
+        String headerSize = exchgOut.getMessage().getHeader(HEADER_SIZE, String.class);
         assertEquals("" + repeat, headerSize);
 
         assertTrue(result.length() > repeat, "dataloss in output occurred");

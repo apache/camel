@@ -77,7 +77,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage("cxf://bean:springEndpoint?cxfConfigurer=#myConfigurer");
         // we don't expect the exception here
         assertFalse(reply.isFailed(), "We don't expect the exception here");
-        assertEquals("Greet Hello World!", reply.getOut().getBody(String.class), "Get a wrong response");
+        assertEquals("Greet Hello World!", reply.getMessage().getBody(String.class), "Get a wrong response");
     }
 
     @Test

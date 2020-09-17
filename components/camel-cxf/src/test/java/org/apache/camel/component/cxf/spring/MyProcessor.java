@@ -37,7 +37,7 @@ public class MyProcessor implements Processor {
         // Get the operation name
         String operation = (String) in.getHeader(CxfConstants.OPERATION_NAME);
         Object result = operation + " " + (String) parameter.get(0);
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
 }

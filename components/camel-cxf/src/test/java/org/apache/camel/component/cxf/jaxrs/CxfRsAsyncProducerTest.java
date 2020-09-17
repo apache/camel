@@ -59,7 +59,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         public void process(Exchange exchange) throws Exception {
             // check the query
             Message inMessage = exchange.getIn();
-            exchange.getOut().setBody(inMessage.getHeader(Exchange.HTTP_QUERY, String.class));
+            exchange.getMessage().setBody(inMessage.getHeader(Exchange.HTTP_QUERY, String.class));
         }
     }
 
@@ -98,13 +98,13 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
         assertEquals("John", response.getName(), "Get a wrong customer name");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
-        assertEquals("value", exchange.getOut().getHeader("key"), "Get a wrong header value");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
         // END SNIPPET: ProxyExample     
     }
 
@@ -122,12 +122,12 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        List<Customer> response = CastUtils.cast((List<?>) exchange.getOut().getBody());
+        List<Customer> response = CastUtils.cast((List<?>) exchange.getMessage().getBody());
 
         assertNotNull(response, "The response should not be null");
         assertTrue(response.contains(new Customer(113, "Dan")), "Dan is missing!");
         assertTrue(response.contains(new Customer(123, "John")), "John is missing!");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -150,12 +150,12 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        List<Customer> response = CastUtils.cast((List<?>) exchange.getOut().getBody());
+        List<Customer> response = CastUtils.cast((List<?>) exchange.getMessage().getBody());
 
         assertNotNull(response, "The response should not be null");
         assertTrue(response.contains(new Customer(113, "Dan")), "Dan is missing!");
         assertTrue(response.contains(new Customer(123, "John")), "John is missing!");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -178,13 +178,13 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
         assertEquals("John", response.getName(), "Get a wrong customer name");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
-        assertEquals("value", exchange.getOut().getHeader("key"), "Get a wrong header value");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
     }
 
     @Test
@@ -208,7 +208,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
 
         // we should get the exception here 
         assertNull(exchange.getException(), "Don't expect the exception here");
-        Message result = exchange.getOut();
+        Message result = exchange.getMessage();
         assertEquals(406, result.getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong http status code.");
 
     }
@@ -259,11 +259,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
         assertEquals("John", response.getName(), "Get a wrong customer name");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -286,11 +286,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
         assertEquals("John", response.getName(), "Get a wrong customer name");
-        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -313,13 +313,13 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                         });
 
         // get the response message 
-        Response response = (Response) exchange.getOut().getBody();
+        Response response = (Response) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertNotNull(response.getEntity(), "The response entity should not be null");
         // check the response code
         assertEquals(201, response.getStatus(), "Get a wrong response code");
         // check the response code from message header
-        assertEquals(201, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -342,13 +342,13 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Response response = (Response) exchange.getOut().getBody();
+        Response response = (Response) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertNotNull(response.getEntity(), "The response entity should not be null");
         // check the response code
         assertEquals(201, response.getStatus(), "Get a wrong response code");
         // check the response code from message header
-        assertEquals(201, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -375,11 +375,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertTrue(response.getId() != 8888, "Get a wrong customer id");
         assertEquals("Willem", response.getName(), "Get a wrong customer name");
-        assertEquals(201, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals(201, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
     }
 
     @Test
@@ -396,7 +396,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("q1=12&q2=13", response, "The response value is wrong");
     }
@@ -422,7 +422,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                 });
 
         // get the response message 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("q1=new&q2=world", response, "The response value is wrong");
     }

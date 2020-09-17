@@ -50,10 +50,10 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                                 assertNull(exchange.getIn().getHeader("CamelCxfTest"), "We should not get this header");
                                 assertNull(exchange.getIn().getHeader("Transfer-Encoding"), "We should not get this header");
                                 //check the headers
-                                exchange.getOut().setHeader("Content-Type", "text/xml");
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                                exchange.getMessage().setHeader("Content-Type", "text/xml");
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                                 //send the response back 
-                                exchange.getOut().setBody(RESPONSE);
+                                exchange.getMessage().setBody(RESPONSE);
                             }
                         });
             }
@@ -82,7 +82,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
         Exchange exchange = sendSimpleMessage("cxf://http://localhost:" + port
                                               + "/CxfProducerProtocalHeaderTest/user"
                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService");
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         assertEquals("echo " + "Hello World!", result, "reply body on Camel");
     }

@@ -80,8 +80,8 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
-                        exchange.getOut().setBody(new Customer(123, "Raul"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setBody(new Customer(123, "Raul"));
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
 
@@ -92,7 +92,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
                         assertNotNull(c);
                         assertEquals(123, c.getId());
                         assertEquals(12, exchange.getIn().getHeader("age"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
             }

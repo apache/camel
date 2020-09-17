@@ -39,7 +39,7 @@ public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
                                 = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
                         faultDetail.setPersonId("");
                         UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
-                        exchange.getOut().setBody(fault);
+                        exchange.getMessage().setBody(fault);
                     }
                 });
 

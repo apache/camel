@@ -99,7 +99,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
             throw exchange.getException();
         }
 
-        assertEquals("param:para1para2", exchange.getOut().getBody(String.class), "Get a wrong response.");
+        assertEquals("param:para1para2", exchange.getMessage().getBody(String.class), "Get a wrong response.");
 
     }
 }
