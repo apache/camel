@@ -341,7 +341,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder runLoggingLevel(
@@ -356,7 +356,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder runLoggingLevel(
@@ -485,7 +485,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -498,7 +498,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1082,8 +1082,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 7 enums and the value can be one of: THREADS, MESSAGES,
-         * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
+         * There are 7 enums and the value can be one of: threads, messages,
+         * attachments, labels, history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1108,8 +1108,8 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 7 enums and the value can be one of: THREADS, MESSAGES,
-         * ATTACHMENTS, LABELS, HISTORY, DRAFTS, USERS
+         * There are 7 enums and the value can be one of: threads, messages,
+         * attachments, labels, history, drafts, users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

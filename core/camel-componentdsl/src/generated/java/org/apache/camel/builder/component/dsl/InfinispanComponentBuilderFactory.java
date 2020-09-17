@@ -202,7 +202,7 @@ public interface InfinispanComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: producer
          */
         default InfinispanComponentBuilder operation(

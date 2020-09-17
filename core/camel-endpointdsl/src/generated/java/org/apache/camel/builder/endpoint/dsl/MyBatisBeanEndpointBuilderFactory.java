@@ -48,7 +48,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
          * type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder executorType(
@@ -64,7 +64,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder executorType(String executorType) {

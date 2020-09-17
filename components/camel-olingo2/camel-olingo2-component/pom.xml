@@ -57,15 +57,6 @@
             <version>${commons-lang3-version}</version>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-olingo2-api</artifactId>
-            <version>${project.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -158,13 +149,16 @@
                         <configuration>
                             <apis>
                                 <api>
-                                    <apiName />
+                                    <apiName/>
                                     <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
-                                    <fromSignatureFile>${basedir}/src/signatures/olingo-api-signature.txt</fromSignatureFile>
+                                    <fromJavasource>
+                                        <includeMethods>read|uread|delete|create|update|patch|merge|batch</includeMethods>
+                                    </fromJavasource>
                                     <extraOptions>
                                         <extraOption>
                                             <name>keyPredicate</name>
                                             <type>java.lang.String</type>
+                                            <description>OData Key predicate</description>
                                         </extraOption>
                                     </extraOptions>
                                     <nullableOptions>
@@ -178,6 +172,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-olingo2-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->

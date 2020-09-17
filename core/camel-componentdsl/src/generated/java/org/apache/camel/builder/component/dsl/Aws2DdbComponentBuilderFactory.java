@@ -154,7 +154,7 @@ public interface Aws2DdbComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
          * 
-         * Default: PutItem
+         * Default: put-item
          * Group: producer
          */
         default Aws2DdbComponentBuilder operation(

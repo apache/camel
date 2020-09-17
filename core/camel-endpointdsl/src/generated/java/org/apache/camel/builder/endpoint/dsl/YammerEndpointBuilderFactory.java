@@ -451,7 +451,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
@@ -466,7 +466,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
@@ -595,7 +595,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -608,7 +608,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1245,8 +1245,8 @@ public interface YammerEndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * The function to use
-         * There are 9 enums and the value can be one of: MESSAGES, MY_FEED,
-         * ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
+         * There are 9 enums and the value can be one of: messages, my-feed,
+         * algo, following, sent, private, received, users, current
          * 
          * @param path function
          */
@@ -1265,8 +1265,8 @@ public interface YammerEndpointBuilderFactory {
          * 
          * Path parameter: function (required)
          * The function to use
-         * There are 9 enums and the value can be one of: MESSAGES, MY_FEED,
-         * ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
+         * There are 9 enums and the value can be one of: messages, my-feed,
+         * algo, following, sent, private, received, users, current
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

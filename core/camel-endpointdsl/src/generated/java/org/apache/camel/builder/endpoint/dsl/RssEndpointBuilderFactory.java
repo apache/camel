@@ -476,7 +476,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default RssEndpointBuilder runLoggingLevel(LoggingLevel runLoggingLevel) {
@@ -490,7 +490,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default RssEndpointBuilder runLoggingLevel(String runLoggingLevel) {
@@ -614,7 +614,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default RssEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -627,7 +627,7 @@ public interface RssEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default RssEndpointBuilder timeUnit(String timeUnit) {

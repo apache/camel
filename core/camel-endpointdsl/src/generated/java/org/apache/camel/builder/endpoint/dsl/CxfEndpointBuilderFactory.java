@@ -50,7 +50,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(DataFormat dataFormat) {
@@ -63,7 +63,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(String dataFormat) {
@@ -789,7 +789,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(DataFormat dataFormat) {
@@ -802,7 +802,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(String dataFormat) {
@@ -1605,7 +1605,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointBuilder dataFormat(DataFormat dataFormat) {
@@ -1618,7 +1618,7 @@ public interface CxfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
-         * Default: POJO
+         * Default: pojo
          * Group: common
          */
         default CxfEndpointBuilder dataFormat(String dataFormat) {

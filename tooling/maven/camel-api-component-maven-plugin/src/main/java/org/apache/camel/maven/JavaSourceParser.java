@@ -24,13 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import org.apache.camel.util.StringHelper;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.Type;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.TypeVariable;
+import org.jboss.forge.roaster.model.impl.AbstractGenericCapableJavaSource;
+import org.jboss.forge.roaster.model.impl.AbstractJavaSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
+import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.jboss.forge.roaster.model.source.TypeVariableSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 
@@ -39,14 +47,20 @@ import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
  */
 public class JavaSourceParser {
 
-    private List<String> methods = new ArrayList<>();
-    private Map<String, String> methodText = new HashMap<>();
-    private Map<String, Map<String, String>> parameters = new LinkedHashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger(JavaSourceParser.class);
+
     private String errorMessage;
 
+    private String classDoc;
+    private List<String> methodSignatures = new ArrayList<>();
+    private final Map<String, String> methodDocs = new HashMap<>();
+    private Map<String, Map<String, String>> parameterTypes = new LinkedHashMap<>();
+    private Map<String, Map<String, String>> parameterDocs = new LinkedHashMap<>();
+
+    @SuppressWarnings("unchecked")
     public synchronized void parse(InputStream in, String innerClass) throws Exception {
-        JavaClassSource rootClazz = (JavaClassSource) Roaster.parse(in);
-        JavaClassSource clazz = rootClazz;
+        AbstractGenericCapableJavaSource rootClazz = (AbstractGenericCapableJavaSource) Roaster.parse(in);
+        AbstractGenericCapableJavaSource clazz = rootClazz;
 
         if (innerClass != null) {
             // we want the inner class from the parent class
@@ -57,73 +71,179 @@ public class JavaSourceParser {
             }
         }
 
-        for (MethodSource ms : clazz.getMethods()) {
-            // should not be constructor and must be public
-            if (!ms.isPublic() || ms.isConstructor()) {
+        LOG.debug("Parsing class: {}", clazz.getQualifiedName());
+
+        String rawClass = clazz.toUnformattedString();
+        String doc = getClassJavadocRaw(clazz, rawClass);
+        classDoc = sanitizeJavaDocValue(doc, true);
+        if (classDoc == null || classDoc.isEmpty()) {
+            rawClass = rootClazz.toUnformattedString();
+            doc = getClassJavadocRaw(rootClazz, rawClass);
+            classDoc = sanitizeJavaDocValue(doc, true);
+        }
+        if (classDoc != null && classDoc.indexOf('.') > 0) {
+            classDoc = StringHelper.before(classDoc, ".");
+        }
+
+        List<MethodSource> ml = ((MethodHolderSource) clazz).getMethods();
+        for (MethodSource ms : ml) {
+            String methodName = ms.getName();
+            LOG.debug("Parsing method: {}", methodName);
+
+            // should not be constructor and must not be private
+            boolean isInterface = clazz instanceof JavaInterfaceSource;
+            boolean accept = isInterface || (!ms.isConstructor() && ms.isPublic());
+            if (!accept) {
                 continue;
             }
-            String signature = ms.toSignature();
-            // roaster signatures has return values at end
-            // public create(String, AddressRequest) : Result
 
-            int pos = signature.indexOf(':');
-            if (pos != -1) {
-                String result = signature.substring(pos + 1).trim();
-                // lets use FQN types
-                if (!"void".equals(result)) {
-                    result = resolveType(rootClazz, clazz, result);
-                }
-                if (result.isEmpty()) {
-                    result = "void";
-                }
-
-                List<JavaDocTag> params = ms.getJavaDoc().getTags("@param");
-
-                Map<String, String> docs = new LinkedHashMap<>();
-                StringBuilder sb = new StringBuilder();
-                sb.append("public ").append(result).append(" ").append(ms.getName()).append("(");
-                List<ParameterSource> list = ms.getParameters();
-                for (int i = 0; i < list.size(); i++) {
-                    ParameterSource ps = list.get(i);
-                    String name = ps.getName();
-                    String type = resolveType(rootClazz, clazz, ms, ps.getType());
-                    if (type.startsWith("java.lang.")) {
-                        type = type.substring(10);
-                    }
-                    sb.append(type);
-                    if (ps.isVarArgs() || ps.getType().isArray()) {
-                        // the old way with javadoc did not use varargs in the signature, so lets transform this to an array style
-                        sb.append("[]");
-                    }
-                    sb.append(" ").append(name);
-                    if (i < list.size() - 1) {
-                        sb.append(", ");
-                    }
-
-                    // need documentation for this parameter
-                    docs.put(name, getJavadocValue(params, name));
-                }
-                sb.append(")");
-
-                signature = sb.toString();
-                Map<String, String> existing = parameters.get(ms.getName());
-                if (existing != null) {
-                    existing.putAll(docs);
-                } else {
-                    parameters.put(ms.getName(), docs);
-                }
+            doc = getMethodJavadocRaw(ms, rawClass);
+            doc = sanitizeJavaDocValue(doc, true);
+            if (doc != null && doc.indexOf('.') > 0) {
+                doc = StringHelper.before(doc, ".");
+            }
+            if (doc != null && !doc.isEmpty()) {
+                methodDocs.put(ms.getName(), doc);
             }
 
-            methods.add(signature);
-            methodText.put(ms.getName(), signature);
+            String result = resolveParameterizedType(rootClazz, clazz, ms, null, ms.getReturnType());
+            if (result.isEmpty()) {
+                result = "void";
+            }
+            LOG.trace("Parsed return type as: {}", result);
+
+            List<JavaDocTag> params = ms.getJavaDoc().getTags("@param");
+
+            Map<String, String> docs = new LinkedHashMap<>();
+            Map<String, String> args = new LinkedHashMap<>();
+            StringBuilder sb = new StringBuilder();
+            sb.append("public ").append(result).append(" ").append(ms.getName()).append("(");
+            List<ParameterSource> list = ms.getParameters();
+            for (int i = 0; i < list.size(); i++) {
+                ParameterSource ps = list.get(i);
+                String name = ps.getName();
+                String type = resolveParameterizedType(rootClazz, clazz, ms, ps, ps.getType());
+                LOG.trace("Parsing parameter #{} ({} {})", i, type, name);
+
+                sb.append(type);
+                sb.append(" ").append(name);
+                if (i < list.size() - 1) {
+                    sb.append(", ");
+                }
+
+                // need documentation for this parameter
+                docs.put(name, getJavadocValue(params, name));
+                args.put(name, type);
+            }
+            sb.append(")");
+
+            Map<String, String> existing = parameterDocs.get(ms.getName());
+            if (existing != null) {
+                existing.putAll(docs);
+            } else {
+                parameterDocs.put(ms.getName(), docs);
+            }
+
+            String signature = sb.toString();
+            methodSignatures.add(signature);
+            parameterTypes.put(signature, args);
         }
     }
 
-    private static JavaClassSource findInnerClass(JavaClassSource rootClazz, String innerClass) {
+    private static String resolveParameterizedType(
+            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms,
+            ParameterSource ps, Type type) {
+        String answer = resolveType(rootClazz, clazz, ms, type);
+
+        if (type.isParameterized()) {
+            // for parameterized types then it can get complex if they are variables (T, T extends Foo etc)
+            // or if there are no bounds for these types which we then can't resolve.
+            List<Type> types = type.getTypeArguments();
+            boolean bounds = false;
+            boolean found = false;
+            for (Type t : types) {
+                if (hasTypeVariableBounds(ms, clazz, t.getName())) {
+                    bounds = true;
+                    // okay now it gets complex as we have a type like T which is a type variable and we need to resolve that into
+                    // what base class that is
+                    String tn = resolveTypeVariable(ms, clazz, t.getName());
+                    if (tn != null) {
+                        answer = answer.replace(t.getName(), tn);
+                        found = true;
+                    }
+                }
+            }
+            if (!bounds && !found) {
+                // argh this is getting complex, it may be T or just java.lang.String but this **** generics and roaster
+                // does not make this easy, so let see if we can find out if all the types are a qualified type or only a variable
+                boolean fqn = types.stream().allMatch(t -> {
+                    // if its from java itself then its okay
+                    if (t.getQualifiedName().startsWith("java")) {
+                        return true;
+                    }
+                    // okay lets assume its a type variable if the name is upper case only
+                    boolean upperOnly = isUpperCaseOnly(t.getName());
+                    return !upperOnly && t.getQualifiedName().indexOf('.') != -1;
+                });
+                if (!fqn) {
+                    // remove generics we could not resolve that even if we have bounds information
+                    bounds = true;
+                    found = false;
+                }
+            }
+            if (bounds && !found) {
+                // remove generics we could not resolve that even if we have bounds information
+                answer = type.getQualifiedName();
+            }
+        } else if (ms.hasTypeVariable(answer) || clazz.hasTypeVariable(answer)) {
+            // okay now it gets complex as we have a type like T which is a type variable and we need to resolve that into
+            // what base class that is
+            answer = resolveTypeVariable(ms, clazz, answer);
+        }
+        if ((ps != null && ps.isVarArgs()) || type.isArray()) {
+            // the old way with javadoc did not use varargs in the signature, so lets transform this to an array style
+            answer = answer + "[]";
+        }
+
+        // remove java.lang. prefix as it should not be there
+        answer = answer.replaceAll("java.lang.", "");
+        return answer;
+    }
+
+    private static boolean hasTypeVariableBounds(MethodSource ms, AbstractGenericCapableJavaSource clazz, String type) {
+        TypeVariable tv = ms.getTypeVariable(type);
+        if (tv == null) {
+            tv = clazz.getTypeVariable(type);
+        }
+        if (tv != null) {
+            return !tv.getBounds().isEmpty();
+        }
+        return false;
+    }
+
+    private static String resolveTypeVariable(MethodSource ms, AbstractGenericCapableJavaSource clazz, String type) {
+        TypeVariable tv = ms.getTypeVariable(type);
+        if (tv == null) {
+            tv = clazz.getTypeVariable(type);
+        }
+        if (tv != null) {
+            List<Type> bounds = tv.getBounds();
+            for (Type bt : bounds) {
+                String bn = bt.getQualifiedName();
+                if (!type.equals(bn)) {
+                    return bn;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static AbstractGenericCapableJavaSource findInnerClass(
+            AbstractGenericCapableJavaSource rootClazz, String innerClass) {
         String[] parts = innerClass.split("\\$");
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
-            JavaClassSource nested = (JavaClassSource) rootClazz.getNestedType(part);
+            AbstractGenericCapableJavaSource nested = (AbstractGenericCapableJavaSource) rootClazz.getNestedType(part);
             if (nested != null && i < parts.length - 1) {
                 rootClazz = nested;
             } else {
@@ -133,13 +253,14 @@ public class JavaSourceParser {
         return null;
     }
 
-    private static String resolveType(JavaClassSource rootClazz, JavaClassSource clazz, MethodSource ms, Type type) {
+    private static String resolveType(
+            AbstractGenericCapableJavaSource rootClazz, AbstractGenericCapableJavaSource clazz, MethodSource ms, Type type) {
         String name = type.getName();
         // if the type is from a type variable (eg T extends Foo generic style)
         // then the type should be returned as-is
         TypeVariableSource tv = ms.getTypeVariable(name);
         if (tv == null) {
-            clazz.getTypeVariable(name);
+            tv = clazz.getTypeVariable(name);
         }
         if (tv != null) {
             return type.getName();
@@ -161,7 +282,7 @@ public class JavaSourceParser {
         return answer;
     }
 
-    private static String resolveType(JavaClassSource rootClazz, JavaClassSource clazz, String type) {
+    private static String resolveType(AbstractJavaSource rootClazz, AbstractJavaSource clazz, String type) {
         if ("void".equals(type)) {
             return "void";
         }
@@ -216,21 +337,61 @@ public class JavaSourceParser {
             String key = tag.getValue();
             if (key.startsWith(name)) {
                 String desc = key.substring(name.length());
-                desc = sanitizeJavaDocValue(desc);
+                desc = sanitizeJavaDocValue(desc, false);
                 return desc;
             }
         }
         return "";
     }
 
-    private static String sanitizeJavaDocValue(String desc) {
-        // remove leading - and whitespaces
+    /**
+     * Gets the class javadoc raw (incl line breaks and tags etc). The roaster API returns the javadoc with line breaks
+     * and others removed
+     */
+    private static String getClassJavadocRaw(AbstractJavaSource clazz, String rawClass) {
+        Object obj = clazz.getJavaDoc().getInternal();
+        ASTNode node = (ASTNode) obj;
+        int pos = node.getStartPosition();
+        int len = node.getLength();
+        if (pos > 0 && len > 0) {
+            return rawClass.substring(pos, pos + len);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the method javadoc raw (incl line breaks and tags etc). The roaster API returns the javadoc with line breaks
+     * and others removed
+     */
+    private static String getMethodJavadocRaw(MethodSource ms, String rawClass) {
+        Object obj = ms.getJavaDoc().getInternal();
+        ASTNode node = (ASTNode) obj;
+        int pos = node.getStartPosition();
+        int len = node.getLength();
+        if (pos > 0 && len > 0) {
+            return rawClass.substring(pos, pos + len);
+        } else {
+            return null;
+        }
+    }
+
+    private static String sanitizeJavaDocValue(String desc, boolean summary) {
+        if (desc == null) {
+            return null;
+        }
+
+        // remove leading/trailing garbage
         desc = desc.trim();
-        while (desc.startsWith("-")) {
+        while (desc.startsWith("\n") || desc.startsWith("}") || desc.startsWith("-") || desc.startsWith("/")) {
             desc = desc.substring(1);
             desc = desc.trim();
         }
-        desc = sanitizeDescription(desc, false);
+        while (desc.endsWith("-") || desc.endsWith("/")) {
+            desc = desc.substring(0, desc.length() - 1);
+            desc = desc.trim();
+        }
+        desc = sanitizeDescription(desc, summary);
         if (desc != null && !desc.isEmpty()) {
             // upper case first letter
             char ch = desc.charAt(0);
@@ -259,27 +420,69 @@ public class JavaSourceParser {
         return desc;
     }
 
-    public void reset() {
-        methods.clear();
-        methodText.clear();
-        parameters.clear();
-        errorMessage = null;
+    private static boolean isUpperCaseOnly(String name) {
+        for (int i = 0; i < name.length(); i++) {
+            if (!Character.isUpperCase(name.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
+    public void reset() {
+        methodSignatures.clear();
+        parameterDocs.clear();
+        parameterTypes.clear();
+        methodDocs.clear();
+        errorMessage = null;
+        classDoc = null;
+    }
+
+    /**
+     * Contains the error message if parsing failed
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    public List<String> getMethods() {
-        return methods;
+    /**
+     * Contains all the method signatures, such as: public String addUser(int userId, String name)
+     */
+    public List<String> getMethodSignatures() {
+        return methodSignatures;
     }
 
-    public Map<String, String> getMethodText() {
-        return methodText;
+    /**
+     * Parameter types for every method
+     *
+     * The key is the method signature, the inner map has key = parameter name, value = parameter type
+     */
+    public Map<String, Map<String, String>> getParameterTypes() {
+        return parameterTypes;
     }
 
-    public Map<String, Map<String, String>> getParameters() {
-        return parameters;
+    /**
+     * Documentation for every method and their arguments (parameters).
+     *
+     * The key is the method name, the inner map has key = parameter name, value = documentation
+     */
+    public Map<String, Map<String, String>> getParameterDocs() {
+        return parameterDocs;
     }
 
+    /**
+     * Documentation for the class (api description)
+     */
+    public String getClassDoc() {
+        return classDoc;
+    }
+
+    /**
+     * Documentation for every method
+     *
+     * The key is the method name, the value is the documentation
+     */
+    public Map<String, String> getMethodDocs() {
+        return methodDocs;
+    }
 }

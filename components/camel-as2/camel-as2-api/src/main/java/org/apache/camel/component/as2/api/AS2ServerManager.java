@@ -27,11 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * AS2 Server Manager
- *
- * <p>
  * Receives EDI Messages over HTTP
- *
  */
 public class AS2ServerManager {
 

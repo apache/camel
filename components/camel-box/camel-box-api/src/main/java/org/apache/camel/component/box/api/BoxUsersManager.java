@@ -30,13 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Users Manager
- * 
- * <p>
  * Provides operations to manage Box users.
- * 
- * 
- *
  */
 public class BoxUsersManager {
 

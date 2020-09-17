@@ -474,7 +474,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointConsumerBuilder delimiter(
@@ -489,7 +489,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointConsumerBuilder delimiter(String delimiter) {
@@ -1053,7 +1053,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
@@ -1068,7 +1068,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
@@ -1085,7 +1085,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
@@ -1103,7 +1103,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
@@ -1117,7 +1117,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
@@ -1132,7 +1132,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
@@ -1980,7 +1980,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointProducerBuilder delimiter(
@@ -1995,7 +1995,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointProducerBuilder delimiter(String delimiter) {
@@ -3325,7 +3325,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointBuilder delimiter(TextLineDelimiter delimiter) {
@@ -3339,7 +3339,7 @@ public interface NettyEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: LINE
+         * Default: line
          * Group: codec
          */
         default NettyEndpointBuilder delimiter(String delimiter) {

@@ -652,7 +652,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: producer
          */
         default InfinispanEndpointProducerBuilder operation(
@@ -666,7 +666,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: producer
          */
         default InfinispanEndpointProducerBuilder operation(String operation) {

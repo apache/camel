@@ -54,7 +54,7 @@ The AWS 2 Translate component supports 17 options, which are listed below.
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *configuration* (producer) | Component configuration |  | Translate2Configuration
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. There are 1 enums and the value can be one of: translateText | translateText | Translate2Operations
+| *operation* (producer) | *Required* The operation to perform. There are 1 enums and the value can be one of: translate-text | translate-text | Translate2Operations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer
@@ -101,7 +101,7 @@ with the following path and query parameters:
 | *autodetectSourceLanguage* (producer) | Being able to autodetect the source language | false | boolean
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *operation* (producer) | *Required* The operation to perform. There are 1 enums and the value can be one of: translateText | translateText | Translate2Operations
+| *operation* (producer) | *Required* The operation to perform. There are 1 enums and the value can be one of: translate-text | translate-text | Translate2Operations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not | false | boolean
 | *proxyHost* (producer) | To define a proxy host when instantiating the Translate client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the Translate client |  | Integer

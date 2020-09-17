@@ -836,7 +836,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * 
-         * Default: listBlobs
+         * Default: list-blobs
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder operation(
@@ -850,7 +850,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * 
-         * Default: listBlobs
+         * Default: list-blobs
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder operation(String operation) {

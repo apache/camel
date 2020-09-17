@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -37,14 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ApiMethodParser<T> {
 
-    // also used by JavadocApiMethodGeneratorMojo
-    public static final Pattern ARGS_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+([^\\s,]+)\\s*,?");
-
     private static final String METHOD_PREFIX
             = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<((?!\\sextends\\s)[^>])+>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
-    private static final Pattern METHOD_PATTERN = Pattern
-            .compile("\\s*([^<\\s]+)?\\s*(<[^>]+>)?(<(?<genericTypeParameterName>\\S+)\\s+extends\\s+"
-                     + "(?<genericTypeParameterUpperBound>\\S+)>\\s+(?<returnType>\\S+))?\\s+(\\S+)\\s*\\(\\s*(?<signature>[\\S\\s,]*)\\)\\s*;?\\s*");
 
     private static final String JAVA_LANG = "java.lang.";
     private static final Map<String, Class<?>> PRIMITIVE_TYPES;
@@ -66,7 +58,9 @@ public abstract class ApiMethodParser<T> {
 
     private final Class<T> proxyType;
     private List<String> signatures;
+    private final Map<String, Map<String, String>> signaturesArguments = new HashMap<>();
     private Map<String, Map<String, String>> parameters;
+    private final Map<String, String> descriptions = new HashMap<>();
     private ClassLoader classLoader = ApiMethodParser.class.getClassLoader();
 
     public ApiMethodParser(Class<T> proxyType) {
@@ -84,6 +78,22 @@ public abstract class ApiMethodParser<T> {
     public final void setSignatures(List<String> signatures) {
         this.signatures = new ArrayList<>();
         this.signatures.addAll(signatures);
+    }
+
+    public Map<String, Map<String, String>> getSignaturesArguments() {
+        return signaturesArguments;
+    }
+
+    public void addSignatureArguments(String name, Map<String, String> arguments) {
+        this.signaturesArguments.put(name, arguments);
+    }
+
+    public Map<String, String> getDescriptions() {
+        return descriptions;
+    }
+
+    public void setDescriptions(Map<String, String> descriptions) {
+        this.descriptions.putAll(descriptions);
     }
 
     public Map<String, Map<String, String>> getParameters() {
@@ -126,59 +136,62 @@ public abstract class ApiMethodParser<T> {
 
             log.debug("Processing {}", signature);
 
-            final Matcher methodMatcher = METHOD_PATTERN.matcher(signature);
-            if (!methodMatcher.matches()) {
-                throw new IllegalArgumentException("Invalid method signature " + signature);
-            }
-            // handle generic methods with single bounded type parameters
-            String genericTypeParameterName = null;
-            String genericTypeParameterUpperBound = null;
-            String returnType = null;
-            try {
-                genericTypeParameterName = methodMatcher.group("genericTypeParameterName");
-                genericTypeParameterUpperBound = methodMatcher.group("genericTypeParameterUpperBound");
-                returnType = methodMatcher.group("returnType");
-                if (returnType != null && returnType.equals(genericTypeParameterName)) {
-                    returnType = genericTypeParameterUpperBound;
-                }
-            } catch (IllegalArgumentException e) {
-                // ignore
-            }
-
-            // void is not a valid return type
-            String rt = returnType != null ? returnType : methodMatcher.group(1);
-            // use Object as return type which is what the existing behaviour was using
-            final Class<?> resultType = !"void".equals(rt) ? forName(rt) : void.class;
-            final String name = methodMatcher.group(7);
-            final String argSignature = methodMatcher.group(8);
-
             final List<ApiMethodArg> arguments = new ArrayList<>();
             final List<Class<?>> argTypes = new ArrayList<>();
 
-            final Matcher argsMatcher = ARGS_PATTERN.matcher(argSignature);
-            while (argsMatcher.find()) {
-                String genericParameterName = argsMatcher.group(1);
-                if (genericTypeParameterName != null && genericTypeParameterName.equals(genericParameterName)) {
-                    genericParameterName = genericTypeParameterUpperBound;
+            // Map<String, Map<XXX, Bla>> foo(
+            int space = 0;
+            int max = signature.indexOf('(');
+            for (int i = max; i > 0; i--) {
+                char ch = signature.charAt(i);
+                if (Character.isWhitespace(ch)) {
+                    space = i;
+                    break;
                 }
-                final Class<?> type = forName(genericParameterName);
-                argTypes.add(type);
-                String genericParameterUpperbound = argsMatcher.group(2);
-                String typeArgs = genericParameterUpperbound != null
-                        ? genericParameterUpperbound.substring(1, genericParameterUpperbound.length() - 1).replace(" ", "")
-                        : null;
-                if (typeArgs != null && typeArgs.equals(genericTypeParameterName)) {
-                    typeArgs = genericTypeParameterUpperBound;
-                }
-                String typeName = argsMatcher.group(3);
-                String typeDesc = null;
-                if (parameters != null && name != null && typeName != null) {
-                    Map<String, String> params = parameters.get(name);
-                    if (params != null) {
-                        typeDesc = params.get(typeName);
+            }
+            final String name = signature.substring(space, max).trim();
+            String rt = signature.substring(0, space).trim();
+            // remove generic so the type is just the class name
+            int pos = rt.indexOf('<');
+            if (pos != -1) {
+                rt = rt.substring(0, pos);
+            }
+            final String returnType = rt;
+            final Class<?> resultType = forName(returnType);
+
+            // use the signature arguments from the parser so we do not have to use our own magic regexp parsing that is flawed
+            Map<String, String> args = signaturesArguments.get(signature);
+            if (args != null) {
+                for (Map.Entry<String, String> entry : args.entrySet()) {
+                    String argName = entry.getKey();
+                    String rawTypeArg = entry.getValue();
+                    String shortTypeArgs = rawTypeArg;
+                    String typeArg = null;
+                    // handle generics
+                    pos = shortTypeArgs.indexOf('<');
+                    if (pos != -1) {
+                        typeArg = shortTypeArgs.substring(pos);
+                        // remove leading and trailing < > as that is what the old way was doing
+                        if (typeArg.startsWith("<")) {
+                            typeArg = typeArg.substring(1);
+                        }
+                        if (typeArg.endsWith(">")) {
+                            typeArg = typeArg.substring(0, typeArg.length() - 1);
+                        }
+                        shortTypeArgs = shortTypeArgs.substring(0, pos);
                     }
+                    final Class<?> type = forName(shortTypeArgs);
+                    argTypes.add(type);
+
+                    String typeDesc = null;
+                    if (parameters != null && name != null && argName != null) {
+                        Map<String, String> params = parameters.get(name);
+                        if (params != null) {
+                            typeDesc = params.get(argName);
+                        }
+                    }
+                    arguments.add(new ApiMethodArg(argName, type, typeArg, rawTypeArg, typeDesc));
                 }
-                arguments.add(new ApiMethodArg(typeName, type, typeArgs, typeDesc));
             }
 
             Method method;
@@ -187,7 +200,7 @@ public abstract class ApiMethodParser<T> {
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("Method not found [" + signature + "] in type " + proxyType.getName());
             }
-            result.add(new ApiMethodModel(name, resultType, arguments, method));
+            result.add(new ApiMethodModel(name, resultType, arguments, method, descriptions.get(name), signature));
         }
 
         // allow derived classes to post process
@@ -325,23 +338,30 @@ public abstract class ApiMethodParser<T> {
         private final Class<?> resultType;
         private final List<ApiMethodArg> arguments;
         private final Method method;
+        private final String description;
+        private final String signature;
 
         private String uniqueName;
 
-        protected ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method) {
+        protected ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method,
+                                 String description, String signature) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
             this.method = method;
+            this.description = description;
+            this.signature = signature;
         }
 
         protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments,
-                                 Method method) {
+                                 Method method, String description, String signature) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;
             this.arguments = arguments;
             this.method = method;
+            this.description = description;
+            this.signature = signature;
         }
 
         public String getUniqueName() {
@@ -352,6 +372,7 @@ public abstract class ApiMethodParser<T> {
             return name;
         }
 
+        @Deprecated
         public Class<?> getResultType() {
             return resultType;
         }
@@ -362,6 +383,14 @@ public abstract class ApiMethodParser<T> {
 
         public List<ApiMethodArg> getArguments() {
             return arguments;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getSignature() {
+            return signature;
         }
 
         @Override

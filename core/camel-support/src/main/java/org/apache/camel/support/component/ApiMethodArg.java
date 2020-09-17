@@ -20,12 +20,14 @@ public class ApiMethodArg {
     private final String name;
     private final Class<?> type;
     private final String typeArgs;
+    private final String rawTypeArgs;
     private final String description;
 
-    public ApiMethodArg(String name, Class<?> type, String typeArgs, String description) {
+    public ApiMethodArg(String name, Class<?> type, String typeArgs, String rawTypeArgs, String description) {
         this.name = name;
         this.type = type;
         this.typeArgs = typeArgs;
+        this.rawTypeArgs = rawTypeArgs;
         this.description = description;
     }
 
@@ -39,6 +41,10 @@ public class ApiMethodArg {
 
     public String getTypeArgs() {
         return this.typeArgs;
+    }
+
+    public String getRawTypeArgs() {
+        return rawTypeArgs;
     }
 
     public String getDescription() {
@@ -57,14 +63,14 @@ public class ApiMethodArg {
     }
 
     public static ApiMethodArg arg(String name, Class<?> type) {
-        return new ApiMethodArg(name, type, null, null);
+        return new ApiMethodArg(name, type, null, null, null);
     }
 
     public static ApiMethodArg arg(String name, Class<?> type, String typeArgs) {
-        return new ApiMethodArg(name, type, typeArgs, null);
+        return new ApiMethodArg(name, type, typeArgs, null, null);
     }
 
     public static ApiMethodArg arg(String name, Class<?> type, String typeArgs, String description) {
-        return new ApiMethodArg(name, type, typeArgs, description);
+        return new ApiMethodArg(name, type, typeArgs, null, description);
     }
 }

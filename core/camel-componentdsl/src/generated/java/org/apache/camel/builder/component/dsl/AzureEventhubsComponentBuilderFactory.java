@@ -75,7 +75,7 @@ public interface AzureEventhubsComponentBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: AMQP
+         * Default: amqp
          * Group: common
          */
         default AzureEventhubsComponentBuilder amqpTransportType(
@@ -276,10 +276,10 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
-         * Sets the identifier of the Event Hub partition that the {link
-         * EventData events} will be sent to. If the identifier is not
-         * specified, the Event Hubs service will be responsible for routing
-         * events that are sent to an available partition.
+         * Sets the identifier of the Event Hub partition that the events will
+         * be sent to. If the identifier is not specified, the Event Hubs
+         * service will be responsible for routing events that are sent to an
+         * available partition.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -315,11 +315,10 @@ public interface AzureEventhubsComponentBuilderFactory {
         /**
          * Sets the EventHubProducerAsyncClient.An asynchronous producer
          * responsible for transmitting EventData to a specific Event Hub,
-         * grouped together in batches. Depending on the {link
-         * CreateBatchOptions options} specified when creating an
-         * {linkEventDataBatch}, the events may be automatically routed to an
-         * available partition or specific to a partition. Use by this component
-         * to produce the data in camel producer.
+         * grouped together in batches. Depending on the options specified when
+         * creating an {linkEventDataBatch}, the events may be automatically
+         * routed to an available partition or specific to a partition. Use by
+         * this component to produce the data in camel producer.
          * 
          * The option is a:
          * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.

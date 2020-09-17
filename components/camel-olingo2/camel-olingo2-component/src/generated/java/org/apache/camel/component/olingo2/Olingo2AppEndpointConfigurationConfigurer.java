@@ -156,6 +156,8 @@ public class Olingo2AppEndpointConfigurationConfigurer extends org.apache.camel.
         case "HttpHeaders": return java.lang.String.class;
         case "queryparams":
         case "QueryParams": return java.lang.String.class;
+        case "responsehandler":
+        case "ResponseHandler": return java.util.List.class;
         default: return null;
         }
     }

@@ -109,7 +109,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
          * 
-         * Default: SIZE_BASED
+         * Default: size-based
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder evictionType(
@@ -123,7 +123,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
          * 
-         * Default: SIZE_BASED
+         * Default: size-based
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder evictionType(String evictionType) {

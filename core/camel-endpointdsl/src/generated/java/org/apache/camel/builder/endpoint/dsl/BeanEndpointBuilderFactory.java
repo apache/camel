@@ -93,7 +93,7 @@ public interface BeanEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
-         * Default: Singleton
+         * Default: singleton
          * Group: common
          */
         default BeanEndpointBuilder scope(BeanScope scope) {
@@ -119,7 +119,7 @@ public interface BeanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.BeanScope</code> type.
          * 
-         * Default: Singleton
+         * Default: singleton
          * Group: common
          */
         default BeanEndpointBuilder scope(String scope) {

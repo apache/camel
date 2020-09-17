@@ -493,7 +493,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * 
-         * Default: listQueues
+         * Default: list-queues
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(
@@ -507,7 +507,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * 
-         * Default: listQueues
+         * Default: list-queues
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(String operation) {

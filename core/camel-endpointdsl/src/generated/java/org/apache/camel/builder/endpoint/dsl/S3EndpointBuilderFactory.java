@@ -716,7 +716,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(
@@ -731,7 +731,7 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
@@ -857,7 +857,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -870,7 +870,7 @@ public interface S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(String timeUnit) {

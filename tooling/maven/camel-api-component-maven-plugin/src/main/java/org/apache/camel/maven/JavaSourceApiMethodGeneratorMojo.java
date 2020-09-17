@@ -17,15 +17,12 @@
 package org.apache.camel.maven;
 
 import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -45,7 +42,6 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
     }
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
-    private static final Pattern RAW_ARGTYPES_PATTERN = Pattern.compile("\\s*([^<\\s,]+)\\s*(<[^>]+>)?\\s*,?");
 
     @Parameter(property = PREFIX + "excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)
     protected String excludePackages;
@@ -106,19 +102,24 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                 }
 
                 // get public method signature
-                for (String method : parser.getMethods()) {
+                for (String method : parser.getMethodSignatures()) {
                     if (!result.containsKey(method)
                             && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
                             && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
 
+                        String signature = method;
                         method = method.replace("public ", "");
                         int whitespace = method.indexOf(' ');
                         int leftBracket = method.indexOf('(');
                         String name = method.substring(whitespace + 1, leftBracket);
+
                         SignatureModel model = new SignatureModel();
                         model.setSignature(method);
-                        Map<String, String> params = parser.getParameters().get(name);
-                        model.setParameters(params);
+                        model.setApiDescription(parser.getClassDoc());
+                        model.setMethodDescription(parser.getMethodDocs().get(name));
+                        model.setParameterDescriptions(parser.getParameterDocs().get(name));
+                        model.setParameterTypes(parser.getParameterTypes().get(signature));
+
                         result.put(method, model);
                     }
                 }
@@ -133,41 +134,6 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
                                              + "make sure source JAR is available as project scoped=provided and optional=true dependency");
         }
         return new ArrayList<>(result.values());
-    }
-
-    private String getResultType(Class<?> aClass, String name, String[] types) throws MojoExecutionException {
-        Class<?>[] argTypes = new Class<?>[types.length];
-        final ClassLoader classLoader = getProjectClassLoader();
-        for (int i = 0; i < types.length; i++) {
-            try {
-                try {
-                    argTypes[i] = ApiMethodParser.forName(types[i], classLoader);
-                } catch (ClassNotFoundException e) {
-                    throw new MojoExecutionException(e.getMessage(), e);
-                }
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException(e.getCause().getMessage(), e.getCause());
-            }
-        }
-
-        // return null for non-public methods, and for non-static methods if includeStaticMethods is null or false
-        String result = null;
-        try {
-            final Method method = aClass.getMethod(name, argTypes);
-            int modifiers = method.getModifiers();
-            if (!Modifier.isStatic(modifiers) || Boolean.TRUE.equals(includeStaticMethods)) {
-                result = method.getReturnType().getName();
-            }
-        } catch (NoSuchMethodException e) {
-            // could be a non-public method
-            try {
-                aClass.getDeclaredMethod(name, argTypes);
-            } catch (NoSuchMethodException e1) {
-                throw new MojoExecutionException(e1.getMessage(), e1);
-            }
-        }
-
-        return result;
     }
 
 }

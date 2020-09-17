@@ -1054,8 +1054,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
          * object in order to integrate with existing (legacy) endpoint mappings
          * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-         * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION,
-         * TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+         * There are 8 enums and the value can be one of: root-qname, action,
+         * to, soap-action, xpathresult, uri, uri-path, beanname
          * 
          * Path parameter: lookupKey
          * Endpoint mapping key if endpoint mapping is used
@@ -1096,8 +1096,8 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
          * object in order to integrate with existing (legacy) endpoint mappings
          * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
-         * There are 8 enums and the value can be one of: ROOT_QNAME, ACTION,
-         * TO, SOAP_ACTION, XPATHRESULT, URI, URI_PATH, BEANNAME
+         * There are 8 enums and the value can be one of: root-qname, action,
+         * to, soap-action, xpathresult, uri, uri-path, beanname
          * 
          * Path parameter: lookupKey
          * Endpoint mapping key if endpoint mapping is used

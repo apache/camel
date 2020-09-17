@@ -670,9 +670,9 @@ The Salesforce component supports 72 options, which are listed below.
 | *apiVersion* (common) | Salesforce API version. | 34.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: xml, csv, json, zip-xml, zip-csv, zip-json |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
-| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: json, xml |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
 | *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
@@ -683,11 +683,11 @@ The Salesforce component supports 72 options, which are listed below.
 | *jobId* (common) | Bulk API Job ID |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: exception, null | exception | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: all, referenced, select, where |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: all, create, extended, update |  | NotifyForOperationsEnum
 | *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
@@ -780,9 +780,9 @@ with the following path and query parameters:
 | *apiVersion* (common) | Salesforce API version. | 34.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
+| *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: xml, csv, json, zip-xml, zip-csv, zip-json |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
-| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
+| *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: json, xml |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
@@ -790,11 +790,11 @@ with the following path and query parameters:
 | *jobId* (common) | Bulk API Job ID |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 30000 | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: EXCEPTION, NULL | EXCEPTION | NotFoundBehaviour
-| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. There are 2 enums and the value can be one of: exception, null | exception | NotFoundBehaviour
+| *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE. There are 4 enums and the value can be one of: all, referenced, select, where |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: ALL, CREATE, EXTENDED, UPDATE |  | NotifyForOperationsEnum
+| *notifyForOperations* (common) | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0). There are 4 enums and the value can be one of: all, create, extended, update |  | NotifyForOperationsEnum
 | *notifyForOperationUndelete* (common) | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationUpdate* (common) | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
 | *objectMapper* (common) | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
@@ -815,7 +815,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

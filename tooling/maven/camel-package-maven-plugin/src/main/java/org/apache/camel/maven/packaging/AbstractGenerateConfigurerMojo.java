@@ -335,8 +335,13 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
                     String desc = type.isArray() ? type.getComponentType().getName() : m.toGenericString();
                     if (desc.contains("<") && desc.contains(">")) {
                         desc = Strings.between(desc, "<", ">");
+                        // if it has additional nested types, then we only want the outer type
+                        int pos = desc.indexOf('<');
+                        if (pos != -1) {
+                            desc = desc.substring(0, pos);
+                        }
                         // if its a map then it has a key/value, so we only want the last part
-                        int pos = desc.indexOf(',');
+                        pos = desc.indexOf(',');
                         if (pos != -1) {
                             desc = desc.substring(pos + 1);
                         }

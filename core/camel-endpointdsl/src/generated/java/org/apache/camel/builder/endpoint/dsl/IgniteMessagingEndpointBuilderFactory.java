@@ -403,7 +403,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> type.
          * 
-         * Default: UNORDERED
+         * Default: unordered
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(
@@ -417,7 +417,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> type.
          * 
-         * Default: UNORDERED
+         * Default: unordered
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(String sendMode) {

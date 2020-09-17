@@ -362,6 +362,7 @@
                                         <nullableOption>offset</nullableOption>
                                         <nullableOption>limit</nullableOption>
                                         <nullableOption>fields</nullableOption>
+                                        <nullableOption>newName</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>

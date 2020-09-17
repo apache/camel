@@ -325,7 +325,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
          * 
-         * Default: LATEST
+         * Default: latest
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
@@ -340,7 +340,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
          * 
-         * Default: LATEST
+         * Default: latest
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
@@ -369,7 +369,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
          * 
-         * Default: PersistentOnly
+         * Default: persistent-only
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
@@ -385,7 +385,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
          * 
-         * Default: PersistentOnly
+         * Default: persistent-only
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
@@ -400,7 +400,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
-         * Default: EXCLUSIVE
+         * Default: exclusive
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
@@ -415,7 +415,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
-         * Default: EXCLUSIVE
+         * Default: exclusive
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
@@ -729,7 +729,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: producer
          */
         default PulsarEndpointProducerBuilder compressionType(
@@ -743,7 +743,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: producer
          */
         default PulsarEndpointProducerBuilder compressionType(
@@ -911,7 +911,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
-         * Default: RoundRobinPartition
+         * Default: round-robin-partition
          * Group: producer
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(
@@ -925,7 +925,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
-         * Default: RoundRobinPartition
+         * Default: round-robin-partition
          * Group: producer
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(

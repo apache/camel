@@ -1095,7 +1095,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
@@ -1113,7 +1113,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
@@ -1540,7 +1540,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
@@ -1555,7 +1555,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
@@ -1683,7 +1683,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1696,7 +1696,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -2480,7 +2480,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default FileEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
@@ -2507,7 +2507,7 @@ public interface FileEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default FileEndpointProducerBuilder fileExist(String fileExist) {

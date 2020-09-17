@@ -366,7 +366,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder runLoggingLevel(
@@ -381,7 +381,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder runLoggingLevel(
@@ -508,7 +508,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -521,7 +521,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -861,7 +861,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
@@ -876,7 +876,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
@@ -1240,7 +1240,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
@@ -1255,7 +1255,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
@@ -1575,7 +1575,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
@@ -1590,7 +1590,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: RSA_SHA_256
+         * Default: rsa-sha-256
          * Group: security
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
@@ -1648,9 +1648,9 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 10 enums and the value can be one of: COLLABORATIONS,
-         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
-         * USERS
+         * There are 10 enums and the value can be one of: collaborations,
+         * comments, event-logs, files, folders, groups, events, search, tasks,
+         * users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1673,9 +1673,9 @@ public interface BoxEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 10 enums and the value can be one of: COLLABORATIONS,
-         * COMMENTS, EVENT_LOGS, FILES, FOLDERS, GROUPS, EVENTS, SEARCH, TASKS,
-         * USERS
+         * There are 10 enums and the value can be one of: collaborations,
+         * comments, event-logs, files, folders, groups, events, search, tasks,
+         * users
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

@@ -28,13 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Groups Manager
- * 
- * <p>
  * Provides operations to manage Box groups.
- * 
- * 
- *
  */
 public class BoxGroupsManager {
 

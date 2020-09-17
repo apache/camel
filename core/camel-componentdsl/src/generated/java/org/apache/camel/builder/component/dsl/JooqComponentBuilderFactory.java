@@ -129,7 +129,7 @@ public interface JooqComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: producer
          */
         default JooqComponentBuilder operation(

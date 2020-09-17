@@ -53,7 +53,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* | *Required* Operation to use. There are 1 enums and the value can be one of: startCase |  | BonitaOperation
+| *operation* | *Required* Operation to use. There are 1 enums and the value can be one of: start-case |  | BonitaOperation
 |===
 
 

@@ -308,7 +308,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.persistence.LockModeType</code> type.
          * 
-         * Default: PESSIMISTIC_WRITE
+         * Default: pessimistic-write
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(
@@ -322,7 +322,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>javax.persistence.LockModeType</code> type.
          * 
-         * Default: PESSIMISTIC_WRITE
+         * Default: pessimistic-write
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(String lockModeType) {
@@ -669,7 +669,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
@@ -684,7 +684,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
@@ -811,7 +811,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -824,7 +824,7 @@ public interface JpaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(String timeUnit) {

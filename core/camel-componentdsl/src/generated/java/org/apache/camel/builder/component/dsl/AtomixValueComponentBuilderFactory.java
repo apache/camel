@@ -90,7 +90,7 @@ public interface AtomixValueComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue.Action</code> type.
          * 
-         * Default: SET
+         * Default: set
          * Group: common
          */
         default AtomixValueComponentBuilder defaultAction(

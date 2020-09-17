@@ -103,7 +103,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(WeatherMode mode) {
@@ -116,7 +116,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(String mode) {
@@ -596,7 +596,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
@@ -611,7 +611,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
@@ -740,7 +740,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -753,7 +753,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1098,7 +1098,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointProducerBuilder mode(WeatherMode mode) {
@@ -1111,7 +1111,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointProducerBuilder mode(String mode) {
@@ -1595,7 +1595,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointBuilder mode(WeatherMode mode) {
@@ -1608,7 +1608,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
-         * Default: JSON
+         * Default: json
          * Group: common
          */
         default WeatherEndpointBuilder mode(String mode) {

@@ -278,7 +278,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
          * type.
          * 
-         * Default: TimeStamp
+         * Default: time-stamp
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder queryStrategy(
@@ -294,7 +294,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
          * type.
          * 
-         * Default: TimeStamp
+         * Default: time-stamp
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder queryStrategy(String queryStrategy) {

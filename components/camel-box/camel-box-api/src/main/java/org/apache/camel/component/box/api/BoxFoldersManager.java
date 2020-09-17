@@ -31,13 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Box Folders Manager
- * 
- * <p>
  * Provides operations to manage Box folders.
- * 
- * 
- *
  */
 public class BoxFoldersManager {
 

@@ -73,7 +73,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
@@ -87,7 +87,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
@@ -125,7 +125,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
@@ -139,7 +139,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
@@ -571,7 +571,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
@@ -585,7 +585,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
@@ -623,7 +623,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
@@ -637,7 +637,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
@@ -1017,7 +1017,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointBuilder broadcastType(
@@ -1031,7 +1031,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: common
          */
         default AtomixMessagingEndpointBuilder broadcastType(
@@ -1068,7 +1068,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointBuilder defaultAction(
@@ -1082,7 +1082,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
-         * Default: DIRECT
+         * Default: direct
          * Group: common
          */
         default AtomixMessagingEndpointBuilder defaultAction(

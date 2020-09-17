@@ -257,7 +257,7 @@ public interface AzureBlobComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * 
-         * Default: listBlobs
+         * Default: list-blobs
          * Group: producer
          */
         default AzureBlobComponentBuilder operation(

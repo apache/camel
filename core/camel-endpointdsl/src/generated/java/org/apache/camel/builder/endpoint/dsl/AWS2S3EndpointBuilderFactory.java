@@ -874,7 +874,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AWS2S3EndpointConsumerBuilder runLoggingLevel(
@@ -889,7 +889,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default AWS2S3EndpointConsumerBuilder runLoggingLevel(
@@ -1018,7 +1018,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AWS2S3EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1031,7 +1031,7 @@ public interface AWS2S3EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default AWS2S3EndpointConsumerBuilder timeUnit(String timeUnit) {

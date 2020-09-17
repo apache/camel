@@ -186,7 +186,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
          * 
-         * Default: PutItem
+         * Default: put-item
          * Group: producer
          */
         default Ddb2EndpointBuilder operation(Ddb2Operations operation) {
@@ -199,7 +199,7 @@ public interface Ddb2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws2.ddb.Ddb2Operations</code> type.
          * 
-         * Default: PutItem
+         * Default: put-item
          * Group: producer
          */
         default Ddb2EndpointBuilder operation(String operation) {

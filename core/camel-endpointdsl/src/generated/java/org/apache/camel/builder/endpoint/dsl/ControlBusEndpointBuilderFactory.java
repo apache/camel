@@ -135,7 +135,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: INFO
+         * Default: info
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
@@ -149,7 +149,7 @@ public interface ControlBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: INFO
+         * Default: info
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {

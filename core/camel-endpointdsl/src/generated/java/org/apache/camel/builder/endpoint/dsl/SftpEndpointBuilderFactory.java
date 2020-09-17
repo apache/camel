@@ -207,7 +207,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
@@ -222,7 +222,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
@@ -262,7 +262,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointConsumerBuilder separator(PathSeparator separator) {
@@ -277,7 +277,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointConsumerBuilder separator(String separator) {
@@ -1270,7 +1270,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
@@ -1288,7 +1288,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: DEBUG
+         * Default: debug
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
@@ -1715,7 +1715,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
@@ -1730,7 +1730,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
@@ -1858,7 +1858,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1871,7 +1871,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -3209,7 +3209,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
@@ -3224,7 +3224,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
@@ -3264,7 +3264,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointProducerBuilder separator(PathSeparator separator) {
@@ -3279,7 +3279,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointProducerBuilder separator(String separator) {
@@ -3306,7 +3306,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
@@ -3333,7 +3333,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
-         * Default: Override
+         * Default: override
          * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(String fileExist) {
@@ -4690,7 +4690,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(
@@ -4705,7 +4705,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
@@ -4744,7 +4744,7 @@ public interface SftpEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointBuilder separator(PathSeparator separator) {
@@ -4759,7 +4759,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
-         * Default: UNIX
+         * Default: unix
          * Group: common
          */
         default SftpEndpointBuilder separator(String separator) {

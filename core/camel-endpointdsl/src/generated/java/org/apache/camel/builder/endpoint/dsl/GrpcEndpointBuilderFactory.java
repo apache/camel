@@ -142,7 +142,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
          * type.
          * 
-         * Default: PROPAGATION
+         * Default: propagation
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
@@ -163,7 +163,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
          * type.
          * 
-         * Default: PROPAGATION
+         * Default: propagation
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
@@ -258,7 +258,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointConsumerBuilder authenticationType(
@@ -272,7 +272,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointConsumerBuilder authenticationType(
@@ -287,7 +287,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
@@ -302,7 +302,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(String jwtAlgorithm) {
@@ -382,7 +382,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointConsumerBuilder negotiationType(
@@ -397,7 +397,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointConsumerBuilder negotiationType(
@@ -680,7 +680,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
          * type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default GrpcEndpointProducerBuilder producerStrategy(
@@ -699,7 +699,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
          * type.
          * 
-         * Default: SIMPLE
+         * Default: simple
          * Group: producer
          */
         default GrpcEndpointProducerBuilder producerStrategy(
@@ -737,7 +737,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointProducerBuilder authenticationType(
@@ -751,7 +751,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointProducerBuilder authenticationType(
@@ -766,7 +766,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
@@ -781,7 +781,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(String jwtAlgorithm) {
@@ -861,7 +861,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointProducerBuilder negotiationType(
@@ -876,7 +876,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointProducerBuilder negotiationType(
@@ -1043,7 +1043,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointBuilder authenticationType(
@@ -1057,7 +1057,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: security
          */
         default GrpcEndpointBuilder authenticationType(String authenticationType) {
@@ -1071,7 +1071,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
@@ -1085,7 +1085,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
-         * Default: HMAC256
+         * Default: hmac256
          * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
@@ -1165,7 +1165,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointBuilder negotiationType(
@@ -1180,7 +1180,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
          * 
-         * Default: PLAINTEXT
+         * Default: plaintext
          * Group: security
          */
         default GrpcEndpointBuilder negotiationType(String negotiationType) {

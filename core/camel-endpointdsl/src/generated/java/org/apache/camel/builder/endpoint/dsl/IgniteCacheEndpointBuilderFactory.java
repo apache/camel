@@ -526,7 +526,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option is a: <code>org.apache.ignite.cache.CachePeekMode</code>
          * type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
@@ -541,7 +541,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ignite.cache.CachePeekMode</code> type.
          * 
-         * Default: ALL
+         * Default: all
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(

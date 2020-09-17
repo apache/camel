@@ -544,7 +544,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
@@ -559,7 +559,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
@@ -691,7 +691,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder timeUnit(
@@ -705,7 +705,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1596,8 +1596,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-         * MENTIONS, RETWEETSOFME, UNKNOWN
+         * There are 6 enums and the value can be one of: public, home, user,
+         * mentions, retweetsofme, unknown
          * 
          * @param path timelineType
          */
@@ -1616,8 +1616,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * Path parameter: timelineType (required)
          * The timeline type to produce/consume.
-         * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-         * MENTIONS, RETWEETSOFME, UNKNOWN
+         * There are 6 enums and the value can be one of: public, home, user,
+         * mentions, retweetsofme, unknown
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

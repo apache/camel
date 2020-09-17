@@ -317,7 +317,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder runLoggingLevel(
@@ -332,7 +332,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder runLoggingLevel(
@@ -461,7 +461,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -474,7 +474,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -899,27 +899,27 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
-         * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
-         * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
-         * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
-         * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
-         * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
-         * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-         * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-         * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-         * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
-         * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
-         * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER,
-         * RECORDING_ADD_ON_RESULT, RECORDING_TRANSCRIPTION,
-         * RECORDING_ADD_ON_RESULT_PAYLOAD, SIP_CREDENTIAL_LIST, SIP_DOMAIN,
-         * SIP_IP_ACCESS_CONTROL_LIST, SIP_CREDENTIAL_LIST_CREDENTIAL,
-         * SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
-         * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
-         * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
-         * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
-         * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
-         * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
+         * There are 56 enums and the value can be one of: account, address,
+         * application, available-phone-number-country, call, conference,
+         * connect-app, incoming-phone-number, key, message, new-key,
+         * new-signing-key, notification, outgoing-caller-id, queue, recording,
+         * short-code, signing-key, token, transcription, validation-request,
+         * address-dependent-phone-number, available-phone-number-country-local,
+         * available-phone-number-country-mobile,
+         * available-phone-number-country-toll-free, call-feedback,
+         * call-feedback-summary, call-notification, call-recording,
+         * conference-participant, incoming-phone-number-local,
+         * incoming-phone-number-mobile, incoming-phone-number-toll-free,
+         * message-feedback, message-media, queue-member,
+         * recording-add-on-result, recording-transcription,
+         * recording-add-on-result-payload, sip-credential-list, sip-domain,
+         * sip-ip-access-control-list, sip-credential-list-credential,
+         * sip-domain-credential-list-mapping,
+         * sip-domain-ip-access-control-list-mapping,
+         * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
+         * usage-record-all-time, usage-record-daily, usage-record-last-month,
+         * usage-record-monthly, usage-record-this-month, usage-record-today,
+         * usage-record-yearly, usage-record-yesterday
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -943,27 +943,27 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 56 enums and the value can be one of: ACCOUNT, ADDRESS,
-         * APPLICATION, AVAILABLE_PHONE_NUMBER_COUNTRY, CALL, CONFERENCE,
-         * CONNECT_APP, INCOMING_PHONE_NUMBER, KEY, MESSAGE, NEW_KEY,
-         * NEW_SIGNING_KEY, NOTIFICATION, OUTGOING_CALLER_ID, QUEUE, RECORDING,
-         * SHORT_CODE, SIGNING_KEY, TOKEN, TRANSCRIPTION, VALIDATION_REQUEST,
-         * ADDRESS_DEPENDENT_PHONE_NUMBER, AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,
-         * AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,
-         * AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE, CALL_FEEDBACK,
-         * CALL_FEEDBACK_SUMMARY, CALL_NOTIFICATION, CALL_RECORDING,
-         * CONFERENCE_PARTICIPANT, INCOMING_PHONE_NUMBER_LOCAL,
-         * INCOMING_PHONE_NUMBER_MOBILE, INCOMING_PHONE_NUMBER_TOLL_FREE,
-         * MESSAGE_FEEDBACK, MESSAGE_MEDIA, QUEUE_MEMBER,
-         * RECORDING_ADD_ON_RESULT, RECORDING_TRANSCRIPTION,
-         * RECORDING_ADD_ON_RESULT_PAYLOAD, SIP_CREDENTIAL_LIST, SIP_DOMAIN,
-         * SIP_IP_ACCESS_CONTROL_LIST, SIP_CREDENTIAL_LIST_CREDENTIAL,
-         * SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,
-         * SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,
-         * SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS, USAGE_RECORD, USAGE_TRIGGER,
-         * USAGE_RECORD_ALL_TIME, USAGE_RECORD_DAILY, USAGE_RECORD_LAST_MONTH,
-         * USAGE_RECORD_MONTHLY, USAGE_RECORD_THIS_MONTH, USAGE_RECORD_TODAY,
-         * USAGE_RECORD_YEARLY, USAGE_RECORD_YESTERDAY
+         * There are 56 enums and the value can be one of: account, address,
+         * application, available-phone-number-country, call, conference,
+         * connect-app, incoming-phone-number, key, message, new-key,
+         * new-signing-key, notification, outgoing-caller-id, queue, recording,
+         * short-code, signing-key, token, transcription, validation-request,
+         * address-dependent-phone-number, available-phone-number-country-local,
+         * available-phone-number-country-mobile,
+         * available-phone-number-country-toll-free, call-feedback,
+         * call-feedback-summary, call-notification, call-recording,
+         * conference-participant, incoming-phone-number-local,
+         * incoming-phone-number-mobile, incoming-phone-number-toll-free,
+         * message-feedback, message-media, queue-member,
+         * recording-add-on-result, recording-transcription,
+         * recording-add-on-result-payload, sip-credential-list, sip-domain,
+         * sip-ip-access-control-list, sip-credential-list-credential,
+         * sip-domain-credential-list-mapping,
+         * sip-domain-ip-access-control-list-mapping,
+         * sip-ip-access-control-list-ip-address, usage-record, usage-trigger,
+         * usage-record-all-time, usage-record-daily, usage-record-last-month,
+         * usage-record-monthly, usage-record-this-month, usage-record-today,
+         * usage-record-yearly, usage-record-yesterday
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

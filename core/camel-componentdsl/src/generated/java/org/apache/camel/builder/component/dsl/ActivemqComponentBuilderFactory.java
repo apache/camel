@@ -456,7 +456,7 @@ public interface ActivemqComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer (advanced)
          */
         default ActivemqComponentBuilder consumerType(
@@ -1521,7 +1521,7 @@ public interface ActivemqComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: logging
          */
         default ActivemqComponentBuilder errorHandlerLoggingLevel(

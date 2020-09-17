@@ -105,7 +105,7 @@ public enum BoxFilesManagerApiMethod implements ApiMethod {
         arg("fileId", String.class)),
 
     GET_FILE_THUMBNAIL(
-        byte.class,
+        byte[].class,
         "getFileThumbnail",
         arg("fileId", String.class),
         arg("fileType", com.box.sdk.BoxFile.ThumbnailFileType.class),

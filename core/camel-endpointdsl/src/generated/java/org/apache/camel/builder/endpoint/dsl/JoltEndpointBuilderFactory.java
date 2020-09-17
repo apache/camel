@@ -135,7 +135,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
-         * Default: Hydrated
+         * Default: hydrated
          * Group: producer
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
@@ -149,7 +149,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
-         * Default: Hydrated
+         * Default: hydrated
          * Group: producer
          */
         default JoltEndpointBuilder inputType(String inputType) {
@@ -203,7 +203,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
-         * Default: Hydrated
+         * Default: hydrated
          * Group: producer
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
@@ -217,7 +217,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
-         * Default: Hydrated
+         * Default: hydrated
          * Group: producer
          */
         default JoltEndpointBuilder outputType(String outputType) {
@@ -231,7 +231,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
-         * Default: Chainr
+         * Default: chainr
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
@@ -245,7 +245,7 @@ public interface JoltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
-         * Default: Chainr
+         * Default: chainr
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {

@@ -553,7 +553,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: logging
          */
         default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -568,7 +568,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: WARN
+         * Default: warn
          * Group: logging
          */
         default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -814,7 +814,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder consumerType(
@@ -837,7 +837,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder consumerType(

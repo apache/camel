@@ -498,7 +498,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
@@ -513,7 +513,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
@@ -642,7 +642,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -655,7 +655,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(String timeUnit) {

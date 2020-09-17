@@ -269,7 +269,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(
@@ -297,7 +297,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
          * 
-         * Default: Default
+         * Default: default
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(String bindingStyle) {

@@ -102,7 +102,7 @@ public interface SmppComponentBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
-         * Default: ALLOW
+         * Default: allow
          * Group: common
          */
         default SmppComponentBuilder splittingPolicy(

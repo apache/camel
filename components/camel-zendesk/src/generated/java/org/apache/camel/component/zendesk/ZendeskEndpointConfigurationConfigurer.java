@@ -649,6 +649,8 @@ public class ZendeskEndpointConfigurationConfigurer extends org.apache.camel.sup
         case "Statuses": return org.zendesk.client.v2.model.JobStatus.class;
         case "ticketlist":
         case "TicketList": return org.zendesk.client.v2.model.Ticket.class;
+        case "type":
+        case "Type": return org.zendesk.client.v2.model.SearchResultEntity.class;
         case "userlist":
         case "UserList": return org.zendesk.client.v2.model.User.class;
         case "userslist":

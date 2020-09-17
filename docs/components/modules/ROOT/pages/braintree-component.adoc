@@ -79,7 +79,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: ADD_ON, ADDRESS, CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION |  | BraintreeApiName
+| *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: add-on, address, client-token, credit-card-verification, customer, discount, dispute, document-upload, merchant-account, payment-method, payment-method-nonce, plan, report, settlement-batch-summary, subscription, transaction, webhook-notification |  | BraintreeApiName
 | *methodName* | What sub operation to use for the selected operation |  | String
 |===
 
@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -114,12 +114,12 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
 | *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: trace, debug, info, warn, error, off | trace | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
-| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: nanoseconds, microseconds, milliseconds, seconds, minutes, hours, days | milliseconds | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *accessToken* (security) | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
 | *privateKey* (security) | The private key provided by Braintree. |  | String
@@ -129,7 +129,7 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (17 APIs):
+=== Query API Parameters (14 APIs):
 
 The Braintree endpoint is an API based component and has additional parameters based on which API name and method in use.
 The API name and method is located in the endpoint URI as the apiName/methodName path parameters:
@@ -141,181 +141,872 @@ braintree:apiName/methodName
 The following lists each API name and method and its additional parameters.
 
 
-==== addOn
-
-The addOn method has no API parameters.
+==== paymentMethodNonce
 
 
-==== address
+The paymentMethodNonce API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
 
-[width="100%",cols="2,5,3",options="header"]
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> create(String paymentMethodToken);
+
+com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> create(com.braintreegateway.PaymentMethodNonceRequest request);
+
+com.braintreegateway.PaymentMethodNonce find(String paymentMethodNonce);
+
+----
+
+The paymentMethodNonce API is defined in the syntax as follows:
+
+----
+braintree:paymentMethodNonce/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
 |===
-| Name | Description | Type
-| *customerId* | The id of the Customer | String
-| *id* | The id of the Address to delete | String
-| *request* | The request object | AddressRequest
-|===
-
-
-==== clientToken
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *request* |  | ClientTokenRequest
-|===
-
-
-==== creditCardVerification
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *id* |  | String
-| *query* |  | CreditCardVerificationSearchRequest
-| *request* |  | CreditCardVerificationRequest
+| Method | Alias | Description
+| *create* |  | 
+| *find* |  | 
 |===
 
-
-==== customer
-
-[width="100%",cols="2,5,3",options="header"]
+The paymentMethodNonce API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
 |===
-| Name | Description | Type
-| *associationFilterId* | The id of the association filter to use | String
-| *id* | The id of the Customer | String
-| *query* | The request query to use for search | CustomerSearchRequest
-| *request* | The request | CustomerRequest
+| Method | Parameter | Description | Type
+| create | *paymentMethodToken* |   | String
+| create | *request* |   | PaymentMethodNonceRequest
+| find | *paymentMethodNonce* |   | String
 |===
 
+In addition to the parameters above, the paymentMethodNonce API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
 
-==== discount
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
 
-The discount method has no API parameters.
-
-
-==== dispute
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *content* | The content of the text evidence for the dispute | String
-| *disputeId* | The dispute id to add text evidence to | String
-| *documentId* | The document id of a previously uploaded document | String
-| *evidenceId* | The evidence id to remove | String
-| *fileEvidenceRequest* | The file evidence request for the dispute | FileEvidenceRequest
-| *id* | The dispute id to accept | String
-| *query* | The query for what disputes to find | DisputeSearchRequest
-| *textEvidenceRequest* | The text evidence request for the dispute | TextEvidenceRequest
-|===
 
 
 ==== documentUpload
 
-[width="100%",cols="2,5,3",options="header"]
+
+The documentUpload API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.DocumentUpload> create(com.braintreegateway.DocumentUploadRequest request);
+
+----
+
+The documentUpload API is defined in the syntax as follows:
+
+----
+braintree:documentUpload/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
 |===
-| Name | Description | Type
-| *request* |  | DocumentUploadRequest
-|===
-
-
-==== merchantAccount
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *currencyRequest* |  | MerchantAccountCreateForCurrencyRequest
-| *id* |  | String
-| *page* |  | Integer
-| *request* |  | MerchantAccountRequest
-|===
-
-
-==== paymentMethod
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *deleteRequest* |  | PaymentMethodDeleteRequest
-| *grantRequest* |  | PaymentMethodGrantRequest
-| *request* |  | PaymentMethodRequest
-| *token* |  | String
+| Method | Alias | Description
+| *create* |  | 
 |===
 
-
-==== paymentMethodNonce
-
-[width="100%",cols="2,5,3",options="header"]
+The documentUpload API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
 |===
-| Name | Description | Type
-| *paymentMethodNonce* |  | String
-| *paymentMethodToken* |  | String
-| *request* |  | PaymentMethodNonceRequest
+| Method | Parameter | Description | Type
+| create | *request* |   | DocumentUploadRequest
 |===
 
+In addition to the parameters above, the documentUpload API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
 
-==== plan
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
 
-The plan method has no API parameters.
-
-
-==== report
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *request* | The request | TransactionLevelFeeReportRequest
-|===
-
-
-==== settlementBatchSummary
-
-[width="100%",cols="2,5,3",options="header"]
-|===
-| Name | Description | Type
-| *groupByCustomField* |  | String
-| *settlementDate* |  | Calendar
-|===
 
 
 ==== subscription
 
-[width="100%",cols="2,5,3",options="header"]
+
+The subscription API has 7 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Subscription> cancel(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Subscription> create(com.braintreegateway.SubscriptionRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Subscription> delete(String customerId, String id);
+
+com.braintreegateway.Subscription find(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, Boolean submitForSettlement);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, java.math.BigDecimal amount);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, java.math.BigDecimal amount, Boolean submitForSettlement);
+
+com.braintreegateway.ResourceCollection<com.braintreegateway.Subscription> search(com.braintreegateway.SubscriptionSearchRequest searchRequest);
+
+com.braintreegateway.Result<com.braintreegateway.Subscription> update(String id, com.braintreegateway.SubscriptionRequest request);
+
+----
+
+The subscription API is defined in the syntax as follows:
+
+----
+braintree:subscription/methodName?[parameters]
+----
+
+The 7 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
 |===
-| Name | Description | Type
-| *amount* |  | BigDecimal
-| *customerId* |  | String
-| *id* | Of the Subscription to cancel | String
-| *request* | The request | SubscriptionRequest
-| *searchRequest* | The SubscriptionSearchRequest | SubscriptionSearchRequest
-| *submitForSettlement* |  | Boolean
-| *subscriptionId* |  | String
+| Method | Alias | Description
+| *cancel* |  | Cancels the Subscription with the given id
+| *create* |  | Creates a Subscription
+| *delete* |  | 
+| *find* |  | Finds a Subscription by id
+| *retryCharge* |  | 
+| *search* |  | Search for a Subscription
+| *update* |  | Updates a Subscription
 |===
 
-
-==== transaction
-
-[width="100%",cols="2,5,3",options="header"]
+The subscription API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
 |===
-| Name | Description | Type
-| *amount* |  | BigDecimal
-| *cloneRequest* |  | TransactionCloneRequest
-| *id* | Of the transaction to cancel release from escrow of | String
-| *query* | The search query | TransactionSearchRequest
-| *refundRequest* |  | TransactionRefundRequest
-| *request* | The request | TransactionRequest
+| Method | Parameter | Description | Type
+| cancel | *id* |  Of the Subscription to cancel | String
+| create | *request* |  The request | SubscriptionRequest
+| delete | *customerId* |   | String
+| delete | *id* |   | String
+| find | *id* |  The id of the Subscription | String
+| retryCharge | *amount* |   | BigDecimal
+| retryCharge | *submitForSettlement* |   | Boolean
+| retryCharge | *subscriptionId* |   | String
+| search | *searchRequest* |  The SubscriptionSearchRequest | SubscriptionSearchRequest
+| update | *id* |  The id of the Subscription | String
+| update | *request* |  The request | SubscriptionRequest
 |===
+
+In addition to the parameters above, the subscription API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== dispute
+
+
+The dispute API has 7 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> accept(String id);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, String documentId);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, com.braintreegateway.FileEvidenceRequest fileEvidenceRequest);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, String content);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, com.braintreegateway.TextEvidenceRequest textEvidenceRequest);
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> finalize(String id);
+
+com.braintreegateway.Dispute find(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> removeEvidence(String disputeId, String evidenceId);
+
+com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute> search(com.braintreegateway.DisputeSearchRequest query);
+
+----
+
+The dispute API is defined in the syntax as follows:
+
+----
+braintree:dispute/methodName?[parameters]
+----
+
+The 7 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *accept* |  | Accept a Dispute, given a dispute ID
+| *addFileEvidence* |  | Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request
+| *addTextEvidence* |  | Add Text Evidence to a Dispute, given an ID and content
+| *finalize* |  | Finalize a Dispute, given an ID
+| *find* |  | Returns a Dispute, given an ID
+| *removeEvidence* |  | Remove Evidence from a Dispute, given an ID and a DisputeEvidence ID
+| *search* |  | Finds all Disputes that match the query
+|===
+
+The dispute API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| accept | *id* |  The dispute id to accept | String
+| addFileEvidence | *disputeId* |  The dispute id to add text evidence to | String
+| addFileEvidence | *documentId* |  The document id of a previously uploaded document | String
+| addFileEvidence | *fileEvidenceRequest* |  The file evidence request for the dispute | FileEvidenceRequest
+| addTextEvidence | *content* |  The content of the text evidence for the dispute | String
+| addTextEvidence | *id* |  The dispute id to add text evidence to | String
+| addTextEvidence | *textEvidenceRequest* |  The text evidence request for the dispute | TextEvidenceRequest
+| finalize | *id* |  The dispute id to finalize | String
+| find | *id* |  The dispute id to find | String
+| removeEvidence | *disputeId* |  The dispute id to remove evidence from | String
+| removeEvidence | *evidenceId* |  The evidence id to remove | String
+| search | *query* |  The query for what disputes to find | DisputeSearchRequest
+|===
+
+In addition to the parameters above, the dispute API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== settlementBatchSummary
+
+
+The settlementBatchSummary API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate);
+
+com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate, String groupByCustomField);
+
+----
+
+The settlementBatchSummary API is defined in the syntax as follows:
+
+----
+braintree:settlementBatchSummary/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *generate* |  | 
+|===
+
+The settlementBatchSummary API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| generate | *groupByCustomField* |   | String
+| generate | *settlementDate* |   | Calendar
+|===
+
+In addition to the parameters above, the settlementBatchSummary API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== address
+
+
+The address API has 4 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Address> create(String customerId, com.braintreegateway.AddressRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Address> delete(String customerId, String id);
+
+com.braintreegateway.Address find(String customerId, String id);
+
+com.braintreegateway.Result<com.braintreegateway.Address> update(String customerId, String id, com.braintreegateway.AddressRequest request);
+
+----
+
+The address API is defined in the syntax as follows:
+
+----
+braintree:address/methodName?[parameters]
+----
+
+The 4 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | Creates an Address for a Customer
+| *delete* |  | Deletes a Customer's Address
+| *find* |  | Finds a Customer's Address
+| *update* |  | Updates a Customer's Address
+|===
+
+The address API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *customerId* |  The id of the Customer | String
+| create | *request* |  The request object | AddressRequest
+| delete | *customerId* |  The id of the Customer | String
+| delete | *id* |  The id of the Address to delete | String
+| find | *customerId* |  The id of the Customer | String
+| find | *id* |  The id of the Address | String
+| update | *customerId* |  The id of the Customer | String
+| update | *id* |  The id of the Address | String
+| update | *request* |  The request object containing the AddressRequest parameters | AddressRequest
+|===
+
+In addition to the parameters above, the address API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
 
 
 ==== webhookNotification
 
-[width="100%",cols="2,5,3",options="header"]
+
+The webhookNotification API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.WebhookNotification parse(String signature, String payload);
+
+String verify(String challenge);
+
+----
+
+The webhookNotification API is defined in the syntax as follows:
+
+----
+braintree:webhookNotification/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
 |===
-| Name | Description | Type
-| *challenge* |  | String
-| *payload* |  | String
-| *signature* |  | String
+| Method | Alias | Description
+| *parse* |  | 
+| *verify* |  | 
 |===
+
+The webhookNotification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| parse | *payload* |   | String
+| parse | *signature* |   | String
+| verify | *challenge* |   | String
+|===
+
+In addition to the parameters above, the webhookNotification API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== creditCardVerification
+
+
+The creditCardVerification API has 3 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.CreditCardVerification> create(com.braintreegateway.CreditCardVerificationRequest request);
+
+com.braintreegateway.CreditCardVerification find(String id);
+
+com.braintreegateway.ResourceCollection<com.braintreegateway.CreditCardVerification> search(com.braintreegateway.CreditCardVerificationSearchRequest query);
+
+----
+
+The creditCardVerification API is defined in the syntax as follows:
+
+----
+braintree:creditCardVerification/methodName?[parameters]
+----
+
+The 3 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | 
+| *find* |  | 
+| *search* |  | 
+|===
+
+The creditCardVerification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *request* |   | CreditCardVerificationRequest
+| find | *id* |   | String
+| search | *query* |   | CreditCardVerificationSearchRequest
+|===
+
+In addition to the parameters above, the creditCardVerification API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== transaction
+
+
+The transaction API has 13 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> cancelRelease(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> cloneTransaction(String id, com.braintreegateway.TransactionCloneRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> credit(com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.Transaction find(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> holdInEscrow(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> refund(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> refund(String id, com.braintreegateway.TransactionRefundRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> refund(String id, java.math.BigDecimal amount);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> releaseFromEscrow(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> sale(com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.ResourceCollection<com.braintreegateway.Transaction> search(com.braintreegateway.TransactionSearchRequest query);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> submitForPartialSettlement(String id, com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> submitForPartialSettlement(String id, java.math.BigDecimal amount);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> submitForSettlement(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> submitForSettlement(String id, com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> submitForSettlement(String id, java.math.BigDecimal amount);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> updateDetails(String id, com.braintreegateway.TransactionRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Transaction> voidTransaction(String id);
+
+----
+
+The transaction API is defined in the syntax as follows:
+
+----
+braintree:transaction/methodName?[parameters]
+----
+
+The 13 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *cancelRelease* |  | Cancels a pending release of a transaction with the given id from escrow
+| *cloneTransaction* |  | 
+| *credit* |  | Creates a credit Transaction
+| *find* |  | Finds a Transaction by id
+| *holdInEscrow* |  | Holds the transaction with the given id for escrow
+| *refund* |  | Refunds all or part of a previous sale Transaction
+| *releaseFromEscrow* |  | Submits the transaction with the given id for release
+| *sale* |  | Creates a sale Transaction
+| *search* |  | Finds all Transactions that match the query and returns a ResourceCollection
+| *submitForPartialSettlement* |  | Submits a partial settlement transaction for the given id
+| *submitForSettlement* |  | Submits the transaction with the given id to be settled along with a TransactionRequest object
+| *updateDetails* |  | Updates details for a transaction that has been submitted for settlement
+| *voidTransaction* |  | Voids the transaction with the given id
+|===
+
+The transaction API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| cancelRelease | *id* |  Of the transaction to cancel release from escrow of | String
+| cloneTransaction | *cloneRequest* |   | TransactionCloneRequest
+| cloneTransaction | *id* |   | String
+| credit | *request* |  The request | TransactionRequest
+| find | *id* |  The id of the Transaction | String
+| holdInEscrow | *id* |  Of the transaction to hold for escrow | String
+| refund | *amount* |   | BigDecimal
+| refund | *id* |   | String
+| refund | *refundRequest* |   | TransactionRefundRequest
+| releaseFromEscrow | *id* |  Of the transaction to submit for release | String
+| sale | *request* |  The request | TransactionRequest
+| search | *query* |  The search query | TransactionSearchRequest
+| submitForPartialSettlement | *amount* |  Of the partial settlement | BigDecimal
+| submitForPartialSettlement | *id* |  Of the transaction to add the partial settlement transaction for | String
+| submitForPartialSettlement | *request* |  The request | TransactionRequest
+| submitForSettlement | *amount* |  To settle. must be less than or equal to the authorization amount. | BigDecimal
+| submitForSettlement | *id* |  Of the transaction to submit for settlement | String
+| submitForSettlement | *request* |  The request | TransactionRequest
+| updateDetails | *id* |  Of the transaction to update the details for | String
+| updateDetails | *request* |  The request | TransactionRequest
+| voidTransaction | *id* |  Of the transaction to void | String
+|===
+
+In addition to the parameters above, the transaction API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== report
+
+
+The report API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.TransactionLevelFeeReport> transactionLevelFees(com.braintreegateway.TransactionLevelFeeReportRequest request);
+
+----
+
+The report API is defined in the syntax as follows:
+
+----
+braintree:report/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *transactionLevelFees* |  | Retrieves a Transaction-Level Fee Report
+|===
+
+The report API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| transactionLevelFees | *request* |  The request | TransactionLevelFeeReportRequest
+|===
+
+In addition to the parameters above, the report API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== paymentMethod
+
+
+The paymentMethod API has 6 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> create(com.braintreegateway.PaymentMethodRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> delete(String token);
+
+com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> delete(String token, com.braintreegateway.PaymentMethodDeleteRequest request);
+
+com.braintreegateway.PaymentMethod find(String token);
+
+com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> grant(String token);
+
+com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> grant(String token, com.braintreegateway.PaymentMethodGrantRequest grantRequest);
+
+com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> revoke(String token);
+
+com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> update(String token, com.braintreegateway.PaymentMethodRequest request);
+
+----
+
+The paymentMethod API is defined in the syntax as follows:
+
+----
+braintree:paymentMethod/methodName?[parameters]
+----
+
+The 6 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | 
+| *delete* |  | 
+| *find* |  | 
+| *grant* |  | 
+| *revoke* |  | 
+| *update* |  | 
+|===
+
+The paymentMethod API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *request* |   | PaymentMethodRequest
+| delete | *deleteRequest* |   | PaymentMethodDeleteRequest
+| delete | *token* |   | String
+| find | *token* |   | String
+| grant | *grantRequest* |   | PaymentMethodGrantRequest
+| grant | *token* |   | String
+| revoke | *token* |   | String
+| update | *request* |   | PaymentMethodRequest
+| update | *token* |   | String
+|===
+
+In addition to the parameters above, the paymentMethod API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== clientToken
+
+
+The clientToken API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+String generate();
+
+String generate(com.braintreegateway.ClientTokenRequest request);
+
+----
+
+The clientToken API is defined in the syntax as follows:
+
+----
+braintree:clientToken/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *generate* |  | 
+|===
+
+The clientToken API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| generate | *request* |   | ClientTokenRequest
+|===
+
+In addition to the parameters above, the clientToken API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== merchantAccount
+
+
+The merchantAccount API has 5 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.MerchantAccount> create(com.braintreegateway.MerchantAccountRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.MerchantAccount> createForCurrency(com.braintreegateway.MerchantAccountCreateForCurrencyRequest request);
+
+com.braintreegateway.PaginatedResult<com.braintreegateway.MerchantAccount> fetchMerchantAccounts(int page);
+
+com.braintreegateway.MerchantAccount find(String id);
+
+com.braintreegateway.Result<com.braintreegateway.MerchantAccount> update(String id, com.braintreegateway.MerchantAccountRequest request);
+
+----
+
+The merchantAccount API is defined in the syntax as follows:
+
+----
+braintree:merchantAccount/methodName?[parameters]
+----
+
+The 5 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | 
+| *createForCurrency* |  | 
+| *fetchMerchantAccounts* |  | 
+| *find* |  | 
+| *update* |  | 
+|===
+
+The merchantAccount API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *request* |   | MerchantAccountRequest
+| createForCurrency | *currencyRequest* |   | MerchantAccountCreateForCurrencyRequest
+| fetchMerchantAccounts | *page* |   | Integer
+| find | *id* |   | String
+| update | *id* |   | String
+| update | *request* |   | MerchantAccountRequest
+|===
+
+In addition to the parameters above, the merchantAccount API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== customer
+
+
+The customer API has 5 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Customer> create(com.braintreegateway.CustomerRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Customer> delete(String id);
+
+com.braintreegateway.Customer find(String id);
+
+com.braintreegateway.Customer find(String id, String associationFilterId);
+
+com.braintreegateway.ResourceCollection<com.braintreegateway.Customer> search(com.braintreegateway.CustomerSearchRequest query);
+
+com.braintreegateway.Result<com.braintreegateway.Customer> update(String id, com.braintreegateway.CustomerRequest request);
+
+----
+
+The customer API is defined in the syntax as follows:
+
+----
+braintree:customer/methodName?[parameters]
+----
+
+The 5 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | Creates a Customer
+| *delete* |  | Deletes a Customer by id
+| *find* |  | Finds a Customer by id
+| *search* |  | Finds all Transactions that match the query and returns a ResourceCollection
+| *update* |  | Updates a Customer
+|===
+
+The customer API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *request* |  The request | CustomerRequest
+| delete | *id* |  The id of the Customer | String
+| find | *associationFilterId* |  The id of the association filter to use | String
+| find | *id* |  The id of the Customer | String
+| search | *query* |  The request query to use for search | CustomerSearchRequest
+| update | *id* |  The id of the Customer | String
+| update | *request* |  The request | CustomerRequest
+|===
+
+In addition to the parameters above, the customer API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
 // endpoint options: END
 
 == Producer Endpoints:

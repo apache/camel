@@ -89,7 +89,7 @@ with the following path and query parameters:
 | *period* (consumer) | If greater than 0, generate periodic events every period. | 1s | long
 | *repeatCount* (consumer) | Specifies a maximum limit of number of fires. So if you set it to 1, the timer will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *daemon* (advanced) | Specifies whether or not the thread associated with the timer endpoint runs as a daemon. The default value is true. | true | boolean
 | *pattern* (advanced) | Allows you to specify a custom Date pattern to use for setting the time option using URI syntax. |  | String

@@ -835,7 +835,16 @@ public final class StringHelper {
         return m.matches();
     }
 
+    /**
+     * Converts the string from camel case into dash format (helloGreatWorld -> hello-great-world)
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
     public static String camelCaseToDash(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         StringBuilder answer = new StringBuilder();
 
         Character prev = null;
@@ -851,9 +860,15 @@ public final class StringHelper {
             if (ch == '-' || ch == '_') {
                 answer.append("-");
             } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                answer.append("-").append(ch);
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
             } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                answer.append("-").append(ch);
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
             } else {
                 answer.append(ch);
             }

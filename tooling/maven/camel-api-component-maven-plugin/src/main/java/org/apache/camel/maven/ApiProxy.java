@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,11 +28,9 @@ public class ApiProxy {
 
     private String apiName;
 
+    private String apiDescription;
+
     private String proxyClass;
-
-    private File fromSignatureFile;
-
-    private FromJavadoc fromJavadoc;
 
     private FromJavasource fromJavasource;
 
@@ -59,28 +56,20 @@ public class ApiProxy {
         this.apiName = apiName;
     }
 
+    public String getApiDescription() {
+        return apiDescription;
+    }
+
+    public void setApiDescription(String apiDescription) {
+        this.apiDescription = apiDescription;
+    }
+
     public String getProxyClass() {
         return proxyClass;
     }
 
     public void setProxyClass(String proxyClass) {
         this.proxyClass = proxyClass;
-    }
-
-    public File getFromSignatureFile() {
-        return fromSignatureFile;
-    }
-
-    public void setFromSignatureFile(File fromSignatureFile) {
-        this.fromSignatureFile = fromSignatureFile;
-    }
-
-    public FromJavadoc getFromJavadoc() {
-        return fromJavadoc;
-    }
-
-    public void setFromJavadoc(FromJavadoc fromJavadoc) {
-        this.fromJavadoc = fromJavadoc;
     }
 
     public FromJavasource getFromJavasource() {

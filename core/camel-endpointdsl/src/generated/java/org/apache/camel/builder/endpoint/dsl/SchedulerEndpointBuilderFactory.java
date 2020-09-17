@@ -330,7 +330,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SchedulerEndpointBuilder runLoggingLevel(
@@ -345,7 +345,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default SchedulerEndpointBuilder runLoggingLevel(String runLoggingLevel) {
@@ -471,7 +471,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SchedulerEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -484,7 +484,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default SchedulerEndpointBuilder timeUnit(String timeUnit) {

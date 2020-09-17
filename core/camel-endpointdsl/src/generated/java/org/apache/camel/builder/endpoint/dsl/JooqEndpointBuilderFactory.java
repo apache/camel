@@ -355,7 +355,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
@@ -370,7 +370,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
@@ -498,7 +498,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -511,7 +511,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -784,7 +784,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: producer
          */
         default JooqEndpointProducerBuilder operation(JooqOperation operation) {
@@ -797,7 +797,7 @@ public interface JooqEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * 
-         * Default: NONE
+         * Default: none
          * Group: producer
          */
         default JooqEndpointProducerBuilder operation(String operation) {

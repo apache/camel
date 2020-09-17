@@ -83,4 +83,20 @@ public class JavadocHelperTest {
         String out2 = JavadocHelper.sanitizeDescription(JAVADOC2, false);
         Assertions.assertEquals(EXPECTED_OUT2, out2);
     }
+
+    @Test
+    public void testSanitizeJavaDocLink() throws Exception {
+        String s = " * Provides methods to create, delete, find, and update {@link Customer}\n"
+                   + " * objects. This class does not need to be instantiated directly. Instead, use";
+        String s2 = JavadocHelper.sanitizeDescription(s, false);
+        Assertions.assertEquals(
+                "Provides methods to create, delete, find, and update Customer objects. This class does not need to be instantiated directly. Instead, use",
+                s2);
+
+        s = " * Provides methods to interact with {@link Transaction Transactions}.\n"
+            + " * E.g. sales, credits, refunds, searches, etc.\n";
+        String s3 = JavadocHelper.sanitizeDescription(s, false);
+        Assertions.assertEquals("Provides methods to interact with Transactions. E.g. sales, credits, refunds, searches, etc.",
+                s3);
+    }
 }

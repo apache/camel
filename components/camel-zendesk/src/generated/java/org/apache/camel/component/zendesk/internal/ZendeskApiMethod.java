@@ -286,14 +286,14 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.Attachment.Upload.class,
         "createUpload",
         arg("fileName", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
     CREATE_UPLOAD_1(
         org.zendesk.client.v2.model.Attachment.Upload.class,
         "createUpload",
         arg("fileName", String.class),
         arg("contentType", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
     CREATE_UPLOAD_2(
         org.zendesk.client.v2.model.Attachment.Upload.class,
@@ -301,7 +301,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         arg("token", String.class),
         arg("fileName", String.class),
         arg("contentType", String.class),
-        arg("content", new byte[0].getClass())),
+        arg("content", byte[].class)),
 
     CREATE_UPLOAD_ARTICLE(
         org.zendesk.client.v2.model.hc.ArticleAttachments.class,
@@ -467,7 +467,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteOrganizationMemberships",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
     DELETE_PERMISSION_GROUP(
         void.class,
@@ -523,7 +523,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         void.class,
         "deleteTickets",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
     DELETE_TOPIC(
         void.class,
@@ -1196,7 +1196,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         java.util.List.class,
         "getTickets",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
     GET_TICKETS_BY_EXTERNAL_ID(
         Iterable.class,
@@ -1248,7 +1248,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         java.util.List.class,
         "getTopics",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
     GET_TOPICS_BY_USER(
         java.util.List.class,
@@ -1462,7 +1462,7 @@ public enum ZendeskApiMethod implements ApiMethod {
         org.zendesk.client.v2.model.JobStatus.class,
         "permanentlyDeleteTickets",
         arg("id", long.class),
-        arg("ids", new long[0].getClass())),
+        arg("ids", long[].class)),
 
     PERMANENTLY_DELETE_USER(
         org.zendesk.client.v2.model.User.class,

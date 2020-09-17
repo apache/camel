@@ -19,5 +19,56 @@ package org.apache.camel.maven;
 /**
  * Java source API generator properties.
  */
-public class FromJavasource extends FromJavadoc {
+public class FromJavasource {
+
+    protected String excludePackages = ApiComponentGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
+
+    protected String excludeClasses;
+
+    protected String includeMethods;
+
+    protected String excludeMethods;
+
+    protected Boolean includeStaticMethods;
+
+    public String getExcludePackages() {
+        return excludePackages;
+    }
+
+    public void setExcludePackages(String excludePackages) {
+        this.excludePackages = excludePackages;
+    }
+
+    public String getExcludeClasses() {
+        return excludeClasses;
+    }
+
+    public void setExcludeClasses(String excludeClasses) {
+        this.excludeClasses = excludeClasses;
+    }
+
+    public String getIncludeMethods() {
+        return includeMethods;
+    }
+
+    public void setIncludeMethods(String includeMethods) {
+        this.includeMethods = includeMethods;
+    }
+
+    public String getExcludeMethods() {
+        return excludeMethods;
+    }
+
+    public void setExcludeMethods(String excludeMethods) {
+        this.excludeMethods = excludeMethods;
+    }
+
+    public Boolean getIncludeStaticMethods() {
+        return includeStaticMethods;
+    }
+
+    public void setIncludeStaticMethods(Boolean includeStaticMethods) {
+        this.includeStaticMethods = includeStaticMethods;
+    }
+
 }

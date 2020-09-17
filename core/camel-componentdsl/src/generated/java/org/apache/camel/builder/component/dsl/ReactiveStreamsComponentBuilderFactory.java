@@ -117,7 +117,7 @@ public interface ReactiveStreamsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
          * 
-         * Default: BUFFER
+         * Default: buffer
          * Group: producer
          */
         default ReactiveStreamsComponentBuilder backpressureStrategy(

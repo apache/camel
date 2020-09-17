@@ -76,7 +76,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(
@@ -90,7 +90,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(String fhirVersion) {
@@ -483,7 +483,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
@@ -498,7 +498,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: TRACE
+         * Default: trace
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
@@ -626,7 +626,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -639,7 +639,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: MILLISECONDS
+         * Default: milliseconds
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1114,7 +1114,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
@@ -1129,7 +1129,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
@@ -1177,7 +1177,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(
@@ -1191,7 +1191,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(String fhirVersion) {
@@ -1719,7 +1719,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
@@ -1734,7 +1734,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
@@ -1783,7 +1783,7 @@ public interface FhirEndpointBuilderFactory {
          * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointBuilder fhirVersion(FhirVersionEnum fhirVersion) {
@@ -1796,7 +1796,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
-         * Default: R4
+         * Default: r4
          * Group: common
          */
         default FhirEndpointBuilder fhirVersion(String fhirVersion) {
@@ -2274,7 +2274,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(
@@ -2289,7 +2289,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
-         * Default: ONCE
+         * Default: once
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(String validationMode) {
@@ -2353,9 +2353,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
-         * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
-         * TRANSACTION, UPDATE, VALIDATE
+         * There are 13 enums and the value can be one of: capabilities, create,
+         * delete, history, load-page, meta, operation, patch, read, search,
+         * transaction, update, validate
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -2378,9 +2378,9 @@ public interface FhirEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 13 enums and the value can be one of: CAPABILITIES, CREATE,
-         * DELETE, HISTORY, LOAD_PAGE, META, OPERATION, PATCH, READ, SEARCH,
-         * TRANSACTION, UPDATE, VALIDATE
+         * There are 13 enums and the value can be one of: capabilities, create,
+         * delete, history, load-page, meta, operation, patch, read, search,
+         * transaction, update, validate
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

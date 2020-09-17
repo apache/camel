@@ -195,7 +195,8 @@ public class ApiMethodHelperTest {
         GREETALL_2(Map.class, "greetAll", arg("nameMap", Map.class)),
         GREETTIMES(new String[0].getClass(), "greetTimes",
                    arg("name", String.class), arg("times", int.class)),
-        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild", arg("child", TestProxy.InnerChild.class));
+        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild",
+                        arg("child", TestProxy.InnerChild.class));
 
         private final ApiMethod apiMethod;
 

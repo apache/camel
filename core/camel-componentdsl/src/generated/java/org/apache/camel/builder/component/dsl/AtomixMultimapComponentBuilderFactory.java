@@ -90,7 +90,7 @@ public interface AtomixMultimapComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: producer
          */
         default AtomixMultimapComponentBuilder defaultAction(

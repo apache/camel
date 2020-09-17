@@ -85,7 +85,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder defaultAction(
@@ -99,7 +99,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder defaultAction(
@@ -576,7 +576,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder defaultAction(
@@ -590,7 +590,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder defaultAction(
@@ -1015,7 +1015,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointBuilder defaultAction(Action defaultAction) {
@@ -1028,7 +1028,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
-         * Default: PUT
+         * Default: put
          * Group: common
          */
         default AtomixMapEndpointBuilder defaultAction(String defaultAction) {
