@@ -226,6 +226,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // write the found barcode format into the header
         exchange.getOut().setHeader(Barcode.BARCODE_FORMAT, result.getBarcodeFormat());
 
+        if (result.getResultMetadata() != null) {
+            result.getResultMetadata().forEach((k, v) -> {
+                exchange.getOut().setHeader(k.toString(), v);
+            });
+        }
+
         return result.getText();
     }
 
