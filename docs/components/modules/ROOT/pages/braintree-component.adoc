@@ -238,6 +238,59 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
+==== creditCardVerification
+
+
+The creditCardVerification API has 3 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.CreditCardVerification> create(com.braintreegateway.CreditCardVerificationRequest request);
+
+com.braintreegateway.CreditCardVerification find(String id);
+
+com.braintreegateway.ResourceCollection<com.braintreegateway.CreditCardVerification> search(com.braintreegateway.CreditCardVerificationSearchRequest query);
+
+----
+
+The creditCardVerification API is defined in the syntax as follows:
+
+----
+braintree:creditCardVerification/methodName?[parameters]
+----
+
+The 3 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | 
+| *find* |  | 
+| *search* |  | 
+|===
+
+The creditCardVerification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *request* |   | CreditCardVerificationRequest
+| find | *id* |   | String
+| search | *query* |   | CreditCardVerificationSearchRequest
+|===
+
+In addition to the parameters above, the creditCardVerification API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
 ==== subscription
 
 
@@ -395,219 +448,6 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== settlementBatchSummary
-
-
-The settlementBatchSummary API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate);
-
-com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate, String groupByCustomField);
-
-----
-
-The settlementBatchSummary API is defined in the syntax as follows:
-
-----
-braintree:settlementBatchSummary/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *generate* |  | 
-|===
-
-The settlementBatchSummary API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| generate | *groupByCustomField* |   | String
-| generate | *settlementDate* |   | Calendar
-|===
-
-In addition to the parameters above, the settlementBatchSummary API can also use from the 34 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBraintree.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBraintree.myParameterNameHere` header.
-
-
-
-==== address
-
-
-The address API has 4 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.braintreegateway.Result<com.braintreegateway.Address> create(String customerId, com.braintreegateway.AddressRequest request);
-
-com.braintreegateway.Result<com.braintreegateway.Address> delete(String customerId, String id);
-
-com.braintreegateway.Address find(String customerId, String id);
-
-com.braintreegateway.Result<com.braintreegateway.Address> update(String customerId, String id, com.braintreegateway.AddressRequest request);
-
-----
-
-The address API is defined in the syntax as follows:
-
-----
-braintree:address/methodName?[parameters]
-----
-
-The 4 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *create* |  | Creates an Address for a Customer
-| *delete* |  | Deletes a Customer's Address
-| *find* |  | Finds a Customer's Address
-| *update* |  | Updates a Customer's Address
-|===
-
-The address API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| create | *customerId* |  The id of the Customer | String
-| create | *request* |  The request object | AddressRequest
-| delete | *customerId* |  The id of the Customer | String
-| delete | *id* |  The id of the Address to delete | String
-| find | *customerId* |  The id of the Customer | String
-| find | *id* |  The id of the Address | String
-| update | *customerId* |  The id of the Customer | String
-| update | *id* |  The id of the Address | String
-| update | *request* |  The request object containing the AddressRequest parameters | AddressRequest
-|===
-
-In addition to the parameters above, the address API can also use from the 34 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBraintree.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBraintree.myParameterNameHere` header.
-
-
-
-==== webhookNotification
-
-
-The webhookNotification API has 2 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.braintreegateway.WebhookNotification parse(String signature, String payload);
-
-String verify(String challenge);
-
-----
-
-The webhookNotification API is defined in the syntax as follows:
-
-----
-braintree:webhookNotification/methodName?[parameters]
-----
-
-The 2 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *parse* |  | 
-| *verify* |  | 
-|===
-
-The webhookNotification API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| parse | *payload* |   | String
-| parse | *signature* |   | String
-| verify | *challenge* |   | String
-|===
-
-In addition to the parameters above, the webhookNotification API can also use from the 34 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBraintree.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBraintree.myParameterNameHere` header.
-
-
-
-==== creditCardVerification
-
-
-The creditCardVerification API has 3 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.braintreegateway.Result<com.braintreegateway.CreditCardVerification> create(com.braintreegateway.CreditCardVerificationRequest request);
-
-com.braintreegateway.CreditCardVerification find(String id);
-
-com.braintreegateway.ResourceCollection<com.braintreegateway.CreditCardVerification> search(com.braintreegateway.CreditCardVerificationSearchRequest query);
-
-----
-
-The creditCardVerification API is defined in the syntax as follows:
-
-----
-braintree:creditCardVerification/methodName?[parameters]
-----
-
-The 3 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *create* |  | 
-| *find* |  | 
-| *search* |  | 
-|===
-
-The creditCardVerification API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| create | *request* |   | CreditCardVerificationRequest
-| find | *id* |   | String
-| search | *query* |   | CreditCardVerificationSearchRequest
-|===
-
-In addition to the parameters above, the creditCardVerification API can also use from the 34 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBraintree.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBraintree.myParameterNameHere` header.
-
-
-
 ==== transaction
 
 
@@ -710,6 +550,116 @@ The transaction API method(s) has the following set of parameters listed in the 
 |===
 
 In addition to the parameters above, the transaction API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== settlementBatchSummary
+
+
+The settlementBatchSummary API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate);
+
+com.braintreegateway.Result<com.braintreegateway.SettlementBatchSummary> generate(java.util.Calendar settlementDate, String groupByCustomField);
+
+----
+
+The settlementBatchSummary API is defined in the syntax as follows:
+
+----
+braintree:settlementBatchSummary/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *generate* |  | 
+|===
+
+The settlementBatchSummary API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| generate | *groupByCustomField* |   | String
+| generate | *settlementDate* |   | Calendar
+|===
+
+In addition to the parameters above, the settlementBatchSummary API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== address
+
+
+The address API has 4 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Address> create(String customerId, com.braintreegateway.AddressRequest request);
+
+com.braintreegateway.Result<com.braintreegateway.Address> delete(String customerId, String id);
+
+com.braintreegateway.Address find(String customerId, String id);
+
+com.braintreegateway.Result<com.braintreegateway.Address> update(String customerId, String id, com.braintreegateway.AddressRequest request);
+
+----
+
+The address API is defined in the syntax as follows:
+
+----
+braintree:address/methodName?[parameters]
+----
+
+The 4 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *create* |  | Creates an Address for a Customer
+| *delete* |  | Deletes a Customer's Address
+| *find* |  | Finds a Customer's Address
+| *update* |  | Updates a Customer's Address
+|===
+
+The address API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| create | *customerId* |  The id of the Customer | String
+| create | *request* |  The request object | AddressRequest
+| delete | *customerId* |  The id of the Customer | String
+| delete | *id* |  The id of the Address to delete | String
+| find | *customerId* |  The id of the Customer | String
+| find | *id* |  The id of the Address | String
+| update | *customerId* |  The id of the Customer | String
+| update | *id* |  The id of the Address | String
+| update | *request* |  The request object containing the AddressRequest parameters | AddressRequest
+|===
+
+In addition to the parameters above, the address API can also use from the 34 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -874,6 +824,56 @@ The clientToken API method(s) has the following set of parameters listed in the 
 |===
 
 In addition to the parameters above, the clientToken API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
+==== webhookNotification
+
+
+The webhookNotification API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.WebhookNotification parse(String signature, String payload);
+
+String verify(String challenge);
+
+----
+
+The webhookNotification API is defined in the syntax as follows:
+
+----
+braintree:webhookNotification/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *parse* |  | 
+| *verify* |  | 
+|===
+
+The webhookNotification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| parse | *payload* |   | String
+| parse | *signature* |   | String
+| verify | *challenge* |   | String
+|===
+
+In addition to the parameters above, the webhookNotification API can also use from the 34 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

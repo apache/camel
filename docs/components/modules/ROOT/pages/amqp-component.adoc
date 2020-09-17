@@ -270,7 +270,7 @@ with the following path and query parameters:
 | *useMessageIDAsCorrelationID* (advanced) | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages. | false | boolean
 | *waitForProvisionCorrelationTo{zwsp}BeUpdatedCounter* (advanced) | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | int
 | *waitForProvisionCorrelationTo{zwsp}BeUpdatedThreadSleepingTime* (advanced) | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | long
-| *errorHandlerLoggingLevel* (logging) | Allows to configure the default errorHandler logging level for logging uncaught exceptions. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | WARN | LoggingLevel
+| *errorHandlerLoggingLevel* (logging) | Allows to configure the default errorHandler logging level for logging uncaught exceptions. There are 6 enums and the value can be one of: trace, debug, info, warn, error, off | warn | LoggingLevel
 | *errorHandlerLogStackTrace* (logging) | Allows to control whether stacktraces should be logged or not, by the default errorHandler. | true | boolean
 | *password* (security) | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *username* (security) | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String

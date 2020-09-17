@@ -348,244 +348,6 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== operation
-
-
-The operation API has 5 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-org.hl7.fhir.instance.model.api.IBaseResource onInstance(org.hl7.fhir.instance.model.api.IIdType id, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseResource onInstanceVersion(org.hl7.fhir.instance.model.api.IIdType id, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseResource onServer(String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseResource onType(Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseBundle processMessage(String respondToUri, org.hl7.fhir.instance.model.api.IBaseBundle msgBundle, boolean asynchronous, Class<org.hl7.fhir.instance.model.api.IBaseBundle> responseClass, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-----
-
-The operation API is defined in the syntax as follows:
-
-----
-fhir:operation/methodName?[parameters]
-----
-
-The 5 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *onInstance* |  | Perform the operation across all versions of a specific resource (by ID and type) on the server
-| *onInstanceVersion* |  | This operation operates on a specific version of a resource
-| *onServer* |  | Perform the operation across all versions of all resources of all types on the server
-| *onType* |  | Perform the operation across all versions of all resources of the given type on the server
-| *processMessage* |  | This operation is called $process-message as defined by the FHIR specification
-|===
-
-The operation API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onInstance | *id* |  Resource (version will be stripped) | IIdType
-| onInstance | *name* |  Operation name | String
-| onInstance | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onInstance | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onInstance | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/\$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
-| onInstance | *useHttpGet* |  Use HTTP GET verb | Boolean
-| onInstanceVersion | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onInstanceVersion | *id* |  Resource version | IIdType
-| onInstanceVersion | *name* |  Operation name | String
-| onInstanceVersion | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onInstanceVersion | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onInstanceVersion | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/\$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
-| onInstanceVersion | *useHttpGet* |  Use HTTP GET verb | Boolean
-| onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onServer | *name* |  Operation name | String
-| onServer | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onServer | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onServer | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/\$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
-| onServer | *useHttpGet* |  Use HTTP GET verb | Boolean
-| onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onType | *name* |  Operation name | String
-| onType | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
-| onType | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
-| onType | *resourceType* |  The resource type to operate on | Class
-| onType | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/\$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
-| onType | *useHttpGet* |  Use HTTP GET verb | Boolean
-| processMessage | *asynchronous* |  Whether to process the message asynchronously or synchronously, defaults to synchronous. | Boolean
-| processMessage | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| processMessage | *msgBundle* |  Set the Message Bundle to POST to the messaging server | IBaseBundle
-| processMessage | *respondToUri* | *Optional*  An optional query parameter indicating that responses from the receiving server should be sent to this URI, may be NULL | String
-| processMessage | *responseClass* |  The response class | Class
-|===
-
-In addition to the parameters above, the operation API can also use from the 46 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelFhir.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelFhir.myParameterNameHere` header.
-
-
-
-==== search
-
-
-The search API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-----
-
-The search API is defined in the syntax as follows:
-
-----
-fhir:search/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *searchByUrl* |  | Perform a search directly by URL
-|===
-
-The search API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| searchByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| searchByUrl | *url* |  The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
-|===
-
-In addition to the parameters above, the search API can also use from the 46 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelFhir.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelFhir.myParameterNameHere` header.
-
-
-
-==== capabilities
-
-
-The capabilities API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-org.hl7.fhir.instance.model.api.IBaseConformance ofType(Class<org.hl7.fhir.instance.model.api.IBaseConformance> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-----
-
-The capabilities API is defined in the syntax as follows:
-
-----
-fhir:capabilities/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *ofType* |  | Retrieve the conformance statement using the given model type
-|===
-
-The capabilities API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| ofType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| ofType | *type* |  The model type | Class
-|===
-
-In addition to the parameters above, the capabilities API can also use from the 46 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelFhir.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelFhir.myParameterNameHere` header.
-
-
-
-==== patch
-
-
-The patch API has 2 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, String stringId, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, org.hl7.fhir.instance.model.api.IIdType id, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-ca.uhn.fhir.rest.api.MethodOutcome patchByUrl(String patchBody, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-----
-
-The patch API is defined in the syntax as follows:
-
-----
-fhir:patch/methodName?[parameters]
-----
-
-The 2 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *patchById* |  | Applies the patch to the given resource ID
-| *patchByUrl* |  | Specifies that the update should be performed as a conditional create against a given search URL
-|===
-
-The patch API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| patchById | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| patchById | *id* |  The resource ID to patch | IIdType
-| patchById | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
-| patchById | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
-| patchById | *stringId* |  The resource ID to patch | String
-| patchByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| patchByUrl | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
-| patchByUrl | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
-| patchByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
-|===
-
-In addition to the parameters above, the patch API can also use from the 46 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelFhir.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelFhir.myParameterNameHere` header.
-
-
-
 ==== meta
 
 
@@ -723,6 +485,94 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
+==== operation
+
+
+The operation API has 5 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+org.hl7.fhir.instance.model.api.IBaseResource onInstance(org.hl7.fhir.instance.model.api.IIdType id, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseResource onInstanceVersion(org.hl7.fhir.instance.model.api.IIdType id, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseResource onServer(String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseResource onType(Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType, String name, org.hl7.fhir.instance.model.api.IBaseParameters parameters, Class<org.hl7.fhir.instance.model.api.IBaseParameters> outputParameterType, boolean useHttpGet, Class<org.hl7.fhir.instance.model.api.IBaseResource> returnType, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseBundle processMessage(String respondToUri, org.hl7.fhir.instance.model.api.IBaseBundle msgBundle, boolean asynchronous, Class<org.hl7.fhir.instance.model.api.IBaseBundle> responseClass, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+----
+
+The operation API is defined in the syntax as follows:
+
+----
+fhir:operation/methodName?[parameters]
+----
+
+The 5 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *onInstance* |  | Perform the operation across all versions of a specific resource (by ID and type) on the server
+| *onInstanceVersion* |  | This operation operates on a specific version of a resource
+| *onServer* |  | Perform the operation across all versions of all resources of all types on the server
+| *onType* |  | Perform the operation across all versions of all resources of the given type on the server
+| *processMessage* |  | This operation is called $process-message as defined by the FHIR specification
+|===
+
+The operation API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onInstance | *id* |  Resource (version will be stripped) | IIdType
+| onInstance | *name* |  Operation name | String
+| onInstance | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onInstance | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
+| onInstance | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onInstance | *useHttpGet* |  Use HTTP GET verb | Boolean
+| onInstanceVersion | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onInstanceVersion | *id* |  Resource version | IIdType
+| onInstanceVersion | *name* |  Operation name | String
+| onInstanceVersion | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onInstanceVersion | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
+| onInstanceVersion | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onInstanceVersion | *useHttpGet* |  Use HTTP GET verb | Boolean
+| onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onServer | *name* |  Operation name | String
+| onServer | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onServer | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
+| onServer | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onServer | *useHttpGet* |  Use HTTP GET verb | Boolean
+| onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onType | *name* |  Operation name | String
+| onType | *outputParameterType* | *Optional*  The type to use for the output parameters (this should be set to Parameters.class drawn from the version of the FHIR structures you are using), may be NULL | Class
+| onType | *parameters* | *Optional*  The parameters to use as input. May also be null if the operation does not require any input parameters. | IBaseParameters
+| onType | *resourceType* |  The resource type to operate on | Class
+| onType | *returnType* | *Optional*  If this operation returns a single resource body as its return type instead of a Parameters resource, use this method to specify that resource type. This is useful for certain operations (e.g. Patient/NNN/$everything) which return a bundle instead of a Parameters resource, may be NULL | Class
+| onType | *useHttpGet* |  Use HTTP GET verb | Boolean
+| processMessage | *asynchronous* |  Whether to process the message asynchronously or synchronously, defaults to synchronous. | Boolean
+| processMessage | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| processMessage | *msgBundle* |  Set the Message Bundle to POST to the messaging server | IBaseBundle
+| processMessage | *respondToUri* | *Optional*  An optional query parameter indicating that responses from the receiving server should be sent to this URI, may be NULL | String
+| processMessage | *responseClass* |  The response class | Class
+|===
+
+In addition to the parameters above, the operation API can also use from the 46 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelFhir.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelFhir.myParameterNameHere` header.
+
+
+
 ==== load-page
 
 
@@ -771,6 +621,52 @@ The load-page API method(s) has the following set of parameters listed in the ta
 |===
 
 In addition to the parameters above, the load-page API can also use from the 46 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelFhir.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelFhir.myParameterNameHere` header.
+
+
+
+==== search
+
+
+The search API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+----
+
+The search API is defined in the syntax as follows:
+
+----
+fhir:search/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *searchByUrl* |  | Perform a search directly by URL
+|===
+
+The search API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| searchByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| searchByUrl | *url* |  The URL to search for. Note that this URL may be complete (e.g. \http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used. | String
+|===
+
+In addition to the parameters above, the search API can also use from the 46 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -908,6 +804,110 @@ The read API method(s) has the following set of parameters listed in the table b
 |===
 
 In addition to the parameters above, the read API can also use from the 46 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelFhir.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelFhir.myParameterNameHere` header.
+
+
+
+==== capabilities
+
+
+The capabilities API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+org.hl7.fhir.instance.model.api.IBaseConformance ofType(Class<org.hl7.fhir.instance.model.api.IBaseConformance> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+----
+
+The capabilities API is defined in the syntax as follows:
+
+----
+fhir:capabilities/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *ofType* |  | Retrieve the conformance statement using the given model type
+|===
+
+The capabilities API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| ofType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| ofType | *type* |  The model type | Class
+|===
+
+In addition to the parameters above, the capabilities API can also use from the 46 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelFhir.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelFhir.myParameterNameHere` header.
+
+
+
+==== patch
+
+
+The patch API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, String stringId, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, org.hl7.fhir.instance.model.api.IIdType id, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+ca.uhn.fhir.rest.api.MethodOutcome patchByUrl(String patchBody, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+----
+
+The patch API is defined in the syntax as follows:
+
+----
+fhir:patch/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *patchById* |  | Applies the patch to the given resource ID
+| *patchByUrl* |  | Specifies that the update should be performed as a conditional create against a given search URL
+|===
+
+The patch API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| patchById | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| patchById | *id* |  The resource ID to patch | IIdType
+| patchById | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
+| patchById | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
+| patchById | *stringId* |  The resource ID to patch | String
+| patchByUrl | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| patchByUrl | *patchBody* |  The body of the patch document serialized in either XML or JSON which conforms to \http://jsonpatch.com/ or \http://tools.ietf.org/html/rfc5261 | String
+| patchByUrl | *preferReturn* | *Optional*  Add a Prefer header to the request, which requests that the server include or suppress the resource body as a part of the result. If a resource is returned by the server it will be parsed an accessible to the client via MethodOutcome#getResource() | PreferReturnEnum
+| patchByUrl | *url* |  The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366 | String
+|===
+
+In addition to the parameters above, the patch API can also use from the 46 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
