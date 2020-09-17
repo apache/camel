@@ -274,8 +274,9 @@ public abstract class AbstractCamelCatalog {
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
                     boolean found = false;
                     for (String s : enums) {
+                        String dashEC = StringHelper.camelCaseToDash(value);
                         String valueEC = StringHelper.asEnumConstantValue(value);
-                        if (value.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
+                        if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                             found = true;
                             break;
                         }
@@ -656,9 +657,10 @@ public abstract class AbstractCamelCatalog {
         if (key != null) {
             String matchKey = null;
             String dashKey = StringHelper.camelCaseToDash(key);
+            String ecKey = StringHelper.asEnumConstantValue(key);
             for (ApiModel am : model.getApiOptions()) {
                 String aKey = am.getName();
-                if (aKey.equals(key) || aKey.equals(dashKey) || "DEFAULT".equals(key)) {
+                if (aKey.equalsIgnoreCase("DEFAULT") || aKey.equalsIgnoreCase(key) || aKey.equalsIgnoreCase(ecKey) || aKey.equalsIgnoreCase(dashKey)) {
                     am.getMethods().forEach(m -> m.getOptions().forEach(o -> answer.put(o.getName(), o)));
                 }
             }
@@ -1093,10 +1095,11 @@ public abstract class AbstractCamelCatalog {
             List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
                 boolean found = false;
+                String dashEC = StringHelper.camelCaseToDash(value);
                 String valueEC = StringHelper.asEnumConstantValue(value);
                 for (String s : enums) {
                     // equals as is or using the enum naming style
-                    if (value.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
+                    if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
                         found = true;
                         break;
                     }
