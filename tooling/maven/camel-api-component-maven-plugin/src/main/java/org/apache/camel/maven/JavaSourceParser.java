@@ -43,7 +43,18 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.tooling.util.JavadocHelper.sanitizeDescription;
 
 /**
- * Parses source java to get Method Signatures from Method Summary.
+ * Java source parser that are used for parsing the proxy API class.
+ *
+ * Implementation note:
+ *
+ * This parser uses Roaster and have some workarounds to work around some limitations in Roaster.
+ * The code is specially complex in regards to resolve types from method signatures that use Java generics
+ * which can have both type variables or reference to a class (either qualified or not). The type variables
+ * can also be bounded (T extends Foo) which further complicate matters. The parser has been built with
+ * trial and errors to get it to function and work for the current set of Camel API based components.
+ *
+ * The parser was also designed to plugin and work with the old parsers that was based on javadoc harvesting.
+ * Therefore how it functions and what information it returns is adapted to be as it was with the old parser.
  */
 public class JavaSourceParser {
 
