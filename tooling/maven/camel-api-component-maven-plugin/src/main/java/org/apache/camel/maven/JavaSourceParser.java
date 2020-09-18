@@ -391,7 +391,14 @@ public class JavaSourceParser {
             desc = desc.substring(0, desc.length() - 1);
             desc = desc.trim();
         }
+
         desc = sanitizeDescription(desc, summary);
+
+        // skip if its just a http link (such as seen in zendesk client)
+        if (desc != null && desc.matches("https?:.*")) {
+            return null;
+        }
+
         if (desc != null && !desc.isEmpty()) {
             // upper case first letter
             char ch = desc.charAt(0);
