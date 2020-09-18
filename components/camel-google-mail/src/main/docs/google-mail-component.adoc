@@ -141,10 +141,24 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 google-mail:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 7 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *users* | The users collection of methods
+| *threads* | The threads collection of methods
+| *drafts* | The drafts collection of methods
+| *labels* | The labels collection of methods
+| *history* | The history collection of methods
+| *attachments* | The attachments collection of methods
+| *messages* | The messages collection of methods
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== users
+==== API: users
 
 
 The users API has 3 method(s) which is represented by the following method signatures
@@ -198,7 +212,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== threads
+==== API: threads
 
 
 The threads API has 6 method(s) which is represented by the following method signatures
@@ -269,7 +283,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== drafts
+==== API: drafts
 
 
 The drafts API has 6 method(s) which is represented by the following method signatures
@@ -349,7 +363,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== labels
+==== API: labels
 
 
 The labels API has 6 method(s) which is represented by the following method signatures
@@ -421,7 +435,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== history
+==== API: history
 
 
 The history API has 1 method(s) which is represented by the following method signatures
@@ -466,7 +480,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== attachments
+==== API: attachments
 
 
 The attachments API has 1 method(s) which is represented by the following method signatures
@@ -513,7 +527,7 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
-==== messages
+==== API: messages
 
 
 The messages API has 11 method(s) which is represented by the following method signatures

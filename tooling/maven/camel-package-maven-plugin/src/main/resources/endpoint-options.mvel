@@ -41,10 +41,18 @@ The API name and method is located in the endpoint URI as the @{apiPropertyQuali
 @{syntax}
 ----
 
-The following lists each API name and method and its additional parameters.
+There are @{apiOptions.size} API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
+| API Name | Description
+@foreach{api : apiOptions}| *@{api.name}* | @{api.description}
+@end{}|===
+
+Each API is documented in the following sections to come.
 
 @foreach{api : apiOptions}
-==== @{api.name}
+==== API: @{api.name}
 @if{api.methods.isEmpty()}
 The @{api.name} has no API methods.
 @else{}

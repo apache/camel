@@ -155,10 +155,19 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 as2:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 2 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *client* | Sends EDI Messages over HTTP
+| *server* | Receives EDI Messages over HTTP
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== client
+==== API: client
 
 
 The client API has 1 method(s) which is represented by the following method signatures
@@ -219,7 +228,7 @@ would override a `CamelAs2.myParameterNameHere` header.
 
 
 
-==== server
+==== API: server
 
 
 The server API has 1 method(s) which is represented by the following method signatures

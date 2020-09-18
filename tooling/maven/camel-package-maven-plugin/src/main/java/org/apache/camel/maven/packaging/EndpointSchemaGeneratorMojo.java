@@ -1113,6 +1113,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                         api.addAlias(alias);
                                     }
                                 }
+                                if (apiParams != null) {
+                                    api.setDescription(apiParams.description());
+                                }
                             } else {
                                 api = op.get();
                             }

@@ -136,10 +136,31 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 braintree:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 14 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *paymentMethodNonce* | 
+| *documentUpload* | 
+| *subscription* | Provides methods to interact with Subscriptions
+| *dispute* | Provides methods to interact with Dispute objects
+| *settlementBatchSummary* | 
+| *address* | Provides methods to create, delete, find, and update Address objects
+| *webhookNotification* | 
+| *creditCardVerification* | 
+| *transaction* | Provides methods to interact with Transactions
+| *report* | Provides methods to interact with reports
+| *paymentMethod* | 
+| *clientToken* | Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly
+| *merchantAccount* | 
+| *customer* | Provides methods to create, delete, find, and update Customer objects
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== paymentMethodNonce
+==== API: paymentMethodNonce
 
 
 The paymentMethodNonce API has 2 method(s) which is represented by the following method signatures
@@ -191,7 +212,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== documentUpload
+==== API: documentUpload
 
 
 The documentUpload API has 1 method(s) which is represented by the following method signatures
@@ -236,7 +257,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== subscription
+==== API: subscription
 
 
 The subscription API has 7 method(s) which is represented by the following method signatures
@@ -315,7 +336,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== dispute
+==== API: dispute
 
 
 The dispute API has 7 method(s) which is represented by the following method signatures
@@ -393,7 +414,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== settlementBatchSummary
+==== API: settlementBatchSummary
 
 
 The settlementBatchSummary API has 1 method(s) which is represented by the following method signatures
@@ -441,7 +462,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== address
+==== API: address
 
 
 The address API has 4 method(s) which is represented by the following method signatures
@@ -503,7 +524,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== webhookNotification
+==== API: webhookNotification
 
 
 The webhookNotification API has 2 method(s) which is represented by the following method signatures
@@ -553,7 +574,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== creditCardVerification
+==== API: creditCardVerification
 
 
 The creditCardVerification API has 3 method(s) which is represented by the following method signatures
@@ -606,7 +627,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== transaction
+==== API: transaction
 
 
 The transaction API has 13 method(s) which is represented by the following method signatures
@@ -717,7 +738,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== report
+==== API: report
 
 
 The report API has 1 method(s) which is represented by the following method signatures
@@ -762,7 +783,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== paymentMethod
+==== API: paymentMethod
 
 
 The paymentMethod API has 6 method(s) which is represented by the following method signatures
@@ -834,7 +855,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== clientToken
+==== API: clientToken
 
 
 The clientToken API has 1 method(s) which is represented by the following method signatures
@@ -881,7 +902,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== merchantAccount
+==== API: merchantAccount
 
 
 The merchantAccount API has 5 method(s) which is represented by the following method signatures
@@ -943,7 +964,7 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
-==== customer
+==== API: customer
 
 
 The customer API has 5 method(s) which is represented by the following method signatures
