@@ -169,7 +169,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
          * 
-         * Default: put-attributes
+         * Default: PutAttributes
          * Group: producer
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
@@ -182,7 +182,7 @@ public interface SdbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
          * 
-         * Default: put-attributes
+         * Default: PutAttributes
          * Group: producer
          */
         default SdbEndpointBuilder operation(String operation) {

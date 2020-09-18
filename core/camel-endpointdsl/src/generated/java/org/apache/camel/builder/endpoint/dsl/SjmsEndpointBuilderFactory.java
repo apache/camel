@@ -232,7 +232,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: warn
+         * Default: WARN
          * Group: logging
          */
         default SjmsEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -247,7 +247,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: warn
+         * Default: WARN
          * Group: logging
          */
         default SjmsEndpointConsumerBuilder errorHandlerLoggingLevel(

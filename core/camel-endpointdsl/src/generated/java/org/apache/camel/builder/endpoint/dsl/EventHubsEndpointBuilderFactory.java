@@ -80,7 +80,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointConsumerBuilder amqpTransportType(
@@ -95,7 +95,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointConsumerBuilder amqpTransportType(
@@ -576,7 +576,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointProducerBuilder amqpTransportType(
@@ -591,7 +591,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointProducerBuilder amqpTransportType(
@@ -899,7 +899,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointBuilder amqpTransportType(
@@ -914,7 +914,7 @@ public interface EventHubsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: amqp
+         * Default: AMQP
          * Group: common
          */
         default EventHubsEndpointBuilder amqpTransportType(

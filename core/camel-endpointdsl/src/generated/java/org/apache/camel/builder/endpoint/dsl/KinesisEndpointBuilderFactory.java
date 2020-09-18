@@ -222,7 +222,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
          * 
-         * Default: trim-horizon
+         * Default: TRIM_HORIZON
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(
@@ -237,7 +237,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
          * 
-         * Default: trim-horizon
+         * Default: TRIM_HORIZON
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(String iteratorType) {
@@ -553,7 +553,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
@@ -568,7 +568,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
@@ -697,7 +697,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -710,7 +710,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {

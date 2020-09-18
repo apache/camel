@@ -88,7 +88,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileSystemType(
@@ -102,7 +102,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileSystemType(String fileSystemType) {
@@ -116,7 +116,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(HdfsFileType fileType) {
@@ -130,7 +130,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(String fileType) {
@@ -143,6 +143,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(WritableType keyType) {
@@ -155,6 +156,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(String keyType) {
@@ -191,7 +193,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(WritableType valueType) {
@@ -204,7 +206,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(String valueType) {
@@ -552,7 +554,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
@@ -567,7 +569,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
@@ -695,7 +697,7 @@ public interface HdfsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -708,7 +710,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1017,7 +1019,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
@@ -1032,7 +1034,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
@@ -1046,7 +1048,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
@@ -1060,7 +1062,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
@@ -1227,7 +1229,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileSystemType(
@@ -1241,7 +1243,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileSystemType(String fileSystemType) {
@@ -1255,7 +1257,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(HdfsFileType fileType) {
@@ -1269,7 +1271,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(String fileType) {
@@ -1282,6 +1284,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(WritableType keyType) {
@@ -1294,6 +1297,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(String keyType) {
@@ -1330,7 +1334,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(WritableType valueType) {
@@ -1343,7 +1347,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(String valueType) {
@@ -1629,7 +1633,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
@@ -1644,7 +1648,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
@@ -1658,7 +1662,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
@@ -1672,7 +1676,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
@@ -1838,7 +1842,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointBuilder fileSystemType(
@@ -1852,7 +1856,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileSystemType</code> type.
          * 
-         * Default: hdfs
+         * Default: HDFS
          * Group: common
          */
         default HdfsEndpointBuilder fileSystemType(String fileSystemType) {
@@ -1866,7 +1870,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointBuilder fileType(HdfsFileType fileType) {
@@ -1880,7 +1884,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.HdfsFileType</code> type.
          * 
-         * Default: normal-file
+         * Default: NORMAL_FILE
          * Group: common
          */
         default HdfsEndpointBuilder fileType(String fileType) {
@@ -1893,6 +1897,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointBuilder keyType(WritableType keyType) {
@@ -1905,6 +1910,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
+         * Default: NULL
          * Group: common
          */
         default HdfsEndpointBuilder keyType(String keyType) {
@@ -1941,7 +1947,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointBuilder valueType(WritableType valueType) {
@@ -1954,7 +1960,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs.WritableType</code> type.
          * 
-         * Default: bytes
+         * Default: BYTES
          * Group: common
          */
         default HdfsEndpointBuilder valueType(String valueType) {
@@ -2148,7 +2154,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
@@ -2163,7 +2169,7 @@ public interface HdfsEndpointBuilderFactory {
          * <code>org.apache.camel.component.hdfs.HdfsCompressionCodec</code>
          * type.
          * 
-         * Default: default
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
@@ -2177,7 +2183,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionType(
@@ -2191,7 +2197,7 @@ public interface HdfsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionType(

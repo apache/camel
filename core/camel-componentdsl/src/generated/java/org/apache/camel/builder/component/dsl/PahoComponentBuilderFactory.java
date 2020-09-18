@@ -220,7 +220,7 @@ public interface PahoComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
-         * Default: memory
+         * Default: MEMORY
          * Group: common
          */
         default PahoComponentBuilder persistence(

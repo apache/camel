@@ -751,14 +751,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     enums = new ArrayList<>();
                     for (Object val : fieldType.getEnumConstants()) {
                         String str = val.toString();
-                        // make the enum nicely human readable instead of typically upper cased
-                        str = SchemaHelper.camelCaseToDash(str);
                         if (!enums.contains(str)) {
                             enums.add(str);
                         }
                     }
-                    // also for the default value
-                    defaultValue = SchemaHelper.camelCaseToDash((String) defaultValue);
                 }
 
                 // the field type may be overloaded by another type
@@ -922,14 +918,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         enums = new ArrayList<>();
                         for (Object val : fieldTypeElement.getEnumConstants()) {
                             String str = val.toString();
-                            // make the enum nicely human readable instead of typically upper cased
-                            str = SchemaHelper.camelCaseToDash(str);
                             if (!enums.contains(str)) {
                                 enums.add(str);
                             }
                         }
-                        // also for the default value
-                        defaultValue = SchemaHelper.camelCaseToDash((String) defaultValue);
                     }
 
                     // the field type may be overloaded by another type
@@ -1049,14 +1041,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             enums = new ArrayList<>();
                             for (Object val : fieldTypeElement.getEnumConstants()) {
                                 String str = val.toString();
-                                // make the enum nicely human readable instead of typically upper cased
-                                str = SchemaHelper.camelCaseToDash(str);
                                 if (!enums.contains(str)) {
                                     enums.add(str);
                                 }
                             }
-                            // also for the default value
-                            defaultValue = SchemaHelper.camelCaseToDash((String) defaultValue);
                         }
 
                         // the field type may be overloaded by another type

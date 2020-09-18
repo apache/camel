@@ -226,7 +226,7 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
          * 
-         * Default: latest
+         * Default: LATEST
          * Group: consumer
          */
         default PulsarComponentBuilder subscriptionInitialPosition(
@@ -255,7 +255,7 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
          * 
-         * Default: persistent-only
+         * Default: PersistentOnly
          * Group: consumer
          */
         default PulsarComponentBuilder subscriptionTopicsMode(
@@ -270,7 +270,7 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
-         * Default: exclusive
+         * Default: EXCLUSIVE
          * Group: consumer
          */
         default PulsarComponentBuilder subscriptionType(
@@ -378,7 +378,7 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: producer
          */
         default PulsarComponentBuilder compressionType(
@@ -468,7 +468,7 @@ public interface PulsarComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
-         * Default: round-robin-partition
+         * Default: RoundRobinPartition
          * Group: producer
          */
         default PulsarComponentBuilder messageRoutingMode(

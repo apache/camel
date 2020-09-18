@@ -397,7 +397,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
@@ -412,7 +412,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
@@ -542,7 +542,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -555,7 +555,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1249,8 +1249,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 8 enums and the value can be one of: acl, list, calendars,
-         * channels, colors, freebusy, events, settings
+         * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+         * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1275,8 +1275,8 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 8 enums and the value can be one of: acl, list, calendars,
-         * channels, colors, freebusy, events, settings
+         * There are 8 enums and the value can be one of: ACL, LIST, CALENDARS,
+         * CHANNELS, COLORS, FREEBUSY, EVENTS, SETTINGS
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

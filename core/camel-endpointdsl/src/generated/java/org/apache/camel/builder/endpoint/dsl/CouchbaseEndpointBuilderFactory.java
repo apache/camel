@@ -485,7 +485,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
@@ -500,7 +500,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
@@ -629,7 +629,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -642,7 +642,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {

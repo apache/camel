@@ -253,7 +253,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option is a:
          * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
          * 
-         * Default: trim-horizon
+         * Default: TRIM_HORIZON
          * Group: consumer
          */
         default Kinesis2EndpointConsumerBuilder iteratorType(
@@ -267,7 +267,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
          * 
-         * Default: trim-horizon
+         * Default: TRIM_HORIZON
          * Group: consumer
          */
         default Kinesis2EndpointConsumerBuilder iteratorType(String iteratorType) {
@@ -583,7 +583,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default Kinesis2EndpointConsumerBuilder runLoggingLevel(
@@ -598,7 +598,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default Kinesis2EndpointConsumerBuilder runLoggingLevel(
@@ -727,7 +727,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Kinesis2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -740,7 +740,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Kinesis2EndpointConsumerBuilder timeUnit(String timeUnit) {

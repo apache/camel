@@ -684,7 +684,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
@@ -703,7 +703,7 @@ public interface StubEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(

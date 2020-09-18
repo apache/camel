@@ -335,7 +335,7 @@ public interface NettyHttpComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: warn
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default NettyHttpComponentBuilder noReplyLogLevel(
@@ -352,7 +352,7 @@ public interface NettyHttpComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: debug
+         * Default: DEBUG
          * Group: consumer (advanced)
          */
         default NettyHttpComponentBuilder serverClosedChannelExceptionCaughtLogLevel(
@@ -366,7 +366,7 @@ public interface NettyHttpComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: warn
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default NettyHttpComponentBuilder serverExceptionCaughtLogLevel(
@@ -881,7 +881,7 @@ public interface NettyHttpComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
-         * Default: line
+         * Default: LINE
          * Group: codec
          */
         default NettyHttpComponentBuilder delimiter(

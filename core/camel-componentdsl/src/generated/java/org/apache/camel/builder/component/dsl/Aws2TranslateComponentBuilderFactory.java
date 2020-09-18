@@ -116,7 +116,7 @@ public interface Aws2TranslateComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.translate.Translate2Operations</code> type.
          * 
-         * Default: translate-text
+         * Default: translateText
          * Group: producer
          */
         default Aws2TranslateComponentBuilder operation(

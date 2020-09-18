@@ -401,7 +401,7 @@ public interface JmsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
-         * Default: default
+         * Default: Default
          * Group: consumer (advanced)
          */
         default JmsComponentBuilder consumerType(
@@ -1441,7 +1441,7 @@ public interface JmsComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: warn
+         * Default: WARN
          * Group: logging
          */
         default JmsComponentBuilder errorHandlerLoggingLevel(

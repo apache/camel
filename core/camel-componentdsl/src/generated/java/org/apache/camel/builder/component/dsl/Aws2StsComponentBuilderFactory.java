@@ -102,7 +102,7 @@ public interface Aws2StsComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> type.
          * 
-         * Default: assume-role
+         * Default: assumeRole
          * Group: producer
          */
         default Aws2StsComponentBuilder operation(

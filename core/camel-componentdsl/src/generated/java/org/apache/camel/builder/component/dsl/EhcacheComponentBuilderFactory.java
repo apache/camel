@@ -122,7 +122,7 @@ public interface EhcacheComponentBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventFiring</code> type.
          * 
-         * Default: asynchronous
+         * Default: ASYNCHRONOUS
          * Group: consumer
          */
         default EhcacheComponentBuilder eventFiring(
@@ -135,7 +135,7 @@ public interface EhcacheComponentBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
          * 
-         * Default: ordered
+         * Default: ORDERED
          * Group: consumer
          */
         default EhcacheComponentBuilder eventOrdering(
