@@ -101,7 +101,7 @@
           <execution>
             <id>generate</id>
             <goals>
-              <goal>generate</goal>
+              <goal>generate-component</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
