@@ -201,28 +201,30 @@ An example of using Public Key authentication is provided in
 `examples/camel-example-ssh-security`.
 
 [[SSH-CertificateDependencies]]
-Certificate Dependencies
+== Certificate Dependencies
 
 You will need to add some additional runtime dependencies if you use
 certificate based authentication. You may need to use later versions depending what version
 of Camel you are using.
+
+The component uses `sshd-core` library which is based on either `bouncycastle` or `eddsa` security providers. `camel-ssh` is picking explicitly `bouncycastle` as security provider.
 
 [source,xml]
 -----------------------------------------
 <dependency>
   <groupId>org.apache.sshd</groupId>
   <artifactId>sshd-core</artifactId>
-  <version>0.8.0</version>
+  <version>2.0.0</version>
 </dependency>
 <dependency>
   <groupId>org.bouncycastle</groupId>
   <artifactId>bcpg-jdk15on</artifactId>
-  <version>1.47</version>
+  <version>1.65</version>
 </dependency>
 <dependency>
   <groupId>org.bouncycastle</groupId>
   <artifactId>bcpkix-jdk15on</artifactId>
-  <version>1.47</version>
+  <version>1.65</version>
 </dependency>
 -----------------------------------------
 
