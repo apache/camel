@@ -124,15 +124,15 @@ There are 56 API groups as listed in the table below:
 | *call-recording* | 
 | *queue-member* | 
 | *usage-trigger* | 
-| *usage-record-last-month* | 
 | *usage-record-all-time* | 
+| *usage-record-last-month* | 
 | *recording-transcription* | 
 | *message* | 
 | *call-feedback-summary* | 
 | *sip-credential-list-credential* | 
 | *new-key* | 
-| *incoming-phone-number* | 
 | *call-notification* | 
+| *incoming-phone-number* | 
 | *validation-request* | 
 | *usage-record-yesterday* | 
 | *usage-record-this-month* | 
@@ -143,8 +143,8 @@ There are 56 API groups as listed in the table below:
 | *usage-record* | 
 | *available-phone-number-country-mobile* | 
 | *conference-participant* | 
-| *recording-add-on-result* | 
 | *notification* | 
+| *recording-add-on-result* | 
 | *sip-domain-ip-access-control-list-mapping* | 
 | *sip-domain* | 
 | *address* | 
@@ -153,8 +153,8 @@ There are 56 API groups as listed in the table below:
 | *available-phone-number-country* | 
 | *usage-record-yearly* | 
 | *queue* | 
-| *transcription* | 
 | *sip-domain-credential-list-mapping* | 
+| *transcription* | 
 | *call-feedback* | 
 | *key* | 
 | *incoming-phone-number-toll-free* | 
@@ -563,53 +563,6 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== API: usage-record-last-month
-
-
-The usage-record-last-month API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader();
-
-com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader(String pathAccountSid);
-
-----
-
-The usage-record-last-month API is defined in the syntax as follows:
-
-----
-twilio:usage-record-last-month/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *reader* | read | Create a LastMonthReader to execute read
-|===
-
-The usage-record-last-month API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
-|===
-
-In addition to the parameters above, the usage-record-last-month API can also use from the 23 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelTwilio.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelTwilio.myParameterNameHere` header.
-
-
-
 ==== API: usage-record-all-time
 
 
@@ -648,6 +601,53 @@ The usage-record-all-time API method(s) has the following set of parameters list
 |===
 
 In addition to the parameters above, the usage-record-all-time API can also use from the 23 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelTwilio.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelTwilio.myParameterNameHere` header.
+
+
+
+==== API: usage-record-last-month
+
+
+The usage-record-last-month API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader();
+
+com.twilio.rest.api.v2010.account.usage.record.LastMonthReader reader(String pathAccountSid);
+
+----
+
+The usage-record-last-month API is defined in the syntax as follows:
+
+----
+twilio:usage-record-last-month/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *reader* | read | Create a LastMonthReader to execute read
+|===
+
+The usage-record-last-month API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
+|===
+
+In addition to the parameters above, the usage-record-last-month API can also use from the 23 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1004,6 +1004,62 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
+==== API: call-notification
+
+
+The call-notification API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathAccountSid, String pathCallSid, String pathSid);
+
+com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathCallSid, String pathSid);
+
+com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathAccountSid, String pathCallSid);
+
+com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathCallSid);
+
+----
+
+The call-notification API is defined in the syntax as follows:
+
+----
+twilio:call-notification/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *fetcher* | fetch | Create a NotificationFetcher to execute fetch
+| *reader* | read | Create a NotificationReader to execute read
+|===
+
+The call-notification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
+| fetcher | *pathCallSid* |  The Call SID of the resource to fetch | String
+| fetcher | *pathSid* |  The unique string that identifies the resource | String
+| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
+| reader | *pathCallSid* |  The Call SID of the resource to fetch | String
+|===
+
+In addition to the parameters above, the call-notification API can also use from the 23 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelTwilio.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelTwilio.myParameterNameHere` header.
+
+
+
 ==== API: incoming-phone-number
 
 
@@ -1075,62 +1131,6 @@ The incoming-phone-number API method(s) has the following set of parameters list
 |===
 
 In addition to the parameters above, the incoming-phone-number API can also use from the 23 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelTwilio.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelTwilio.myParameterNameHere` header.
-
-
-
-==== API: call-notification
-
-
-The call-notification API has 2 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathAccountSid, String pathCallSid, String pathSid);
-
-com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathCallSid, String pathSid);
-
-com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathAccountSid, String pathCallSid);
-
-com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathCallSid);
-
-----
-
-The call-notification API is defined in the syntax as follows:
-
-----
-twilio:call-notification/methodName?[parameters]
-----
-
-The 2 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *fetcher* | fetch | Create a NotificationFetcher to execute fetch
-| *reader* | read | Create a NotificationReader to execute read
-|===
-
-The call-notification API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
-| fetcher | *pathCallSid* |  The Call SID of the resource to fetch | String
-| fetcher | *pathSid* |  The unique string that identifies the resource | String
-| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
-| reader | *pathCallSid* |  The Call SID of the resource to fetch | String
-|===
-
-In addition to the parameters above, the call-notification API can also use from the 23 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1687,6 +1687,60 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
+==== API: notification
+
+
+The notification API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.twilio.rest.api.v2010.account.NotificationFetcher fetcher(String pathAccountSid, String pathSid);
+
+com.twilio.rest.api.v2010.account.NotificationFetcher fetcher(String pathSid);
+
+com.twilio.rest.api.v2010.account.NotificationReader reader();
+
+com.twilio.rest.api.v2010.account.NotificationReader reader(String pathAccountSid);
+
+----
+
+The notification API is defined in the syntax as follows:
+
+----
+twilio:notification/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *fetcher* | fetch | Create a NotificationFetcher to execute fetch
+| *reader* | read | Create a NotificationReader to execute read
+|===
+
+The notification API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
+| fetcher | *pathSid* |  The unique string that identifies the resource | String
+| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
+|===
+
+In addition to the parameters above, the notification API can also use from the 23 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelTwilio.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelTwilio.myParameterNameHere` header.
+
+
+
 ==== API: recording-add-on-result
 
 
@@ -1742,60 +1796,6 @@ The recording-add-on-result API method(s) has the following set of parameters li
 |===
 
 In addition to the parameters above, the recording-add-on-result API can also use from the 23 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelTwilio.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelTwilio.myParameterNameHere` header.
-
-
-
-==== API: notification
-
-
-The notification API has 2 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.twilio.rest.api.v2010.account.NotificationFetcher fetcher(String pathAccountSid, String pathSid);
-
-com.twilio.rest.api.v2010.account.NotificationFetcher fetcher(String pathSid);
-
-com.twilio.rest.api.v2010.account.NotificationReader reader();
-
-com.twilio.rest.api.v2010.account.NotificationReader reader(String pathAccountSid);
-
-----
-
-The notification API is defined in the syntax as follows:
-
-----
-twilio:notification/methodName?[parameters]
-----
-
-The 2 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *fetcher* | fetch | Create a NotificationFetcher to execute fetch
-| *reader* | read | Create a NotificationReader to execute read
-|===
-
-The notification API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
-| fetcher | *pathSid* |  The unique string that identifies the resource | String
-| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
-|===
-
-In addition to the parameters above, the notification API can also use from the 23 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2353,67 +2353,6 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== API: transcription
-
-
-The transcription API has 3 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.twilio.rest.api.v2010.account.TranscriptionDeleter deleter(String pathAccountSid, String pathSid);
-
-com.twilio.rest.api.v2010.account.TranscriptionDeleter deleter(String pathSid);
-
-com.twilio.rest.api.v2010.account.TranscriptionFetcher fetcher(String pathAccountSid, String pathSid);
-
-com.twilio.rest.api.v2010.account.TranscriptionFetcher fetcher(String pathSid);
-
-com.twilio.rest.api.v2010.account.TranscriptionReader reader();
-
-com.twilio.rest.api.v2010.account.TranscriptionReader reader(String pathAccountSid);
-
-----
-
-The transcription API is defined in the syntax as follows:
-
-----
-twilio:transcription/methodName?[parameters]
-----
-
-The 3 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *deleter* | delete | Create a TranscriptionDeleter to execute delete
-| *fetcher* | fetch | Create a TranscriptionFetcher to execute fetch
-| *reader* | read | Create a TranscriptionReader to execute read
-|===
-
-The transcription API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| deleter | *pathAccountSid* |  The SID of the Account that created the resources to delete | String
-| deleter | *pathSid* |  The unique string that identifies the resource | String
-| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
-| fetcher | *pathSid* |  The unique string that identifies the resource | String
-| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
-|===
-
-In addition to the parameters above, the transcription API can also use from the 23 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelTwilio.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelTwilio.myParameterNameHere` header.
-
-
-
 ==== API: sip-domain-credential-list-mapping
 
 
@@ -2477,6 +2416,67 @@ The sip-domain-credential-list-mapping API method(s) has the following set of pa
 |===
 
 In addition to the parameters above, the sip-domain-credential-list-mapping API can also use from the 23 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelTwilio.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelTwilio.myParameterNameHere` header.
+
+
+
+==== API: transcription
+
+
+The transcription API has 3 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.twilio.rest.api.v2010.account.TranscriptionDeleter deleter(String pathAccountSid, String pathSid);
+
+com.twilio.rest.api.v2010.account.TranscriptionDeleter deleter(String pathSid);
+
+com.twilio.rest.api.v2010.account.TranscriptionFetcher fetcher(String pathAccountSid, String pathSid);
+
+com.twilio.rest.api.v2010.account.TranscriptionFetcher fetcher(String pathSid);
+
+com.twilio.rest.api.v2010.account.TranscriptionReader reader();
+
+com.twilio.rest.api.v2010.account.TranscriptionReader reader(String pathAccountSid);
+
+----
+
+The transcription API is defined in the syntax as follows:
+
+----
+twilio:transcription/methodName?[parameters]
+----
+
+The 3 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *deleter* | delete | Create a TranscriptionDeleter to execute delete
+| *fetcher* | fetch | Create a TranscriptionFetcher to execute fetch
+| *reader* | read | Create a TranscriptionReader to execute read
+|===
+
+The transcription API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| deleter | *pathAccountSid* |  The SID of the Account that created the resources to delete | String
+| deleter | *pathSid* |  The unique string that identifies the resource | String
+| fetcher | *pathAccountSid* |  The SID of the Account that created the resource to fetch | String
+| fetcher | *pathSid* |  The unique string that identifies the resource | String
+| reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
+|===
+
+In addition to the parameters above, the transcription API can also use from the 23 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
