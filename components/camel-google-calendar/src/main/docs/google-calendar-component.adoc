@@ -41,7 +41,7 @@ for this component:
 </dependency>
 ----
 
-=== Component options
+== Component options
 
 // component options: START
 The Google Calendar component supports 14 options, which are listed below.
