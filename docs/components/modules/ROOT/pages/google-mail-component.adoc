@@ -148,134 +148,56 @@ There are 7 API groups as listed in the table below:
 [width="100%",cols="2,8",options="header"]
 |===
 | API Name | Description
-| *users* | The users collection of methods
-| *threads* | The threads collection of methods
-| *drafts* | The drafts collection of methods
-| *labels* | The labels collection of methods
-| *history* | The history collection of methods
 | *attachments* | The attachments collection of methods
+| *drafts* | The drafts collection of methods
+| *history* | The history collection of methods
+| *labels* | The labels collection of methods
 | *messages* | The messages collection of methods
+| *threads* | The threads collection of methods
+| *users* | The users collection of methods
 |===
 
 Each API is documented in the following sections to come.
 
 
-==== API: users
+==== API: attachments
 
 
-The users API has 3 method(s) which is represented by the following method signatures
+The attachments API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
 
-com.google.api.services.gmail.Gmail.Users.GetProfile getProfile(String userId);
-
-com.google.api.services.gmail.Gmail.Users.Stop stop(String userId);
-
-com.google.api.services.gmail.Gmail.Users.Watch watch(String userId, com.google.api.services.gmail.model.WatchRequest content);
+com.google.api.services.gmail.Gmail.Users.Messages.Attachments.Get get(String userId, String messageId, String id);
 
 ----
 
-The users API is defined in the syntax as follows:
+The attachments API is defined in the syntax as follows:
 
 ----
-google-mail:users/methodName?[parameters]
+google-mail:attachments/methodName?[parameters]
 ----
 
-The 3 method(s) is listed in the table below.
+The 1 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
-| *getProfile* |  | Gets the current user's Gmail profile
-| *stop* |  | Stop receiving push notifications for the given user mailbox
-| *watch* |  | Set up or update a push notification watch on the given user mailbox
+| *get* |  | Gets the specified message attachment
 |===
 
-The users API method(s) has the following set of parameters listed in the table below:
+The attachments API method(s) has the following set of parameters listed in the table below:
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
-| getProfile | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| stop | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| watch | *content* |  The com.google.api.services.gmail.model.WatchRequest | WatchRequest
-| watch | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-|===
-
-In addition to the parameters above, the users API can also use from the 28 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleMail.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleMail.myParameterNameHere` header.
-
-
-
-==== API: threads
-
-
-The threads API has 6 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.gmail.Gmail.Users.Threads.Delete delete(String userId, String id);
-
-com.google.api.services.gmail.Gmail.Users.Threads.Get get(String userId, String id);
-
-com.google.api.services.gmail.Gmail.Users.Threads.List list(String userId);
-
-com.google.api.services.gmail.Gmail.Users.Threads.Modify modify(String userId, String id, com.google.api.services.gmail.model.ModifyThreadRequest content);
-
-com.google.api.services.gmail.Gmail.Users.Threads.Trash trash(String userId, String id);
-
-com.google.api.services.gmail.Gmail.Users.Threads.Untrash untrash(String userId, String id);
-
-----
-
-The threads API is defined in the syntax as follows:
-
-----
-google-mail:threads/methodName?[parameters]
-----
-
-The 6 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *delete* |  | Immediately and permanently deletes the specified thread
-| *get* |  | Gets the specified thread
-| *list* |  | Lists the threads in the user's mailbox
-| *modify* |  | Modifies the labels applied to the thread
-| *trash* |  | Moves the specified thread to the trash
-| *untrash* |  | Removes the specified thread from the trash
-|===
-
-The threads API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| delete | *id* |  ID of the Thread to delete | String
-| delete | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| get | *id* |  The ID of the thread to retrieve | String
+| get | *id* |  The ID of the attachment | String
+| get | *messageId* |  The ID of the message containing the attachment | String
 | get | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| list | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| modify | *content* |  The com.google.api.services.gmail.model.ModifyThreadRequest | ModifyThreadRequest
-| modify | *id* |  The ID of the thread to modify | String
-| modify | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| trash | *id* |  The ID of the thread to Trash | String
-| trash | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-| untrash | *id* |  The ID of the thread to remove from Trash | String
-| untrash | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
 |===
 
-In addition to the parameters above, the threads API can also use from the 28 endpoint query option
+In addition to the parameters above, the attachments API can also use from the 28 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -365,6 +287,51 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 
+==== API: history
+
+
+The history API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.gmail.Gmail.Users.History.List list(String userId);
+
+----
+
+The history API is defined in the syntax as follows:
+
+----
+google-mail:history/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *list* |  | Lists the history of all changes to the given mailbox
+|===
+
+The history API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| list | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+|===
+
+In addition to the parameters above, the history API can also use from the 28 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleMail.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleMail.myParameterNameHere` header.
+
+
+
 ==== API: labels
 
 
@@ -428,98 +395,6 @@ The labels API method(s) has the following set of parameters listed in the table
 |===
 
 In addition to the parameters above, the labels API can also use from the 28 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleMail.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleMail.myParameterNameHere` header.
-
-
-
-==== API: history
-
-
-The history API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.gmail.Gmail.Users.History.List list(String userId);
-
-----
-
-The history API is defined in the syntax as follows:
-
-----
-google-mail:history/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *list* |  | Lists the history of all changes to the given mailbox
-|===
-
-The history API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| list | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-|===
-
-In addition to the parameters above, the history API can also use from the 28 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleMail.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleMail.myParameterNameHere` header.
-
-
-
-==== API: attachments
-
-
-The attachments API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.gmail.Gmail.Users.Messages.Attachments.Get get(String userId, String messageId, String id);
-
-----
-
-The attachments API is defined in the syntax as follows:
-
-----
-google-mail:attachments/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *get* |  | Gets the specified message attachment
-|===
-
-The attachments API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| get | *id* |  The ID of the attachment | String
-| get | *messageId* |  The ID of the message containing the attachment | String
-| get | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
-|===
-
-In addition to the parameters above, the attachments API can also use from the 28 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -625,6 +500,131 @@ The messages API method(s) has the following set of parameters listed in the tab
 |===
 
 In addition to the parameters above, the messages API can also use from the 28 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleMail.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleMail.myParameterNameHere` header.
+
+
+
+==== API: threads
+
+
+The threads API has 6 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.gmail.Gmail.Users.Threads.Delete delete(String userId, String id);
+
+com.google.api.services.gmail.Gmail.Users.Threads.Get get(String userId, String id);
+
+com.google.api.services.gmail.Gmail.Users.Threads.List list(String userId);
+
+com.google.api.services.gmail.Gmail.Users.Threads.Modify modify(String userId, String id, com.google.api.services.gmail.model.ModifyThreadRequest content);
+
+com.google.api.services.gmail.Gmail.Users.Threads.Trash trash(String userId, String id);
+
+com.google.api.services.gmail.Gmail.Users.Threads.Untrash untrash(String userId, String id);
+
+----
+
+The threads API is defined in the syntax as follows:
+
+----
+google-mail:threads/methodName?[parameters]
+----
+
+The 6 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *delete* |  | Immediately and permanently deletes the specified thread
+| *get* |  | Gets the specified thread
+| *list* |  | Lists the threads in the user's mailbox
+| *modify* |  | Modifies the labels applied to the thread
+| *trash* |  | Moves the specified thread to the trash
+| *untrash* |  | Removes the specified thread from the trash
+|===
+
+The threads API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| delete | *id* |  ID of the Thread to delete | String
+| delete | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| get | *id* |  The ID of the thread to retrieve | String
+| get | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| list | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| modify | *content* |  The com.google.api.services.gmail.model.ModifyThreadRequest | ModifyThreadRequest
+| modify | *id* |  The ID of the thread to modify | String
+| modify | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| trash | *id* |  The ID of the thread to Trash | String
+| trash | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| untrash | *id* |  The ID of the thread to remove from Trash | String
+| untrash | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+|===
+
+In addition to the parameters above, the threads API can also use from the 28 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleMail.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleMail.myParameterNameHere` header.
+
+
+
+==== API: users
+
+
+The users API has 3 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.gmail.Gmail.Users.GetProfile getProfile(String userId);
+
+com.google.api.services.gmail.Gmail.Users.Stop stop(String userId);
+
+com.google.api.services.gmail.Gmail.Users.Watch watch(String userId, com.google.api.services.gmail.model.WatchRequest content);
+
+----
+
+The users API is defined in the syntax as follows:
+
+----
+google-mail:users/methodName?[parameters]
+----
+
+The 3 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *getProfile* |  | Gets the current user's Gmail profile
+| *stop* |  | Stop receiving push notifications for the given user mailbox
+| *watch* |  | Set up or update a push notification watch on the given user mailbox
+|===
+
+The users API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| getProfile | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| stop | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+| watch | *content* |  The com.google.api.services.gmail.model.WatchRequest | WatchRequest
+| watch | *userId* |  The user's email address. The special value me can be used to indicate the authenticated user. default: me | String
+|===
+
+In addition to the parameters above, the users API can also use from the 28 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

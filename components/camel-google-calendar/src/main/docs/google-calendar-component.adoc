@@ -146,253 +146,16 @@ There are 7 API groups as listed in the table below:
 [width="100%",cols="2,8",options="header"]
 |===
 | API Name | Description
-| *settings* | The settings collection of methods
-| *freebusy* | The freebusy collection of methods
-| *events* | The events collection of methods
-| *channels* | The channels collection of methods
 | *acl* | The acl collection of methods
 | *calendars* | The calendars collection of methods
+| *channels* | The channels collection of methods
+| *events* | The events collection of methods
+| *freebusy* | The freebusy collection of methods
 | *list* | The calendarList collection of methods
+| *settings* | The settings collection of methods
 |===
 
 Each API is documented in the following sections to come.
-
-
-==== API: settings
-
-
-The settings API has 2 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.calendar.Calendar.Settings.Get get(String setting);
-
-com.google.api.services.calendar.Calendar.Settings.Watch watch(com.google.api.services.calendar.model.Channel content);
-
-----
-
-The settings API is defined in the syntax as follows:
-
-----
-google-calendar:settings/methodName?[parameters]
-----
-
-The 2 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *get* |  | Returns a single user setting
-| *watch* |  | Watch for changes to Settings resources
-|===
-
-The settings API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| get | *setting* |  The id of the user setting | String
-| watch | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
-|===
-
-In addition to the parameters above, the settings API can also use from the 32 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleCalendar.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleCalendar.myParameterNameHere` header.
-
-
-
-==== API: freebusy
-
-
-The freebusy API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.calendar.Calendar.Freebusy.Query query(com.google.api.services.calendar.model.FreeBusyRequest content);
-
-----
-
-The freebusy API is defined in the syntax as follows:
-
-----
-google-calendar:freebusy/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *query* |  | Returns free/busy information for a set of calendars
-|===
-
-The freebusy API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| query | *content* |  The com.google.api.services.calendar.model.FreeBusyRequest | FreeBusyRequest
-|===
-
-In addition to the parameters above, the freebusy API can also use from the 32 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleCalendar.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleCalendar.myParameterNameHere` header.
-
-
-
-==== API: events
-
-
-The events API has 11 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.calendar.Calendar.Events.CalendarImport calendarImport(String calendarId, com.google.api.services.calendar.model.Event content);
-
-com.google.api.services.calendar.Calendar.Events.Delete delete(String calendarId, String eventId);
-
-com.google.api.services.calendar.Calendar.Events.Get get(String calendarId, String eventId);
-
-com.google.api.services.calendar.Calendar.Events.Insert insert(String calendarId, com.google.api.services.calendar.model.Event content);
-
-com.google.api.services.calendar.Calendar.Events.Instances instances(String calendarId, String eventId);
-
-com.google.api.services.calendar.Calendar.Events.List list(String calendarId);
-
-com.google.api.services.calendar.Calendar.Events.Move move(String calendarId, String eventId, String destination);
-
-com.google.api.services.calendar.Calendar.Events.Patch patch(String calendarId, String eventId, com.google.api.services.calendar.model.Event content);
-
-com.google.api.services.calendar.Calendar.Events.QuickAdd quickAdd(String calendarId, String text);
-
-com.google.api.services.calendar.Calendar.Events.Update update(String calendarId, String eventId, com.google.api.services.calendar.model.Event content);
-
-com.google.api.services.calendar.Calendar.Events.Watch watch(String calendarId, com.google.api.services.calendar.model.Channel content);
-
-----
-
-The events API is defined in the syntax as follows:
-
-----
-google-calendar:events/methodName?[parameters]
-----
-
-The 11 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *calendarImport* |  | Imports an event
-| *delete* |  | Deletes an event
-| *get* |  | Returns an event
-| *insert* |  | Creates an event
-| *instances* |  | Returns instances of the specified recurring event
-| *list* |  | Returns events on the specified calendar
-| *move* |  | Moves an event to another calendar, i
-| *patch* |  | Updates an event
-| *quickAdd* |  | Creates an event based on a simple text string
-| *update* |  | Updates an event
-| *watch* |  | Watch for changes to Events resources
-|===
-
-The events API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| calendarImport | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| calendarImport | *content* |  The com.google.api.services.calendar.model.Event | Event
-| delete | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| delete | *eventId* |  Event identifier | String
-| get | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| get | *eventId* |  Event identifier | String
-| insert | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| insert | *content* |  The com.google.api.services.calendar.model.Event | Event
-| instances | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| instances | *eventId* |  Recurring event identifier | String
-| list | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| move | *calendarId* |  Calendar identifier of the source calendar where the event currently is on | String
-| move | *destination* |  Calendar identifier of the target calendar where the event is to be moved to | String
-| move | *eventId* |  Event identifier | String
-| patch | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| patch | *content* |  The com.google.api.services.calendar.model.Event | Event
-| patch | *eventId* |  Event identifier | String
-| quickAdd | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| quickAdd | *text* |  The text describing the event to be created | String
-| update | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| update | *content* |  The com.google.api.services.calendar.model.Event | Event
-| update | *eventId* |  Event identifier | String
-| watch | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
-| watch | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
-|===
-
-In addition to the parameters above, the events API can also use from the 32 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleCalendar.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleCalendar.myParameterNameHere` header.
-
-
-
-==== API: channels
-
-
-The channels API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.calendar.Calendar.Channels.Stop stop(com.google.api.services.calendar.model.Channel content);
-
-----
-
-The channels API is defined in the syntax as follows:
-
-----
-google-calendar:channels/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *stop* |  | Stop watching resources through this channel
-|===
-
-The channels API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| stop | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
-|===
-
-In addition to the parameters above, the channels API can also use from the 32 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleCalendar.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleCalendar.myParameterNameHere` header.
-
 
 
 ==== API: acl
@@ -539,6 +302,194 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 
 
+==== API: channels
+
+
+The channels API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.calendar.Calendar.Channels.Stop stop(com.google.api.services.calendar.model.Channel content);
+
+----
+
+The channels API is defined in the syntax as follows:
+
+----
+google-calendar:channels/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *stop* |  | Stop watching resources through this channel
+|===
+
+The channels API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| stop | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
+|===
+
+In addition to the parameters above, the channels API can also use from the 32 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleCalendar.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleCalendar.myParameterNameHere` header.
+
+
+
+==== API: events
+
+
+The events API has 11 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.calendar.Calendar.Events.CalendarImport calendarImport(String calendarId, com.google.api.services.calendar.model.Event content);
+
+com.google.api.services.calendar.Calendar.Events.Delete delete(String calendarId, String eventId);
+
+com.google.api.services.calendar.Calendar.Events.Get get(String calendarId, String eventId);
+
+com.google.api.services.calendar.Calendar.Events.Insert insert(String calendarId, com.google.api.services.calendar.model.Event content);
+
+com.google.api.services.calendar.Calendar.Events.Instances instances(String calendarId, String eventId);
+
+com.google.api.services.calendar.Calendar.Events.List list(String calendarId);
+
+com.google.api.services.calendar.Calendar.Events.Move move(String calendarId, String eventId, String destination);
+
+com.google.api.services.calendar.Calendar.Events.Patch patch(String calendarId, String eventId, com.google.api.services.calendar.model.Event content);
+
+com.google.api.services.calendar.Calendar.Events.QuickAdd quickAdd(String calendarId, String text);
+
+com.google.api.services.calendar.Calendar.Events.Update update(String calendarId, String eventId, com.google.api.services.calendar.model.Event content);
+
+com.google.api.services.calendar.Calendar.Events.Watch watch(String calendarId, com.google.api.services.calendar.model.Channel content);
+
+----
+
+The events API is defined in the syntax as follows:
+
+----
+google-calendar:events/methodName?[parameters]
+----
+
+The 11 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *calendarImport* |  | Imports an event
+| *delete* |  | Deletes an event
+| *get* |  | Returns an event
+| *insert* |  | Creates an event
+| *instances* |  | Returns instances of the specified recurring event
+| *list* |  | Returns events on the specified calendar
+| *move* |  | Moves an event to another calendar, i
+| *patch* |  | Updates an event
+| *quickAdd* |  | Creates an event based on a simple text string
+| *update* |  | Updates an event
+| *watch* |  | Watch for changes to Events resources
+|===
+
+The events API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| calendarImport | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| calendarImport | *content* |  The com.google.api.services.calendar.model.Event | Event
+| delete | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| delete | *eventId* |  Event identifier | String
+| get | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| get | *eventId* |  Event identifier | String
+| insert | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| insert | *content* |  The com.google.api.services.calendar.model.Event | Event
+| instances | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| instances | *eventId* |  Recurring event identifier | String
+| list | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| move | *calendarId* |  Calendar identifier of the source calendar where the event currently is on | String
+| move | *destination* |  Calendar identifier of the target calendar where the event is to be moved to | String
+| move | *eventId* |  Event identifier | String
+| patch | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| patch | *content* |  The com.google.api.services.calendar.model.Event | Event
+| patch | *eventId* |  Event identifier | String
+| quickAdd | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| quickAdd | *text* |  The text describing the event to be created | String
+| update | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| update | *content* |  The com.google.api.services.calendar.model.Event | Event
+| update | *eventId* |  Event identifier | String
+| watch | *calendarId* |  Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword. | String
+| watch | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
+|===
+
+In addition to the parameters above, the events API can also use from the 32 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleCalendar.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleCalendar.myParameterNameHere` header.
+
+
+
+==== API: freebusy
+
+
+The freebusy API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.calendar.Calendar.Freebusy.Query query(com.google.api.services.calendar.model.FreeBusyRequest content);
+
+----
+
+The freebusy API is defined in the syntax as follows:
+
+----
+google-calendar:freebusy/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *query* |  | Returns free/busy information for a set of calendars
+|===
+
+The freebusy API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| query | *content* |  The com.google.api.services.calendar.model.FreeBusyRequest | FreeBusyRequest
+|===
+
+In addition to the parameters above, the freebusy API can also use from the 32 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleCalendar.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleCalendar.myParameterNameHere` header.
+
+
+
 ==== API: list
 
 
@@ -597,6 +548,55 @@ The list API method(s) has the following set of parameters listed in the table b
 |===
 
 In addition to the parameters above, the list API can also use from the 32 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleCalendar.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleCalendar.myParameterNameHere` header.
+
+
+
+==== API: settings
+
+
+The settings API has 2 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.calendar.Calendar.Settings.Get get(String setting);
+
+com.google.api.services.calendar.Calendar.Settings.Watch watch(com.google.api.services.calendar.model.Channel content);
+
+----
+
+The settings API is defined in the syntax as follows:
+
+----
+google-calendar:settings/methodName?[parameters]
+----
+
+The 2 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *get* |  | Returns a single user setting
+| *watch* |  | Watch for changes to Settings resources
+|===
+
+The settings API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| get | *setting* |  The id of the user setting | String
+| watch | *contentChannel* |  The com.google.api.services.calendar.model.Channel | Channel
+|===
+
+In addition to the parameters above, the settings API can also use from the 32 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

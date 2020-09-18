@@ -150,347 +150,21 @@ There are 12 API groups as listed in the table below:
 [width="100%",cols="2,8",options="header"]
 |===
 | API Name | Description
-| *drive-channels* | The channels collection of methods
-| *drive-revisions* | The revisions collection of methods
-| *drive-replies* | The replies collection of methods
-| *drive-permissions* | The permissions collection of methods
-| *drive-parents* | The parents collection of methods
 | *drive-apps* | The apps collection of methods
 | *drive-changes* | The changes collection of methods
+| *drive-channels* | The channels collection of methods
+| *drive-children* | The children collection of methods
 | *drive-comments* | The comments collection of methods
+| *drive-files* | The files collection of methods
+| *drive-parents* | The parents collection of methods
+| *drive-permissions* | The permissions collection of methods
 | *drive-properties* | The properties collection of methods
 | *drive-realtime* | The realtime collection of methods
-| *drive-children* | The children collection of methods
-| *drive-files* | The files collection of methods
+| *drive-replies* | The replies collection of methods
+| *drive-revisions* | The revisions collection of methods
 |===
 
 Each API is documented in the following sections to come.
-
-
-==== API: drive-channels
-
-
-The drive-channels API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.drive.Drive.Channels.Stop stop(com.google.api.services.drive.model.Channel content);
-
-----
-
-The drive-channels API is defined in the syntax as follows:
-
-----
-google-drive:drive-channels/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *stop* |  | Stop watching resources through this channel
-|===
-
-The drive-channels API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| stop | *contentChannel* |  The com.google.api.services.drive.model.Channel | Channel
-|===
-
-In addition to the parameters above, the drive-channels API can also use from the 30 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleDrive.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleDrive.myParameterNameHere` header.
-
-
-
-==== API: drive-revisions
-
-
-The drive-revisions API has 5 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.drive.Drive.Revisions.Delete delete(String fileId, String revisionId);
-
-com.google.api.services.drive.Drive.Revisions.Get get(String fileId, String revisionId);
-
-com.google.api.services.drive.Drive.Revisions.List list(String fileId);
-
-com.google.api.services.drive.Drive.Revisions.Patch patch(String fileId, String revisionId, com.google.api.services.drive.model.Revision content);
-
-com.google.api.services.drive.Drive.Revisions.Update update(String fileId, String revisionId, com.google.api.services.drive.model.Revision content);
-
-----
-
-The drive-revisions API is defined in the syntax as follows:
-
-----
-google-drive:drive-revisions/methodName?[parameters]
-----
-
-The 5 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *delete* |  | Removes a revision
-| *get* |  | Gets a specific revision
-| *list* |  | Lists a file's revisions
-| *patch* |  | Updates a revision
-| *update* |  | Updates a revision
-|===
-
-The drive-revisions API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| delete | *fileId* |  The ID of the file | String
-| delete | *revisionId* |  The ID of the revision | String
-| get | *fileId* |  The ID of the file | String
-| get | *revisionId* |  The ID of the revision | String
-| list | *fileId* |  The ID of the file | String
-| patch | *content* |  The com.google.api.services.drive.model.Revision | Revision
-| patch | *fileId* |  The ID for the file | String
-| patch | *revisionId* |  The ID for the revision | String
-| update | *content* |  The com.google.api.services.drive.model.Revision | Revision
-| update | *fileId* |  The ID for the file | String
-| update | *revisionId* |  The ID for the revision | String
-|===
-
-In addition to the parameters above, the drive-revisions API can also use from the 30 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleDrive.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleDrive.myParameterNameHere` header.
-
-
-
-==== API: drive-replies
-
-
-The drive-replies API has 6 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.drive.Drive.Replies.Delete delete(String fileId, String commentId, String replyId);
-
-com.google.api.services.drive.Drive.Replies.Get get(String fileId, String commentId, String replyId);
-
-com.google.api.services.drive.Drive.Replies.Insert insert(String fileId, String commentId, com.google.api.services.drive.model.CommentReply content);
-
-com.google.api.services.drive.Drive.Replies.List list(String fileId, String commentId);
-
-com.google.api.services.drive.Drive.Replies.Patch patch(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content);
-
-com.google.api.services.drive.Drive.Replies.Update update(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content);
-
-----
-
-The drive-replies API is defined in the syntax as follows:
-
-----
-google-drive:drive-replies/methodName?[parameters]
-----
-
-The 6 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *delete* |  | Deletes a reply
-| *get* |  | Gets a reply
-| *insert* |  | Creates a new reply to the given comment
-| *list* |  | Lists all of the replies to a comment
-| *patch* |  | Updates an existing reply
-| *update* |  | Updates an existing reply
-|===
-
-The drive-replies API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| delete | *commentId* |  The ID of the comment | String
-| delete | *fileId* |  The ID of the file | String
-| delete | *replyId* |  The ID of the reply | String
-| get | *commentId* |  The ID of the comment | String
-| get | *fileId* |  The ID of the file | String
-| get | *replyId* |  The ID of the reply | String
-| insert | *commentId* |  The ID of the comment | String
-| insert | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
-| insert | *fileId* |  The ID of the file | String
-| list | *commentId* |  The ID of the comment | String
-| list | *fileId* |  The ID of the file | String
-| patch | *commentId* |  The ID of the comment | String
-| patch | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
-| patch | *fileId* |  The ID of the file | String
-| patch | *replyId* |  The ID of the reply | String
-| update | *commentId* |  The ID of the comment | String
-| update | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
-| update | *fileId* |  The ID of the file | String
-| update | *replyId* |  The ID of the reply | String
-|===
-
-In addition to the parameters above, the drive-replies API can also use from the 30 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleDrive.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleDrive.myParameterNameHere` header.
-
-
-
-==== API: drive-permissions
-
-
-The drive-permissions API has 7 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.drive.Drive.Permissions.Delete delete(String fileId, String permissionId);
-
-com.google.api.services.drive.Drive.Permissions.Get get(String fileId, String permissionId);
-
-com.google.api.services.drive.Drive.Permissions.GetIdForEmail getIdForEmail(String email);
-
-com.google.api.services.drive.Drive.Permissions.Insert insert(String fileId, com.google.api.services.drive.model.Permission content);
-
-com.google.api.services.drive.Drive.Permissions.List list(String fileId);
-
-com.google.api.services.drive.Drive.Permissions.Patch patch(String fileId, String permissionId, com.google.api.services.drive.model.Permission content);
-
-com.google.api.services.drive.Drive.Permissions.Update update(String fileId, String permissionId, com.google.api.services.drive.model.Permission content);
-
-----
-
-The drive-permissions API is defined in the syntax as follows:
-
-----
-google-drive:drive-permissions/methodName?[parameters]
-----
-
-The 7 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *delete* |  | Deletes a permission from a file or Team Drive
-| *get* |  | Gets a permission by ID
-| *getIdForEmail* |  | Returns the permission ID for an email address
-| *insert* |  | Inserts a permission for a file or Team Drive
-| *list* |  | Lists a file's or Team Drive's permissions
-| *patch* |  | Updates a permission using patch semantics
-| *update* |  | Updates a permission
-|===
-
-The drive-permissions API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| delete | *fileId* |  The ID for the file or Team Drive | String
-| delete | *permissionId* |  The ID for the permission | String
-| get | *fileId* |  The ID for the file or Team Drive | String
-| get | *permissionId* |  The ID for the permission | String
-| getIdForEmail | *email* |  The email address for which to return a permission ID | String
-| insert | *content* |  The com.google.api.services.drive.model.Permission | Permission
-| insert | *fileId* |  The ID for the file or Team Drive | String
-| list | *fileId* |  The ID for the file or Team Drive | String
-| patch | *content* |  The com.google.api.services.drive.model.Permission | Permission
-| patch | *fileId* |  The ID for the file or Team Drive | String
-| patch | *permissionId* |  The ID for the permission | String
-| update | *content* |  The com.google.api.services.drive.model.Permission | Permission
-| update | *fileId* |  The ID for the file or Team Drive | String
-| update | *permissionId* |  The ID for the permission | String
-|===
-
-In addition to the parameters above, the drive-permissions API can also use from the 30 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleDrive.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleDrive.myParameterNameHere` header.
-
-
-
-==== API: drive-parents
-
-
-The drive-parents API has 4 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.drive.Drive.Parents.Delete delete(String fileId, String parentId);
-
-com.google.api.services.drive.Drive.Parents.Get get(String fileId, String parentId);
-
-com.google.api.services.drive.Drive.Parents.Insert insert(String fileId, com.google.api.services.drive.model.ParentReference content);
-
-com.google.api.services.drive.Drive.Parents.List list(String fileId);
-
-----
-
-The drive-parents API is defined in the syntax as follows:
-
-----
-google-drive:drive-parents/methodName?[parameters]
-----
-
-The 4 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *delete* |  | Removes a parent from a file
-| *get* |  | Gets a specific parent reference
-| *insert* |  | Adds a parent folder for a file
-| *list* |  | Lists a file's parents
-|===
-
-The drive-parents API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| delete | *fileId* |  The ID of the file | String
-| delete | *parentId* |  The ID of the parent | String
-| get | *fileId* |  The ID of the file | String
-| get | *parentId* |  The ID of the parent | String
-| insert | *content* |  The com.google.api.services.drive.model.ParentReference | ParentReference
-| insert | *fileId* |  The ID of the file | String
-| list | *fileId* |  The ID of the file | String
-|===
-
-In addition to the parameters above, the drive-parents API can also use from the 30 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleDrive.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleDrive.myParameterNameHere` header.
-
 
 
 ==== API: drive-apps
@@ -587,6 +261,111 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
+==== API: drive-channels
+
+
+The drive-channels API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.drive.Drive.Channels.Stop stop(com.google.api.services.drive.model.Channel content);
+
+----
+
+The drive-channels API is defined in the syntax as follows:
+
+----
+google-drive:drive-channels/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *stop* |  | Stop watching resources through this channel
+|===
+
+The drive-channels API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| stop | *contentChannel* |  The com.google.api.services.drive.model.Channel | Channel
+|===
+
+In addition to the parameters above, the drive-channels API can also use from the 30 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleDrive.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleDrive.myParameterNameHere` header.
+
+
+
+==== API: drive-children
+
+
+The drive-children API has 4 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.drive.Drive.Children.Delete delete(String folderId, String childId);
+
+com.google.api.services.drive.Drive.Children.Get get(String folderId, String childId);
+
+com.google.api.services.drive.Drive.Children.Insert insert(String folderId, com.google.api.services.drive.model.ChildReference content);
+
+com.google.api.services.drive.Drive.Children.List list(String folderId);
+
+----
+
+The drive-children API is defined in the syntax as follows:
+
+----
+google-drive:drive-children/methodName?[parameters]
+----
+
+The 4 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *delete* |  | Removes a child from a folder
+| *get* |  | Gets a specific child reference
+| *insert* |  | Inserts a file into a folder
+| *list* |  | Lists a folder's children
+|===
+
+The drive-children API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| delete | *childId* |  The ID of the child | String
+| delete | *folderId* |  The ID of the folder | String
+| get | *childId* |  The ID of the child | String
+| get | *folderId* |  The ID of the folder | String
+| insert | *content* |  The com.google.api.services.drive.model.ChildReference | ChildReference
+| insert | *folderId* |  The ID of the folder | String
+| list | *folderId* |  The ID of the folder | String
+|===
+
+In addition to the parameters above, the drive-children API can also use from the 30 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleDrive.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleDrive.myParameterNameHere` header.
+
+
+
 ==== API: drive-comments
 
 
@@ -650,6 +429,238 @@ The drive-comments API method(s) has the following set of parameters listed in t
 |===
 
 In addition to the parameters above, the drive-comments API can also use from the 30 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleDrive.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleDrive.myParameterNameHere` header.
+
+
+
+==== API: drive-files
+
+
+The drive-files API has 11 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.drive.Drive.Files.Copy copy(String fileId, com.google.api.services.drive.model.File content);
+
+com.google.api.services.drive.Drive.Files.Delete delete(String fileId);
+
+com.google.api.services.drive.Drive.Files.Export export(String fileId, String mimeType);
+
+com.google.api.services.drive.Drive.Files.Get get(String fileId);
+
+com.google.api.services.drive.Drive.Files.Insert insert(com.google.api.services.drive.model.File content);
+
+com.google.api.services.drive.Drive.Files.Insert insert(com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent);
+
+com.google.api.services.drive.Drive.Files.Patch patch(String fileId, com.google.api.services.drive.model.File content);
+
+com.google.api.services.drive.Drive.Files.Touch touch(String fileId);
+
+com.google.api.services.drive.Drive.Files.Trash trash(String fileId);
+
+com.google.api.services.drive.Drive.Files.Untrash untrash(String fileId);
+
+com.google.api.services.drive.Drive.Files.Update update(String fileId, com.google.api.services.drive.model.File content);
+
+com.google.api.services.drive.Drive.Files.Update update(String fileId, com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent);
+
+com.google.api.services.drive.Drive.Files.Watch watch(String fileId, com.google.api.services.drive.model.Channel content);
+
+----
+
+The drive-files API is defined in the syntax as follows:
+
+----
+google-drive:drive-files/methodName?[parameters]
+----
+
+The 11 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *copy* |  | Creates a copy of the specified file
+| *delete* |  | Permanently deletes a file by ID
+| *export* |  | Exports a Google Doc to the requested MIME type and returns the exported content
+| *get* |  | Gets a file's metadata by ID
+| *insert* |  | Insert a new file
+| *patch* |  | Updates file metadata and/or content
+| *touch* |  | Set the file's updated time to the current server time
+| *trash* |  | Moves a file to the trash
+| *untrash* |  | Restores a file from the trash
+| *update* |  | Updates file metadata and/or content
+| *watch* |  | Subscribe to changes on a file
+|===
+
+The drive-files API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| copy | *content* |  The com.google.api.services.drive.model.File | File
+| copy | *fileId* |  The ID of the file to copy | String
+| delete | *fileId* |  The ID of the file to delete | String
+| export | *fileId* |  The ID of the file | String
+| export | *mimeType* |  The MIME type of the format requested for this export | String
+| get | *fileId* |  The ID for the file in question | String
+| insert | *content* |  The com.google.api.services.drive.model.File media metadata or null if none | File
+| insert | *mediaContent* |  The media HTTP content or null if none | AbstractInputStreamContent
+| patch | *content* |  The com.google.api.services.drive.model.File | File
+| patch | *fileId* |  The ID of the file to update | String
+| touch | *fileId* |  The ID of the file to update | String
+| trash | *fileId* |  The ID of the file to trash | String
+| untrash | *fileId* |  The ID of the file to untrash | String
+| update | *content* |  The com.google.api.services.drive.model.File media metadata or null if none | File
+| update | *fileId* |  The ID of the file to update | String
+| update | *mediaContent* |  The media HTTP content or null if none | AbstractInputStreamContent
+| watch | *contentChannel* |  The com.google.api.services.drive.model.Channel | Channel
+| watch | *fileId* |  The ID for the file in question | String
+|===
+
+In addition to the parameters above, the drive-files API can also use from the 30 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleDrive.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleDrive.myParameterNameHere` header.
+
+
+
+==== API: drive-parents
+
+
+The drive-parents API has 4 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.drive.Drive.Parents.Delete delete(String fileId, String parentId);
+
+com.google.api.services.drive.Drive.Parents.Get get(String fileId, String parentId);
+
+com.google.api.services.drive.Drive.Parents.Insert insert(String fileId, com.google.api.services.drive.model.ParentReference content);
+
+com.google.api.services.drive.Drive.Parents.List list(String fileId);
+
+----
+
+The drive-parents API is defined in the syntax as follows:
+
+----
+google-drive:drive-parents/methodName?[parameters]
+----
+
+The 4 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *delete* |  | Removes a parent from a file
+| *get* |  | Gets a specific parent reference
+| *insert* |  | Adds a parent folder for a file
+| *list* |  | Lists a file's parents
+|===
+
+The drive-parents API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| delete | *fileId* |  The ID of the file | String
+| delete | *parentId* |  The ID of the parent | String
+| get | *fileId* |  The ID of the file | String
+| get | *parentId* |  The ID of the parent | String
+| insert | *content* |  The com.google.api.services.drive.model.ParentReference | ParentReference
+| insert | *fileId* |  The ID of the file | String
+| list | *fileId* |  The ID of the file | String
+|===
+
+In addition to the parameters above, the drive-parents API can also use from the 30 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleDrive.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleDrive.myParameterNameHere` header.
+
+
+
+==== API: drive-permissions
+
+
+The drive-permissions API has 7 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.drive.Drive.Permissions.Delete delete(String fileId, String permissionId);
+
+com.google.api.services.drive.Drive.Permissions.Get get(String fileId, String permissionId);
+
+com.google.api.services.drive.Drive.Permissions.GetIdForEmail getIdForEmail(String email);
+
+com.google.api.services.drive.Drive.Permissions.Insert insert(String fileId, com.google.api.services.drive.model.Permission content);
+
+com.google.api.services.drive.Drive.Permissions.List list(String fileId);
+
+com.google.api.services.drive.Drive.Permissions.Patch patch(String fileId, String permissionId, com.google.api.services.drive.model.Permission content);
+
+com.google.api.services.drive.Drive.Permissions.Update update(String fileId, String permissionId, com.google.api.services.drive.model.Permission content);
+
+----
+
+The drive-permissions API is defined in the syntax as follows:
+
+----
+google-drive:drive-permissions/methodName?[parameters]
+----
+
+The 7 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *delete* |  | Deletes a permission from a file or Team Drive
+| *get* |  | Gets a permission by ID
+| *getIdForEmail* |  | Returns the permission ID for an email address
+| *insert* |  | Inserts a permission for a file or Team Drive
+| *list* |  | Lists a file's or Team Drive's permissions
+| *patch* |  | Updates a permission using patch semantics
+| *update* |  | Updates a permission
+|===
+
+The drive-permissions API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| delete | *fileId* |  The ID for the file or Team Drive | String
+| delete | *permissionId* |  The ID for the permission | String
+| get | *fileId* |  The ID for the file or Team Drive | String
+| get | *permissionId* |  The ID for the permission | String
+| getIdForEmail | *email* |  The email address for which to return a permission ID | String
+| insert | *content* |  The com.google.api.services.drive.model.Permission | Permission
+| insert | *fileId* |  The ID for the file or Team Drive | String
+| list | *fileId* |  The ID for the file or Team Drive | String
+| patch | *content* |  The com.google.api.services.drive.model.Permission | Permission
+| patch | *fileId* |  The ID for the file or Team Drive | String
+| patch | *permissionId* |  The ID for the permission | String
+| update | *content* |  The com.google.api.services.drive.model.Permission | Permission
+| update | *fileId* |  The ID for the file or Team Drive | String
+| update | *permissionId* |  The ID for the permission | String
+|===
+
+In addition to the parameters above, the drive-permissions API can also use from the 30 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -783,57 +794,75 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== API: drive-children
+==== API: drive-replies
 
 
-The drive-children API has 4 method(s) which is represented by the following method signatures
+The drive-replies API has 6 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
 
-com.google.api.services.drive.Drive.Children.Delete delete(String folderId, String childId);
+com.google.api.services.drive.Drive.Replies.Delete delete(String fileId, String commentId, String replyId);
 
-com.google.api.services.drive.Drive.Children.Get get(String folderId, String childId);
+com.google.api.services.drive.Drive.Replies.Get get(String fileId, String commentId, String replyId);
 
-com.google.api.services.drive.Drive.Children.Insert insert(String folderId, com.google.api.services.drive.model.ChildReference content);
+com.google.api.services.drive.Drive.Replies.Insert insert(String fileId, String commentId, com.google.api.services.drive.model.CommentReply content);
 
-com.google.api.services.drive.Drive.Children.List list(String folderId);
+com.google.api.services.drive.Drive.Replies.List list(String fileId, String commentId);
+
+com.google.api.services.drive.Drive.Replies.Patch patch(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content);
+
+com.google.api.services.drive.Drive.Replies.Update update(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content);
 
 ----
 
-The drive-children API is defined in the syntax as follows:
+The drive-replies API is defined in the syntax as follows:
 
 ----
-google-drive:drive-children/methodName?[parameters]
+google-drive:drive-replies/methodName?[parameters]
 ----
 
-The 4 method(s) is listed in the table below.
+The 6 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
-| *delete* |  | Removes a child from a folder
-| *get* |  | Gets a specific child reference
-| *insert* |  | Inserts a file into a folder
-| *list* |  | Lists a folder's children
+| *delete* |  | Deletes a reply
+| *get* |  | Gets a reply
+| *insert* |  | Creates a new reply to the given comment
+| *list* |  | Lists all of the replies to a comment
+| *patch* |  | Updates an existing reply
+| *update* |  | Updates an existing reply
 |===
 
-The drive-children API method(s) has the following set of parameters listed in the table below:
+The drive-replies API method(s) has the following set of parameters listed in the table below:
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
-| delete | *childId* |  The ID of the child | String
-| delete | *folderId* |  The ID of the folder | String
-| get | *childId* |  The ID of the child | String
-| get | *folderId* |  The ID of the folder | String
-| insert | *content* |  The com.google.api.services.drive.model.ChildReference | ChildReference
-| insert | *folderId* |  The ID of the folder | String
-| list | *folderId* |  The ID of the folder | String
+| delete | *commentId* |  The ID of the comment | String
+| delete | *fileId* |  The ID of the file | String
+| delete | *replyId* |  The ID of the reply | String
+| get | *commentId* |  The ID of the comment | String
+| get | *fileId* |  The ID of the file | String
+| get | *replyId* |  The ID of the reply | String
+| insert | *commentId* |  The ID of the comment | String
+| insert | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
+| insert | *fileId* |  The ID of the file | String
+| list | *commentId* |  The ID of the comment | String
+| list | *fileId* |  The ID of the file | String
+| patch | *commentId* |  The ID of the comment | String
+| patch | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
+| patch | *fileId* |  The ID of the file | String
+| patch | *replyId* |  The ID of the reply | String
+| update | *commentId* |  The ID of the comment | String
+| update | *content* |  The com.google.api.services.drive.model.CommentReply | CommentReply
+| update | *fileId* |  The ID of the file | String
+| update | *replyId* |  The ID of the reply | String
 |===
 
-In addition to the parameters above, the drive-children API can also use from the 30 endpoint query option
+In addition to the parameters above, the drive-replies API can also use from the 30 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -843,93 +872,64 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== API: drive-files
+==== API: drive-revisions
 
 
-The drive-files API has 11 method(s) which is represented by the following method signatures
+The drive-revisions API has 5 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
 
-com.google.api.services.drive.Drive.Files.Copy copy(String fileId, com.google.api.services.drive.model.File content);
+com.google.api.services.drive.Drive.Revisions.Delete delete(String fileId, String revisionId);
 
-com.google.api.services.drive.Drive.Files.Delete delete(String fileId);
+com.google.api.services.drive.Drive.Revisions.Get get(String fileId, String revisionId);
 
-com.google.api.services.drive.Drive.Files.Export export(String fileId, String mimeType);
+com.google.api.services.drive.Drive.Revisions.List list(String fileId);
 
-com.google.api.services.drive.Drive.Files.Get get(String fileId);
+com.google.api.services.drive.Drive.Revisions.Patch patch(String fileId, String revisionId, com.google.api.services.drive.model.Revision content);
 
-com.google.api.services.drive.Drive.Files.Insert insert(com.google.api.services.drive.model.File content);
-
-com.google.api.services.drive.Drive.Files.Insert insert(com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent);
-
-com.google.api.services.drive.Drive.Files.Patch patch(String fileId, com.google.api.services.drive.model.File content);
-
-com.google.api.services.drive.Drive.Files.Touch touch(String fileId);
-
-com.google.api.services.drive.Drive.Files.Trash trash(String fileId);
-
-com.google.api.services.drive.Drive.Files.Untrash untrash(String fileId);
-
-com.google.api.services.drive.Drive.Files.Update update(String fileId, com.google.api.services.drive.model.File content);
-
-com.google.api.services.drive.Drive.Files.Update update(String fileId, com.google.api.services.drive.model.File content, com.google.api.client.http.AbstractInputStreamContent mediaContent);
-
-com.google.api.services.drive.Drive.Files.Watch watch(String fileId, com.google.api.services.drive.model.Channel content);
+com.google.api.services.drive.Drive.Revisions.Update update(String fileId, String revisionId, com.google.api.services.drive.model.Revision content);
 
 ----
 
-The drive-files API is defined in the syntax as follows:
+The drive-revisions API is defined in the syntax as follows:
 
 ----
-google-drive:drive-files/methodName?[parameters]
+google-drive:drive-revisions/methodName?[parameters]
 ----
 
-The 11 method(s) is listed in the table below.
+The 5 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
-| *copy* |  | Creates a copy of the specified file
-| *delete* |  | Permanently deletes a file by ID
-| *export* |  | Exports a Google Doc to the requested MIME type and returns the exported content
-| *get* |  | Gets a file's metadata by ID
-| *insert* |  | Insert a new file
-| *patch* |  | Updates file metadata and/or content
-| *touch* |  | Set the file's updated time to the current server time
-| *trash* |  | Moves a file to the trash
-| *untrash* |  | Restores a file from the trash
-| *update* |  | Updates file metadata and/or content
-| *watch* |  | Subscribe to changes on a file
+| *delete* |  | Removes a revision
+| *get* |  | Gets a specific revision
+| *list* |  | Lists a file's revisions
+| *patch* |  | Updates a revision
+| *update* |  | Updates a revision
 |===
 
-The drive-files API method(s) has the following set of parameters listed in the table below:
+The drive-revisions API method(s) has the following set of parameters listed in the table below:
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
-| copy | *content* |  The com.google.api.services.drive.model.File | File
-| copy | *fileId* |  The ID of the file to copy | String
-| delete | *fileId* |  The ID of the file to delete | String
-| export | *fileId* |  The ID of the file | String
-| export | *mimeType* |  The MIME type of the format requested for this export | String
-| get | *fileId* |  The ID for the file in question | String
-| insert | *content* |  The com.google.api.services.drive.model.File media metadata or null if none | File
-| insert | *mediaContent* |  The media HTTP content or null if none | AbstractInputStreamContent
-| patch | *content* |  The com.google.api.services.drive.model.File | File
-| patch | *fileId* |  The ID of the file to update | String
-| touch | *fileId* |  The ID of the file to update | String
-| trash | *fileId* |  The ID of the file to trash | String
-| untrash | *fileId* |  The ID of the file to untrash | String
-| update | *content* |  The com.google.api.services.drive.model.File media metadata or null if none | File
-| update | *fileId* |  The ID of the file to update | String
-| update | *mediaContent* |  The media HTTP content or null if none | AbstractInputStreamContent
-| watch | *contentChannel* |  The com.google.api.services.drive.model.Channel | Channel
-| watch | *fileId* |  The ID for the file in question | String
+| delete | *fileId* |  The ID of the file | String
+| delete | *revisionId* |  The ID of the revision | String
+| get | *fileId* |  The ID of the file | String
+| get | *revisionId* |  The ID of the revision | String
+| list | *fileId* |  The ID of the file | String
+| patch | *content* |  The com.google.api.services.drive.model.Revision | Revision
+| patch | *fileId* |  The ID for the file | String
+| patch | *revisionId* |  The ID for the revision | String
+| update | *content* |  The com.google.api.services.drive.model.Revision | Revision
+| update | *fileId* |  The ID for the file | String
+| update | *revisionId* |  The ID for the revision | String
 |===
 
-In addition to the parameters above, the drive-files API can also use from the 30 endpoint query option
+In addition to the parameters above, the drive-revisions API can also use from the 30 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

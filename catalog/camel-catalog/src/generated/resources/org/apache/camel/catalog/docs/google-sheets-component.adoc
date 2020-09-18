@@ -151,70 +151,11 @@ There are 2 API groups as listed in the table below:
 [width="100%",cols="2,8",options="header"]
 |===
 | API Name | Description
-| *spreadsheets* | The spreadsheets collection of methods
 | *data* | The values collection of methods
+| *spreadsheets* | The spreadsheets collection of methods
 |===
 
 Each API is documented in the following sections to come.
-
-
-==== API: spreadsheets
-
-
-The spreadsheets API has 4 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.google.api.services.sheets.v4.Sheets.Spreadsheets.BatchUpdate batchUpdate(String spreadsheetId, com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest content);
-
-com.google.api.services.sheets.v4.Sheets.Spreadsheets.Create create(com.google.api.services.sheets.v4.model.Spreadsheet content);
-
-com.google.api.services.sheets.v4.Sheets.Spreadsheets.Get get(String spreadsheetId);
-
-com.google.api.services.sheets.v4.Sheets.Spreadsheets.GetByDataFilter getByDataFilter(String spreadsheetId, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest content);
-
-----
-
-The spreadsheets API is defined in the syntax as follows:
-
-----
-google-sheets:spreadsheets/methodName?[parameters]
-----
-
-The 4 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *batchUpdate* |  | Applies one or more updates to the spreadsheet
-| *create* |  | Creates a spreadsheet, returning the newly created spreadsheet
-| *get* |  | Returns the spreadsheet at the given ID
-| *getByDataFilter* |  | Returns the spreadsheet at the given ID
-|===
-
-The spreadsheets API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| batchUpdate | *batchUpdateSpreadsheetRequest* |  The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest | BatchUpdateSpreadsheetRequest
-| batchUpdate | *spreadsheetId* |  The spreadsheet to apply the updates to | String
-| create | *content* |  The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
-| get | *spreadsheetId* |  The spreadsheet to request | String
-| getByDataFilter | *getSpreadsheetByDataFilter{zwsp}Request* |  The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
-| getByDataFilter | *spreadsheetId* |  The spreadsheet to request | String
-|===
-
-In addition to the parameters above, the spreadsheets API can also use from the 28 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelGoogleSheets.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelGoogleSheets.myParameterNameHere` header.
-
 
 
 ==== API: data
@@ -301,6 +242,65 @@ The data API method(s) has the following set of parameters listed in the table b
 |===
 
 In addition to the parameters above, the data API can also use from the 28 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelGoogleSheets.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelGoogleSheets.myParameterNameHere` header.
+
+
+
+==== API: spreadsheets
+
+
+The spreadsheets API has 4 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.google.api.services.sheets.v4.Sheets.Spreadsheets.BatchUpdate batchUpdate(String spreadsheetId, com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest content);
+
+com.google.api.services.sheets.v4.Sheets.Spreadsheets.Create create(com.google.api.services.sheets.v4.model.Spreadsheet content);
+
+com.google.api.services.sheets.v4.Sheets.Spreadsheets.Get get(String spreadsheetId);
+
+com.google.api.services.sheets.v4.Sheets.Spreadsheets.GetByDataFilter getByDataFilter(String spreadsheetId, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest content);
+
+----
+
+The spreadsheets API is defined in the syntax as follows:
+
+----
+google-sheets:spreadsheets/methodName?[parameters]
+----
+
+The 4 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *batchUpdate* |  | Applies one or more updates to the spreadsheet
+| *create* |  | Creates a spreadsheet, returning the newly created spreadsheet
+| *get* |  | Returns the spreadsheet at the given ID
+| *getByDataFilter* |  | Returns the spreadsheet at the given ID
+|===
+
+The spreadsheets API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| batchUpdate | *batchUpdateSpreadsheetRequest* |  The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest | BatchUpdateSpreadsheetRequest
+| batchUpdate | *spreadsheetId* |  The spreadsheet to apply the updates to | String
+| create | *content* |  The com.google.api.services.sheets.v4.model.Spreadsheet | Spreadsheet
+| get | *spreadsheetId* |  The spreadsheet to request | String
+| getByDataFilter | *getSpreadsheetByDataFilter{zwsp}Request* |  The com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest | GetSpreadsheetByDataFilterRequest
+| getByDataFilter | *spreadsheetId* |  The spreadsheet to request | String
+|===
+
+In addition to the parameters above, the spreadsheets API can also use from the 28 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
