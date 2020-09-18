@@ -170,19 +170,250 @@ There are 10 API groups as listed in the table below:
 [width="100%",cols="2,8",options="header"]
 |===
 | API Name | Description
-| *files* | Provides operations to manage Box files
-| *search* | Provides operations to manage Box searches
+| *collaborations* | Provides operations to manage Box collaborations
 | *comments* | Provides operations to manage Box comments
 | *event-logs* | Provides operations to read Box enterprise (admin) event logs
-| *collaborations* | Provides operations to manage Box collaborations
-| *tasks* | Provides operations to manage Box tasks
 | *events* | Provides operations to manage Box events
-| *groups* | Provides operations to manage Box groups
-| *users* | Provides operations to manage Box users
+| *files* | Provides operations to manage Box files
 | *folders* | Provides operations to manage Box folders
+| *groups* | Provides operations to manage Box groups
+| *search* | Provides operations to manage Box searches
+| *tasks* | Provides operations to manage Box tasks
+| *users* | Provides operations to manage Box users
 |===
 
 Each API is documented in the following sections to come.
+
+
+==== API: collaborations
+
+
+The collaborations API has 6 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.box.sdk.BoxCollaboration addFolderCollaboration(String folderId, com.box.sdk.BoxCollaborator collaborator, com.box.sdk.BoxCollaboration.Role role);
+
+com.box.sdk.BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, com.box.sdk.BoxCollaboration.Role role);
+
+void deleteCollaboration(String collaborationId);
+
+com.box.sdk.BoxCollaboration.Info getCollaborationInfo(String collaborationId);
+
+java.util.Collection<com.box.sdk.BoxCollaboration.Info> getFolderCollaborations(String folderId);
+
+com.box.sdk.BoxCollaboration updateCollaborationInfo(String collaborationId, com.box.sdk.BoxCollaboration.Info info);
+
+----
+
+The collaborations API is defined in the syntax as follows:
+
+----
+box:collaborations/methodName?[parameters]
+----
+
+The 6 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *addFolderCollaboration* | add | Add a collaboration to this folder
+| *addFolderCollaborationByEmail* | addByEmail | Add a collaboration to this folder
+| *deleteCollaboration* | delete | Delete collaboration
+| *getCollaborationInfo* | info | Get collaboration information
+| *getFolderCollaborations* | collaborations | Get information about all of the collaborations for folder
+| *updateCollaborationInfo* | updateInfo | Update collaboration information
+|===
+
+The collaborations API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| addFolderCollaboration | *collaborator* |  The collaborator to add | BoxCollaborator
+| addFolderCollaboration | *folderId* |  The id of folder to add collaboration to | String
+| addFolderCollaboration | *role* |  The role of the collaborator | Role
+| addFolderCollaborationByEmail | *email* |  The email address of the collaborator to add | String
+| addFolderCollaborationByEmail | *folderId* |  The id of folder to add collaboration to | String
+| addFolderCollaborationByEmail | *role* |  The role of the collaborator | Role
+| deleteCollaboration | *collaborationId* |  The id of comment to change | String
+| getCollaborationInfo | *collaborationId* |  The id of collaboration | String
+| getFolderCollaborations | *folderId* |  The id of folder to get collaborations information on | String
+| updateCollaborationInfo | *collaborationId* |  The id of collaboration | String
+| updateCollaborationInfo | *info* |   | Info
+|===
+
+In addition to the parameters above, the collaborations API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
+
+
+==== API: comments
+
+
+The comments API has 6 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.box.sdk.BoxFile addFileComment(String fileId, String message);
+
+com.box.sdk.BoxComment changeCommentMessage(String commentId, String message);
+
+void deleteComment(String commentId);
+
+com.box.sdk.BoxComment.Info getCommentInfo(String commentId);
+
+java.util.List<com.box.sdk.BoxComment.Info> getFileComments(String fileId);
+
+com.box.sdk.BoxComment replyToComment(String commentId, String message);
+
+----
+
+The comments API is defined in the syntax as follows:
+
+----
+box:comments/methodName?[parameters]
+----
+
+The 6 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *addFileComment* | add | Add comment to file
+| *changeCommentMessage* | updateMessage | Change comment message
+| *deleteComment* | delete | Delete comment
+| *getCommentInfo* | info | Get comment information
+| *getFileComments* | comments | Get a list of any comments on this file
+| *replyToComment* | reply | Reply to a comment
+|===
+
+The comments API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| addFileComment | *fileId* |  The id of file | String
+| addFileComment | *message* |  The comment's message | String
+| changeCommentMessage | *commentId* |  The id of comment to change | String
+| changeCommentMessage | *message* |  The new message for the comment | String
+| deleteComment | *commentId* |  The id of comment to delete | String
+| getCommentInfo | *commentId* |  The id of comment | String
+| getFileComments | *fileId* |  The id of file | String
+| replyToComment | *commentId* |  The id of comment to reply to | String
+| replyToComment | *message* |  The message for the reply | String
+|===
+
+In addition to the parameters above, the comments API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
+
+
+==== API: event-logs
+
+
+The event-logs API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+java.util.List<com.box.sdk.BoxEvent> getEnterpriseEvents(String position, java.util.Date after, java.util.Date before, com.box.sdk.BoxEvent.Type[] types);
+
+----
+
+The event-logs API is defined in the syntax as follows:
+
+----
+box:event-logs/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *getEnterpriseEvents* | events | Create an event stream with optional starting initial position and add listener that will be notified when an event is received
+|===
+
+The event-logs API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| getEnterpriseEvents | *after* |  The lower bound on the timestamp of the events returned | Date
+| getEnterpriseEvents | *before* |  The upper bound on the timestamp of the events returned | Date
+| getEnterpriseEvents | *position* | *Optional*  The starting position of the event stream. May be null in which case all events within bounds returned. | String
+| getEnterpriseEvents | *types* | *Optional*  An optional list of event types to filter by | Type[]
+|===
+
+In addition to the parameters above, the event-logs API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
+
+
+==== API: events
+
+
+The events API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+void listen(com.box.sdk.EventListener listener, Long startingPosition);
+
+----
+
+The events API is defined in the syntax as follows:
+
+----
+box:events/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *listen* |  | Create an event stream with optional starting initial position and add listener that will be notified when an event is received
+|===
+
+The events API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| listen | *startingPosition* | *Optional*  The starting position of the event stream | Long
+|===
+
+In addition to the parameters above, the events API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
 
 
 ==== API: files
@@ -355,356 +586,95 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== API: search
+==== API: folders
 
 
-The search API has 1 method(s) which is represented by the following method signatures
+The folders API has 10 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
 
 [source,java]
 ----
 
-java.util.Collection<com.box.sdk.BoxItem> searchFolder(String folderId, String query);
+com.box.sdk.BoxFolder copyFolder(String folderId, String destinationFolderId, String newName);
+
+com.box.sdk.BoxFolder createFolder(String parentFolderId, String folderName);
+
+com.box.sdk.BoxFolder createFolder(String parentFolderId, String[] path);
+
+com.box.sdk.BoxSharedLink createFolderSharedLink(String folderId, com.box.sdk.BoxSharedLink.Access access, java.util.Date unshareDate, com.box.sdk.BoxSharedLink.Permissions permissions);
+
+void deleteFolder(String folderId);
+
+com.box.sdk.BoxFolder getFolder(String[] path);
+
+com.box.sdk.BoxFolder.Info getFolderInfo(String folderId, String[] fields);
+
+java.util.Collection<com.box.sdk.BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String[] fields);
+
+com.box.sdk.BoxFolder moveFolder(String folderId, String destinationFolderId, String newName);
+
+com.box.sdk.BoxFolder renameFolder(String folderId, String newFolderName);
+
+com.box.sdk.BoxFolder updateFolderInfo(String folderId, com.box.sdk.BoxFolder.Info info);
 
 ----
 
-The search API is defined in the syntax as follows:
+The folders API is defined in the syntax as follows:
 
 ----
-box:search/methodName?[parameters]
+box:folders/methodName?[parameters]
 ----
 
-The 1 method(s) is listed in the table below.
+The 10 method(s) is listed in the table below.
 (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
 
 [width="100%",cols="2,2,6",options="header"]
 |===
 | Method | Alias | Description
-| *searchFolder* | search | Search folder and all descendant folders using the given query
+| *copyFolder* | copy | Copy folder to destination folder while optionally giving it a new name
+| *createFolder* | create | Create a folder specified by path from parent folder with given parentFolderId, creating intermediate directories as required
+| *createFolderSharedLink* | link | Create a shared link to folder
+| *deleteFolder* | delete | Delete folder
+| *getFolder* | folder | Return the Box folder referenced by path
+| *getFolderInfo* | info | Get folder information
+| *getFolderItems* | items | Returns a specific range of child items in folder and specifies which fields of each item to retrieve
+| *moveFolder* | move | Move folder to destination folder while optionally giving it a new name
+| *renameFolder* | rename | Rename folder giving it the name newName
+| *updateFolderInfo* | updateInfo | Update folder information
 |===
 
-The search API method(s) has the following set of parameters listed in the table below:
+The folders API method(s) has the following set of parameters listed in the table below:
 [width="100%",cols="2,2,4,2",options="header"]
 |===
 | Method | Parameter | Description | Type
-| searchFolder | *folderId* |  The id of folder searched | String
-| searchFolder | *query* |  The search query | String
+| copyFolder | *destinationFolderId* |  The id of the destination folder | String
+| copyFolder | *folderId* |  The id of folder to copy | String
+| copyFolder | *newName* | *Optional*  The new name for copied folder; if newName is null, the copied folder has same name as the original. | String
+| createFolder | *folderName* |  The name of created folder | String
+| createFolder | *parentFolderId* |  The id of parent folder | String
+| createFolder | *path* |  Sequence of Box folder names from parent folder to returned folder | String[]
+| createFolderSharedLink | *access* |  The access level of the shared link | Access
+| createFolderSharedLink | *folderId* |  The id of folder to create shared link on | String
+| createFolderSharedLink | *permissions* |  The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
+| createFolderSharedLink | *unshareDate* |  The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
+| deleteFolder | *folderId* |  The id of folder to delete | String
+| getFolder | *path* |  Sequence of Box folder names from root folder to returned folder | String[]
+| getFolderInfo | *fields* | *Optional*  The information fields to retrieve; if null all information fields are retrieved. | String[]
+| getFolderInfo | *folderId* |  The id of folder | String
+| getFolderItems | *fields* | *Optional*  The item fields to retrieve for each child item; if null all item fields are retrieved. | String[]
+| getFolderItems | *folderId* |  The id of folder | String
+| getFolderItems | *limit* | *Optional*  The maximum number of children to retrieve after the offset; if null all child items are retrieved. | Long
+| getFolderItems | *offset* | *Optional*  The index of first child item to retrieve; if null all child items are retrieved. | Long
+| moveFolder | *destinationFolderId* |  The id of the destination folder | String
+| moveFolder | *folderId* |  The id of folder to move | String
+| moveFolder | *newName* | *Optional*  The new name of moved folder; if newName is null, the moved folder has same name as the original. | String
+| renameFolder | *folderId* |  The id of folder to rename | String
+| renameFolder | *newFolderName* |  The new name of folder | String
+| updateFolderInfo | *folderId* |  The id of folder to update | String
+| updateFolderInfo | *info* |  The updated information | Info
 |===
 
-In addition to the parameters above, the search API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: comments
-
-
-The comments API has 6 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.box.sdk.BoxFile addFileComment(String fileId, String message);
-
-com.box.sdk.BoxComment changeCommentMessage(String commentId, String message);
-
-void deleteComment(String commentId);
-
-com.box.sdk.BoxComment.Info getCommentInfo(String commentId);
-
-java.util.List<com.box.sdk.BoxComment.Info> getFileComments(String fileId);
-
-com.box.sdk.BoxComment replyToComment(String commentId, String message);
-
-----
-
-The comments API is defined in the syntax as follows:
-
-----
-box:comments/methodName?[parameters]
-----
-
-The 6 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *addFileComment* | add | Add comment to file
-| *changeCommentMessage* | updateMessage | Change comment message
-| *deleteComment* | delete | Delete comment
-| *getCommentInfo* | info | Get comment information
-| *getFileComments* | comments | Get a list of any comments on this file
-| *replyToComment* | reply | Reply to a comment
-|===
-
-The comments API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| addFileComment | *fileId* |  The id of file | String
-| addFileComment | *message* |  The comment's message | String
-| changeCommentMessage | *commentId* |  The id of comment to change | String
-| changeCommentMessage | *message* |  The new message for the comment | String
-| deleteComment | *commentId* |  The id of comment to delete | String
-| getCommentInfo | *commentId* |  The id of comment | String
-| getFileComments | *fileId* |  The id of file | String
-| replyToComment | *commentId* |  The id of comment to reply to | String
-| replyToComment | *message* |  The message for the reply | String
-|===
-
-In addition to the parameters above, the comments API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: event-logs
-
-
-The event-logs API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-java.util.List<com.box.sdk.BoxEvent> getEnterpriseEvents(String position, java.util.Date after, java.util.Date before, com.box.sdk.BoxEvent.Type[] types);
-
-----
-
-The event-logs API is defined in the syntax as follows:
-
-----
-box:event-logs/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *getEnterpriseEvents* | events | Create an event stream with optional starting initial position and add listener that will be notified when an event is received
-|===
-
-The event-logs API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| getEnterpriseEvents | *after* |  The lower bound on the timestamp of the events returned | Date
-| getEnterpriseEvents | *before* |  The upper bound on the timestamp of the events returned | Date
-| getEnterpriseEvents | *position* | *Optional*  The starting position of the event stream. May be null in which case all events within bounds returned. | String
-| getEnterpriseEvents | *types* | *Optional*  An optional list of event types to filter by | Type[]
-|===
-
-In addition to the parameters above, the event-logs API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: collaborations
-
-
-The collaborations API has 6 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.box.sdk.BoxCollaboration addFolderCollaboration(String folderId, com.box.sdk.BoxCollaborator collaborator, com.box.sdk.BoxCollaboration.Role role);
-
-com.box.sdk.BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, com.box.sdk.BoxCollaboration.Role role);
-
-void deleteCollaboration(String collaborationId);
-
-com.box.sdk.BoxCollaboration.Info getCollaborationInfo(String collaborationId);
-
-java.util.Collection<com.box.sdk.BoxCollaboration.Info> getFolderCollaborations(String folderId);
-
-com.box.sdk.BoxCollaboration updateCollaborationInfo(String collaborationId, com.box.sdk.BoxCollaboration.Info info);
-
-----
-
-The collaborations API is defined in the syntax as follows:
-
-----
-box:collaborations/methodName?[parameters]
-----
-
-The 6 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *addFolderCollaboration* | add | Add a collaboration to this folder
-| *addFolderCollaborationByEmail* | addByEmail | Add a collaboration to this folder
-| *deleteCollaboration* | delete | Delete collaboration
-| *getCollaborationInfo* | info | Get collaboration information
-| *getFolderCollaborations* | collaborations | Get information about all of the collaborations for folder
-| *updateCollaborationInfo* | updateInfo | Update collaboration information
-|===
-
-The collaborations API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| addFolderCollaboration | *collaborator* |  The collaborator to add | BoxCollaborator
-| addFolderCollaboration | *folderId* |  The id of folder to add collaboration to | String
-| addFolderCollaboration | *role* |  The role of the collaborator | Role
-| addFolderCollaborationByEmail | *email* |  The email address of the collaborator to add | String
-| addFolderCollaborationByEmail | *folderId* |  The id of folder to add collaboration to | String
-| addFolderCollaborationByEmail | *role* |  The role of the collaborator | Role
-| deleteCollaboration | *collaborationId* |  The id of comment to change | String
-| getCollaborationInfo | *collaborationId* |  The id of collaboration | String
-| getFolderCollaborations | *folderId* |  The id of folder to get collaborations information on | String
-| updateCollaborationInfo | *collaborationId* |  The id of collaboration | String
-| updateCollaborationInfo | *info* |   | Info
-|===
-
-In addition to the parameters above, the collaborations API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: tasks
-
-
-The tasks API has 9 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.box.sdk.BoxTask addAssignmentToTask(String taskId, com.box.sdk.BoxUser assignTo);
-
-com.box.sdk.BoxTask addFileTask(String fileId, com.box.sdk.BoxTask.Action action, java.util.Date dueAt, String message);
-
-void deleteTask(String taskId);
-
-void deleteTaskAssignment(String taskAssignmentId);
-
-java.util.List<com.box.sdk.BoxTask.Info> getFileTasks(String fileId);
-
-com.box.sdk.BoxTaskAssignment.Info getTaskAssignmentInfo(String taskAssignmentId);
-
-java.util.List<com.box.sdk.BoxTaskAssignment.Info> getTaskAssignments(String taskId);
-
-com.box.sdk.BoxTask.Info getTaskInfo(String taskId);
-
-com.box.sdk.BoxTask updateTaskInfo(String taskId, com.box.sdk.BoxTask.Info info);
-
-----
-
-The tasks API is defined in the syntax as follows:
-
-----
-box:tasks/methodName?[parameters]
-----
-
-The 9 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *addAssignmentToTask* | addAssignment | Add assignment for task
-| *addFileTask* | add | Add task to file
-| *deleteTask* | delete | Delete task
-| *deleteTaskAssignment* | deleteAssignment | Delete task assignment
-| *getFileTasks* | tasks | Get a list of any tasks on file
-| *getTaskAssignmentInfo* | assignmentInfo | Get task assignment information
-| *getTaskAssignments* | assignments | Get a list of any assignments for task
-| *getTaskInfo* | info | Get task information
-| *updateTaskInfo* | updateInfo | Update task information
-|===
-
-The tasks API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| addAssignmentToTask | *assignTo* |  The user to assign to task | BoxUser
-| addAssignmentToTask | *taskId* |  The id of task to add assignment for | String
-| addFileTask | *action* |  The action the task assignee will be prompted to do | Action
-| addFileTask | *dueAt* |  The day at which this task is due | Date
-| addFileTask | *fileId* |  The id of file to add task to | String
-| addFileTask | *message* | *Optional*  An optional message to include with the task | String
-| deleteTask | *taskId* |  The id of task to delete | String
-| deleteTaskAssignment | *taskAssignmentId* |  The id of task assignment to delete | String
-| getFileTasks | *fileId* |  The id of file | String
-| getTaskAssignmentInfo | *taskAssignmentId* |  The id of task assignment | String
-| getTaskAssignments | *taskId* |  The id of task | String
-| getTaskInfo | *taskId* |  The id of task | String
-| updateTaskInfo | *info* |  The updated information | Info
-| updateTaskInfo | *taskId* |  The id of task | String
-|===
-
-In addition to the parameters above, the tasks API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: events
-
-
-The events API has 1 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-void listen(com.box.sdk.EventListener listener, Long startingPosition);
-
-----
-
-The events API is defined in the syntax as follows:
-
-----
-box:events/methodName?[parameters]
-----
-
-The 1 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *listen* |  | Create an event stream with optional starting initial position and add listener that will be notified when an event is received
-|===
-
-The events API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| listen | *startingPosition* | *Optional*  The starting position of the event stream | Long
-|===
-
-In addition to the parameters above, the events API can also use from the 38 endpoint query option
+In addition to the parameters above, the folders API can also use from the 38 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -800,6 +770,134 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
+==== API: search
+
+
+The search API has 1 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+java.util.Collection<com.box.sdk.BoxItem> searchFolder(String folderId, String query);
+
+----
+
+The search API is defined in the syntax as follows:
+
+----
+box:search/methodName?[parameters]
+----
+
+The 1 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *searchFolder* | search | Search folder and all descendant folders using the given query
+|===
+
+The search API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| searchFolder | *folderId* |  The id of folder searched | String
+| searchFolder | *query* |  The search query | String
+|===
+
+In addition to the parameters above, the search API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
+
+
+==== API: tasks
+
+
+The tasks API has 9 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.box.sdk.BoxTask addAssignmentToTask(String taskId, com.box.sdk.BoxUser assignTo);
+
+com.box.sdk.BoxTask addFileTask(String fileId, com.box.sdk.BoxTask.Action action, java.util.Date dueAt, String message);
+
+void deleteTask(String taskId);
+
+void deleteTaskAssignment(String taskAssignmentId);
+
+java.util.List<com.box.sdk.BoxTask.Info> getFileTasks(String fileId);
+
+com.box.sdk.BoxTaskAssignment.Info getTaskAssignmentInfo(String taskAssignmentId);
+
+java.util.List<com.box.sdk.BoxTaskAssignment.Info> getTaskAssignments(String taskId);
+
+com.box.sdk.BoxTask.Info getTaskInfo(String taskId);
+
+com.box.sdk.BoxTask updateTaskInfo(String taskId, com.box.sdk.BoxTask.Info info);
+
+----
+
+The tasks API is defined in the syntax as follows:
+
+----
+box:tasks/methodName?[parameters]
+----
+
+The 9 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *addAssignmentToTask* | addAssignment | Add assignment for task
+| *addFileTask* | add | Add task to file
+| *deleteTask* | delete | Delete task
+| *deleteTaskAssignment* | deleteAssignment | Delete task assignment
+| *getFileTasks* | tasks | Get a list of any tasks on file
+| *getTaskAssignmentInfo* | assignmentInfo | Get task assignment information
+| *getTaskAssignments* | assignments | Get a list of any assignments for task
+| *getTaskInfo* | info | Get task information
+| *updateTaskInfo* | updateInfo | Update task information
+|===
+
+The tasks API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| addAssignmentToTask | *assignTo* |  The user to assign to task | BoxUser
+| addAssignmentToTask | *taskId* |  The id of task to add assignment for | String
+| addFileTask | *action* |  The action the task assignee will be prompted to do | Action
+| addFileTask | *dueAt* |  The day at which this task is due | Date
+| addFileTask | *fileId* |  The id of file to add task to | String
+| addFileTask | *message* | *Optional*  An optional message to include with the task | String
+| deleteTask | *taskId* |  The id of task to delete | String
+| deleteTaskAssignment | *taskAssignmentId* |  The id of task assignment to delete | String
+| getFileTasks | *fileId* |  The id of file | String
+| getTaskAssignmentInfo | *taskAssignmentId* |  The id of task assignment | String
+| getTaskAssignments | *taskId* |  The id of task | String
+| getTaskInfo | *taskId* |  The id of task | String
+| updateTaskInfo | *info* |  The updated information | Info
+| updateTaskInfo | *taskId* |  The id of task | String
+|===
+
+In addition to the parameters above, the tasks API can also use from the 38 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBox.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBox.myParameterNameHere` header.
+
+
+
 ==== API: users
 
 
@@ -882,104 +980,6 @@ The users API method(s) has the following set of parameters listed in the table 
 |===
 
 In addition to the parameters above, the users API can also use from the 38 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBox.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBox.myParameterNameHere` header.
-
-
-
-==== API: folders
-
-
-The folders API has 10 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.box.sdk.BoxFolder copyFolder(String folderId, String destinationFolderId, String newName);
-
-com.box.sdk.BoxFolder createFolder(String parentFolderId, String folderName);
-
-com.box.sdk.BoxFolder createFolder(String parentFolderId, String[] path);
-
-com.box.sdk.BoxSharedLink createFolderSharedLink(String folderId, com.box.sdk.BoxSharedLink.Access access, java.util.Date unshareDate, com.box.sdk.BoxSharedLink.Permissions permissions);
-
-void deleteFolder(String folderId);
-
-com.box.sdk.BoxFolder getFolder(String[] path);
-
-com.box.sdk.BoxFolder.Info getFolderInfo(String folderId, String[] fields);
-
-java.util.Collection<com.box.sdk.BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String[] fields);
-
-com.box.sdk.BoxFolder moveFolder(String folderId, String destinationFolderId, String newName);
-
-com.box.sdk.BoxFolder renameFolder(String folderId, String newFolderName);
-
-com.box.sdk.BoxFolder updateFolderInfo(String folderId, com.box.sdk.BoxFolder.Info info);
-
-----
-
-The folders API is defined in the syntax as follows:
-
-----
-box:folders/methodName?[parameters]
-----
-
-The 10 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *copyFolder* | copy | Copy folder to destination folder while optionally giving it a new name
-| *createFolder* | create | Create a folder specified by path from parent folder with given parentFolderId, creating intermediate directories as required
-| *createFolderSharedLink* | link | Create a shared link to folder
-| *deleteFolder* | delete | Delete folder
-| *getFolder* | folder | Return the Box folder referenced by path
-| *getFolderInfo* | info | Get folder information
-| *getFolderItems* | items | Returns a specific range of child items in folder and specifies which fields of each item to retrieve
-| *moveFolder* | move | Move folder to destination folder while optionally giving it a new name
-| *renameFolder* | rename | Rename folder giving it the name newName
-| *updateFolderInfo* | updateInfo | Update folder information
-|===
-
-The folders API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| copyFolder | *destinationFolderId* |  The id of the destination folder | String
-| copyFolder | *folderId* |  The id of folder to copy | String
-| copyFolder | *newName* | *Optional*  The new name for copied folder; if newName is null, the copied folder has same name as the original. | String
-| createFolder | *folderName* |  The name of created folder | String
-| createFolder | *parentFolderId* |  The id of parent folder | String
-| createFolder | *path* |  Sequence of Box folder names from parent folder to returned folder | String[]
-| createFolderSharedLink | *access* |  The access level of the shared link | Access
-| createFolderSharedLink | *folderId* |  The id of folder to create shared link on | String
-| createFolderSharedLink | *permissions* |  The permissions of the created link; if permissions is null then the created shared link is create with default permissions. | Permissions
-| createFolderSharedLink | *unshareDate* |  The date and time at which time the created shared link will expire; if unsharedDate is null then a non-expiring link is created. | Date
-| deleteFolder | *folderId* |  The id of folder to delete | String
-| getFolder | *path* |  Sequence of Box folder names from root folder to returned folder | String[]
-| getFolderInfo | *fields* | *Optional*  The information fields to retrieve; if null all information fields are retrieved. | String[]
-| getFolderInfo | *folderId* |  The id of folder | String
-| getFolderItems | *fields* | *Optional*  The item fields to retrieve for each child item; if null all item fields are retrieved. | String[]
-| getFolderItems | *folderId* |  The id of folder | String
-| getFolderItems | *limit* | *Optional*  The maximum number of children to retrieve after the offset; if null all child items are retrieved. | Long
-| getFolderItems | *offset* | *Optional*  The index of first child item to retrieve; if null all child items are retrieved. | Long
-| moveFolder | *destinationFolderId* |  The id of the destination folder | String
-| moveFolder | *folderId* |  The id of folder to move | String
-| moveFolder | *newName* | *Optional*  The new name of moved folder; if newName is null, the moved folder has same name as the original. | String
-| renameFolder | *folderId* |  The id of folder to rename | String
-| renameFolder | *newFolderName* |  The new name of folder | String
-| updateFolderInfo | *folderId* |  The id of folder to update | String
-| updateFolderInfo | *info* |  The updated information | Info
-|===
-
-In addition to the parameters above, the folders API can also use from the 38 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
