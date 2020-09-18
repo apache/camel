@@ -102,7 +102,11 @@ public class AbstractEndpointBuilder {
             try {
                 // build query string from parameters
                 String query = URISupport.createQueryString(params, encode);
-                answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
+                if(targetPath.contains("?")) {
+                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "&" + query);
+                } else {
+                    answer = new NormalizedUri(targetScheme + "://" + targetPath + "?" + query);
+                }
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
