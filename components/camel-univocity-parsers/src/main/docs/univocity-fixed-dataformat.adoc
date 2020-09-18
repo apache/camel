@@ -9,7 +9,7 @@
 *Since Camel {since}*
 
 This xref:manual::data-format.adoc[Data
-Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
+Format] uses https://www.univocity.com/pages/univocity_parsers_tutorial.html[uniVocity-parsers]
 for reading and writing 3 kinds of tabular data text files:
 
 * CSV (Comma Separated Values), where the values are separated by a
@@ -37,7 +37,7 @@ substituting the version number for the latest and greatest release.
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
 please refer to their
-http://www.univocity.com/pages/parsers-documentation[documentation
+https://www.univocity.com/pages/univocity_parsers_tutorial#settings[documentation
 page].
 
 The 3 data formats share common options and have dedicated ones, this
@@ -80,7 +80,7 @@ The uniVocity Fixed Length dataformat supports 17 options, which are listed belo
 
 The marshalling accepts either:
 
-* A list of maps (L`ist<Map<String, ?>>`), one for each line
+* A list of maps (`List<Map<String, ?>>`), one for each line
 * A single map (`Map<String, ?>`), for a single line
 
 Any other body will throws an exception.
