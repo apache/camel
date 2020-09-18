@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Helper methods for working with Strings.
@@ -55,7 +56,7 @@ public final class StringHelper {
 
     /**
      * Remove carriage return and line feeds from a String, replacing them with an empty String.
-     * 
+     *
      * @param  s                    String to be sanitized of carriage return / line feed characters
      * @return                      sanitized version of <code>s</code>.
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
@@ -196,7 +197,7 @@ public final class StringHelper {
 
     /**
      * Determines if the string has at least one letter in upper case
-     * 
+     *
      * @param  text the text
      * @return      <tt>true</tt> if at least one letter is upper case, <tt>false</tt> otherwise
      */
@@ -477,6 +478,19 @@ public final class StringHelper {
     }
 
     /**
+     * Returns the string after the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  after        the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text after the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String after(String text, String after, String defaultValue) {
+        String answer = after(text, after);
+        return answer != null ? answer : defaultValue;
+    }
+
+    /**
      * Returns an object after the given token
      *
      * @param  text   the text
@@ -494,6 +508,34 @@ public final class StringHelper {
     }
 
     /**
+     * Returns the string after the the last occurrence of the given token
+     *
+     * @param  text  the text
+     * @param  after the token
+     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String afterLast(String text, String after) {
+        int pos = text.lastIndexOf(after);
+        if (pos == -1) {
+            return null;
+        }
+        return text.substring(pos + after.length());
+    }
+
+    /**
+     * Returns the string after the the last occurrence of the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  after        the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text after the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String afterLast(String text, String after, String defaultValue) {
+        String answer = afterLast(text, after);
+        return answer != null ? answer : defaultValue;
+    }
+
+    /**
      * Returns the string before the given token
      *
      * @param  text   the text
@@ -503,6 +545,19 @@ public final class StringHelper {
     public static String before(String text, String before) {
         int pos = text.indexOf(before);
         return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String before(String text, String before, String defaultValue) {
+        String answer = before(text, before);
+        return answer != null ? answer : defaultValue;
     }
 
     /**
@@ -520,6 +575,31 @@ public final class StringHelper {
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
+    }
+
+    /**
+     * Returns the string before the last occurrence of the given token
+     *
+     * @param  text   the text
+     * @param  before the token
+     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String beforeLast(String text, String before) {
+        int pos = text.lastIndexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the last occurrence of the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String beforeLast(String text, String before, String defaultValue) {
+        String answer = beforeLast(text, before);
+        return answer != null ? answer : defaultValue;
     }
 
     /**
@@ -712,7 +792,7 @@ public final class StringHelper {
      * Removes the leading and trailing whitespace and if the resulting string is empty returns {@code null}. Examples:
      * <p>
      * Examples: <blockquote>
-     * 
+     *
      * <pre>
      * trimToNull("abc") -> "abc"
      * trimToNull(" abc") -> "abc"
@@ -720,7 +800,7 @@ public final class StringHelper {
      * trimToNull(" ") -> null
      * trimToNull("") -> null
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public static String trimToNull(final String given) {
@@ -912,6 +992,21 @@ public final class StringHelper {
      */
     public static String[] splitWords(String text) {
         return text.split("[\\W]+");
+    }
+
+    /**
+     * Creates a stream from the given input sequence around matches of the regex
+     *
+     * @param  text  the input
+     * @param  regex the expression used to split the input
+     * @return       the stream of strings computed by splitting the input with the given regex
+     */
+    public static Stream<String> splitAsStream(CharSequence text, String regex) {
+        if (text == null || regex == null) {
+            return Stream.empty();
+        }
+
+        return Pattern.compile(regex).splitAsStream(text);
     }
 
 }
