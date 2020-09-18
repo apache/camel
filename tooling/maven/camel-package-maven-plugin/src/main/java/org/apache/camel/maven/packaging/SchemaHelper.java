@@ -20,6 +20,9 @@ import java.util.Locale;
 
 public final class SchemaHelper {
 
+    private SchemaHelper() {
+    }
+
     /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
