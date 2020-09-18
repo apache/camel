@@ -787,8 +787,8 @@ The 221 method(s) is listed in the table below.
 | *createOrUpdateUsersAsync* |  | 
 | *createOrganization* |  | 
 | *createOrganizationMembership* |  | 
-| *createOrganizationMemberships* |  | Https://developer
-| *createOrganizationMembershipsAsync* |  | Https://developer
+| *createOrganizationMemberships* |  | 
+| *createOrganizationMembershipsAsync* |  | 
 | *createOrganizations* |  | 
 | *createOrganizationsAsync* |  | 
 | *createPermissionGroup* |  | Create permission group
@@ -825,7 +825,7 @@ The 221 method(s) is listed in the table below.
 | *deleteGroupMembership* |  | 
 | *deleteOrganization* |  | 
 | *deleteOrganizationMembership* |  | 
-| *deleteOrganizationMemberships* |  | Https://developer
+| *deleteOrganizationMemberships* |  | 
 | *deletePermissionGroup* |  | Delete permission group
 | *deleteSection* |  | 
 | *deleteSuspendedTicket* |  | 
@@ -857,7 +857,7 @@ The 221 method(s) is listed in the table below.
 | *getCategory* |  | 
 | *getCategoryTranslations* |  | 
 | *getComplianceDeletionStatuses* |  | 
-| *getDeletedTickets* |  | Https://developer
+| *getDeletedTickets* |  | 
 | *getDynamicContentItem* |  | 
 | *getDynamicContentItemVariant* |  | 
 | *getDynamicContentItemVariants* |  | 
@@ -910,7 +910,7 @@ The 221 method(s) is listed in the table below.
 | *getTickets* |  | 
 | *getTicketsByExternalId* |  | 
 | *getTicketsFromSearch* |  | 
-| *getTicketsIncrementally* |  | Https://developer
+| *getTicketsIncrementally* |  | 
 | *getTopic* |  | 
 | *getTopics* |  | List Topics using a User Segment
 | *getTopicsByUser* |  | 
