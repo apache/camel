@@ -16,4 +16,4 @@
 // ------------------------------------------------------------------------
 
 // this is a code comment
-return "The result is " + request.body * 2;
+return "The result is " + request.body * headers.multiplier;
