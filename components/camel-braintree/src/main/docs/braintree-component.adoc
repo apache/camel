@@ -143,8 +143,8 @@ There are 14 API groups as listed in the table below:
 | API Name | Description
 | *paymentMethodNonce* | 
 | *documentUpload* | 
-| *subscription* | Provides methods to interact with Subscriptions
 | *dispute* | Provides methods to interact with Dispute objects
+| *subscription* | Provides methods to interact with Subscriptions
 | *settlementBatchSummary* | 
 | *address* | Provides methods to create, delete, find, and update Address objects
 | *webhookNotification* | 
@@ -257,6 +257,84 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 
+==== API: dispute
+
+
+The dispute API has 7 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> accept(String id);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, String documentId);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, com.braintreegateway.FileEvidenceRequest fileEvidenceRequest);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, String content);
+
+com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, com.braintreegateway.TextEvidenceRequest textEvidenceRequest);
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> finalize(String id);
+
+com.braintreegateway.Dispute find(String id);
+
+com.braintreegateway.Result<com.braintreegateway.Dispute> removeEvidence(String disputeId, String evidenceId);
+
+com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute> search(com.braintreegateway.DisputeSearchRequest query);
+
+----
+
+The dispute API is defined in the syntax as follows:
+
+----
+braintree:dispute/methodName?[parameters]
+----
+
+The 7 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *accept* |  | Accept a Dispute, given a dispute ID
+| *addFileEvidence* |  | Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request
+| *addTextEvidence* |  | Add Text Evidence to a Dispute, given an ID and content
+| *finalize* |  | Finalize a Dispute, given an ID
+| *find* |  | Returns a Dispute, given an ID
+| *removeEvidence* |  | Remove Evidence from a Dispute, given an ID and a DisputeEvidence ID
+| *search* |  | Finds all Disputes that match the query
+|===
+
+The dispute API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| accept | *id* |  The dispute id to accept | String
+| addFileEvidence | *disputeId* |  The dispute id to add text evidence to | String
+| addFileEvidence | *documentId* |  The document id of a previously uploaded document | String
+| addFileEvidence | *fileEvidenceRequest* |  The file evidence request for the dispute | FileEvidenceRequest
+| addTextEvidence | *content* |  The content of the text evidence for the dispute | String
+| addTextEvidence | *id* |  The dispute id to add text evidence to | String
+| addTextEvidence | *textEvidenceRequest* |  The text evidence request for the dispute | TextEvidenceRequest
+| finalize | *id* |  The dispute id to finalize | String
+| find | *id* |  The dispute id to find | String
+| removeEvidence | *disputeId* |  The dispute id to remove evidence from | String
+| removeEvidence | *evidenceId* |  The evidence id to remove | String
+| search | *query* |  The query for what disputes to find | DisputeSearchRequest
+|===
+
+In addition to the parameters above, the dispute API can also use from the 34 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelBraintree.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelBraintree.myParameterNameHere` header.
+
+
+
 ==== API: subscription
 
 
@@ -327,84 +405,6 @@ The subscription API method(s) has the following set of parameters listed in the
 |===
 
 In addition to the parameters above, the subscription API can also use from the 34 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelBraintree.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelBraintree.myParameterNameHere` header.
-
-
-
-==== API: dispute
-
-
-The dispute API has 7 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-com.braintreegateway.Result<com.braintreegateway.Dispute> accept(String id);
-
-com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, String documentId);
-
-com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, com.braintreegateway.FileEvidenceRequest fileEvidenceRequest);
-
-com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, String content);
-
-com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, com.braintreegateway.TextEvidenceRequest textEvidenceRequest);
-
-com.braintreegateway.Result<com.braintreegateway.Dispute> finalize(String id);
-
-com.braintreegateway.Dispute find(String id);
-
-com.braintreegateway.Result<com.braintreegateway.Dispute> removeEvidence(String disputeId, String evidenceId);
-
-com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute> search(com.braintreegateway.DisputeSearchRequest query);
-
-----
-
-The dispute API is defined in the syntax as follows:
-
-----
-braintree:dispute/methodName?[parameters]
-----
-
-The 7 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *accept* |  | Accept a Dispute, given a dispute ID
-| *addFileEvidence* |  | Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request
-| *addTextEvidence* |  | Add Text Evidence to a Dispute, given an ID and content
-| *finalize* |  | Finalize a Dispute, given an ID
-| *find* |  | Returns a Dispute, given an ID
-| *removeEvidence* |  | Remove Evidence from a Dispute, given an ID and a DisputeEvidence ID
-| *search* |  | Finds all Disputes that match the query
-|===
-
-The dispute API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| accept | *id* |  The dispute id to accept | String
-| addFileEvidence | *disputeId* |  The dispute id to add text evidence to | String
-| addFileEvidence | *documentId* |  The document id of a previously uploaded document | String
-| addFileEvidence | *fileEvidenceRequest* |  The file evidence request for the dispute | FileEvidenceRequest
-| addTextEvidence | *content* |  The content of the text evidence for the dispute | String
-| addTextEvidence | *id* |  The dispute id to add text evidence to | String
-| addTextEvidence | *textEvidenceRequest* |  The text evidence request for the dispute | TextEvidenceRequest
-| finalize | *id* |  The dispute id to finalize | String
-| find | *id* |  The dispute id to find | String
-| removeEvidence | *disputeId* |  The dispute id to remove evidence from | String
-| removeEvidence | *evidenceId* |  The evidence id to remove | String
-| search | *query* |  The query for what disputes to find | DisputeSearchRequest
-|===
-
-In addition to the parameters above, the dispute API can also use from the 34 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
