@@ -113,10 +113,73 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 twilio:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 56 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *recording-add-on-result-payload* | 
+| *usage-record-today* | 
+| *available-phone-number-country-local* | 
+| *call-recording* | 
+| *queue-member* | 
+| *usage-trigger* | 
+| *usage-record-last-month* | 
+| *usage-record-all-time* | 
+| *recording-transcription* | 
+| *message* | 
+| *call-feedback-summary* | 
+| *sip-credential-list-credential* | 
+| *new-key* | 
+| *incoming-phone-number* | 
+| *call-notification* | 
+| *validation-request* | 
+| *usage-record-yesterday* | 
+| *usage-record-this-month* | 
+| *new-signing-key* | 
+| *conference* | 
+| *usage-record-daily* | 
+| *application* | 
+| *usage-record* | 
+| *available-phone-number-country-mobile* | 
+| *conference-participant* | 
+| *recording-add-on-result* | 
+| *notification* | 
+| *sip-domain-ip-access-control-list-mapping* | 
+| *sip-domain* | 
+| *address* | 
+| *message-media* | 
+| *sip-ip-access-control-list-ip-address* | 
+| *available-phone-number-country* | 
+| *usage-record-yearly* | 
+| *queue* | 
+| *transcription* | 
+| *sip-domain-credential-list-mapping* | 
+| *call-feedback* | 
+| *key* | 
+| *incoming-phone-number-toll-free* | 
+| *token* | 
+| *short-code* | 
+| *available-phone-number-country-toll-free* | 
+| *usage-record-monthly* | 
+| *sip-ip-access-control-list* | 
+| *connect-app* | 
+| *address-dependent-phone-number* | 
+| *signing-key* | 
+| *outgoing-caller-id* | 
+| *call* | 
+| *incoming-phone-number-local* | 
+| *message-feedback* | 
+| *recording* | 
+| *incoming-phone-number-mobile* | 
+| *account* | 
+| *sip-credential-list* | 
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== recording-add-on-result-payload
+==== API: recording-add-on-result-payload
 
 
 The recording-add-on-result-payload API has 3 method(s) which is represented by the following method signatures
@@ -183,7 +246,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-today
+==== API: usage-record-today
 
 
 The usage-record-today API has 1 method(s) which is represented by the following method signatures
@@ -230,7 +293,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== available-phone-number-country-local
+==== API: available-phone-number-country-local
 
 
 The available-phone-number-country-local API has 1 method(s) which is represented by the following method signatures
@@ -278,7 +341,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== call-recording
+==== API: call-recording
 
 
 The call-recording API has 5 method(s) which is represented by the following method signatures
@@ -358,7 +421,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== queue-member
+==== API: queue-member
 
 
 The queue-member API has 3 method(s) which is represented by the following method signatures
@@ -423,7 +486,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-trigger
+==== API: usage-trigger
 
 
 The usage-trigger API has 5 method(s) which is represented by the following method signatures
@@ -500,7 +563,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-last-month
+==== API: usage-record-last-month
 
 
 The usage-record-last-month API has 1 method(s) which is represented by the following method signatures
@@ -547,7 +610,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-all-time
+==== API: usage-record-all-time
 
 
 The usage-record-all-time API has 1 method(s) which is represented by the following method signatures
@@ -594,7 +657,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== recording-transcription
+==== API: recording-transcription
 
 
 The recording-transcription API has 3 method(s) which is represented by the following method signatures
@@ -658,7 +721,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== message
+==== API: message
 
 
 The message API has 5 method(s) which is represented by the following method signatures
@@ -750,7 +813,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== call-feedback-summary
+==== API: call-feedback-summary
 
 
 The call-feedback-summary API has 3 method(s) which is represented by the following method signatures
@@ -813,7 +876,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-credential-list-credential
+==== API: sip-credential-list-credential
 
 
 The sip-credential-list-credential API has 5 method(s) which is represented by the following method signatures
@@ -894,7 +957,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== new-key
+==== API: new-key
 
 
 The new-key API has 1 method(s) which is represented by the following method signatures
@@ -941,7 +1004,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== incoming-phone-number
+==== API: incoming-phone-number
 
 
 The incoming-phone-number API has 5 method(s) which is represented by the following method signatures
@@ -1021,7 +1084,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== call-notification
+==== API: call-notification
 
 
 The call-notification API has 2 method(s) which is represented by the following method signatures
@@ -1077,7 +1140,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== validation-request
+==== API: validation-request
 
 
 The validation-request API has 1 method(s) which is represented by the following method signatures
@@ -1125,7 +1188,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-yesterday
+==== API: usage-record-yesterday
 
 
 The usage-record-yesterday API has 1 method(s) which is represented by the following method signatures
@@ -1172,7 +1235,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-this-month
+==== API: usage-record-this-month
 
 
 The usage-record-this-month API has 1 method(s) which is represented by the following method signatures
@@ -1219,7 +1282,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== new-signing-key
+==== API: new-signing-key
 
 
 The new-signing-key API has 1 method(s) which is represented by the following method signatures
@@ -1266,7 +1329,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== conference
+==== API: conference
 
 
 The conference API has 3 method(s) which is represented by the following method signatures
@@ -1327,7 +1390,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-daily
+==== API: usage-record-daily
 
 
 The usage-record-daily API has 1 method(s) which is represented by the following method signatures
@@ -1374,7 +1437,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== application
+==== API: application
 
 
 The application API has 5 method(s) which is represented by the following method signatures
@@ -1448,7 +1511,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record
+==== API: usage-record
 
 
 The usage-record API has 1 method(s) which is represented by the following method signatures
@@ -1495,7 +1558,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== available-phone-number-country-mobile
+==== API: available-phone-number-country-mobile
 
 
 The available-phone-number-country-mobile API has 1 method(s) which is represented by the following method signatures
@@ -1543,7 +1606,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== conference-participant
+==== API: conference-participant
 
 
 The conference-participant API has 5 method(s) which is represented by the following method signatures
@@ -1624,7 +1687,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== recording-add-on-result
+==== API: recording-add-on-result
 
 
 The recording-add-on-result API has 3 method(s) which is represented by the following method signatures
@@ -1688,7 +1751,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== notification
+==== API: notification
 
 
 The notification API has 2 method(s) which is represented by the following method signatures
@@ -1742,7 +1805,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-domain-ip-access-control-list-mapping
+==== API: sip-domain-ip-access-control-list-mapping
 
 
 The sip-domain-ip-access-control-list-mapping API has 4 method(s) which is represented by the following method signatures
@@ -1814,7 +1877,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-domain
+==== API: sip-domain
 
 
 The sip-domain API has 5 method(s) which is represented by the following method signatures
@@ -1889,7 +1952,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== address
+==== API: address
 
 
 The address API has 5 method(s) which is represented by the following method signatures
@@ -1969,7 +2032,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== message-media
+==== API: message-media
 
 
 The message-media API has 3 method(s) which is represented by the following method signatures
@@ -2033,7 +2096,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-ip-access-control-list-ip-address
+==== API: sip-ip-access-control-list-ip-address
 
 
 The sip-ip-access-control-list-ip-address API has 5 method(s) which is represented by the following method signatures
@@ -2114,7 +2177,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== available-phone-number-country
+==== API: available-phone-number-country
 
 
 The available-phone-number-country API has 2 method(s) which is represented by the following method signatures
@@ -2168,7 +2231,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-yearly
+==== API: usage-record-yearly
 
 
 The usage-record-yearly API has 1 method(s) which is represented by the following method signatures
@@ -2215,7 +2278,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== queue
+==== API: queue
 
 
 The queue API has 5 method(s) which is represented by the following method signatures
@@ -2290,7 +2353,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== transcription
+==== API: transcription
 
 
 The transcription API has 3 method(s) which is represented by the following method signatures
@@ -2351,7 +2414,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-domain-credential-list-mapping
+==== API: sip-domain-credential-list-mapping
 
 
 The sip-domain-credential-list-mapping API has 4 method(s) which is represented by the following method signatures
@@ -2423,7 +2486,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== call-feedback
+==== API: call-feedback
 
 
 The call-feedback API has 3 method(s) which is represented by the following method signatures
@@ -2487,7 +2550,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== key
+==== API: key
 
 
 The key API has 4 method(s) which is represented by the following method signatures
@@ -2555,7 +2618,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== incoming-phone-number-toll-free
+==== API: incoming-phone-number-toll-free
 
 
 The incoming-phone-number-toll-free API has 2 method(s) which is represented by the following method signatures
@@ -2609,7 +2672,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== token
+==== API: token
 
 
 The token API has 1 method(s) which is represented by the following method signatures
@@ -2656,7 +2719,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== short-code
+==== API: short-code
 
 
 The short-code API has 3 method(s) which is represented by the following method signatures
@@ -2717,7 +2780,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== available-phone-number-country-toll-free
+==== API: available-phone-number-country-toll-free
 
 
 The available-phone-number-country-toll-free API has 1 method(s) which is represented by the following method signatures
@@ -2765,7 +2828,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== usage-record-monthly
+==== API: usage-record-monthly
 
 
 The usage-record-monthly API has 1 method(s) which is represented by the following method signatures
@@ -2812,7 +2875,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-ip-access-control-list
+==== API: sip-ip-access-control-list
 
 
 The sip-ip-access-control-list API has 5 method(s) which is represented by the following method signatures
@@ -2888,7 +2951,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== connect-app
+==== API: connect-app
 
 
 The connect-app API has 4 method(s) which is represented by the following method signatures
@@ -2956,7 +3019,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== address-dependent-phone-number
+==== API: address-dependent-phone-number
 
 
 The address-dependent-phone-number API has 1 method(s) which is represented by the following method signatures
@@ -3004,7 +3067,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== signing-key
+==== API: signing-key
 
 
 The signing-key API has 4 method(s) which is represented by the following method signatures
@@ -3072,7 +3135,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== outgoing-caller-id
+==== API: outgoing-caller-id
 
 
 The outgoing-caller-id API has 4 method(s) which is represented by the following method signatures
@@ -3140,7 +3203,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== call
+==== API: call
 
 
 The call API has 5 method(s) which is represented by the following method signatures
@@ -3227,7 +3290,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== incoming-phone-number-local
+==== API: incoming-phone-number-local
 
 
 The incoming-phone-number-local API has 2 method(s) which is represented by the following method signatures
@@ -3281,7 +3344,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== message-feedback
+==== API: message-feedback
 
 
 The message-feedback API has 1 method(s) which is represented by the following method signatures
@@ -3329,7 +3392,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== recording
+==== API: recording
 
 
 The recording API has 3 method(s) which is represented by the following method signatures
@@ -3390,7 +3453,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== incoming-phone-number-mobile
+==== API: incoming-phone-number-mobile
 
 
 The incoming-phone-number-mobile API has 2 method(s) which is represented by the following method signatures
@@ -3444,7 +3507,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== account
+==== API: account
 
 
 The account API has 2 method(s) which is represented by the following method signatures
@@ -3497,7 +3560,7 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 
-==== sip-credential-list
+==== API: sip-credential-list
 
 
 The sip-credential-list API has 5 method(s) which is represented by the following method signatures

@@ -163,10 +163,27 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 box:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 10 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *files* | Provides operations to manage Box files
+| *search* | Provides operations to manage Box searches
+| *comments* | Provides operations to manage Box comments
+| *event-logs* | Provides operations to read Box enterprise (admin) event logs
+| *collaborations* | Provides operations to manage Box collaborations
+| *tasks* | Provides operations to manage Box tasks
+| *events* | Provides operations to manage Box events
+| *groups* | Provides operations to manage Box groups
+| *users* | Provides operations to manage Box users
+| *folders* | Provides operations to manage Box folders
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== files
+==== API: files
 
 
 The files API has 22 method(s) which is represented by the following method signatures
@@ -336,7 +353,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== search
+==== API: search
 
 
 The search API has 1 method(s) which is represented by the following method signatures
@@ -382,7 +399,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== comments
+==== API: comments
 
 
 The comments API has 6 method(s) which is represented by the following method signatures
@@ -450,7 +467,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== event-logs
+==== API: event-logs
 
 
 The event-logs API has 1 method(s) which is represented by the following method signatures
@@ -498,7 +515,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== collaborations
+==== API: collaborations
 
 
 The collaborations API has 6 method(s) which is represented by the following method signatures
@@ -568,7 +585,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== tasks
+==== API: tasks
 
 
 The tasks API has 9 method(s) which is represented by the following method signatures
@@ -650,7 +667,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== events
+==== API: events
 
 
 The events API has 1 method(s) which is represented by the following method signatures
@@ -695,7 +712,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== groups
+==== API: groups
 
 
 The groups API has 9 method(s) which is represented by the following method signatures
@@ -781,7 +798,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== users
+==== API: users
 
 
 The users API has 10 method(s) which is represented by the following method signatures
@@ -872,7 +889,7 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 
-==== folders
+==== API: folders
 
 
 The folders API has 10 method(s) which is represented by the following method signatures

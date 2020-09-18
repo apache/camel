@@ -152,10 +152,24 @@ The API name and method is located in the endpoint URI as the  path parameters:
 google-calendar-stream:index
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 7 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *settings* | The settings collection of methods
+| *freebusy* | The freebusy collection of methods
+| *events* | The events collection of methods
+| *channels* | The channels collection of methods
+| *acl* | The acl collection of methods
+| *calendars* | The calendars collection of methods
+| *list* | The calendarList collection of methods
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== settings
+==== API: settings
 
 
 The settings API has 2 method(s) which is represented by the following method signatures
@@ -204,7 +218,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== freebusy
+==== API: freebusy
 
 
 The freebusy API has 1 method(s) which is represented by the following method signatures
@@ -249,7 +263,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== events
+==== API: events
 
 
 The events API has 11 method(s) which is represented by the following method signatures
@@ -347,7 +361,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== channels
+==== API: channels
 
 
 The channels API has 1 method(s) which is represented by the following method signatures
@@ -392,7 +406,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== acl
+==== API: acl
 
 
 The acl API has 7 method(s) which is represented by the following method signatures
@@ -469,7 +483,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== calendars
+==== API: calendars
 
 
 The calendars API has 6 method(s) which is represented by the following method signatures
@@ -536,7 +550,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 
 
-==== list
+==== API: list
 
 
 The list API has 6 method(s) which is represented by the following method signatures

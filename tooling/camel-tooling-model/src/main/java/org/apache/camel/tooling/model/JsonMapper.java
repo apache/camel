@@ -107,7 +107,7 @@ public final class JsonMapper {
                 ApiModel am = new ApiModel();
                 model.getApiOptions().add(am);
                 am.setName(name);
-                am.setDescription(mp.getString("description"));
+                am.setDescription(mp.getStringOrDefault("description", ""));
                 Collection<String> aliases = mp.getCollection("aliases");
                 if (aliases != null && !aliases.isEmpty()) {
                     aliases.forEach(am::addAlias);
@@ -121,7 +121,7 @@ public final class JsonMapper {
                         if (signatures != null && !signatures.isEmpty()) {
                             signatures.forEach(amm::addSignature);
                         }
-                        amm.setDescription(mmp.getString("description"));
+                        amm.setDescription(mmp.getStringOrDefault("description", ""));
                     }
                 }
             }

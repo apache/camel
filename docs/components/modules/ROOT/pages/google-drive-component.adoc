@@ -147,10 +147,29 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 google-drive:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 12 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *drive-channels* | The channels collection of methods
+| *drive-revisions* | The revisions collection of methods
+| *drive-replies* | The replies collection of methods
+| *drive-permissions* | The permissions collection of methods
+| *drive-parents* | The parents collection of methods
+| *drive-apps* | The apps collection of methods
+| *drive-changes* | The changes collection of methods
+| *drive-comments* | The comments collection of methods
+| *drive-properties* | The properties collection of methods
+| *drive-realtime* | The realtime collection of methods
+| *drive-children* | The children collection of methods
+| *drive-files* | The files collection of methods
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== drive-channels
+==== API: drive-channels
 
 
 The drive-channels API has 1 method(s) which is represented by the following method signatures
@@ -195,7 +214,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-revisions
+==== API: drive-revisions
 
 
 The drive-revisions API has 5 method(s) which is represented by the following method signatures
@@ -262,7 +281,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-replies
+==== API: drive-replies
 
 
 The drive-replies API has 6 method(s) which is represented by the following method signatures
@@ -340,7 +359,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-permissions
+==== API: drive-permissions
 
 
 The drive-permissions API has 7 method(s) which is represented by the following method signatures
@@ -416,7 +435,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-parents
+==== API: drive-parents
 
 
 The drive-parents API has 4 method(s) which is represented by the following method signatures
@@ -476,7 +495,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-apps
+==== API: drive-apps
 
 
 The drive-apps API has 1 method(s) which is represented by the following method signatures
@@ -521,7 +540,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-changes
+==== API: drive-changes
 
 
 The drive-changes API has 2 method(s) which is represented by the following method signatures
@@ -570,7 +589,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-comments
+==== API: drive-comments
 
 
 The drive-comments API has 6 method(s) which is represented by the following method signatures
@@ -642,7 +661,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-properties
+==== API: drive-properties
 
 
 The drive-properties API has 6 method(s) which is represented by the following method signatures
@@ -714,7 +733,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-realtime
+==== API: drive-realtime
 
 
 The drive-realtime API has 2 method(s) which is represented by the following method signatures
@@ -766,7 +785,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-children
+==== API: drive-children
 
 
 The drive-children API has 4 method(s) which is represented by the following method signatures
@@ -826,7 +845,7 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 
-==== drive-files
+==== API: drive-files
 
 
 The drive-files API has 11 method(s) which is represented by the following method signatures

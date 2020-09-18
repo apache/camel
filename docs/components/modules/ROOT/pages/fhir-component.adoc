@@ -181,10 +181,30 @@ The API name and method is located in the endpoint URI as the apiName/methodName
 fhir:apiName/methodName
 ----
 
-The following lists each API name and method and its additional parameters.
+There are 13 API groups as listed in the table below:
+
+[width="100%",cols="2,8",options="header"]
+|===
+| API Name | Description
+| *update* | API for the update operation, which performs a logical delete on a server resource
+| *create* | API for the create operation, which creates a new resource instance on the server
+| *validate* | API for validating resources
+| *operation* | API for extended FHIR operations https://www
+| *search* | API to search for resources matching a given set of criteria
+| *capabilities* | API to Fetch the capability statement for the server
+| *patch* | API for the patch operation, which performs a logical patch on a server resource
+| *meta* | API for the meta operations, which can be used to get, add and remove tags and other Meta elements from a resource or across the server
+| *history* | API for the history method
+| *load-page* | API that Loads the previous/next bundle of resources from a paged set, using the link specified in the link type=next tag within the atom bundle
+| *transaction* | API for sending a transaction (collection of resources) to the server to be executed as a single unit
+| *read* | API method for read operations
+| *delete* | API for the delete operation, which performs a logical delete on a server resource
+|===
+
+Each API is documented in the following sections to come.
 
 
-==== update
+==== API: update
 
 
 The update API has 2 method(s) which is represented by the following method signatures
@@ -250,7 +270,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== create
+==== API: create
 
 
 The create API has 1 method(s) which is represented by the following method signatures
@@ -301,7 +321,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== validate
+==== API: validate
 
 
 The validate API has 1 method(s) which is represented by the following method signatures
@@ -350,7 +370,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== operation
+==== API: operation
 
 
 The operation API has 5 method(s) which is represented by the following method signatures
@@ -438,7 +458,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== search
+==== API: search
 
 
 The search API has 1 method(s) which is represented by the following method signatures
@@ -484,7 +504,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== capabilities
+==== API: capabilities
 
 
 The capabilities API has 1 method(s) which is represented by the following method signatures
@@ -530,7 +550,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== patch
+==== API: patch
 
 
 The patch API has 2 method(s) which is represented by the following method signatures
@@ -588,7 +608,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== meta
+==== API: meta
 
 
 The meta API has 5 method(s) which is represented by the following method signatures
@@ -658,7 +678,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== history
+==== API: history
 
 
 The history API has 3 method(s) which is represented by the following method signatures
@@ -725,7 +745,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== load-page
+==== API: load-page
 
 
 The load-page API has 3 method(s) which is represented by the following method signatures
@@ -782,7 +802,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== transaction
+==== API: transaction
 
 
 The transaction API has 2 method(s) which is represented by the following method signatures
@@ -836,7 +856,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== read
+==== API: read
 
 
 The read API has 2 method(s) which is represented by the following method signatures
@@ -919,7 +939,7 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
-==== delete
+==== API: delete
 
 
 The delete API has 3 method(s) which is represented by the following method signatures
