@@ -344,7 +344,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder runLoggingLevel(
@@ -359,7 +359,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder runLoggingLevel(
@@ -489,7 +489,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -502,7 +502,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1092,7 +1092,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: spreadsheets, data
+         * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation
@@ -1116,7 +1116,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * Path parameter: apiName (required)
          * What kind of operation to perform
-         * There are 2 enums and the value can be one of: spreadsheets, data
+         * There are 2 enums and the value can be one of: SPREADSHEETS, DATA
          * 
          * Path parameter: methodName (required)
          * What sub operation to use for the selected operation

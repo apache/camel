@@ -998,7 +998,7 @@ public interface BlobEndpointBuilderFactory {
          * The option is a:
          * <code>com.azure.storage.blob.models.BlockListType</code> type.
          * 
-         * Default: committed
+         * Default: COMMITTED
          * Group: producer
          */
         default BlobEndpointProducerBuilder blockListType(
@@ -1012,7 +1012,7 @@ public interface BlobEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.storage.blob.models.BlockListType</code> type.
          * 
-         * Default: committed
+         * Default: COMMITTED
          * Group: producer
          */
         default BlobEndpointProducerBuilder blockListType(String blockListType) {

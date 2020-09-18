@@ -65,7 +65,7 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType</code> type.
          * 
-         * Default: all
+         * Default: ALL
          * Group: common
          */
         default AtomixMessagingComponentBuilder broadcastType(
@@ -116,7 +116,7 @@ public interface AtomixMessagingComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action</code> type.
          * 
-         * Default: direct
+         * Default: DIRECT
          * Group: common
          */
         default AtomixMessagingComponentBuilder defaultAction(

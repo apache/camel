@@ -182,7 +182,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
-         * Default: blocking
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorEndpointConsumerBuilder waitStrategy(
@@ -198,7 +198,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
-         * Default: blocking
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorEndpointConsumerBuilder waitStrategy(
@@ -460,7 +460,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Default: multi
+         * Default: Multi
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder producerType(
@@ -477,7 +477,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Default: multi
+         * Default: Multi
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder producerType(
@@ -523,7 +523,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder waitForTaskToComplete(
@@ -541,7 +541,7 @@ public interface DisruptorEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default DisruptorEndpointProducerBuilder waitForTaskToComplete(

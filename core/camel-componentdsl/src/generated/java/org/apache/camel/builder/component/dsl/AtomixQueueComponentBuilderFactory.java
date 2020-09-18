@@ -90,7 +90,7 @@ public interface AtomixQueueComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue.Action</code> type.
          * 
-         * Default: add
+         * Default: ADD
          * Group: common
          */
         default AtomixQueueComponentBuilder defaultAction(

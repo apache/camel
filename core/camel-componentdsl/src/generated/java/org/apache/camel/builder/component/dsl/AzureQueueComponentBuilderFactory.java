@@ -158,7 +158,7 @@ public interface AzureQueueComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * 
-         * Default: list-queues
+         * Default: listQueues
          * Group: producer
          */
         default AzureQueueComponentBuilder operation(

@@ -49,7 +49,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointConsumerBuilder compressionType(
@@ -64,7 +64,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointConsumerBuilder compressionType(
@@ -79,7 +79,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
@@ -94,7 +94,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
@@ -217,7 +217,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointConsumerBuilder negotiationType(
@@ -232,7 +232,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointConsumerBuilder negotiationType(
@@ -406,7 +406,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointProducerBuilder compressionType(
@@ -421,7 +421,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointProducerBuilder compressionType(
@@ -436,7 +436,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
@@ -451,7 +451,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
@@ -519,7 +519,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointProducerBuilder negotiationType(
@@ -534,7 +534,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointProducerBuilder negotiationType(
@@ -652,7 +652,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointBuilder compressionType(
@@ -667,7 +667,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
-         * Default: none
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointBuilder compressionType(String compressionType) {
@@ -681,7 +681,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointBuilder exchangeProtocol(
@@ -696,7 +696,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
-         * Default: binary
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointBuilder exchangeProtocol(String exchangeProtocol) {
@@ -710,7 +710,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointBuilder negotiationType(
@@ -725,7 +725,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
-         * Default: plaintext
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointBuilder negotiationType(String negotiationType) {

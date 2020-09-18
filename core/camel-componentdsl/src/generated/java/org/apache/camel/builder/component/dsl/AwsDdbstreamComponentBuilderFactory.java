@@ -118,7 +118,7 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
          * 
-         * Default: latest
+         * Default: LATEST
          * Group: consumer
          */
         default AwsDdbstreamComponentBuilder iteratorType(

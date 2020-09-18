@@ -149,7 +149,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
          * 
-         * Default: latest
+         * Default: LATEST
          * Group: consumer
          */
         default DdbStreamEndpointBuilder iteratorType(
@@ -166,7 +166,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
          * 
-         * Default: latest
+         * Default: LATEST
          * Group: consumer
          */
         default DdbStreamEndpointBuilder iteratorType(String iteratorType) {
@@ -518,7 +518,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder runLoggingLevel(
@@ -533,7 +533,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder runLoggingLevel(String runLoggingLevel) {
@@ -659,7 +659,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -672,7 +672,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder timeUnit(String timeUnit) {

@@ -989,7 +989,7 @@ public interface Sqs2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default Sqs2EndpointConsumerBuilder runLoggingLevel(
@@ -1004,7 +1004,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: trace
+         * Default: TRACE
          * Group: scheduler
          */
         default Sqs2EndpointConsumerBuilder runLoggingLevel(
@@ -1132,7 +1132,7 @@ public interface Sqs2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Sqs2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1145,7 +1145,7 @@ public interface Sqs2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
-         * Default: milliseconds
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Sqs2EndpointConsumerBuilder timeUnit(String timeUnit) {

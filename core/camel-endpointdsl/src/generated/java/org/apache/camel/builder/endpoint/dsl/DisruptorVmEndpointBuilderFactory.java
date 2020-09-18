@@ -182,7 +182,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
-         * Default: blocking
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
@@ -198,7 +198,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
-         * Default: blocking
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
@@ -460,7 +460,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Default: multi
+         * Default: Multi
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder producerType(
@@ -477,7 +477,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Default: multi
+         * Default: Multi
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder producerType(
@@ -523,7 +523,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
@@ -541,7 +541,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
-         * Default: if-reply-expected
+         * Default: IfReplyExpected
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(

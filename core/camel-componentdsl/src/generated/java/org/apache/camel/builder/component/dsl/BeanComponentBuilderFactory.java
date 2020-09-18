@@ -97,7 +97,7 @@ public interface BeanComponentBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
-         * Default: singleton
+         * Default: Singleton
          * Group: producer
          */
         default BeanComponentBuilder scope(org.apache.camel.BeanScope scope) {

@@ -112,7 +112,7 @@ public interface DisruptorComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
-         * Default: blocking
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorComponentBuilder defaultWaitStrategy(
@@ -141,7 +141,7 @@ public interface DisruptorComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
-         * Default: multi
+         * Default: Multi
          * Group: producer
          */
         default DisruptorComponentBuilder defaultProducerType(

@@ -122,7 +122,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * 
-         * Default: select-list
+         * Default: SelectList
          * Group: producer
          */
         default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
@@ -135,7 +135,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * 
-         * Default: select-list
+         * Default: SelectList
          * Group: producer
          */
         default JdbcEndpointBuilder outputType(String outputType) {

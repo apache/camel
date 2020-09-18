@@ -205,7 +205,7 @@ public interface BoxComponentBuilderFactory {
          * 
          * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
-         * Default: rsa-sha-256
+         * Default: RSA_SHA_256
          * Group: security
          */
         default BoxComponentBuilder encryptionAlgorithm(

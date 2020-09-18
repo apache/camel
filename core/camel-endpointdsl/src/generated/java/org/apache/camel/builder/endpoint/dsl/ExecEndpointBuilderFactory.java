@@ -112,7 +112,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: debug
+         * Default: DEBUG
          * Group: producer
          */
         default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
@@ -127,7 +127,7 @@ public interface ExecEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
-         * Default: debug
+         * Default: DEBUG
          * Group: producer
          */
         default ExecEndpointBuilder commandLogLevel(String commandLogLevel) {

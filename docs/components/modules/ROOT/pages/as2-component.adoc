@@ -81,7 +81,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *apiName* | *Required* What kind of operation to perform. There are 2 enums and the value can be one of: client, server |  | AS2ApiName
+| *apiName* | *Required* What kind of operation to perform. There are 2 enums and the value can be one of: CLIENT, SERVER |  | AS2ApiName
 | *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 
@@ -93,16 +93,16 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *as2From* (common) | The value of the AS2From header of AS2 message. |  | String
-| *as2MessageStructure* (common) | The structure of AS2 Message. One of: PLAIN - No encryption, no signature, SIGNED - No encryption, signature, ENCRYPTED - Encryption, no signature, ENCRYPTED_SIGNED - Encryption, signature. There are 8 enums and the value can be one of: plain, signed, encrypted, signed-encrypted, plain-compressed, signed-compressed, encrypted-compressed, encrypted-compressed-signed |  | AS2MessageStructure
+| *as2MessageStructure* (common) | The structure of AS2 Message. One of: PLAIN - No encryption, no signature, SIGNED - No encryption, signature, ENCRYPTED - Encryption, no signature, ENCRYPTED_SIGNED - Encryption, signature. There are 8 enums and the value can be one of: PLAIN, SIGNED, ENCRYPTED, SIGNED_ENCRYPTED, PLAIN_COMPRESSED, SIGNED_COMPRESSED, ENCRYPTED_COMPRESSED, ENCRYPTED_COMPRESSED_SIGNED |  | AS2MessageStructure
 | *as2To* (common) | The value of the AS2To header of AS2 message. |  | String
 | *as2Version* (common) | The version of the AS2 protocol. There are 2 enums and the value can be one of: 1.0, 1.1 | 1.1 | String
 | *clientFqdn* (common) | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
-| *compressionAlgorithm* (common) | The algorithm used to compress EDI message. There are 1 enums and the value can be one of: zlib |  | AS2CompressionAlgorithm
+| *compressionAlgorithm* (common) | The algorithm used to compress EDI message. There are 1 enums and the value can be one of: ZLIB |  | AS2CompressionAlgorithm
 | *decryptingPrivateKey* (common) | The key used to encrypt the EDI message. |  | PrivateKey
 | *dispositionNotificationTo* (common) | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *ediMessageTransferEncoding* (common) | The transfer encoding of EDI message. |  | String
 | *ediMessageType* (common) | The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent |  | ContentType
-| *encryptingAlgorithm* (common) | The algorithm used to encrypt EDI message. There are 20 enums and the value can be one of: aes128-cbc, aes192-cbc, aes256-cbc, aes128-ccm, aes192-ccm, aes256-ccm, aes128-gcm, aes192-gcm, aes256-gcm, camellia128-cbc, camellia192-cbc, camellia256-cbc, cast5-cbc, des-cbc, des-ede3-cbc, gost28147-gcfb, idea-cbc, rc2-cbc, rc4, seed-cbc |  | AS2EncryptionAlgorithm
+| *encryptingAlgorithm* (common) | The algorithm used to encrypt EDI message. There are 20 enums and the value can be one of: AES128_CBC, AES192_CBC, AES256_CBC, AES128_CCM, AES192_CCM, AES256_CCM, AES128_GCM, AES192_GCM, AES256_GCM, CAMELLIA128_CBC, CAMELLIA192_CBC, CAMELLIA256_CBC, CAST5_CBC, DES_CBC, DES_EDE3_CBC, GOST28147_GCFB, IDEA_CBC, RC2_CBC, RC4, SEED_CBC |  | AS2EncryptionAlgorithm
 | *encryptingCertificateChain* (common) | The chain of certificates used to encrypt EDI message. |  | Certificate[]
 | *from* (common) | The value of the From header of AS2 message. |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
@@ -112,7 +112,7 @@ with the following path and query parameters:
 | *serverFqdn* (common) | The Server Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
 | *serverPortNumber* (common) | The port number of server. |  | Integer
 | *signedReceiptMicAlgorithms* (common) | The list of algorithms, in order of preference, requested to generate a message integrity check (MIC) returned in message dispostion notification (MDN) |  | String[]
-| *signingAlgorithm* (common) | The algorithm used to sign EDI message. There are 47 enums and the value can be one of: sha3-224-withrsa, sha3-256-withrsa, sha3-384with-rsa, sha3-512-withrsa, md5-withrsa, sha1-withrsa, md2-withrsa, sha224-withrsa, sha256-withrsa, sha384-withrsa, sha512-withrsa, ripemd128-withrsa, ripemd160-withrsa, ripemd256-withrsa, sha224-withdsa, sha256-withdsa, sha384-withdsa, sha512-withdsa, sha3-224-withdsa, sha3-256-withdsa, sha3-384-withdsa, sha3-512-withdsa, sha1-withdsa, sha3-224-withecdsa, sha3-256-withecdsa, sha3-384-withecdsa, sha3-512-withecdsa, sha1-withecdsa, sha224-withecdsa, sha256-withecdsa, sha384-withecdsa, sha512-withecdsa, sha1-withplain-ecdsa, sha224-withplain-ecdsa, sha256-withplain-ecdsa, sha384-withplain-ecdsa, sha512-withplain-ecdsa, ripemd160-withplain-ecdsa, sha1-withrsaandmgf1, sha224-withrsaandmgf1, sha256-withrsaandmgf1, sha384-withrsaandmgf1, sha512-withrsaandmgf1, sha3-224-withrsaandmgf1, sha3-256-withrsaandmgf1, sha3-384-withrsaandmgf1, sha3-512-withrsaandmgf1 |  | AS2SignatureAlgorithm
+| *signingAlgorithm* (common) | The algorithm used to sign EDI message. There are 47 enums and the value can be one of: SHA3_224WITHRSA, SHA3_256WITHRSA, SHA3_384withRSA, SHA3_512WITHRSA, MD5WITHRSA, SHA1WITHRSA, MD2WITHRSA, SHA224WITHRSA, SHA256WITHRSA, SHA384WITHRSA, SHA512WITHRSA, RIPEMD128WITHRSA, RIPEMD160WITHRSA, RIPEMD256WITHRSA, SHA224WITHDSA, SHA256WITHDSA, SHA384WITHDSA, SHA512WITHDSA, SHA3_224WITHDSA, SHA3_256WITHDSA, SHA3_384WITHDSA, SHA3_512WITHDSA, SHA1WITHDSA, SHA3_224WITHECDSA, SHA3_256WITHECDSA, SHA3_384WITHECDSA, SHA3_512WITHECDSA, SHA1WITHECDSA, SHA224WITHECDSA, SHA256WITHECDSA, SHA384WITHECDSA, SHA512WITHECDSA, SHA1WITHPLAIN_ECDSA, SHA224WITHPLAIN_ECDSA, SHA256WITHPLAIN_ECDSA, SHA384WITHPLAIN_ECDSA, SHA512WITHPLAIN_ECDSA, RIPEMD160WITHPLAIN_ECDSA, SHA1WITHRSAANDMGF1, SHA224WITHRSAANDMGF1, SHA256WITHRSAANDMGF1, SHA384WITHRSAANDMGF1, SHA512WITHRSAANDMGF1, SHA3_224WITHRSAANDMGF1, SHA3_256WITHRSAANDMGF1, SHA3_384WITHRSAANDMGF1, SHA3_512WITHRSAANDMGF1 |  | AS2SignatureAlgorithm
 | *signingCertificateChain* (common) | The chain of certificates used to sign EDI message. |  | Certificate[]
 | *signingPrivateKey* (common) | The key used to sign the EDI message. |  | PrivateKey
 | *subject* (common) | The value of Subject header of AS2 message. |  | String
@@ -122,7 +122,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: in-only, in-out, in-optional-out |  | ExchangePattern
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -134,12 +134,12 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. | 1000 | long
 | *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
-| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: trace, debug, info, warn, error, off | trace | LoggingLevel
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. There are 6 enums and the value can be one of: TRACE, DEBUG, INFO, WARN, ERROR, OFF | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component. Use value spring or quartz for built in scheduler | none | Object
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
-| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: nanoseconds, microseconds, milliseconds, seconds, minutes, hours, days | milliseconds | TimeUnit
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 
