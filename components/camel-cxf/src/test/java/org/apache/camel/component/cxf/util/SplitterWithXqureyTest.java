@@ -62,7 +62,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 Element element = (Element) exchange.getIn().getBody();
                                 String message = CxfUtilsTestHelper.elementToString(element);
-                                exchange.getOut().setBody(message);
+                                exchange.getMessage().setBody(message);
                             }
                         })
                         .to("mock:result");

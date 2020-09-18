@@ -254,7 +254,7 @@ public class DefaultCxfBindingTest {
 
         cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
 
-        Map<String, Object> camelHeaders = exchange.getOut().getHeaders();
+        Map<String, Object> camelHeaders = exchange.getMessage().getHeaders();
         assertNotNull(camelHeaders);
         assertEquals(responseContext, camelHeaders.get(Client.RESPONSE_CONTEXT));
 
@@ -281,7 +281,7 @@ public class DefaultCxfBindingTest {
 
         cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
 
-        CxfPayload<?> cxfPayload = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> cxfPayload = exchange.getMessage().getBody(CxfPayload.class);
 
         assertNotNull(cxfPayload);
         List<?> body = cxfPayload.getBody();

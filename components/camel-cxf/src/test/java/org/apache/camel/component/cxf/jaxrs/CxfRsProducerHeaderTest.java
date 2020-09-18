@@ -70,12 +70,12 @@ public class CxfRsProducerHeaderTest {
         });
 
         // verify the out message is a Response object by default
-        Response response = (Response) exchange.getOut().getBody();
+        Response response = (Response) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertEquals(200, response.getStatus());
 
         // test converter (from Response to InputStream)
-        assertEquals(RESPONSE, CxfUtils.getStringFromInputStream(exchange.getOut().getBody(InputStream.class)));
+        assertEquals(RESPONSE, CxfUtils.getStringFromInputStream(exchange.getMessage().getBody(InputStream.class)));
     }
 
     @Test
@@ -96,13 +96,13 @@ public class CxfRsProducerHeaderTest {
         });
 
         // get the response message 
-        Response response = (Response) exchange.getOut().getBody();
+        Response response = (Response) exchange.getMessage().getBody();
 
         // check the response code on the Response object as set by the "HttpProcess"
         assertEquals(200, response.getStatus());
 
         // get out message
-        Message outMessage = exchange.getOut();
+        Message outMessage = exchange.getMessage();
 
         // verify the content-type header sent by the "HttpProcess"
         assertEquals("text/xml", outMessage.getHeader(Exchange.CONTENT_TYPE));
@@ -125,7 +125,7 @@ public class CxfRsProducerHeaderTest {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            Message out = exchange.getOut();
+            Message out = exchange.getMessage();
 
             if (in.getHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API) != null) {
                 // this should have been filtered
@@ -135,8 +135,8 @@ public class CxfRsProducerHeaderTest {
             out.setHeader("echo-accept", in.getHeader("Accept"));
             out.setHeader("echo-my-user-defined-header", in.getHeader("my-user-defined-header"));
 
-            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
-            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/xml");
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/xml");
 
         }
 

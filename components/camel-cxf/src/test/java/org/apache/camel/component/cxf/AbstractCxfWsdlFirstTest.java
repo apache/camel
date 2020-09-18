@@ -112,7 +112,7 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     public void testInvokingServiceWithCamelProducer() throws Exception {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         List<Object> result = out.getBody(List.class);
         assertEquals(4, result.size(), "The result list should not be empty");
         Holder<String> name = (Holder<String>) result.get(3);

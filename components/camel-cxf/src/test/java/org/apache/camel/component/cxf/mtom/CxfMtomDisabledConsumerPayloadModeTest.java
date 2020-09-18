@@ -76,7 +76,7 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             CxfPayload<SoapHeader> body = new CxfPayload<>(
                     new ArrayList<SoapHeader>(),
                     elements, null);
-            exchange.getOut().setBody(body);
+            exchange.getMessage().setBody(body);
             exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 

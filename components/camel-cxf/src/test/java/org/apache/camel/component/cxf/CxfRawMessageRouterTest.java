@@ -80,10 +80,10 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
 
         });
-        assertNotNull(MessageHelper.getContentType(exchange.getOut()), "We should get the Content-Type here");
-        assertTrue(MessageHelper.getContentType(exchange.getOut()).startsWith("text/xml"), "Get wrong content type");
-        assertNotNull(exchange.getOut().getHeader("content-type"), "We should get the content-type here");
-        String response = exchange.getOut().getBody(String.class);
+        assertNotNull(MessageHelper.getContentType(exchange.getMessage()), "We should get the Content-Type here");
+        assertTrue(MessageHelper.getContentType(exchange.getMessage()).startsWith("text/xml"), "Get wrong content type");
+        assertNotNull(exchange.getMessage().getHeader("content-type"), "We should get the content-type here");
+        String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "Response should not be null");
         assertTrue(response.indexOf("echo hello world") > 0, "We should get right return result");
     }

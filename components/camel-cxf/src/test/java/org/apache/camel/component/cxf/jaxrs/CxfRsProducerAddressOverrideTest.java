@@ -72,7 +72,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
@@ -98,7 +98,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
@@ -123,7 +123,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         });
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
@@ -150,7 +150,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         });
 
         // get the response message
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
@@ -163,7 +163,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://http",
                 new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
-        Customer response = exchange.getOut().getBody(Customer.class);
+        Customer response = exchange.getMessage().getBody(Customer.class);
         assertNotNull(response, "The response should not be null");
 
         // Second call with override url
@@ -174,7 +174,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
         exchange = template.send("direct://http",
                 new SendProcessor("http://localhost:" + getPort1() + "/CxfRsProducerAddressOverrideTest"));
         // get the response message
-        response = exchange.getOut().getBody(Customer.class);
+        response = exchange.getMessage().getBody(Customer.class);
         assertNotNull(response, "The response should not be null");
     }
 

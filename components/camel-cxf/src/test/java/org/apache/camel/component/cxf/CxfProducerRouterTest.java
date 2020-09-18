@@ -124,7 +124,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
 
         Exchange exchange = template.send("direct:EndpointA", senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         // The response message's body is an MessageContentsList which first element is the return value of the operation,
         // If there are some holder parameters, the holder parameter will be filled in the reset of List.
         // The result will be extract from the MessageContentsList with the String class type
@@ -144,7 +144,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         senderExchange.getIn().setBody(REQUEST_MESSAGE);
         Exchange exchange = template.send("direct:EndpointB", senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String response = out.getBody(String.class);
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");
@@ -159,7 +159,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         senderExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
         Exchange exchange = template.send("direct:EndpointC", senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String response = out.getBody(String.class);
         assertTrue(response.indexOf("echo " + TEST_MESSAGE) > 0, "It should has the echo message");
         assertTrue(response.indexOf("echoResponse") > 0, "It should has the echoResponse tag");

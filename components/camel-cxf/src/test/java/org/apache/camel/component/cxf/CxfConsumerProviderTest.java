@@ -62,7 +62,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
                         assertNotNull(node);
                         XmlConverter xmlConverter = new XmlConverter();
                         // Put the result back
-                        exchange.getOut().setBody(xmlConverter.toSource(RESPONSE));
+                        exchange.getMessage().setBody(xmlConverter.toSource(RESPONSE));
                     }
                 });
             }

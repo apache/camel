@@ -50,7 +50,7 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     public void testInvokingServiceWithCamelProducer() {
         Exchange exchange = sendJaxWsMessage("hello");
         assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         assertStringContains(result, "Bonjour");
 

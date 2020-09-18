@@ -437,7 +437,7 @@ public class CxfMessageHeadersRelayTest {
 
         });
 
-        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBodySources().size());
 
         assertTrue(out.getBodySources().get(0) instanceof DOMSource);
@@ -516,7 +516,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
@@ -539,7 +539,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");
@@ -567,7 +567,7 @@ public class CxfMessageHeadersRelayTest {
 
         Exchange exchange = template.send(producerUri, senderExchange);
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         MessageContentsList result = (MessageContentsList) out.getBody();
         assertTrue(result.get(0) != null && ((Me) result.get(0)).getFirstName().equals("pass"),
                 "Expected the out of band header to propagate but it didn't");

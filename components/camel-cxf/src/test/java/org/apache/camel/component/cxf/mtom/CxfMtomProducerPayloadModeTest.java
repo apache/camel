@@ -122,7 +122,7 @@ public class CxfMtomProducerPayloadModeTest {
 
         // process response 
 
-        CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<SoapHeader> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());
 
         Map<String, String> ns = new HashMap<>();

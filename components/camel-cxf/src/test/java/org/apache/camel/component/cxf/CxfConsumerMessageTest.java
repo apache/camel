@@ -66,9 +66,9 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
                         String request = in.getBody(String.class);
                         // Send the response message back
                         if (request.indexOf(ECHO_METHOD) > 0) {
-                            exchange.getOut().setBody(ECHO_RESPONSE);
+                            exchange.getMessage().setBody(ECHO_RESPONSE);
                         } else { // echoBoolean call
-                            exchange.getOut().setBody(ECHO_BOOLEAN_RESPONSE);
+                            exchange.getMessage().setBody(ECHO_BOOLEAN_RESPONSE);
                         }
 
                     }

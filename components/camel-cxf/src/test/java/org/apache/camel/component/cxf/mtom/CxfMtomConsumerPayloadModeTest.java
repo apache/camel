@@ -135,7 +135,7 @@ public class CxfMtomConsumerPayloadModeTest {
             CxfPayload<SoapHeader> sbody = new CxfPayload<>(
                     new ArrayList<SoapHeader>(),
                     elements, null);
-            exchange.getOut().setBody(sbody);
+            exchange.getMessage().setBody(sbody);
             exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 

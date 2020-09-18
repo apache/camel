@@ -34,7 +34,7 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                             public void process(Exchange exchange) throws Exception {
                                 SoapFault fault = exchange
                                         .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setBody(fault);
+                                exchange.getMessage().setBody(fault);
                             }
 
                         }).end().to(serviceURI);
@@ -43,11 +43,11 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                 from(routerEndpointURI).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
-                        Message out = exchange.getOut();
+                        Message out = exchange.getMessage();
                         // Set the message body with the 
                         out.setBody(this.getClass().getResourceAsStream("SoapFaultMessage.xml"));
                         // Set the response code here
-                        out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, new Integer(500));
+                        out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(500));
                     }
 
                 });

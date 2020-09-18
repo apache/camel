@@ -107,7 +107,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
 
         // process response - verify response attachments
 
-        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());
 
         DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
