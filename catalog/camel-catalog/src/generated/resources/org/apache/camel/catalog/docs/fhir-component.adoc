@@ -191,8 +191,8 @@ There are 13 API groups as listed in the table below:
 | *search* | API to search for resources matching a given set of criteria
 | *capabilities* | API to Fetch the capability statement for the server
 | *patch* | API for the patch operation, which performs a logical patch on a server resource
-| *meta* | API for the meta operations, which can be used to get, add and remove tags and other Meta elements from a resource or across the server
 | *history* | API for the history method
+| *meta* | API for the meta operations, which can be used to get, add and remove tags and other Meta elements from a resource or across the server
 | *load-page* | API that Loads the previous/next bundle of resources from a paged set, using the link specified in the link type=next tag within the atom bundle
 | *transaction* | API for sending a transaction (collection of resources) to the server to be executed as a single unit
 | *read* | API method for read operations
@@ -606,6 +606,73 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 
+==== API: history
+
+
+The history API has 3 method(s) which is represented by the following method signatures
+(an API method may have multiple signatures due to overloading):
+
+[source,java]
+----
+
+org.hl7.fhir.instance.model.api.IBaseBundle onInstance(org.hl7.fhir.instance.model.api.IIdType id, Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseBundle onServer(Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+org.hl7.fhir.instance.model.api.IBaseBundle onType(Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType, Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
+
+----
+
+The history API is defined in the syntax as follows:
+
+----
+fhir:history/methodName?[parameters]
+----
+
+The 3 method(s) is listed in the table below.
+(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
+
+[width="100%",cols="2,2,6",options="header"]
+|===
+| Method | Alias | Description
+| *onInstance* |  | Perform the operation across all versions of a specific resource (by ID and type) on the server
+| *onServer* |  | Perform the operation across all versions of all resources of all types on the server
+| *onType* |  | Perform the operation across all versions of all resources of the given type on the server
+|===
+
+The history API method(s) has the following set of parameters listed in the table below:
+[width="100%",cols="2,2,4,2",options="header"]
+|===
+| Method | Parameter | Description | Type
+| onInstance | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onInstance | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
+| onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onInstance | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
+| onInstance | *id* |  The IIdType which must be populated with both a resource type and a resource ID at | IIdType
+| onInstance | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+| onServer | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onServer | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
+| onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onServer | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
+| onServer | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+| onType | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
+| onType | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
+| onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
+| onType | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
+| onType | *resourceType* |  The resource type to search for | Class
+| onType | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
+|===
+
+In addition to the parameters above, the history API can also use from the 46 endpoint query option
+which is listed in the _Query Parameters_ section.
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
+The message header name must be of the format `CamelFhir.parameter`.
+The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
+would override a `CamelFhir.myParameterNameHere` header.
+
+
+
 ==== API: meta
 
 
@@ -667,73 +734,6 @@ The meta API method(s) has the following set of parameters listed in the table b
 |===
 
 In addition to the parameters above, the meta API can also use from the 46 endpoint query option
-which is listed in the _Query Parameters_ section.
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
-The message header name must be of the format `CamelFhir.parameter`.
-The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
-would override a `CamelFhir.myParameterNameHere` header.
-
-
-
-==== API: history
-
-
-The history API has 3 method(s) which is represented by the following method signatures
-(an API method may have multiple signatures due to overloading):
-
-[source,java]
-----
-
-org.hl7.fhir.instance.model.api.IBaseBundle onInstance(org.hl7.fhir.instance.model.api.IIdType id, Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseBundle onServer(Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-org.hl7.fhir.instance.model.api.IBaseBundle onType(Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType, Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType, Integer count, java.util.Date cutoff, org.hl7.fhir.instance.model.api.IPrimitiveType<java.util.Date> iCutoff, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters);
-
-----
-
-The history API is defined in the syntax as follows:
-
-----
-fhir:history/methodName?[parameters]
-----
-
-The 3 method(s) is listed in the table below.
-(API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[width="100%",cols="2,2,6",options="header"]
-|===
-| Method | Alias | Description
-| *onInstance* |  | Perform the operation across all versions of a specific resource (by ID and type) on the server
-| *onServer* |  | Perform the operation across all versions of all resources of all types on the server
-| *onType* |  | Perform the operation across all versions of all resources of the given type on the server
-|===
-
-The history API method(s) has the following set of parameters listed in the table below:
-[width="100%",cols="2,2,4,2",options="header"]
-|===
-| Method | Parameter | Description | Type
-| onInstance | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
-| onInstance | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
-| onInstance | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onInstance | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
-| onInstance | *id* |  The IIdType which must be populated with both a resource type and a resource ID at | IIdType
-| onInstance | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
-| onServer | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
-| onServer | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
-| onServer | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onServer | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
-| onServer | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
-| onType | *count* | *Optional*  Request that the server return only up to theCount number of resources, may be NULL | Integer
-| onType | *cutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | Date
-| onType | *extraParameters* | *Optional*  See ExtraParameters for a full list of parameters that can be passed, may be NULL | Map
-| onType | *iCutoff* | *Optional*  Request that the server return only resource versions that were created at or after the given time (inclusive), may be NULL | IPrimitiveType
-| onType | *resourceType* |  The resource type to search for | Class
-| onType | *returnType* |  Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server. | Class
-|===
-
-In addition to the parameters above, the history API can also use from the 46 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
