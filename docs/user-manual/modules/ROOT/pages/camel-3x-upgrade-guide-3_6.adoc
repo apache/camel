@@ -9,11 +9,27 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 === API components upgrade
 
 The `camel-braintree`, `camel-twilio` and `camel-zendesk` has updated to newer versions and regenerated their API
-signatures in the Camel components which may change some of the existing singatures and as well bring in new.
+signatures in the Camel components which changed a few existing API methods and adding new API methods as well.
 
-=== Camel Karaf
+=== API components overhauled
 
-The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
+The following API component has been overhauled, by having a new Java source parser to inspect API and fully generate
+Camel endpoint configuration and documentation gathered from javadoc.
+
+The components affected are:
+
+- camel-as2
+- camel-box
+- camel-braintree
+- camel-fhir
+- camel-google-calendar
+- camel-google-drive
+- camel-google-email
+- camel-google-sheets
+- camel-olingo2
+- camel-olingo4
+- camel-twilio
+- camel-zendesk
 
 === Customizers
 
@@ -108,15 +124,18 @@ To configure the component to use a pre-configured cache, it is not more require
 
 As example, the following code:
 
-
 [source,java]
 ----
 .to("caffeine-cache://cache?cache=#myCache&action=PUT&key=1")
 ----
 
-Should eb repolaced by:
+Should eb replaced by:
 
 [source,java]
 ----
 .to("caffeine-cache://myCache?action=PUT&key=1")
 ----
+
+=== Camel Karaf
+
+The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
