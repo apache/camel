@@ -95,7 +95,7 @@ public class CxfMtomPOJOProducerTest {
 
         assertEquals(2, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 2");
 
-        Object[] result = exchange.getOut().getBody(Object[].class);
+        Object[] result = exchange.getMessage().getBody(Object[].class);
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
         assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, photo1.value);
         Holder<Image> image1 = (Holder<Image>) result[2];

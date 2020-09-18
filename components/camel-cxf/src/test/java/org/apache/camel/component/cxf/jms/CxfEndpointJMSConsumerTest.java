@@ -71,7 +71,7 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // just set the response for greetme operation here
                         String me = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hello " + me);
+                        exchange.getMessage().setBody("Hello " + me);
                     }
                 });
             }

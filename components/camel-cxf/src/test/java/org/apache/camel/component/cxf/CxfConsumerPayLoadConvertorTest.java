@@ -56,7 +56,7 @@ public class CxfConsumerPayLoadConvertorTest extends CxfConsumerPayloadTest {
                             checkRequest("ECHO_REQUEST", request);
                         }
                         // just set the documentString into to the message body
-                        exchange.getOut().setBody(documentString);
+                        exchange.getMessage().setBody(documentString);
                     }
                 });
             }

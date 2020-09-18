@@ -113,7 +113,7 @@ public class CxfProducerTest {
     public void testInvokingSimpleServerWithParams() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         LOG.info("Received output text: " + result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
@@ -152,7 +152,7 @@ public class CxfProducerTest {
     public void testInvokingJaxWsServerWithParams() throws Exception {
         Exchange exchange = sendJaxWsMessage();
 
-        org.apache.camel.Message out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getMessage();
         String result = out.getBody(String.class);
         LOG.info("Received output text: " + result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));

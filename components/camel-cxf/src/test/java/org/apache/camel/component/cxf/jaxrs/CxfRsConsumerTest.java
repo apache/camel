@@ -237,7 +237,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 customer.setId(Long.parseLong(id));
                 customer.setName("Willem");
                 // We just put the response Object into the out message body
-                exchange.getOut().setBody(customer);
+                exchange.getMessage().setBody(customer);
             } else {
                 if ("/customerservice/customers/400".equals(path)) {
                     // We return the remote client IP address this time
@@ -247,13 +247,13 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     // Just make sure the request object is not null
                     assertNotNull(request, "The request object should not be null");
                     Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
-                    exchange.getOut().setBody(r);
+                    exchange.getMessage().setBody(r);
                     return;
                 }
                 if ("/customerservice/customers/123".equals(path)) {
                     // send a customer response back
                     Response r = Response.status(200).entity("customer response back!").build();
-                    exchange.getOut().setBody(r);
+                    exchange.getMessage().setBody(r);
                     return;
                 }
                 if ("/customerservice/customers/456".equals(path)) {
@@ -263,11 +263,11 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 } else if ("/customerservice/customers/234".equals(path)) {
                     Response r = Response.status(404).entity("Can't found the customer with uri " + path)
                             .header("Content-Type", "text/plain").build();
-                    exchange.getOut().setBody(r);
+                    exchange.getMessage().setBody(r);
                 } else if ("/customerservice/customers/789".equals(path)) {
-                    exchange.getOut().setBody("Can't found the customer with uri " + path);
-                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
+                    exchange.getMessage().setBody("Can't found the customer with uri " + path);
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
                 } else {
                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                 }
@@ -293,7 +293,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 // Now you can do what you want on the customer object
                 assertEquals("Mary", customer.getName(), "Get a wrong customer name.");
                 // set the response back
-                exchange.getOut().setBody(Response.ok().build());
+                exchange.getMessage().setBody(Response.ok().build());
             }
 
         }
@@ -312,7 +312,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     processGetCustomer(exchange);
                 } else if (HttpMethod.POST.equals(httpMethod)) {
                     InputStream inBody = exchange.getIn().getBody(InputStream.class);
-                    exchange.getOut().setBody(Response.ok(inBody).build());
+                    exchange.getMessage().setBody(Response.ok(inBody).build());
                 }
             }
         }

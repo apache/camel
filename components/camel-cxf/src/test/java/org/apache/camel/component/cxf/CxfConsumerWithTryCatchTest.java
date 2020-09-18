@@ -47,7 +47,7 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
                                 String operation = (String) in.getHeader(CxfConstants.OPERATION_NAME);
                                 Object result = operation + " " + (String) parameter.get(0);
                                 // Put the result back
-                                exchange.getOut().setBody(result);
+                                exchange.getMessage().setBody(result);
                             }
                         })
                         .when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_BOOLEAN_OPERATION))
@@ -65,7 +65,7 @@ public class CxfConsumerWithTryCatchTest extends CxfConsumerTest {
                                 // Get the parameter list
                                 List<?> parameter = in.getBody(List.class);
                                 // Put the result back
-                                exchange.getOut().setBody(parameter.get(0));
+                                exchange.getMessage().setBody(parameter.get(0));
                             }
                         })
                         .end();

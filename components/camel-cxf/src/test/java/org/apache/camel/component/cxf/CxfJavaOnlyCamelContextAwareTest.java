@@ -85,7 +85,7 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
                                    + "</GetPersonResponse>";
 
                         Document xml = context.getTypeConverter().convertTo(Document.class, s);
-                        exchange.getOut().setBody(xml);
+                        exchange.getMessage().setBody(xml);
                     }
                 });
             }

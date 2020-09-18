@@ -53,7 +53,7 @@ public class PersonProcessor implements Processor {
             personFault.setPersonId("");
             org.apache.camel.wsdl_first.UnknownPersonFault fault
                     = new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
-            exchange.getOut().setBody(fault);
+            exchange.getMessage().setBody(fault);
             return;
         }
 
@@ -62,7 +62,7 @@ public class PersonProcessor implements Processor {
         LOG.info("setting Bonjour as the response");
         // Set the response message, first element is the return value of the operation,
         // the others are the holders of method parameters
-        exchange.getOut().setBody(new Object[] { null, personId, ssn, name });
+        exchange.getMessage().setBody(new Object[] { null, personId, ssn, name });
     }
 
 }

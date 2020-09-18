@@ -101,10 +101,10 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         if (id == 123) {
                             assertEquals("123", exchange.getIn().getHeader("id"));
                             assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
-                            exchange.getOut().setBody(new Customer(123, "Raul"));
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                            exchange.getMessage().setBody(new Customer(123, "Raul"));
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                         } else if (id == 456) {
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                         } else {
                             fail();
                         }
@@ -138,7 +138,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         list.add(new Customer(123, "Raul"));
                         list.add(new Customer(456, "Raul2"));
                         response.setCustomers(list);
-                        exchange.getOut().setBody(response);
+                        exchange.getMessage().setBody(response);
                     }
                 });
 
@@ -166,7 +166,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertTrue(InputStream.class.isAssignableFrom(exchange.getIn().getBody().getClass()));
                         InputStream is = exchange.getIn().getBody(InputStream.class);
                         is.close();
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
 
@@ -178,7 +178,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         DataHandler dh = exchange.getIn().getBody(DataHandler.class);
                         assertEquals("image/jpeg", dh.getContentType());
                         dh.getInputStream().close();
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
 
@@ -191,7 +191,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
 
@@ -202,7 +202,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
             }

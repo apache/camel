@@ -59,7 +59,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         // Make sure we don't put the attachement into out message
         assertEquals(0, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 0");
 
-        Object[] result = exchange.getOut().getBody(Object[].class);
+        Object[] result = exchange.getMessage().getBody(Object[].class);
 
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
 
