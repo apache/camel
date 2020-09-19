@@ -168,7 +168,6 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
                         populateResultWithSolverManager(exchange, solverJob);
                     } catch (Throwable e) {
                         exchange.setException(e);
-                        e.printStackTrace();
                     } finally {
                         callback.done(false);
                     }
