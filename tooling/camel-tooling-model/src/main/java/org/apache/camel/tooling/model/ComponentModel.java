@@ -17,7 +17,9 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOptionModel> {
@@ -35,7 +37,8 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected boolean lenientProperties;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
-    protected final List<ApiModel> apiOptions = new ArrayList<>();
+    // lets sort apis A..Z so they are always in the same order
+    protected final Collection<ApiModel> apiOptions = new TreeSet<>(Comparators.apiModelComparator());
 
     public ComponentModel() {
     }
@@ -169,7 +172,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
                 .collect(Collectors.toList());
     }
 
-    public List<ApiModel> getApiOptions() {
+    public Collection<ApiModel> getApiOptions() {
         return apiOptions;
     }
 

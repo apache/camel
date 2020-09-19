@@ -1107,6 +1107,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                     .findFirst();
                             if (!op.isPresent()) {
                                 api = new ApiModel();
+                                api.setName(apiName);
                                 componentModel.getApiOptions().add(api);
                                 if (apiParams != null) {
                                     for (String alias : apiParams.aliases()) {
@@ -1119,7 +1120,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             } else {
                                 api = op.get();
                             }
-                            api.setName(apiName);
                             for (ApiMethod method : apiParam.apiMethods()) {
                                 ApiMethodModel apiMethod = null;
                                 for (ApiMethodModel m : api.getMethods()) {
