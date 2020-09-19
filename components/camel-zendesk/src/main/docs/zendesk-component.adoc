@@ -175,14 +175,6 @@ org.zendesk.client.v2.model.GroupMembership createGroupMembership(org.zendesk.cl
 
 org.zendesk.client.v2.model.Macro createMacro(org.zendesk.client.v2.model.Macro macro);
 
-org.zendesk.client.v2.model.User createOrUpdateUser(org.zendesk.client.v2.model.User user);
-
-org.zendesk.client.v2.model.JobStatus createOrUpdateUsers(java.util.List<org.zendesk.client.v2.model.User> users);
-
-org.zendesk.client.v2.model.JobStatus createOrUpdateUsers(org.zendesk.client.v2.model.User[] users);
-
-org.asynchttpclient.ListenableFuture<org.zendesk.client.v2.model.JobStatus> createOrUpdateUsersAsync(java.util.List<org.zendesk.client.v2.model.User> users);
-
 org.zendesk.client.v2.model.Organization createOrganization(org.zendesk.client.v2.model.Organization organization);
 
 org.zendesk.client.v2.model.OrganizationMembership createOrganizationMembership(long user_id, org.zendesk.client.v2.model.OrganizationMembership organizationMembership);
@@ -200,6 +192,14 @@ org.zendesk.client.v2.model.JobStatus createOrganizations(java.util.List<org.zen
 org.zendesk.client.v2.model.JobStatus createOrganizations(org.zendesk.client.v2.model.Organization[] organizations);
 
 org.asynchttpclient.ListenableFuture<org.zendesk.client.v2.model.JobStatus> createOrganizationsAsync(java.util.List<org.zendesk.client.v2.model.Organization> organizations);
+
+org.zendesk.client.v2.model.User createOrUpdateUser(org.zendesk.client.v2.model.User user);
+
+org.zendesk.client.v2.model.JobStatus createOrUpdateUsers(java.util.List<org.zendesk.client.v2.model.User> users);
+
+org.zendesk.client.v2.model.JobStatus createOrUpdateUsers(org.zendesk.client.v2.model.User[] users);
+
+org.asynchttpclient.ListenableFuture<org.zendesk.client.v2.model.JobStatus> createOrUpdateUsersAsync(java.util.List<org.zendesk.client.v2.model.User> users);
 
 org.zendesk.client.v2.model.hc.PermissionGroup createPermissionGroup(org.zendesk.client.v2.model.hc.PermissionGroup permissionGroup);
 
@@ -251,13 +251,13 @@ org.zendesk.client.v2.model.Identity createUserIdentity(long userId, org.zendesk
 
 org.zendesk.client.v2.model.Identity createUserIdentity(org.zendesk.client.v2.model.User user, org.zendesk.client.v2.model.Identity identity);
 
-org.zendesk.client.v2.model.hc.UserSegment createUserSegment(org.zendesk.client.v2.model.hc.UserSegment userSegment);
-
 org.zendesk.client.v2.model.JobStatus createUsers(java.util.List<org.zendesk.client.v2.model.User> users);
 
 org.zendesk.client.v2.model.JobStatus createUsers(org.zendesk.client.v2.model.User[] users);
 
 org.asynchttpclient.ListenableFuture<org.zendesk.client.v2.model.JobStatus> createUsersAsync(java.util.List<org.zendesk.client.v2.model.User> users);
+
+org.zendesk.client.v2.model.hc.UserSegment createUserSegment(org.zendesk.client.v2.model.hc.UserSegment userSegment);
 
 void deleteArticle(org.zendesk.client.v2.model.hc.Article article);
 
@@ -357,12 +357,6 @@ Iterable<org.zendesk.client.v2.model.hc.Article> getArticleFromSearch(String sea
 
 Iterable<org.zendesk.client.v2.model.hc.Article> getArticleFromSearch(String searchTerm, Long sectionId);
 
-Iterable<org.zendesk.client.v2.model.hc.Subscription> getArticleSubscriptions(Long articleId);
-
-Iterable<org.zendesk.client.v2.model.hc.Subscription> getArticleSubscriptions(Long articleId, String locale);
-
-Iterable<org.zendesk.client.v2.model.hc.Translation> getArticleTranslations(Long articleId);
-
 Iterable<org.zendesk.client.v2.model.hc.Article> getArticles();
 
 Iterable<org.zendesk.client.v2.model.hc.Article> getArticles(String locale);
@@ -378,6 +372,12 @@ Iterable<org.zendesk.client.v2.model.hc.Article> getArticlesFromAnyLabels(java.u
 java.util.List<org.zendesk.client.v2.model.hc.Article> getArticlesFromPage(int page);
 
 Iterable<org.zendesk.client.v2.model.hc.Article> getArticlesIncrementally(java.util.Date startTime);
+
+Iterable<org.zendesk.client.v2.model.hc.Subscription> getArticleSubscriptions(Long articleId);
+
+Iterable<org.zendesk.client.v2.model.hc.Subscription> getArticleSubscriptions(Long articleId, String locale);
+
+Iterable<org.zendesk.client.v2.model.hc.Translation> getArticleTranslations(Long articleId);
 
 Iterable<org.zendesk.client.v2.model.GroupMembership> getAssignableGroupMemberships();
 
@@ -459,11 +459,11 @@ Iterable<org.zendesk.client.v2.model.OrganizationMembership> getOrganizationMemb
 
 Iterable<org.zendesk.client.v2.model.OrganizationMembership> getOrganizationMembershipsForUser(long user_id);
 
+Iterable<org.zendesk.client.v2.model.Organization> getOrganizationsIncrementally(java.util.Date startTime);
+
 Iterable<org.zendesk.client.v2.model.Ticket> getOrganizationTickets(long organizationId);
 
 Iterable<org.zendesk.client.v2.model.User> getOrganizationUsers(long id);
-
-Iterable<org.zendesk.client.v2.model.Organization> getOrganizationsIncrementally(java.util.Date startTime);
 
 org.zendesk.client.v2.model.hc.PermissionGroup getPermissionGroup(long id);
 
@@ -497,17 +497,17 @@ Iterable<org.zendesk.client.v2.model.SearchResultEntity> getSearchResults(String
 
 org.zendesk.client.v2.model.hc.Section getSection(long id);
 
-Iterable<org.zendesk.client.v2.model.hc.Subscription> getSectionSubscriptions(Long sectionId);
-
-Iterable<org.zendesk.client.v2.model.hc.Subscription> getSectionSubscriptions(Long sectionId, String locale);
-
-Iterable<org.zendesk.client.v2.model.hc.Translation> getSectionTranslations(Long sectionId);
-
 Iterable<org.zendesk.client.v2.model.hc.Section> getSections();
 
 Iterable<org.zendesk.client.v2.model.hc.Section> getSections(org.zendesk.client.v2.model.hc.Category category);
 
 Iterable<org.zendesk.client.v2.model.hc.Section> getSections(org.zendesk.client.v2.model.hc.UserSegment userSegment);
+
+Iterable<org.zendesk.client.v2.model.hc.Subscription> getSectionSubscriptions(Long sectionId);
+
+Iterable<org.zendesk.client.v2.model.hc.Subscription> getSectionSubscriptions(Long sectionId, String locale);
+
+Iterable<org.zendesk.client.v2.model.hc.Translation> getSectionTranslations(Long sectionId);
 
 org.zendesk.client.v2.model.targets.Target getTarget(long id);
 
@@ -589,19 +589,19 @@ Iterable<org.zendesk.client.v2.model.Request> getUserRequests(long id);
 
 Iterable<org.zendesk.client.v2.model.Request> getUserRequests(org.zendesk.client.v2.model.User user);
 
+Iterable<org.zendesk.client.v2.model.User> getUsersByRole(String role, String[] roles);
+
 org.zendesk.client.v2.model.hc.UserSegment getUserSegment(long id);
 
 Iterable<org.zendesk.client.v2.model.hc.UserSegment> getUserSegments();
 
 Iterable<org.zendesk.client.v2.model.hc.UserSegment> getUserSegments(long id);
 
+Iterable<org.zendesk.client.v2.model.User> getUsersIncrementally(java.util.Date startTime);
+
 Iterable<org.zendesk.client.v2.model.hc.Subscription> getUserSubscriptions(Long userId);
 
 Iterable<org.zendesk.client.v2.model.hc.Subscription> getUserSubscriptions(org.zendesk.client.v2.model.User user);
-
-Iterable<org.zendesk.client.v2.model.User> getUsersByRole(String role, String[] roles);
-
-Iterable<org.zendesk.client.v2.model.User> getUsersIncrementally(java.util.Date startTime);
 
 org.zendesk.client.v2.model.Ticket importTicket(org.zendesk.client.v2.model.TicketImport ticketImport);
 
@@ -743,13 +743,13 @@ org.zendesk.client.v2.model.Identity updateUserIdentity(long userId, org.zendesk
 
 org.zendesk.client.v2.model.Identity updateUserIdentity(org.zendesk.client.v2.model.User user, org.zendesk.client.v2.model.Identity identity);
 
-org.zendesk.client.v2.model.hc.UserSegment updateUserSegment(org.zendesk.client.v2.model.hc.UserSegment userSegment);
-
 org.zendesk.client.v2.model.JobStatus updateUsers(java.util.List<org.zendesk.client.v2.model.User> users);
 
 org.zendesk.client.v2.model.JobStatus updateUsers(org.zendesk.client.v2.model.User[] users);
 
 org.asynchttpclient.ListenableFuture<org.zendesk.client.v2.model.JobStatus> updateUsersAsync(java.util.List<org.zendesk.client.v2.model.User> users);
+
+org.zendesk.client.v2.model.hc.UserSegment updateUserSegment(org.zendesk.client.v2.model.hc.UserSegment userSegment);
 
 org.zendesk.client.v2.model.Identity verifyUserIdentity(long userId, long identityId);
 
@@ -788,15 +788,15 @@ The 221 method(s) is listed in the table below.
 | *createGroup* |  | 
 | *createGroupMembership* |  | 
 | *createMacro* |  | 
-| *createOrUpdateUser* |  | 
-| *createOrUpdateUsers* |  | 
-| *createOrUpdateUsersAsync* |  | 
 | *createOrganization* |  | 
 | *createOrganizationMembership* |  | 
 | *createOrganizationMemberships* |  | 
 | *createOrganizationMembershipsAsync* |  | 
 | *createOrganizations* |  | 
 | *createOrganizationsAsync* |  | 
+| *createOrUpdateUser* |  | 
+| *createOrUpdateUsers* |  | 
+| *createOrUpdateUsersAsync* |  | 
 | *createPermissionGroup* |  | Create permission group
 | *createRequest* |  | 
 | *createSatisfactionRating* |  | 
@@ -816,9 +816,9 @@ The 221 method(s) is listed in the table below.
 | *createUploadArticle* |  | Create upload article with inline false
 | *createUser* |  | 
 | *createUserIdentity* |  | 
-| *createUserSegment* |  | Create User Segment
 | *createUsers* |  | 
 | *createUsersAsync* |  | 
+| *createUserSegment* |  | Create User Segment
 | *deleteArticle* |  | 
 | *deleteArticleAttachment* |  | Delete attachment from article
 | *deleteAttachment* |  | 
@@ -848,13 +848,13 @@ The 221 method(s) is listed in the table below.
 | *deleteUserSegment* |  | Delete User Segment
 | *getArticle* |  | 
 | *getArticleFromSearch* |  | 
-| *getArticleSubscriptions* |  | 
-| *getArticleTranslations* |  | 
 | *getArticles* |  | Get all articles from help center
 | *getArticlesFromAllLabels* |  | 
 | *getArticlesFromAnyLabels* |  | 
 | *getArticlesFromPage* |  | 
 | *getArticlesIncrementally* |  | 
+| *getArticleSubscriptions* |  | 
+| *getArticleTranslations* |  | 
 | *getAssignableGroupMemberships* |  | 
 | *getAttachment* |  | 
 | *getAttachmentsFromArticle* |  | 
@@ -888,9 +888,9 @@ The 221 method(s) is listed in the table below.
 | *getOrganizationMembershipForUser* |  | 
 | *getOrganizationMembershipsForOrg* |  | 
 | *getOrganizationMembershipsForUser* |  | 
+| *getOrganizationsIncrementally* |  | 
 | *getOrganizationTickets* |  | 
 | *getOrganizationUsers* |  | 
-| *getOrganizationsIncrementally* |  | 
 | *getPermissionGroup* |  | Get permission group by id
 | *getRequest* |  | 
 | *getRequestComment* |  | 
@@ -899,9 +899,9 @@ The 221 method(s) is listed in the table below.
 | *getSchedule* |  | 
 | *getSearchResults* |  | 
 | *getSection* |  | 
+| *getSections* |  | List Sections using a User Segment
 | *getSectionSubscriptions* |  | 
 | *getSectionTranslations* |  | 
-| *getSections* |  | List Sections using a User Segment
 | *getTarget* |  | 
 | *getTicket* |  | 
 | *getTicketAudit* |  | 
@@ -928,11 +928,11 @@ The 221 method(s) is listed in the table below.
 | *getUserRelatedInfo* |  | 
 | *getUserRequestedTickets* |  | 
 | *getUserRequests* |  | 
+| *getUsersByRole* |  | 
 | *getUserSegment* |  | Get user segment by id
 | *getUserSegments* |  | Returns the list of user segments that a particular user belongs to
-| *getUserSubscriptions* |  | 
-| *getUsersByRole* |  | 
 | *getUsersIncrementally* |  | 
+| *getUserSubscriptions* |  | 
 | *importTicket* |  | 
 | *importTopic* |  | 
 | *lookupOrganizationsByExternalId* |  | 
@@ -988,9 +988,9 @@ The 221 method(s) is listed in the table below.
 | *updateTrigger* |  | 
 | *updateUser* |  | 
 | *updateUserIdentity* |  | 
-| *updateUserSegment* |  | Update User Segment
 | *updateUsers* |  | 
 | *updateUsersAsync* |  | 
+| *updateUserSegment* |  | Update User Segment
 | *verifyUserIdentity* |  | 
 |===
 
@@ -1027,10 +1027,6 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | createGroupMembership | *groupMembership* |   | GroupMembership
 | createGroupMembership | *user_id* |   | Long
 | createMacro | *macro* |   | Macro
-| createOrUpdateUser | *user* |   | User
-| createOrUpdateUsers | *users* |   | User[]
-| createOrUpdateUsers | *usersList* |   | List
-| createOrUpdateUsersAsync | *usersList* |   | List
 | createOrganization | *organization* |   | Organization
 | createOrganizationMembership | *organizationMembership* |   | OrganizationMembership
 | createOrganizationMembership | *user_id* |   | Long
@@ -1040,6 +1036,10 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | createOrganizations | *organizationList* |   | List
 | createOrganizations | *organizations* |   | Organization[]
 | createOrganizationsAsync | *organizationList* |   | List
+| createOrUpdateUser | *user* |   | User
+| createOrUpdateUsers | *users* |   | User[]
+| createOrUpdateUsers | *usersList* |   | List
+| createOrUpdateUsersAsync | *usersList* |   | List
 | createPermissionGroup | *permissionGroup* |   | PermissionGroup
 | createRequest | *request* |   | Request
 | createSatisfactionRating | *satisfactionRating* |   | SatisfactionRating
@@ -1071,10 +1071,10 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | createUserIdentity | *identity* |   | Identity
 | createUserIdentity | *user* |   | User
 | createUserIdentity | *userId* |   | Long
-| createUserSegment | *userSegment* |   | UserSegment
 | createUsers | *userList* |   | List
 | createUsers | *users* |   | User[]
 | createUsersAsync | *userList* |   | List
+| createUserSegment | *userSegment* |   | UserSegment
 | deleteArticle | *article* |   | Article
 | deleteArticleAttachment | *articleAttachments* |   | ArticleAttachments
 | deleteArticleAttachment | *id* |  Attachment identifier | Long
@@ -1129,9 +1129,6 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | getArticle | *id* |   | Long
 | getArticleFromSearch | *searchTerm* |   | String
 | getArticleFromSearch | *sectionId* |   | Long
-| getArticleSubscriptions | *articleId* |   | Long
-| getArticleSubscriptions | *locale* |   | String
-| getArticleTranslations | *articleId* |   | Long
 | getArticles | *category* |   | Category
 | getArticles | *locale* |   | String
 | getArticles | *section* |   | Section
@@ -1139,6 +1136,9 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | getArticlesFromAnyLabels | *labels* |   | List
 | getArticlesFromPage | *page* |   | Integer
 | getArticlesIncrementally | *startTime* |   | Date
+| getArticleSubscriptions | *articleId* |   | Long
+| getArticleSubscriptions | *locale* |   | String
+| getArticleTranslations | *articleId* |   | Long
 | getAssignableGroupMemberships | *group_id* |   | Long
 | getAttachment | *attachment* |   | Attachment
 | getAttachment | *id* |   | Long
@@ -1180,9 +1180,9 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | getOrganizationMembershipForUser | *user_id* |   | Long
 | getOrganizationMembershipsForOrg | *organization_id* |   | Long
 | getOrganizationMembershipsForUser | *user_id* |   | Long
+| getOrganizationsIncrementally | *startTime* |   | Date
 | getOrganizationTickets | *organizationId* |   | Long
 | getOrganizationUsers | *id* |   | Long
-| getOrganizationsIncrementally | *startTime* |   | Date
 | getPermissionGroup | *id* |   | Long
 | getRequest | *id* |   | Long
 | getRequestComment | *comment* |   | Comment
@@ -1201,11 +1201,11 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | getSearchResults | *sortOrder* |   | SortOrder
 | getSearchResults | *type* |   | Class
 | getSection | *id* |   | Long
+| getSections | *category* |   | Category
+| getSections | *userSegment* |   | UserSegment
 | getSectionSubscriptions | *locale* |   | String
 | getSectionSubscriptions | *sectionId* |   | Long
 | getSectionTranslations | *sectionId* |   | Long
-| getSections | *category* |   | Category
-| getSections | *userSegment* |   | UserSegment
 | getTarget | *id* |   | Long
 | getTicket | *id* |   | Long
 | getTicketAudit | *audit* |   | Audit
@@ -1249,13 +1249,13 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | getUserRequestedTickets | *userId* |   | Long
 | getUserRequests | *id* |   | Long
 | getUserRequests | *user* |   | User
-| getUserSegment | *id* |   | Long
-| getUserSegments | *id* |   | Long
-| getUserSubscriptions | *user* |   | User
-| getUserSubscriptions | *userId0* |   | Long
 | getUsersByRole | *role* |   | String
 | getUsersByRole | *roles* |   | String[]
+| getUserSegment | *id* |   | Long
+| getUserSegments | *id* |   | Long
 | getUsersIncrementally | *startTime* |   | Date
+| getUserSubscriptions | *user* |   | User
+| getUserSubscriptions | *userId0* |   | Long
 | importTicket | *ticketImport* |   | TicketImport
 | importTopic | *topic* |   | Topic
 | lookupOrganizationsByExternalId | *externalId* |   | String
@@ -1356,10 +1356,10 @@ The DEFAULT API method(s) has the following set of parameters listed in the tabl
 | updateUserIdentity | *identity* |   | Identity
 | updateUserIdentity | *user* |   | User
 | updateUserIdentity | *userId* |   | Long
-| updateUserSegment | *userSegment* |   | UserSegment
 | updateUsers | *users* |   | User[]
 | updateUsers | *usersList* |   | List
 | updateUsersAsync | *usersList* |   | List
+| updateUserSegment | *userSegment* |   | UserSegment
 | verifyUserIdentity | *identity* |   | Identity
 | verifyUserIdentity | *identityId* |   | Long
 | verifyUserIdentity | *user* |   | User
