@@ -34,7 +34,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.apache.camel.tooling.model.ApiModel;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -184,15 +183,6 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         desc = desc.replaceAll("\\\\n", "\n");
                         option.setDescription(desc);
                     });
-
-                    // sort API groups
-                    if (model.isApi()) {
-                        List<ApiModel> sorted = new ArrayList<>();
-                        sorted.addAll(model.getApiOptions());
-                        Collections.sort(sorted, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-                        model.getApiOptions().clear();
-                        model.getApiOptions().addAll(sorted);
-                    }
 
                     String options = evaluateTemplate("component-options.mvel", model);
                     updated |= updateOptionsIn(file, "component", options);

@@ -105,9 +105,9 @@ public final class JsonMapper {
                 String name = entry.getKey();
                 JsonObject mp = (JsonObject) entry.getValue();
                 ApiModel am = new ApiModel();
-                model.getApiOptions().add(am);
                 am.setName(name);
                 am.setDescription(mp.getStringOrDefault("description", ""));
+                model.getApiOptions().add(am);
                 Collection<String> aliases = mp.getCollection("aliases");
                 if (aliases != null && !aliases.isEmpty()) {
                     aliases.forEach(am::addAlias);
@@ -441,7 +441,7 @@ public final class JsonMapper {
         return json;
     }
 
-    public static JsonObject apiModelAsJsonObject(List<ApiModel> model, boolean options) {
+    public static JsonObject apiModelAsJsonObject(Collection<ApiModel> model, boolean options) {
         JsonObject root = new JsonObject();
         model.forEach(a -> {
             JsonObject json = new JsonObject();

@@ -17,14 +17,17 @@
 package org.apache.camel.tooling.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 public final class ApiModel {
 
     private String name;
     private String description;
     private final List<String> aliases = new ArrayList<>();
-    private final List<ApiMethodModel> methods = new ArrayList<>();
+    // lets sort api methods A..Z so they are always in the same order
+    private final Collection<ApiMethodModel> methods = new TreeSet<>(Comparators.apiMethodModelModelComparator());
 
     public String getName() {
         return name;
@@ -50,7 +53,7 @@ public final class ApiModel {
         this.aliases.add(alias);
     }
 
-    public List<ApiMethodModel> getMethods() {
+    public Collection<ApiMethodModel> getMethods() {
         return methods;
     }
 
