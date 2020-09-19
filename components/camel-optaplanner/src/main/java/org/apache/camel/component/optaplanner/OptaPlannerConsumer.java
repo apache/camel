@@ -32,25 +32,45 @@ public class OptaPlannerConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(OptaPlannerConsumer.class);
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
-    private final SolverEventListener<Object> listener;
+    private SolverEventListener<Object> solverListener;
+    private OptaplannerSolutionEventListener solverJobListener;
 
     public OptaPlannerConsumer(OptaPlannerEndpoint endpoint, Processor processor, OptaPlannerConfiguration configuration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
-        listener = new SolverEventListener<Object>() {
-            @Override
-            public void bestSolutionChanged(BestSolutionChangedEvent<Object> event) {
-                if (event.isEveryProblemFactChangeProcessed() && event.getNewBestScore().isSolutionInitialized()) {
-                    processEvent(event);
+        if (!configuration.isUseSolverManager()) {
+            solverListener = new SolverEventListener<Object>() {
+                @Override
+                public void bestSolutionChanged(BestSolutionChangedEvent<Object> event) {
+                    if (event.isEveryProblemFactChangeProcessed() && event.getNewBestScore().isSolutionInitialized()) {
+                        processEvent(event);
+                    }
                 }
-            }
-        };
+            };
+        } else {
+            solverJobListener = new OptaplannerSolutionEventListener() {
+                @Override
+                public void bestSolutionChanged(OptaplannerSolutionEvent event) {
+                    processSolverJobEvent(event);
+                }
+            };
+        }
     }
 
     public void processEvent(BestSolutionChangedEvent<Object> event) {
         Exchange exchange = getEndpoint().createExchange();
-        exchange.getOut().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getNewBestSolution());
+        exchange.getMessage().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getNewBestSolution());
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            LOG.error("Error processing event ", e);
+        }
+    }
+
+    public void processSolverJobEvent(OptaplannerSolutionEvent event) {
+        Exchange exchange = getEndpoint().createExchange();
+        exchange.getMessage().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getBestSolution());
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -60,15 +80,28 @@ public class OptaPlannerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
-        solver.addEventListener(listener);
+        // usage of XML file and getting the solver created
+        if (!configuration.isUseSolverManager()) {
+            Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
+            solver.addEventListener(solverListener);
+        } else {
+            final Long problemId = configuration.getProblemId();
+            endpoint.addSolutionEventListener(problemId, solverJobListener);
+        }
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
-        solver.removeEventListener(listener);
+        // usage of XML file and getting the solver created
+        if (!configuration.isUseSolverManager()) {
+            Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
+            solver.removeEventListener(solverListener);
+        } else {
+            // usage of problem Id created async with Optaplanner producer
+            final Long problemId = configuration.getProblemId();
+            endpoint.removeSolutionEventListener(problemId, solverJobListener);
+        }
         super.doStop();
     }
 }

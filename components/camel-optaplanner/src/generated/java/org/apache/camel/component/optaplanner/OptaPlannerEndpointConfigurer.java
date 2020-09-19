@@ -30,11 +30,15 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "problemid":
+        case "problemId": target.getConfiguration().setProblemId(property(camelContext, java.lang.Long.class, value)); return true;
         case "solverid":
         case "solverId": target.getConfiguration().setSolverId(property(camelContext, java.lang.String.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "threadpoolsize":
         case "threadPoolSize": target.getConfiguration().setThreadPoolSize(property(camelContext, int.class, value)); return true;
+        case "usesolvermanager":
+        case "useSolverManager": target.getConfiguration().setUseSolverManager(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -48,9 +52,11 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         answer.put("lazyStartProducer", boolean.class);
+        answer.put("problemId", java.lang.Long.class);
         answer.put("solverId", java.lang.String.class);
         answer.put("synchronous", boolean.class);
         answer.put("threadPoolSize", int.class);
+        answer.put("useSolverManager", boolean.class);
         return answer;
     }
 
@@ -69,11 +75,15 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
         case "exchangePattern": return target.getExchangePattern();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "problemid":
+        case "problemId": return target.getConfiguration().getProblemId();
         case "solverid":
         case "solverId": return target.getConfiguration().getSolverId();
         case "synchronous": return target.isSynchronous();
         case "threadpoolsize":
         case "threadPoolSize": return target.getConfiguration().getThreadPoolSize();
+        case "usesolvermanager":
+        case "useSolverManager": return target.getConfiguration().isUseSolverManager();
         default: return null;
         }
     }
