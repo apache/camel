@@ -114,7 +114,7 @@
                 <api>
                   <apiName>hello</apiName>
                   <proxyClass>${package}.api.${name}Hello</proxyClass>
-                    <fromJavasource />
+                  <fromJavasource />
                 </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level
