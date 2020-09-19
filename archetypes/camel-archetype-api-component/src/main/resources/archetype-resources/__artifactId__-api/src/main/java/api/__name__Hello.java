@@ -17,9 +17,9 @@
 package ${package}.api;
 
 /**
- * Sample API used by ${name} Component whose method signatures are read from Javadoc.
+ * Sample API used by ${name} Component whose method signatures are read from Java source.
  */
-public class ${name}JavadocHello {
+public class ${name}Hello {
 
     public String sayHi() {
         return "Hello!";
