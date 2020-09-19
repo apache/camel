@@ -134,7 +134,16 @@ the barcode data format as header variable:
 |BarcodeFormat |String |Value of com.google.zxing.BarcodeFormat.
 |=======================================================================
  
+If you'll paste the code 39 barcode that is rotated some degrees into the 'barcode_in' folder,
+You can find the ORIENTATION as header variable:
 
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+
+|Name |Type |Description
+
+|ORIENTATION |Integer	 |rotate value in degrees .
+|=======================================================================
  
 
 include::camel-spring-boot::page$barcode-starter.adoc[]
