@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriParams;
         apiMethods = {
             @ApiMethod(methodName = "greetMe", signatures={"String greetMe(String name)"}),
             @ApiMethod(methodName = "greetUs", signatures={"String greetUs(String name1, String name2)"}),
-            @ApiMethod(methodName = "sayHi", signatures={"String greetHi()"})},
+            @ApiMethod(methodName = "sayHi", signatures={"String sayHi()"})},
         aliases = {})
 @UriParams
 @Configurer
