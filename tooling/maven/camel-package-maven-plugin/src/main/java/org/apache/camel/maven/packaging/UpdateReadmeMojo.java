@@ -134,7 +134,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private void executeComponent() throws MojoExecutionException {
         // find the component names
-        List<String> componentNames = listDescriptorNamesOfType("component");
+        final String kind = "component";
+        List<String> componentNames = listDescriptorNamesOfType(kind);
 
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
@@ -143,12 +144,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         if (!componentNames.isEmpty()) {
             getLog().debug("Found " + componentNames.size() + " components");
             for (String componentName : componentNames) {
-                String json = loadJsonFrom(jsonFiles, "component", componentName);
+                String json = loadJsonFrom(jsonFiles, kind, componentName);
                 if (json != null) {
                     // special for some components
                     componentName = asComponentName(componentName);
 
-                    File file = new File(componentDocDir, componentName + "-component.adoc");
+                    File file = new File(componentDocDir, componentName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
 
                     ComponentModel model = generateComponentModel(json);
@@ -164,7 +165,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         }
                     }
 
-                    boolean updated = updateHeader(componentName, file, model, " Component", "-component");
+                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
 
                     checkComponentHeader(file, model);
                     checkSince(file, model);
@@ -185,7 +186,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     });
 
                     String options = evaluateTemplate("component-options.mvel", model);
-                    updated |= updateOptionsIn(file, "component", options);
+                    updated |= updateOptionsIn(file, kind, options);
 
                     options = evaluateTemplate("endpoint-options.mvel", model);
                     updated |= updateOptionsIn(file, "endpoint", options);
@@ -232,7 +233,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         if (!jsonFiles.isEmpty()) {
             getLog().debug("Found " + jsonFiles.size() + "miscellaneous components");
             for (File jsonFile : jsonFiles) {
-                String json = loadJsonFrom(jsonFile, "other");
+                final String kind = "other";
+                String json = loadJsonFrom(jsonFile, kind);
                 if (json != null) {
                     // special for some components
                     OtherModel model = generateOtherModel(json);
@@ -245,7 +247,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     boolean exists = file.exists();
 
                     // we only want the first scheme as the alternatives do not
-                    boolean updated = updateHeader(componentName, file, model, " Component", "-component");
+                    boolean updated = updateHeader(componentName, file, model, " Component", kind);
                     checkSince(file, model);
 
                     if (updated) {
@@ -283,7 +285,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private void executeDataFormat() throws MojoExecutionException {
         // find the dataformat names
-        List<String> dataFormatNames = listDescriptorNamesOfType("dataformat");
+        final String kind = "dataformat";
+        List<String> dataFormatNames = listDescriptorNamesOfType(kind);
 
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
@@ -292,12 +295,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         if (!dataFormatNames.isEmpty()) {
             getLog().debug("Found " + dataFormatNames.size() + " dataformats");
             for (String dataFormatName : dataFormatNames) {
-                String json = loadJsonFrom(jsonFiles, "dataformat", dataFormatName);
+                String json = loadJsonFrom(jsonFiles, kind, dataFormatName);
                 if (json != null) {
                     // special for some data formats
                     dataFormatName = asDataFormatName(dataFormatName);
 
-                    File file = new File(dataformatDocDir, dataFormatName + "-dataformat.adoc");
+                    File file = new File(dataformatDocDir, dataFormatName + "-" + kind + ".adoc");
 
                     DataFormatModel model = generateDataFormatModel(json);
                     // Bindy has 3 derived dataformats, but only one doc, so
@@ -312,11 +315,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     model.setTitle(title);
 
                     boolean exists = file.exists();
-                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", "-dataformat");
+                    boolean updated = updateHeader(dataFormatName, file, model, " DataFormat", kind);
                     checkSince(file, model);
 
                     String options = evaluateTemplate("dataformat-options.mvel", model);
-                    updated |= updateOptionsIn(file, "dataformat", options);
+                    updated |= updateOptionsIn(file, kind, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -363,7 +366,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private void executeLanguage() throws MojoExecutionException {
         // find the language names
-        List<String> languageNames = listDescriptorNamesOfType("language");
+        final String kind = "language";
+        List<String> languageNames = listDescriptorNamesOfType(kind);
 
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles);
@@ -372,12 +376,12 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         if (!languageNames.isEmpty()) {
             getLog().debug("Found " + languageNames.size() + " languages");
             for (String languageName : languageNames) {
-                String json = loadJsonFrom(jsonFiles, "language", languageName);
+                String json = loadJsonFrom(jsonFiles, kind, languageName);
                 if (json != null) {
-                    File file = new File(languageDocDir, languageName + "-language.adoc");
+                    File file = new File(languageDocDir, languageName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
                     if (!exists) {
-                        file = new File(languageDocDir2, languageName + "-language.adoc");
+                        file = new File(languageDocDir2, languageName + "-" + kind + ".adoc");
                         exists = file.exists();
                     }
 
@@ -398,13 +402,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                         option.setDescription(desc);
                     });
 
-                    String titleSuffix = " Language";
-                    String linkSuffix = "-language";
-                    boolean updated = updateHeader(languageName, file, model, titleSuffix, linkSuffix);
+                    boolean updated = updateHeader(languageName, file, model, " Language", kind);
                     checkSince(file, model);
 
                     String options = evaluateTemplate("language-options.mvel", model);
-                    updated |= updateOptionsIn(file, "language", options);
+                    updated |= updateOptionsIn(file, kind, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -488,17 +490,18 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     String eipName = model.getName();
 
                     // we only want actual EIPs from the models
-                    if (!model.getLabel().startsWith("eip")) {
+                    final String kind = "eip";
+                    if (!model.getLabel().startsWith(kind)) {
                         continue;
                     }
 
-                    File file = new File(eipDocDir, eipName + "-eip.adoc");
+                    File file = new File(eipDocDir, eipName + "-" + kind + ".adoc");
                     boolean exists = file.exists();
 
-                    boolean updated = updateHeader(eipName, file, model, " EIP", "-eip");
+                    boolean updated = updateHeader(eipName, file, model, " EIP", kind);
 
                     String options = evaluateTemplate("eip-options.mvel", model);
-                    updated |= updateOptionsIn(file, "eip", options);
+                    updated |= updateOptionsIn(file, kind, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -558,10 +561,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
     private boolean updateHeader(
             String name, final File file, final BaseModel<? extends BaseOptionModel> model, String titleSuffix,
-            String linkSuffix)
+            String kind)
             throws MojoExecutionException {
         getLog().debug("updateHeader " + file);
-
+        final String linkSuffix = "-" + kind;
         if (model == null || !file.exists()) {
             return false;
         }
@@ -622,6 +625,8 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     newLines.add(":core:");
                 }
             }
+
+            newLines.add("include::{cq-version}@camel-quarkus:ROOT:partial$reference/" + kind + "s/" + name + ".adoc[]");
 
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");
