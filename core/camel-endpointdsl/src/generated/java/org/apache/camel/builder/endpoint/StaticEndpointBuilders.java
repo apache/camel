@@ -11389,7 +11389,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>optaplanner:configFile</code>
      * 
      * Path parameter: configFile (required)
-     * Specifies the location to the solver file
+     * Specifies the location to the solver file. If useSolverManager=FALSE,
+     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
+     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
+     * : this file is ignored by Camel usage of SolverManager. SolverManager can
+     * be injected by DI in Quarkus or Spring.
      * 
      * @param path configFile
      */
@@ -11408,7 +11412,11 @@ public class StaticEndpointBuilders {
      * Syntax: <code>optaplanner:configFile</code>
      * 
      * Path parameter: configFile (required)
-     * Specifies the location to the solver file
+     * Specifies the location to the solver file. If useSolverManager=FALSE,
+     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
+     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
+     * : this file is ignored by Camel usage of SolverManager. SolverManager can
+     * be injected by DI in Quarkus or Spring.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

@@ -42,6 +42,30 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointConsumerBuilder) this;
         }
         /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointConsumerBuilder problemId(Long problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointConsumerBuilder problemId(String problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
          * Specifies the solverId to user for the solver instance key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -51,6 +75,34 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
             doSetProperty("solverId", solverId);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointConsumerBuilder useSolverManager(
+                boolean useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointConsumerBuilder useSolverManager(
+                String useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
             return this;
         }
         /**
@@ -227,6 +279,30 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointProducerBuilder) this;
         }
         /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointProducerBuilder problemId(Long problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointProducerBuilder problemId(String problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
          * Specifies the solverId to user for the solver instance key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -236,6 +312,34 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointProducerBuilder solverId(String solverId) {
             doSetProperty("solverId", solverId);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointProducerBuilder useSolverManager(
+                boolean useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointProducerBuilder useSolverManager(
+                String useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
             return this;
         }
         /**
@@ -410,6 +514,30 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointBuilder) this;
         }
         /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointBuilder problemId(Long problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
+         * In case of using SolverManager : the problem id.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Default: 1L
+         * Group: common
+         */
+        default OptaPlannerEndpointBuilder problemId(String problemId) {
+            doSetProperty("problemId", problemId);
+            return this;
+        }
+        /**
          * Specifies the solverId to user for the solver instance key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -419,6 +547,34 @@ public interface OptaPlannerEndpointBuilderFactory {
          */
         default OptaPlannerEndpointBuilder solverId(String solverId) {
             doSetProperty("solverId", solverId);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointBuilder useSolverManager(
+                boolean useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
+            return this;
+        }
+        /**
+         * use SolverManager instead of XML file config. Use this mode on
+         * Quarkus app.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default OptaPlannerEndpointBuilder useSolverManager(
+                String useSolverManager) {
+            doSetProperty("useSolverManager", useSolverManager);
             return this;
         }
     }
@@ -503,7 +659,12 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Syntax: <code>optaplanner:configFile</code>
          * 
          * Path parameter: configFile (required)
-         * Specifies the location to the solver file
+         * Specifies the location to the solver file. If useSolverManager=FALSE,
+         * Camel uses this file and create the Solver. If useSolverManager=TRUE
+         * and SolverManager is set in the header
+         * {OptaPlannerConstants.SOLVER_MANAGER} : this file is ignored by Camel
+         * usage of SolverManager. SolverManager can be injected by DI in
+         * Quarkus or Spring.
          * 
          * @param path configFile
          */
@@ -521,7 +682,12 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Syntax: <code>optaplanner:configFile</code>
          * 
          * Path parameter: configFile (required)
-         * Specifies the location to the solver file
+         * Specifies the location to the solver file. If useSolverManager=FALSE,
+         * Camel uses this file and create the Solver. If useSolverManager=TRUE
+         * and SolverManager is set in the header
+         * {OptaPlannerConstants.SOLVER_MANAGER} : this file is ignored by Camel
+         * usage of SolverManager. SolverManager can be injected by DI in
+         * Quarkus or Spring.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

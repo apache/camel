@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.optaplanner;
 
-public interface OptaPlannerConstants {
-    String DEFAULT_SOLVER_ID = "DEFAULT_SOLVER";
-    String SOLVER_ID = "CamelOptaPlannerSolverId";
-    String IS_ASYNC = "CamelOptaPlannerIsAsync";
-    String BEST_SOLUTION = "CamelOptaPlannerBestSolution";
-    String TIME_SPENT = "CamelOptaPlannerTimeSpent";
-    String IS_SOLVING = "CamelOptaPlannerIsSolving";
-    String IS_TERMINATE_EARLY = "CamelOptaPlannerIsTerminateEarly";
-    String IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED = "CamelOptaPlannerIsEveryProblemFactChangeProcessed";
-    String SOLVER_MANAGER = "CamelOptaPlannerSolverManager";
-    long IS_EVERY_PROBLEM_FACT_CHANGE_DELAY = 100;
+import java.util.EventObject;
+
+public class OptaplannerSolutionEvent extends EventObject {
+
+    private Object bestSolution;
+
+    public OptaplannerSolutionEvent(Object bestSolution) {
+        super(bestSolution);
+        this.bestSolution = bestSolution;
+    }
+
+    public Object getBestSolution() {
+        return this.bestSolution;
+    }
 }
