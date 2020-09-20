@@ -17,7 +17,6 @@
     "syntax": "kubernetes-resources-quota:masterUrl",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

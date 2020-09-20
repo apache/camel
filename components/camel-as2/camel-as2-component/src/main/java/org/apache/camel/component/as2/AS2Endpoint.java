@@ -51,7 +51,7 @@ import org.apache.http.entity.ContentType;
  * Transfer data securely and reliably using the AS2 protocol (RFC4130).
  */
 @UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName",
-             apiPropertyQualifier = "apiName/methodName",
+             apiSyntax = "apiName/methodName",
              category = { Category.FILE })
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 

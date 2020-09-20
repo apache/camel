@@ -17,7 +17,6 @@
     "syntax": "aws2-ecs:label",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

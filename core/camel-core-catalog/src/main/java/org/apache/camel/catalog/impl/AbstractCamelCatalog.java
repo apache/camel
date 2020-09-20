@@ -176,7 +176,7 @@ public abstract class AbstractCamelCatalog {
 
         if (model.isApi()) {
             // TODO: combo of apiName/methodName
-            String[] qualifieres = StringHelper.splitWords(model.getApiPropertyQualifier());
+            String[] qualifieres = StringHelper.splitWords(model.getApiSyntax());
             String key = properties.get(qualifieres[0]);
             Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
             rows.putAll(apiProperties);
@@ -549,7 +549,7 @@ public abstract class AbstractCamelCatalog {
         // is this an api component then there may be additional options
         if (model.isApi()) {
             // TODO: combo of apiName/methodName
-            String[] qualifieres = StringHelper.splitWords(model.getApiPropertyQualifier());
+            String[] qualifieres = StringHelper.splitWords(model.getSyntax());
             int pos = word.indexOf(qualifieres[0]);
             if (pos != -1) {
                 String key = word2.size() > pos ? word2.get(pos) : null;

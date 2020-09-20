@@ -17,7 +17,7 @@
     "syntax": "braintree:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName\/methodName",
+    "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": false

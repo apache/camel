@@ -169,10 +169,10 @@ public @interface UriEndpoint {
     boolean generateConfigurer() default true;
 
     /**
-     * The name of the property that is used in the endpoint URI to select which API name (method) to use.
+     * The name of the properties that is used in the endpoint URI to select which API name (method) to use.
      *
      * This is only applicable for API based components where configurations are separated by API names (grouping).
      */
-    String apiPropertyQualifier() default "";
+    String apiSyntax() default "";
 
 }

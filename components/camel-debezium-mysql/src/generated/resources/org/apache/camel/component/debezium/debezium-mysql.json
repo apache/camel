@@ -17,7 +17,6 @@
     "syntax": "debezium-mysql:name",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

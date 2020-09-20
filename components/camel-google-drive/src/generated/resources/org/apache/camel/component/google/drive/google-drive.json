@@ -17,7 +17,7 @@
     "syntax": "google-drive:apiName\/methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "apiName\/methodName",
+    "apiSyntax": "apiName\/methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

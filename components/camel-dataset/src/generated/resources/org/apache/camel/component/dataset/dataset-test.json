@@ -17,7 +17,6 @@
     "syntax": "dataset-test:name",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": true,
     "lenientProperties": true

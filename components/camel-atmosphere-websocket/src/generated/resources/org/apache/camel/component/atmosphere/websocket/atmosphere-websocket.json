@@ -18,7 +18,6 @@
     "syntax": "atmosphere-websocket:servicePath",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -48,7 +48,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Upload, download and manage files, folders, groups, collaborations, etc. on box.com.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "box", title = "Box", syntax = "box:apiName/methodName",
-             apiPropertyQualifier = "apiName/methodName",
+             apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer", category = { Category.CLOUD, Category.FILE, Category.API }, lenientProperties = true)
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 

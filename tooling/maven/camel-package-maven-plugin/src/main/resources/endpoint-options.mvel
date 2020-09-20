@@ -32,16 +32,16 @@ The @{title} endpoint has no query parameters.
 
 @if{!apiOptions.isEmpty()}
 
-=== Query API Parameters (@{apiOptions.size()} APIs):
+=== API Parameters (@{apiOptions.size()} APIs):
 
-The @{title} endpoint is an API based component and has additional parameters based on which API name and method in use.
-The API name and method is located in the endpoint URI as the @{apiPropertyQualifier} path parameters:
+The @{title} endpoint is an API based component and has additional parameters based on which API name and API method is used.
+The API name and API method is located in the endpoint URI as the @{apiSyntax} path parameters:
 
 ----
 @{syntax}
 ----
 
-There are @{apiOptions.size} API groups as listed in the table below:
+There are @{apiOptions.size} API names as listed in the table below:
 
 [width="100%",cols="2,8",options="header"]
 |===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }

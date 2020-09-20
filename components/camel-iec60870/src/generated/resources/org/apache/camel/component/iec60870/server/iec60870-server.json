@@ -17,7 +17,6 @@
     "syntax": "iec60870-server:uriPath",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

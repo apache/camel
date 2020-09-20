@@ -18,7 +18,6 @@
     "alternativeSyntax": "irc:username:password@hostname:port",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -18,7 +18,6 @@
     "syntax": "disruptor:name",
     "async": true,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

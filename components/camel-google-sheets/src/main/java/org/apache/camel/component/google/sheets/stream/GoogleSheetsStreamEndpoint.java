@@ -38,7 +38,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-sheets-stream",
              title = "Google Sheets Stream",
-             syntax = "google-sheets-stream:apiName", apiPropertyQualifier = "apiName",
+             syntax = "google-sheets-stream:apiName", apiSyntax = "apiName",
              consumerOnly = true,
              category = { Category.API, Category.CLOUD, Category.SHEETS })
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {

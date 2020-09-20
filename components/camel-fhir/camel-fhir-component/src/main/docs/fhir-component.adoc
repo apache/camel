@@ -170,16 +170,16 @@ with the following path and query parameters:
 
 
 
-=== Query API Parameters (13 APIs):
+=== API Parameters (13 APIs):
 
-The FHIR endpoint is an API based component and has additional parameters based on which API name and method in use.
-The API name and method is located in the endpoint URI as the apiName/methodName path parameters:
+The FHIR endpoint is an API based component and has additional parameters based on which API name and API method is used.
+The API name and API method is located in the endpoint URI as the apiName/methodName path parameters:
 
 ----
 fhir:apiName/methodName
 ----
 
-There are 13 API groups as listed in the table below:
+There are 13 API names as listed in the table below:
 
 [width="100%",cols="2,8",options="header"]
 |===

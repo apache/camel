@@ -17,7 +17,7 @@
     "syntax": "zendesk:methodName",
     "async": false,
     "api": true,
-    "apiPropertyQualifier": "methodName",
+    "apiSyntax": "methodName",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false
