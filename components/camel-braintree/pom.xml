@@ -61,22 +61,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.braintreepayments.gateway</groupId>
-            <artifactId>braintree-java</artifactId>
-            <version>${braintree-gateway-version}</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -268,6 +252,21 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>com.braintreepayments.gateway</groupId>
+                        <artifactId>braintree-java</artifactId>
+                        <version>${braintree-gateway-version}</version>
+                        <classifier>sources</classifier>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.json</groupId>
+                                <artifactId>json</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <!-- we need to generate additional configurer classes -->
