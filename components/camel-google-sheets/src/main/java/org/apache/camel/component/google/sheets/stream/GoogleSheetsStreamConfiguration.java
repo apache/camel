@@ -145,8 +145,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Gets the apiName.
-     *
-     * @return
      */
     public String getApiName() {
         return apiName;
@@ -154,8 +152,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Sets the apiName.
-     *
-     * @param apiName
      */
     public void setApiName(String apiName) {
         this.apiName = apiName;
@@ -167,8 +163,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Specifies the spreadsheet identifier that is used to identify the target to obtain.
-     *
-     * @param spreadsheetId
      */
     public void setSpreadsheetId(String spreadsheetId) {
         this.spreadsheetId = spreadsheetId;
@@ -181,8 +175,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     /**
      * Specify the maximum number of returned results. This will limit the number of rows in a returned value range data
      * set or the number of returned value ranges in a batch request.
-     *
-     * @param maxResults
      */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
@@ -194,8 +186,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Specifies the range of rows and columns in a sheet to get data from.
-     *
-     * @param range
      */
     public void setRange(String range) {
         this.range = range;
@@ -207,8 +197,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Specifies the major dimension that results should use..
-     *
-     * @param majorDimension
      */
     public void setMajorDimension(String majorDimension) {
         this.majorDimension = majorDimension;
@@ -220,8 +208,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Determines how values should be rendered in the output.
-     *
-     * @param valueRenderOption
      */
     public void setValueRenderOption(String valueRenderOption) {
         this.valueRenderOption = valueRenderOption;
@@ -233,8 +219,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * True if grid data should be returned.
-     *
-     * @param includeGridData
      */
     public void setIncludeGridData(boolean includeGridData) {
         this.includeGridData = includeGridData;
@@ -248,8 +232,6 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
      * True if value range result should be split into rows or columns to process each of them individually. When true
      * each row or column is represented with a separate exchange in batch processing. Otherwise value range object is
      * used as exchange junk size.
-     *
-     * @param splitResults
      */
     public void setSplitResults(boolean splitResults) {
         this.splitResults = splitResults;

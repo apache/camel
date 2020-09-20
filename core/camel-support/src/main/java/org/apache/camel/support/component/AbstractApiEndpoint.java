@@ -97,10 +97,6 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     @Override
     public void configureProperties(Map<String, Object> options) {
         super.configureProperties(options);
-        // TODO: this is not very clean as it does not leverage the endpoint
-        // TODO: configurer, but the generated configurer currently does not
-        // TODO: support configuration inheritance, so only basic options
-        // TODO: are supported.  This should be fixed.
         setProperties(getConfiguration(), options);
 
         // validate and initialize state
