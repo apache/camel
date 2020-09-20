@@ -17,7 +17,6 @@
     "syntax": "quartz:groupName\/triggerName",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

@@ -17,7 +17,6 @@
     "syntax": "hazelcast-instance:cacheName",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

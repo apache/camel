@@ -17,7 +17,6 @@
     "syntax": "cql:beanRef:hosts:port\/keyspace",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -18,7 +18,6 @@
     "alternativeSyntax": "xmpp:user:password@host:port\/participant",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

@@ -17,7 +17,6 @@
     "syntax": "zookeeper-master:groupName:consumerEndpointUri",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": true

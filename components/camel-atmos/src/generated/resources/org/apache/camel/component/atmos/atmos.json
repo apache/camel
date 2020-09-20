@@ -17,7 +17,6 @@
     "syntax": "atmos:name\/operation",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

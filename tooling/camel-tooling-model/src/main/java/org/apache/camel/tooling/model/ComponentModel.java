@@ -31,7 +31,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected String alternativeSyntax;
     protected boolean async;
     protected boolean api;
-    protected String apiPropertyQualifier;
+    protected String apiSyntax;
     protected boolean consumerOnly;
     protected boolean producerOnly;
     protected boolean lenientProperties;
@@ -104,12 +104,12 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
         this.api = api;
     }
 
-    public String getApiPropertyQualifier() {
-        return apiPropertyQualifier;
+    public String getApiSyntax() {
+        return apiSyntax;
     }
 
-    public void setApiPropertyQualifier(String apiPropertyQualifier) {
-        this.apiPropertyQualifier = apiPropertyQualifier;
+    public void setApiSyntax(String apiSyntax) {
+        this.apiSyntax = apiSyntax;
     }
 
     public boolean isConsumerOnly() {

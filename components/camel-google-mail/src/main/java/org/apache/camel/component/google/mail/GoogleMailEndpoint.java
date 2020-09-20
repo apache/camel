@@ -36,12 +36,11 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Manage messages in Google Mail.
  */
-@UriEndpoint(
-             firstVersion = "2.15.0",
+@UriEndpoint(firstVersion = "2.15.0",
              scheme = "google-mail",
              title = "Google Mail",
              syntax = "google-mail:apiName/methodName",
-             apiPropertyQualifier = "apiName/methodName",
+             apiSyntax = "apiName/methodName",
              consumerPrefix = "consumer",
              category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {

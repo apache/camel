@@ -18,7 +18,6 @@
     "alternativeSyntax": "jcr:username:password@host\/base",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

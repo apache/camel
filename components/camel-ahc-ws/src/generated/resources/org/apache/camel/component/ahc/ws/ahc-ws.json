@@ -18,7 +18,6 @@
     "syntax": "ahc-ws:httpUri",
     "async": true,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": false,
     "producerOnly": false,
     "lenientProperties": false

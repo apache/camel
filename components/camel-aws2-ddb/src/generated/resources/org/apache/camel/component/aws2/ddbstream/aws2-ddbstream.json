@@ -17,7 +17,6 @@
     "syntax": "aws2-ddbstream:tableName",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

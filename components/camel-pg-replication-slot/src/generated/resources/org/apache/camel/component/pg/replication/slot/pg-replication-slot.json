@@ -17,7 +17,6 @@
     "syntax": "pg-replication-slot:host:port\/database\/slot:outputPlugin",
     "async": false,
     "api": false,
-    "apiPropertyQualifier": "",
     "consumerOnly": true,
     "producerOnly": false,
     "lenientProperties": false

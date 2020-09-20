@@ -522,7 +522,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         model.setLenientProperties(uriEndpoint.lenientProperties());
         model.setAsync(loadClass("org.apache.camel.AsyncEndpoint").isAssignableFrom(endpointClassElement));
         model.setApi(loadClass("org.apache.camel.ApiEndpoint").isAssignableFrom(endpointClassElement));
-        model.setApiPropertyQualifier(uriEndpoint.apiPropertyQualifier());
+        model.setApiSyntax(uriEndpoint.apiSyntax());
 
         // what is the first version this component was added to Apache Camel
         String firstVersion = uriEndpoint.firstVersion();
