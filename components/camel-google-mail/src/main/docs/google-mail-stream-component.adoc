@@ -153,13 +153,13 @@ There are 7 API names as listed in the table below:
 [width="100%",cols="2,1,7",options="header"]
 |===
 | API Name | Type | Description
-| *attachments* | Both | The attachments collection of methods
-| *drafts* | Both | The drafts collection of methods
-| *history* | Both | The history collection of methods
-| *labels* | Both | The labels collection of methods
-| *messages* | Both | The messages collection of methods
-| *threads* | Both | The threads collection of methods
-| *users* | Both | The users collection of methods
+| *attachments* | Consumer | The attachments collection of methods
+| *drafts* | Consumer | The drafts collection of methods
+| *history* | Consumer | The history collection of methods
+| *labels* | Consumer | The labels collection of methods
+| *messages* | Consumer | The messages collection of methods
+| *threads* | Consumer | The threads collection of methods
+| *users* | Consumer | The users collection of methods
 |===
 
 Each API is documented in the following sections to come.
@@ -167,7 +167,7 @@ Each API is documented in the following sections to come.
 
 ==== API: attachments
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -218,7 +218,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: drafts
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -302,7 +302,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: history
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -351,7 +351,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: labels
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -427,7 +427,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: messages
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -536,7 +536,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: threads
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -611,7 +611,7 @@ would override a `CamelGoogleMailStream.myParameterNameHere` header.
 
 ==== API: users
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 

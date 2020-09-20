@@ -157,13 +157,13 @@ There are 7 API names as listed in the table below:
 [width="100%",cols="2,1,7",options="header"]
 |===
 | API Name | Type | Description
-| *acl* | Both | The acl collection of methods
-| *calendars* | Both | The calendars collection of methods
-| *channels* | Both | The channels collection of methods
-| *events* | Both | The events collection of methods
-| *freebusy* | Both | The freebusy collection of methods
-| *list* | Both | The calendarList collection of methods
-| *settings* | Both | The settings collection of methods
+| *acl* | Consumer | The acl collection of methods
+| *calendars* | Consumer | The calendars collection of methods
+| *channels* | Consumer | The channels collection of methods
+| *events* | Consumer | The events collection of methods
+| *freebusy* | Consumer | The freebusy collection of methods
+| *list* | Consumer | The calendarList collection of methods
+| *settings* | Consumer | The settings collection of methods
 |===
 
 Each API is documented in the following sections to come.
@@ -171,7 +171,7 @@ Each API is documented in the following sections to come.
 
 ==== API: acl
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -252,7 +252,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: calendars
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -323,7 +323,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: channels
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -372,7 +372,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: events
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -474,7 +474,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: freebusy
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -523,7 +523,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: list
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
@@ -594,7 +594,7 @@ would override a `CamelGoogleCalendarStream.myParameterNameHere` header.
 
 ==== API: settings
 
-*Both producer and consumer are supported*
+*Only consumer is supported*
 
 
 
