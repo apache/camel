@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.braintreegateway.ClientTokenGateway}.
  */
-@ApiParams(apiName = "clientToken", description = "Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly",
+@ApiParams(apiName = "clientToken", 
+           description = "Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly",
            apiMethods = {@ApiMethod(methodName = "generate", signatures={"String generate()", "String generate(com.braintreegateway.ClientTokenRequest request)"}), }, aliases = {})
 @UriParams
 @Configurer

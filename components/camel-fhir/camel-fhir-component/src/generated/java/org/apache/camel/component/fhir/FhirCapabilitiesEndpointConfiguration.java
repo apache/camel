@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirCapabilities}.
  */
-@ApiParams(apiName = "capabilities", description = "API to Fetch the capability statement for the server",
+@ApiParams(apiName = "capabilities", 
+           description = "API to Fetch the capability statement for the server",
            apiMethods = {@ApiMethod(methodName = "ofType", description="Retrieve the conformance statement using the given model type", signatures={"org.hl7.fhir.instance.model.api.IBaseConformance ofType(Class<org.hl7.fhir.instance.model.api.IBaseConformance> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer

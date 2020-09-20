@@ -143,22 +143,26 @@ google-calendar:apiName/methodName
 
 There are 7 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *acl* | The acl collection of methods
-| *calendars* | The calendars collection of methods
-| *channels* | The channels collection of methods
-| *events* | The events collection of methods
-| *freebusy* | The freebusy collection of methods
-| *list* | The calendarList collection of methods
-| *settings* | The settings collection of methods
+| API Name | Type | Description
+| *acl* | Both | The acl collection of methods
+| *calendars* | Both | The calendars collection of methods
+| *channels* | Both | The channels collection of methods
+| *events* | Both | The events collection of methods
+| *freebusy* | Both | The freebusy collection of methods
+| *list* | Both | The calendarList collection of methods
+| *settings* | Both | The settings collection of methods
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: acl
+
+*Both producer and consumer are supported*
+
+
 
 
 The acl API has 7 method(s) which is represented by the following method signatures
@@ -237,6 +241,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 ==== API: calendars
 
+*Both producer and consumer are supported*
+
+
+
 
 The calendars API has 6 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -304,6 +312,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 ==== API: channels
 
+*Both producer and consumer are supported*
+
+
+
 
 The channels API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -348,6 +360,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 
 ==== API: events
+
+*Both producer and consumer are supported*
+
+
 
 
 The events API has 11 method(s) which is represented by the following method signatures
@@ -447,6 +463,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 ==== API: freebusy
 
+*Both producer and consumer are supported*
+
+
+
 
 The freebusy API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -491,6 +511,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 
 ==== API: list
+
+*Both producer and consumer are supported*
+
+
 
 
 The list API has 6 method(s) which is represented by the following method signatures
@@ -558,6 +582,10 @@ would override a `CamelGoogleCalendar.myParameterNameHere` header.
 
 
 ==== API: settings
+
+*Both producer and consumer are supported*
+
+
 
 
 The settings API has 2 method(s) which is represented by the following method signatures

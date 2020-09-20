@@ -118,29 +118,33 @@ braintree:apiName/methodName
 
 There are 14 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *address* | Provides methods to create, delete, find, and update Address objects
-| *clientToken* | Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly
-| *creditCardVerification* | To verify credit card information
-| *customer* | Provides methods to create, delete, find, and update Customer objects
-| *dispute* | Provides methods to interact with Dispute objects
-| *documentUpload* | API to upload evidence documents
-| *merchantAccount* | Provides methods to create, find, and update MerchantAccount objects
-| *paymentMethod* | Provides methods to interact with payments
-| *paymentMethodNonce* | Provides methods to interact with nonce payments
-| *report* | Provides methods to interact with reports
-| *settlementBatchSummary* | Provides methods to interact wit settlement summaries
-| *subscription* | Provides methods to interact with Subscriptions
-| *transaction* | Provides methods to interact with Transactions
-| *webhookNotification* | To retrieve notifications via webhooks
+| API Name | Type | Description
+| *address* | Both | Provides methods to create, delete, find, and update Address objects
+| *clientToken* | Both | Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly
+| *creditCardVerification* | Both | To verify credit card information
+| *customer* | Both | Provides methods to create, delete, find, and update Customer objects
+| *dispute* | Both | Provides methods to interact with Dispute objects
+| *documentUpload* | Both | API to upload evidence documents
+| *merchantAccount* | Both | Provides methods to create, find, and update MerchantAccount objects
+| *paymentMethod* | Both | Provides methods to interact with payments
+| *paymentMethodNonce* | Both | Provides methods to interact with nonce payments
+| *report* | Both | Provides methods to interact with reports
+| *settlementBatchSummary* | Both | Provides methods to interact wit settlement summaries
+| *subscription* | Both | Provides methods to interact with Subscriptions
+| *transaction* | Both | Provides methods to interact with Transactions
+| *webhookNotification* | Both | To retrieve notifications via webhooks
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: address
+
+*Both producer and consumer are supported*
+
+
 
 
 The address API has 4 method(s) which is represented by the following method signatures
@@ -204,6 +208,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 ==== API: clientToken
 
+*Both producer and consumer are supported*
+
+
+
 
 The clientToken API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -250,6 +258,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: creditCardVerification
+
+*Both producer and consumer are supported*
+
+
 
 
 The creditCardVerification API has 3 method(s) which is represented by the following method signatures
@@ -303,6 +315,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: customer
+
+*Both producer and consumer are supported*
+
+
 
 
 The customer API has 5 method(s) which is represented by the following method signatures
@@ -368,6 +384,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: dispute
+
+*Both producer and consumer are supported*
+
+
 
 
 The dispute API has 7 method(s) which is represented by the following method signatures
@@ -447,6 +467,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 ==== API: documentUpload
 
+*Both producer and consumer are supported*
+
+
+
 
 The documentUpload API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -491,6 +515,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: merchantAccount
+
+*Both producer and consumer are supported*
+
+
 
 
 The merchantAccount API has 5 method(s) which is represented by the following method signatures
@@ -553,6 +581,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: paymentMethod
+
+*Both producer and consumer are supported*
+
+
 
 
 The paymentMethod API has 6 method(s) which is represented by the following method signatures
@@ -626,6 +658,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 ==== API: paymentMethodNonce
 
+*Both producer and consumer are supported*
+
+
+
 
 The paymentMethodNonce API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -678,6 +714,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 ==== API: report
 
+*Both producer and consumer are supported*
+
+
+
 
 The report API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -722,6 +762,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: settlementBatchSummary
+
+*Both producer and consumer are supported*
+
+
 
 
 The settlementBatchSummary API has 1 method(s) which is represented by the following method signatures
@@ -770,6 +814,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: subscription
+
+*Both producer and consumer are supported*
+
+
 
 
 The subscription API has 7 method(s) which is represented by the following method signatures
@@ -849,6 +897,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: transaction
+
+*Both producer and consumer are supported*
+
+
 
 
 The transaction API has 13 method(s) which is represented by the following method signatures
@@ -960,6 +1012,10 @@ would override a `CamelBraintree.myParameterNameHere` header.
 
 
 ==== API: webhookNotification
+
+*Both producer and consumer are supported*
+
+
 
 
 The webhookNotification API has 2 method(s) which is represented by the following method signatures

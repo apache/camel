@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.recording.addonresult.Payload}.
  */
-@ApiParams(apiName = "recording-add-on-result-payload", description = "",
+@ApiParams(apiName = "recording-add-on-result-payload", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a PayloadDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadDeleter deleter(String pathReferenceSid, String pathAddOnResultSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadDeleter deleter(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a PayloadFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadFetcher fetcher(String pathReferenceSid, String pathAddOnResultSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadFetcher fetcher(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a PayloadReader to execute read", signatures={"com.twilio.rest.api.v2010.account.recording.addonresult.PayloadReader reader(String pathReferenceSid, String pathAddOnResultSid)", "com.twilio.rest.api.v2010.account.recording.addonresult.PayloadReader reader(String pathAccountSid, String pathReferenceSid, String pathAddOnResultSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

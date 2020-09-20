@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.recording.Transcription}.
  */
-@ApiParams(apiName = "recording-transcription", description = "",
+@ApiParams(apiName = "recording-transcription", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a TranscriptionDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionDeleter deleter(String pathRecordingSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionDeleter deleter(String pathAccountSid, String pathRecordingSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a TranscriptionFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionFetcher fetcher(String pathRecordingSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionFetcher fetcher(String pathAccountSid, String pathRecordingSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a TranscriptionReader to execute read", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionReader reader(String pathRecordingSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionReader reader(String pathAccountSid, String pathRecordingSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

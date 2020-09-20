@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirSearch}.
  */
-@ApiParams(apiName = "search", description = "API to search for resources matching a given set of criteria",
+@ApiParams(apiName = "search", 
+           description = "API to search for resources matching a given set of criteria",
            apiMethods = {@ApiMethod(methodName = "searchByUrl", description="Perform a search directly by URL", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer

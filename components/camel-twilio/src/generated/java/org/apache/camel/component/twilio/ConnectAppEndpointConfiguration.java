@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.ConnectApp}.
  */
-@ApiParams(apiName = "connect-app", description = "",
+@ApiParams(apiName = "connect-app", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a ConnectAppDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.ConnectAppDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.ConnectAppDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a ConnectAppFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.ConnectAppFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.ConnectAppFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a ConnectAppReader to execute read", signatures={"com.twilio.rest.api.v2010.account.ConnectAppReader reader()", "com.twilio.rest.api.v2010.account.ConnectAppReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a ConnectAppUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.ConnectAppUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.ConnectAppUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

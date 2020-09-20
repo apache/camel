@@ -138,17 +138,21 @@ as2:apiName/methodName
 
 There are 2 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *client* | Sends EDI Messages over HTTP
-| *server* | Receives EDI Messages over HTTP
+| API Name | Type | Description
+| *client* | Producer | Sends EDI Messages over HTTP
+| *server* | Consumer | Receives EDI Messages over HTTP
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: client
+
+*Only producer is supported*
+
+
 
 
 The client API has 1 method(s) which is represented by the following method signatures
@@ -210,6 +214,10 @@ would override a `CamelAs2.myParameterNameHere` header.
 
 
 ==== API: server
+
+*Only consumer is supported*
+
+
 
 
 The server API has 1 method(s) which is represented by the following method signatures

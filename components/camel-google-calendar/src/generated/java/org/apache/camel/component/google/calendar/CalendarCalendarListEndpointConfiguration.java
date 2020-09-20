@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$CalendarList}.
  */
-@ApiParams(apiName = "list", description = "The calendarList collection of methods",
+@ApiParams(apiName = "list", 
+           description = "The calendarList collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes an entry on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Delete delete(String calendarId)"}), @ApiMethod(methodName = "get", description="Returns an entry on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Get get(String calendarId)"}), @ApiMethod(methodName = "insert", description="Adds an entry to the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Insert insert(com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "list", description="Returns entries on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$List list()"}), @ApiMethod(methodName = "patch", description="Updates an entry on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Patch patch(String calendarId, com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "update", description="Updates an entry on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Update update(String calendarId, com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "watch", description="Watch for changes to CalendarList resources", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Watch watch(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer

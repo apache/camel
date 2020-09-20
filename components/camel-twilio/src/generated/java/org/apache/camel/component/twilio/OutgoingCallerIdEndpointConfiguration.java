@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.OutgoingCallerId}.
  */
-@ApiParams(apiName = "outgoing-caller-id", description = "",
+@ApiParams(apiName = "outgoing-caller-id", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a OutgoingCallerIdDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.OutgoingCallerIdDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.OutgoingCallerIdDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a OutgoingCallerIdFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.OutgoingCallerIdFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.OutgoingCallerIdFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a OutgoingCallerIdReader to execute read", signatures={"com.twilio.rest.api.v2010.account.OutgoingCallerIdReader reader()", "com.twilio.rest.api.v2010.account.OutgoingCallerIdReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a OutgoingCallerIdUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.OutgoingCallerIdUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.OutgoingCallerIdUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

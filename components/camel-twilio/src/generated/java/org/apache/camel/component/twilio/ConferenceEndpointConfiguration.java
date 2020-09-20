@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.Conference}.
  */
-@ApiParams(apiName = "conference", description = "",
+@ApiParams(apiName = "conference", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "fetcher", description="Create a ConferenceFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.ConferenceFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.ConferenceFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a ConferenceReader to execute read", signatures={"com.twilio.rest.api.v2010.account.ConferenceReader reader()", "com.twilio.rest.api.v2010.account.ConferenceReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a ConferenceUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.ConferenceUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.ConferenceUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

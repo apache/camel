@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.usage.record.AllTime}.
  */
-@ApiParams(apiName = "usage-record-all-time", description = "",
+@ApiParams(apiName = "usage-record-all-time", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a AllTimeReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.AllTimeReader reader()", "com.twilio.rest.api.v2010.account.usage.record.AllTimeReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

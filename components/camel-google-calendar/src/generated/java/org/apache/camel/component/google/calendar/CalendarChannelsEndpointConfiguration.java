@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$Channels}.
  */
-@ApiParams(apiName = "channels", description = "The channels collection of methods",
+@ApiParams(apiName = "channels", 
+           description = "The channels collection of methods",
            apiMethods = {@ApiMethod(methodName = "stop", description="Stop watching resources through this channel", signatures={"com.google.api.services.calendar.Calendar$Channels$Stop stop(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer

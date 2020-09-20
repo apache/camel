@@ -100,6 +100,7 @@
                             <apis>
                                 <api>
                                     <apiName>client</apiName>
+                                    <producerOnly>true</producerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
                                     <fromJavasource>
                                         <excludeMethods>
@@ -120,6 +121,7 @@
                                 </api>
                                 <api>
                                     <apiName>server</apiName>
+                                    <consumerOnly>true</consumerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
                                     <fromJavasource>
                                         <excludeMethods>stopListening|handleMDNResponse</excludeMethods>

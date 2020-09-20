@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.usage.Record}.
  */
-@ApiParams(apiName = "usage-record", description = "",
+@ApiParams(apiName = "usage-record", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a RecordReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.RecordReader reader()", "com.twilio.rest.api.v2010.account.usage.RecordReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

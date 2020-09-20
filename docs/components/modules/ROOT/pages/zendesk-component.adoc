@@ -121,16 +121,20 @@ zendesk:methodName
 
 There are 1 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *DEFAULT* | 
+| API Name | Type | Description
+| *DEFAULT* | Both | 
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: DEFAULT
+
+*Both producer and consumer are supported*
+
+
 
 
 The DEFAULT API has 221 method(s) which is represented by the following method signatures

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.address.DependentPhoneNumber}.
  */
-@ApiParams(apiName = "address-dependent-phone-number", description = "",
+@ApiParams(apiName = "address-dependent-phone-number", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a DependentPhoneNumberReader to execute read", signatures={"com.twilio.rest.api.v2010.account.address.DependentPhoneNumberReader reader(String pathAddressSid)", "com.twilio.rest.api.v2010.account.address.DependentPhoneNumberReader reader(String pathAccountSid, String pathAddressSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer
