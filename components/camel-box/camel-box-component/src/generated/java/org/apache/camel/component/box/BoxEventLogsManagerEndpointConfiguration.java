@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.box.api.BoxEventLogsManager}.
  */
-@ApiParams(apiName = "event-logs", description = "Provides operations to read Box enterprise (admin) event logs",
+@ApiParams(apiName = "event-logs", producerOnly = true,
+           description = "Provides operations to read Box enterprise (admin) event logs",
            apiMethods = {@ApiMethod(methodName = "getEnterpriseEvents", description="Create an event stream with optional starting initial position and add listener that will be notified when an event is received", signatures={"java.util.List<com.box.sdk.BoxEvent> getEnterpriseEvents(String position, java.util.Date after, java.util.Date before, com.box.sdk.BoxEvent$Type[] types)"})}, aliases = {"getEnterpriseEvents=events"})
 @UriParams
 @Configurer

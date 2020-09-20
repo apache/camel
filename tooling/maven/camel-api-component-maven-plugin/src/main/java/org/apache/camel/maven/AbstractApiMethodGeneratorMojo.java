@@ -58,6 +58,12 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @Parameter
     protected String apiDescription;
 
+    @Parameter
+    protected boolean consumerOnly;
+
+    @Parameter
+    protected boolean producerOnly;
+
     /**
      * Method alias patterns for all APIs.
      */
@@ -202,6 +208,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         VelocityContext context = getCommonContext(models);
         context.put("apiName", apiName);
         context.put("apiDescription", apiDescription);
+        context.put("consumerOnly", consumerOnly);
+        context.put("producerOnly", producerOnly);
         context.put("configName", getConfigName());
         context.put("componentName", componentName);
         context.put("componentPackage", componentPackage);

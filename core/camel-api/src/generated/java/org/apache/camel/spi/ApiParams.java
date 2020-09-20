@@ -47,6 +47,20 @@ public @interface ApiParams {
     String description() default "";
 
     /**
+     * Whether this API can only be used as a producer.
+     * <p/>
+     * By default its assumed the API can be used as both consumer and producer.
+     */
+    boolean producerOnly() default false;
+
+    /**
+     * Whether this API can only be used as a consumer.
+     * <p/>
+     * By default its assumed the API can be used as both consumer and producer.
+     */
+    boolean consumerOnly() default false;
+
+    /**
      * The API methods that the API provides of this configuration class.
      */
     ApiMethod[] apiMethods();

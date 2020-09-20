@@ -119,6 +119,7 @@
                                     <apiName>collaborations</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCollaborationsManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFolderCollaboration</methodPattern>
@@ -154,6 +155,7 @@
                                     <apiName>comments</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCommentsManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFileComment</methodPattern>
@@ -185,6 +187,7 @@
                                     <apiName>event-logs</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxEventLogsManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>getEnterpriseEvents</methodPattern>
@@ -200,6 +203,7 @@
                                     <apiName>files</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxFilesManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>uploadFile</methodPattern>
@@ -310,8 +314,8 @@
                                 <api>
                                     <apiName>folders</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxFoldersManager</proxyClass>
-                                    <fromJavasource>
-                                    </fromJavasource>
+                                    <producerOnly>true</producerOnly>
+                                    <fromJavasource />
                                     <aliases>
                                         <alias>
                                             <methodPattern>getRootFolder</methodPattern>
@@ -368,8 +372,8 @@
                                 <api>
                                     <apiName>groups</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxGroupsManager</proxyClass>
-                                    <fromJavasource>
-                                    </fromJavasource>
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>createGroup</methodPattern>
@@ -423,6 +427,7 @@
                                     <fromJavasource>
                                         <excludeMethods>stopListening</excludeMethods>
                                     </fromJavasource>
+                                    <consumerOnly>true</consumerOnly>
                                     <excludeConfigNames>listener</excludeConfigNames>
                                     <nullableOptions>
                                         <nullableOption>startingPosition</nullableOption>
@@ -432,6 +437,7 @@
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxSearchManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>searchFolder</methodPattern>
@@ -442,8 +448,8 @@
                                 <api>
                                     <apiName>tasks</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxTasksManager</proxyClass>
-                                    <fromJavasource>
-                                    </fromJavasource>
+                                    <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFileTask</methodPattern>
@@ -490,6 +496,7 @@
                                     <apiName>users</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxUsersManager</proxyClass>
                                     <fromJavasource />
+                                    <producerOnly>true</producerOnly>
                                     <aliases>
                                         <alias>
                                             <methodPattern>getCurrentUser</methodPattern>

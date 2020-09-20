@@ -157,6 +157,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         mojo.classPrefix = apiProxy.getClassPrefix();
         mojo.apiName = apiProxy.getApiName();
         mojo.apiDescription = apiProxy.getApiDescription();
+        mojo.consumerOnly = apiProxy.isConsumerOnly();
+        mojo.producerOnly = apiProxy.isProducerOnly();
     }
 
     private AbstractApiMethodGeneratorMojo getApiMethodGenerator(ApiProxy api) {
