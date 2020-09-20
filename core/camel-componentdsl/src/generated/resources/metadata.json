@@ -1609,7 +1609,7 @@
     "api": true,
     "apiPropertyQualifier": "apiName\/methodName",
     "consumerOnly": false,
-    "producerOnly": false,
+    "producerOnly": true,
     "lenientProperties": false
   },
   "BrowseComponentBuilderFactory": {
