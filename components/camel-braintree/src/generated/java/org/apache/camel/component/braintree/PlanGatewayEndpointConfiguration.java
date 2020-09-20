@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.braintreegateway.PlanGateway}.
  */
-@ApiParams(apiName = "plan", description = "",
+@ApiParams(apiName = "plan", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "all", signatures={"java.util.List<com.braintreegateway.Plan> all()"})}, aliases = {})
 @UriParams
 @Configurer

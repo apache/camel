@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.SigningKey}.
  */
-@ApiParams(apiName = "signing-key", description = "",
+@ApiParams(apiName = "signing-key", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "deleter", description="Create a SigningKeyDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.SigningKeyDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a SigningKeyFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.SigningKeyFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a SigningKeyReader to execute read", signatures={"com.twilio.rest.api.v2010.account.SigningKeyReader reader()", "com.twilio.rest.api.v2010.account.SigningKeyReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a SigningKeyUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.SigningKeyUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.SigningKeyUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

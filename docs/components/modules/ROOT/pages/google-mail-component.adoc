@@ -145,22 +145,26 @@ google-mail:apiName/methodName
 
 There are 7 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *attachments* | The attachments collection of methods
-| *drafts* | The drafts collection of methods
-| *history* | The history collection of methods
-| *labels* | The labels collection of methods
-| *messages* | The messages collection of methods
-| *threads* | The threads collection of methods
-| *users* | The users collection of methods
+| API Name | Type | Description
+| *attachments* | Both | The attachments collection of methods
+| *drafts* | Both | The drafts collection of methods
+| *history* | Both | The history collection of methods
+| *labels* | Both | The labels collection of methods
+| *messages* | Both | The messages collection of methods
+| *threads* | Both | The threads collection of methods
+| *users* | Both | The users collection of methods
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: attachments
+
+*Both producer and consumer are supported*
+
+
 
 
 The attachments API has 1 method(s) which is represented by the following method signatures
@@ -208,6 +212,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 ==== API: drafts
+
+*Both producer and consumer are supported*
+
+
 
 
 The drafts API has 6 method(s) which is represented by the following method signatures
@@ -289,6 +297,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 ==== API: history
 
+*Both producer and consumer are supported*
+
+
+
 
 The history API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -333,6 +345,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 ==== API: labels
+
+*Both producer and consumer are supported*
+
+
 
 
 The labels API has 6 method(s) which is represented by the following method signatures
@@ -405,6 +421,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 ==== API: messages
+
+*Both producer and consumer are supported*
+
+
 
 
 The messages API has 11 method(s) which is represented by the following method signatures
@@ -511,6 +531,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 ==== API: threads
 
+*Both producer and consumer are supported*
+
+
+
 
 The threads API has 6 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -581,6 +605,10 @@ would override a `CamelGoogleMail.myParameterNameHere` header.
 
 
 ==== API: users
+
+*Both producer and consumer are supported*
+
+
 
 
 The users API has 3 method(s) which is represented by the following method signatures

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.queue.Member}.
  */
-@ApiParams(apiName = "queue-member", description = "",
+@ApiParams(apiName = "queue-member", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "fetcher", description="Create a MemberFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.queue.MemberFetcher fetcher(String pathQueueSid, String pathCallSid)", "com.twilio.rest.api.v2010.account.queue.MemberFetcher fetcher(String pathAccountSid, String pathQueueSid, String pathCallSid)"}), @ApiMethod(methodName = "reader", description="Create a MemberReader to execute read", signatures={"com.twilio.rest.api.v2010.account.queue.MemberReader reader(String pathQueueSid)", "com.twilio.rest.api.v2010.account.queue.MemberReader reader(String pathAccountSid, String pathQueueSid)"}), @ApiMethod(methodName = "updater", description="Create a MemberUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.queue.MemberUpdater updater(String pathQueueSid, String pathCallSid, java.net.URI url)", "com.twilio.rest.api.v2010.account.queue.MemberUpdater updater(String pathAccountSid, String pathQueueSid, String pathCallSid, java.net.URI url)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

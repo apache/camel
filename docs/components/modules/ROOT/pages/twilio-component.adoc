@@ -115,71 +115,75 @@ twilio:apiName/methodName
 
 There are 56 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *account* | 
-| *address* | 
-| *address-dependent-phone-number* | 
-| *application* | 
-| *available-phone-number-country* | 
-| *available-phone-number-country-local* | 
-| *available-phone-number-country-mobile* | 
-| *available-phone-number-country-toll-free* | 
-| *call* | 
-| *call-feedback* | 
-| *call-feedback-summary* | 
-| *call-notification* | 
-| *call-recording* | 
-| *conference* | 
-| *conference-participant* | 
-| *connect-app* | 
-| *incoming-phone-number* | 
-| *incoming-phone-number-local* | 
-| *incoming-phone-number-mobile* | 
-| *incoming-phone-number-toll-free* | 
-| *key* | 
-| *message* | 
-| *message-feedback* | 
-| *message-media* | 
-| *new-key* | 
-| *new-signing-key* | 
-| *notification* | 
-| *outgoing-caller-id* | 
-| *queue* | 
-| *queue-member* | 
-| *recording* | 
-| *recording-add-on-result* | 
-| *recording-add-on-result-payload* | 
-| *recording-transcription* | 
-| *short-code* | 
-| *signing-key* | 
-| *sip-credential-list* | 
-| *sip-credential-list-credential* | 
-| *sip-domain* | 
-| *sip-domain-credential-list-mapping* | 
-| *sip-domain-ip-access-control-list-mapping* | 
-| *sip-ip-access-control-list* | 
-| *sip-ip-access-control-list-ip-address* | 
-| *token* | 
-| *transcription* | 
-| *usage-record* | 
-| *usage-record-all-time* | 
-| *usage-record-daily* | 
-| *usage-record-last-month* | 
-| *usage-record-monthly* | 
-| *usage-record-this-month* | 
-| *usage-record-today* | 
-| *usage-record-yearly* | 
-| *usage-record-yesterday* | 
-| *usage-trigger* | 
-| *validation-request* | 
+| API Name | Type | Description
+| *account* | Both | 
+| *address* | Both | 
+| *address-dependent-phone-number* | Both | 
+| *application* | Both | 
+| *available-phone-number-country* | Both | 
+| *available-phone-number-country-local* | Both | 
+| *available-phone-number-country-mobile* | Both | 
+| *available-phone-number-country-toll-free* | Both | 
+| *call* | Both | 
+| *call-feedback* | Both | 
+| *call-feedback-summary* | Both | 
+| *call-notification* | Both | 
+| *call-recording* | Both | 
+| *conference* | Both | 
+| *conference-participant* | Both | 
+| *connect-app* | Both | 
+| *incoming-phone-number* | Both | 
+| *incoming-phone-number-local* | Both | 
+| *incoming-phone-number-mobile* | Both | 
+| *incoming-phone-number-toll-free* | Both | 
+| *key* | Both | 
+| *message* | Both | 
+| *message-feedback* | Both | 
+| *message-media* | Both | 
+| *new-key* | Both | 
+| *new-signing-key* | Both | 
+| *notification* | Both | 
+| *outgoing-caller-id* | Both | 
+| *queue* | Both | 
+| *queue-member* | Both | 
+| *recording* | Both | 
+| *recording-add-on-result* | Both | 
+| *recording-add-on-result-payload* | Both | 
+| *recording-transcription* | Both | 
+| *short-code* | Both | 
+| *signing-key* | Both | 
+| *sip-credential-list* | Both | 
+| *sip-credential-list-credential* | Both | 
+| *sip-domain* | Both | 
+| *sip-domain-credential-list-mapping* | Both | 
+| *sip-domain-ip-access-control-list-mapping* | Both | 
+| *sip-ip-access-control-list* | Both | 
+| *sip-ip-access-control-list-ip-address* | Both | 
+| *token* | Both | 
+| *transcription* | Both | 
+| *usage-record* | Both | 
+| *usage-record-all-time* | Both | 
+| *usage-record-daily* | Both | 
+| *usage-record-last-month* | Both | 
+| *usage-record-monthly* | Both | 
+| *usage-record-this-month* | Both | 
+| *usage-record-today* | Both | 
+| *usage-record-yearly* | Both | 
+| *usage-record-yesterday* | Both | 
+| *usage-trigger* | Both | 
+| *validation-request* | Both | 
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: account
+
+*Both producer and consumer are supported*
+
+
 
 
 The account API has 2 method(s) which is represented by the following method signatures
@@ -233,6 +237,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: address
+
+*Both producer and consumer are supported*
+
+
 
 
 The address API has 5 method(s) which is represented by the following method signatures
@@ -314,6 +322,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: address-dependent-phone-number
 
+*Both producer and consumer are supported*
+
+
+
 
 The address-dependent-phone-number API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -361,6 +373,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: application
+
+*Both producer and consumer are supported*
+
+
 
 
 The application API has 5 method(s) which is represented by the following method signatures
@@ -436,6 +452,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: available-phone-number-country
 
+*Both producer and consumer are supported*
+
+
+
 
 The available-phone-number-country API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -490,6 +510,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: available-phone-number-country-local
 
+*Both producer and consumer are supported*
+
+
+
 
 The available-phone-number-country-local API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -537,6 +561,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: available-phone-number-country-mobile
+
+*Both producer and consumer are supported*
+
+
 
 
 The available-phone-number-country-mobile API has 1 method(s) which is represented by the following method signatures
@@ -586,6 +614,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: available-phone-number-country-toll-free
 
+*Both producer and consumer are supported*
+
+
+
 
 The available-phone-number-country-toll-free API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -633,6 +665,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: call
+
+*Both producer and consumer are supported*
+
+
 
 
 The call API has 5 method(s) which is represented by the following method signatures
@@ -721,6 +757,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: call-feedback
 
+*Both producer and consumer are supported*
+
+
+
 
 The call-feedback API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -785,6 +825,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: call-feedback-summary
 
+*Both producer and consumer are supported*
+
+
+
 
 The call-feedback-summary API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -848,6 +892,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: call-notification
 
+*Both producer and consumer are supported*
+
+
+
 
 The call-notification API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -903,6 +951,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: call-recording
+
+*Both producer and consumer are supported*
+
+
 
 
 The call-recording API has 5 method(s) which is represented by the following method signatures
@@ -984,6 +1036,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: conference
 
+*Both producer and consumer are supported*
+
+
+
 
 The conference API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1044,6 +1100,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: conference-participant
+
+*Both producer and consumer are supported*
+
+
 
 
 The conference-participant API has 5 method(s) which is represented by the following method signatures
@@ -1126,6 +1186,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: connect-app
 
+*Both producer and consumer are supported*
+
+
+
 
 The connect-app API has 4 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1193,6 +1257,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: incoming-phone-number
+
+*Both producer and consumer are supported*
+
+
 
 
 The incoming-phone-number API has 5 method(s) which is represented by the following method signatures
@@ -1274,6 +1342,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: incoming-phone-number-local
 
+*Both producer and consumer are supported*
+
+
+
 
 The incoming-phone-number-local API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1327,6 +1399,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: incoming-phone-number-mobile
+
+*Both producer and consumer are supported*
+
+
 
 
 The incoming-phone-number-mobile API has 2 method(s) which is represented by the following method signatures
@@ -1382,6 +1458,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: incoming-phone-number-toll-free
 
+*Both producer and consumer are supported*
+
+
+
 
 The incoming-phone-number-toll-free API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1435,6 +1515,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: key
+
+*Both producer and consumer are supported*
+
+
 
 
 The key API has 4 method(s) which is represented by the following method signatures
@@ -1503,6 +1587,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: message
+
+*Both producer and consumer are supported*
+
+
 
 
 The message API has 5 method(s) which is represented by the following method signatures
@@ -1596,6 +1684,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: message-feedback
 
+*Both producer and consumer are supported*
+
+
+
 
 The message-feedback API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1643,6 +1735,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: message-media
+
+*Both producer and consumer are supported*
+
+
 
 
 The message-media API has 3 method(s) which is represented by the following method signatures
@@ -1708,6 +1804,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: new-key
 
+*Both producer and consumer are supported*
+
+
+
 
 The new-key API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1755,6 +1855,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: new-signing-key
 
+*Both producer and consumer are supported*
+
+
+
 
 The new-signing-key API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -1801,6 +1905,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: notification
+
+*Both producer and consumer are supported*
+
+
 
 
 The notification API has 2 method(s) which is represented by the following method signatures
@@ -1855,6 +1963,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: outgoing-caller-id
+
+*Both producer and consumer are supported*
+
+
 
 
 The outgoing-caller-id API has 4 method(s) which is represented by the following method signatures
@@ -1923,6 +2035,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: queue
+
+*Both producer and consumer are supported*
+
+
 
 
 The queue API has 5 method(s) which is represented by the following method signatures
@@ -1999,6 +2115,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: queue-member
 
+*Both producer and consumer are supported*
+
+
+
 
 The queue-member API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2064,6 +2184,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: recording
 
+*Both producer and consumer are supported*
+
+
+
 
 The recording API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2124,6 +2248,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: recording-add-on-result
+
+*Both producer and consumer are supported*
+
+
 
 
 The recording-add-on-result API has 3 method(s) which is represented by the following method signatures
@@ -2188,6 +2316,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: recording-add-on-result-payload
+
+*Both producer and consumer are supported*
+
+
 
 
 The recording-add-on-result-payload API has 3 method(s) which is represented by the following method signatures
@@ -2256,6 +2388,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: recording-transcription
 
+*Both producer and consumer are supported*
+
+
+
 
 The recording-transcription API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2320,6 +2456,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: short-code
 
+*Both producer and consumer are supported*
+
+
+
 
 The short-code API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2380,6 +2520,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: signing-key
+
+*Both producer and consumer are supported*
+
+
 
 
 The signing-key API has 4 method(s) which is represented by the following method signatures
@@ -2448,6 +2592,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: sip-credential-list
+
+*Both producer and consumer are supported*
+
+
 
 
 The sip-credential-list API has 5 method(s) which is represented by the following method signatures
@@ -2524,6 +2672,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: sip-credential-list-credential
+
+*Both producer and consumer are supported*
+
+
 
 
 The sip-credential-list-credential API has 5 method(s) which is represented by the following method signatures
@@ -2606,6 +2758,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: sip-domain
 
+*Both producer and consumer are supported*
+
+
+
 
 The sip-domain API has 5 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2681,6 +2837,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: sip-domain-credential-list-mapping
 
+*Both producer and consumer are supported*
+
+
+
 
 The sip-domain-credential-list-mapping API has 4 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2753,6 +2913,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: sip-domain-ip-access-control-list-mapping
 
+*Both producer and consumer are supported*
+
+
+
 
 The sip-domain-ip-access-control-list-mapping API has 4 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -2824,6 +2988,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: sip-ip-access-control-list
+
+*Both producer and consumer are supported*
+
+
 
 
 The sip-ip-access-control-list API has 5 method(s) which is represented by the following method signatures
@@ -2900,6 +3068,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: sip-ip-access-control-list-ip-address
+
+*Both producer and consumer are supported*
+
+
 
 
 The sip-ip-access-control-list-ip-address API has 5 method(s) which is represented by the following method signatures
@@ -2982,6 +3154,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: token
 
+*Both producer and consumer are supported*
+
+
+
 
 The token API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3028,6 +3204,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: transcription
+
+*Both producer and consumer are supported*
+
+
 
 
 The transcription API has 3 method(s) which is represented by the following method signatures
@@ -3090,6 +3270,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: usage-record
 
+*Both producer and consumer are supported*
+
+
+
 
 The usage-record API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3136,6 +3320,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: usage-record-all-time
+
+*Both producer and consumer are supported*
+
+
 
 
 The usage-record-all-time API has 1 method(s) which is represented by the following method signatures
@@ -3184,6 +3372,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: usage-record-daily
 
+*Both producer and consumer are supported*
+
+
+
 
 The usage-record-daily API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3230,6 +3422,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: usage-record-last-month
+
+*Both producer and consumer are supported*
+
+
 
 
 The usage-record-last-month API has 1 method(s) which is represented by the following method signatures
@@ -3278,6 +3474,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: usage-record-monthly
 
+*Both producer and consumer are supported*
+
+
+
 
 The usage-record-monthly API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3324,6 +3524,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: usage-record-this-month
+
+*Both producer and consumer are supported*
+
+
 
 
 The usage-record-this-month API has 1 method(s) which is represented by the following method signatures
@@ -3372,6 +3576,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: usage-record-today
 
+*Both producer and consumer are supported*
+
+
+
 
 The usage-record-today API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3418,6 +3626,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: usage-record-yearly
+
+*Both producer and consumer are supported*
+
+
 
 
 The usage-record-yearly API has 1 method(s) which is represented by the following method signatures
@@ -3466,6 +3678,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 ==== API: usage-record-yesterday
 
+*Both producer and consumer are supported*
+
+
+
 
 The usage-record-yesterday API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -3512,6 +3728,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: usage-trigger
+
+*Both producer and consumer are supported*
+
+
 
 
 The usage-trigger API has 5 method(s) which is represented by the following method signatures
@@ -3589,6 +3809,10 @@ would override a `CamelTwilio.myParameterNameHere` header.
 
 
 ==== API: validation-request
+
+*Both producer and consumer are supported*
+
+
 
 
 The validation-request API has 1 method(s) which is represented by the following method signatures

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$Colors}.
  */
-@ApiParams(apiName = "colors", description = "The colors collection of methods",
+@ApiParams(apiName = "colors", 
+           description = "The colors collection of methods",
            apiMethods = {@ApiMethod(methodName = "get", description="Returns the color definitions for calendars and events", signatures={"com.google.api.services.calendar.Calendar$Colors$Get get()"})}, aliases = {})
 @UriParams
 @Configurer

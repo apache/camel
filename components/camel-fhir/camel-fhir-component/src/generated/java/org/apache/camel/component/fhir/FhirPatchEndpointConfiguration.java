@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirPatch}.
  */
-@ApiParams(apiName = "patch", description = "API for the patch operation, which performs a logical patch on a server resource",
+@ApiParams(apiName = "patch", 
+           description = "API for the patch operation, which performs a logical patch on a server resource",
            apiMethods = {@ApiMethod(methodName = "patchById", description="Applies the patch to the given resource ID", signatures={"ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, org.hl7.fhir.instance.model.api.IIdType id, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome patchById(String patchBody, String stringId, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "patchByUrl", description="Specifies that the update should be performed as a conditional create against a given search URL", signatures={"ca.uhn.fhir.rest.api.MethodOutcome patchByUrl(String patchBody, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer

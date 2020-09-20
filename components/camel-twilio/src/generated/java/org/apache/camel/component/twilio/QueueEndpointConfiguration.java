@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.Queue}.
  */
-@ApiParams(apiName = "queue", description = "",
+@ApiParams(apiName = "queue", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a QueueCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.QueueCreator creator(String friendlyName)", "com.twilio.rest.api.v2010.account.QueueCreator creator(String pathAccountSid, String friendlyName)"}), @ApiMethod(methodName = "deleter", description="Create a QueueDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.QueueDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.QueueDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a QueueFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.QueueFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.QueueFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a QueueReader to execute read", signatures={"com.twilio.rest.api.v2010.account.QueueReader reader()", "com.twilio.rest.api.v2010.account.QueueReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a QueueUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.QueueUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.QueueUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Properties}.
  */
-@ApiParams(apiName = "drive-properties", description = "The properties collection of methods",
+@ApiParams(apiName = "drive-properties", 
+           description = "The properties collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes a property", signatures={"com.google.api.services.drive.Drive$Properties$Delete delete(String fileId, String propertyKey)"}), @ApiMethod(methodName = "get", description="Gets a property by its key", signatures={"com.google.api.services.drive.Drive$Properties$Get get(String fileId, String propertyKey)"}), @ApiMethod(methodName = "insert", description="Adds a property to a file, or updates it if it already exists", signatures={"com.google.api.services.drive.Drive$Properties$Insert insert(String fileId, com.google.api.services.drive.model.Property content)"}), @ApiMethod(methodName = "list", description="Lists a file's properties", signatures={"com.google.api.services.drive.Drive$Properties$List list(String fileId)"}), @ApiMethod(methodName = "patch", description="Updates a property, or adds it if it doesn't exist", signatures={"com.google.api.services.drive.Drive$Properties$Patch patch(String fileId, String propertyKey, com.google.api.services.drive.model.Property content)"}), @ApiMethod(methodName = "update", description="Updates a property, or adds it if it doesn't exist", signatures={"com.google.api.services.drive.Drive$Properties$Update update(String fileId, String propertyKey, com.google.api.services.drive.model.Property content)"})}, aliases = {})
 @UriParams
 @Configurer

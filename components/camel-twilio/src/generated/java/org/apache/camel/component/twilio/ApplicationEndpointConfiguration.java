@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.Application}.
  */
-@ApiParams(apiName = "application", description = "",
+@ApiParams(apiName = "application", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a ApplicationCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.ApplicationCreator creator()", "com.twilio.rest.api.v2010.account.ApplicationCreator creator(String pathAccountSid)"}), @ApiMethod(methodName = "deleter", description="Create a ApplicationDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.ApplicationDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.ApplicationDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a ApplicationFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.ApplicationFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.ApplicationFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a ApplicationReader to execute read", signatures={"com.twilio.rest.api.v2010.account.ApplicationReader reader()", "com.twilio.rest.api.v2010.account.ApplicationReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a ApplicationUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.ApplicationUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.ApplicationUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

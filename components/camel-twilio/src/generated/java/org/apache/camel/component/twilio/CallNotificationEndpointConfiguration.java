@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.call.Notification}.
  */
-@ApiParams(apiName = "call-notification", description = "",
+@ApiParams(apiName = "call-notification", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "fetcher", description="Create a NotificationFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathCallSid, String pathSid)", "com.twilio.rest.api.v2010.account.call.NotificationFetcher fetcher(String pathAccountSid, String pathCallSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a NotificationReader to execute read", signatures={"com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.NotificationReader reader(String pathAccountSid, String pathCallSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

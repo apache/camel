@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.fhir.api.FhirCreate}.
  */
-@ApiParams(apiName = "create", description = "API for the create operation, which creates a new resource instance on the server",
+@ApiParams(apiName = "create", 
+           description = "API for the create operation, which creates a new resource instance on the server",
            apiMethods = {@ApiMethod(methodName = "resource", description="Creates a IBaseResource on the server", signatures={"ca.uhn.fhir.rest.api.MethodOutcome resource(org.hl7.fhir.instance.model.api.IBaseResource resource, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)", "ca.uhn.fhir.rest.api.MethodOutcome resource(String resourceAsString, String url, ca.uhn.fhir.rest.api.PreferReturnEnum preferReturn, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), }, aliases = {})
 @UriParams
 @Configurer

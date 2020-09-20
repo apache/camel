@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.Token}.
  */
-@ApiParams(apiName = "token", description = "",
+@ApiParams(apiName = "token", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a TokenCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.TokenCreator creator()", "com.twilio.rest.api.v2010.account.TokenCreator creator(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.braintreegateway.PaymentMethodGateway}.
  */
-@ApiParams(apiName = "paymentMethod", description = "Provides methods to interact with payments",
+@ApiParams(apiName = "paymentMethod", 
+           description = "Provides methods to interact with payments",
            apiMethods = {@ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> create(com.braintreegateway.PaymentMethodRequest request)"}), @ApiMethod(methodName = "delete", signatures={"com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> delete(String token)", "com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> delete(String token, com.braintreegateway.PaymentMethodDeleteRequest request)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.PaymentMethod find(String token)"}), @ApiMethod(methodName = "grant", signatures={"com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> grant(String token)", "com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> grant(String token, com.braintreegateway.PaymentMethodGrantRequest grantRequest)"}), @ApiMethod(methodName = "revoke", signatures={"com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> revoke(String token)"}), @ApiMethod(methodName = "update", signatures={"com.braintreegateway.Result<com.braintreegateway.? extends PaymentMethod> update(String token, com.braintreegateway.PaymentMethodRequest request)"})}, aliases = {})
 @UriParams
 @Configurer

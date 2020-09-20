@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local}.
  */
-@ApiParams(apiName = "available-phone-number-country-local", description = "",
+@ApiParams(apiName = "available-phone-number-country-local", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a LocalReader to execute read", signatures={"com.twilio.rest.api.v2010.account.availablephonenumbercountry.LocalReader reader(String pathCountryCode)", "com.twilio.rest.api.v2010.account.availablephonenumbercountry.LocalReader reader(String pathAccountSid, String pathCountryCode)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

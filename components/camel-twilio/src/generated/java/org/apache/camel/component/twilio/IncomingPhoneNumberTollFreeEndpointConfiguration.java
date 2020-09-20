@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.incomingphonenumber.TollFree}.
  */
-@ApiParams(apiName = "incoming-phone-number-toll-free", description = "",
+@ApiParams(apiName = "incoming-phone-number-toll-free", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a TollFreeCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.incomingphonenumber.TollFreeCreator creator(com.twilio.type.PhoneNumber phoneNumber)", "com.twilio.rest.api.v2010.account.incomingphonenumber.TollFreeCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber phoneNumber)"}), @ApiMethod(methodName = "reader", description="Create a TollFreeReader to execute read", signatures={"com.twilio.rest.api.v2010.account.incomingphonenumber.TollFreeReader reader()", "com.twilio.rest.api.v2010.account.incomingphonenumber.TollFreeReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

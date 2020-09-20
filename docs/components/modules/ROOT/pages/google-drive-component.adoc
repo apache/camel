@@ -149,27 +149,31 @@ google-drive:apiName/methodName
 
 There are 12 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *drive-apps* | The apps collection of methods
-| *drive-changes* | The changes collection of methods
-| *drive-channels* | The channels collection of methods
-| *drive-children* | The children collection of methods
-| *drive-comments* | The comments collection of methods
-| *drive-files* | The files collection of methods
-| *drive-parents* | The parents collection of methods
-| *drive-permissions* | The permissions collection of methods
-| *drive-properties* | The properties collection of methods
-| *drive-realtime* | The realtime collection of methods
-| *drive-replies* | The replies collection of methods
-| *drive-revisions* | The revisions collection of methods
+| API Name | Type | Description
+| *drive-apps* | Both | The apps collection of methods
+| *drive-changes* | Both | The changes collection of methods
+| *drive-channels* | Both | The channels collection of methods
+| *drive-children* | Both | The children collection of methods
+| *drive-comments* | Both | The comments collection of methods
+| *drive-files* | Both | The files collection of methods
+| *drive-parents* | Both | The parents collection of methods
+| *drive-permissions* | Both | The permissions collection of methods
+| *drive-properties* | Both | The properties collection of methods
+| *drive-realtime* | Both | The realtime collection of methods
+| *drive-replies* | Both | The replies collection of methods
+| *drive-revisions* | Both | The revisions collection of methods
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: drive-apps
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-apps API has 1 method(s) which is represented by the following method signatures
@@ -215,6 +219,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-changes
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-changes API has 2 method(s) which is represented by the following method signatures
@@ -265,6 +273,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 ==== API: drive-channels
 
+*Both producer and consumer are supported*
+
+
+
 
 The drive-channels API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -309,6 +321,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-children
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-children API has 4 method(s) which is represented by the following method signatures
@@ -369,6 +385,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-comments
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-comments API has 6 method(s) which is represented by the following method signatures
@@ -441,6 +461,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-files
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-files API has 11 method(s) which is represented by the following method signatures
@@ -538,6 +562,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 ==== API: drive-parents
 
+*Both producer and consumer are supported*
+
+
+
 
 The drive-parents API has 4 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -597,6 +625,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-permissions
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-permissions API has 7 method(s) which is represented by the following method signatures
@@ -674,6 +706,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 ==== API: drive-properties
 
+*Both producer and consumer are supported*
+
+
+
 
 The drive-properties API has 6 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -746,6 +782,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 ==== API: drive-realtime
 
+*Both producer and consumer are supported*
+
+
+
 
 The drive-realtime API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -797,6 +837,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-replies
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-replies API has 6 method(s) which is represented by the following method signatures
@@ -875,6 +919,10 @@ would override a `CamelGoogleDrive.myParameterNameHere` header.
 
 
 ==== API: drive-revisions
+
+*Both producer and consumer are supported*
+
+
 
 
 The drive-revisions API has 5 method(s) which is represented by the following method signatures

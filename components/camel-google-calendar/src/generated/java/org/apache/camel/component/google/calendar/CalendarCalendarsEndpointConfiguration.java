@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$Calendars}.
  */
-@ApiParams(apiName = "calendars", description = "The calendars collection of methods",
+@ApiParams(apiName = "calendars", 
+           description = "The calendars collection of methods",
            apiMethods = {@ApiMethod(methodName = "clear", description="Clears a primary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Clear clear(String calendarId)"}), @ApiMethod(methodName = "delete", description="Deletes a secondary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Delete delete(String calendarId)"}), @ApiMethod(methodName = "get", description="Returns metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Get get(String calendarId)"}), @ApiMethod(methodName = "insert", description="Creates a secondary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Insert insert(com.google.api.services.calendar.model.Calendar content)"}), @ApiMethod(methodName = "patch", description="Updates metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Patch patch(String calendarId, com.google.api.services.calendar.model.Calendar content)"}), @ApiMethod(methodName = "update", description="Updates metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Update update(String calendarId, com.google.api.services.calendar.model.Calendar content)"})}, aliases = {})
 @UriParams
 @Configurer

@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountry}.
  */
-@ApiParams(apiName = "available-phone-number-country", description = "",
+@ApiParams(apiName = "available-phone-number-country", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "fetcher", description="Create a AvailablePhoneNumberCountryFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryFetcher fetcher(String pathCountryCode)", "com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryFetcher fetcher(String pathAccountSid, String pathCountryCode)"}), @ApiMethod(methodName = "reader", description="Create a AvailablePhoneNumberCountryReader to execute read", signatures={"com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryReader reader()", "com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

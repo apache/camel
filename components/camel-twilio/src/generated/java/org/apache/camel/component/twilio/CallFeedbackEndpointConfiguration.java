@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.call.Feedback}.
  */
-@ApiParams(apiName = "call-feedback", description = "",
+@ApiParams(apiName = "call-feedback", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a FeedbackCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackCreator creator(String pathCallSid, Integer qualityScore)", "com.twilio.rest.api.v2010.account.call.FeedbackCreator creator(String pathAccountSid, String pathCallSid, Integer qualityScore)"}), @ApiMethod(methodName = "fetcher", description="Create a FeedbackFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackFetcher fetcher(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.FeedbackFetcher fetcher(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "updater", description="Create a FeedbackUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackUpdater updater(String pathCallSid, Integer qualityScore)", "com.twilio.rest.api.v2010.account.call.FeedbackUpdater updater(String pathAccountSid, String pathCallSid, Integer qualityScore)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

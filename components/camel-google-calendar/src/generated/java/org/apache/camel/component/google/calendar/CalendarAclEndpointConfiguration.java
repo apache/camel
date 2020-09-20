@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$Acl}.
  */
-@ApiParams(apiName = "acl", description = "The acl collection of methods",
+@ApiParams(apiName = "acl", 
+           description = "The acl collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes an access control rule", signatures={"com.google.api.services.calendar.Calendar$Acl$Delete delete(String calendarId, String ruleId)"}), @ApiMethod(methodName = "get", description="Returns an access control rule", signatures={"com.google.api.services.calendar.Calendar$Acl$Get get(String calendarId, String ruleId)"}), @ApiMethod(methodName = "insert", description="Creates an access control rule", signatures={"com.google.api.services.calendar.Calendar$Acl$Insert insert(String calendarId, com.google.api.services.calendar.model.AclRule content)"}), @ApiMethod(methodName = "list", description="Returns the rules in the access control list for the calendar", signatures={"com.google.api.services.calendar.Calendar$Acl$List list(String calendarId)"}), @ApiMethod(methodName = "patch", description="Updates an access control rule", signatures={"com.google.api.services.calendar.Calendar$Acl$Patch patch(String calendarId, String ruleId, com.google.api.services.calendar.model.AclRule content)"}), @ApiMethod(methodName = "update", description="Updates an access control rule", signatures={"com.google.api.services.calendar.Calendar$Acl$Update update(String calendarId, String ruleId, com.google.api.services.calendar.model.AclRule content)"}), @ApiMethod(methodName = "watch", description="Watch for changes to ACL resources", signatures={"com.google.api.services.calendar.Calendar$Acl$Watch watch(String calendarId, com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer

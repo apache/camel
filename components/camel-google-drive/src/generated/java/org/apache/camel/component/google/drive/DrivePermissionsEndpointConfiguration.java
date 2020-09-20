@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Permissions}.
  */
-@ApiParams(apiName = "drive-permissions", description = "The permissions collection of methods",
+@ApiParams(apiName = "drive-permissions", 
+           description = "The permissions collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes a permission from a file or Team Drive", signatures={"com.google.api.services.drive.Drive$Permissions$Delete delete(String fileId, String permissionId)"}), @ApiMethod(methodName = "get", description="Gets a permission by ID", signatures={"com.google.api.services.drive.Drive$Permissions$Get get(String fileId, String permissionId)"}), @ApiMethod(methodName = "getIdForEmail", description="Returns the permission ID for an email address", signatures={"com.google.api.services.drive.Drive$Permissions$GetIdForEmail getIdForEmail(String email)"}), @ApiMethod(methodName = "insert", description="Inserts a permission for a file or Team Drive", signatures={"com.google.api.services.drive.Drive$Permissions$Insert insert(String fileId, com.google.api.services.drive.model.Permission content)"}), @ApiMethod(methodName = "list", description="Lists a file's or Team Drive's permissions", signatures={"com.google.api.services.drive.Drive$Permissions$List list(String fileId)"}), @ApiMethod(methodName = "patch", description="Updates a permission using patch semantics", signatures={"com.google.api.services.drive.Drive$Permissions$Patch patch(String fileId, String permissionId, com.google.api.services.drive.model.Permission content)"}), @ApiMethod(methodName = "update", description="Updates a permission", signatures={"com.google.api.services.drive.Drive$Permissions$Update update(String fileId, String permissionId, com.google.api.services.drive.model.Permission content)"})}, aliases = {})
 @UriParams
 @Configurer

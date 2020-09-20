@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.twilio.rest.api.v2010.account.usage.record.Yesterday}.
  */
-@ApiParams(apiName = "usage-record-yesterday", description = "",
+@ApiParams(apiName = "usage-record-yesterday", 
+           description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a YesterdayReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.YesterdayReader reader()", "com.twilio.rest.api.v2010.account.usage.record.YesterdayReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer

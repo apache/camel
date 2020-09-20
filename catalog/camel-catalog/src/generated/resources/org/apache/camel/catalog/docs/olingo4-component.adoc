@@ -157,16 +157,20 @@ olingo4:apiName/methodName
 
 There are 1 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *DEFAULT* | Olingo4 Client Api Interface
+| API Name | Type | Description
+| *DEFAULT* | Both | Olingo4 Client Api Interface
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: DEFAULT
+
+*Both producer and consumer are supported*
+
+
 
 
 The DEFAULT API has 9 method(s) which is represented by the following method signatures

@@ -183,28 +183,32 @@ fhir:apiName/methodName
 
 There are 13 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *capabilities* | API to Fetch the capability statement for the server
-| *create* | API for the create operation, which creates a new resource instance on the server
-| *delete* | API for the delete operation, which performs a logical delete on a server resource
-| *history* | API for the history method
-| *load-page* | API that Loads the previous/next bundle of resources from a paged set, using the link specified in the link type=next tag within the atom bundle
-| *meta* | API for the meta operations, which can be used to get, add and remove tags and other Meta elements from a resource or across the server
-| *operation* | API for extended FHIR operations https://www
-| *patch* | API for the patch operation, which performs a logical patch on a server resource
-| *read* | API method for read operations
-| *search* | API to search for resources matching a given set of criteria
-| *transaction* | API for sending a transaction (collection of resources) to the server to be executed as a single unit
-| *update* | API for the update operation, which performs a logical delete on a server resource
-| *validate* | API for validating resources
+| API Name | Type | Description
+| *capabilities* | Both | API to Fetch the capability statement for the server
+| *create* | Both | API for the create operation, which creates a new resource instance on the server
+| *delete* | Both | API for the delete operation, which performs a logical delete on a server resource
+| *history* | Both | API for the history method
+| *load-page* | Both | API that Loads the previous/next bundle of resources from a paged set, using the link specified in the link type=next tag within the atom bundle
+| *meta* | Both | API for the meta operations, which can be used to get, add and remove tags and other Meta elements from a resource or across the server
+| *operation* | Both | API for extended FHIR operations https://www
+| *patch* | Both | API for the patch operation, which performs a logical patch on a server resource
+| *read* | Both | API method for read operations
+| *search* | Both | API to search for resources matching a given set of criteria
+| *transaction* | Both | API for sending a transaction (collection of resources) to the server to be executed as a single unit
+| *update* | Both | API for the update operation, which performs a logical delete on a server resource
+| *validate* | Both | API for validating resources
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: capabilities
+
+*Both producer and consumer are supported*
+
+
 
 
 The capabilities API has 1 method(s) which is represented by the following method signatures
@@ -251,6 +255,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: create
+
+*Both producer and consumer are supported*
+
+
 
 
 The create API has 1 method(s) which is represented by the following method signatures
@@ -302,6 +310,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: delete
+
+*Both producer and consumer are supported*
+
+
 
 
 The delete API has 3 method(s) which is represented by the following method signatures
@@ -362,6 +374,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: history
+
+*Both producer and consumer are supported*
+
+
 
 
 The history API has 3 method(s) which is represented by the following method signatures
@@ -430,6 +446,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 ==== API: load-page
 
+*Both producer and consumer are supported*
+
+
+
 
 The load-page API has 3 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -486,6 +506,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: meta
+
+*Both producer and consumer are supported*
+
+
 
 
 The meta API has 5 method(s) which is represented by the following method signatures
@@ -556,6 +580,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: operation
+
+*Both producer and consumer are supported*
+
+
 
 
 The operation API has 5 method(s) which is represented by the following method signatures
@@ -645,6 +673,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 ==== API: patch
 
+*Both producer and consumer are supported*
+
+
+
 
 The patch API has 2 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -702,6 +734,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: read
+
+*Both producer and consumer are supported*
+
+
 
 
 The read API has 2 method(s) which is represented by the following method signatures
@@ -786,6 +822,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 ==== API: search
 
+*Both producer and consumer are supported*
+
+
+
 
 The search API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -831,6 +871,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: transaction
+
+*Both producer and consumer are supported*
+
+
 
 
 The transaction API has 2 method(s) which is represented by the following method signatures
@@ -885,6 +929,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: update
+
+*Both producer and consumer are supported*
+
+
 
 
 The update API has 2 method(s) which is represented by the following method signatures
@@ -951,6 +999,10 @@ would override a `CamelFhir.myParameterNameHere` header.
 
 
 ==== API: validate
+
+*Both producer and consumer are supported*
+
+
 
 
 The validate API has 1 method(s) which is represented by the following method signatures
