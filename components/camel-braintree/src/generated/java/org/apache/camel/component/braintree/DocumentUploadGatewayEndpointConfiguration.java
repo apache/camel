@@ -14,7 +14,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.braintreegateway.DocumentUploadGateway}.
  */
-@ApiParams(apiName = "documentUpload", description = "",
+@ApiParams(apiName = "documentUpload", description = "API to upload evidence documents",
            apiMethods = {@ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.DocumentUpload> create(com.braintreegateway.DocumentUploadRequest request)"})}, aliases = {})
 @UriParams
 @Configurer
