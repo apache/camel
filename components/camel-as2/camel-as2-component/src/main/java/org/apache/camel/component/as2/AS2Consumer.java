@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.as2;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -55,11 +54,8 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     private static final String REQUEST_URI_PROPERTY = "requestUri";
 
     private AS2ServerConnection as2ServerConnection;
-
     private AS2ServerManager apiProxy;
-
     private final ApiMethod apiMethod;
-
     private final Map<String, Object> properties;
 
     public AS2Consumer(AS2Endpoint endpoint, Processor processor) {
@@ -67,15 +63,9 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
         apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
 
-        // Add listener property to register this consumer as listener for
-        // events.
         properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
         properties.put(HANDLER_PROPERTY, this);
-
-        as2ServerConnection = endpoint.getAS2ServerConnection();
-
-        apiProxy = new AS2ServerManager(as2ServerConnection);
     }
 
     @Override
@@ -89,8 +79,17 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     }
 
     @Override
+    public AS2Endpoint getEndpoint() {
+        return (AS2Endpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // Add listener property to register this consumer as listener for events
+        as2ServerConnection = getEndpoint().getAS2ServerConnection();
+        apiProxy = new AS2ServerManager(as2ServerConnection);
 
         // invoke the API method to start listening
         ApiMethodHelper.invokeMethod(apiProxy, apiMethod, properties);
@@ -98,16 +97,18 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
     @Override
     protected void doStop() throws Exception {
-        String requestUri = (String) properties.get(REQUEST_URI_PROPERTY);
-        apiProxy.stopListening(requestUri);
+        if (apiProxy != null) {
+            String requestUri = (String) properties.get(REQUEST_URI_PROPERTY);
+            apiProxy.stopListening(requestUri);
+        }
 
         super.doStop();
     }
 
     @Override
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
-            throws HttpException, IOException {
-        Exception exception = null;
+            throws HttpException {
+        Exception exception;
         try {
             if (request instanceof HttpEntityEnclosingRequest) {
                 EntityParser.parseAS2MessageEntity(request);
@@ -133,7 +134,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 exception = exchange.getException();
             }
         } catch (Exception e) {
-            LOG.info("Failed to process AS2 message", e);
+            LOG.warn("Failed to process AS2 message", e);
             exception = e;
         }
 

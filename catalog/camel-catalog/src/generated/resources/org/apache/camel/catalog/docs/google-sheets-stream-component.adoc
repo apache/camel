@@ -259,6 +259,14 @@ The `inBody` parameter overrides message header, i.e. the endpoint parameter `in
 would override a `CamelGoogleSheetsStream.myParameterNameHere` header.
 
 
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use Scheduled Poll Consumer Options to schedule endpoint invocation.
+By default Consumer endpoints that return an array or collection will generate one exchange per element,
+and their routes will be executed once for each exchange. To change this behavior use the property `splitResults=false`
+to return a single exchange for the entire list or array.
+
+
+
 
 ==== API: spreadsheets
 
@@ -316,6 +324,13 @@ Any of the parameters can be provided in either the endpoint URI, or dynamically
 The message header name must be of the format `CamelGoogleSheetsStream.parameter`.
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `CamelGoogleSheetsStream.myParameterNameHere` header.
+
+
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use Scheduled Poll Consumer Options to schedule endpoint invocation.
+By default Consumer endpoints that return an array or collection will generate one exchange per element,
+and their routes will be executed once for each exchange. To change this behavior use the property `splitResults=false`
+to return a single exchange for the entire list or array.
 // endpoint options: END
 
 == More information

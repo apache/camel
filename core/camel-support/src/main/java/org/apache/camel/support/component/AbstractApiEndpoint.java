@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ApiEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
@@ -149,6 +150,15 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
             if (!missing.isEmpty()) {
                 log.debug("Method {} could use one or more properties from {}", methodName, missing);
             }
+        }
+    }
+
+    @Override
+    protected void configureConsumer(Consumer consumer) throws Exception {
+        super.configureConsumer(consumer);
+        if (getConfiguration() instanceof AbstractApiConfiguration && consumer instanceof AbstractApiConsumer) {
+            ((AbstractApiConsumer<?, ?>) consumer)
+                    .setSplitResult(((AbstractApiConfiguration) getConfiguration()).isSplitResult());
         }
     }
 

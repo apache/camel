@@ -90,7 +90,6 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final AS2Consumer consumer = new AS2Consumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }

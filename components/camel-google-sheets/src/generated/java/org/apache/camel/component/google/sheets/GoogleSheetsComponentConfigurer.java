@@ -45,6 +45,8 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "splitresult":
+        case "splitResult": getOrCreateConfiguration(target).setSplitResult(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +64,7 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         answer.put("configuration", org.apache.camel.component.google.sheets.GoogleSheetsConfiguration.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("refreshToken", java.lang.String.class);
+        answer.put("splitResult", boolean.class);
         return answer;
     }
 
@@ -88,6 +91,8 @@ public class GoogleSheetsComponentConfigurer extends PropertyConfigurerSupport i
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
+        case "splitresult":
+        case "splitResult": return getOrCreateConfiguration(target).isSplitResult();
         default: return null;
         }
     }

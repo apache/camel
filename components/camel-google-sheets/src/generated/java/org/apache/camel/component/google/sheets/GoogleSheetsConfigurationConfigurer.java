@@ -33,6 +33,8 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "splitresult":
+        case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -47,6 +49,7 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         answer.put("ClientSecret", java.lang.String.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("RefreshToken", java.lang.String.class);
+        answer.put("SplitResult", boolean.class);
         return answer;
     }
 
@@ -68,6 +71,8 @@ public class GoogleSheetsConfigurationConfigurer extends org.apache.camel.suppor
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "splitresult":
+        case "SplitResult": return target.isSplitResult();
         default: return null;
         }
     }

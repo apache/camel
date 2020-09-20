@@ -22,13 +22,14 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.component.AbstractApiConfiguration;
 
 /**
  * Component configuration for GoogleSheets component.
  */
 @UriParams
 @Configurer
-public class GoogleSheetsConfiguration {
+public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
 
     @UriPath
     @Metadata(required = true)
