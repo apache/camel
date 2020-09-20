@@ -45,6 +45,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The AS2 consumer.
+ *
+ * Implementation detail. This AS2 consumer extends AbstractApiConsumer but its not scheduled polling based. Instead it
+ * uses a HTTP listener to connect to AS2 server and listen for events.
  */
 public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuration> implements HttpRequestHandler {
 
