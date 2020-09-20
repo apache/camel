@@ -66,7 +66,6 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final GoogleSheetsConsumer consumer = new GoogleSheetsConsumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }
