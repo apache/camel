@@ -49,25 +49,6 @@ public interface BraintreeComponentBuilderFactory {
             extends
                 ComponentBuilder<BraintreeComponent> {
         /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: consumer
-         */
-        default BraintreeComponentBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -133,7 +114,6 @@ public interface BraintreeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((BraintreeComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((BraintreeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((BraintreeComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "configuration": ((BraintreeComponent) component).setConfiguration((org.apache.camel.component.braintree.BraintreeConfiguration) value); return true;

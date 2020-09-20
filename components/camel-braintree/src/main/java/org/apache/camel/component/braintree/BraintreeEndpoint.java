@@ -39,6 +39,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * Process payments using Braintree Payments.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
+             producerOnly = true,
              apiPropertyQualifier = "apiName/methodName",
              category = { Category.CLOUD, Category.PAYMENT })
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
@@ -48,8 +49,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     private Object apiProxy;
 
-    public BraintreeEndpoint(
-                             String uri,
+    public BraintreeEndpoint(String uri,
                              BraintreeComponent component,
                              BraintreeApiName apiName,
                              String methodName,
@@ -65,10 +65,7 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        BraintreeConsumer consumer = new BraintreeConsumer(this, processor);
-        // also set consumer.* properties
-        configureConsumer(consumer);
-        return consumer;
+        throw new UnsupportedOperationException("Consumer not supported");
     }
 
     @Override
@@ -91,16 +88,8 @@ public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, Bra
         BraintreeGateway gateway = getComponent().getGateway(this.configuration);
         try {
             Method method = gateway.getClass().getMethod(apiName.getName());
-            if (method != null) {
-                apiProxy = method.invoke(gateway);
-            } else {
-                throw new IllegalArgumentException("Invalid API name " + apiName);
-            }
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+            apiProxy = method.invoke(gateway);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
