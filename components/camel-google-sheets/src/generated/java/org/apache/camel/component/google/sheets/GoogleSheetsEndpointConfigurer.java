@@ -64,6 +64,8 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
+        case "splitresult":
+        case "splitResult": target.getConfiguration().setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "startscheduler":
         case "startScheduler": target.setStartScheduler(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -102,6 +104,7 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         answer.put("scheduler", java.lang.Object.class);
         answer.put("schedulerProperties", java.util.Map.class);
         answer.put("sendEmptyMessageWhenIdle", boolean.class);
+        answer.put("splitResult", boolean.class);
         answer.put("startScheduler", boolean.class);
         answer.put("synchronous", boolean.class);
         answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
@@ -158,6 +161,8 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "schedulerProperties": return target.getSchedulerProperties();
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return target.isSendEmptyMessageWhenIdle();
+        case "splitresult":
+        case "splitResult": return target.getConfiguration().isSplitResult();
         case "startscheduler":
         case "startScheduler": return target.isStartScheduler();
         case "synchronous": return target.isSynchronous();

@@ -47,6 +47,8 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "Range": target.setRange(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "splitresult":
+        case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
         case "SpreadsheetId": target.setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         case "values":
@@ -72,6 +74,7 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         answer.put("MethodName", java.lang.String.class);
         answer.put("Range", java.lang.String.class);
         answer.put("RefreshToken", java.lang.String.class);
+        answer.put("SplitResult", boolean.class);
         answer.put("SpreadsheetId", java.lang.String.class);
         answer.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
         return answer;
@@ -109,6 +112,8 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
         case "Range": return target.getRange();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "splitresult":
+        case "SplitResult": return target.isSplitResult();
         case "spreadsheetid":
         case "SpreadsheetId": return target.getSpreadsheetId();
         case "values":

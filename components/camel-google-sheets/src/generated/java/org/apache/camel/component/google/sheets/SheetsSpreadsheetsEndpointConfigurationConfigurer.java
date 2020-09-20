@@ -39,6 +39,8 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "RefreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "splitresult":
+        case "SplitResult": target.setSplitResult(property(camelContext, boolean.class, value)); return true;
         case "spreadsheetid":
         case "SpreadsheetId": target.setSpreadsheetId(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -58,6 +60,7 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         answer.put("GetSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class);
         answer.put("MethodName", java.lang.String.class);
         answer.put("RefreshToken", java.lang.String.class);
+        answer.put("SplitResult", boolean.class);
         answer.put("SpreadsheetId", java.lang.String.class);
         return answer;
     }
@@ -86,6 +89,8 @@ public class SheetsSpreadsheetsEndpointConfigurationConfigurer extends org.apach
         case "MethodName": return target.getMethodName();
         case "refreshtoken":
         case "RefreshToken": return target.getRefreshToken();
+        case "splitresult":
+        case "SplitResult": return target.isSplitResult();
         case "spreadsheetid":
         case "SpreadsheetId": return target.getSpreadsheetId();
         default: return null;

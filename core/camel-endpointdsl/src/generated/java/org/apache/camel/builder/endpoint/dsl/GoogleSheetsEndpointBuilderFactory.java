@@ -148,6 +148,38 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return this;
         }
         /**
+         * When consumer return an array or collection this will generate one
+         * exchange per element, and their routes will be executed once for each
+         * exchange. Set this value to false to use a single exchange for the
+         * entire list or array.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default GoogleSheetsEndpointConsumerBuilder splitResult(
+                boolean splitResult) {
+            doSetProperty("splitResult", splitResult);
+            return this;
+        }
+        /**
+         * When consumer return an array or collection this will generate one
+         * exchange per element, and their routes will be executed once for each
+         * exchange. Set this value to false to use a single exchange for the
+         * entire list or array.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default GoogleSheetsEndpointConsumerBuilder splitResult(
+                String splitResult) {
+            doSetProperty("splitResult", splitResult);
+            return this;
+        }
+        /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 

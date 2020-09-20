@@ -105,6 +105,21 @@ public interface GoogleSheetsComponentBuilderFactory {
             return this;
         }
         /**
+         * When consumer return an array or collection this will generate one
+         * exchange per element, and their routes will be executed once for each
+         * exchange. Set this value to false to use a single exchange for the
+         * entire list or array.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default GoogleSheetsComponentBuilder splitResult(boolean splitResult) {
+            doSetProperty("splitResult", splitResult);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -221,6 +236,7 @@ public interface GoogleSheetsComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsComponent) component).setConfiguration((org.apache.camel.component.google.sheets.GoogleSheetsConfiguration) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "splitResult": getOrCreateConfiguration((GoogleSheetsComponent) component).setSplitResult((boolean) value); return true;
             case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GoogleSheetsComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;

@@ -97,6 +97,14 @@ The message header name must be of the format `Camel@{util.componentName(scheme)
 The `inBody` parameter overrides message header, i.e. the endpoint parameter `inBody=myParameterNameHere`
 would override a `Camel@{util.componentName(scheme)}.myParameterNameHere` header.
 
+@if{!producerOnly}
+Any of the producer endpoints can be used as a consumer endpoint.
+Consumer endpoints can use Scheduled Poll Consumer Options to schedule endpoint invocation.
+By default consumer endpoints that return an array or collection will generate one exchange per element,
+and their routes will be executed once for each exchange. To change this behavior use the property `splitResults=false`
+to return a single exchange for the entire list or array.
+@end{}
+
 @end{}
 @end{}
 
