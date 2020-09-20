@@ -1116,8 +1116,9 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                 }
                                 if (apiParams != null) {
                                     api.setDescription(apiParams.description());
-                                    api.setConsumerOnly(apiParams.consumerOnly());
-                                    api.setProducerOnly(apiParams.producerOnly());
+                                    // component model takes precedence
+                                    api.setConsumerOnly(componentModel.isConsumerOnly() || apiParams.consumerOnly());
+                                    api.setProducerOnly(componentModel.isProducerOnly() || apiParams.producerOnly());
                                 }
                             } else {
                                 api = op.get();
