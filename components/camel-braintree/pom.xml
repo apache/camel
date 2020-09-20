@@ -116,6 +116,7 @@
                                 </api>
                                 <api>
                                     <apiName>creditCardVerification</apiName>
+                                    <apiDescription>To verify credit card information</apiDescription>
                                     <proxyClass>com.braintreegateway.CreditCardVerificationGateway</proxyClass>
                                     <fromJavasource />
                                 </api>
@@ -138,11 +139,13 @@
                                 </api>
                                 <api>
                                     <apiName>documentUpload</apiName>
+                                    <apiDescription>API to upload evidence documents</apiDescription>
                                     <proxyClass>com.braintreegateway.DocumentUploadGateway</proxyClass>
                                     <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>merchantAccount</apiName>
+                                    <apiDescription>Provides methods to create, find, and update MerchantAccount objects</apiDescription>
                                     <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
                                     <fromJavasource />
                                     <substitutions>
@@ -165,6 +168,7 @@
                                 </api>
                                 <api>
                                     <apiName>paymentMethod</apiName>
+                                    <apiDescription>Provides methods to interact with payments</apiDescription>
                                     <proxyClass>com.braintreegateway.PaymentMethodGateway</proxyClass>
                                     <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
@@ -188,6 +192,7 @@
                                 </api>
                                 <api>
                                     <apiName>paymentMethodNonce</apiName>
+                                    <apiDescription>Provides methods to interact with nonce payments</apiDescription>
                                     <proxyClass>com.braintreegateway.PaymentMethodNonceGateway</proxyClass>
                                     <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
@@ -205,6 +210,7 @@
                                 </api>
                                 <api>
                                     <apiName>settlementBatchSummary</apiName>
+                                    <apiDescription>Provides methods to interact wit settlement summaries</apiDescription>
                                     <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
                                     <fromJavasource />
                                 </api>
@@ -245,6 +251,7 @@
                                 </api>
                                 <api>
                                     <apiName>webhookNotification</apiName>
+                                    <apiDescription>To retrieve notifications via webhooks</apiDescription>
                                     <proxyClass>com.braintreegateway.WebhookNotificationGateway</proxyClass>
                                     <fromJavasource />
                                 </api>

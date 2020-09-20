@@ -100,7 +100,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         List<SignatureModel> data = getSignatureList();
         for (SignatureModel model : data) {
             // we get the api description via the method signature (not ideal but that's the way of the old parser API)
-            this.apiDescription = model.getApiDescription();
+            if (model.getApiDescription() != null) {
+                this.apiDescription = model.getApiDescription();
+            }
             signatures.add(model.getSignature());
             String method = StringHelper.before(model.getSignature(), "(");
             if (method != null && method.contains(" ")) {

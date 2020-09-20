@@ -14,7 +14,7 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link com.braintreegateway.PaymentMethodNonceGateway}.
  */
-@ApiParams(apiName = "paymentMethodNonce", description = "",
+@ApiParams(apiName = "paymentMethodNonce", description = "Provides methods to interact with nonce payments",
            apiMethods = {@ApiMethod(methodName = "create", signatures={"com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> create(String paymentMethodToken)", "com.braintreegateway.Result<com.braintreegateway.PaymentMethodNonce> create(com.braintreegateway.PaymentMethodNonceRequest request)"}), @ApiMethod(methodName = "find", signatures={"com.braintreegateway.PaymentMethodNonce find(String paymentMethodNonce)"})}, aliases = {})
 @UriParams
 @Configurer

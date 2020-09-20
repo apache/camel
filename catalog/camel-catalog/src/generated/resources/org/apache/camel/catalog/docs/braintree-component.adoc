@@ -143,18 +143,18 @@ There are 14 API groups as listed in the table below:
 | API Name | Description
 | *address* | Provides methods to create, delete, find, and update Address objects
 | *clientToken* | Generates client tokens, which are used to authenticate requests made directly on behalf of merchants This class does not need to be instantiated directly
-| *creditCardVerification* | 
+| *creditCardVerification* | To verify credit card information
 | *customer* | Provides methods to create, delete, find, and update Customer objects
 | *dispute* | Provides methods to interact with Dispute objects
-| *documentUpload* | 
-| *merchantAccount* | 
-| *paymentMethod* | 
-| *paymentMethodNonce* | 
+| *documentUpload* | API to upload evidence documents
+| *merchantAccount* | Provides methods to create, find, and update MerchantAccount objects
+| *paymentMethod* | Provides methods to interact with payments
+| *paymentMethodNonce* | Provides methods to interact with nonce payments
 | *report* | Provides methods to interact with reports
-| *settlementBatchSummary* | 
+| *settlementBatchSummary* | Provides methods to interact wit settlement summaries
 | *subscription* | Provides methods to interact with Subscriptions
 | *transaction* | Provides methods to interact with Transactions
-| *webhookNotification* | 
+| *webhookNotification* | To retrieve notifications via webhooks
 |===
 
 Each API is documented in the following sections to come.
