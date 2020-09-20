@@ -43,16 +43,24 @@ The API name and API method is located in the endpoint URI as the @{apiSyntax} p
 
 There are @{apiOptions.size} API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
-| API Name | Description
-@foreach{api : apiOptions}| *@{api.name}* | @{api.description}
+| API Name | Type | Description
+@foreach{api : apiOptions}| *@{api.name}* | @{util.producerOrConsumer(api)} | @{api.description}
 @end{}|===
 
 Each API is documented in the following sections to come.
 
 @foreach{api : apiOptions}
 ==== API: @{api.name}
+@if{api.consumerOnly}
+*Only consumer is supported*
+@elseif{api.producerOnly}
+*Only producer is supported*
+@else{}
+*Both producer and consumer are supported*
+@end{}
+
 @if{api.methods.isEmpty()}
 The @{api.name} has no API methods.
 @else{}

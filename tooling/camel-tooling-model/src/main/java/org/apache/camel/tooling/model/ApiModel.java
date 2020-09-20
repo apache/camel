@@ -25,6 +25,8 @@ public final class ApiModel {
 
     private String name;
     private String description;
+    private boolean consumerOnly;
+    private boolean producerOnly;
     private final List<String> aliases = new ArrayList<>();
     // lets sort api methods A..Z so they are always in the same order
     private final Collection<ApiMethodModel> methods = new TreeSet<>(Comparators.apiMethodModelModelComparator());
@@ -43,6 +45,22 @@ public final class ApiModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isConsumerOnly() {
+        return consumerOnly;
+    }
+
+    public void setConsumerOnly(boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
+    }
+
+    public boolean isProducerOnly() {
+        return producerOnly;
+    }
+
+    public void setProducerOnly(boolean producerOnly) {
+        this.producerOnly = producerOnly;
     }
 
     public List<String> getAliases() {

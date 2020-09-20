@@ -150,25 +150,29 @@ box:apiName/methodName
 
 There are 10 API names as listed in the table below:
 
-[width="100%",cols="2,8",options="header"]
+[width="100%",cols="2,1,7",options="header"]
 |===
-| API Name | Description
-| *collaborations* | Provides operations to manage Box collaborations
-| *comments* | Provides operations to manage Box comments
-| *event-logs* | Provides operations to read Box enterprise (admin) event logs
-| *events* | Provides operations to manage Box events
-| *files* | Provides operations to manage Box files
-| *folders* | Provides operations to manage Box folders
-| *groups* | Provides operations to manage Box groups
-| *search* | Provides operations to manage Box searches
-| *tasks* | Provides operations to manage Box tasks
-| *users* | Provides operations to manage Box users
+| API Name | Type | Description
+| *collaborations* | Producer | Provides operations to manage Box collaborations
+| *comments* | Producer | Provides operations to manage Box comments
+| *event-logs* | Producer | Provides operations to read Box enterprise (admin) event logs
+| *events* | Consumer | Provides operations to manage Box events
+| *files* | Producer | Provides operations to manage Box files
+| *folders* | Producer | Provides operations to manage Box folders
+| *groups* | Producer | Provides operations to manage Box groups
+| *search* | Producer | Provides operations to manage Box searches
+| *tasks* | Producer | Provides operations to manage Box tasks
+| *users* | Producer | Provides operations to manage Box users
 |===
 
 Each API is documented in the following sections to come.
 
 
 ==== API: collaborations
+
+*Only producer is supported*
+
+
 
 
 The collaborations API has 6 method(s) which is represented by the following method signatures
@@ -240,6 +244,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: comments
 
+*Only producer is supported*
+
+
+
 
 The comments API has 6 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -308,6 +316,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: event-logs
 
+*Only producer is supported*
+
+
+
 
 The event-logs API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -356,6 +368,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: events
 
+*Only consumer is supported*
+
+
+
 
 The events API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -400,6 +416,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 ==== API: files
+
+*Only producer is supported*
+
+
 
 
 The files API has 22 method(s) which is represented by the following method signatures
@@ -571,6 +591,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: folders
 
+*Only producer is supported*
+
+
+
 
 The folders API has 10 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -669,6 +693,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: groups
 
+*Only producer is supported*
+
+
+
 
 The groups API has 9 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -755,6 +783,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 ==== API: search
 
+*Only producer is supported*
+
+
+
 
 The search API has 1 method(s) which is represented by the following method signatures
 (an API method may have multiple signatures due to overloading):
@@ -800,6 +832,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 ==== API: tasks
+
+*Only producer is supported*
+
+
 
 
 The tasks API has 9 method(s) which is represented by the following method signatures
@@ -882,6 +918,10 @@ would override a `CamelBox.myParameterNameHere` header.
 
 
 ==== API: users
+
+*Only producer is supported*
+
+
 
 
 The users API has 10 method(s) which is represented by the following method signatures

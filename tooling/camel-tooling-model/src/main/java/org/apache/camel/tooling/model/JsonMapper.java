@@ -107,6 +107,8 @@ public final class JsonMapper {
                 ApiModel am = new ApiModel();
                 am.setName(name);
                 am.setDescription(mp.getStringOrDefault("description", ""));
+                am.setConsumerOnly(mp.getBooleanOrDefault("consumerOnly", false));
+                am.setProducerOnly(mp.getBooleanOrDefault("producerOnly", false));
                 model.getApiOptions().add(am);
                 Collection<String> aliases = mp.getCollection("aliases");
                 if (aliases != null && !aliases.isEmpty()) {
@@ -448,21 +450,29 @@ public final class JsonMapper {
         model.forEach(a -> {
             JsonObject json = new JsonObject();
             root.put(a.getName(), json);
-            if (!options && a.getDescription() != null) {
-                json.put("description", a.getDescription());
-            }
-            if (!options && !a.getAliases().isEmpty()) {
-                json.put("aliases", new JsonArray(a.getAliases()));
+            if (!options) {
+                // lets be less verbose and only output these details for the api summary and not when we have all options included
+                json.put("consumerOnly", a.isConsumerOnly());
+                json.put("producerOnly", a.isProducerOnly());
+                if (a.getDescription() != null) {
+                    json.put("description", a.getDescription());
+                }
+                if (!a.getAliases().isEmpty()) {
+                    json.put("aliases", new JsonArray(a.getAliases()));
+                }
             }
             Map<String, JsonObject> methods = new TreeMap<>();
             json.put("methods", methods);
             a.getMethods().forEach(m -> {
                 JsonObject mJson = new JsonObject();
-                if (!options && m.getDescription() != null) {
-                    mJson.put("description", m.getDescription());
-                }
-                if (!options && !m.getSignatures().isEmpty()) {
-                    mJson.put("signatures", new JsonArray(m.getSignatures()));
+                if (!options) {
+                    // lets be less verbose and only output these details for the api summary and not when we have all options included
+                    if (m.getDescription() != null) {
+                        mJson.put("description", m.getDescription());
+                    }
+                    if (!m.getSignatures().isEmpty()) {
+                        mJson.put("signatures", new JsonArray(m.getSignatures()));
+                    }
                 }
                 if (options) {
                     mJson.put("properties", asJsonObject(m.getOptions()));

@@ -59,9 +59,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     // cached connection
     private BoxAPIConnection boxConnection;
-
     private Object apiProxy;
-
     private boolean boxConnectionShared;
 
     public BoxEndpoint(String uri, BoxComponent component, BoxApiName apiName, String methodName,
@@ -111,8 +109,6 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     @Override
     protected void afterConfigureProperties() {
-        // create connection eagerly, a good way to validate configuration
-        createBoxConnection();
     }
 
     @Override
@@ -122,6 +118,12 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             createApiProxy(args);
         }
         return apiProxy;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        createBoxConnection();
     }
 
     private void createBoxConnection() {

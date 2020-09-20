@@ -1116,6 +1116,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                 }
                                 if (apiParams != null) {
                                     api.setDescription(apiParams.description());
+                                    api.setConsumerOnly(apiParams.consumerOnly());
+                                    api.setProducerOnly(apiParams.producerOnly());
                                 }
                             } else {
                                 api = op.get();
@@ -1148,6 +1150,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                                 apiMethod.addApiOptionModel(copy);
                                 // the option description is stored on @ApiMethod
                                 copy.setDescription(method.description());
+                                // whether we are consumer or producer only
+                                group = EndpointHelper.labelAsGroupName(copy.getLabel(), api.isConsumerOnly(),
+                                        api.isProducerOnly());
+                                copy.setGroup(group);
                                 copy.setOptional(apiParam.optional());
                             }
                         } else {

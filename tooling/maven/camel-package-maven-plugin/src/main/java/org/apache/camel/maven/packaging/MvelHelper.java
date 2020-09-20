@@ -69,4 +69,14 @@ public final class MvelHelper {
         // empty if no alias
         return "";
     }
+
+    public static String producerOrConsumer(ApiModel api) {
+        if (api.isConsumerOnly()) {
+            return "Consumer";
+        } else if (api.isProducerOnly()) {
+            return "Producer";
+        }
+        return "Both";
+    }
+
 }

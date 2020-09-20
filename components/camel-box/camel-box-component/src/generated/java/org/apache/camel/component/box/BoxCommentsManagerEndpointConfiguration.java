@@ -14,7 +14,8 @@ import org.apache.camel.spi.UriParams;
 /**
  * Camel endpoint configuration for {@link org.apache.camel.component.box.api.BoxCommentsManager}.
  */
-@ApiParams(apiName = "comments", description = "Provides operations to manage Box comments",
+@ApiParams(apiName = "comments", producerOnly = true,
+           description = "Provides operations to manage Box comments",
            apiMethods = {@ApiMethod(methodName = "addFileComment", description="Add comment to file", signatures={"com.box.sdk.BoxFile addFileComment(String fileId, String message)"}), @ApiMethod(methodName = "changeCommentMessage", description="Change comment message", signatures={"com.box.sdk.BoxComment changeCommentMessage(String commentId, String message)"}), @ApiMethod(methodName = "deleteComment", description="Delete comment", signatures={"void deleteComment(String commentId)"}), @ApiMethod(methodName = "getCommentInfo", description="Get comment information", signatures={"com.box.sdk.BoxComment$Info getCommentInfo(String commentId)"}), @ApiMethod(methodName = "getFileComments", description="Get a list of any comments on this file", signatures={"java.util.List<com.box.sdk.BoxComment$Info> getFileComments(String fileId)"}), @ApiMethod(methodName = "replyToComment", description="Reply to a comment", signatures={"com.box.sdk.BoxComment replyToComment(String commentId, String message)"})}, aliases = {"addFileComment=add", "changeCommentMessage=updateMessage", "deleteComment=delete", "getCommentInfo=info", "getFileComments=comments", "replyToComment=reply"})
 @UriParams
 @Configurer

@@ -27,25 +27,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class ApiProxy {
 
     private String apiName;
-
     private String apiDescription;
-
+    private boolean consumerOnly;
+    private boolean producerOnly;
     private String proxyClass;
-
     private FromJavasource fromJavasource;
-
     private Substitution[] substitutions = new Substitution[0];
-
     private String excludeConfigNames;
-
     private String excludeConfigTypes;
-
     private ExtraOption[] extraOptions;
-
     private String[] nullableOptions;
-
     private String classPrefix;
-
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public String getApiName() {
@@ -62,6 +54,22 @@ public class ApiProxy {
 
     public void setApiDescription(String apiDescription) {
         this.apiDescription = apiDescription;
+    }
+
+    public boolean isConsumerOnly() {
+        return consumerOnly;
+    }
+
+    public void setConsumerOnly(boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
+    }
+
+    public boolean isProducerOnly() {
+        return producerOnly;
+    }
+
+    public void setProducerOnly(boolean producerOnly) {
+        this.producerOnly = producerOnly;
     }
 
     public String getProxyClass() {
