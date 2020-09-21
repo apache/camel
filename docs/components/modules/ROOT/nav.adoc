@@ -49,6 +49,7 @@
 *** xref:aws2-ec2-component.adoc[AWS 2 Elastic Compute Cloud (EC2)]
 *** xref:aws2-ecs-component.adoc[AWS 2 Elastic Container Service (ECS)]
 *** xref:aws2-eks-component.adoc[AWS 2 Elastic Kubernetes Service (EKS)]
+*** xref:aws2-eventbridge-component.adoc[AWS 2 Eventbridge]
 *** xref:aws2-iam-component.adoc[AWS 2 Identity and Access Management (IAM)]
 *** xref:aws2-kms-component.adoc[AWS 2 Key Management Service (KMS)]
 *** xref:aws2-kinesis-component.adoc[AWS 2 Kinesis]
