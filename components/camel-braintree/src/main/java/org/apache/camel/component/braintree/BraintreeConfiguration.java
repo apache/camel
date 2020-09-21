@@ -46,7 +46,10 @@ public class BraintreeConfiguration {
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;
-    @UriPath
+    @UriPath(enums = "accept,addFileEvidence,addTextEvidence,cancel,cancelRelease,cloneTransaction,create,createForCurrency"
+                     + ",credit,delete,fetchMerchantAccounts,finalize,find,generate,grant,holdInEscrow,parse,refund,releaseFromEscrow"
+                     + ",removeEvidence,retryCharge,revoke,sale,search,submitForPartialSettlement,submitForSettlement,transactionLevelFees"
+                     + ",update,updateDetails,verify,voidTransaction")
     @Metadata(required = true)
     private String methodName;
     @UriParam
