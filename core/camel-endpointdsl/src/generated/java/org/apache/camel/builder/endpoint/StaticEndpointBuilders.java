@@ -2959,6 +2959,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
+     * There are 31 enums and the value can be one of: accept, addFileEvidence,
+     * addTextEvidence, cancel, cancelRelease, cloneTransaction, create,
+     * createForCurrency, credit, delete, fetchMerchantAccounts, finalize, find,
+     * generate, grant, holdInEscrow, parse, refund, releaseFromEscrow,
+     * removeEvidence, retryCharge, revoke, sale, search,
+     * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
+     * update, updateDetails, verify, voidTransaction
      * 
      * @param path apiName/methodName
      */
@@ -2986,6 +2993,13 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
+     * There are 31 enums and the value can be one of: accept, addFileEvidence,
+     * addTextEvidence, cancel, cancelRelease, cloneTransaction, create,
+     * createForCurrency, credit, delete, fetchMerchantAccounts, finalize, find,
+     * generate, grant, holdInEscrow, parse, refund, releaseFromEscrow,
+     * removeEvidence, retryCharge, revoke, sale, search,
+     * submitForPartialSettlement, submitForSettlement, transactionLevelFees,
+     * update, updateDetails, verify, voidTransaction
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
