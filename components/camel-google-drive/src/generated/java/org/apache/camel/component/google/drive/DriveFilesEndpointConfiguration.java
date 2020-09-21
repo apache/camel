@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Files}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Files}.
  */
 @ApiParams(apiName = "drive-files", 
            description = "The files collection of methods",

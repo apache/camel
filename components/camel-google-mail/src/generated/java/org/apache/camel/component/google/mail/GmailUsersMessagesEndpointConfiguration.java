@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.gmail.Gmail$Users$Messages}.
+ * Camel endpoint configuration for {@link com.google.api.services.gmail.Gmail.Users.Messages}.
  */
 @ApiParams(apiName = "messages", 
            description = "The messages collection of methods",

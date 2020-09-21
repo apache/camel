@@ -34,38 +34,27 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
 
     @UriPath
     private String index;
-
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam
     private String query;
-
     @UriParam(defaultValue = "10")
     private int maxResults = 10;
-
     @UriParam(defaultValue = "primary")
     private String calendarId = "primary";
-
     @UriParam(defaultValue = "true")
     private boolean consumeFromNow = true;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean considerLastUpdate;
 
     public String getClientId() {

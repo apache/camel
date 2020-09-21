@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Children}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Children}.
  */
 @ApiParams(apiName = "drive-children", 
            description = "The children collection of methods",

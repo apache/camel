@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.gmail.Gmail$Users$Threads}.
+ * Camel endpoint configuration for {@link com.google.api.services.gmail.Gmail.Users.Threads}.
  */
 @ApiParams(apiName = "threads", 
            description = "The threads collection of methods",

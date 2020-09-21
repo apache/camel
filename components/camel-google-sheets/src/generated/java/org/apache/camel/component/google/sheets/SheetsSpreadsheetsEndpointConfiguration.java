@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.sheets.v4.Sheets$Spreadsheets}.
+ * Camel endpoint configuration for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets}.
  */
 @ApiParams(apiName = "spreadsheets", 
            description = "The spreadsheets collection of methods",

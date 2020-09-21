@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar$Events}.
+ * Camel endpoint configuration for {@link com.google.api.services.calendar.Calendar.Events}.
  */
 @ApiParams(apiName = "events", 
            description = "The events collection of methods",

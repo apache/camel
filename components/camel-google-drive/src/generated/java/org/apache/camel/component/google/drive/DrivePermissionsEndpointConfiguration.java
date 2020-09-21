@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Permissions}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Permissions}.
  */
 @ApiParams(apiName = "drive-permissions", 
            description = "The permissions collection of methods",

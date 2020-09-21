@@ -291,6 +291,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         VelocityContext context = new VelocityContext();
         context.put("models", models);
         context.put("proxyType", getProxyType());
+        context.put("proxyTypeLink", getProxyType().getName().replace('$', '.'));
         context.put("helper", this);
         return context;
     }
