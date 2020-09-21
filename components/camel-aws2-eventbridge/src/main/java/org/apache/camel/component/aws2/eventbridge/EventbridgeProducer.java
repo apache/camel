@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.eventbridge;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Collection;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -35,6 +36,9 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
+import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
+import software.amazon.awssdk.services.eventbridge.model.Target;
 
 /**
  * A Producer which sends messages to the Amazon Eventbridge Service SDK v2 <a href="http://aws.amazon.com/sts/">AWS
@@ -55,6 +59,9 @@ public class EventbridgeProducer extends DefaultProducer {
         switch (determineOperation(exchange)) {
             case putRule:
                 putRule(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case putTargets:
+            	putTargets(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -122,41 +129,43 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
-    //    private void putTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
-    //        if (getConfiguration().isPojoRequest()) {
-    //            Object payload = exchange.getIn().getMandatoryBody();
-    //            if (payload instanceof PutTargetsRequest) {
-    //                PutTargetsResponse result;
-    //                try {
-    //                    result = eventbridgeClient.putTargets((PutTargetsRequest) payload);
-    //                } catch (AwsServiceException ase) {
-    //                    LOG.trace("PutTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
-    //                    throw ase;
-    //                }
-    //                Message message = getMessageForResponse(exchange);
-    //                message.setBody(result);
-    //            }
-    //        } else {
-    //            Put.Builder builder = PutRuleRequest.builder();
-    //            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
-    //                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
-    //                builder.name(ruleName);
-    //            }
-    //            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
-    //                String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
-    //                builder.eventPattern(eventPattern);
-    //            }
-    //            PutRuleResponse result;
-    //            try {
-    //                result = eventbridgeClient.putTargets(builder.build());
-    //            } catch (AwsServiceException ase) {
-    //                LOG.trace("Put Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
-    //                throw ase;
-    //            }
-    //            Message message = getMessageForResponse(exchange);
-    //            message.setBody(result);
-    //        }
-    //    }
+        private void putTargets(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+            if (getConfiguration().isPojoRequest()) {
+                Object payload = exchange.getIn().getMandatoryBody();
+                if (payload instanceof PutTargetsRequest) {
+                    PutTargetsResponse result;
+                    try {
+                        result = eventbridgeClient.putTargets((PutTargetsRequest) payload);
+                    } catch (AwsServiceException ase) {
+                        LOG.trace("PutTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                        throw ase;
+                    }
+                    Message message = getMessageForResponse(exchange);
+                    message.setBody(result);
+                }
+            } else {
+                PutTargetsRequest.Builder builder = PutTargetsRequest.builder();
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
+                    String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
+                    builder.rule(ruleName);
+                }
+                if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.TARGETS))) {
+                    Collection<Target> targets = exchange.getIn().getHeader(EventbridgeConstants.TARGETS, Collection.class);
+                    builder.targets(targets);
+                } else {
+                    throw new IllegalArgumentException("At least one targets must be specified");
+                }
+                PutTargetsResponse result;
+                try {
+                    result = eventbridgeClient.putTargets(builder.build());
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Put Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        }
 
     @Override
     public EventbridgeEndpoint getEndpoint() {
