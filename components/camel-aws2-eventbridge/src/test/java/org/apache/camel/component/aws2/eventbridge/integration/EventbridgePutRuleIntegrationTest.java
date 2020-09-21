@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.eventbridge.integration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -31,6 +34,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.Target;
 
 @Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
@@ -39,7 +43,7 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
     EventBridgeClient client
             = EventBridgeClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("xxxx", "yyy")))
+                            AwsBasicCredentials.create("xxxx", "yyyy")))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject
@@ -47,16 +51,32 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+    
+    @EndpointInject("mock:result1")
+    private MockEndpoint result1;
 
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
+        result1.expectedMessageCount(1);
 
         template.send("direct:evs", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+            }
+        });
+        
+        template.send("direct:evs-targets", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test").build();
+                List<Target> targets = new ArrayList<Target>();
+                targets.add(target);
+                exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
         assertMockEndpointsSatisfied();
@@ -69,9 +89,9 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
-
+                String target = "aws2-eventbridge://test?operation=putTargets";
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
-
+                from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
             }
         };
     }
