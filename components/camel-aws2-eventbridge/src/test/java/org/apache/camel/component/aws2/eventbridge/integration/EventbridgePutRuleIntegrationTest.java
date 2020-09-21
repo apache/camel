@@ -51,7 +51,7 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @EndpointInject("mock:result1")
     private MockEndpoint result1;
 
@@ -67,13 +67,14 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
             }
         });
-        
+
         template.send("direct:evs-targets", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test").build();
+                Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                        .build();
                 List<Target> targets = new ArrayList<Target>();
                 targets.add(target);
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
@@ -88,7 +89,8 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
+                String awsEndpoint
+                        = "aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
                 String target = "aws2-eventbridge://test?operation=putTargets";
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
                 from("direct:evs-targets").to(target).log("${body}").to("mock:result1");

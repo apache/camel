@@ -402,7 +402,7 @@ public interface EventbridgeEndpointBuilderFactory {
      */
     enum EvenbridgeOperations {
         putRule,
-        putTarget;
+        putTargets;
     }
 
     /**
