@@ -419,7 +419,7 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     /**
-     * @return a list of properties that take precedence and will use first, if a property exist (can't be null).
+     * @return a list of properties that take precedence and will use first, if a property exists (can't be null).
      */
     public Properties getOverrideProperties() {
         if (overrideProperties == null) {
@@ -430,7 +430,7 @@ public class PropertiesComponent extends ServiceSupport
     }
 
     /**
-     * Sets a special list of override properties that take precedence and will use first, if a property exist.
+     * Sets a special list of override properties that take precedence and will use first, if a property exists.
      */
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
