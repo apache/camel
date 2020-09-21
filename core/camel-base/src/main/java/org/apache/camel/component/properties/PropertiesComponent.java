@@ -439,7 +439,7 @@ public class PropertiesComponent extends ServiceSupport
 
     /**
      * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
-     * exist.
+     * exists.
      */
     @Override
     public void setLocalProperties(Properties localProperties) {
