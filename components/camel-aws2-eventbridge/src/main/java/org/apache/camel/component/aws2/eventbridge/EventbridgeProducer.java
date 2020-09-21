@@ -16,13 +16,19 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -75,7 +81,7 @@ public class EventbridgeProducer extends DefaultProducer {
         return eventbridgeProducerToString;
     }
 
-    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException, IOException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof PutRuleRequest) {
@@ -98,6 +104,11 @@ public class EventbridgeProducer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
                 String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
                 builder.eventPattern(eventPattern);
+            } else {
+                InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
+                        getConfiguration().getEventPatternFile());
+                String eventPattern = IOUtils.toString(s, Charset.defaultCharset());
+                builder.eventPattern(eventPattern);
             }
             PutRuleResponse result;
             try {
@@ -114,19 +125,19 @@ public class EventbridgeProducer extends DefaultProducer {
     //    private void putTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
     //        if (getConfiguration().isPojoRequest()) {
     //            Object payload = exchange.getIn().getMandatoryBody();
-    //            if (payload instanceof PutRuleRequest) {
-    //                PutRuleResponse result;
+    //            if (payload instanceof PutTargetsRequest) {
+    //                PutTargetsResponse result;
     //                try {
-    //                    result = eventbridgeClient.putRule((PutRuleRequest) payload);
+    //                    result = eventbridgeClient.putTargets((PutTargetsRequest) payload);
     //                } catch (AwsServiceException ase) {
-    //                    LOG.trace("PutRule command returned the error code {}", ase.awsErrorDetails().errorCode());
+    //                    LOG.trace("PutTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
     //                    throw ase;
     //                }
     //                Message message = getMessageForResponse(exchange);
     //                message.setBody(result);
     //            }
     //        } else {
-    //            PutRuleRequest.Builder builder = PutRuleRequest.builder();
+    //            Put.Builder builder = PutRuleRequest.builder();
     //            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
     //                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
     //                builder.name(ruleName);

@@ -54,6 +54,8 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean trustAllCertificates;
     @UriParam(label = "common", defaultValue = "true")
     private boolean autoDiscoverClient = true;
+    @UriParam
+    private String eventPatternFile;
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
@@ -178,6 +180,16 @@ public class EventbridgeConfiguration implements Cloneable {
         this.autoDiscoverClient = autoDiscoverClient;
     }
 
+    public String getEventPatternFile() {
+        return eventPatternFile;
+    }
+
+    /**
+     * EventPattern File
+     */
+    public void setEventPatternFile(String eventPatternFile) {
+        this.eventPatternFile = eventPatternFile;
+    }
     // *************************************************
     //
     // *************************************************

@@ -33,6 +33,8 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration.class, value)); return true;
+        case "eventpatternfile":
+        case "eventPatternFile": getOrCreateConfiguration(target).setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
         case "eventbridgeClient": getOrCreateConfiguration(target).setEventbridgeClient(property(camelContext, software.amazon.awssdk.services.eventbridge.EventBridgeClient.class, value)); return true;
         case "lazystartproducer":
@@ -62,6 +64,7 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("configuration", org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration.class);
+        answer.put("eventPatternFile", java.lang.String.class);
         answer.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations.class);
@@ -86,6 +89,8 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();
+        case "eventpatternfile":
+        case "eventPatternFile": return getOrCreateConfiguration(target).getEventPatternFile();
         case "eventbridgeclient":
         case "eventbridgeClient": return getOrCreateConfiguration(target).getEventbridgeClient();
         case "lazystartproducer":
