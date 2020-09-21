@@ -72,13 +72,14 @@ braintree:apiName/methodName
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *apiName* | *Required* What kind of operation to perform. There are 17 enums and the value can be one of: ADD_ON, ADDRESS, CLIENT_TOKEN, CREDIT_CARD_VERIFICATION, CUSTOMER, DISCOUNT, DISPUTE, DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION |  | BraintreeApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
 |===
 
 

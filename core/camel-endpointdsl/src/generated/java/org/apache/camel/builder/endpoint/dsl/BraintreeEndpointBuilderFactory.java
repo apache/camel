@@ -347,6 +347,9 @@ public interface BraintreeEndpointBuilderFactory {
          * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
          * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
          * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
+         * 
          * @param path apiName/methodName
          */
         default BraintreeEndpointBuilder braintree(String path) {
@@ -369,6 +372,9 @@ public interface BraintreeEndpointBuilderFactory {
          * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD,
          * PAYMENT_METHOD_NONCE, PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY,
          * SUBSCRIPTION, TRANSACTION, WEBHOOK_NOTIFICATION
+         * 
+         * Path parameter: methodName (required)
+         * What sub operation to use for the selected operation
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
