@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts;
+package org.apache.camel.component.aws2.eventbridge;
 
 import java.net.URI;
 
@@ -71,14 +71,15 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        eventbridgeClient = configuration.getEventbridgeClient() != null ? configuration.getEventbridgeClient() : createStsClient();
+        eventbridgeClient
+                = configuration.getEventbridgeClient() != null ? configuration.getEventbridgeClient() : createStsClient();
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEventbridgeClient())) {
             if (eventbridgeClient != null) {
-            	eventbridgeClient.close();
+                eventbridgeClient.close();
             }
         }
         super.doStop();
@@ -93,8 +94,8 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
     }
 
     EventBridgeClient createStsClient() {
-    	EventBridgeClient client = null;
-    	EventBridgeClientBuilder clientBuilder = EventBridgeClient.builder();
+        EventBridgeClient client = null;
+        EventBridgeClientBuilder clientBuilder = EventBridgeClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
         ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;
