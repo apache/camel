@@ -960,6 +960,16 @@ public abstract class AbstractCamelCatalog {
         String longKey = CatalogHelper.before(line, "=");
         String key = longKey;
         String value = CatalogHelper.after(line, "=");
+        // trim values
+        if (longKey != null) {
+            longKey = longKey.trim();
+        }
+        if (key != null) {
+            key = key.trim();
+        }
+        if (value != null) {
+            value = value.trim();
+        }
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
         boolean accept = acceptConfigurationPropertyKey(key);
