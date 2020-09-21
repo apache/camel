@@ -176,7 +176,6 @@ public abstract class AbstractCamelCatalog {
         model.getEndpointPathOptions().forEach(o -> rows.put(o.getName(), o));
 
         if (model.isApi()) {
-            // TODO: combo of apiName/methodName
             String[] apiSyntax = StringHelper.splitWords(model.getApiSyntax());
             String key = properties.get(apiSyntax[0]);
             String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
@@ -822,9 +821,9 @@ public abstract class AbstractCamelCatalog {
             sb.append(syntax);
 
             if (!copy.isEmpty()) {
-                boolean hasQuestionmark = sb.toString().contains("?");
+                boolean hasQuestionMark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
-                sb.append(hasQuestionmark ? ampersand : '?');
+                sb.append(hasQuestionMark ? ampersand : '?');
                 String query = URISupport.createQueryString(copy, ampersand, encode);
                 sb.append(query);
             }
