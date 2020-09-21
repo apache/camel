@@ -1121,6 +1121,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+     * 
+     * Syntax: <code>aws2-eventbridge:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
+    }
+    /**
+     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+     * 
+     * Syntax: <code>aws2-eventbridge:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     */
+    public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 

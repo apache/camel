@@ -538,6 +538,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Aws2EksComponentBuilderFactory.aws2Eks();
     }
     /**
+     * AWS 2 Eventbridge (camel-aws2-eventbridge)
+     * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
+     * 
+     * Category: cloud,management
+     * Since: 3.6
+     * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
+     */
+    static org.apache.camel.builder.component.dsl.Aws2EventbridgeComponentBuilderFactory.Aws2EventbridgeComponentBuilder aws2Eventbridge() {
+        return org.apache.camel.builder.component.dsl.Aws2EventbridgeComponentBuilderFactory.aws2Eventbridge();
+    }
+    /**
      * AWS 2 Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances using AWS SDK version 2.x.
      * 

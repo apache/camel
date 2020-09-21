@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts;
+package org.apache.camel.component.aws2.eventbridge;
 
-public enum EvenbridgeOperations {
-
-    putRule
+/**
+ * Constants used in Camel AWS2 STS module
+ */
+public interface EventbridgeConstants {
+    String OPERATION = "CamelAwsEventbridgeOperation";
+    String RULE_NAME = "CamelAwsEventbridgeRuleName";
+    String EVENT_PATTERN = "CamelAwsEventbridgeEventPattern";
 }

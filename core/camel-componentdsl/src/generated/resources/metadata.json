@@ -576,6 +576,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "Aws2EventbridgeComponentBuilderFactory": {
+    "kind": "component",
+    "name": "aws2-eventbridge",
+    "title": "AWS 2 Eventbridge",
+    "description": "Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.",
+    "deprecated": false,
+    "firstVersion": "3.6.0",
+    "label": "cloud,management",
+    "javaType": "org.apache.camel.component.aws2.sts.EventbridgeComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws2-eventbridge",
+    "version": "3.6.0-SNAPSHOT",
+    "scheme": "aws2-eventbridge",
+    "extendsScheme": "",
+    "syntax": "aws2-eventbridge:label",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false
+  },
   "Aws2IamComponentBuilderFactory": {
     "kind": "component",
     "name": "aws2-iam",

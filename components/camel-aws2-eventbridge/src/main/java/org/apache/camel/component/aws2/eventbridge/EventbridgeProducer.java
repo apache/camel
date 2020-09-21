@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.sts;
+package org.apache.camel.component.aws2.eventbridge;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.component.aws2.eks.EKS2Constants;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.services.eks.model.ListClustersRequest;
-import software.amazon.awssdk.services.eks.model.ListClustersResponse;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 
 /**
- * A Producer which sends messages to the Amazon Eventbridge Service SDK v2 <a href="http://aws.amazon.com/sts/">AWS STS</a>
+ * A Producer which sends messages to the Amazon Eventbridge Service SDK v2 <a href="http://aws.amazon.com/sts/">AWS
+ * STS</a>
  */
 public class EventbridgeProducer extends DefaultProducer {
 
@@ -57,7 +55,7 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
-	private EvenbridgeOperations determineOperation(Exchange exchange) {
+    private EvenbridgeOperations determineOperation(Exchange exchange) {
         EvenbridgeOperations operation = exchange.getIn().getHeader(EventbridgeConstants.OPERATION, EvenbridgeOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
@@ -72,12 +70,12 @@ public class EventbridgeProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (eventbridgeProducerToString == null) {
-        	eventbridgeProducerToString = "EventbridgeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            eventbridgeProducerToString = "EventbridgeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return eventbridgeProducerToString;
     }
-    
-    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) {
+
+    private void putRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof PutRuleRequest) {
@@ -97,17 +95,21 @@ public class EventbridgeProducer extends DefaultProducer {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.name(ruleName);
             }
-            ListClustersResponse result;
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
+                String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
+                builder.eventPattern(eventPattern);
+            }
+            PutRuleResponse result;
             try {
-                result = eksClient.listClusters(builder.build());
+                result = eventbridgeClient.putRule(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Put Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
-	}
+    }
 
     @Override
     public EventbridgeEndpoint getEndpoint() {
