@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;

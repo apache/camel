@@ -101,13 +101,13 @@ public class EventbridgeProducer extends DefaultProducer {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.name(ruleName);
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
-                String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
-                builder.eventPattern(eventPattern);
-            } else {
+            if (ObjectHelper.isEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
                 InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
                         getConfiguration().getEventPatternFile());
                 String eventPattern = IOUtils.toString(s, Charset.defaultCharset());
+                builder.eventPattern(eventPattern);
+            } else {
+                String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
                 builder.eventPattern(eventPattern);
             }
             PutRuleResponse result;
