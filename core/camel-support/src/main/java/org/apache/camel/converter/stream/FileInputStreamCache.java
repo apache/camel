@@ -256,9 +256,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 // This can happen when in the splitter or Multi-cast case with parallel processing, the CachedOutputStream is created when the main unit of work
                 // is still active, but has a timeout and after the timeout which stops the unit of work the FileOutputStream is created.
                 // We only can throw here an Exception and inform the user that the processing took longer than the set timeout.
-                String error = "Cannot create a FileOutputStream for Stream Caching, because this FileOutputStream would never be removed from the file system."
-                        + " This situation can happen with a Splitter or Multi Cast in parallel processing if there is a timeout set on the Splitter or Multi Cast, "
-                        + " and the processing in a sub-branch takes longer than the timeout. Consider to increase the timeout.";
+                String error
+                        = "Cannot create a FileOutputStream for Stream Caching, because this FileOutputStream would never be removed from the file system."
+                          + " This situation can happen with a Splitter or Multi Cast in parallel processing if there is a timeout set on the Splitter or Multi Cast, "
+                          + " and the processing in a sub-branch takes longer than the timeout. Consider to increase the timeout.";
                 LOG.error(error);
                 throw new IOException(error);
             }

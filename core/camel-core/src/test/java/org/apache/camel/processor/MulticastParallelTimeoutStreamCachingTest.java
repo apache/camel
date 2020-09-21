@@ -75,7 +75,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         File[] files = f.listFiles();
         assertEquals(0, files.length);
     }
-    
+
     @Test
     public void testCreateOutputStreamCacheBeforeTimeoutButWriteToOutputStreamCacheAfterTimeout() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(1);
@@ -102,7 +102,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 });
             }
         };
-        
+
         final Processor processor2 = new Processor() {
             public void process(Exchange exchange) throws IOException {
                 // create first the OutputStreamCache and then sleep
@@ -129,13 +129,13 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
                 context.setStreamCaching(true);
-                
+
                 onException(IOException.class).to("mock:exception");
 
                 from("direct:a").multicast().timeout(500L).parallelProcessing().to("direct:x");
 
                 from("direct:x").process(processor1).to("mock:x");
-                
+
                 from("direct:b").multicast().timeout(500l).parallelProcessing().to("direct:y");
 
                 from("direct:y").process(processor2).to("mock:y");
