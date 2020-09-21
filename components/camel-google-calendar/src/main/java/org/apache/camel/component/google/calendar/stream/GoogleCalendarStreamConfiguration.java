@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,6 +34,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private static final List<String> DEFAULT_SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     @UriPath
+    @Metadata(required = true)
     private String index;
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;

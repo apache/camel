@@ -46,33 +46,28 @@ public class BraintreeConfiguration {
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;
-    @UriPath
+    @Metadata(required = true)
     private String methodName;
-
     @UriParam
     private String environment;
     @UriParam
     private String merchantId;
-
     @UriParam(label = "security", secret = true)
     private String publicKey;
     @UriParam(label = "security", secret = true)
     private String privateKey;
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
     private Integer proxyPort;
-
     @UriParam(label = "logging", enums = "OFF,SEVERE,WARNING,INFO,CONFIG,FINE,FINER,FINEST,ALL")
     private String httpLogLevel;
     @UriParam(label = "logging", defaultValue = "Braintree")
     private String httpLogName;
     @UriParam(label = "logging", defaultValue = "true")
     private boolean logHandlerEnabled = true;
-
     @UriParam(label = "advanced")
     private Integer httpReadTimeout;
 

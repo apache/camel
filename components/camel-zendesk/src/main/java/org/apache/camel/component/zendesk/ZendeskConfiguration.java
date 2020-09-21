@@ -34,26 +34,19 @@ public class ZendeskConfiguration {
     @UriPath
     @Metadata(required = true)
     private ZendeskApiMethod methodName;
-
     @UriParam
     private String serverUrl;
-
     @UriParam(label = "security", secret = true)
     private String username;
-
     @UriParam(label = "security", secret = true)
     private String oauthToken;
-
     @UriParam(label = "security", secret = true)
     private String token;
-
     @UriParam(label = "security", secret = true)
     private String password;
 
     /**
      * What operation to use
-     * 
-     * @return the methodName
      */
     public ZendeskApiMethod getMethodName() {
         return methodName;
@@ -61,8 +54,6 @@ public class ZendeskConfiguration {
 
     /**
      * What operation to use
-     * 
-     * @param methodName the methodName to set
      */
     public void setMethodName(ZendeskApiMethod methodName) {
         this.methodName = methodName;
@@ -70,8 +61,6 @@ public class ZendeskConfiguration {
 
     /**
      * The server URL to connect.
-     * 
-     * @return server URL
      */
     public String getServerUrl() {
         return serverUrl;
@@ -79,8 +68,6 @@ public class ZendeskConfiguration {
 
     /**
      * The server URL to connect.
-     * 
-     * @param url server URL
      */
     public void setServerUrl(String url) {
         this.serverUrl = url;
@@ -88,8 +75,6 @@ public class ZendeskConfiguration {
 
     /**
      * The user name.
-     * 
-     * @return user name
      */
     public String getUsername() {
         return username;
@@ -97,8 +82,6 @@ public class ZendeskConfiguration {
 
     /**
      * The user name.
-     * 
-     * @param user user name
      */
     public void setUsername(String user) {
         this.username = user;
@@ -106,8 +89,6 @@ public class ZendeskConfiguration {
 
     /**
      * The security token.
-     * 
-     * @return security token
      */
     public String getToken() {
         return token;
@@ -115,8 +96,6 @@ public class ZendeskConfiguration {
 
     /**
      * The security token.
-     * 
-     * @param token security token
      */
     public void setToken(String token) {
         this.token = token;
@@ -124,8 +103,6 @@ public class ZendeskConfiguration {
 
     /**
      * The OAuth token.
-     * 
-     * @return OAuth token
      */
     public String getOauthToken() {
         return oauthToken;
@@ -133,8 +110,6 @@ public class ZendeskConfiguration {
 
     /**
      * The OAuth token.
-     * 
-     * @param token OAuth token
      */
     public void setOauthToken(String token) {
         this.oauthToken = token;
@@ -142,8 +117,6 @@ public class ZendeskConfiguration {
 
     /**
      * The password.
-     * 
-     * @return password
      */
     public String getPassword() {
         return password;
@@ -151,8 +124,6 @@ public class ZendeskConfiguration {
 
     /**
      * The password.
-     * 
-     * @param password password
      */
     public void setPassword(String password) {
         this.password = password;

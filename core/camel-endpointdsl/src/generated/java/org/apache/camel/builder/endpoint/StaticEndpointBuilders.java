@@ -2957,9 +2957,6 @@ public class StaticEndpointBuilders {
      * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
      * WEBHOOK_NOTIFICATION
      * 
-     * Path parameter: methodName
-     * What sub operation to use for the selected operation
-     * 
      * @param path apiName/methodName
      */
     public static org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(
@@ -2983,9 +2980,6 @@ public class StaticEndpointBuilders {
      * DOCUMENT_UPLOAD, MERCHANT_ACCOUNT, PAYMENT_METHOD, PAYMENT_METHOD_NONCE,
      * PLAN, REPORT, SETTLEMENT_BATCH_SUMMARY, SUBSCRIPTION, TRANSACTION,
      * WEBHOOK_NOTIFICATION
-     * 
-     * Path parameter: methodName
-     * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -5979,7 +5973,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-calendar-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Specifies an index for the endpoint
      * 
      * @param path index
@@ -5998,7 +5992,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-calendar-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Specifies an index for the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -6138,7 +6132,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Currently not in use
      * 
      * @param path index
@@ -6157,7 +6151,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
-     * Path parameter: index
+     * Path parameter: index (required)
      * Currently not in use
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -6279,7 +6273,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-sheets-stream:apiName</code>
      * 
-     * Path parameter: apiName
+     * Path parameter: apiName (required)
      * Sets the apiName.
      * 
      * @param path apiName
@@ -6298,7 +6292,7 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>google-sheets-stream:apiName</code>
      * 
-     * Path parameter: apiName
+     * Path parameter: apiName (required)
      * Sets the apiName.
      * 
      * @param componentName to use a custom component name for the endpoint

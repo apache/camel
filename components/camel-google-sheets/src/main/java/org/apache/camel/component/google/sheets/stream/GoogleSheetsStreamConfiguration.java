@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.sheets.v4.SheetsScopes;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -34,44 +35,32 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     private static final List<String> DEFAULT_SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
     @UriPath
+    @Metadata(required = true)
     private String apiName;
-
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam
     private String spreadsheetId;
-
-    @UriParam(defaultValue = "0")
+    @UriParam
     private int maxResults;
-
     @UriParam
     private String range;
-
     @UriParam
     private boolean includeGridData;
-
     @UriParam
     private boolean splitResults;
-
     @UriParam(enums = "ROWS,COLUMNS,DIMENSION_UNSPECIFIED", defaultValue = "ROWS")
     private String majorDimension = "ROWS";
-
     @UriParam(enums = "FORMATTED_VALUE,UNFORMATTED_VALUE,FORMULA", defaultValue = "FORMATTED_VALUE")
     private String valueRenderOption = "FORMATTED_VALUE";
 

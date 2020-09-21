@@ -28,9 +28,6 @@ import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.util.IOHelper;
 import org.zendesk.client.v2.Zendesk;
 
-/**
- * The Zendesk Component.
- */
 @Component("zendesk")
 public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, ZendeskConfiguration, ZendeskApiCollection> {
 
@@ -77,22 +74,21 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     }
 
     /**
-     * To use a shared {@link Zendesk} instance.
-     * 
-     * @return the shared Zendesk instance
+     * To use a shared Zendesk instance.
      */
     public Zendesk getZendesk() {
         return zendesk;
     }
 
+    /**
+     * To use a shared Zendesk instance.
+     */
     public void setZendesk(Zendesk zendesk) {
         this.zendesk = zendesk;
     }
 
     /**
      * The server URL to connect.
-     *
-     * @return server URL
      */
     public String getServerUrl() {
         return serverUrl;
@@ -100,8 +96,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The server URL to connect.
-     *
-     * @param url server URL
      */
     public void setServerUrl(String url) {
         this.serverUrl = url;
@@ -109,8 +103,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The user name.
-     *
-     * @return user name
      */
     public String getUsername() {
         return username;
@@ -118,8 +110,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The user name.
-     *
-     * @param user user name
      */
     public void setUsername(String user) {
         this.username = user;
@@ -127,8 +117,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The security token.
-     *
-     * @return security token
      */
     public String getToken() {
         return token;
@@ -136,8 +124,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The security token.
-     *
-     * @param token security token
      */
     public void setToken(String token) {
         this.token = token;
@@ -145,8 +131,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The OAuth token.
-     *
-     * @return OAuth token
      */
     public String getOauthToken() {
         return oauthToken;
@@ -154,8 +138,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The OAuth token.
-     *
-     * @param token OAuth token
      */
     public void setOauthToken(String token) {
         this.oauthToken = token;
@@ -163,8 +145,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The password.
-     *
-     * @return password
      */
     public String getPassword() {
         return password;
@@ -172,8 +152,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     /**
      * The password.
-     *
-     * @param password password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -215,12 +193,6 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     protected void doStop() throws Exception {
         IOHelper.close(zendesk);
         super.doStop();
-    }
-
-    @Override
-    public void doShutdown() throws Exception {
-        IOHelper.close(zendesk);
-        super.doShutdown();
     }
 
 }

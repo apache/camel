@@ -28,19 +28,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link GoogleSheetsStreamEndpoint}.
- */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets-stream")
 public class GoogleSheetsStreamComponent extends DefaultComponent {
 
+    @Metadata
+    private GoogleSheetsStreamConfiguration configuration;
     @Metadata(label = "advanced")
     private Sheets client;
     @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
-    @Metadata
-    private GoogleSheetsStreamConfiguration configuration;
 
     public GoogleSheetsStreamComponent() {
         this(null);
