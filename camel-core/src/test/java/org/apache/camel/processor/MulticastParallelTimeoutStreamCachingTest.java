@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilterInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +41,9 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
     protected Endpoint startEndpoint;
     protected MockEndpoint x;
-
+    protected MockEndpoint exception;
+    protected MockEndpoint y;
+    
     public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
@@ -64,6 +68,15 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
         File[] files = f.listFiles();
         assertEquals(0, files.length);
     }
+    
+    @Test
+    public void testCreateOutputStreamCacheBeforeTimeoutButWriteToOutputStreamCacheAfterTimeout() throws Exception {
+        exception.expectedMessageCount(1);
+        y.expectedMessageCount(0);
+
+        template.sendBody("direct:b", "testMessage");
+        assertMockEndpointsSatisfied();
+    }
 
     @Before
     @Override
@@ -72,6 +85,8 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
         deleteDirectory(new File(TARGET_MULTICAST_PARALLEL_TIMEOUT_STREAM_CACHING_TEST_CACHE));
         x = getMockEndpoint("mock:x");
+        y = getMockEndpoint("mock:y");
+        exception = getMockEndpoint("mock:exception");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -90,6 +105,23 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 });
             }
         };
+        
+        final Processor processor2 = new Processor() {
+            public void process(Exchange exchange) throws IOException {
+                // create first the OutputStreamCache and then sleep
+                CachedOutputStream outputStream = new CachedOutputStream(exchange);
+                try {
+                    // sleep for one second so that the write to the CachedOutputStream happens after the main exchange has finished due to timeout on the multicast
+                    Thread.sleep(1000l);
+                } catch (InterruptedException e) {
+                    throw new IllegalStateException("Unexpected exception", e);
+                }
+                outputStream.write(BODY);
+                Message in = exchange.getIn();
+                // use FilterInputStream to trigger streamcaching
+                in.setBody(outputStream.getInputStream());
+            }
+        };
 
         return new RouteBuilder() {
             public void configure() {
@@ -99,10 +131,16 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);
                 context.getStreamCachingStrategy().setSpoolThreshold(1l);
                 context.setStreamCaching(true);
+                
+                onException(IOException.class).to("mock:exception");
 
                 from("direct:a").multicast().timeout(500l).parallelProcessing().to("direct:x");
 
                 from("direct:x").process(processor1).to("mock:x");
+                
+                from("direct:b").multicast().timeout(500l).parallelProcessing().to("direct:y");
+
+                from("direct:y").process(processor2).to("mock:y");
             }
         };
     }
