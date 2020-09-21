@@ -797,7 +797,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-mail-stream:index</code>
          * 
-         * Path parameter: index
+         * Path parameter: index (required)
          * Currently not in use
          * 
          * @param path index
@@ -815,7 +815,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-mail-stream:index</code>
          * 
-         * Path parameter: index
+         * Path parameter: index (required)
          * Currently not in use
          * 
          * @param componentName to use a custom component name for the endpoint

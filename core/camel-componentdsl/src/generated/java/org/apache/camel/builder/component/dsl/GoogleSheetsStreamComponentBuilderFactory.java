@@ -49,19 +49,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleSheetsStreamComponent> {
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamComponentBuilder accessToken(
-                java.lang.String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
@@ -103,18 +90,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         default GoogleSheetsStreamComponentBuilder clientId(
                 java.lang.String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client secret of the sheets application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamComponentBuilder clientSecret(
-                java.lang.String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -163,7 +138,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          */
         default GoogleSheetsStreamComponentBuilder maxResults(int maxResults) {
@@ -179,20 +153,6 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          */
         default GoogleSheetsStreamComponentBuilder range(java.lang.String range) {
             doSetProperty("range", range);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamComponentBuilder refreshToken(
-                java.lang.String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -281,6 +241,45 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
             doSetProperty("clientFactory", clientFactory);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleSheetsStreamComponentBuilderImpl
@@ -305,23 +304,23 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "applicationName": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setApplicationName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleSheetsStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientId((java.lang.String) value); return true;
-            case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "configuration": ((GoogleSheetsStreamComponent) component).setConfiguration((org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration) value); return true;
             case "includeGridData": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setIncludeGridData((boolean) value); return true;
             case "majorDimension": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMajorDimension((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setMaxResults((int) value); return true;
             case "range": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRange((java.lang.String) value); return true;
-            case "refreshToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setScopes((java.util.List) value); return true;
             case "splitResults": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSplitResults((boolean) value); return true;
             case "spreadsheetId": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setSpreadsheetId((java.lang.String) value); return true;
             case "valueRenderOption": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setValueRenderOption((java.lang.String) value); return true;
             case "basicPropertyBinding": ((GoogleSheetsStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsStreamComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleSheetsStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

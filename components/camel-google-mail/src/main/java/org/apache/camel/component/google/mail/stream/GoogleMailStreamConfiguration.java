@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.mail.stream;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -27,6 +28,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class GoogleMailStreamConfiguration implements Cloneable {
     @UriPath
+    @Metadata(required = true)
     private String index;
     @UriParam
     private String clientId;

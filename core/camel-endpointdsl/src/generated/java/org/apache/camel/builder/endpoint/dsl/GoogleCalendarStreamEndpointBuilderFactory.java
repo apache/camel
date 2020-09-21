@@ -864,7 +864,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-calendar-stream:index</code>
          * 
-         * Path parameter: index
+         * Path parameter: index (required)
          * Specifies an index for the endpoint
          * 
          * @param path index
@@ -883,7 +883,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-calendar-stream:index</code>
          * 
-         * Path parameter: index
+         * Path parameter: index (required)
          * Specifies an index for the endpoint
          * 
          * @param componentName to use a custom component name for the endpoint

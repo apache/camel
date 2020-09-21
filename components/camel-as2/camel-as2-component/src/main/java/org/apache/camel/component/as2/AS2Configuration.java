@@ -42,86 +42,59 @@ public class AS2Configuration {
     @UriPath
     @Metadata(required = true, enums = "client,server")
     private AS2ApiName apiName;
-
     @UriPath
     @Metadata(required = true)
     private String methodName;
-
     @UriParam(defaultValue = "1.1", enums = "1.0,1.1")
     private String as2Version = "1.1";
-
     @UriParam(defaultValue = "Camel AS2 Client Endpoint")
     private String userAgent = "Camel AS2 Client Endpoint";
-
     @UriParam(defaultValue = "Camel AS2 Server Endpoint")
     private String server = "Camel AS2 Server Endpoint";
-
     @UriParam(defaultValue = "camel.apache.org")
     private String serverFqdn = "camel.apache.org";
-
     @UriParam
     private String targetHostname;
-
     @UriParam
     private Integer targetPortNumber = 80;
-
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
-
     @UriParam
     private Integer serverPortNumber;
-
     @UriParam(defaultValue = "/")
     private String requestUri = "/";
-
     @UriParam
     private ContentType ediMessageType;
-
     @UriParam
     private String ediMessageTransferEncoding;
-
     @UriParam
     private AS2MessageStructure as2MessageStructure;
-
     @UriParam
     private String subject;
-
     @UriParam
     private String from;
-
     @UriParam
     private String as2From;
-
     @UriParam
     private String as2To;
-
     @UriParam
     private AS2SignatureAlgorithm signingAlgorithm;
-
     @UriParam
     private Certificate[] signingCertificateChain;
-
     @UriParam
     private PrivateKey signingPrivateKey;
-
     @UriParam
     private AS2CompressionAlgorithm compressionAlgorithm;
-
     @UriParam
     private String dispositionNotificationTo;
-
     @UriParam
     private String[] signedReceiptMicAlgorithms;
-
     @UriParam
     private AS2EncryptionAlgorithm encryptingAlgorithm;
-
     @UriParam
     private Certificate[] encryptingCertificateChain;
-
     @UriParam
     private PrivateKey decryptingPrivateKey;
-
     @UriParam
     private String mdnMessageTemplate;
 

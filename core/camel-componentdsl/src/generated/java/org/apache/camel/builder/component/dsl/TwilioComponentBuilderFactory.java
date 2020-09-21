@@ -49,6 +49,20 @@ public interface TwilioComponentBuilderFactory {
             extends
                 ComponentBuilder<TwilioComponent> {
         /**
+         * To use the shared configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.twilio.TwilioConfiguration</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default TwilioComponentBuilder configuration(
+                org.apache.camel.component.twilio.TwilioConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -101,20 +115,6 @@ public interface TwilioComponentBuilderFactory {
         default TwilioComponentBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use the shared configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.twilio.TwilioConfiguration</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default TwilioComponentBuilder configuration(
-                org.apache.camel.component.twilio.TwilioConfiguration configuration) {
-            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -179,10 +179,10 @@ public interface TwilioComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
             case "bridgeErrorHandler": ((TwilioComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TwilioComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((TwilioComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((TwilioComponent) component).setConfiguration((org.apache.camel.component.twilio.TwilioConfiguration) value); return true;
             case "restClient": ((TwilioComponent) component).setRestClient((com.twilio.http.TwilioRestClient) value); return true;
             case "accountSid": ((TwilioComponent) component).setAccountSid((java.lang.String) value); return true;
             case "password": ((TwilioComponent) component).setPassword((java.lang.String) value); return true;

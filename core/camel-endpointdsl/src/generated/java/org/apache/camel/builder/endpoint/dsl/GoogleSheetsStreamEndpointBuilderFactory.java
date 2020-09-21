@@ -48,18 +48,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return (AdvancedGoogleSheetsStreamEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
@@ -122,18 +110,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the sheets application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamEndpointBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
          * True if grid data should be returned.
          * 
          * The option is a: <code>boolean</code> type.
@@ -179,7 +155,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
@@ -193,7 +168,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 0
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
@@ -209,20 +183,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          */
         default GoogleSheetsStreamEndpointBuilder range(String range) {
             doSetProperty("range", range);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamEndpointBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -728,6 +688,44 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the sheets application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamEndpointBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleSheetsStreamEndpointBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     /**
@@ -897,7 +895,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-sheets-stream:apiName</code>
          * 
-         * Path parameter: apiName
+         * Path parameter: apiName (required)
          * Sets the apiName.
          * 
          * @param path apiName
@@ -915,7 +913,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * Syntax: <code>google-sheets-stream:apiName</code>
          * 
-         * Path parameter: apiName
+         * Path parameter: apiName (required)
          * Sets the apiName.
          * 
          * @param componentName to use a custom component name for the endpoint

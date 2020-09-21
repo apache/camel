@@ -64,7 +64,6 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private Object apiProxy;
 
     private AS2ClientConnection as2ClientConnection;
-
     private AS2ServerConnection as2ServerConnection;
 
     public AS2Endpoint(String uri, AS2Component component,

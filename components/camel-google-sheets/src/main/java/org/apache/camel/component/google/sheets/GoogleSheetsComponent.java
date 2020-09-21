@@ -25,9 +25,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link GoogleSheetsEndpoint}.
- */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets")
 public class GoogleSheetsComponent
@@ -35,7 +32,6 @@ public class GoogleSheetsComponent
 
     @Metadata
     GoogleSheetsConfiguration configuration;
-
     @Metadata(label = "advanced")
     private Sheets client;
     @Metadata(label = "advanced")

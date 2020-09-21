@@ -34,35 +34,25 @@ public class GoogleCalendarConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleCalendarApiName apiName;
-
     @UriPath(enums = "calendarImport,clear,delete,get,insert,instances,list,move,patch,query,quickAdd,stop,update,watch")
     @Metadata(required = true)
     private String methodName;
-
     @UriParam(defaultValue = CalendarScopes.CALENDAR)
     private String scopes = CalendarScopes.CALENDAR;
-
     @UriParam
     private String clientId;
-
     @UriParam
     private String emailAddress;
-
     @UriParam(label = "security", secret = true)
     private String clientSecret;
-
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam
     private String p12FileName;
-
     @UriParam
     private String user;
 
