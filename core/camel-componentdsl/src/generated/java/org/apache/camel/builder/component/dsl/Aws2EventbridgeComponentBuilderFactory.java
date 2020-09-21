@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.aws2.sts.EventbridgeComponent;
+import org.apache.camel.component.aws2.eventbridge.EventbridgeComponent;
 
 /**
  * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
@@ -67,12 +67,12 @@ public interface Aws2EventbridgeComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sts.EventbridgeConfiguration</code> type.
+         * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration</code> type.
          * 
          * Group: producer
          */
         default Aws2EventbridgeComponentBuilder configuration(
-                org.apache.camel.component.aws2.sts.EventbridgeConfiguration configuration) {
+                org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -114,14 +114,13 @@ public interface Aws2EventbridgeComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sts.EvenbridgeOperations</code>
-         * type.
+         * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
          * 
          * Default: assumeRole
          * Group: producer
          */
         default Aws2EventbridgeComponentBuilder operation(
-                org.apache.camel.component.aws2.sts.EvenbridgeOperations operation) {
+                org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -254,10 +253,10 @@ public interface Aws2EventbridgeComponentBuilderFactory {
         protected EventbridgeComponent buildConcreteComponent() {
             return new EventbridgeComponent();
         }
-        private org.apache.camel.component.aws2.sts.EventbridgeConfiguration getOrCreateConfiguration(
-                org.apache.camel.component.aws2.sts.EventbridgeComponent component) {
+        private org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.aws2.eventbridge.EventbridgeComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.aws2.sts.EventbridgeConfiguration());
+                component.setConfiguration(new org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration());
             }
             return component.getConfiguration();
         }
@@ -268,10 +267,10 @@ public interface Aws2EventbridgeComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "autoDiscoverClient": getOrCreateConfiguration((EventbridgeComponent) component).setAutoDiscoverClient((boolean) value); return true;
-            case "configuration": ((EventbridgeComponent) component).setConfiguration((org.apache.camel.component.aws2.sts.EventbridgeConfiguration) value); return true;
+            case "configuration": ((EventbridgeComponent) component).setConfiguration((org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration) value); return true;
             case "eventbridgeClient": getOrCreateConfiguration((EventbridgeComponent) component).setEventbridgeClient((software.amazon.awssdk.services.eventbridge.EventBridgeClient) value); return true;
             case "lazyStartProducer": ((EventbridgeComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.sts.EvenbridgeOperations) value); return true;
+            case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EventbridgeComponent) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((EventbridgeComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((EventbridgeComponent) component).setProxyPort((java.lang.Integer) value); return true;

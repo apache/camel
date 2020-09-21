@@ -111,6 +111,42 @@ public class EventbridgeProducer extends DefaultProducer {
         }
     }
 
+    //    private void putTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+    //        if (getConfiguration().isPojoRequest()) {
+    //            Object payload = exchange.getIn().getMandatoryBody();
+    //            if (payload instanceof PutRuleRequest) {
+    //                PutRuleResponse result;
+    //                try {
+    //                    result = eventbridgeClient.putRule((PutRuleRequest) payload);
+    //                } catch (AwsServiceException ase) {
+    //                    LOG.trace("PutRule command returned the error code {}", ase.awsErrorDetails().errorCode());
+    //                    throw ase;
+    //                }
+    //                Message message = getMessageForResponse(exchange);
+    //                message.setBody(result);
+    //            }
+    //        } else {
+    //            PutRuleRequest.Builder builder = PutRuleRequest.builder();
+    //            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
+    //                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
+    //                builder.name(ruleName);
+    //            }
+    //            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN))) {
+    //                String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
+    //                builder.eventPattern(eventPattern);
+    //            }
+    //            PutRuleResponse result;
+    //            try {
+    //                result = eventbridgeClient.putTargets(builder.build());
+    //            } catch (AwsServiceException ase) {
+    //                LOG.trace("Put Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+    //                throw ase;
+    //            }
+    //            Message message = getMessageForResponse(exchange);
+    //            message.setBody(result);
+    //        }
+    //    }
+
     @Override
     public EventbridgeEndpoint getEndpoint() {
         return (EventbridgeEndpoint) super.getEndpoint();

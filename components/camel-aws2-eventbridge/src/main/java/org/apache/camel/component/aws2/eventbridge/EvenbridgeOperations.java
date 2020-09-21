@@ -18,5 +18,6 @@ package org.apache.camel.component.aws2.eventbridge;
 
 public enum EvenbridgeOperations {
 
-    putRule
+    putRule,
+    putTarget
 }
