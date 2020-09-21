@@ -27,6 +27,11 @@ https://aws.amazon.com/eventbridge/[Amazon Eventbridge].
 The AWS2 Eventbridge component is not supported in OSGI
 ====
 
+[NOTE]
+====
+To create a rule that triggers on an action by an AWS service that does not emit events, you can base the rule on API calls made by that service. The API calls are recorded by AWS CloudTrail, so you'll need to have CloudTrail enabled. For more information https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html[Services Supported by CloudTrail Event History].
+====
+
 == URI Format
 
 [source,java]
