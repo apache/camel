@@ -48,19 +48,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
             return (AdvancedGoogleCalendarStreamEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleCalendarStreamEndpointBuilder accessToken(
-                String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google Calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
@@ -132,18 +119,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client secret of the calendar application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleCalendarStreamEndpointBuilder clientSecret(
-                String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -233,20 +208,6 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          */
         default GoogleCalendarStreamEndpointBuilder query(String query) {
             doSetProperty("query", query);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleCalendarStreamEndpointBuilder refreshToken(
-                String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -693,6 +654,45 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         default GoogleCalendarStreamEndpointBuilder useFixedDelay(
                 String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarStreamEndpointBuilder accessToken(
+                String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarStreamEndpointBuilder clientSecret(
+                String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarStreamEndpointBuilder refreshToken(
+                String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }

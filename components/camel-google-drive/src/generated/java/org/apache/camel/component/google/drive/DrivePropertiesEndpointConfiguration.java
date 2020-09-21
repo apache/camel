@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Properties}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Properties}.
  */
 @ApiParams(apiName = "drive-properties", 
            description = "The properties collection of methods",

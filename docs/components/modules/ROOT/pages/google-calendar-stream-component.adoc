@@ -62,21 +62,21 @@ The Google Calendar Stream component supports 15 options, which are listed below
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *applicationName* (consumer) | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *calendarId* (consumer) | The calendarId to be used | primary | String
 | *clientId* (consumer) | Client ID of the calendar application |  | String
-| *clientSecret* (consumer) | Client secret of the calendar application |  | String
+| *configuration* (consumer) | The configuration |  | GoogleCalendarStreamConfiguration
 | *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
 | *consumeFromNow* (consumer) | Consume events in the selected calendar from now on | true | boolean
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
-| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientFactory* (advanced) | The client Factory |  | GoogleCalendarClientFactory
-| *configuration* (advanced) | The configuration |  | GoogleCalendarStreamConfiguration
+| *accessToken* (security) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *clientSecret* (security) | Client secret of the calendar application |  | String
+| *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 // component options: END
 
@@ -108,17 +108,14 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *applicationName* (consumer) | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *calendarId* (consumer) | The calendarId to be used | primary | String
 | *clientId* (consumer) | Client ID of the calendar application |  | String
-| *clientSecret* (consumer) | Client secret of the calendar application |  | String
 | *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
 | *consumeFromNow* (consumer) | Consume events in the selected calendar from now on | true | boolean
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
-| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See \https://developers.google.com/calendar/auth for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -140,6 +137,9 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. There are 7 enums and the value can be one of: NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| *accessToken* (security) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *clientSecret* (security) | Client secret of the calendar application |  | String
+| *refreshToken* (security) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 |===
 
 

@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Channels}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Channels}.
  */
 @ApiParams(apiName = "drive-channels", 
            description = "The channels collection of methods",

@@ -122,11 +122,4 @@ public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarAp
         return apiProxy;
     }
 
-    public GoogleCalendarClientFactory getClientFactory() {
-        return ((GoogleCalendarComponent) getComponent()).getClientFactory();
-    }
-
-    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
-        ((GoogleCalendarComponent) getComponent()).setClientFactory(clientFactory);
-    }
 }

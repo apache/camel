@@ -18,13 +18,13 @@ package org.apache.camel.component.google.calendar.stream;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -37,7 +37,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
              title = "Google Calendar Stream",
              syntax = "google-calendar-stream:index",
              consumerOnly = true,
-             label = "api,cloud")
+             category = { Category.API, Category.CLOUD })
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -63,14 +63,6 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     public Calendar getClient() {
         return ((GoogleCalendarStreamComponent) getComponent()).getClient(configuration);
-    }
-
-    public GoogleCalendarClientFactory getClientFactory() {
-        return ((GoogleCalendarStreamComponent) getComponent()).getClientFactory();
-    }
-
-    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
-        ((GoogleCalendarStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleCalendarStreamConfiguration getConfiguration() {

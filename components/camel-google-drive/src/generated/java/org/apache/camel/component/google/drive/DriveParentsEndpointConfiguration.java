@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Parents}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Parents}.
  */
 @ApiParams(apiName = "drive-parents", 
            description = "The parents collection of methods",

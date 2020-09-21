@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Replies}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Replies}.
  */
 @ApiParams(apiName = "drive-replies", 
            description = "The replies collection of methods",

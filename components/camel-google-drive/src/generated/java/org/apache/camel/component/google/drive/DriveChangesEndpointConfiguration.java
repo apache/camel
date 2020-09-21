@@ -12,7 +12,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link com.google.api.services.drive.Drive$Changes}.
+ * Camel endpoint configuration for {@link com.google.api.services.drive.Drive.Changes}.
  */
 @ApiParams(apiName = "drive-changes", 
            description = "The changes collection of methods",

@@ -27,9 +27,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link GoogleCalendarStreamEndpoint}.
- */
 @Component("google-calendar-stream")
 public class GoogleCalendarStreamComponent extends DefaultComponent {
 
@@ -37,7 +34,7 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
     private Calendar client;
     @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
-    @Metadata(label = "advanced")
+    @Metadata
     private GoogleCalendarStreamConfiguration configuration;
 
     public GoogleCalendarStreamComponent() {

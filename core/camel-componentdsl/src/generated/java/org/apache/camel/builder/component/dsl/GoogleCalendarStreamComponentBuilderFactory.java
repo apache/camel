@@ -49,19 +49,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             extends
                 ComponentBuilder<GoogleCalendarStreamComponent> {
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleCalendarStreamComponentBuilder accessToken(
-                java.lang.String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google Calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
@@ -119,15 +106,16 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * Client secret of the calendar application.
+         * The configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a:
+         * <code>org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration</code> type.
          * 
          * Group: consumer
          */
-        default GoogleCalendarStreamComponentBuilder clientSecret(
-                java.lang.String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
+        default GoogleCalendarStreamComponentBuilder configuration(
+                org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration configuration) {
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -182,20 +170,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleCalendarStreamComponentBuilder refreshToken(
-                java.lang.String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
-            return this;
-        }
-        /**
          * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
@@ -238,16 +212,42 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * The configuration.
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: advanced
+         * Group: security
          */
-        default GoogleCalendarStreamComponentBuilder configuration(
-                org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration configuration) {
-            doSetProperty("configuration", configuration);
+        default GoogleCalendarStreamComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the calendar application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarStreamComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleCalendarStreamComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
     }
@@ -274,21 +274,21 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "applicationName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setApplicationName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleCalendarStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "calendarId": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setCalendarId((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientId((java.lang.String) value); return true;
-            case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
             case "considerLastUpdate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsiderLastUpdate((boolean) value); return true;
             case "consumeFromNow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsumeFromNow((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
             case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
-            case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
             case "basicPropertyBinding": ((GoogleCalendarStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
-            case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }
