@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -131,9 +130,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy to delete the message after being processed.
-     *
-     * @param  exchange    the exchange
-     * @throws IOException
      */
     protected void processCommit(Exchange exchange, String unreadLabelId) {
         try {
@@ -159,9 +155,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy when processing the exchange failed.
-     *
-     * @param  exchange    the exchange
-     * @throws IOException
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         try {

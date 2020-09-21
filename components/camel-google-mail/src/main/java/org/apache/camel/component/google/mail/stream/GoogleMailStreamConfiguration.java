@@ -28,31 +28,22 @@ import org.apache.camel.spi.UriPath;
 public class GoogleMailStreamConfiguration implements Cloneable {
     @UriPath
     private String index;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam(defaultValue = "is:unread")
     private String query = "is:unread";
-
     @UriParam(defaultValue = "10")
     private long maxResults = 10L;
-
     @UriParam
     private String labels;
-
     @UriParam
     private boolean markAsRead;
 
@@ -117,7 +108,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies an index for the endpoint
+     * Currently not in use
      */
     public void setIndex(String index) {
         this.index = index;

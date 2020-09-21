@@ -32,23 +32,17 @@ public class GoogleMailConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleMailApiName apiName;
-
     @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,stop,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
-
     @UriParam
     private String clientId;
-
     @UriParam(label = "security", secret = true)
     private String clientSecret;
-
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
 

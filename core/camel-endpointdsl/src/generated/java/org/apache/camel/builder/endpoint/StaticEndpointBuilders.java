@@ -6132,14 +6132,14 @@ public class StaticEndpointBuilders {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
      * Path parameter: index
-     * Specifies an index for the endpoint
+     * Currently not in use
      * 
      * @param path index
      */
@@ -6151,14 +6151,14 @@ public class StaticEndpointBuilders {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      * 
      * Syntax: <code>google-mail-stream:index</code>
      * 
      * Path parameter: index
-     * Specifies an index for the endpoint
+     * Currently not in use
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

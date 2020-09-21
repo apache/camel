@@ -25,16 +25,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link GoogleMailEndpoint}.
- */
 @Component("google-mail")
 public class GoogleMailComponent
         extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
     @Metadata
     GoogleMailConfiguration configuration;
-
     @Metadata(label = "advanced")
     private Gmail client;
     @Metadata(label = "advanced")

@@ -47,18 +47,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return (AdvancedGoogleMailStreamEndpointBuilder) this;
         }
         /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
-        /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -117,17 +105,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default GoogleMailStreamEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client secret of the mail application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -199,19 +176,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          */
         default GoogleMailStreamEndpointBuilder query(String query) {
             doSetProperty("query", query);
-            return this;
-        }
-        /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -628,6 +592,42 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     /**
@@ -791,14 +791,14 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Google Mail Stream (camel-google-mail)
          * Poll for incoming messages in Google Mail.
          * 
-         * Category: api,cloud,mail
+         * Category: cloud,api,mail
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-google-mail
          * 
          * Syntax: <code>google-mail-stream:index</code>
          * 
          * Path parameter: index
-         * Specifies an index for the endpoint
+         * Currently not in use
          * 
          * @param path index
          */
@@ -809,14 +809,14 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Google Mail Stream (camel-google-mail)
          * Poll for incoming messages in Google Mail.
          * 
-         * Category: api,cloud,mail
+         * Category: cloud,api,mail
          * Since: 2.22
          * Maven coordinates: org.apache.camel:camel-google-mail
          * 
          * Syntax: <code>google-mail-stream:index</code>
          * 
          * Path parameter: index
-         * Specifies an index for the endpoint
+         * Currently not in use
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
