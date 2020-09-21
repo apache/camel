@@ -128,7 +128,7 @@ public interface Aws2EventbridgeComponentBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
          * 
-         * Default: assumeRole
+         * Default: putRule
          * Group: producer
          */
         default Aws2EventbridgeComponentBuilder operation(
@@ -194,7 +194,6 @@ public interface Aws2EventbridgeComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: aws-global
          * Group: producer
          */
         default Aws2EventbridgeComponentBuilder region(java.lang.String region) {

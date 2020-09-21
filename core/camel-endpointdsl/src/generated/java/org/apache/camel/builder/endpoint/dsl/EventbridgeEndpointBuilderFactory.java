@@ -156,7 +156,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
          * 
          * Required: true
-         * Default: assumeRole
+         * Default: putRule
          * Group: producer
          */
         default EventbridgeEndpointBuilder operation(
@@ -171,7 +171,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
          * 
          * Required: true
-         * Default: assumeRole
+         * Default: putRule
          * Group: producer
          */
         default EventbridgeEndpointBuilder operation(String operation) {
@@ -270,7 +270,6 @@ public interface EventbridgeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: aws-global
          * Group: producer
          */
         default EventbridgeEndpointBuilder region(String region) {
