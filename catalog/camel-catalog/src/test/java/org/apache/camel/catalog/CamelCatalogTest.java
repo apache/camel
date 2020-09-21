@@ -1476,6 +1476,20 @@ public class CamelCatalogTest {
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
+        // spaces around
+        text = "camel.main.allow-use-original-message = true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message= true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message =true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        text = "camel.main.allow-use-original-message  =   true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
         text = "camel.main.allow-use-original-message=abc";
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
