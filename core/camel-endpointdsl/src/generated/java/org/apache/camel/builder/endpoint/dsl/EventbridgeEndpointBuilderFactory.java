@@ -96,6 +96,18 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
+         * EventPattern File.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EventbridgeEndpointBuilder eventPatternFile(
+                String eventPatternFile) {
+            doSetProperty("eventPatternFile", eventPatternFile);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

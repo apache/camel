@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -38,8 +37,9 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
     @BindToRegistry("eventbridge-client")
     EventBridgeClient client
             = EventBridgeClient.builder()
-                    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                    .region(Region.US_WEST_1).build();
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create("xxxx", "yyy")))
+                    .region(Region.EU_WEST_1).build();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -56,7 +56,6 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
-                exchange.getIn().setHeader(EventbridgeConstants.EVENT_PATTERN, "{ \"source\": [\"aws.s3\"] }");
             }
         });
         assertMockEndpointsSatisfied();
@@ -68,7 +67,7 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws2-eventbridge://test?operation=putRule";
+                String awsEndpoint = "aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
 
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
 

@@ -90,6 +90,18 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             return this;
         }
         /**
+         * EventPattern File.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2EventbridgeComponentBuilder eventPatternFile(
+                java.lang.String eventPatternFile) {
+            doSetProperty("eventPatternFile", eventPatternFile);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -269,6 +281,7 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             case "autoDiscoverClient": getOrCreateConfiguration((EventbridgeComponent) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((EventbridgeComponent) component).setConfiguration((org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration) value); return true;
             case "eventbridgeClient": getOrCreateConfiguration((EventbridgeComponent) component).setEventbridgeClient((software.amazon.awssdk.services.eventbridge.EventBridgeClient) value); return true;
+            case "eventPatternFile": getOrCreateConfiguration((EventbridgeComponent) component).setEventPatternFile((java.lang.String) value); return true;
             case "lazyStartProducer": ((EventbridgeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EventbridgeComponent) component).setPojoRequest((boolean) value); return true;

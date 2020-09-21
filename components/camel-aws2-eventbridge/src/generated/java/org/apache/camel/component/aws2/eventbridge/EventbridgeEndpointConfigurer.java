@@ -25,6 +25,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "eventpatternfile":
+        case "eventPatternFile": target.getConfiguration().setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
         case "eventbridgeClient": target.getConfiguration().setEventbridgeClient(property(camelContext, software.amazon.awssdk.services.eventbridge.EventBridgeClient.class, value)); return true;
         case "lazystartproducer":
@@ -54,6 +56,7 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         answer.put("accessKey", java.lang.String.class);
         answer.put("autoDiscoverClient", boolean.class);
         answer.put("basicPropertyBinding", boolean.class);
+        answer.put("eventPatternFile", java.lang.String.class);
         answer.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations.class);
@@ -78,6 +81,8 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "eventpatternfile":
+        case "eventPatternFile": return target.getConfiguration().getEventPatternFile();
         case "eventbridgeclient":
         case "eventbridgeClient": return target.getConfiguration().getEventbridgeClient();
         case "lazystartproducer":
