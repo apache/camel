@@ -46,6 +46,7 @@ public class BraintreeConfiguration {
     @UriPath
     @Metadata(required = true)
     private BraintreeApiName apiName;
+    @UriPath
     @Metadata(required = true)
     private String methodName;
     @UriParam

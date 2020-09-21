@@ -42,6 +42,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.JSonSchemaResolver;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.SuggestionStrategy;
+import org.apache.camel.tooling.model.ApiMethodModel;
 import org.apache.camel.tooling.model.ApiModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -176,9 +177,10 @@ public abstract class AbstractCamelCatalog {
 
         if (model.isApi()) {
             // TODO: combo of apiName/methodName
-            String[] qualifieres = StringHelper.splitWords(model.getApiSyntax());
-            String key = properties.get(qualifieres[0]);
-            Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
+            String[] apiSyntax = StringHelper.splitWords(model.getApiSyntax());
+            String key = properties.get(apiSyntax[0]);
+            String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
+            Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key, key2);
             rows.putAll(apiProperties);
         }
 
@@ -548,12 +550,12 @@ public abstract class AbstractCamelCatalog {
 
         // is this an api component then there may be additional options
         if (model.isApi()) {
-            // TODO: combo of apiName/methodName
-            String[] qualifieres = StringHelper.splitWords(model.getSyntax());
-            int pos = word.indexOf(qualifieres[0]);
+            String[] apiSyntax = StringHelper.splitWords(model.getSyntax());
+            int pos = word.indexOf(apiSyntax[0]);
             if (pos != -1) {
                 String key = word2.size() > pos ? word2.get(pos) : null;
-                Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key);
+                // key2 should be null as its fine to get all the options for api name
+                Map<String, BaseOptionModel> apiProperties = extractApiProperties(model, key, null);
                 rows.putAll(apiProperties);
             }
         }
@@ -652,20 +654,58 @@ public abstract class AbstractCamelCatalog {
         return answer;
     }
 
-    private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key) {
+    private Map<String, BaseOptionModel> extractApiProperties(ComponentModel model, String key, String key2) {
         Map<String, BaseOptionModel> answer = new LinkedHashMap<>();
         if (key != null) {
             String matchKey = null;
             String dashKey = StringHelper.camelCaseToDash(key);
             String ecKey = StringHelper.asEnumConstantValue(key);
+            String dashKey2 = StringHelper.camelCaseToDash(key2);
+            String ecKey2 = StringHelper.asEnumConstantValue(key2);
             for (ApiModel am : model.getApiOptions()) {
                 String aKey = am.getName();
                 if (aKey.equalsIgnoreCase("DEFAULT") || aKey.equalsIgnoreCase(key) || aKey.equalsIgnoreCase(ecKey) || aKey.equalsIgnoreCase(dashKey)) {
-                    am.getMethods().forEach(m -> m.getOptions().forEach(o -> answer.put(o.getName(), o)));
+                    am.getMethods().stream()
+                            .filter(m -> {
+                                if (key2 == null) {
+                                    // no api method so match all
+                                    return true;
+                                }
+                                String name = m.getName();
+                                if (name.equalsIgnoreCase(key2) || name.equalsIgnoreCase(ecKey2) || name.equalsIgnoreCase(dashKey2)) {
+                                    return true;
+                                }
+                                // is there an alias then we need to compute the alias key and compare against the key2
+                                String key3 = apiMethodAlias(am, m);
+                                if (key3 != null) {
+                                    String dashKey3 = StringHelper.camelCaseToDash(key3);
+                                    String ecKey3 = StringHelper.asEnumConstantValue(key3);
+                                    if (key2.equalsIgnoreCase(key3) || ecKey2.equalsIgnoreCase(ecKey3) || dashKey2.equalsIgnoreCase(dashKey3)) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            .forEach(m -> m.getOptions()
+                                    .forEach(o -> answer.put(o.getName(), o)));
                 }
             }
         }
         return answer;
+    }
+
+    private static String apiMethodAlias(ApiModel api, ApiMethodModel method) {
+        String name = method.getName();
+        for (String alias : api.getAliases()) {
+            int pos = alias.indexOf('=');
+            String pattern = alias.substring(0, pos);
+            String aliasMethod = alias.substring(pos + 1);
+            // match ignore case
+            if (Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(name).matches()) {
+                return aliasMethod;
+            }
+        }
+        return null;
     }
 
     public Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException {

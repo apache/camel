@@ -1194,6 +1194,13 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("unknown"));
 
+        // call/fetcher does not have from and to parameters
+        uri = "twilio:Call/Fetch?applicationSid=123&from=#555&to=#999";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("from"));
+        assertTrue(result.getUnknown().contains("to"));
+
         uri = "zendesk:getTopicsByUser?user_id=123";
         result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
