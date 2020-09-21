@@ -13,7 +13,7 @@
 
 The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
 It is *not* a regular Camel component with producer and consumer for routing messages. However for historical
-reasons it was named `PropertiesComponent` and this name is commonly known and therefore we keep using it.
+reasons it was named `PropertiesComponent` and this name is commonly known and therfore we keep using it.
 
 == Spring Boot Auto-Configuration
 
@@ -67,7 +67,7 @@ The property placeholder is generally in use when doing:
 * using Blueprint PropertyPlaceholder with Camel
 xref:properties-component.adoc[Properties] component
 * using `@PropertyInject` to inject a property in a POJO
-* Using default value if a property does not exist
+* Using default value if a property does not exists
 * Include out of the box functions, to lookup property
 values from OS environment variables, JVM system properties, or the
 service idiom.
@@ -104,7 +104,7 @@ with comma such as:
 pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
 ----
 
-You can set which location can be discarded if missing by setting the ``optional`` attribute, which is false by default, i.e:
+You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
 
 [source,java]
 ----
@@ -186,7 +186,7 @@ fresh such as:
 </camelContext>
 ----
 
-Setting the properties location through the location tag works just fine but sometimes you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
+Setting the properties location through the location tag works just fine but sometime you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
 
 [source,xml]
 ----
@@ -434,7 +434,7 @@ Notice how we can use the Camel syntax for placeholders `{{` and `}}` in the
 Camel route, which will lookup the value from OSGi blueprint.
 
 The blueprint syntax for placeholders is `${ }`. So outside the
-`<camelContext>` you must use the `${ }` syntax. Whereas inside
+`<camelContext>` you must use the `${ }` syntax. Where as inside
 `<camelContext>` you must use `{{` and `}}` syntax.
 
 OSGi blueprint allows you to configure the syntax, so you can actually
