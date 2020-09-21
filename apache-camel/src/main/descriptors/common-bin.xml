@@ -94,6 +94,7 @@
         <include>org.apache.camel:camel-aws2-ec2</include>
         <include>org.apache.camel:camel-aws2-ecs</include>
         <include>org.apache.camel:camel-aws2-eks</include>
+        <include>org.apache.camel:camel-aws2-eventbridge</include>
         <include>org.apache.camel:camel-aws2-iam</include>
         <include>org.apache.camel:camel-aws2-kinesis</include>
         <include>org.apache.camel:camel-aws2-kms</include>

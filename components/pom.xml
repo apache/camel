@@ -129,6 +129,7 @@
         <module>camel-aws2-ec2</module>
         <module>camel-aws2-ecs</module>
         <module>camel-aws2-eks</module>
+        <module>camel-aws2-eventbridge</module>
         <module>camel-aws2-iam</module>
         <module>camel-aws2-kinesis</module>
         <module>camel-aws2-kms</module>
