@@ -109,7 +109,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
                 CachedOutputStream outputStream = new CachedOutputStream(exchange);
                 try {
                     // sleep for one second so that the write to the CachedOutputStream happens after the main exchange has finished due to timeout on the multicast
-                    Thread.sleep(1000l);
+                    Thread.sleep(1000L);
                 } catch (InterruptedException e) {
                     throw new IllegalStateException("Unexpected exception", e);
                 }
@@ -136,7 +136,7 @@ public class MulticastParallelTimeoutStreamCachingTest extends ContextTestSuppor
 
                 from("direct:x").process(processor1).to("mock:x");
 
-                from("direct:b").multicast().timeout(500l).parallelProcessing().to("direct:y");
+                from("direct:b").multicast().timeout(500L).parallelProcessing().to("direct:y");
 
                 from("direct:y").process(processor2).to("mock:y");
             }
