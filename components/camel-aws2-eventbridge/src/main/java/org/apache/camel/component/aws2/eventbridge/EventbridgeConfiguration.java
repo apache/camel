@@ -22,7 +22,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @UriParams
@@ -38,7 +37,7 @@ public class EventbridgeConfiguration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
-    @Metadata(required = true, defaultValue = "assumeRole")
+    @Metadata(required = true, defaultValue = "putRule")
     private EvenbridgeOperations operation = EvenbridgeOperations.putRule;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -46,8 +45,8 @@ public class EventbridgeConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
-    @UriParam(defaultValue = "aws-global")
-    private String region = Region.AWS_GLOBAL.id();
+    @UriParam
+    private String region;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
