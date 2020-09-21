@@ -3111,7 +3111,7 @@
     "description": "Poll for incoming messages in Google Mail.",
     "deprecated": false,
     "firstVersion": "2.22.0",
-    "label": "api,cloud,mail",
+    "label": "cloud,api,mail",
     "javaType": "org.apache.camel.component.google.mail.stream.GoogleMailStreamComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

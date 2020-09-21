@@ -45,7 +45,6 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
              category = { Category.CLOUD, Category.API, Category.MAIL })
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {
 
-    // TODO create and manage API proxy
     private Object apiProxy;
 
     @UriParam

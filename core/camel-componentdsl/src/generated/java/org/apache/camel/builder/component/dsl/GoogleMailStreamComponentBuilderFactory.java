@@ -34,7 +34,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
      * 
-     * Category: api,cloud,mail
+     * Category: cloud,api,mail
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-google-mail
      */
@@ -48,19 +48,6 @@ public interface GoogleMailStreamComponentBuilderFactory {
     interface GoogleMailStreamComponentBuilder
             extends
                 ComponentBuilder<GoogleMailStreamComponent> {
-        /**
-         * OAuth 2 access token. This typically expires after an hour so
-         * refreshToken is recommended for long term usage.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamComponentBuilder accessToken(
-                java.lang.String accessToken) {
-            doSetProperty("accessToken", accessToken);
-            return this;
-        }
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
@@ -102,18 +89,6 @@ public interface GoogleMailStreamComponentBuilderFactory {
         default GoogleMailStreamComponentBuilder clientId(
                 java.lang.String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * Client secret of the mail application.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamComponentBuilder clientSecret(
-                java.lang.String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -164,20 +139,6 @@ public interface GoogleMailStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * OAuth 2 refresh token. Using this, the Google Calendar component can
-         * obtain a new accessToken whenever the current one expires - a
-         * necessity if the application is long-lived.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamComponentBuilder refreshToken(
-                java.lang.String refreshToken) {
-            doSetProperty("refreshToken", refreshToken);
-            return this;
-        }
-        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -218,6 +179,45 @@ public interface GoogleMailStreamComponentBuilderFactory {
             doSetProperty("configuration", configuration);
             return this;
         }
+        /**
+         * OAuth 2 access token. This typically expires after an hour so
+         * refreshToken is recommended for long term usage.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamComponentBuilder accessToken(
+                java.lang.String accessToken) {
+            doSetProperty("accessToken", accessToken);
+            return this;
+        }
+        /**
+         * Client secret of the mail application.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * OAuth 2 refresh token. Using this, the Google Calendar component can
+         * obtain a new accessToken whenever the current one expires - a
+         * necessity if the application is long-lived.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GoogleMailStreamComponentBuilder refreshToken(
+                java.lang.String refreshToken) {
+            doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
     }
 
     class GoogleMailStreamComponentBuilderImpl
@@ -242,19 +242,19 @@ public interface GoogleMailStreamComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accessToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "applicationName": getOrCreateConfiguration((GoogleMailStreamComponent) component).setApplicationName((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((GoogleMailStreamComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((GoogleMailStreamComponent) component).setClientId((java.lang.String) value); return true;
-            case "clientSecret": getOrCreateConfiguration((GoogleMailStreamComponent) component).setClientSecret((java.lang.String) value); return true;
             case "labels": getOrCreateConfiguration((GoogleMailStreamComponent) component).setLabels((java.lang.String) value); return true;
             case "markAsRead": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMarkAsRead((boolean) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleMailStreamComponent) component).setMaxResults((long) value); return true;
             case "query": getOrCreateConfiguration((GoogleMailStreamComponent) component).setQuery((java.lang.String) value); return true;
-            case "refreshToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             case "basicPropertyBinding": ((GoogleMailStreamComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "clientFactory": ((GoogleMailStreamComponent) component).setClientFactory((org.apache.camel.component.google.mail.GoogleMailClientFactory) value); return true;
             case "configuration": ((GoogleMailStreamComponent) component).setConfiguration((org.apache.camel.component.google.mail.stream.GoogleMailStreamConfiguration) value); return true;
+            case "accessToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setAccessToken((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((GoogleMailStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "refreshToken": getOrCreateConfiguration((GoogleMailStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
             default: return false;
             }
         }

@@ -26,16 +26,12 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * Represents the component that manages {@link GoogleDriveEndpoint}.
- */
 @Component("google-drive")
 public class GoogleDriveComponent
         extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
 
     @Metadata
     GoogleDriveConfiguration configuration;
-
     @Metadata(label = "advanced")
     private Drive client;
     @Metadata(label = "advanced")

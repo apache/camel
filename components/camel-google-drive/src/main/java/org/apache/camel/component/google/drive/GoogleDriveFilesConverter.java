@@ -69,7 +69,7 @@ public final class GoogleDriveFilesConverter {
     }
 
     // convenience method that takes google file metadata and converts that to an inputstream
-    @Converter
+    @Converter(allowNull = true)
     public static InputStream download(com.google.api.services.drive.model.File fileMetadata, Exchange exchange)
             throws Exception {
         if (fileMetadata.getDownloadUrl() != null && fileMetadata.getDownloadUrl().length() > 0) {

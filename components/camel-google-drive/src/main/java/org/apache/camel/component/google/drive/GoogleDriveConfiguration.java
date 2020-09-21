@@ -40,26 +40,19 @@ public class GoogleDriveConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleDriveApiName apiName;
-
     @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch")
     @Metadata(required = true)
     private String methodName;
-
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-
     @UriParam
     private String clientId;
-
     @UriParam(label = "security", secret = true)
     private String clientSecret;
-
     @UriParam(label = "security", secret = true)
     private String accessToken;
-
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
 
