@@ -114,6 +114,58 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+=== AWS2-Eventbridge Producer operations
+
+Camel-AWS2-Eventbridge component provides the following operation on the producer side:
+
+- putRule
+- putTargets
+
+- PutRule: this operation create a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:putRule").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will create a rule named firstrule and it will use a json file for defining the EventPattern.
+
+- PutTargets: this operation will add a target to the rule 
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+          Target target = Target.builder().id("sqs-queue").arn("arn:aws:sqs:eu-west-1:780410022472:camel-connector-test")
+                .build();
+          List<Target> targets = new ArrayList<Target>();
+          targets.add(target);
+          exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
+      }
+  })
+  .to("aws2-eventbridge://test?operation=putTargets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will add the target sqs-queue with the arn reported to the targets of the firstrule rule.
+
+== Automatic detection of EventbridgeClient client in registry
+
+The component is capable of detecting the presence of an EventbridgeClient bean into the registry.
+If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter, like the example above.
+This may be really useful for smarter configuration of the endpoint.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
