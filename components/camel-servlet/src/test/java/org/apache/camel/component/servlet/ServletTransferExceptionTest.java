@@ -38,7 +38,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
 
         assertEquals(500, response.getResponseCode());
         assertEquals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, response.getContentType());
-        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream());
+        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream(), null);
         assertNotNull(object);
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, object);
