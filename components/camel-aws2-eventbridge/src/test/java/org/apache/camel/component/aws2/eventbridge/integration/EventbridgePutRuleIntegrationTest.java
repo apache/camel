@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -36,14 +35,14 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
-@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
+//@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
 
     @BindToRegistry("eventbridge-client")
     EventBridgeClient client
             = EventBridgeClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("xxxx", "yyyy")))
+                            AwsBasicCredentials.create("AKIAJS6AYRAKVKC43KXA", "iaNSvyYs1o222icScLnbSm70gMysvcSQf89AzaOx")))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject

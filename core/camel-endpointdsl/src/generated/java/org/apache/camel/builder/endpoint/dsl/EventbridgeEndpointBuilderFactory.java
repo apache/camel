@@ -96,10 +96,12 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The eventbus name.
+         * The eventbus name, the default value is default and this means it
+         * will be the AWS event bus of your account.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default EventbridgeEndpointBuilder eventbusName(String eventbusName) {
