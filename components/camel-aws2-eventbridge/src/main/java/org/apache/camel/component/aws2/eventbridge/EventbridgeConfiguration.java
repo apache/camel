@@ -105,7 +105,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy protocol when instantiating the STS client
+     * To define a proxy protocol when instantiating the Eventbridge client
      */
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
@@ -116,7 +116,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the STS client
+     * To define a proxy host when instantiating the Eventbridge client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -127,7 +127,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the STS client
+     * To define a proxy port when instantiating the Eventbridge client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -138,7 +138,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which STS client needs to work. When using this parameter, the configuration will expect the
+     * The region in which Eventbridge client needs to work. When using this parameter, the configuration will expect the
      * lowercase name of the region (for example ap-east-1) You'll need to use the name Region.EU_WEST_1.id()
      */
     public void setRegion(String region) {

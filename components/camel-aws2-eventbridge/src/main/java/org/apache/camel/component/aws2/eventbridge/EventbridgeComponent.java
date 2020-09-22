@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 /**
- * For working with Amazon STS SDK v2.
+ * For working with Amazon Eventbridge SDK v2.
  */
 @Component("aws2-eventbridge")
 public class EventbridgeComponent extends DefaultComponent {

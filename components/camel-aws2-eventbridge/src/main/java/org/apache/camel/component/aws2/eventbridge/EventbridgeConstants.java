@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws2.eventbridge;
 
 /**
- * Constants used in Camel AWS2 STS module
+ * Constants used in Camel AWS2 Eventbridge module
  */
 public interface EventbridgeConstants {
     String OPERATION = "CamelAwsEventbridgeOperation";
