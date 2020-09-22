@@ -19,11 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
@@ -185,40 +181,6 @@ public class VertxWebsocketRouterTest extends VertxWebSocketTestSupport {
             String result = template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
             assertTrue(latch.await(10, TimeUnit.SECONDS));
             assertEquals("Hello world", result);
-        } finally {
-            context.stop();
-        }
-    }
-
-    @Test
-    public void testCustomVertxRouterWebSocketAlreadyClosedException() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                fromF("vertx-websocket:localhost:%d/test", port)
-                        .to("mock:result");
-            }
-        });
-
-        Router router = createRouter("/custom", new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext context) {
-                HttpServerRequest request = context.request();
-                ServerWebSocket webSocket = request.upgrade();
-
-                // Immediately close the socket to simulate an error scenario
-                webSocket.close();
-            }
-        }, null);
-
-        context.getRegistry().bind("vertx-router", router);
-        context.start();
-        try {
-            assertThrows(CamelExecutionException.class, () -> {
-                ProducerTemplate template = context.createProducerTemplate();
-                template.requestBody("vertx-websocket:localhost:" + port + "/custom", "Hello world", String.class);
-            });
         } finally {
             context.stop();
         }
