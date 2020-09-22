@@ -414,7 +414,8 @@ public interface EventbridgeEndpointBuilderFactory {
      */
     enum EventbridgeOperations {
         putRule,
-        putTargets;
+        putTargets,
+        removeTargets;
     }
 
     /**

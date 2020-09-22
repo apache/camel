@@ -24,4 +24,5 @@ public interface EventbridgeConstants {
     String RULE_NAME = "CamelAwsEventbridgeRuleName";
     String EVENT_PATTERN = "CamelAwsEventbridgeEventPattern";
     String TARGETS = "CamelAwsEventbridgeTargets";
+    String TARGETS_IDS = "CamelAwsEventbridgeTargetsIds";
 }
