@@ -31,7 +31,7 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "eventbridgeClient": target.getConfiguration().setEventbridgeClient(property(camelContext, software.amazon.awssdk.services.eventbridge.EventBridgeClient.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations.class, value)); return true;
+        case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class, value)); return true;
         case "pojorequest":
         case "pojoRequest": target.getConfiguration().setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -59,7 +59,7 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         answer.put("eventPatternFile", java.lang.String.class);
         answer.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
         answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations.class);
+        answer.put("operation", org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class);
         answer.put("pojoRequest", boolean.class);
         answer.put("proxyHost", java.lang.String.class);
         answer.put("proxyPort", java.lang.Integer.class);

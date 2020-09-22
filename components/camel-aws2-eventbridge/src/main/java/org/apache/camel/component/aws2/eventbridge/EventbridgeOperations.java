@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws2.eventbridge;
 
-public enum EvenbridgeOperations {
+public enum EventbridgeOperations {
 
     putRule,
     putTargets
