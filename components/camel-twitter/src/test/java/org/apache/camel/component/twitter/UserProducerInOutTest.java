@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -74,7 +75,7 @@ public class UserProducerInOutTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .inOut("twitter-timeline://user?" + getUriTokens())
+                        .to(ExchangePattern.InOut, "twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         //.transform().simple("The tweet '${body.text}' was published with the id '${body.id}'")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
