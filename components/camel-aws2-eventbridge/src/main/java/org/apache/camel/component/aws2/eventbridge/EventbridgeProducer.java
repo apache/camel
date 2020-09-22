@@ -41,8 +41,8 @@ import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 /**
- * A Producer which sends messages to the Amazon Eventbridge Service SDK v2 <a href="http://aws.amazon.com/sts/">AWS
- * STS</a>
+ * A Producer which sends messages to the Amazon Eventbridge Service SDK v2 <a href="http://aws.amazon.com/eventbridge/">AWS
+ * Eventbridge</a>
  */
 public class EventbridgeProducer extends DefaultProducer {
 
