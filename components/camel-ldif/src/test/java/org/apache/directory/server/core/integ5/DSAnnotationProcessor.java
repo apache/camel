@@ -205,8 +205,6 @@ public final class DSAnnotationProcessor {
                         createPartition.cacheSize(),
                         new File(service.getInstanceLayout().getPartitionsDirectory(), createPartition.name()));
 
-                partition.setCacheService(service.getCacheService());
-
                 CreateIndex[] indexes = createPartition.indexes();
 
                 for (CreateIndex createIndex : indexes) {
@@ -228,7 +226,6 @@ public final class DSAnnotationProcessor {
 
                 if (partition instanceof AbstractBTreePartition) {
                     AbstractBTreePartition btreePartition = (AbstractBTreePartition) partition;
-                    btreePartition.setCacheService(service.getCacheService());
                     btreePartition.setCacheSize(createPartition.cacheSize());
                     btreePartition.setPartitionPath(new File(
                             service
