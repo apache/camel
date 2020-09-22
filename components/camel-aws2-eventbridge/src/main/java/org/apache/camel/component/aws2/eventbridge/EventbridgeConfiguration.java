@@ -55,7 +55,7 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean autoDiscoverClient = true;
     @UriParam
     private String eventPatternFile;
-    @UriParam
+    @UriParam(defaultValue = "default")
     private String eventbusName = "default";
 
     public EventBridgeClient getEventbridgeClient() {
@@ -197,7 +197,7 @@ public class EventbridgeConfiguration implements Cloneable {
     }
 
     /**
-     * The eventbus name
+     * The eventbus name, the default value is default and this means it will be the AWS event bus of your account.
      */
     public void setEventbusName(String eventbusName) {
         this.eventbusName = eventbusName;
