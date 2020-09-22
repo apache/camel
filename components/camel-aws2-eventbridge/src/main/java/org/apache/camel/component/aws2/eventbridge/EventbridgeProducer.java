@@ -69,7 +69,8 @@ public class EventbridgeProducer extends DefaultProducer {
     }
 
     private EventbridgeOperations determineOperation(Exchange exchange) {
-        EventbridgeOperations operation = exchange.getIn().getHeader(EventbridgeConstants.OPERATION, EventbridgeOperations.class);
+        EventbridgeOperations operation
+                = exchange.getIn().getHeader(EventbridgeConstants.OPERATION, EventbridgeOperations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }

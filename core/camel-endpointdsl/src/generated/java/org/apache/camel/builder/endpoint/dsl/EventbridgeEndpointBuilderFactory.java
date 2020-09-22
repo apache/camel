@@ -153,14 +153,14 @@ public interface EventbridgeEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
+         * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> type.
          * 
          * Required: true
          * Default: putRule
          * Group: producer
          */
         default EventbridgeEndpointBuilder operation(
-                EvenbridgeOperations operation) {
+                EventbridgeOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -168,7 +168,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * The operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
+         * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> type.
          * 
          * Required: true
          * Default: putRule
@@ -397,9 +397,9 @@ public interface EventbridgeEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> enum.
+     * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> enum.
      */
-    enum EvenbridgeOperations {
+    enum EventbridgeOperations {
         putRule,
         putTargets;
     }

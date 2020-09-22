@@ -126,13 +126,13 @@ public interface Aws2EventbridgeComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations</code> type.
+         * <code>org.apache.camel.component.aws2.eventbridge.EventbridgeOperations</code> type.
          * 
          * Default: putRule
          * Group: producer
          */
         default Aws2EventbridgeComponentBuilder operation(
-                org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations operation) {
+                org.apache.camel.component.aws2.eventbridge.EventbridgeOperations operation) {
             doSetProperty("operation", operation);
             return this;
         }
@@ -282,7 +282,7 @@ public interface Aws2EventbridgeComponentBuilderFactory {
             case "eventbridgeClient": getOrCreateConfiguration((EventbridgeComponent) component).setEventbridgeClient((software.amazon.awssdk.services.eventbridge.EventBridgeClient) value); return true;
             case "eventPatternFile": getOrCreateConfiguration((EventbridgeComponent) component).setEventPatternFile((java.lang.String) value); return true;
             case "lazyStartProducer": ((EventbridgeComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.eventbridge.EvenbridgeOperations) value); return true;
+            case "operation": getOrCreateConfiguration((EventbridgeComponent) component).setOperation((org.apache.camel.component.aws2.eventbridge.EventbridgeOperations) value); return true;
             case "pojoRequest": getOrCreateConfiguration((EventbridgeComponent) component).setPojoRequest((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((EventbridgeComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((EventbridgeComponent) component).setProxyPort((java.lang.Integer) value); return true;
