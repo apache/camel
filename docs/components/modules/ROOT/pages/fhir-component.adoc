@@ -183,7 +183,7 @@ fhir:apiName/methodName
 
 There are 13 API names as listed in the table below:
 
-[width="100%",cols="2,1,7",options="header"]
+[width="100%",cols="2,2,6",options="header"]
 |===
 | API Name | Type | Description
 | *capabilities* | Both | API to Fetch the capability statement for the server
