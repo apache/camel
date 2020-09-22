@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.xray;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.xray.bean.ProcessingCamelBean;
@@ -114,25 +115,25 @@ public class CustomComponentTest extends CamelAwsXRayTestSupport {
             public void configure() {
                 from(START).routeId("start")
                         .log("Starting test")
-                        .inOnly(DELIVERY);
+                        .to(ExchangePattern.InOnly, DELIVERY);
 
                 from(DELIVERY).routeId("delivery")
                         .log("Doing some stuff")
                         .to(CommonEndpoints.RECEIVED)
                         .delay(100)
-                        .inOnly(IN_QUEUE);
+                        .to(ExchangePattern.InOnly, IN_QUEUE);
 
                 from(IN_QUEUE).routeId("processing")
                         .log("Do some more stuff")
                         .to(CommonEndpoints.PROCESSING)
                         .delay(100)
-                        .inOnly(PERSISTENCE_QUEUE);
+                        .to(ExchangePattern.InOnly, PERSISTENCE_QUEUE);
 
                 from(PERSISTENCE_QUEUE).routeId("wait-for-persisting")
                         .log("Waiting on available persisting instance")
                         .to(CommonEndpoints.PERSISTENCE_QUEUE)
                         .delay(100)
-                        .inOnly(PERSISTING);
+                        .to(ExchangePattern.InOnly, PERSISTING);
 
                 from(PERSISTING).routeId("persisting")
                         .log("Payload ready for usage")
