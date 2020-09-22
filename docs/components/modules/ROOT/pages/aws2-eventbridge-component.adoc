@@ -127,6 +127,7 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 
 - putRule
 - putTargets
+- removeTargets
 
 - PutRule: this operation create a rule related to an eventbus
 
@@ -166,6 +167,26 @@ This operation will create a rule named firstrule and it will use a json file fo
 --------------------------------------------------------------------------------
 
 This operation will add the target sqs-queue with the arn reported to the targets of the firstrule rule.
+
+- RemoveTargets: this operation will remove a collection of target from the rule 
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+          List<String> ids = new ArrayList<String>();
+          targets.add("sqs-queue");
+          exchange.getIn().setHeader(EventbridgeConstants.TARGETS_IDS, targets);
+      }
+  })
+  .to("aws2-eventbridge://test?operation=removeTargets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will remove the target sqs-queue from the firstrule rule.
 
 == Automatic detection of EventbridgeClient client in registry
 
