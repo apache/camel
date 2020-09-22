@@ -203,7 +203,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy host when instantiating the STS client.
+         * To define a proxy host when instantiating the Eventbridge client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -214,7 +214,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the STS client.
+         * To define a proxy port when instantiating the Eventbridge client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -225,7 +225,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy port when instantiating the STS client.
+         * To define a proxy port when instantiating the Eventbridge client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -237,7 +237,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the STS client.
+         * To define a proxy protocol when instantiating the Eventbridge client.
          * 
          * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
          * type.
@@ -250,7 +250,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * To define a proxy protocol when instantiating the STS client.
+         * To define a proxy protocol when instantiating the Eventbridge client.
          * 
          * The option will be converted to a
          * <code>software.amazon.awssdk.core.Protocol</code> type.
@@ -263,7 +263,7 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The region in which STS client needs to work. When using this
+         * The region in which Eventbridge client needs to work. When using this
          * parameter, the configuration will expect the lowercase name of the
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
