@@ -35,6 +35,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -1190,6 +1191,9 @@ public abstract class BaseMainSupport extends BaseService {
 
         // make defensive copy as we mutate the map
         Set<String> keys = new LinkedHashSet<>(properties.keySet());
+        // find names of beans
+        final Set<String> beans
+                = properties.keySet().stream().map(k -> StringHelper.before(k, ".", k)).collect(Collectors.toSet());
         // create beans first
         for (String key : keys) {
             if (key.indexOf('.') == -1) {
@@ -1205,22 +1209,17 @@ public abstract class BaseMainSupport extends BaseService {
                 camelContext.getRegistry().bind(name, bean);
             }
         }
-        // then set properties
-        for (String key : keys) {
-            if (key.indexOf('.') != -1) {
-                String name = StringHelper.before(key, ".");
-                String valueKey = StringHelper.after(key, ".");
-                Object value = properties.remove(key);
-                Object bean = camelContext.getRegistry().lookupByName(name);
-                if (bean == null) {
-                    throw new IllegalArgumentException(
-                            "Cannot resolve bean with name " + name);
-                }
-                Map<String, Object> map = new HashMap<>();
-                map.put(valueKey, value);
-                setPropertiesOnTarget(camelContext, bean, map, optionPrefix + name + ".", failIfNotSet, ignoreCase,
-                        autoConfiguredProperties);
+        // then set properties per bean
+        for (String name : beans) {
+            Object bean = camelContext.getRegistry().lookupByName(name);
+            if (bean == null) {
+                throw new IllegalArgumentException(
+                        "Cannot resolve bean with name " + name);
             }
+            // configure all the properties on the bean at once (to ensure they are configured in right order)
+            Map<String, Object> config = PropertiesHelper.extractProperties(properties, name + ".");
+            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
+                    autoConfiguredProperties);
         }
     }
 
