@@ -38,6 +38,8 @@ import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsResponse;
+import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsRequest;
+import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 /**
@@ -62,6 +64,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 break;
             case putTargets:
                 putTargets(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case removeTargets:
+                removeTargets(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -163,6 +168,45 @@ public class EventbridgeProducer extends DefaultProducer {
                 result = eventbridgeClient.putTargets(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Put Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+
+    private void removeTargets(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof RemoveTargetsRequest) {
+                RemoveTargetsResponse result;
+                try {
+                    result = eventbridgeClient.removeTargets((RemoveTargetsRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("RemoveTargets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+            RemoveTargetsRequest.Builder builder = RemoveTargetsRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
+                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
+                builder.rule(ruleName);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.TARGETS_IDS))) {
+                Collection<String> ids = exchange.getIn().getHeader(EventbridgeConstants.TARGETS_IDS, Collection.class);
+                builder.ids(ids);
+            } else {
+                throw new IllegalArgumentException("At least one targets must be specified");
+            }
+            builder.eventBusName(getConfiguration().getEventbusName());
+            RemoveTargetsResponse result;
+            try {
+                result = eventbridgeClient.removeTargets(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Remove Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
