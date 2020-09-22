@@ -72,7 +72,8 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
         super.doStart();
 
         eventbridgeClient
-                = configuration.getEventbridgeClient() != null ? configuration.getEventbridgeClient() : createEventbridgeClient();
+                = configuration.getEventbridgeClient() != null
+                        ? configuration.getEventbridgeClient() : createEventbridgeClient();
     }
 
     @Override
