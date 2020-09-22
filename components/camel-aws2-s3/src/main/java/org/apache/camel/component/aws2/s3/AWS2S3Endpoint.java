@@ -175,7 +175,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
                 throw new RuntimeCamelException(e);
             }
         } else {
-            message.setBody(null);
+            message.setBody(s3Object);
         }
 
         message.setHeader(AWS2S3Constants.KEY, key);
@@ -193,12 +193,14 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, s3Object.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, s3Object.response().storageClass());
 
-        /**
-         * If includeBody != true, it is safe to close the object here. If includeBody == true, the caller is
-         * responsible for closing the stream and object once the body has been fully consumed. As of 2.17, the consumer
-         * does not close the stream or object on commit.
+        /*
+         * If includeBody == true, it is safe to close the object here because the S3Object
+         * was consumed already. If includeBody != true, the caller is responsible for
+         * closing the stream once the body has been fully consumed or use the autoCloseBody
+         * configuration to automatically schedule the body closing at the end of exchange.
+         * TODO REVIEW THIS STATEMENT As of 2.17, the consumer does not close the stream or object on commit.
          */
-        if (!configuration.isIncludeBody()) {
+        if (configuration.isIncludeBody()) {
             IOHelper.close(s3Object);
         } else {
             if (configuration.isAutocloseBody()) {
