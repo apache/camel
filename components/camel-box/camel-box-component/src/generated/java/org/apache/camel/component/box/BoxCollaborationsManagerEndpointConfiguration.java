@@ -33,7 +33,7 @@ public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConf
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addFolderCollaboration", description="The id of folder to add collaboration to"), @ApiMethod(methodName = "addFolderCollaborationByEmail", description="The id of folder to add collaboration to"), @ApiMethod(methodName = "getFolderCollaborations", description="The id of folder to get collaborations information on")})
     private String folderId;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "updateCollaborationInfo")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "updateCollaborationInfo", description="Collaboration information to update")})
     private com.box.sdk.BoxCollaboration.Info info;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addFolderCollaboration", description="The role of the collaborator"), @ApiMethod(methodName = "addFolderCollaborationByEmail", description="The role of the collaborator")})

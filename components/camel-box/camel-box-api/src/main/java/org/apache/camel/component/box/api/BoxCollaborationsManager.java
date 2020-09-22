@@ -158,6 +158,7 @@ public class BoxCollaborationsManager {
      * Update collaboration information.
      * 
      * @param  collaborationId - the id of collaboration.
+     * @param  info            collaboration information to update.
      * @return                 The collaboration with updated information.
      */
     public BoxCollaboration updateCollaborationInfo(String collaborationId, BoxCollaboration.Info info) {

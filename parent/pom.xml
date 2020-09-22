@@ -539,7 +539,7 @@
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
         <testcontainers-version>1.14.3</testcontainers-version>
         <tika-version>1.24.1</tika-version>
-        <twilio-version>7.55.0</twilio-version>
+        <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
         <undertow-version>2.1.3.Final</undertow-version>
         <univocity-parsers-version>2.9.0</univocity-parsers-version>

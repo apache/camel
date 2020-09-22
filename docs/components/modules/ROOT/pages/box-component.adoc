@@ -150,7 +150,7 @@ box:apiName/methodName
 
 There are 10 API names as listed in the table below:
 
-[width="100%",cols="2,1,7",options="header"]
+[width="100%",cols="2,2,6",options="header"]
 |===
 | API Name | Type | Description
 | *collaborations* | Producer | Provides operations to manage Box collaborations
@@ -229,7 +229,7 @@ The collaborations API method(s) has the following set of parameters listed in t
 | getCollaborationInfo | *collaborationId* |  The id of collaboration | String
 | getFolderCollaborations | *folderId* |  The id of folder to get collaborations information on | String
 | updateCollaborationInfo | *collaborationId* |  The id of collaboration | String
-| updateCollaborationInfo | *info* |   | Info
+| updateCollaborationInfo | *info* |  Collaboration information to update | Info
 |===
 
 In addition to the parameters above, the collaborations API can also use from the 21 endpoint query option
