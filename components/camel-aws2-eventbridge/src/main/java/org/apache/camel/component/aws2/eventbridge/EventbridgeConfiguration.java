@@ -38,7 +38,7 @@ public class EventbridgeConfiguration implements Cloneable {
     private String secretKey;
     @UriParam
     @Metadata(required = true, defaultValue = "putRule")
-    private EvenbridgeOperations operation = EvenbridgeOperations.putRule;
+    private EventbridgeOperations operation = EventbridgeOperations.putRule;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
@@ -89,14 +89,14 @@ public class EventbridgeConfiguration implements Cloneable {
         this.secretKey = secretKey;
     }
 
-    public EvenbridgeOperations getOperation() {
+    public EventbridgeOperations getOperation() {
         return operation;
     }
 
     /**
      * The operation to perform
      */
-    public void setOperation(EvenbridgeOperations operation) {
+    public void setOperation(EventbridgeOperations operation) {
         this.operation = operation;
     }
 
