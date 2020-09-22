@@ -96,6 +96,17 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
+         * The eventbus name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EventbridgeEndpointBuilder eventbusName(String eventbusName) {
+            doSetProperty("eventbusName", eventbusName);
+            return this;
+        }
+        /**
          * EventPattern File.
          * 
          * The option is a: <code>java.lang.String</code> type.

@@ -118,6 +118,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 String eventPattern = exchange.getIn().getHeader(EventbridgeConstants.EVENT_PATTERN, String.class);
                 builder.eventPattern(eventPattern);
             }
+            builder.eventBusName(getConfiguration().getEventbusName());
             PutRuleResponse result;
             try {
                 result = eventbridgeClient.putRule(builder.build());
@@ -156,6 +157,7 @@ public class EventbridgeProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("At least one targets must be specified");
             }
+            builder.eventBusName(getConfiguration().getEventbusName());
             PutTargetsResponse result;
             try {
                 result = eventbridgeClient.putTargets(builder.build());

@@ -55,6 +55,8 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean autoDiscoverClient = true;
     @UriParam
     private String eventPatternFile;
+    @UriParam
+    private String eventbusName = "default";
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;
@@ -188,6 +190,17 @@ public class EventbridgeConfiguration implements Cloneable {
      */
     public void setEventPatternFile(String eventPatternFile) {
         this.eventPatternFile = eventPatternFile;
+    }
+
+    public String getEventbusName() {
+        return eventbusName;
+    }
+
+    /**
+     * The eventbus name
+     */
+    public void setEventbusName(String eventbusName) {
+        this.eventbusName = eventbusName;
     }
     // *************************************************
     //
