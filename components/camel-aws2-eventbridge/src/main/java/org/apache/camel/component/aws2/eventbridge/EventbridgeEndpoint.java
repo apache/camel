@@ -72,7 +72,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
         super.doStart();
 
         eventbridgeClient
-                = configuration.getEventbridgeClient() != null ? configuration.getEventbridgeClient() : createStsClient();
+                = configuration.getEventbridgeClient() != null ? configuration.getEventbridgeClient() : createEventbridgeClient();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
         return eventbridgeClient;
     }
 
-    EventBridgeClient createStsClient() {
+    EventBridgeClient createEventbridgeClient() {
         EventBridgeClient client = null;
         EventBridgeClientBuilder clientBuilder = EventBridgeClient.builder();
         ProxyConfiguration.Builder proxyConfig = null;
