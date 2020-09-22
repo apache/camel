@@ -47,7 +47,7 @@
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.1</ahc-version>
         <android-annotations-version>4.1.1.4</android-annotations-version>
-        <apacheds-version>2.0.0.AM25</apacheds-version>
+        <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.18.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
