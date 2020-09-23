@@ -127,6 +127,7 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 - putTargets
 - removeTargets
 - deleteRule
+- enableRule
 
 - PutRule: this operation create a rule related to an eventbus
 
@@ -203,6 +204,23 @@ This operation will remove the target sqs-queue from the firstrule rule.
 --------------------------------------------------------------------------------
 
 This operation will remove the firstrule rule from the test eventbus.
+
+- EnableRule: this operation will enable a rule related to an eventbus
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME, "firstrule");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=enableRule")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will enable the firstrule rule from the test eventbus.
 
 == Automatic detection of EventbridgeClient client in registry
 
