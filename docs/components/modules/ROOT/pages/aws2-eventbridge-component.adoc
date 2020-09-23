@@ -129,6 +129,7 @@ Camel-AWS2-Eventbridge component provides the following operation on the produce
 - deleteRule
 - enableRule
 - disableRule
+- listRules
 
 - PutRule: this operation create a rule related to an eventbus
 
@@ -239,6 +240,23 @@ This operation will enable the firstrule rule from the test eventbus.
 --------------------------------------------------------------------------------
 
 This operation will disable the firstrule rule from the test eventbus.
+
+- ListRules: this operation will list all the rules related to an eventbus with prefix first
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(EventbridgeConstants.RULE_NAME_PREFIX, "first");
+      }
+  })
+  .to("aws2-eventbridge://test?operation=listRules")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list all the rules with prefix first from the test eventbus.
 
 == Automatic detection of EventbridgeClient client in registry
 
