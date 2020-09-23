@@ -55,9 +55,6 @@ public class EventbridgeComponent extends DefaultComponent {
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Event bus name must be specified.");
         }
-        if (remaining.startsWith("arn:")) {
-            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
-        }
         EventbridgeConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
         configuration.setEventbusName(remaining);
