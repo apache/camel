@@ -403,7 +403,8 @@ public interface EventbridgeEndpointBuilderFactory {
         putRule,
         putTargets,
         removeTargets,
-        deleteRule;
+        deleteRule,
+        enableRule;
     }
 
     /**

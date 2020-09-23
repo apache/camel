@@ -256,7 +256,7 @@ public class EventbridgeProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void enableRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -272,7 +272,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        	EnableRuleRequest.Builder builder = EnableRuleRequest.builder();
+            EnableRuleRequest.Builder builder = EnableRuleRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.name(ruleName);
