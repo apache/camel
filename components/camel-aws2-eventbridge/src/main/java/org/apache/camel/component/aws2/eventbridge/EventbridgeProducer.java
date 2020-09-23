@@ -36,6 +36,8 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.DeleteRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.EnableRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.EnableRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
@@ -72,6 +74,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 break;
             case deleteRule:
                 deleteRule(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case enableRule:
+                enableRule(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -245,6 +250,39 @@ public class EventbridgeProducer extends DefaultProducer {
                 result = eventbridgeClient.deleteRule(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Delete Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+    
+    private void enableRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof EnableRuleRequest) {
+                EnableRuleResponse result;
+                try {
+                    result = eventbridgeClient.enableRule((EnableRuleRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Enable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+        	EnableRuleRequest.Builder builder = EnableRuleRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
+                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
+                builder.name(ruleName);
+            }
+            builder.eventBusName(getConfiguration().getEventbusName());
+            EnableRuleResponse result;
+            try {
+                result = eventbridgeClient.enableRule(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Enable Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
