@@ -404,7 +404,8 @@ public interface EventbridgeEndpointBuilderFactory {
         putTargets,
         removeTargets,
         deleteRule,
-        enableRule;
+        enableRule,
+        disableRule;
     }
 
     /**
