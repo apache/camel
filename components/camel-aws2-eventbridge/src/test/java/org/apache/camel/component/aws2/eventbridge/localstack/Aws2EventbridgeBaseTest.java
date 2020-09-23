@@ -28,7 +28,6 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
-import software.amazon.awssdk.services.eventbridge.model.CreateEventBusRequest;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2EventbridgeBaseTest extends ContainerAwareTestSupport {
@@ -58,7 +57,7 @@ public class Aws2EventbridgeBaseTest extends ContainerAwareTestSupport {
     }
 
     public EventBridgeClient getEventbridgeClient() {
-    	EventBridgeClient eventbridgeClient = EventBridgeClient
+        EventBridgeClient eventbridgeClient = EventBridgeClient
                 .builder()
                 .endpointOverride(URI.create("http://" + getEventbridgeUrl()))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))

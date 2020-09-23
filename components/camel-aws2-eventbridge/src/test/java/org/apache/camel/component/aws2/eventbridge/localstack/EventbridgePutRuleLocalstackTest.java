@@ -26,11 +26,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import software.amazon.awssdk.services.eventbridge.model.CreateEventBusRequest;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
@@ -43,7 +39,6 @@ public class EventbridgePutRuleLocalstackTest extends Aws2EventbridgeBaseTest {
 
     @EndpointInject("mock:result1")
     private MockEndpoint result1;
-    
 
     @Test
     public void sendIn() throws Exception {
