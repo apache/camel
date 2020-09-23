@@ -90,8 +90,8 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint
-                        = "aws2-eventbridge://test?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
-                String target = "aws2-eventbridge://test?operation=putTargets";
+                        = "aws2-eventbridge://default?operation=putRule&eventPatternFile=file:src/test/resources/eventpattern.json";
+                String target = "aws2-eventbridge://default?operation=putTargets";
                 from("direct:evs").to(awsEndpoint).log("${body}").to("mock:result");
                 from("direct:evs-targets").to(target).log("${body}").to("mock:result1");
             }

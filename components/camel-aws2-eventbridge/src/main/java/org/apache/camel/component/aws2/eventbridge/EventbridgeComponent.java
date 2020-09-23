@@ -60,6 +60,7 @@ public class EventbridgeComponent extends DefaultComponent {
         }
         EventbridgeConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
+        configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (endpoint.getConfiguration().isAutoDiscoverClient()) {
