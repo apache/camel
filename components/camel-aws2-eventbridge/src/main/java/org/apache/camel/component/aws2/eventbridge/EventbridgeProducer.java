@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.eventbridge.model.DeleteRuleRequest;
+import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.PutRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.PutTargetsRequest;
@@ -67,6 +69,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 break;
             case removeTargets:
                 removeTargets(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case deleteRule:
+                deleteRule(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -207,6 +212,39 @@ public class EventbridgeProducer extends DefaultProducer {
                 result = eventbridgeClient.removeTargets(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("Remove Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+    
+    private void deleteRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof DeleteRuleRequest) {
+                DeleteRuleResponse result;
+                try {
+                    result = eventbridgeClient.deleteRule((DeleteRuleRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("Delete Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+        	DeleteRuleRequest.Builder builder = DeleteRuleRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
+                String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
+                builder.name(ruleName);
+            }
+            builder.eventBusName(getConfiguration().getEventbusName());
+            DeleteRuleResponse result;
+            try {
+                result = eventbridgeClient.deleteRule(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("Delete Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);

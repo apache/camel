@@ -20,5 +20,6 @@ public enum EventbridgeOperations {
 
     putRule,
     putTargets,
-    removeTargets
+    removeTargets,
+    deleteRule
 }
