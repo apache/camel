@@ -20,16 +20,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 @UriParams
 public class EventbridgeConfiguration implements Cloneable {
 
-    @UriPath(description = "Logical name")
-    @Metadata(required = true)
-    private String label;
+    private String eventbusName = "default";
     @UriParam
     private EventBridgeClient eventbridgeClient;
     @UriParam(label = "security", secret = true)
@@ -55,8 +52,6 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean autoDiscoverClient = true;
     @UriParam
     private String eventPatternFile;
-    @UriParam(defaultValue = "default")
-    private String eventbusName = "default";
 
     public EventBridgeClient getEventbridgeClient() {
         return eventbridgeClient;

@@ -52,6 +52,12 @@ public class EventbridgeComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("Event bus name must be specified.");
+        }
+        if (remaining.startsWith("arn:")) {
+            remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
+        }
         EventbridgeConfiguration configuration
                 = this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);

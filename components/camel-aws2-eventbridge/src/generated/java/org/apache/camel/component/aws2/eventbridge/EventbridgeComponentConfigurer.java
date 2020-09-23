@@ -37,8 +37,6 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "eventPatternFile": getOrCreateConfiguration(target).setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
         case "eventbridgeClient": getOrCreateConfiguration(target).setEventbridgeClient(property(camelContext, software.amazon.awssdk.services.eventbridge.EventBridgeClient.class, value)); return true;
-        case "eventbusname":
-        case "eventbusName": getOrCreateConfiguration(target).setEventbusName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class, value)); return true;
@@ -68,7 +66,6 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         answer.put("configuration", org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration.class);
         answer.put("eventPatternFile", java.lang.String.class);
         answer.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
-        answer.put("eventbusName", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class);
         answer.put("pojoRequest", boolean.class);
@@ -96,8 +93,6 @@ public class EventbridgeComponentConfigurer extends PropertyConfigurerSupport im
         case "eventPatternFile": return getOrCreateConfiguration(target).getEventPatternFile();
         case "eventbridgeclient":
         case "eventbridgeClient": return getOrCreateConfiguration(target).getEventbridgeClient();
-        case "eventbusname":
-        case "eventbusName": return getOrCreateConfiguration(target).getEventbusName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return getOrCreateConfiguration(target).getOperation();

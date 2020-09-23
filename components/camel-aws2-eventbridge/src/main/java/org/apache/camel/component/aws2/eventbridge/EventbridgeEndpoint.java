@@ -23,8 +23,10 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -49,6 +51,9 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
 
     private EventBridgeClient eventbridgeClient;
 
+    @UriPath(description = "Event bus name or ARN")
+    @Metadata(required = true)
+    private String eventbusNameOrArn; // to support component docs
     @UriParam
     private EventbridgeConfiguration configuration;
 
