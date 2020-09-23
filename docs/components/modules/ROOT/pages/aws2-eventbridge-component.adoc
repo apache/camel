@@ -80,7 +80,7 @@ The AWS 2 Eventbridge component supports 15 options, which are listed below.
 The AWS 2 Eventbridge endpoint is configured using URI syntax:
 
 ----
-aws2-eventbridge:label
+aws2-eventbridge://eventbusNameOrArn
 ----
 
 with the following path and query parameters:

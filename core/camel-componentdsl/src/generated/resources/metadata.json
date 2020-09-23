@@ -591,7 +591,7 @@
     "version": "3.6.0-SNAPSHOT",
     "scheme": "aws2-eventbridge",
     "extendsScheme": "",
-    "syntax": "aws2-eventbridge:label",
+    "syntax": "aws2-eventbridge:\/\/eventbusNameOrArn",
     "async": false,
     "api": false,
     "consumerOnly": false,

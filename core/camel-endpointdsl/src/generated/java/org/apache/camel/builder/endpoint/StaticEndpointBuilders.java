@@ -1128,12 +1128,12 @@ public class StaticEndpointBuilders {
      * Since: 3.6
      * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
      * 
-     * Syntax: <code>aws2-eventbridge:label</code>
+     * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
      * 
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
      * 
-     * @param path label
+     * @param path //eventbusNameOrArn
      */
     public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
             String path) {
@@ -1147,14 +1147,14 @@ public class StaticEndpointBuilders {
      * Since: 3.6
      * Maven coordinates: org.apache.camel:camel-aws2-eventbridge
      * 
-     * Syntax: <code>aws2-eventbridge:label</code>
+     * Syntax: <code>aws2-eventbridge://eventbusNameOrArn</code>
      * 
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path label
+     * @param path //eventbusNameOrArn
      */
     public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
             String componentName,
