@@ -43,7 +43,7 @@ public class EventbridgePutRuleIntegrationTest extends CamelTestSupport {
     EventBridgeClient client
             = EventBridgeClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create("xxxx", "yyyy")))
+                            AwsBasicCredentials.create("xxxxx", "yyyy")))
                     .region(Region.EU_WEST_1).build();
 
     @EndpointInject
