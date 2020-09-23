@@ -510,7 +510,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be
      * disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that
-     * takes precedence and no routes is started. You would need to start CamelContext explicit using the
+     * takes precedence and no routes are started. You would need to start CamelContext explicit using the
      * org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes
      * manually using CamelContext.getRouteController().startRoute(String).
      *
@@ -647,7 +647,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets the JMX statistics level The level can be set to Extended to gather additional information
+     * Sets the JMX statistics level, the level can be set to Extended to gather additional information
      *
      * The default value is Default.
      */
