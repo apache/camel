@@ -78,7 +78,7 @@ shown:
 
 [source,text]
 ----
-sql:select * from table where id=:#${property.myId} order by name[?options]
+sql:select * from table where id=:#${exchangeProperty.myId} order by name[?options]
 ----
 
 Notice that the standard `?` symbol that denotes the parameters to an
@@ -102,7 +102,7 @@ And the myquery.sql file is in the classpath and is just a plain text
 select *
 from table
 where
-  id = :#${property.myId}
+  id = :#${exchangeProperty.myId}
 order by
   name
 ----
@@ -388,7 +388,7 @@ uses the value of a property as the second parameter.
 from("direct:projects")
   .setBody(constant("ASF"))
   .setProperty("min", constant(123))
-  .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
+  .to("sql:select * from projects where license = :#${body} and id > :#${exchangeProperty.min} order by id")
 ----
 
 === Using expression parameters in consumers

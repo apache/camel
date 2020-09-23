@@ -112,7 +112,7 @@ Combining different Expression Languages is also possible, e.g.:
 
 [source,java]
 ----
-PredicateBuilder.and(XPathBuilder.xpath("/bookings/flights"), simple("${property.country = 'Spain'}"))
+PredicateBuilder.and(XPathBuilder.xpath("/bookings/flights"), simple("${exchangeProperty.country = 'Spain'}"))
 ----
 
 The sample below demonstrates further use cases:

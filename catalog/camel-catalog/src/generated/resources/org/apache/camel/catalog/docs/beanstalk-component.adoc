@@ -207,7 +207,7 @@ supply them to Beanstalkd daemon. Our simple demo routes may look like
 [source,java]
 ----------------------------------------------------------------------------------------------
 from("beanstalk:testTube").
-   log("Processing job #${property.beanstalk.jobId} with body ${in.body}").
+   log("Processing job #${exchangeProperty.beanstalk.jobId} with body ${in.body}").
    process(new Processor() {
      @Override
      public void process(Exchange exchange) {
@@ -215,7 +215,7 @@ from("beanstalk:testTube").
        exchange.getIn().setBody( Integer.valueOf(exchange.getIn().getBody(classOf[String])) );
      }
    }).
-   log("Parsed job #${property.beanstalk.jobId} to body ${in.body}");
+   log("Parsed job #${exchangeProperty.beanstalk.jobId} to body ${in.body}");
 ----------------------------------------------------------------------------------------------
 
 [source,java]
