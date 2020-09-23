@@ -22,6 +22,7 @@ package org.apache.camel.component.aws2.eventbridge;
 public interface EventbridgeConstants {
     String OPERATION = "CamelAwsEventbridgeOperation";
     String RULE_NAME = "CamelAwsEventbridgeRuleName";
+    String RULE_NAME_PREFIX = "CamelAwsEventbridgeRuleNamePrefix";
     String EVENT_PATTERN = "CamelAwsEventbridgeEventPattern";
     String TARGETS = "CamelAwsEventbridgeTargets";
     String TARGETS_IDS = "CamelAwsEventbridgeTargetsIds";
