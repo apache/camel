@@ -44,7 +44,7 @@ import software.amazon.awssdk.utils.AttributeMap;
  * Manage AWS Eventbridge cluster instances using AWS SDK version 2.x.
  */
 @UriEndpoint(firstVersion = "3.6.0", scheme = "aws2-eventbridge", title = "AWS 2 Eventbridge",
-             syntax = "aws2-eventbridge:label", producerOnly = true, category = {
+             syntax = "aws2-eventbridge://eventbusNameOrArn", producerOnly = true, category = {
                      Category.CLOUD,
                      Category.MANAGEMENT })
 public class EventbridgeEndpoint extends DefaultEndpoint {
