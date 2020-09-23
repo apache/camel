@@ -12,7 +12,7 @@
 
 RxJava based back-end for Camel's reactive streams component.
 
-See more details in the camel-streams-component documentation.
+See more details in the camel-reactive-streams documentation.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
