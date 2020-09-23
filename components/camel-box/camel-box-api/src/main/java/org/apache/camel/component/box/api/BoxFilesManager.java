@@ -82,7 +82,7 @@ public class BoxFilesManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -107,7 +107,7 @@ public class BoxFilesManager {
             return file;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -218,7 +218,7 @@ public class BoxFilesManager {
             return boxFile;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -259,7 +259,7 @@ public class BoxFilesManager {
             return file;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -282,7 +282,7 @@ public class BoxFilesManager {
 
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -328,7 +328,7 @@ public class BoxFilesManager {
             return output;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -370,7 +370,7 @@ public class BoxFilesManager {
             return output;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -400,7 +400,7 @@ public class BoxFilesManager {
             return fileVersion;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -432,7 +432,7 @@ public class BoxFilesManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -464,7 +464,7 @@ public class BoxFilesManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -489,7 +489,7 @@ public class BoxFilesManager {
             return fileToRename;
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -508,7 +508,7 @@ public class BoxFilesManager {
             file.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -536,7 +536,7 @@ public class BoxFilesManager {
             fileVersion.delete();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -572,7 +572,7 @@ public class BoxFilesManager {
             return file.createSharedLink(access, unshareDate, permissions);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -596,7 +596,7 @@ public class BoxFilesManager {
 
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -619,7 +619,7 @@ public class BoxFilesManager {
             return file.getPreviewLink();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -666,7 +666,7 @@ public class BoxFilesManager {
             return file.getThumbnail(fileType, minWidth, minHeight, maxWidth, maxHeight);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -699,7 +699,7 @@ public class BoxFilesManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -728,7 +728,7 @@ public class BoxFilesManager {
             }
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
 
     }
@@ -753,7 +753,7 @@ public class BoxFilesManager {
             return file.updateMetadata(metadata);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -772,7 +772,7 @@ public class BoxFilesManager {
             file.deleteMetadata();
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 
@@ -802,7 +802,7 @@ public class BoxFilesManager {
             parentFolder.canUpload(fileName, size);
         } catch (BoxAPIException e) {
             throw new RuntimeException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
     }
 }
