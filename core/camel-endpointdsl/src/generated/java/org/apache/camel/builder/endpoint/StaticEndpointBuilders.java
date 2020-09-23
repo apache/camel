@@ -1130,8 +1130,8 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>aws2-eventbridge:label</code>
      * 
-     * Path parameter: label (required)
-     * Logical name
+     * Path parameter: eventbusNameOrArn (required)
+     * Event bus name or ARN
      * 
      * @param path label
      */
@@ -1149,8 +1149,8 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>aws2-eventbridge:label</code>
      * 
-     * Path parameter: label (required)
-     * Logical name
+     * Path parameter: eventbusNameOrArn (required)
+     * Event bus name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

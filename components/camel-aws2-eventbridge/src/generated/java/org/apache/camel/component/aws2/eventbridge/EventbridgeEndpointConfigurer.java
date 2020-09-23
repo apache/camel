@@ -29,8 +29,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "eventPatternFile": target.getConfiguration().setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
         case "eventbridgeClient": target.getConfiguration().setEventbridgeClient(property(camelContext, software.amazon.awssdk.services.eventbridge.EventBridgeClient.class, value)); return true;
-        case "eventbusname":
-        case "eventbusName": target.getConfiguration().setEventbusName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class, value)); return true;
@@ -60,7 +58,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         answer.put("basicPropertyBinding", boolean.class);
         answer.put("eventPatternFile", java.lang.String.class);
         answer.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
-        answer.put("eventbusName", java.lang.String.class);
         answer.put("lazyStartProducer", boolean.class);
         answer.put("operation", org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class);
         answer.put("pojoRequest", boolean.class);
@@ -88,8 +85,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "eventPatternFile": return target.getConfiguration().getEventPatternFile();
         case "eventbridgeclient":
         case "eventbridgeClient": return target.getConfiguration().getEventbridgeClient();
-        case "eventbusname":
-        case "eventbusName": return target.getConfiguration().getEventbusName();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

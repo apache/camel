@@ -96,19 +96,6 @@ public interface EventbridgeEndpointBuilderFactory {
             return this;
         }
         /**
-         * The eventbus name, the default value is default and this means it
-         * will be the AWS event bus of your account.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: default
-         * Group: producer
-         */
-        default EventbridgeEndpointBuilder eventbusName(String eventbusName) {
-            doSetProperty("eventbusName", eventbusName);
-            return this;
-        }
-        /**
          * EventPattern File.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -437,8 +424,8 @@ public interface EventbridgeEndpointBuilderFactory {
          * 
          * Syntax: <code>aws2-eventbridge:label</code>
          * 
-         * Path parameter: label (required)
-         * Logical name
+         * Path parameter: eventbusNameOrArn (required)
+         * Event bus name or ARN
          * 
          * @param path label
          */
@@ -455,8 +442,8 @@ public interface EventbridgeEndpointBuilderFactory {
          * 
          * Syntax: <code>aws2-eventbridge:label</code>
          * 
-         * Path parameter: label (required)
-         * Logical name
+         * Path parameter: eventbusNameOrArn (required)
+         * Event bus name or ARN
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
