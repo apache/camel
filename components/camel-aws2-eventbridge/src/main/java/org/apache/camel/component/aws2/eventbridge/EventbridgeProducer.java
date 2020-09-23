@@ -218,7 +218,7 @@ public class EventbridgeProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void deleteRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -234,7 +234,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        	DeleteRuleRequest.Builder builder = DeleteRuleRequest.builder();
+            DeleteRuleRequest.Builder builder = DeleteRuleRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.name(ruleName);
