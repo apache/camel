@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.eventbridge.model.DeleteRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
+
+import static org.junit.Assert.assertNotNull;
 
 public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest {
 
@@ -66,7 +64,7 @@ public class EventbridgeDeleteRuleLocalstackTest extends Aws2EventbridgeBaseTest
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        
+
         Exchange ex = template.send("direct:evs-deleteRule", new Processor() {
 
             @Override
