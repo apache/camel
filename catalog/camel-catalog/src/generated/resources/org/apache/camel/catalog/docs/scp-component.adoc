@@ -6,6 +6,7 @@
 :since: 2.10
 :supportLevel: Stable
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scp.adoc[]
 
 *Since Camel {since}*
 

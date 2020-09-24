@@ -1,4 +1,4 @@
-[[cdi-component]]
+[[cdi-other]]
 = CDI Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-cdi/src/main/docs/cdi.adoc
@@ -7,6 +7,7 @@
 :description: Using Camel with CDI
 :since: 2.10
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/cdi.adoc[]
 
 *Since Camel {since}*
 

@@ -5,6 +5,7 @@
 :description: Encrypt and decrypt XML payloads using Apache Santuario.
 :since: 2.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/secureXML.adoc[]
 
 *Since Camel {since}*
 

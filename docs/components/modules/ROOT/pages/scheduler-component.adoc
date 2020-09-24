@@ -9,6 +9,7 @@
 :supportLevel: Stable
 :component-header: Only consumer is supported
 :core:
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/scheduler.adoc[]
 
 *Since Camel {since}*
 

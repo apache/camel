@@ -1,4 +1,4 @@
-[[spring-javaconfig-component]]
+[[spring-javaconfig-other]]
 = Spring Java Configuration Component (deprecated)
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc
@@ -8,6 +8,7 @@
 :since: 2.0
 :supportLevel: Stable-deprecated
 :deprecated: *deprecated*
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-javaconfig.adoc[]
 //Manually maintained attributes
 :group: Spring
 

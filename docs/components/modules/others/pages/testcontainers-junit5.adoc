@@ -1,4 +1,4 @@
-[[testcontainers-junit5-component]]
+[[testcontainers-junit5-other]]
 = Testcontainers JUnit5 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc
@@ -7,6 +7,7 @@
 :description: Camel support for testcontainers with JUnit 5
 :since: 3.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-junit5.adoc[]
 
 *Since Camel {since}*
 

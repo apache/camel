@@ -6,6 +6,7 @@
 :since: 2.16
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/undertow.adoc[]
 
 *Since Camel {since}*
 
