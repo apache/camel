@@ -36,6 +36,7 @@ import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriAssembler;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -554,6 +555,11 @@ public interface ExtendedCamelContext extends CamelContext {
      * use this as end user.
      */
     RouteController getInternalRouteController();
+
+    /**
+     * Gets the {@link EndpointUriAssembler} for the given component name.
+     */
+    EndpointUriAssembler getEndpointUriAssembler(String scheme);
 
     /**
      * Internal API for adding routes. Do not use this as end user.

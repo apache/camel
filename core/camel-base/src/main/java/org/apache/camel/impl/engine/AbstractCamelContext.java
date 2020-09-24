@@ -95,6 +95,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriAssembler;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
@@ -4232,6 +4233,18 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public RouteController getInternalRouteController() {
         return internalRouteController;
+    }
+
+    @Override
+    public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
+        // TODO: lookup factory specific for a given component
+
+        // no specific factory found so lets fallback to use runtime catalog
+        return new BaseServiceResolver<>(RuntimeCamelCatalog.ENDPOINT_URI_ASSEMBLER_FACTORY, EndpointUriAssembler.class)
+                .resolve(getCamelContextReference())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Cannot find RuntimeCamelCatalog on classpath. "
+                                                                + "Add camel-core-catalog to classpath."));
     }
 
     public enum Initialization {

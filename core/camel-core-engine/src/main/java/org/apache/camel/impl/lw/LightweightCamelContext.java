@@ -89,6 +89,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriAssembler;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -1413,6 +1414,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public RouteController getInternalRouteController() {
         return getExtendedCamelContext().getInternalRouteController();
+    }
+
+    @Override
+    public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
+        return getExtendedCamelContext().getEndpointUriAssembler(scheme);
     }
 
     @Override

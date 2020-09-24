@@ -36,6 +36,11 @@ public interface RuntimeCamelCatalog extends StaticService, CamelContextAware {
     String FACTORY = "runtime-camelcatalog";
 
     /**
+     * Factory key for {@link org.apache.camel.spi.EndpointUriAssembler}
+     */
+    String ENDPOINT_URI_ASSEMBLER_FACTORY = "runtime-camelcatalog-endpointuriassembler";
+
+    /**
      * Returns the component information as JSON format.
      * <p/>
      * This API is needed by {@link ComponentVerifierExtension}.
