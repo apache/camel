@@ -65,7 +65,7 @@ public class EventbridgeDisableRuleLocalstackTest extends Aws2EventbridgeBaseTes
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        
+
         template.send("direct:evs-disableRule", new Processor() {
 
             @Override
