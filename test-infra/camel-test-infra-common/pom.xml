@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>camel-test-infra-common</artifactId>
 
-    <name>Camel :: Test :: Infra :: Common </name>
+    <name>Camel :: Test Infra :: Common</name>
     <description>Common test infrastructure code for Camel</description>
 
     <build>
