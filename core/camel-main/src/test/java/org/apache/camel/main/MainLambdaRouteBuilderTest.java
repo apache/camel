@@ -25,25 +25,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainLambdaRouteBuilderTest {
+    private static final LambdaRouteBuilder BUILDER = rb -> rb.from("direct:start").to("mock:results");
 
     @Test
-    public void testMainRoutesCollector() throws Exception {
+    public void testBindLambdaRouteBuilder() throws Exception {
         Main main = new Main();
-        main.bind("myBarRoute", (LambdaRouteBuilder) rb -> rb.from("direct:start").to("mock:results"));
+        main.bind("myBarRoute", BUILDER);
         main.start();
 
-        CamelContext camelContext = main.getCamelContext();
+        doTest(main.camelContext);
+
+        main.stop();
+    }
+
+    @Test
+    public void testAddLambdaRouteBuilder() throws Exception {
+        Main main = new Main();
+        main.configure().addLambdaRouteBuilder(BUILDER);
+        main.start();
+
+        doTest(main.camelContext);
+
+        main.stop();
+    }
+
+    private static void doTest(CamelContext camelContext) throws Exception {
         assertNotNull(camelContext);
         assertEquals(1, camelContext.getRoutes().size());
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedBodiesReceived("Hello World");
 
-        main.getCamelTemplate().sendBody("direct:start", "Hello World");
+        camelContext.createProducerTemplate().sendBody("direct:start", "Hello World");
 
         endpoint.assertIsSatisfied();
-
-        main.stop();
     }
-
 }

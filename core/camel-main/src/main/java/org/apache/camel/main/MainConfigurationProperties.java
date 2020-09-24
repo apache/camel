@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.LambdaRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Configurer;
 
 /**
@@ -363,6 +365,18 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         setRoutesBuilderClasses(existing);
     }
 
+    /**
+     * Add an additional {@link LambdaRouteBuilder} object to the known list of builders.
+     */
+    public void addLambdaRouteBuilder(LambdaRouteBuilder routeBuilder) {
+        this.routesBuilders.add(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                routeBuilder.accept(this);
+            }
+        });
+    }
+
     // fluent builders
     // --------------------------------------------------------------
 
@@ -557,6 +571,14 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withAdditionalRoutesBuilder(Class... builders) {
         addRoutesBuilder(builders);
+        return this;
+    }
+
+    /**
+     * Add an additional {@link LambdaRouteBuilder} object to the known list of builders.
+     */
+    public MainConfigurationProperties withAdditionalLambdaRouteBuilder(LambdaRouteBuilder builder) {
+        addLambdaRouteBuilder(builder);
         return this;
     }
 }
