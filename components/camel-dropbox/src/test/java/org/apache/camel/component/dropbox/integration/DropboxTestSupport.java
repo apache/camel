@@ -46,7 +46,7 @@ public class DropboxTestSupport extends CamelTestSupport {
         try (InputStream inStream = getClass().getResourceAsStream("/test-options.properties")) {
             properties.load(inStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O error: reading test-options.properties: {}", e.getMessage(), e);
             throw new IllegalAccessError("test-options.properties could not be found");
         }
 

@@ -28,6 +28,8 @@ import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.fusesource.stomp.client.Constants.DESTINATION;
 import static org.fusesource.stomp.client.Constants.ID;
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StompProducerTest extends StompBaseTest {
+    private static final Logger LOG = LoggerFactory.getLogger(StompProducerTest.class);
 
     private static final String HEADER = "testheader1";
     private static final String HEADER_VALUE = "testheader1";
@@ -68,7 +71,7 @@ public class StompProducerTest extends StompBaseTest {
                         assertTrue(frame.getHeader(new AsciiBuffer(HEADER)).ascii().toString().startsWith(HEADER_VALUE));
                         latch.countDown();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOG.warn("Unhandled exception receiving STOMP data: {}", e.getMessage(), e);
                         break;
                     }
                 }

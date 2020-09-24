@@ -28,10 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltDTDTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(SaxonXsltDTDTest.class);
 
     private static final String MESSAGE
             = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
@@ -76,7 +79,7 @@ public class SaxonXsltDTDTest extends CamelTestSupport {
             xml = exchange.getIn().getBody(String.class);
             assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Exception thrown during test (likely safe to ignore): {}", ex.getMessage(), ex);
             // expect an exception here
             assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
             // the file could not be found

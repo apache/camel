@@ -42,20 +42,21 @@ import com.atlassian.jira.rest.client.api.domain.Worklog;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.jira.rest.client.api.domain.User.S48_48;
 import static org.apache.camel.component.jira.JiraTestConstants.KEY;
 import static org.apache.camel.component.jira.JiraTestConstants.TEST_JIRA_URL;
 
 public final class Utils {
-
     public static User userAssignee;
     static {
         try {
             userAssignee = new User(
                     null, "user-test", "User Test", "user@test", true, null, buildUserAvatarUris("user-test", 10082L), null);
         } catch (Exception e) {
-            e.printStackTrace();
+
+            LoggerFactory.getLogger(Utils.class).debug("Failed to build test user: {}", e.getMessage(), e);
         }
     }
     private static IssueType issueType = new IssueType(null, 1L, "Bug", false, "Bug", null);

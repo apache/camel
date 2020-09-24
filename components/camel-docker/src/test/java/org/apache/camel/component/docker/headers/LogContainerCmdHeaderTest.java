@@ -25,6 +25,8 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
  * Validates Log Container Request headers are applied properly
  */
 public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainerCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(LogContainerCmdHeaderTest.class);
 
     @Mock
     private LogContainerCmd mockObject;
@@ -80,7 +83,7 @@ public class LogContainerCmdHeaderTest extends BaseDockerHeaderTest<LogContainer
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 

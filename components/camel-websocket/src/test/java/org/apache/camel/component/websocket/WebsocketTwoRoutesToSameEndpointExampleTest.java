@@ -74,7 +74,7 @@ public class WebsocketTwoRoutesToSameEndpointExampleTest extends CamelTestSuppor
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override

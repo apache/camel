@@ -110,7 +110,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             try {
                 headers.putAll(message.getBody(Map.class));
             } catch (ClassCastException e) {
-                e.printStackTrace();
+                LOG.warn("Unable to perform cast while extracting header parameters: {}", e.getMessage(), e);
             }
         }
 

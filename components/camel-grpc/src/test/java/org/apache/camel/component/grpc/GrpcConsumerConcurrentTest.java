@@ -81,7 +81,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 try {
                     latch.await(5, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
                 }
 
                 PongResponse pongResponse = responseObserver.getPongResponse();
@@ -122,7 +122,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
                 try {
                     latch.await(5, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOG.debug("Interrupted while waiting for the response", e);
                 }
 
                 PongResponse pongResponse = responseObserver.getPongResponse();

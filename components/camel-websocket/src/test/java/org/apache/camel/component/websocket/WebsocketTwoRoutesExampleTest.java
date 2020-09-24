@@ -76,7 +76,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override
@@ -132,7 +132,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                log.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override

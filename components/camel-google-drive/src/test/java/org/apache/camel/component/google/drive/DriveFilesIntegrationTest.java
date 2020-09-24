@@ -82,7 +82,8 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
             final File result = requestBody("direct://GET", fileId);
             fail("Should have not found deleted file.");
         } catch (Exception e) {
-            e.printStackTrace();
+            // Likely safe to ignore in this context
+            LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
         }
     }
 

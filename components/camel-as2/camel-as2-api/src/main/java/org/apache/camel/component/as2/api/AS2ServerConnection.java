@@ -165,8 +165,7 @@ public class AS2ServerConnection {
             } catch (final IOException ex) {
                 LOG.error("I/O error: {}", ex.getMessage());
             } catch (final HttpException ex) {
-                ex.printStackTrace();
-                LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage());
+                LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage(), ex);
             } finally {
                 try {
                     this.serverConnection.shutdown();

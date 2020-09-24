@@ -25,6 +25,8 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
  * Validates Pull Image Request headers are applied properly
  */
 public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(PullImageCmdHeaderTest.class);
 
     @Mock
     private PullImageCmd mockObject;
@@ -68,7 +71,7 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 

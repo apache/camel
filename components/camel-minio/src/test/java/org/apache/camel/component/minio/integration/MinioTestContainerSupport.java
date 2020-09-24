@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.apache.camel.component.minio.MinioTestUtils;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 
@@ -32,7 +33,8 @@ class MinioTestContainerSupport extends ContainerAwareTestSupport {
         try {
             properties = MinioTestUtils.loadMinioPropertiesFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(MinioTestContainerSupport.class)
+                    .warn("I/O exception loading minio properties file: {}", e.getMessage(), e);
         }
     }
 

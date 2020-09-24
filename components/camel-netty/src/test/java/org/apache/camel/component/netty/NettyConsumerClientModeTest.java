@@ -36,8 +36,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyConsumerClientModeTest extends BaseNettyTest {
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeTest.class);
     private MyServer server;
 
     public void startNettyServer() throws Exception {
@@ -123,7 +126,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
+            LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
 

@@ -100,7 +100,8 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
             final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
             fail("Should have thrown an exception.");
         } catch (Exception e) {
-            e.printStackTrace();
+            // Likely safe to ignore in this context
+            LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
         }
     }
 

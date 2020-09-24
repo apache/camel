@@ -76,10 +76,13 @@ import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.amazonaws.services.s3.model.VersionListing;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AmazonS3ClientMock extends AbstractAmazonS3 {
+    private static final Logger LOG = LoggerFactory.getLogger(AmazonS3ClientMock.class);
 
     List<S3Object> objects = new CopyOnWriteArrayList<>();
     List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<>();
@@ -471,7 +474,7 @@ public class AmazonS3ClientMock extends AbstractAmazonS3 {
         try {
             url = new URL("http://aws.amazonas.s3/file.zip");
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.warn("Invalid URL: {}", e.getMessage(), e);
         }
         return url;
     }
