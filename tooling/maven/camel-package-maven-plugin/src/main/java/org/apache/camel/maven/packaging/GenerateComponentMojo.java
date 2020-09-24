@@ -44,6 +44,8 @@ public class GenerateComponentMojo extends AbstractGenerateMojo {
         invoke(GenerateConfigurerMojo.class);
         // generate-endpoint-schema
         invoke(EndpointSchemaGeneratorMojo.class);
+        // generate uri-endpoint-assembler
+        invoke(GenerateUriEndpointAssemblerMojo.class);
         // prepare-components
         invoke(PrepareComponentMojo.class);
         // validate-components
