@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class EventbridgeRemoveTargetsLocalstackTest extends Aws2EventbridgeBaseTest {
 
@@ -66,7 +65,7 @@ public class EventbridgeRemoveTargetsLocalstackTest extends Aws2EventbridgeBaseT
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        
+
         template.send("direct:evs-remove-targets", new Processor() {
 
             @Override
