@@ -80,6 +80,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws2-sqs</artifactId>
             <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
