@@ -54,7 +54,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
 
     @Override
     public Properties loadProperties(Predicate<String> filter) {
-        Properties answer = new Properties();
+        Properties answer = new OrderedProperties();
 
         for (String name : properties.stringPropertyNames()) {
             if (filter.test(name)) {
