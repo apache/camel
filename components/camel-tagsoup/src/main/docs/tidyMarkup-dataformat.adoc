@@ -5,6 +5,7 @@
 :description: Parse (potentially invalid) HTML into valid HTML or DOM.
 :since: 2.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/tidyMarkup.adoc[]
 
 *Since Camel {since}*
 

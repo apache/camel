@@ -1,10 +1,11 @@
-[[opentelemetry-component]]
+[[opentelemetry-other]]
 = OpenTelemetry Component
 :docTitle: OpenTelemetry
 :artifactId: camel-opentelemetry
 :description: Distributed tracing using OpenTelemetry
 :since: 3.5
 :supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[]
 
 *Since Camel {since}*
 

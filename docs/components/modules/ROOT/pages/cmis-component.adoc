@@ -8,6 +8,7 @@
 :since: 2.11
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/cmis.adoc[]
 
 *Since Camel {since}*
 

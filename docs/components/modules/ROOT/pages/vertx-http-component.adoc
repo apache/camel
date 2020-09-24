@@ -8,6 +8,7 @@
 :since: 3.5
 :supportLevel: Preview
 :component-header: Only producer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-http.adoc[]
 
 *Since Camel {since}*
 

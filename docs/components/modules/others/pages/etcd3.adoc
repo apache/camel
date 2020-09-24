@@ -1,4 +1,4 @@
-[[etcd3-component]]
+[[etcd3-other]]
 = Etcd3 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-etcd3/src/main/docs/etcd3.adoc
@@ -7,6 +7,7 @@
 :description: Aggregation repository using EtcD as datastore
 :since: 3.5
 :supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[]
 
 *Since Camel {since}*
 

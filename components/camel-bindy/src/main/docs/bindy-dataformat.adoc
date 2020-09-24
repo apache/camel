@@ -5,6 +5,7 @@
 :description: Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
 :since: 2.0
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/bindy.adoc[]
 
 *Since Camel {since}*
 

@@ -9,6 +9,7 @@
 :supportLevel: Stable
 :component-header: Only producer is supported
 :core:
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/dataformat.adoc[]
 
 *Since Camel {since}*
 

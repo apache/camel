@@ -1,4 +1,4 @@
-[[testcontainers-component]]
+[[testcontainers-other]]
 = Testcontainers Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-testcontainers/src/main/docs/testcontainers.adoc
@@ -7,6 +7,7 @@
 :description: Camel support for testcontainers
 :since: 2.22
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers.adoc[]
 
 *Since Camel {since}*
 
