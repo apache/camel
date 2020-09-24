@@ -164,7 +164,7 @@ Or send whole jslt expression via header: (suitable for querying)
 [source,java]
 ---------------------------------------------------------------------
 from("direct:in").
-  setHeader("CamelJsltResourceUri").constant(".published").
+  setHeader("CamelJsltString").constant(".published").
   to("jslt:dummy?allowTemplateFromHeader=true");
 ---------------------------------------------------------------------
 
