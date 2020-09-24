@@ -49,14 +49,14 @@ public class EventbridgePutRuleSqsIntegrationTest extends CamelTestSupport {
                     .credentialsProvider(StaticCredentialsProvider.create(
                             AwsBasicCredentials.create("xxxxx", "yyyy")))
                     .region(Region.EU_WEST_1).build();
-    
+
     @BindToRegistry("sqs-client")
     SqsClient clientSqs
             = SqsClient.builder()
                     .credentialsProvider(StaticCredentialsProvider.create(
                             AwsBasicCredentials.create("xxxx", "yyyy")))
                     .region(Region.EU_WEST_1).build();
-    
+
     @BindToRegistry("s3-client")
     S3Client clientS3
             = S3Client.builder()
@@ -97,11 +97,11 @@ public class EventbridgePutRuleSqsIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        
+
         clientS3.createBucket(CreateBucketRequest.builder().bucket("test-2567810").build());
-        
+
         clientS3.deleteBucket(DeleteBucketRequest.builder().bucket("test-2567810").build());
-        
+
         Thread.sleep(60000);
         assertMockEndpointsSatisfied();
 
