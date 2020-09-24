@@ -6,6 +6,7 @@
 :since: 3.5
 :supportLevel: Preview
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/vertx-websocket.adoc[]
 
 *Since Camel {since}*
 

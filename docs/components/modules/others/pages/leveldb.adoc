@@ -1,4 +1,4 @@
-[[leveldb-component]]
+[[leveldb-other]]
 = LevelDB Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-leveldb/src/main/docs/leveldb.adoc
@@ -7,6 +7,7 @@
 :description: Using LevelDB as persistent EIP store
 :since: 2.10
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/leveldb.adoc[]
 
 *Since Camel {since}*
 

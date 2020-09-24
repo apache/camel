@@ -6,6 +6,7 @@
 :since: 3.1
 :supportLevel: Stable
 :component-header: Only consumer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/aws2-ddbstream.adoc[]
 //Manually maintained attributes
 :group: AWS 2
 

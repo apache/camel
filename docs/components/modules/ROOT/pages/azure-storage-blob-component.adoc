@@ -8,6 +8,7 @@
 :since: 3.3
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/azure-storage-blob.adoc[]
 //Manually maintained attributes
 :group: Azure
 

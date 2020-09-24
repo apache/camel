@@ -8,6 +8,7 @@
 :since: 3.0
 :supportLevel: Stable
 :component-header: Only consumer is supported
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/debezium-mongodb.adoc[]
 
 *Since Camel {since}*
 

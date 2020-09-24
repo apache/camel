@@ -1,10 +1,11 @@
-[[opentracing-component]]
+[[opentracing-other]]
 = OpenTracing Component
 :docTitle: OpenTracing
 :artifactId: camel-opentracing
 :description: Distributed tracing using OpenTracing
 :since: 2.19
 :supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentracing.adoc[]
 
 *Since Camel {since}*
 
