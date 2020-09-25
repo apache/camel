@@ -56,7 +56,6 @@
         <module>camel-allcomponents</module>
         <module>camel-endpointdsl</module>
         <module>camel-componentdsl</module>
-        <module>camel-test-infra</module>
     </modules>
 
     <properties>

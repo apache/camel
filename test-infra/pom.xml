@@ -20,17 +20,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>core</artifactId>
+        <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <version>3.6.0-SNAPSHOT</version>
-        <relativePath>..</relativePath>
+        <relativePath>../parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>camel-test-core</artifactId>
+    <artifactId>test-infra</artifactId>
 
     <packaging>pom</packaging>
-    <name>Camel :: Test :: Infra </name>
+    <name>Camel :: Test Infra</name>
     <description>Test infrastructure for Camel</description>
 
     <modules>
