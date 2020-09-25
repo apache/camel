@@ -36,6 +36,6 @@ public interface EndpointUriAssembler {
      * @param  parameters   endpoint options
      * @return              the constructed endpoint uri
      */
-    String buildUri(CamelContext camelContext, String scheme, Map<String, String> parameters) throws URISyntaxException;
+    String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException;
 
 }

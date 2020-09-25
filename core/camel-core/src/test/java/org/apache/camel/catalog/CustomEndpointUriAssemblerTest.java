@@ -34,9 +34,9 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
     public void testCustomAssemble() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("timerName", "foo");
-        params.put("period", "123");
+        params.put("period", 123);
         params.put("repeatCount", "5");
 
         String uri = assembler.buildUri(context, "timer", params);
@@ -47,9 +47,9 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
     public void testCustomAssembleUnsorted() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
 
-        Map<String, String> params = new LinkedHashMap<>();
+        Map<String, Object> params = new LinkedHashMap<>();
         params.put("timerName", "foo");
-        params.put("repeatCount", "5");
+        params.put("repeatCount", 5);
         params.put("period", "123");
 
         String uri = assembler.buildUri(context, "timer", params);
@@ -61,7 +61,8 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         private static final String SYNTAX = "timer:timerName";
 
         @Override
-        public String buildUri(CamelContext camelContext, String scheme, Map<String, String> parameters) throws URISyntaxException {
+        public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
+                throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
 

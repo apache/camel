@@ -30,23 +30,28 @@ import org.apache.camel.util.URISupport;
  */
 public abstract class EndpointUriAssemblerSupport {
 
-    protected String buildPathParameter(CamelContext camelContext, String syntax, String uri, String name, String defaultValue, boolean required, Map<String, String> parameters) {
-        String obj = parameters.remove(name);
-        if (ObjectHelper.isEmpty(obj)) {
-            obj = defaultValue;
+    protected String buildPathParameter(
+            CamelContext camelContext, String syntax, String uri, String name, Object defaultValue, boolean required,
+            Map<String, Object> parameters) {
+        Object obj = parameters.remove(name);
+        if (ObjectHelper.isEmpty(obj) && defaultValue != null) {
+            obj = camelContext.getTypeConverter().convertTo(String.class, defaultValue);
         }
         if (ObjectHelper.isEmpty(obj) && required) {
-            throw new IllegalArgumentException("Option " + name + " is required when creating endpoint uri with syntax " + syntax);
+            throw new IllegalArgumentException(
+                    "Option " + name + " is required when creating endpoint uri with syntax " + syntax);
         }
         if (ObjectHelper.isNotEmpty(obj)) {
-            uri = uri.replace(name, obj);
+            String str = camelContext.getTypeConverter().convertTo(String.class, obj);
+            uri = uri.replace(name, str);
         }
         return uri;
     }
 
-    protected String buildQueryParameters(CamelContext camelContext, String uri, Map<String, String> parameters) throws URISyntaxException {
+    protected String buildQueryParameters(CamelContext camelContext, String uri, Map<String, Object> parameters)
+            throws URISyntaxException {
         // we want sorted parameters
-        Map map = new TreeMap(parameters);
+        Map<String, Object> map = new TreeMap<>(parameters);
         String query = URISupport.createQueryString(map);
         if (ObjectHelper.isNotEmpty(query)) {
             uri = uri + "?" + query;

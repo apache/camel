@@ -1,6 +1,7 @@
 package org.apache.camel.catalog.impl;
 
 import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -19,9 +20,11 @@ import static org.apache.camel.catalog.RuntimeCamelCatalog.ENDPOINT_URI_ASSEMBLE
 public class CamelCatalogEndpointUriAssembler implements EndpointUriAssembler {
 
     @Override
-    public String buildUri(CamelContext camelContext, String scheme, Map<String, String> parameters) {
+    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) {
         try {
-            return camelContext.adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog().asEndpointUri(scheme, parameters,
+            Map<String, String> copy = new LinkedHashMap<>();
+            parameters.forEach((k, v) -> copy.put(k, v != null ? v.toString() : null));
+            return camelContext.adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog().asEndpointUri(scheme, copy,
                     false);
         } catch (URISyntaxException e) {
             throw RuntimeCamelException.wrapRuntimeException(e);

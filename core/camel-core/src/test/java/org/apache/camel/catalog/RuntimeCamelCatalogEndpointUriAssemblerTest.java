@@ -32,7 +32,7 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
     public void testLookupAssemble() throws Exception {
         EndpointUriAssembler assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("timer");
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("timerName", "foo");
         params.put("period", "123");
         params.put("repeatCount", "5");
@@ -45,7 +45,7 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
     public void testRuntimeAssemble() throws Exception {
         EndpointUriAssembler assembler = new CamelCatalogEndpointUriAssembler();
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("timerName", "foo");
         params.put("period", "123");
         params.put("repeatCount", "5");

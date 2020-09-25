@@ -4243,8 +4243,7 @@ public abstract class AbstractCamelContext extends BaseService
         return new BaseServiceResolver<>(RuntimeCamelCatalog.ENDPOINT_URI_ASSEMBLER_FACTORY, EndpointUriAssembler.class)
                 .resolve(getCamelContextReference())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find RuntimeCamelCatalog on classpath. "
-                                                                + "Add camel-core-catalog to classpath."));
+                        "Cannot find RuntimeCamelCatalog on classpath. Add camel-core-catalog to classpath."));
     }
 
     public enum Initialization {

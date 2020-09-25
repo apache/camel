@@ -128,10 +128,10 @@ public class GenerateUriEndpointAssemblerMojo extends AbstractGeneratorMojo {
     }
 
     protected void createEndpointUrlAssembler(ComponentModel model) throws IOException {
-        getLog().info("Generating endpoint-uri-assembler: " + model.getScheme());
+        getLog().debug("Generating endpoint-uri-assembler: " + model.getScheme());
 
         String fqn = model.getJavaType();
-        generateEndpointUriAssembler(fqn, fqn, model.getEndpointOptions(), sourcesOutputDir);
+        generateEndpointUriAssembler(fqn, fqn, model, sourcesOutputDir);
 
         int pos = fqn.lastIndexOf('.');
         String pn = fqn.substring(0, pos);
@@ -159,7 +159,7 @@ public class GenerateUriEndpointAssemblerMojo extends AbstractGeneratorMojo {
 
     @Deprecated
     private void generateEndpointUriAssembler(
-            String fqn, String targetFqn, List<ComponentModel.EndpointOptionModel> options, File outputDir)
+            String fqn, String targetFqn, ComponentModel model, File outputDir)
             throws IOException {
 
         int pos = targetFqn.lastIndexOf('.');
@@ -172,7 +172,7 @@ public class GenerateUriEndpointAssemblerMojo extends AbstractGeneratorMojo {
         String psn = "org.apache.camel.support.component.EndpointUriAssemblerSupport";
 
         StringWriter sw = new StringWriter();
-        EndpointUriAssemblerGenerator.generateEndpointUriAssembler(pn, cn, en, pfqn, psn, options, sw);
+        EndpointUriAssemblerGenerator.generateEndpointUriAssembler(pn, cn, en, pfqn, psn, model, sw);
 
         String source = sw.toString();
 

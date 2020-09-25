@@ -18,11 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.ComponentModel;
 
 public final class EndpointUriAssemblerGenerator {
 
@@ -31,8 +29,7 @@ public final class EndpointUriAssemblerGenerator {
 
     public static void generateEndpointUriAssembler(
             String pn, String cn, String en,
-            String pfqn, String psn,
-            Collection<? extends BaseOptionModel> options, Writer w)
+            String pfqn, String psn, ComponentModel model, Writer w)
             throws IOException {
 
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
@@ -43,25 +40,25 @@ public final class EndpointUriAssemblerGenerator {
         w.write("\n");
         w.write("import org.apache.camel.CamelContext;\n");
         w.write("import org.apache.camel.spi.EndpointUriAssembler;\n");
-        w.write("import " + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
         w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
         w.write(" */\n");
-        w.write("@SuppressWarnings(\"unchecked\")\n");
-        w.write("public class " + cn + " extends " + psn
-                + " implements EndpointUriAssembler {\n");
-
-        // sort options A..Z so they always have same order
-        options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
-
-        // generate API that returns all the options
+        w.write("public class " + cn + " extends " + psn + " implements EndpointUriAssembler {\n");
+        w.write("\n");
+        w.write("    private static final String SYNTAX = \"" + model.getSyntax() + "\";\n");
         w.write("\n");
         w.write("    @Override\n");
-        w.write("    public String buildUri(CamelContext camelContext, String scheme, Map<String, String> parameters) throws URISyntaxException {\n");
-        w.write("        return null;\n");
+        w.write("    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {\n");
+        w.write("        String uri = SYNTAX;\n");
+        w.write("\n");
+        for (BaseOptionModel option : model.getEndpointPathOptions()) {
+            w.write("        uri = buildPathParameter(camelContext, SYNTAX, uri, \"" + option.getName() + "\", "
+                    + option.getDefaultValue() + ", " + option.isRequired() + ", parameters);\n");
+        }
+        w.write("        uri = buildQueryParameters(camelContext, uri, parameters);\n");
+        w.write("        return uri;\n");
         w.write("    }\n");
-
         w.write("}\n");
         w.write("\n");
     }
