@@ -106,7 +106,7 @@ public final class CodehausIrcChat {
         try {
             conn.connect();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("I/O error while connecting: {}", e.getMessage(), e);
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);

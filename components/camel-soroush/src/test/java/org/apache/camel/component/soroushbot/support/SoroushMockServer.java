@@ -19,8 +19,11 @@ package org.apache.camel.component.soroushbot.support;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SoroushMockServer extends Thread {
+    private static final Logger LOG = LoggerFactory.getLogger(SoroushMockServer.class);
 
     private Server jettyServer;
     private Integer port = 8080;
@@ -51,7 +54,7 @@ public class SoroushMockServer extends Thread {
                 jettyServer.start();
                 port = jettyServer.getURI().getPort();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.warn("Failed to start the Jetty server: {}", e.getMessage(), e);
             }
         }
     }

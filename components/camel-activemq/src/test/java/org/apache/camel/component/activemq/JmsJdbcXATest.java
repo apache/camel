@@ -189,7 +189,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
                                 try {
                                     broker.stop();
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    LOG.warn("Failed to stop the broker: {}", e.getMessage(), e);
                                 }
                             }
                         });

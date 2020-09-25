@@ -48,6 +48,8 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,6 +60,7 @@ import static org.mockito.Mockito.isA;
 import static org.mockito.Mockito.mock;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelDestinationTest.class);
     private Message destMessage;
 
     @Override
@@ -136,8 +139,8 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
             destination = setupCamelDestination(endpointInfo, true);
             // destination.activate();
         } catch (IOException e) {
+            LOG.warn("I/O error setting up destination: {}", e.getMessage(), e);
             fail("The CamelDestination activate should not through exception ");
-            e.printStackTrace();
         }
         sendoutMessage(conduit, outMessage, true, "HelloWorld");
 

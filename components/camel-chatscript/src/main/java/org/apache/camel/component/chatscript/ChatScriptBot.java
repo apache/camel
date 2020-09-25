@@ -73,8 +73,7 @@ public class ChatScriptBot {
             resp = in.readLine();
             echoSocket.close();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage());
+            throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage(), e);
         }
 
         return resp;

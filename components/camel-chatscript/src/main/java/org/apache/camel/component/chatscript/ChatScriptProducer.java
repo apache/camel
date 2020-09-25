@@ -66,8 +66,7 @@ public class ChatScriptProducer extends DefaultProducer {
         try {
             ret = mapper.readValue(message, ChatScriptMessage.class);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception("Unable to parse the input message. Error Message" + e.getMessage());
+            throw new Exception("Unable to parse the input message. Error Message" + e.getMessage(), e);
         }
         return ret;
     }

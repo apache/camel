@@ -32,10 +32,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamingTest extends BaseUndertowTest {
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowHttpStreamingTest.class);
 
     private static final String LINE = String.join("", Collections.nCopies(100, "0123456789"));
     private static final long COUNT = 1000; // approx. 1MB
@@ -89,7 +92,7 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
                     }
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O exception: {}", e.getMessage(), e);
             }
         }).start();
     }

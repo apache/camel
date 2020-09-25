@@ -49,6 +49,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
@@ -58,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CordaProducerIntegrationTest extends CordaTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CordaProducerIntegrationTest.class);
     private static final SecureHash.SHA256 TEST_SHA_256
             = SecureHash.parse("6D1687C143DF792A011A1E80670A4E4E0C25D0D87A39514409B1ABFC2043581F");
 
@@ -442,7 +445,7 @@ public class CordaProducerIntegrationTest extends CordaTestSupport {
             zos.write(in.getBytes());
             zos.closeEntry();
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            LOG.warn("I/O error while trying to compress stream: {}", ioe.getMessage(), ioe);
         }
 
         return new ByteArrayInputStream(baos.toByteArray());

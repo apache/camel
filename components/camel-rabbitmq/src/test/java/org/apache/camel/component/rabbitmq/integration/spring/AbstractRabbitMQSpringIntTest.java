@@ -22,15 +22,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Containers;
 import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testcontainers.containers.GenericContainer;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSupport {
-
     // Container starts once per test class
     protected static GenericContainer container;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractRabbitMQSpringIntTest.class);
 
     protected List<GenericContainer<?>> containers = new CopyOnWriteArrayList();
 
@@ -43,7 +46,7 @@ public abstract class AbstractRabbitMQSpringIntTest extends CamelSpringTestSuppo
         try {
             Containers.start(this.containers, null, 10);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Failed to start RabbitMQ Container: {}", e.getMessage(), e);
         }
 
         ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext(getConfigLocation());

@@ -138,7 +138,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
+            LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
 

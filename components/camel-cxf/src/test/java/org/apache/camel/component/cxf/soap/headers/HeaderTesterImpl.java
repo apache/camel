@@ -34,12 +34,15 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.jws.WebService(serviceName = "HeaderService",
                       targetNamespace = "http://apache.org/camel/cxf/soap/headers",
                       endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
 
 public class HeaderTesterImpl implements HeaderTester {
+    private static final Logger LOG = LoggerFactory.getLogger(HeaderTesterImpl.class);
 
     @Resource
     protected WebServiceContext context;
@@ -59,7 +62,6 @@ public class HeaderTesterImpl implements HeaderTester {
             theResponse.value = theResponseValue;
             headerInfo.value = Constants.OUT_HEADER_DATA;
         } catch (Exception ex) {
-            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }
@@ -80,7 +82,7 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -102,7 +104,7 @@ public class HeaderTesterImpl implements HeaderTester {
             headerInfo.value = Constants.IN_OUT_RESPONSE_HEADER_DATA;
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -117,7 +119,7 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -133,7 +135,7 @@ public class HeaderTesterImpl implements HeaderTester {
             }
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -145,7 +147,7 @@ public class HeaderTesterImpl implements HeaderTester {
             addReplyOutOfBandHeader();
             return result;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -169,7 +171,7 @@ public class HeaderTesterImpl implements HeaderTester {
                     List<Header> hdrList = CastUtils.cast((List<?>) ctx.get(Header.HEADER_LIST));
                     hdrList.add(hdr);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    LOG.warn("Unexpected error: {}", ex.getMessage(), ex);
                 }
             }
         }
@@ -216,7 +218,7 @@ public class HeaderTesterImpl implements HeaderTester {
                             throw new RuntimeException("test failed");
                         }
                     } catch (JAXBException ex) {
-                        ex.printStackTrace();
+                        LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                     }
                 }
             }

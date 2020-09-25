@@ -27,8 +27,11 @@ import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebsocketConsumerRouteTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(WebsocketConsumerRouteTest.class);
 
     private int port;
 
@@ -57,7 +60,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override
@@ -110,7 +113,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
 
                             @Override

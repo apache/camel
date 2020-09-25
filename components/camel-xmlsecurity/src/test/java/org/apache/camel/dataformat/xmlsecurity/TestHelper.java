@@ -44,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestHelper {
-
     protected static final String NS_XML_FRAGMENT
             = "<ns1:cheesesites xmlns:ns1=\"http://cheese.xmlsecurity.camel.apache.org/\">"
               + "<netherlands>"
@@ -77,6 +76,7 @@ public class TestHelper {
                                                  + "</cheesesites>";
 
     static final boolean HAS_3DES;
+
     static {
         boolean ok = false;
         try {
@@ -84,7 +84,7 @@ public class TestHelper {
             XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
             ok = true;
         } catch (XMLEncryptionException e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(TestHelper.class).warn("XML encryption exception: {}", e.getMessage(), e);
         }
         HAS_3DES = ok;
     }

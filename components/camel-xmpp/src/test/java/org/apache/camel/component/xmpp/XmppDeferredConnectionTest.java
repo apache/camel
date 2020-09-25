@@ -21,6 +21,8 @@ import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test to verify that the XMPP producer and consumer will create deferred / lazy connections to the XMPP server when
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 
 public class XmppDeferredConnectionTest extends XmppBaseTest {
+    private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionTest.class);
 
     /**
      * Ensures that the XMPP server instance is created and 'stopped' before the camel routes are initialized
@@ -39,7 +42,7 @@ public class XmppDeferredConnectionTest extends XmppBaseTest {
         try {
             xmppServer.stopXmppEndpoint();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.warn("Failed to stop XMPP endpoint: {}", e.getMessage(), e);
         }
     }
 

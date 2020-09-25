@@ -142,7 +142,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             try {
                 bytes = IOUtils.readBytesFromStream(dh.getInputStream());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error reading bytes from stream: {}", e.getMessage(), e);
             }
             assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, bytes);
 
@@ -154,7 +154,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                 bufferedImage = ImageIO.read(dh.getInputStream());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error reading bytes from stream: {}", e.getMessage(), e);
             }
             assertNotNull(bufferedImage);
             assertEquals(41, bufferedImage.getWidth());
@@ -168,7 +168,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                 map.put(MtomTestHelper.RESP_IMAGE_CID, new DataHandler(ds));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error: {}", e.getMessage(), e);
             }
 
             try {
@@ -178,7 +178,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                 map.put(MtomTestHelper.RESP_PHOTO_CID, new DataHandler(ds));
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error: {}", e.getMessage(), e);
             }
 
         }

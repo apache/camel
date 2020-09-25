@@ -67,7 +67,7 @@ public class UndertowWsTwoRoutesToSameEndpointTest extends BaseUndertowTest {
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
                         }).build())
                 .get();
