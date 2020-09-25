@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.EndpointUriAssembler;
 
 /**
@@ -21,16 +20,16 @@ public class HdfsEndpointUriAssembler extends org.apache.camel.support.component
     }
 
     @Override
-    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
         Map<String, Object> copy = new HashMap<>(parameters);
 
-        uri = buildPathParameter(camelContext, syntax, uri, "hostName", null, true, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", "8020", false, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "path", null, true, copy);
-        uri = buildQueryParameters(camelContext, uri, copy);
+        uri = buildPathParameter(syntax, uri, "hostName", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", "8020", false, copy);
+        uri = buildPathParameter(syntax, uri, "path", null, true, copy);
+        uri = buildQueryParameters(uri, copy);
         return uri;
     }
 }

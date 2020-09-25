@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.EndpointUriAssembler;
 
 /**
@@ -21,15 +20,15 @@ public class LumberjackEndpointUriAssembler extends org.apache.camel.support.com
     }
 
     @Override
-    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
         Map<String, Object> copy = new HashMap<>(parameters);
 
-        uri = buildPathParameter(camelContext, syntax, uri, "host", null, true, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", "5044", false, copy);
-        uri = buildQueryParameters(camelContext, uri, copy);
+        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", "5044", false, copy);
+        uri = buildQueryParameters(uri, copy);
         return uri;
     }
 }

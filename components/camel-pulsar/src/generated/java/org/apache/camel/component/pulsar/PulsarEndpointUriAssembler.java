@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.EndpointUriAssembler;
 
 /**
@@ -21,17 +20,17 @@ public class PulsarEndpointUriAssembler extends org.apache.camel.support.compone
     }
 
     @Override
-    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
         Map<String, Object> copy = new HashMap<>(parameters);
 
-        uri = buildPathParameter(camelContext, syntax, uri, "persistence", null, true, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "tenant", null, true, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "namespace", null, true, copy);
-        uri = buildPathParameter(camelContext, syntax, uri, "topic", null, true, copy);
-        uri = buildQueryParameters(camelContext, uri, copy);
+        uri = buildPathParameter(syntax, uri, "persistence", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "tenant", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "namespace", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "topic", null, true, copy);
+        uri = buildQueryParameters(uri, copy);
         return uri;
     }
 }
