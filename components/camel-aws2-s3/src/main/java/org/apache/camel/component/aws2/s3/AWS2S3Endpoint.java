@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.aws2.s3;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -32,6 +27,7 @@ import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -50,6 +46,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketPolicyRequest;
+import software.amazon.awssdk.utils.IoUtils;
 
 /**
  * Store and retrieve objects from AWS S3 Storage Service using AWS SDK version 2.x.
@@ -173,10 +170,9 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
 
         if (configuration.isIncludeBody()) {
             try {
-                message.setBody(readInputStream(s3Object));
+                message.setBody(IoUtils.toByteArray(s3Object));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new RuntimeCamelException(e);
             }
         } else {
             message.setBody(null);
@@ -257,17 +253,5 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
      */
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
-    }
-
-    private String readInputStream(ResponseInputStream<GetObjectResponse> s3Object) throws IOException {
-        StringBuilder textBuilder = new StringBuilder();
-        try (Reader reader
-                = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
-            while ((c = reader.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-        }
-        return textBuilder.toString();
     }
 }
