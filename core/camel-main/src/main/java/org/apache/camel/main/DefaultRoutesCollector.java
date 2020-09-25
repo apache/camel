@@ -206,7 +206,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 Set<InputStream> set = resolver.findResources(part);
                 for (InputStream is : set) {
                     log.debug("Found XML rest from location: {}", part);
-                    RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
+                    RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
                     if (rests != null) {
                         answer.add(rests);
                         IOHelper.close(is);
