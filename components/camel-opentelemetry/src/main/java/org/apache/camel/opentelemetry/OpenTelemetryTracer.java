@@ -114,7 +114,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             correlationContext = spanFromExchange.getCorrelationContext();
         } else {
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
-            Context ctx = OpenTelemetry.getPropagators().getHttpTextFormat().extract(Context.current(), adapter,
+            Context ctx = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), adapter,
                     new OpenTelemetryGetter(adapter));
             Span span = TracingContextUtils.getSpan(ctx);
             SpanContext parentFromHeaders = span.getContext();
@@ -140,7 +140,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
         Context context = TracingContextUtils.withSpan(spanFromExchange.getOpenTelemetrySpan(), Context.current());
         context = CorrelationsContextUtils.withCorrelationContext(spanFromExchange.getCorrelationContext(), context);
-        OpenTelemetry.getPropagators().getHttpTextFormat().inject(context, adapter, new OpenTelemetrySetter());
+        OpenTelemetry.getPropagators().getTextMapPropagator().inject(context, adapter, new OpenTelemetrySetter());
     }
 
 }
