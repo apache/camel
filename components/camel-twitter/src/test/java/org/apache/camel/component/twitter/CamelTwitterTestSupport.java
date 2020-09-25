@@ -56,7 +56,7 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
             try (InputStream inStream = url.openStream()) {
                 properties.load(inStream);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn("I/O exception loading test-options.properties: {}", e.getMessage(), e);
                 throw new IllegalAccessError("test-options.properties could not be found");
             }
         }

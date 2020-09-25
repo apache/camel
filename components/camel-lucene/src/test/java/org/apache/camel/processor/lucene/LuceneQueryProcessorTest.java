@@ -62,7 +62,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                     from("direct:start").setHeader("QUERY", constant("Rodney Dangerfield"))
                             .process(new LuceneQueryProcessor("target/stdindexDir", analyzer, null, 20, 20)).to("direct:next");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.warn("Unhandled exception: {}", e.getMessage(), e);
                 }
 
                 from("direct:next").process(new Processor() {
@@ -105,7 +105,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
                             .process(new LuceneQueryProcessor("target/simpleindexDir", analyzer, null, 20, 20))
                             .to("direct:next");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.warn("Unhandled exception: {}", e.getMessage(), e);
                 }
 
                 from("direct:next").process(new Processor() {

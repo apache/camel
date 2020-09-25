@@ -122,7 +122,7 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
         try {
             signedJWT.sign(new RSASSASigner(signingKey));
         } catch (JOSEException e) {
-            e.printStackTrace();
+            LOG.warn("Cannot sign object: {}", e.getMessage(), e);
         }
 
         return signedJWT.serialize();

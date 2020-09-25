@@ -61,6 +61,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -81,6 +83,8 @@ public class CxfMessageHeadersRelayTest {
     static int portE3 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.3");
     static int portE4 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.4");
     static int portE5 = CXFTestSupport.getPort("CxfMessageHeadersRelayTest.5");
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMessageHeadersRelayTest.class);
 
     @Autowired
     protected CamelContext context;
@@ -620,7 +624,7 @@ public class CxfMessageHeadersRelayTest {
                             .createUnmarshaller().unmarshal((Node) hdr1.getObject());
                     hdrToTest = (OutofBandHeader) job.getValue();
                 } catch (JAXBException ex) {
-                    ex.printStackTrace();
+                    LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                 }
             }
         }
@@ -677,7 +681,7 @@ public class CxfMessageHeadersRelayTest {
                             .createUnmarshaller().unmarshal((Node) hdr1.getObject());
                     hdrToTest.add((OutofBandHeader) job.getValue());
                 } catch (JAXBException ex) {
-                    ex.printStackTrace();
+                    LOG.warn("JAXB error: {}", ex.getMessage(), ex);
                 }
             }
         }

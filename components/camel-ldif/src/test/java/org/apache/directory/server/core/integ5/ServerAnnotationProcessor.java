@@ -51,6 +51,8 @@ import org.apache.directory.server.ldap.replication.consumer.ReplicationConsumer
 import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.protocol.shared.transport.Transport;
 import org.apache.directory.server.protocol.shared.transport.UdpTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Annotation processor for creating LDAP and Kerberos servers.
@@ -58,6 +60,7 @@ import org.apache.directory.server.protocol.shared.transport.UdpTransport;
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
 public final class ServerAnnotationProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(ServerAnnotationProcessor.class);
 
     private ServerAnnotationProcessor() {
     }
@@ -260,7 +263,7 @@ public final class ServerAnnotationProcessor {
         try {
             ldapServer.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn("Failed to start the LDAP server: {}", e.getMessage(), e);
         }
 
         return ldapServer;
@@ -380,7 +383,7 @@ public final class ServerAnnotationProcessor {
         try {
             kdcServer.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn("Failed to start the KDC server: {}", e.getMessage(), e);
         }
 
         return kdcServer;

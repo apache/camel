@@ -26,6 +26,8 @@ import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,6 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
  * Validates Push Image Request headers are applied properly
  */
 public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(PushImageCmdHeaderTest.class);
 
     @Mock
     private PushImageCmd mockObject;
@@ -73,7 +76,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 

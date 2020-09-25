@@ -48,7 +48,7 @@ public final class CxfEndpointUtils {
             try {
                 qName = QName.valueOf(name);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.warn("Cannot create QName: {}", ex.getMessage(), ex);
             }
         }
         return qName;

@@ -27,8 +27,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import org.apache.cxf.staxutils.StaxUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SoapTargetBean {
+    private static final Logger LOG = LoggerFactory.getLogger(SoapTargetBean.class);
     private static QName sayHi = new QName("http://apache.org/hello_world_soap_http/types", "sayHi");
     private static QName greetMe = new QName("http://apache.org/hello_world_soap_http/types", "greetMe");
     private SOAPMessage sayHiResponse;
@@ -45,7 +48,7 @@ public class SoapTargetBean {
             greetMeResponse = factory.createMessage(null, is);
             is.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Failed to initialize SoapTargetBean: {}", ex.getMessage(), ex);
         }
     }
 
@@ -74,7 +77,7 @@ public class SoapTargetBean {
                 response = greetMeResponse;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Failed to invoke soap message: {}", ex.getMessage(), ex);
         }
         return response;
     }
@@ -93,7 +96,7 @@ public class SoapTargetBean {
                 response = greetMeResponse;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Failed to invoke stream: {}", ex.getMessage(), ex);
         }
         return response;
     }

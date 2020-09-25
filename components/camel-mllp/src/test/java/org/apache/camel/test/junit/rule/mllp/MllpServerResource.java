@@ -790,7 +790,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             try {
                 serverSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.warn("I/O exception closing the server socket: {}", e.getMessage(), e);
             }
             log.info("Closed TCP Listener on port {}", serverSocket.getLocalPort());
         }

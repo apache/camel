@@ -46,6 +46,8 @@ import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsConsumerRouteTest.class);
 
     private static final String CONNECTED_PREFIX = "connected ";
     private static final String BROADCAST_MESSAGE_PREFIX = "broadcast ";
@@ -79,7 +82,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -118,7 +121,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -159,7 +162,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                     @Override
@@ -202,7 +205,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -249,7 +252,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -273,7 +276,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();

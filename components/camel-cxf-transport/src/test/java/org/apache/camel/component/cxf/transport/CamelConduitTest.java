@@ -34,11 +34,14 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CamelConduitTest extends CamelTransportTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelConduitTest.class);
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -113,7 +116,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         try {
             conduit.prepare(message);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error preparing the message: {}", ex.getMessage(), ex);
         }
         verifyMessageContent(message);
     }
@@ -156,7 +159,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         try {
             bis.read(bytes);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.warn("I/O error receiving messages: {}", ex.getMessage(), ex);
         }
         String reponse = new String(bytes);
         assertEquals(content, reponse, "The reponse date should be equals");

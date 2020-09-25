@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.mtom;
 import java.io.IOException;
 
 import org.apache.cxf.helpers.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -26,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Package local test helper
  */
 public final class MtomTestHelper {
-
     static final String SERVICE_TYPES_NS = "http://apache.org/camel/cxf/mtom_feature/types";
     static final String XOP_NS = "http://www.w3.org/2004/08/xop/include";
     static final byte[] REQ_PHOTO_DATA = { 1, 0, -1, 34, 23, 3, 23, 55, 33 };
@@ -65,13 +66,14 @@ public final class MtomTestHelper {
     static byte[] requestJpeg;
     static byte[] responseJpeg;
 
+    private static final Logger LOG = LoggerFactory.getLogger(MtomTestHelper.class);
+
     static {
         try {
             requestJpeg = IOUtils.readBytesFromStream(CxfMtomConsumerPayloadModeTest.class.getResourceAsStream("/java.jpg"));
             responseJpeg = IOUtils.readBytesFromStream(CxfMtomConsumerPayloadModeTest.class.getResourceAsStream("/Splash.jpg"));
         } catch (IOException e) {
-
-            e.printStackTrace();
+            LOG.warn("I/O error reading bytes from stream: {}", e.getMessage(), e);
         }
     }
 
