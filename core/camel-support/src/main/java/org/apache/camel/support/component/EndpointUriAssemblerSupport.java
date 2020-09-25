@@ -34,7 +34,7 @@ public abstract class EndpointUriAssemblerSupport {
             CamelContext camelContext, String syntax, String uri, String name, Object defaultValue, boolean required,
             Map<String, Object> parameters) {
         Object obj = parameters.remove(name);
-        if (ObjectHelper.isEmpty(obj) && defaultValue != null) {
+        if (ObjectHelper.isEmpty(obj) && defaultValue != null && required) {
             obj = camelContext.getTypeConverter().convertTo(String.class, defaultValue);
         }
         if (ObjectHelper.isEmpty(obj) && required) {
@@ -58,8 +58,6 @@ public abstract class EndpointUriAssemblerSupport {
                 }
             }
         }
-
-        // TODO: value == defaultValue and required = false => remove from path as that is better (eg camel-jms)
 
         return uri;
     }

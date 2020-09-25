@@ -102,7 +102,7 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri(context, "acme", params);
-        Assertions.assertEquals("acme:bar:8080?amount=123&verbose=false", uri);
+        Assertions.assertEquals("acme:bar?amount=123&verbose=false", uri);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri(context, "acme2", params);
-        Assertions.assertEquals("acme2:bar/moes:8080?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar/moes?amount=123&verbose=true", uri);
     }
 
     @Test
@@ -158,7 +158,45 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("amount", "123");
 
         String uri = assembler.buildUri(context, "acme2", params);
-        Assertions.assertEquals("acme2:bar:8080?amount=123&verbose=true", uri);
+        Assertions.assertEquals("acme2:bar?amount=123&verbose=true", uri);
+    }
+
+    @Test
+    public void testJms() throws Exception {
+        EndpointUriAssembler assembler = new MyJmsAssembler();
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("destinationType", "topic");
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri(context, "jms2", params);
+        Assertions.assertEquals("jms2:topic:foo?deliveryPersistent=true", uri);
+    }
+
+    @Test
+    public void testJmsMatchDefault() throws Exception {
+        EndpointUriAssembler assembler = new MyJmsAssembler();
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("destinationType", "queue");
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri(context, "jms2", params);
+        Assertions.assertEquals("jms2:queue:foo?deliveryPersistent=true", uri);
+    }
+
+    @Test
+    public void testJmsNoDefault() throws Exception {
+        EndpointUriAssembler assembler = new MyJmsAssembler();
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("deliveryPersistent", true);
+
+        String uri = assembler.buildUri(context, "jms2", params);
+        Assertions.assertEquals("jms2:foo?deliveryPersistent=true", uri);
     }
 
     private class MyAssembler extends EndpointUriAssemblerSupport implements EndpointUriAssembler {
@@ -207,6 +245,29 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
             uri = buildPathParameter(camelContext, SYNTAX, uri, "path", null, false, parameters);
             uri = buildPathParameter(camelContext, SYNTAX, uri, "port", 8080, false, parameters);
             // append remainder parameters
+            uri = buildQueryParameters(camelContext, uri, parameters);
+
+            return uri;
+        }
+
+    }
+
+    private class MyJmsAssembler extends EndpointUriAssemblerSupport implements EndpointUriAssembler {
+
+        private static final String SYNTAX = "jms2:destinationType:destinationName";
+
+        @Override
+        public boolean isEnabled(String scheme) {
+            return "jms2".equals(scheme);
+        }
+
+        @Override
+        public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
+                throws URISyntaxException {
+
+            String uri = SYNTAX;
+            uri = buildPathParameter(camelContext, SYNTAX, uri, "destinationType", "queue", false, parameters);
+            uri = buildPathParameter(camelContext, SYNTAX, uri, "destinationName", null, true, parameters);
             uri = buildQueryParameters(camelContext, uri, parameters);
 
             return uri;
