@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriAssembler;
 import org.apache.camel.support.component.EndpointUriAssemblerSupport;
 import org.junit.jupiter.api.Assertions;
@@ -40,6 +41,21 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("port", 4444);
         params.put("verbose", true);
 
+        String uri = assembler.buildUri(context, "acme", params);
+        Assertions.assertEquals("acme:foo:4444?amount=123&verbose=true", uri);
+    }
+
+    @Test
+    public void testCustomAssembleRegistry() throws Exception {
+        context.getRegistry().bind("myAssembler", new MyAssembler());
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", "foo");
+        params.put("amount", "123");
+        params.put("port", 4444);
+        params.put("verbose", true);
+
+        EndpointUriAssembler assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("acme");
         String uri = assembler.buildUri(context, "acme", params);
         Assertions.assertEquals("acme:foo:4444?amount=123&verbose=true", uri);
     }
@@ -71,7 +87,8 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
             assembler.buildUri(context, "acme", params);
             Assertions.fail();
         } catch (IllegalArgumentException e) {
-            Assertions.assertEquals("Option name is required when creating endpoint uri with syntax acme:name:port", e.getMessage());
+            Assertions.assertEquals("Option name is required when creating endpoint uri with syntax acme:name:port",
+                    e.getMessage());
         }
     }
 
@@ -149,6 +166,11 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         private static final String SYNTAX = "acme:name:port";
 
         @Override
+        public boolean isEnabled(String scheme) {
+            return "acme".equals(scheme);
+        }
+
+        @Override
         public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
                 throws URISyntaxException {
             // begin from syntax
@@ -168,6 +190,11 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
     private class MySecondAssembler extends EndpointUriAssemblerSupport implements EndpointUriAssembler {
 
         private static final String SYNTAX = "acme2:name/path:port";
+
+        @Override
+        public boolean isEnabled(String scheme) {
+            return "acme2".equals(scheme);
+        }
 
         @Override
         public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)

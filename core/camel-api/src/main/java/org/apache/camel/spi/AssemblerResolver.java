@@ -16,29 +16,19 @@
  */
 package org.apache.camel.spi;
 
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 
 /**
- * To assemble an endpoint uri String from a map of parameters.
+ * A pluggable strategy for resolving different assemblers in a loosely coupled manner
  */
-public interface EndpointUriAssembler {
+public interface AssemblerResolver {
 
     /**
-     * Checks whether this assembler supports the given component name
-     */
-    boolean isEnabled(String scheme);
-
-    /**
-     * Assembles an endpoint uri for the given component name with the given parameters.
+     * Resolves the given assembler.
      *
-     * @param  camelContext the Camel context
-     * @param  scheme       the component name
-     * @param  parameters   endpoint options
-     * @return              the constructed endpoint uri
+     * @param  name    the name of the assembler (timer-endpoint etc)
+     * @param  context the camel context
+     * @return         the resolved assembler, or <tt>null</tt> if no assembler could be found
      */
-    String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException;
-
+    EndpointUriAssembler resolveAssembler(String name, CamelContext context);
 }

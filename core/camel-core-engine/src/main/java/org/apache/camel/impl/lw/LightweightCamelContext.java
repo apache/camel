@@ -71,6 +71,7 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -1409,6 +1410,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
         getExtendedCamelContext().setConfigurerResolver(configurerResolver);
+    }
+
+    @Override
+    public AssemblerResolver getAssemblerResolver() {
+        return getExtendedCamelContext().getAssemblerResolver();
+    }
+
+    @Override
+    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
+        getExtendedCamelContext().setAssemblerResolver(assemblerResolver);
     }
 
     @Override

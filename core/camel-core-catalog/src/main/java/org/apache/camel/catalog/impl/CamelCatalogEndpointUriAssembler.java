@@ -17,7 +17,14 @@ import static org.apache.camel.catalog.RuntimeCamelCatalog.ENDPOINT_URI_ASSEMBLE
  * Uses {@link RuntimeCamelCatalog} to assemble the endpoint uri.
  */
 @JdkService(ENDPOINT_URI_ASSEMBLER_FACTORY)
+@Deprecated
 public class CamelCatalogEndpointUriAssembler implements EndpointUriAssembler {
+
+    @Override
+    public boolean isEnabled(String scheme) {
+        // as its a fallback then assume it can handle this
+        return true;
+    }
 
     @Override
     public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) {

@@ -67,6 +67,7 @@ import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -1858,8 +1859,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public AssemblerResolver getAssemblerResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
-        // TODO: If this experiment is continued then this should be implemented
         throw new UnsupportedOperationException();
     }
 

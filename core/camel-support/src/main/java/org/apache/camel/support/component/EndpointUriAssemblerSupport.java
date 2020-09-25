@@ -49,7 +49,7 @@ public abstract class EndpointUriAssemblerSupport {
             int pos = uri.indexOf(name);
             if (pos != -1) {
                 // remove from syntax
-                uri = uri.replace(name, "");
+                uri = uri.replaceFirst(name, "");
                 pos = pos - 1;
                 // remove the separator char
                 char ch = uri.charAt(pos);

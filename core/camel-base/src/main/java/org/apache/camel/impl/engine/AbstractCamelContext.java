@@ -77,6 +77,7 @@ import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
+import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -257,6 +258,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile ComponentNameResolver componentNameResolver;
     private volatile LanguageResolver languageResolver;
     private volatile ConfigurerResolver configurerResolver;
+    private volatile AssemblerResolver assemblerResolver;
     private volatile DataFormatResolver dataFormatResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -1876,6 +1878,21 @@ public abstract class AbstractCamelContext extends BaseService
         this.configurerResolver = doAddService(configurerResolver);
     }
 
+    public AssemblerResolver getAssemblerResolver() {
+        if (assemblerResolver == null) {
+            synchronized (lock) {
+                if (assemblerResolver == null) {
+                    setAssemblerResolver(createAssemblerResolver());
+                }
+            }
+        }
+        return assemblerResolver;
+    }
+
+    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
+        this.assemblerResolver = doAddService(assemblerResolver);
+    }
+
     public boolean isAutoCreateComponents() {
         return autoCreateComponents;
     }
@@ -3206,6 +3223,7 @@ public abstract class AbstractCamelContext extends BaseService
         getRegistry();
         getLanguageResolver();
         getConfigurerResolver();
+        getAssemblerResolver();
         getExecutorServiceManager();
         getInflightRepository();
         getAsyncProcessorAwaitManager();
@@ -4208,6 +4226,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract ConfigurerResolver createConfigurerResolver();
 
+    protected abstract AssemblerResolver createAssemblerResolver();
+
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
     protected abstract EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints);
@@ -4237,13 +4257,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
-        // TODO: lookup factory specific for a given component
-
-        // no specific factory found so lets fallback to use runtime catalog
-        return new BaseServiceResolver<>(RuntimeCamelCatalog.ENDPOINT_URI_ASSEMBLER_FACTORY, EndpointUriAssembler.class)
-                .resolve(getCamelContextReference())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find RuntimeCamelCatalog on classpath. Add camel-core-catalog to classpath."));
+        return getAssemblerResolver().resolveAssembler(scheme, this);
     }
 
     public enum Initialization {

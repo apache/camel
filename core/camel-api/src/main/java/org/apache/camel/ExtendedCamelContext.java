@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
+import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -549,6 +550,16 @@ public interface ExtendedCamelContext extends CamelContext {
      * Sets the {@link ConfigurerResolver} to use.
      */
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
+
+    /**
+     * Gets the {@link AssemblerResolver} to use.
+     */
+    AssemblerResolver getAssemblerResolver();
+
+    /**
+     * Sets the {@link AssemblerResolver} to use.
+     */
+    void setAssemblerResolver(AssemblerResolver assemblerResolver);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

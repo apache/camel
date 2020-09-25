@@ -32,6 +32,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -357,6 +358,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ConfigurerResolver createConfigurerResolver() {
         return new DefaultConfigurerResolver();
+    }
+
+    @Override
+    protected AssemblerResolver createAssemblerResolver() {
+        return new DefaultAssemblerResolver();
     }
 
     @Override

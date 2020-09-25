@@ -23,6 +23,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AllowUseOriginalMessage": target.setAllowUseOriginalMessage(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "applicationcontextclassloader":
         case "ApplicationContextClassLoader": target.setApplicationContextClassLoader(property(camelContext, java.lang.ClassLoader.class, value)); return true;
+        case "assemblerresolver":
+        case "AssemblerResolver": target.setAssemblerResolver(property(camelContext, org.apache.camel.spi.AssemblerResolver.class, value)); return true;
         case "asyncprocessorawaitmanager":
         case "AsyncProcessorAwaitManager": target.setAsyncProcessorAwaitManager(property(camelContext, org.apache.camel.spi.AsyncProcessorAwaitManager.class, value)); return true;
         case "autostartup":
@@ -162,6 +164,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         Map<String, Object> answer = new CaseInsensitiveMap();
         answer.put("AllowUseOriginalMessage", java.lang.Boolean.class);
         answer.put("ApplicationContextClassLoader", java.lang.ClassLoader.class);
+        answer.put("AssemblerResolver", org.apache.camel.spi.AssemblerResolver.class);
         answer.put("AsyncProcessorAwaitManager", org.apache.camel.spi.AsyncProcessorAwaitManager.class);
         answer.put("AutoStartup", java.lang.Boolean.class);
         answer.put("BacklogTracing", java.lang.Boolean.class);
@@ -238,6 +241,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AllowUseOriginalMessage": return target.isAllowUseOriginalMessage();
         case "applicationcontextclassloader":
         case "ApplicationContextClassLoader": return target.getApplicationContextClassLoader();
+        case "assemblerresolver":
+        case "AssemblerResolver": return target.getAssemblerResolver();
         case "asyncprocessorawaitmanager":
         case "AsyncProcessorAwaitManager": return target.getAsyncProcessorAwaitManager();
         case "autostartup":

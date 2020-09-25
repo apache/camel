@@ -12,13 +12,19 @@ import org.apache.camel.spi.EndpointUriAssembler;
  */
 public class AhcEndpointUriAssembler extends org.apache.camel.support.component.EndpointUriAssemblerSupport implements EndpointUriAssembler {
 
-    private static final String SYNTAX = "ahc:httpUri";
+    private static final String BASE = ":httpUri";
+
+    @Override
+    public boolean isEnabled(String scheme) {
+        return "ahc".equals(scheme);
+    }
 
     @Override
     public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {
-        String uri = SYNTAX;
+        String syntax = scheme + BASE;
+        String uri = syntax;
 
-        uri = buildPathParameter(camelContext, SYNTAX, uri, "httpUri", null, true, parameters);
+        uri = buildPathParameter(camelContext, syntax, uri, "httpUri", null, true, parameters);
         uri = buildQueryParameters(camelContext, uri, parameters);
         return uri;
     }

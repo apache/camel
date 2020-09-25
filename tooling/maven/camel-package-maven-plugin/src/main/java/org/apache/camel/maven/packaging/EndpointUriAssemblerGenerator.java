@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.StringJoiner;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -46,14 +47,34 @@ public final class EndpointUriAssemblerGenerator {
         w.write(" */\n");
         w.write("public class " + cn + " extends " + psn + " implements EndpointUriAssembler {\n");
         w.write("\n");
-        w.write("    private static final String SYNTAX = \"" + model.getSyntax() + "\";\n");
+        w.write("    private static final String BASE = \"" + baseSyntax(model) + "\";\n");
+
+        String alternative = alternativeSchemes(model);
+        if (alternative != null) {
+            w.write("    private static final String[] SCHEMES = " + alternative + ";\n");
+        }
+        w.write("\n");
+        w.write("    @Override\n");
+        w.write("    public boolean isEnabled(String scheme) {\n");
+        if (alternative == null) {
+            w.write("        return \"" + model.getScheme() + "\".equals(scheme);\n");
+        } else {
+            w.write("        for (String s : SCHEMES) {\n");
+            w.write("            if (s.equals(scheme)) {\n");
+            w.write("                return true;\n");
+            w.write("            }\n");
+            w.write("        }\n");
+            w.write("        return false;\n");
+        }
+        w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
         w.write("    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {\n");
-        w.write("        String uri = SYNTAX;\n");
+        w.write("        String syntax = scheme + BASE;\n");
+        w.write("        String uri = syntax;\n");
         w.write("\n");
         for (BaseOptionModel option : model.getEndpointPathOptions()) {
-            w.write("        uri = buildPathParameter(camelContext, SYNTAX, uri, \"" + option.getName() + "\", "
+            w.write("        uri = buildPathParameter(camelContext, syntax, uri, \"" + option.getName() + "\", "
                     + option.getDefaultValue() + ", " + option.isRequired() + ", parameters);\n");
         }
         w.write("        uri = buildQueryParameters(camelContext, uri, parameters);\n");
@@ -61,6 +82,30 @@ public final class EndpointUriAssemblerGenerator {
         w.write("    }\n");
         w.write("}\n");
         w.write("\n");
+    }
+
+    private static String alternativeSchemes(ComponentModel model) {
+        StringBuilder sb = new StringBuilder();
+        if (model.getAlternativeSchemes() != null) {
+            sb.append("new String[]{");
+            String[] alts = model.getAlternativeSchemes().split(",");
+            StringJoiner sj = new StringJoiner(", ");
+            for (String alt : alts) {
+                sj.add("\"" + alt + "\"");
+            }
+            sb.append(sj.toString());
+            sb.append("}");
+        }
+        if (sb.length() == 0) {
+            return null;
+        }
+        return sb.toString();
+    }
+
+    private static String baseSyntax(ComponentModel model) {
+        String base = model.getSyntax();
+        base = base.replaceFirst(model.getScheme(), "");
+        return base;
     }
 
 }
