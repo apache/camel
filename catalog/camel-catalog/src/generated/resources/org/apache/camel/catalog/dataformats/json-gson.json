@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "json-gson",
     "title": "JSON Gson",
-    "description": "Marshal POJOs to JSON and back.",
+    "description": "Marshal POJOs to JSON and back using Gson",
     "deprecated": false,
     "firstVersion": "2.10.0",
     "label": "dataformat,transformation,json",

@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "json-jackson",
     "title": "JSON Jackson",
-    "description": "Marshal POJOs to JSON and back.",
+    "description": "Marshal POJOs to JSON and back using Jackson",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,json",

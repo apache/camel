@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "json-johnzon",
     "title": "JSON Johnzon",
-    "description": "Marshal POJOs to JSON and back.",
+    "description": "Marshal POJOs to JSON and back using Johnzon",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "label": "dataformat,transformation,json",

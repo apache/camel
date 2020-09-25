@@ -40,8 +40,7 @@ import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link org.apache.camel.spi.DataFormat}) using
- * XStream and Jettison to marshal to and from JSON
+ * Marshal POJOs to JSON and back using <a href="http://x-stream.github.io/">XStream</a>
  */
 @Dataformat("json-xstream")
 @Metadata(includeProperties = "prettyPrint,dropRootNode,contentTypeHeader")

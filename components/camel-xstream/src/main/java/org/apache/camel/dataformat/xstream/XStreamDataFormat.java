@@ -31,14 +31,12 @@ import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using XStream to marshal to
- * and from XML
+ * Marshal POJOs to JSON and back using <a href="http://x-stream.github.io/">XStream</a>
  */
 @Dataformat("xstream")
 @Metadata(includeProperties = "encoding,converters,aliases,omitFields,implicitCollections,permissions,mode,contentTypeHeader")

@@ -40,7 +40,6 @@ import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.WrappedException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -49,8 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ( {@link DataFormat}) using Bindy to marshal to
- * and from CSV files
+ * Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy
  */
 @Dataformat("bindy-csv")
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
