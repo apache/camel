@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
 
     @Test
     public void testLookupAssemble() throws Exception {
-        EndpointUriAssembler assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("timer");
+        EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("timer");
 
         Map<String, Object> params = new HashMap<>();
         params.put("timerName", "foo");

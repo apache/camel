@@ -71,7 +71,6 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.channel.DefaultChannel;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -90,7 +89,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -130,6 +129,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -1413,13 +1413,13 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public AssemblerResolver getAssemblerResolver() {
-        return getExtendedCamelContext().getAssemblerResolver();
+    public UriFactoryResolver getUriFactoryResolver() {
+        return getExtendedCamelContext().getUriFactoryResolver();
     }
 
     @Override
-    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
-        getExtendedCamelContext().setAssemblerResolver(assemblerResolver);
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
+        getExtendedCamelContext().setUriFactoryResolver(uriFactoryResolver);
     }
 
     @Override
@@ -1428,8 +1428,8 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
-        return getExtendedCamelContext().getEndpointUriAssembler(scheme);
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        return getExtendedCamelContext().getEndpointUriFactory(scheme);
     }
 
     @Override

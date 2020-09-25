@@ -77,7 +77,6 @@ import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
-import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -96,7 +95,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
@@ -142,6 +141,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -258,7 +258,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile ComponentNameResolver componentNameResolver;
     private volatile LanguageResolver languageResolver;
     private volatile ConfigurerResolver configurerResolver;
-    private volatile AssemblerResolver assemblerResolver;
+    private volatile UriFactoryResolver uriFactoryResolver;
     private volatile DataFormatResolver dataFormatResolver;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -1878,19 +1878,19 @@ public abstract class AbstractCamelContext extends BaseService
         this.configurerResolver = doAddService(configurerResolver);
     }
 
-    public AssemblerResolver getAssemblerResolver() {
-        if (assemblerResolver == null) {
+    public UriFactoryResolver getUriFactoryResolver() {
+        if (uriFactoryResolver == null) {
             synchronized (lock) {
-                if (assemblerResolver == null) {
-                    setAssemblerResolver(createAssemblerResolver());
+                if (uriFactoryResolver == null) {
+                    setUriFactoryResolver(createUriFactoryResolver());
                 }
             }
         }
-        return assemblerResolver;
+        return uriFactoryResolver;
     }
 
-    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
-        this.assemblerResolver = doAddService(assemblerResolver);
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
+        this.uriFactoryResolver = doAddService(uriFactoryResolver);
     }
 
     public boolean isAutoCreateComponents() {
@@ -3223,7 +3223,7 @@ public abstract class AbstractCamelContext extends BaseService
         getRegistry();
         getLanguageResolver();
         getConfigurerResolver();
-        getAssemblerResolver();
+        getUriFactoryResolver();
         getExecutorServiceManager();
         getInflightRepository();
         getAsyncProcessorAwaitManager();
@@ -4226,7 +4226,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract ConfigurerResolver createConfigurerResolver();
 
-    protected abstract AssemblerResolver createAssemblerResolver();
+    protected abstract UriFactoryResolver createUriFactoryResolver();
 
     protected abstract RestRegistryFactory createRestRegistryFactory();
 
@@ -4256,8 +4256,8 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
-        return getAssemblerResolver().resolveAssembler(scheme, this);
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        return getUriFactoryResolver().resolveFactory(scheme, this);
     }
 
     public enum Initialization {

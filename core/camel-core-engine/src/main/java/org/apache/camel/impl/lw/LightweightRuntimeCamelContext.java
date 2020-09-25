@@ -67,7 +67,6 @@ import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -85,7 +84,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -127,6 +126,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -1859,17 +1859,17 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public AssemblerResolver getAssemblerResolver() {
+    public UriFactoryResolver getUriFactoryResolver() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setAssemblerResolver(AssemblerResolver assemblerResolver) {
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public EndpointUriAssembler getEndpointUriAssembler(String scheme) {
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
         throw new UnsupportedOperationException();
     }
 

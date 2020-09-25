@@ -32,7 +32,6 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.processor.MulticastProcessor;
-import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -72,6 +71,7 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -361,8 +361,8 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
-    protected AssemblerResolver createAssemblerResolver() {
-        return new DefaultAssemblerResolver();
+    protected UriFactoryResolver createUriFactoryResolver() {
+        return new DefaultUriFactoryResolver();
     }
 
     @Override

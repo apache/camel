@@ -25,7 +25,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AssemblerResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -37,7 +36,7 @@ import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -59,6 +58,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
 /**
@@ -552,14 +552,14 @@ public interface ExtendedCamelContext extends CamelContext {
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
     /**
-     * Gets the {@link AssemblerResolver} to use.
+     * Gets the {@link UriFactoryResolver} to use.
      */
-    AssemblerResolver getAssemblerResolver();
+    UriFactoryResolver getUriFactoryResolver();
 
     /**
-     * Sets the {@link AssemblerResolver} to use.
+     * Sets the {@link UriFactoryResolver} to use.
      */
-    void setAssemblerResolver(AssemblerResolver assemblerResolver);
+    void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
@@ -568,9 +568,9 @@ public interface ExtendedCamelContext extends CamelContext {
     RouteController getInternalRouteController();
 
     /**
-     * Gets the {@link EndpointUriAssembler} for the given component name.
+     * Gets the {@link EndpointUriFactory} for the given component name.
      */
-    EndpointUriAssembler getEndpointUriAssembler(String scheme);
+    EndpointUriFactory getEndpointUriFactory(String scheme);
 
     /**
      * Internal API for adding routes. Do not use this as end user.
