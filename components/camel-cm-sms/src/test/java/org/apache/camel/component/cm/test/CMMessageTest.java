@@ -61,8 +61,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -77,8 +77,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -94,8 +94,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -109,8 +109,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -124,8 +124,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -139,8 +139,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -154,8 +154,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     @Test
@@ -169,8 +169,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(!cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(!cmMessage.isUnicode(), "Should not be unicode");
     }
 
     /*
@@ -192,8 +192,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -210,8 +210,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 1);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -229,8 +229,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -246,8 +246,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -263,8 +263,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 2);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -280,8 +280,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 3);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -297,8 +297,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
     @Test
@@ -314,8 +314,8 @@ public class CMMessageTest {
         final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
-        Assert.isTrue(cmMessage.getMultiparts() == 8);
-        Assert.isTrue(cmMessage.isUnicode());
+        Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
+        Assert.isTrue(cmMessage.isUnicode(), "Should have been unicode");
     }
 
 }
