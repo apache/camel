@@ -16,12 +16,13 @@
  */
 package org.apache.camel.support.component;
 
-import java.util.List;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Base class used by Camel Package Maven Plugin when it generates source code for fast endpoint uri assembler via
@@ -29,66 +30,27 @@ import org.apache.camel.util.TimeUtils;
  */
 public abstract class EndpointUriAssemblerSupport {
 
-    /**
-     * Converts the property to the expected type
-     *
-     * @param  camelContext the camel context
-     * @param  type         the expected type
-     * @param  value        the value
-     * @return              the value converted to the expected type
-     */
-    public static <T> T property(CamelContext camelContext, Class<T> type, Object value) {
-        // if the type is not string based and the value is a bean reference, then we need to lookup
-        // the bean from the registry
-        if (value instanceof String && String.class != type) {
-            String text = value.toString();
-
-            if (EndpointHelper.isReferenceParameter(text)) {
-                Object obj;
-                // special for a list where we refer to beans which can be either a list or a single element
-                // so use Object.class as type
-                if (type == List.class) {
-                    obj = EndpointHelper.resolveReferenceListParameter(camelContext, text, Object.class);
-                } else {
-                    obj = EndpointHelper.resolveReferenceParameter(camelContext, text, type);
-                }
-                if (obj == null) {
-                    // no bean found so throw an exception
-                    throw new NoSuchBeanException(text, type.getName());
-                }
-                value = obj;
-            } else if (type == long.class || type == Long.class || type == int.class || type == Integer.class) {
-                Object obj = null;
-                // string to long/int then it may be a duration where we can convert the value to milli seconds
-                // it may be a time pattern, such as 5s for 5 seconds = 5000
-                try {
-                    long num = TimeUtils.toMilliSeconds(text);
-                    if (type == int.class || type == Integer.class) {
-                        // need to cast to int
-                        obj = (int) num;
-                    } else {
-                        obj = num;
-                    }
-                } catch (IllegalArgumentException e) {
-                    // ignore
-                }
-                if (obj != null) {
-                    value = obj;
-                }
-            }
+    protected String buildPathParameter(CamelContext camelContext, String syntax, String uri, String name, String defaultValue, boolean required, Map<String, String> parameters) {
+        String obj = parameters.remove(name);
+        if (ObjectHelper.isEmpty(obj)) {
+            obj = defaultValue;
         }
-
-        // special for boolean values with string values as we only want to accept "true" or "false"
-        if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
-            String text = (String) value;
-            if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
-                throw new IllegalArgumentException(
-                        "Cannot convert the String value: " + value + " to type: " + type
-                                                   + " as the value is not true or false");
-            }
+        if (ObjectHelper.isEmpty(obj) && required) {
+            throw new IllegalArgumentException("Option " + name + " is required when creating endpoint uri with syntax " + syntax);
         }
-
-        return camelContext.getTypeConverter().convertTo(type, value);
+        if (ObjectHelper.isNotEmpty(obj)) {
+            uri = uri.replace(name, obj);
+        }
+        return uri;
     }
 
+    protected String buildQueryParameters(CamelContext camelContext, String uri, Map<String, String> parameters) throws URISyntaxException {
+        // we want sorted parameters
+        Map map = new TreeMap(parameters);
+        String query = URISupport.createQueryString(map);
+        if (ObjectHelper.isNotEmpty(query)) {
+            uri = uri + "?" + query;
+        }
+        return uri;
+    }
 }

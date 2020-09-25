@@ -16,21 +16,23 @@
  */
 package org.apache.camel.catalog;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.catalog.impl.CamelCatalogEndpointUriAssembler;
 import org.apache.camel.spi.EndpointUriAssembler;
+import org.apache.camel.support.component.EndpointUriAssemblerSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupport {
+public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
 
     @Test
-    public void testLookupAssemble() throws Exception {
-        EndpointUriAssembler assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("timer");
+    public void testCustomAssemble() throws Exception {
+        EndpointUriAssembler assembler = new MyAssembler();
 
         Map<String, String> params = new HashMap<>();
         params.put("timerName", "foo");
@@ -42,15 +44,37 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
     }
 
     @Test
-    public void testRuntimeAssemble() throws Exception {
-        EndpointUriAssembler assembler = new CamelCatalogEndpointUriAssembler();
+    public void testCustomAssembleUnsorted() throws Exception {
+        EndpointUriAssembler assembler = new MyAssembler();
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new LinkedHashMap<>();
         params.put("timerName", "foo");
-        params.put("period", "123");
         params.put("repeatCount", "5");
+        params.put("period", "123");
 
         String uri = assembler.buildUri(context, "timer", params);
         Assertions.assertEquals("timer:foo?period=123&repeatCount=5", uri);
     }
+
+    private class MyAssembler extends EndpointUriAssemblerSupport implements EndpointUriAssembler {
+
+        private static final String SYNTAX = "timer:timerName";
+
+        @Override
+        public String buildUri(CamelContext camelContext, String scheme, Map<String, String> parameters) throws URISyntaxException {
+            // begin from syntax
+            String uri = SYNTAX;
+
+            // TODO: optional path parameters that are missing
+
+            // append path parameters
+            uri = buildPathParameter(camelContext, SYNTAX, uri, "timerName", null, true, parameters);
+            // append remainder parameters
+            uri = buildQueryParameters(camelContext, uri, parameters);
+
+            return uri;
+        }
+
+    }
+
 }
