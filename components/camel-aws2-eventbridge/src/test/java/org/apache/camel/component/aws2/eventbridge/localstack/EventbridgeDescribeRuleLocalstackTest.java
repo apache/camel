@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.aws2.eventbridge.localstack;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.eventbridge.model.DescribeRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTest {
 
@@ -66,7 +65,7 @@ public class EventbridgeDescribeRuleLocalstackTest extends Aws2EventbridgeBaseTe
                 exchange.getIn().setHeader(EventbridgeConstants.TARGETS, targets);
             }
         });
-        
+
         template.send("direct:describe-rule", new Processor() {
 
             @Override
