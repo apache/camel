@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.storage.queue;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,9 +25,11 @@ public class QueueEndpointUriAssembler extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "accountName", null, false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "queueName", null, false, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "accountName", null, false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "queueName", null, false, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest.openapi;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,9 +25,11 @@ public class RestOpenApiEndpointUriAssembler extends org.apache.camel.support.co
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "specificationUri", "openapi.json", false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "operationId", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "specificationUri", "openapi.json", false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "operationId", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

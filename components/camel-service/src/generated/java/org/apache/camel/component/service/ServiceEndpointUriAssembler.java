@@ -2,6 +2,7 @@
 package org.apache.camel.component.service;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,8 +25,10 @@ public class ServiceEndpointUriAssembler extends org.apache.camel.support.compon
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "delegateUri", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "delegateUri", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

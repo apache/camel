@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,9 +25,11 @@ public class EventHubsEndpointUriAssembler extends org.apache.camel.support.comp
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "namespace", null, false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "eventHubName", null, false, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "namespace", null, false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "eventHubName", null, false, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

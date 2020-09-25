@@ -2,6 +2,7 @@
 package org.apache.camel.component.pulsar;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,11 +25,13 @@ public class PulsarEndpointUriAssembler extends org.apache.camel.support.compone
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "persistence", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "tenant", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "namespace", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "topic", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "persistence", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "tenant", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "namespace", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "topic", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

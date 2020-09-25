@@ -2,6 +2,7 @@
 package org.apache.camel.component.xmlsecurity;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,8 +25,10 @@ public class XmlSignerEndpointUriAssembler extends org.apache.camel.support.comp
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "name", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "name", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

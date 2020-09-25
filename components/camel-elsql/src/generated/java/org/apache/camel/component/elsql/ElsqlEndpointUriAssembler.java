@@ -2,6 +2,7 @@
 package org.apache.camel.component.elsql;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,9 +25,11 @@ public class ElsqlEndpointUriAssembler extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "elsqlName", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "resourceUri", null, false, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "elsqlName", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "resourceUri", null, false, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

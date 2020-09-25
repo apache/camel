@@ -2,6 +2,7 @@
 package org.apache.camel.component.smpp;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -30,9 +31,11 @@ public class SmppEndpointUriAssembler extends org.apache.camel.support.component
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "host", "localhost", false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", "2775", false, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "host", "localhost", false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "port", "2775", false, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

@@ -2,6 +2,7 @@
 package org.apache.camel.component.avro;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,11 +25,13 @@ public class AvroEndpointUriAssembler extends org.apache.camel.support.component
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "transport", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "host", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "messageName", null, false, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "transport", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "port", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "messageName", null, false, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

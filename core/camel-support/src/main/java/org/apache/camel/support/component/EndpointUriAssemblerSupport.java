@@ -68,7 +68,14 @@ public abstract class EndpointUriAssemblerSupport {
         Map<String, Object> map = new TreeMap<>(parameters);
         String query = URISupport.createQueryString(map);
         if (ObjectHelper.isNotEmpty(query)) {
-            uri = uri + "?" + query;
+            // there may be a ? sign in the context path then use & instead
+            // (this is not correct but lets deal with this as the camel-catalog handled this)
+            boolean questionMark = uri.indexOf('?') != -1;
+            if (questionMark) {
+                uri = uri + "&" + query;
+            } else {
+                uri = uri + "?" + query;
+            }
         }
         return uri;
     }

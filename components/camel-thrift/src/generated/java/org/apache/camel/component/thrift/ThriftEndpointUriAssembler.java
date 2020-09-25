@@ -2,6 +2,7 @@
 package org.apache.camel.component.thrift;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,10 +25,12 @@ public class ThriftEndpointUriAssembler extends org.apache.camel.support.compone
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "host", null, false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "service", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "host", null, false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "port", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "service", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

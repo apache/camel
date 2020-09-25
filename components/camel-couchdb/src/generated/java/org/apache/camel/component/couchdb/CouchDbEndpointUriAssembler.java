@@ -2,6 +2,7 @@
 package org.apache.camel.component.couchdb;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,11 +25,13 @@ public class CouchDbEndpointUriAssembler extends org.apache.camel.support.compon
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "protocol", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "hostname", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", "5984", false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "database", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "protocol", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "hostname", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "port", "5984", false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "database", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

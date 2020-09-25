@@ -2,6 +2,7 @@
 package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,12 +25,14 @@ public class Jt400EndpointUriAssembler extends org.apache.camel.support.componen
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "userID", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "password", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "systemName", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "objectPath", null, true, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "type", null, true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "userID", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "password", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "systemName", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "objectPath", null, true, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "type", null, true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }

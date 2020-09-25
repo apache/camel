@@ -2,6 +2,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -24,10 +25,12 @@ public class VertxWebsocketEndpointUriAssembler extends org.apache.camel.support
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        uri = buildPathParameter(camelContext, syntax, uri, "host", "0.0.0.0", false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "port", "0", false, parameters);
-        uri = buildPathParameter(camelContext, syntax, uri, "path", "/", true, parameters);
-        uri = buildQueryParameters(camelContext, uri, parameters);
+        Map<String, Object> copy = new HashMap<>(parameters);
+
+        uri = buildPathParameter(camelContext, syntax, uri, "host", "0.0.0.0", false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "port", "0", false, copy);
+        uri = buildPathParameter(camelContext, syntax, uri, "path", "/", true, copy);
+        uri = buildQueryParameters(camelContext, uri, copy);
         return uri;
     }
 }
