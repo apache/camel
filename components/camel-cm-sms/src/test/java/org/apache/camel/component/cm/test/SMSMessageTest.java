@@ -60,12 +60,12 @@ public class SMSMessageTest {
 
         // Coverage ;)
         SMSMessage message = new SMSMessage(null, null);
-        Assert.isNull(message.getMessage());
-        Assert.isNull(message.getPhoneNumber());
+        Assert.isNull(message.getMessage(), "SMS message should be null");
+        Assert.isNull(message.getPhoneNumber(), "Number null have been null");
 
         message = new SMSMessage("idAsString", null, null, "MySelf");
-        Assert.isTrue(message.getId().equals("idAsString"));
-        Assert.isTrue(message.getFrom().equals("MySelf"));
+        Assert.isTrue(message.getId().equals("idAsString"), "Unexpected id");
+        Assert.isTrue(message.getFrom().equals("MySelf"), "Unexpected from");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage(null, validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", null);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -94,7 +94,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, dynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("idAsString", "Hello World", validNumber, zeroLengthDynamicFrom);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage(idAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage(zeroLengthIdAsString, "Hello World", validNumber, "MySelf");
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -137,7 +137,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -146,7 +146,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", validNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(0 == constraintViolations.size());
+        Assert.isTrue(0 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -156,7 +156,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
     @Test
@@ -177,6 +177,6 @@ public class SMSMessageTest {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        Assert.isTrue(1 == constraintViolations.size());
+        Assert.isTrue(1 == constraintViolations.size(), "Unexpected number of constraint violations");
     }
 }
