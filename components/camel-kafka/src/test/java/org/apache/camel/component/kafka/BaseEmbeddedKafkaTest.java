@@ -38,6 +38,7 @@ public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     protected static KafkaContainer kafkaBroker = new KafkaContainer(CONFLUENT_PLATFORM_VERSION)
             .withEmbeddedZookeeper()
+            .withEnv("KAFKA_ZOOKEEPER_CONNECT", "zookeeper:2181")
             .waitingFor(Wait.forListeningPort());
 
     static {
