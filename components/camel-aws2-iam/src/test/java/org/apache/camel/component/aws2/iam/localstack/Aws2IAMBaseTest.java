@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.iam.IamClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2IAMBaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.4";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.5";
     public static final String CONTAINER_NAME = "iam";
 
     @Override
