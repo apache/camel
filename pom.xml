@@ -76,6 +76,7 @@
         <module>buildingtools</module>
         <module>tooling</module>
         <module>core</module>
+        <module>test-infra</module>
         <module>components</module>
         <module>archetypes</module>
         <module>catalog</module>

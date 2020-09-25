@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>camel-test-infra-kafka</artifactId>
 
-    <name>Camel :: Test :: Infra :: Kafka </name>
+    <name>Camel :: Test Infra :: Kafka</name>
     <description>Kafka test infrastructure for Camel</description>
 
     <dependencies>
