@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -28,10 +29,20 @@ import org.apache.camel.util.URISupport;
  * Base class used by Camel Package Maven Plugin when it generates source code for fast endpoint uri assembler via
  * {@link org.apache.camel.spi.EndpointUriAssembler}.
  */
-public abstract class EndpointUriAssemblerSupport {
+public abstract class EndpointUriAssemblerSupport implements CamelContextAware {
+
+    protected CamelContext camelContext;
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     protected String buildPathParameter(
-            CamelContext camelContext, String syntax, String uri, String name, Object defaultValue, boolean required,
+            String syntax, String uri, String name, Object defaultValue, boolean required,
             Map<String, Object> parameters) {
         Object obj = parameters.remove(name);
         if (ObjectHelper.isEmpty(obj) && defaultValue != null && required) {
@@ -62,7 +73,7 @@ public abstract class EndpointUriAssemblerSupport {
         return uri;
     }
 
-    protected String buildQueryParameters(CamelContext camelContext, String uri, Map<String, Object> parameters)
+    protected String buildQueryParameters(String uri, Map<String, Object> parameters)
             throws URISyntaxException {
         // we want sorted parameters
         Map<String, Object> map = new TreeMap<>(parameters);

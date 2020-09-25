@@ -25,7 +25,7 @@ public class LogEndpointUriAssemblerTest extends ContextTestSupport {
         boolean generated = assembler instanceof LogEndpointUriAssembler;
         Assertions.assertTrue(generated);
 
-        String uri = assembler.buildUri(context, "log", params);
+        String uri = assembler.buildUri("log", params);
         Assertions.assertEquals("log:foo?groupSize=123&logMask=true&showExchangePattern=false", uri);
     }
 }

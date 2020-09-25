@@ -36,7 +36,7 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
         params.put("period", "123");
         params.put("repeatCount", "5");
 
-        String uri = assembler.buildUri(context, "timer", params);
+        String uri = assembler.buildUri("timer", params);
         Assertions.assertEquals("timer:foo?period=123&repeatCount=5", uri);
     }
 

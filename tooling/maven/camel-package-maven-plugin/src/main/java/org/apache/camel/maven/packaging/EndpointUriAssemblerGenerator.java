@@ -40,7 +40,6 @@ public final class EndpointUriAssemblerGenerator {
         w.write("import java.util.HashMap;\n");
         w.write("import java.util.Map;\n");
         w.write("\n");
-        w.write("import org.apache.camel.CamelContext;\n");
         w.write("import org.apache.camel.spi.EndpointUriAssembler;\n");
         w.write("\n");
         w.write("/**\n");
@@ -70,17 +69,17 @@ public final class EndpointUriAssemblerGenerator {
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
-        w.write("    public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException {\n");
+        w.write("    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {\n");
         w.write("        String syntax = scheme + BASE;\n");
         w.write("        String uri = syntax;\n");
         w.write("\n");
         w.write("        Map<String, Object> copy = new HashMap<>(parameters);\n");
         w.write("\n");
         for (BaseOptionModel option : model.getEndpointPathOptions()) {
-            w.write("        uri = buildPathParameter(camelContext, syntax, uri, \"" + option.getName() + "\", "
+            w.write("        uri = buildPathParameter(syntax, uri, \"" + option.getName() + "\", "
                     + defaultValue(option) + ", " + option.isRequired() + ", copy);\n");
         }
-        w.write("        uri = buildQueryParameters(camelContext, uri, copy);\n");
+        w.write("        uri = buildQueryParameters(uri, copy);\n");
         w.write("        return uri;\n");
         w.write("    }\n");
         w.write("}\n");

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriAssembler;
@@ -34,6 +33,7 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
     @Test
     public void testCustomAssemble() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new HashMap<>();
         params.put("name", "foo");
@@ -41,13 +41,14 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("port", 4444);
         params.put("verbose", true);
 
-        String uri = assembler.buildUri(context, "acme", params);
+        String uri = assembler.buildUri("acme", params);
         Assertions.assertEquals("acme:foo:4444?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testCustomAssembleRegistry() throws Exception {
-        context.getRegistry().bind("myAssembler", new MyAssembler());
+        EndpointUriAssembler assembler = new MyAssembler();
+        context.getRegistry().bind("myAssembler", assembler);
 
         Map<String, Object> params = new HashMap<>();
         params.put("name", "foo");
@@ -55,14 +56,15 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("port", 4444);
         params.put("verbose", true);
 
-        EndpointUriAssembler assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("acme");
-        String uri = assembler.buildUri(context, "acme", params);
+        assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriAssembler("acme");
+        String uri = assembler.buildUri("acme", params);
         Assertions.assertEquals("acme:foo:4444?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testCustomAssembleUnsorted() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "foo");
@@ -70,13 +72,14 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("port", 4444);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme", params);
+        String uri = assembler.buildUri("acme", params);
         Assertions.assertEquals("acme:foo:4444?amount=123&verbose=false", uri);
     }
 
     @Test
     public void testCustomAssembleNoMandatory() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("verbose", false);
@@ -84,7 +87,7 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("amount", "123");
 
         try {
-            assembler.buildUri(context, "acme", params);
+            assembler.buildUri("acme", params);
             Assertions.fail();
         } catch (IllegalArgumentException e) {
             Assertions.assertEquals("Option name is required when creating endpoint uri with syntax acme:name:port",
@@ -95,19 +98,21 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
     @Test
     public void testCustomAssembleDefault() throws Exception {
         EndpointUriAssembler assembler = new MyAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "bar");
         params.put("verbose", false);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme", params);
+        String uri = assembler.buildUri("acme", params);
         Assertions.assertEquals("acme:bar?amount=123&verbose=false", uri);
     }
 
     @Test
     public void testCustomAssembleComplex() throws Exception {
         EndpointUriAssembler assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "bar");
@@ -115,13 +120,14 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("verbose", true);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme2", params);
+        String uri = assembler.buildUri("acme2", params);
         Assertions.assertEquals("acme2:bar/moes?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testCustomAssembleComplexPort() throws Exception {
         EndpointUriAssembler assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "bar");
@@ -130,13 +136,14 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("verbose", true);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme2", params);
+        String uri = assembler.buildUri("acme2", params);
         Assertions.assertEquals("acme2:bar/moes:4444?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testCustomAssembleComplexNoPath() throws Exception {
         EndpointUriAssembler assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "bar");
@@ -144,58 +151,62 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("verbose", true);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme2", params);
+        String uri = assembler.buildUri("acme2", params);
         Assertions.assertEquals("acme2:bar:4444?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testCustomAssembleComplexNoPathNoPort() throws Exception {
         EndpointUriAssembler assembler = new MySecondAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", "bar");
         params.put("verbose", true);
         params.put("amount", "123");
 
-        String uri = assembler.buildUri(context, "acme2", params);
+        String uri = assembler.buildUri("acme2", params);
         Assertions.assertEquals("acme2:bar?amount=123&verbose=true", uri);
     }
 
     @Test
     public void testJms() throws Exception {
         EndpointUriAssembler assembler = new MyJmsAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("destinationName", "foo");
         params.put("destinationType", "topic");
         params.put("deliveryPersistent", true);
 
-        String uri = assembler.buildUri(context, "jms2", params);
+        String uri = assembler.buildUri("jms2", params);
         Assertions.assertEquals("jms2:topic:foo?deliveryPersistent=true", uri);
     }
 
     @Test
     public void testJmsMatchDefault() throws Exception {
         EndpointUriAssembler assembler = new MyJmsAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("destinationName", "foo");
         params.put("destinationType", "queue");
         params.put("deliveryPersistent", true);
 
-        String uri = assembler.buildUri(context, "jms2", params);
+        String uri = assembler.buildUri("jms2", params);
         Assertions.assertEquals("jms2:queue:foo?deliveryPersistent=true", uri);
     }
 
     @Test
     public void testJmsNoDefault() throws Exception {
         EndpointUriAssembler assembler = new MyJmsAssembler();
+        assembler.setCamelContext(context);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("destinationName", "foo");
         params.put("deliveryPersistent", true);
 
-        String uri = assembler.buildUri(context, "jms2", params);
+        String uri = assembler.buildUri("jms2", params);
         Assertions.assertEquals("jms2:foo?deliveryPersistent=true", uri);
     }
 
@@ -209,16 +220,16 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> parameters)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
 
             // append path parameters
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "name", null, true, parameters);
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "port", 8080, false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "name", null, true, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, parameters);
             // append remainder parameters
-            uri = buildQueryParameters(camelContext, uri, parameters);
+            uri = buildQueryParameters(uri, parameters);
 
             return uri;
         }
@@ -235,17 +246,17 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> parameters)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
 
             // append path parameters
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "name", null, true, parameters);
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "path", null, false, parameters);
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "port", 8080, false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "name", null, true, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "path", null, false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, parameters);
             // append remainder parameters
-            uri = buildQueryParameters(camelContext, uri, parameters);
+            uri = buildQueryParameters(uri, parameters);
 
             return uri;
         }
@@ -262,13 +273,13 @@ public class CustomEndpointUriAssemblerTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> parameters)
                 throws URISyntaxException {
 
             String uri = SYNTAX;
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "destinationType", "queue", false, parameters);
-            uri = buildPathParameter(camelContext, SYNTAX, uri, "destinationName", null, true, parameters);
-            uri = buildQueryParameters(camelContext, uri, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, parameters);
+            uri = buildQueryParameters(uri, parameters);
 
             return uri;
         }

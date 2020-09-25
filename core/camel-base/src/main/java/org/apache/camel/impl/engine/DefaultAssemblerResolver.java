@@ -71,6 +71,7 @@ public class DefaultAssemblerResolver extends ServiceSupport implements CamelCon
         Set<EndpointUriAssembler> assemblers = context.getRegistry().findByType(EndpointUriAssembler.class);
         answer = assemblers.stream().filter(a -> a.isEnabled(name)).findFirst().orElse(null);
         if (answer != null) {
+            answer.setCamelContext(context);
             cache.put(name, answer);
             return answer;
         }
@@ -96,6 +97,7 @@ public class DefaultAssemblerResolver extends ServiceSupport implements CamelCon
             // create the assembler
             if (EndpointUriAssembler.class.isAssignableFrom(type)) {
                 answer = (EndpointUriAssembler) context.getInjector().newInstance(type, false);
+                answer.setCamelContext(context);
                 cache.put(name, answer);
                 return answer;
             } else {

@@ -19,12 +19,12 @@ package org.apache.camel.spi;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 
 /**
  * To assemble an endpoint uri String from a map of parameters.
  */
-public interface EndpointUriAssembler {
+public interface EndpointUriAssembler extends CamelContextAware {
 
     /**
      * Checks whether this assembler supports the given component name
@@ -34,11 +34,10 @@ public interface EndpointUriAssembler {
     /**
      * Assembles an endpoint uri for the given component name with the given parameters.
      *
-     * @param  camelContext the Camel context
-     * @param  scheme       the component name
-     * @param  parameters   endpoint options
-     * @return              the constructed endpoint uri
+     * @param  scheme     the component name
+     * @param  parameters endpoint options
+     * @return            the constructed endpoint uri
      */
-    String buildUri(CamelContext camelContext, String scheme, Map<String, Object> parameters) throws URISyntaxException;
+    String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException;
 
 }
