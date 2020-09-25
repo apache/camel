@@ -58,6 +58,9 @@ public abstract class EndpointUriAssemblerSupport {
                 }
             }
         }
+
+        // TODO: value == defaultValue and required = false => remove from path as that is better (eg camel-jms)
+
         return uri;
     }
 

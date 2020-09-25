@@ -75,7 +75,7 @@ public final class EndpointUriAssemblerGenerator {
         w.write("\n");
         for (BaseOptionModel option : model.getEndpointPathOptions()) {
             w.write("        uri = buildPathParameter(camelContext, syntax, uri, \"" + option.getName() + "\", "
-                    + option.getDefaultValue() + ", " + option.isRequired() + ", parameters);\n");
+                    + defaultValue(option) + ", " + option.isRequired() + ", parameters);\n");
         }
         w.write("        uri = buildQueryParameters(camelContext, uri, parameters);\n");
         w.write("        return uri;\n");
@@ -106,6 +106,15 @@ public final class EndpointUriAssemblerGenerator {
         String base = model.getSyntax();
         base = base.replaceFirst(model.getScheme(), "");
         return base;
+    }
+
+    private static Object defaultValue(BaseOptionModel option) {
+        Object obj = option.getDefaultValue();
+        if (obj instanceof String) {
+            return "\"" + obj + "\"";
+        } else {
+            return obj;
+        }
     }
 
 }
