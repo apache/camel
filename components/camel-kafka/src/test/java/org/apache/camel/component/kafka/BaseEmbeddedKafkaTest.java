@@ -32,7 +32,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
     protected static AdminClient kafkaAdminClient;
 
-    private static final String CONFLUENT_PLATFORM_VERSION = "5.5.1";
+    private static final String CONFLUENT_PLATFORM_VERSION = "6.0.0";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 

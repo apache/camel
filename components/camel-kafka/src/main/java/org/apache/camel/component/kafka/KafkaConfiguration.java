@@ -254,13 +254,13 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String sslTruststorePassword;
     // SSL
     // ssl.enabled.protocols
-    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS)
+    @UriParam(label = "common,security")
     private String sslEnabledProtocols = SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS;
     // ssl.keystore.type
     @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE)
     private String sslKeystoreType = SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE;
     // ssl.protocol
-    @UriParam(label = "common,security", defaultValue = SslConfigs.DEFAULT_SSL_PROTOCOL)
+    @UriParam(label = "common,security")
     private String sslProtocol = SslConfigs.DEFAULT_SSL_PROTOCOL;
     // ssl.provider
     @UriParam(label = "common,security")
