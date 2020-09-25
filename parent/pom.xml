@@ -36,7 +36,7 @@
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs/>
-        <camel.surefire.fork.vmargs/>
+        <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
         <cxf.xjc.jvmArgs/>
         <trimStackTrace>false</trimStackTrace>
         <!-- dependency versions -->
@@ -4326,7 +4326,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin-version}</version>
                 <configuration>
-                    <argLine>-XX:+ExitOnOutOfMemoryError</argLine>
+                    <argLine>@{camel.surefire.fork.vmargs}</argLine>
                     <!--forkMode>pertest</forkMode -->
                     <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                     <childDelegation>false</childDelegation>
@@ -4681,13 +4681,6 @@
                                 <fork>true</fork>
                                 <showDeprecation>true</showDeprecation>
                                 <showWarnings>true</showWarnings>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                            <!--lets avoid polluting every pom.xml as these settings are almost always needed-->
-                            <configuration>
-                                <argLine>${camel.surefire.fork.vmargs}</argLine>
                             </configuration>
                         </plugin>
                     </plugins>
