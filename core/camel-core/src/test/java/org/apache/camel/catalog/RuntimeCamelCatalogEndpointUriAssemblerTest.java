@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.catalog.impl.CamelCatalogEndpointUriAssembler;
 import org.apache.camel.spi.EndpointUriAssembler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,16 +40,4 @@ public class RuntimeCamelCatalogEndpointUriAssemblerTest extends ContextTestSupp
         Assertions.assertEquals("timer:foo?period=123&repeatCount=5", uri);
     }
 
-    @Test
-    public void testRuntimeAssemble() throws Exception {
-        EndpointUriAssembler assembler = new CamelCatalogEndpointUriAssembler();
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("timerName", "foo");
-        params.put("period", "123");
-        params.put("repeatCount", "5");
-
-        String uri = assembler.buildUri(context, "timer", params);
-        Assertions.assertEquals("timer:foo?period=123&repeatCount=5", uri);
-    }
 }
