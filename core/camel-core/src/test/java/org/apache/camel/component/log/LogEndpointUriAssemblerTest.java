@@ -22,7 +22,7 @@ public class LogEndpointUriAssemblerTest extends ContextTestSupport {
         // should find the source code generated assembler via classpath
         EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("log");
         Assertions.assertNotNull(assembler);
-        boolean generated = assembler instanceof LogEndpointUriAssembler;
+        boolean generated = assembler instanceof LogEndpointUriFactory;
         Assertions.assertTrue(generated);
 
         String uri = assembler.buildUri("log", params);
