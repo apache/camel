@@ -330,7 +330,8 @@ public class CMTest {
         // Change sending strategy
         CMEndpoint endpoint
                 = (CMEndpoint) camelContext.getEndpoint(applicationContext.getBean(CamelTestConfiguration.class).getUri());
-        Assert.isTrue(endpoint.getHost().equals(applicationContext.getEnvironment().getRequiredProperty("cm.url")));
+        Assert.isTrue(endpoint.getHost().equals(applicationContext.getEnvironment().getRequiredProperty("cm.url")),
+                "Endpoint host and environment property do not match");
     }
 
     @Test
