@@ -44,6 +44,19 @@ public abstract class EndpointUriAssemblerSupport {
         if (ObjectHelper.isNotEmpty(obj)) {
             String str = camelContext.getTypeConverter().convertTo(String.class, obj);
             uri = uri.replace(name, str);
+        } else {
+            // the option is optional and we have no default or value for it, so we need to remove it from the syntax
+            int pos = uri.indexOf(name);
+            if (pos != -1) {
+                // remove from syntax
+                uri = uri.replace(name, "");
+                pos = pos - 1;
+                // remove the separator char
+                char ch = uri.charAt(pos);
+                if (!Character.isLetterOrDigit(ch)) {
+                    uri = uri.substring(0, pos) + uri.substring(pos + 1);
+                }
+            }
         }
         return uri;
     }
