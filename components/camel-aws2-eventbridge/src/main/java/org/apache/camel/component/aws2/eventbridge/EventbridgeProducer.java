@@ -91,7 +91,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 listRules(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             case describeRule:
-            	describeRule(getEndpoint().getEventbridgeClient(), exchange);
+                describeRule(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -370,7 +370,6 @@ public class EventbridgeProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
 
     private void describeRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
@@ -387,7 +386,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        	DescribeRuleRequest.Builder builder = DescribeRuleRequest.builder();
+            DescribeRuleRequest.Builder builder = DescribeRuleRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.name(ruleName);
