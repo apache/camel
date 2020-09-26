@@ -4,7 +4,7 @@
 :page-source: components/camel-gson/src/main/docs/json-gson-dataformat.adoc
 :docTitle: JSON Gson
 :artifactId: camel-gson
-:description: Marshal POJOs to JSON and back.
+:description: Marshal POJOs to JSON and back using Gson
 :since: 2.10
 :supportLevel: Stable
 include::{cq-version}@camel-quarkus:ROOT:partial$reference/dataformats/json-gson.adoc[]
