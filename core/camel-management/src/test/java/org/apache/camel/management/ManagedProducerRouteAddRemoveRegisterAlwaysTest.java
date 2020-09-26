@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementTestSupport {
 
-    private static final int SERVICES = 12;
+    private static final int SERVICES = 11;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
