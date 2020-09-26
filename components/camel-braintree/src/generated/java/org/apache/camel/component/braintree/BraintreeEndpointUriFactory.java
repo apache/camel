@@ -18,7 +18,7 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(17);
+        Set<String> set = new HashSet<>(46);
         set.add("apiName");
         set.add("methodName");
         set.add("environment");
@@ -36,6 +36,35 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         set.add("accessToken");
         set.add("privateKey");
         set.add("publicKey");
+        set.add("amount");
+        set.add("associationFilterId");
+        set.add("challenge");
+        set.add("cloneRequest");
+        set.add("content");
+        set.add("currencyRequest");
+        set.add("customerId");
+        set.add("deleteRequest");
+        set.add("disputeId");
+        set.add("documentId");
+        set.add("evidenceId");
+        set.add("fileEvidenceRequest");
+        set.add("grantRequest");
+        set.add("groupByCustomField");
+        set.add("id");
+        set.add("page");
+        set.add("payload");
+        set.add("paymentMethodNonce");
+        set.add("paymentMethodToken");
+        set.add("query");
+        set.add("refundRequest");
+        set.add("request");
+        set.add("searchRequest");
+        set.add("settlementDate");
+        set.add("signature");
+        set.add("submitForSettlement");
+        set.add("subscriptionId");
+        set.add("textEvidenceRequest");
+        set.add("token");
         PROPERTY_NAMES = set;
     }
 

@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
@@ -234,6 +235,16 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             return uri;
         }
 
+        @Override
+        public Set<String> propertyNames() {
+            return null;
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
+        }
+
     }
 
     private class MySecondAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -261,6 +272,16 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             return uri;
         }
 
+        @Override
+        public Set<String> propertyNames() {
+            return null;
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
+        }
+
     }
 
     private class MyJmsAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
@@ -282,6 +303,16 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
             uri = buildQueryParameters(uri, properties);
 
             return uri;
+        }
+
+        @Override
+        public Set<String> propertyNames() {
+            return null;
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
         }
 
     }

@@ -18,7 +18,7 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(34);
+        Set<String> set = new HashSet<>(52);
         set.add("apiName");
         set.add("methodName");
         set.add("as2From");
@@ -53,6 +53,24 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         set.add("lazyStartProducer");
         set.add("basicPropertyBinding");
         set.add("synchronous");
+        set.add("as2From");
+        set.add("as2MessageStructure");
+        set.add("as2To");
+        set.add("compressionAlgorithm");
+        set.add("dispositionNotificationTo");
+        set.add("ediMessage");
+        set.add("ediMessageContentType");
+        set.add("ediMessageTransferEncoding");
+        set.add("encryptingAlgorithm");
+        set.add("encryptingCertificateChain");
+        set.add("from");
+        set.add("requestUri");
+        set.add("requestUriPattern");
+        set.add("signedReceiptMicAlgorithms");
+        set.add("signingAlgorithm");
+        set.add("signingCertificateChain");
+        set.add("signingPrivateKey");
+        set.add("subject");
         PROPERTY_NAMES = set;
     }
 
