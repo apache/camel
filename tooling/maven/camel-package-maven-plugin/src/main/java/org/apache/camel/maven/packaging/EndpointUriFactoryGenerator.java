@@ -18,7 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -104,11 +106,21 @@ public final class EndpointUriFactoryGenerator {
 
     private static String generatePropertyNames(ComponentModel model) {
         int size = model.getEndpointOptions().size();
+        // use sorted set so the code is always generated the same way
+        Set<String> apis = new TreeSet<>();
+        if (model.isApi()) {
+            // gather all the option names from the api (they can be duplicated as the same name can be used by multiple methods)
+            model.getApiOptions().forEach(a -> a.getMethods().forEach(m -> m.getOptions().forEach(o -> apis.add(o.getName()))));
+            size += apis.size();
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Set<String> set = new HashSet<>(").append(size).append(");\n");
         for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
             sb.append("        set.add(\"").append(option.getName()).append("\");\n");
+        }
+        for (String name : apis) {
+            sb.append("        set.add(\"").append(name).append("\");\n");
         }
         sb.append("        PROPERTY_NAMES = set;\n");
         sb.append("    }\n");
