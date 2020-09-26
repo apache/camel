@@ -41,8 +41,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
         Map<String, String> properties = endpointProperties(exchange, uri);
-        Map<String, String> lenient = endpointLenientProperties(exchange, uri);
-        return new DynamicAwareEntry(uri, originalUri, properties, lenient);
+        return new DynamicAwareEntry(uri, originalUri, properties, null);
     }
 
     @Override
