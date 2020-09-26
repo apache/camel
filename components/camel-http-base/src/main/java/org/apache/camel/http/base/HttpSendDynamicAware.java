@@ -38,22 +38,20 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
     private final Processor postProcessor = new HttpSendDynamicPostProcessor();
 
-    private String scheme;
-
     @Override
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public boolean isOnlyDynamicQueryParameters() {
+        return false;
     }
 
     @Override
-    public String getScheme() {
-        return scheme;
+    public boolean isLenientProperties() {
+        return true;
     }
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        Map<String, String> properties = endpointProperties(exchange, uri);
-        Map<String, String> lenient = endpointLenientProperties(exchange, uri);
+        Map<String, Object> properties = endpointProperties(exchange, uri);
+        Map<String, Object> lenient = endpointLenientProperties(exchange, uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
     }
 
@@ -65,7 +63,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         if (path != null || !entry.getLenientProperties().isEmpty()) {
             // the context path can be dynamic or any lenient properties
             // and therefore build a new static uri without path or lenient options
-            Map<String, String> params = new LinkedHashMap<>(entry.getProperties());
+            Map<String, Object> params = entry.getProperties();
             for (String k : entry.getLenientProperties().keySet()) {
                 params.remove(k);
             }
@@ -75,12 +73,12 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
                     params.put("httpUri", host);
                 } else if (params.containsKey("httpURI")) {
                     params.put("httpURI", host);
-                } else if ("netty-http".equals(scheme)) {
+                } else if ("netty-http".equals(getScheme())) {
                     // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
                 }
             }
-            return asEndpointUri(exchange, scheme, params);
+            return asEndpointUri(exchange, entry.getUri(), params);
         } else {
             // no need for optimisation
             return null;
@@ -118,10 +116,10 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         String u = entry.getUri();
 
         // remove scheme prefix (unless its camel-http or camel-http)
-        boolean httpComponent = "http".equals(scheme) || "https".equals(scheme);
+        boolean httpComponent = "http".equals(getScheme()) || "https".equals(getScheme());
         if (!httpComponent) {
-            String prefix = scheme + "://";
-            String prefix2 = scheme + ":";
+            String prefix = getScheme() + "://";
+            String prefix2 = getScheme() + ":";
             if (u.startsWith(prefix)) {
                 u = u.substring(prefix.length());
             } else if (u.startsWith(prefix2)) {

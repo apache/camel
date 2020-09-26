@@ -18,16 +18,19 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 
 /**
  * Used for components that can optimise the usage of {@link org.apache.camel.processor.SendDynamicProcessor} (toD) to
  * reuse a static {@link org.apache.camel.Endpoint} and {@link Producer} that supports using headers to provide the
  * dynamic parts. For example many of the HTTP components supports this.
  */
-public interface SendDynamicAware {
+public interface SendDynamicAware extends Service, CamelContextAware {
 
     /**
      * Sets the component name.
@@ -42,6 +45,22 @@ public interface SendDynamicAware {
     String getScheme();
 
     /**
+     * Whether only the query parameters can be dynamic and the context-path must be static.
+     *
+     * If true then Camel can restructure endpoint uri using a simple and faster parser.
+     * On the other hand if the context-path and authority part of the URI can be dynamic
+     * then Camel has to use a more complex and slower parser.
+     */
+    boolean isOnlyDynamicQueryParameters();
+
+    /**
+     * Whether the endpoint is lenient or not.
+     *
+     * @see Endpoint#isLenientProperties()
+     */
+    boolean isLenientProperties();
+
+    /**
      * An entry of detailed information from the recipient uri, which allows the {@link SendDynamicAware} implementation
      * to prepare pre- and post- processor and the static uri to be used for the optimised dynamic to.
      */
@@ -49,11 +68,11 @@ public interface SendDynamicAware {
 
         private final String uri;
         private final String originalUri;
-        private final Map<String, String> properties;
-        private final Map<String, String> lenientProperties;
+        private final Map<String, Object> properties;
+        private final Map<String, Object> lenientProperties;
 
-        public DynamicAwareEntry(String uri, String originalUri, Map<String, String> properties,
-                                 Map<String, String> lenientProperties) {
+        public DynamicAwareEntry(String uri, String originalUri, Map<String, Object> properties,
+                                 Map<String, Object> lenientProperties) {
             this.uri = uri;
             this.originalUri = originalUri;
             this.properties = properties;
@@ -68,11 +87,11 @@ public interface SendDynamicAware {
             return originalUri;
         }
 
-        public Map<String, String> getProperties() {
+        public Map<String, Object> getProperties() {
             return properties;
         }
 
-        public Map<String, String> getLenientProperties() {
+        public Map<String, Object> getLenientProperties() {
             return lenientProperties;
         }
     }

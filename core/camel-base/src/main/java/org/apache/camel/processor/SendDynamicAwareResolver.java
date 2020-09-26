@@ -51,6 +51,7 @@ public class SendDynamicAwareResolver {
             if (SendDynamicAware.class.isAssignableFrom(type)) {
                 SendDynamicAware answer = (SendDynamicAware) context.getInjector().newInstance(type, false);
                 answer.setScheme(scheme);
+                answer.setCamelContext(context);
                 return answer;
             } else {
                 throw new IllegalArgumentException("Type is not a SendDynamicAware implementation. Found: " + type.getName());

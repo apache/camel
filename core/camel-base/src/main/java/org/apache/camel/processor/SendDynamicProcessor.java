@@ -336,6 +336,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 }
             }
         }
+        ServiceHelper.initService(dynamicAware);
     }
 
     @Override
@@ -355,12 +356,12 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
             }
         }
 
-        ServiceHelper.startService(producerCache);
+        ServiceHelper.startService(dynamicAware, producerCache);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache);
+        ServiceHelper.stopService(producerCache, dynamicAware);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
