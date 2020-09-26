@@ -43,11 +43,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cluster</artifactId>
         </dependency>
-        <!-- needed for dynamic to -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-catalog</artifactId>
-        </dependency>
 
     </dependencies>
 </project>

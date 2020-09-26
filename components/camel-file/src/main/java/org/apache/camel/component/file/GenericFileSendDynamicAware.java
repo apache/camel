@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -26,21 +25,19 @@ import org.apache.camel.util.URISupport;
 
 public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSupport {
 
-    private String scheme;
-
     @Override
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public boolean isOnlyDynamicQueryParameters() {
+        return true;
     }
 
     @Override
-    public String getScheme() {
-        return scheme;
+    public boolean isLenientProperties() {
+        return false;
     }
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        Map<String, String> properties = endpointProperties(exchange, uri);
+        Map<String, Object> properties = endpointProperties(exchange, uri);
         return new DynamicAwareEntry(uri, originalUri, properties, null);
     }
 
@@ -56,8 +53,9 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
         // if any of the above are in use, then they should not be pre evaluated
         // and we need to rebuild a new uri with them as-is
         if (fileName || tempFileName || idempotentKey || move || moveFailed || preMove || moveExisting) {
-            Map<String, String> params = new LinkedHashMap<>(entry.getProperties());
+            Map<String, Object> params = entry.getProperties();
 
+            // TODO: parseQuery should only have the query part, this is not correct
             Map<String, Object> originalParams = URISupport.parseQuery(entry.getOriginalUri());
             if (fileName) {
                 Object val = originalParams.get("fileName");
@@ -102,7 +100,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
                 }
             }
 
-            return asEndpointUri(exchange, scheme, params);
+            return asEndpointUri(exchange, entry.getUri(), params);
         } else {
             return entry.getUri();
         }
