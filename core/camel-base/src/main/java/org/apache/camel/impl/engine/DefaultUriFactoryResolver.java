@@ -17,7 +17,6 @@
 package org.apache.camel.impl.engine;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -27,8 +26,6 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.UriFactoryResolver;
-import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +34,12 @@ import org.slf4j.LoggerFactory;
  * Default assembler resolver that looks for assembler factories in
  * <b>META-INF/services/org/apache/camel/urifactory/</b>.
  */
-public class DefaultUriFactoryResolver extends ServiceSupport implements CamelContextAware, UriFactoryResolver {
+
+public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryResolver {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/urifactory/";
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUriFactoryResolver.class);
 
-    private final Map<String, EndpointUriFactory> cache = LRUCacheFactory.newLRUSoftCache(1000);
     private CamelContext camelContext;
     private FactoryFinder factoryFinder;
 
@@ -62,17 +59,11 @@ public class DefaultUriFactoryResolver extends ServiceSupport implements CamelCo
             return null;
         }
 
-        EndpointUriFactory answer = cache.get(name);
-        if (answer != null) {
-            return answer;
-        }
-
         // lookup in registry first
         Set<EndpointUriFactory> assemblers = context.getRegistry().findByType(EndpointUriFactory.class);
-        answer = assemblers.stream().filter(a -> a.isEnabled(name)).findFirst().orElse(null);
+        EndpointUriFactory answer = assemblers.stream().filter(a -> a.isEnabled(name)).findFirst().orElse(null);
         if (answer != null) {
             answer.setCamelContext(context);
-            cache.put(name, answer);
             return answer;
         }
 
@@ -88,8 +79,8 @@ public class DefaultUriFactoryResolver extends ServiceSupport implements CamelCo
         }
 
         if (type != null) {
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Found EndpointUriFactory: {} via type: {} via: {}{}", name, type.getName(),
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Found EndpointUriFactory: {} via type: {} via: {}{}", name, type.getName(),
                         factoryFinder.getResourcePath(),
                         name);
             }
@@ -98,7 +89,6 @@ public class DefaultUriFactoryResolver extends ServiceSupport implements CamelCo
             if (EndpointUriFactory.class.isAssignableFrom(type)) {
                 answer = (EndpointUriFactory) context.getInjector().newInstance(type, false);
                 answer.setCamelContext(context);
-                cache.put(name, answer);
                 return answer;
             } else {
                 throw new IllegalArgumentException(
@@ -114,15 +104,6 @@ public class DefaultUriFactoryResolver extends ServiceSupport implements CamelCo
             factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
-    }
-
-    protected Logger getLog() {
-        return LOG;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        cache.clear();
     }
 
 }
