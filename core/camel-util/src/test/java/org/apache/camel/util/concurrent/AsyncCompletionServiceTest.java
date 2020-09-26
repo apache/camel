@@ -25,12 +25,15 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AsyncCompletionServiceTest {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncCompletionServiceTest.class);
 
     private ExecutorService executor;
     private AsyncCompletionService<Object> service;
@@ -179,7 +182,7 @@ public class AsyncCompletionServiceTest {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
             result.accept(r);
         };
@@ -190,7 +193,7 @@ public class AsyncCompletionServiceTest {
             try {
                 latch.await(timeout, unit);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
             result.accept(r);
         };

@@ -26,6 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Concurreny test for idempotent consumer
  */
 public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumerConcurrentTest.class);
+
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
@@ -166,7 +170,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
                             sendMessage("" + j, "multithreadedTest" + j);
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        LOG.error("Failed to send message: {}", e.getMessage(), e);
                         failedFlag[0] = true;
                     }
                 }

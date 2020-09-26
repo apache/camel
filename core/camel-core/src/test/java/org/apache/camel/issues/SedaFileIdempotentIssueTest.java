@@ -105,8 +105,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
                         log.info("Stopped Camel complete");
                         latch.countDown();
                     } catch (Exception e) {
-                        // ignore
-                        e.printStackTrace();
+                        // safe to ignore
+                        log.trace("Exception was thrown (safe to ignore): {}", e.getMessage(), e);
                     }
                 }
             };
