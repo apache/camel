@@ -18,7 +18,7 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(34);
+        Set<String> set = new HashSet<>(42);
         set.add("apiName");
         set.add("methodName");
         set.add("applicationName");
@@ -53,6 +53,14 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         set.add("accessToken");
         set.add("clientSecret");
         set.add("refreshToken");
+        set.add("calendarId");
+        set.add("content");
+        set.add("contentChannel");
+        set.add("destination");
+        set.add("eventId");
+        set.add("ruleId");
+        set.add("setting");
+        set.add("text");
         PROPERTY_NAMES = set;
     }
 

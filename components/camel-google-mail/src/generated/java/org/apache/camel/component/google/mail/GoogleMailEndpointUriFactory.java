@@ -18,7 +18,7 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(30);
+        Set<String> set = new HashSet<>(38);
         set.add("apiName");
         set.add("methodName");
         set.add("applicationName");
@@ -49,6 +49,14 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         set.add("accessToken");
         set.add("clientSecret");
         set.add("refreshToken");
+        set.add("batchDeleteMessagesRequest");
+        set.add("batchModifyMessagesRequest");
+        set.add("content");
+        set.add("id");
+        set.add("mediaContent");
+        set.add("messageId");
+        set.add("modifyMessageRequest");
+        set.add("userId");
         PROPERTY_NAMES = set;
     }
 

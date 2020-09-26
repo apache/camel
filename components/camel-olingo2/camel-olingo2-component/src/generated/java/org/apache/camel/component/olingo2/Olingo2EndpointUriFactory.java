@@ -18,7 +18,7 @@ public class Olingo2EndpointUriFactory extends org.apache.camel.support.componen
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(38);
+        Set<String> set = new HashSet<>(44);
         set.add("apiName");
         set.add("methodName");
         set.add("connectTimeout");
@@ -57,6 +57,12 @@ public class Olingo2EndpointUriFactory extends org.apache.camel.support.componen
         set.add("timeUnit");
         set.add("useFixedDelay");
         set.add("sslContextParameters");
+        set.add("data");
+        set.add("edm");
+        set.add("endpointHttpHeaders");
+        set.add("queryParams");
+        set.add("resourcePath");
+        set.add("responseHandler");
         PROPERTY_NAMES = set;
     }
 
