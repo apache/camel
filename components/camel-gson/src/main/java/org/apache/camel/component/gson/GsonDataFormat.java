@@ -45,8 +45,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
+ * Marshal POJOs to JSON and back using <a href="http://code.google.com/p/google-gson/">Gson</a>
  */
 @Dataformat("json-gson")
 @Metadata(includeProperties = "unmarshalTypeName,prettyPrint,contentTypeHeader")

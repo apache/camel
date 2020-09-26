@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +41,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.SupportLevel;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -88,6 +91,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     protected File schemaOutDir;
 
     protected ClassLoader projectClassLoader;
+    private final Map<String, Optional<JavaClassSource>> sources = new HashMap<>();
 
     public PackageDataFormatMojo() {
     }
@@ -187,8 +191,12 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             excluded = metadata.excludeProperties();
                         }
 
-                        DataFormatModel dataFormatModel
+                        final DataFormatModel dataFormatModel
                                 = extractDataFormatModel(project, json, name, clazz, included, excluded);
+                        if (!modelName.equals(name)) {
+                            /* Prefer description from the clazz */
+                            setDescriptionFromClass(clazz, dataFormatModel);
+                        }
                         if (log.isDebugEnabled()) {
                             log.debug("Model: " + dataFormatModel);
                         }
@@ -248,6 +256,22 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
 
         return count;
+    }
+
+    private void setDescriptionFromClass(Class<?> clazz, final DataFormatModel dataFormatModel) {
+        javaClassSource(clazz.getName()).ifPresent(src -> {
+            String doc = src.getJavaDoc().getFullText();
+            if (doc != null) {
+                // need to sanitize the description first (we only want a
+                // summary)
+                doc = JavadocHelper.sanitizeDescription(doc, true);
+                // the javadoc may actually be empty, so only change the doc
+                // if we got something
+                if (!Strings.isNullOrEmpty(doc)) {
+                    dataFormatModel.setDescription(doc);
+                }
+            }
+        });
     }
 
     private static DataFormatModel extractDataFormatModel(
@@ -449,15 +473,15 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return pckName.replace('.', '/');
     }
 
-    private static List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className)
+    private List<DataFormatOptionModel> parseConfigurationSource(MavenProject project, String className)
             throws IOException {
         final List<DataFormatOptionModel> answer = new ArrayList<>();
-        File file = new File(project.getBasedir(), "src/main/java/" + className.replace('.', '/') + ".java");
-        if (!file.exists()) {
+
+        Optional<JavaClassSource> optClazz = javaClassSource(className);
+        if (!optClazz.isPresent()) {
             return Collections.emptyList();
         }
-
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
+        JavaClassSource clazz = optClazz.get();
         List<FieldSource<JavaClassSource>> fields = clazz.getFields();
         // filter out final or static fields
         fields = fields.stream().filter(f -> !f.isFinal() && !f.isStatic()).collect(Collectors.toList());
@@ -482,6 +506,23 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         }
 
         return answer;
+    }
+
+    private Optional<JavaClassSource> javaClassSource(String className) {
+        return sources.computeIfAbsent(className, this::doParseJavaClassSource);
+    }
+
+    private Optional<JavaClassSource> doParseJavaClassSource(String className) {
+        try {
+            Path srcDir = project.getBasedir().toPath().resolve("src/main/java");
+            Path file = srcDir.resolve(className.replace('.', '/') + ".java");
+            if (!Files.isRegularFile(file)) {
+                return Optional.empty();
+            }
+            return Optional.of((JavaClassSource) Roaster.parse(file.toFile()));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to parse java class " + className, e);
+        }
     }
 
     public static String generatePropertyConfigurer(String pn, String cn, String en, Collection<DataFormatOptionModel> options)

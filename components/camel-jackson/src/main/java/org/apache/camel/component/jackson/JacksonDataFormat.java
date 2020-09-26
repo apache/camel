@@ -50,8 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
+ * Marshal POJOs to JSON and back using <a href="http://jackson.codehaus.org/">Jackson</a>
  */
 @Dataformat("json-jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode")

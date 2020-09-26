@@ -3,7 +3,7 @@
     "kind": "dataformat",
     "name": "bindy-kvp",
     "title": "Bindy Key Value Pair",
-    "description": "Marshal and unmarshal Java beans from and to flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).",
+    "description": "Marshal and unmarshal between POJOs and key-value pair (KVP) format using Camel Bindy",
     "deprecated": false,
     "firstVersion": "2.0.0",
     "label": "dataformat,transformation,csv",

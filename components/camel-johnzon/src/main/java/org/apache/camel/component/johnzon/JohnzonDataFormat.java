@@ -34,8 +34,7 @@ import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
+ * Marshal POJOs to JSON and back using <a href="http://johnzon.apache.org/">Johnzon</a>
  */
 @Dataformat("json-johnzon")
 @Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint")

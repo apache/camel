@@ -51,8 +51,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using
- * <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
+ * Marshal and unmarshal Java objects to and from YAML using <a href="http://www.snakeyaml.org">SnakeYAML</a>
  */
 @Dataformat("yaml-snakeyaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
