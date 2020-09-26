@@ -3,7 +3,9 @@ package org.apache.camel.component.paho;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,72 @@ public class PahoEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":topic";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(34);
+        set.add("topic");
+        set.add("automaticReconnect");
+        set.add("brokerUrl");
+        set.add("cleanSession");
+        set.add("clientId");
+        set.add("connectionTimeout");
+        set.add("filePersistenceDirectory");
+        set.add("keepAliveInterval");
+        set.add("maxInflight");
+        set.add("maxReconnectDelay");
+        set.add("mqttVersion");
+        set.add("persistence");
+        set.add("qos");
+        set.add("retained");
+        set.add("serverURIs");
+        set.add("willPayload");
+        set.add("willQos");
+        set.add("willRetained");
+        set.add("willTopic");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("client");
+        set.add("customWebSocketHeaders");
+        set.add("executorServiceTimeout");
+        set.add("synchronous");
+        set.add("httpsHostnameVerificationEnabled");
+        set.add("password");
+        set.add("socketFactory");
+        set.add("sslClientProps");
+        set.add("sslHostnameVerifier");
+        set.add("userName");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "paho".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "topic", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

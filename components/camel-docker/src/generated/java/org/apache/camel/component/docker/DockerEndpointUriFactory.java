@@ -3,7 +3,9 @@ package org.apache.camel.component.docker;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,62 @@ public class DockerEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":operation";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(24);
+        set.add("operation");
+        set.add("email");
+        set.add("host");
+        set.add("port");
+        set.add("requestTimeout");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("cmdExecFactory");
+        set.add("followRedirectFilter");
+        set.add("loggingFilter");
+        set.add("maxPerRouteConnections");
+        set.add("maxTotalConnections");
+        set.add("parameters");
+        set.add("serverAddress");
+        set.add("socket");
+        set.add("synchronous");
+        set.add("certPath");
+        set.add("password");
+        set.add("secure");
+        set.add("tlsVerify");
+        set.add("username");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "docker".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "operation", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

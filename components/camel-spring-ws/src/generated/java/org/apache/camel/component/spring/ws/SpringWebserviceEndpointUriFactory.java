@@ -3,7 +3,9 @@ package org.apache.camel.component.spring.ws;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,17 +16,51 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":type:lookupKey:webServiceEndpointUri";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(27);
+        set.add("type");
+        set.add("lookupKey");
+        set.add("webServiceEndpointUri");
+        set.add("expression");
+        set.add("messageFilter");
+        set.add("bridgeErrorHandler");
+        set.add("endpointDispatcher");
+        set.add("endpointMapping");
+        set.add("messageIdStrategy");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("allowResponseAttachmentOverride");
+        set.add("allowResponseHeaderOverride");
+        set.add("faultAction");
+        set.add("faultTo");
+        set.add("lazyStartProducer");
+        set.add("messageFactory");
+        set.add("messageSender");
+        set.add("outputAction");
+        set.add("replyTo");
+        set.add("soapAction");
+        set.add("timeout");
+        set.add("webServiceTemplate");
+        set.add("wsAddressingAction");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("sslContextParameters");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "spring-ws".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "type", null, false, copy);
         uri = buildPathParameter(syntax, uri, "lookupKey", null, false, copy);
@@ -32,6 +68,16 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         uri = buildPathParameter(syntax, uri, "expression", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.undertow;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,70 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":httpURI";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(32);
+        set.add("httpURI");
+        set.add("useStreaming");
+        set.add("accessLog");
+        set.add("bridgeErrorHandler");
+        set.add("httpMethodRestrict");
+        set.add("matchOnUriPrefix");
+        set.add("muteException");
+        set.add("optionsEnabled");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("handlers");
+        set.add("cookieHandler");
+        set.add("keepAlive");
+        set.add("lazyStartProducer");
+        set.add("options");
+        set.add("preserveHostHeader");
+        set.add("reuseAddresses");
+        set.add("tcpNoDelay");
+        set.add("throwExceptionOnFailure");
+        set.add("transferException");
+        set.add("accessLogReceiver");
+        set.add("basicPropertyBinding");
+        set.add("headerFilterStrategy");
+        set.add("synchronous");
+        set.add("undertowHttpBinding");
+        set.add("allowedRoles");
+        set.add("securityConfiguration");
+        set.add("securityProvider");
+        set.add("sslContextParameters");
+        set.add("fireWebSocketChannelEvents");
+        set.add("sendTimeout");
+        set.add("sendToAll");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "undertow".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "httpURI", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

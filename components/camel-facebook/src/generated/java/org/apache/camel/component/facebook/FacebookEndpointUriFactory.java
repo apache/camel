@@ -3,7 +3,9 @@ package org.apache.camel.component.facebook;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,143 @@ public class FacebookEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":methodName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(105);
+        set.add("methodName");
+        set.add("achievementURL");
+        set.add("albumId");
+        set.add("albumUpdate");
+        set.add("appId");
+        set.add("center");
+        set.add("checkinId");
+        set.add("checkinUpdate");
+        set.add("clientURL");
+        set.add("clientVersion");
+        set.add("commentId");
+        set.add("commentUpdate");
+        set.add("debugEnabled");
+        set.add("description");
+        set.add("distance");
+        set.add("domainId");
+        set.add("domainName");
+        set.add("domainNames");
+        set.add("eventId");
+        set.add("eventUpdate");
+        set.add("friendId");
+        set.add("friendlistId");
+        set.add("friendlistName");
+        set.add("friendUserId");
+        set.add("groupId");
+        set.add("gzipEnabled");
+        set.add("httpConnectionTimeout");
+        set.add("httpDefaultMaxPerRoute");
+        set.add("httpMaxTotalConnections");
+        set.add("httpReadTimeout");
+        set.add("httpRetryCount");
+        set.add("httpRetryIntervalSeconds");
+        set.add("httpStreamingReadTimeout");
+        set.add("ids");
+        set.add("inBody");
+        set.add("includeRead");
+        set.add("isHidden");
+        set.add("jsonStoreEnabled");
+        set.add("link");
+        set.add("linkId");
+        set.add("locale");
+        set.add("mbeanEnabled");
+        set.add("message");
+        set.add("messageId");
+        set.add("metric");
+        set.add("milestoneId");
+        set.add("name");
+        set.add("noteId");
+        set.add("notificationId");
+        set.add("objectId");
+        set.add("offerId");
+        set.add("optionDescription");
+        set.add("pageId");
+        set.add("permissionName");
+        set.add("permissions");
+        set.add("photoId");
+        set.add("pictureId");
+        set.add("pictureId2");
+        set.add("pictureSize");
+        set.add("placeId");
+        set.add("postId");
+        set.add("postUpdate");
+        set.add("prettyDebugEnabled");
+        set.add("queries");
+        set.add("query");
+        set.add("questionId");
+        set.add("reading");
+        set.add("readingOptions");
+        set.add("restBaseURL");
+        set.add("scoreValue");
+        set.add("size");
+        set.add("source");
+        set.add("subject");
+        set.add("tabId");
+        set.add("tagUpdate");
+        set.add("testUser1");
+        set.add("testUser2");
+        set.add("testUserId");
+        set.add("title");
+        set.add("toUserId");
+        set.add("toUserIds");
+        set.add("userId");
+        set.add("userId1");
+        set.add("userId2");
+        set.add("userIds");
+        set.add("userLocale");
+        set.add("useSSL");
+        set.add("videoBaseURL");
+        set.add("videoId");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("httpProxyHost");
+        set.add("httpProxyPassword");
+        set.add("httpProxyPort");
+        set.add("httpProxyUser");
+        set.add("oAuthAccessToken");
+        set.add("oAuthAccessTokenURL");
+        set.add("oAuthAppId");
+        set.add("oAuthAppSecret");
+        set.add("oAuthAuthorizationURL");
+        set.add("oAuthPermissions");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "facebook".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "methodName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

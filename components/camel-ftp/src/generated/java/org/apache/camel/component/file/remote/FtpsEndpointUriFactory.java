@@ -3,7 +3,9 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,23 +16,161 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/directoryName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(121);
+        set.add("host");
+        set.add("port");
+        set.add("directoryName");
+        set.add("binary");
+        set.add("charset");
+        set.add("disconnect");
+        set.add("doneFileName");
+        set.add("fileName");
+        set.add("passiveMode");
+        set.add("separator");
+        set.add("transferLoggingIntervalSeconds");
+        set.add("transferLoggingLevel");
+        set.add("transferLoggingVerbose");
+        set.add("fastExistsCheck");
+        set.add("bridgeErrorHandler");
+        set.add("delete");
+        set.add("moveFailed");
+        set.add("noop");
+        set.add("preMove");
+        set.add("preSort");
+        set.add("recursive");
+        set.add("resumeDownload");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("streamDownload");
+        set.add("download");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("handleDirectoryParserAbsoluteResult");
+        set.add("ignoreFileNotFoundOrPermissionError");
+        set.add("inProgressRepository");
+        set.add("localWorkDirectory");
+        set.add("onCompletionExceptionHandler");
+        set.add("pollStrategy");
+        set.add("processStrategy");
+        set.add("useList");
+        set.add("fileExist");
+        set.add("flatten");
+        set.add("jailStartingDirectory");
+        set.add("lazyStartProducer");
+        set.add("moveExisting");
+        set.add("tempFileName");
+        set.add("tempPrefix");
+        set.add("allowNullBody");
+        set.add("chmod");
+        set.add("disconnectOnBatchComplete");
+        set.add("eagerDeleteTargetFile");
+        set.add("keepLastModified");
+        set.add("moveExistingFileStrategy");
+        set.add("sendNoop");
+        set.add("activePortRange");
+        set.add("autoCreate");
+        set.add("basicPropertyBinding");
+        set.add("bufferSize");
+        set.add("connectTimeout");
+        set.add("ftpClient");
+        set.add("ftpClientConfig");
+        set.add("ftpClientConfigParameters");
+        set.add("ftpClientParameters");
+        set.add("maximumReconnectAttempts");
+        set.add("reconnectDelay");
+        set.add("siteCommand");
+        set.add("soTimeout");
+        set.add("stepwise");
+        set.add("synchronous");
+        set.add("throwExceptionOnConnectFailed");
+        set.add("timeout");
+        set.add("antExclude");
+        set.add("antFilterCaseSensitive");
+        set.add("antInclude");
+        set.add("eagerMaxMessagesPerPoll");
+        set.add("exclude");
+        set.add("filter");
+        set.add("filterDirectory");
+        set.add("filterFile");
+        set.add("idempotent");
+        set.add("idempotentKey");
+        set.add("idempotentRepository");
+        set.add("include");
+        set.add("maxDepth");
+        set.add("maxMessagesPerPoll");
+        set.add("minDepth");
+        set.add("move");
+        set.add("exclusiveReadLockStrategy");
+        set.add("readLock");
+        set.add("readLockCheckInterval");
+        set.add("readLockDeleteOrphanLockFiles");
+        set.add("readLockLoggingLevel");
+        set.add("readLockMarkerFile");
+        set.add("readLockMinAge");
+        set.add("readLockMinLength");
+        set.add("readLockRemoveOnCommit");
+        set.add("readLockRemoveOnRollback");
+        set.add("readLockTimeout");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        set.add("account");
+        set.add("disableSecureDataChannelDefaults");
+        set.add("execPbsz");
+        set.add("execProt");
+        set.add("ftpClientKeyStoreParameters");
+        set.add("ftpClientTrustStoreParameters");
+        set.add("implicit");
+        set.add("password");
+        set.add("securityProtocol");
+        set.add("sslContextParameters");
+        set.add("username");
+        set.add("shuffle");
+        set.add("sortBy");
+        set.add("sorter");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "ftps".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
         uri = buildPathParameter(syntax, uri, "directoryName", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

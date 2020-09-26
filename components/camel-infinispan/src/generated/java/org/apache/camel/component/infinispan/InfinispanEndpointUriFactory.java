@@ -3,7 +3,9 @@ package org.apache.camel.component.infinispan;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,60 @@ public class InfinispanEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":cacheName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(22);
+        set.add("cacheName");
+        set.add("hosts");
+        set.add("queryBuilder");
+        set.add("bridgeErrorHandler");
+        set.add("clusteredListener");
+        set.add("command");
+        set.add("customListener");
+        set.add("eventTypes");
+        set.add("sync");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("basicPropertyBinding");
+        set.add("cacheContainer");
+        set.add("cacheContainerConfiguration");
+        set.add("configurationProperties");
+        set.add("configurationUri");
+        set.add("flags");
+        set.add("remappingFunction");
+        set.add("resultHeader");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "infinispan".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "cacheName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

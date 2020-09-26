@@ -3,7 +3,9 @@ package org.apache.camel.component.salesforce;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,86 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":operationName:topicName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(47);
+        set.add("operationName");
+        set.add("topicName");
+        set.add("apexMethod");
+        set.add("apexQueryParams");
+        set.add("apexUrl");
+        set.add("apiVersion");
+        set.add("backoffIncrement");
+        set.add("batchId");
+        set.add("contentType");
+        set.add("defaultReplayId");
+        set.add("format");
+        set.add("httpClient");
+        set.add("includeDetails");
+        set.add("initialReplayIdMap");
+        set.add("instanceId");
+        set.add("jobId");
+        set.add("limit");
+        set.add("maxBackoff");
+        set.add("notFoundBehaviour");
+        set.add("notifyForFields");
+        set.add("notifyForOperationCreate");
+        set.add("notifyForOperationDelete");
+        set.add("notifyForOperations");
+        set.add("notifyForOperationUndelete");
+        set.add("notifyForOperationUpdate");
+        set.add("objectMapper");
+        set.add("rawPayload");
+        set.add("reportId");
+        set.add("reportMetadata");
+        set.add("resultId");
+        set.add("sObjectBlobFieldName");
+        set.add("sObjectClass");
+        set.add("sObjectFields");
+        set.add("sObjectId");
+        set.add("sObjectIdName");
+        set.add("sObjectIdValue");
+        set.add("sObjectName");
+        set.add("sObjectQuery");
+        set.add("sObjectSearch");
+        set.add("updateTopic");
+        set.add("bridgeErrorHandler");
+        set.add("replayId");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "salesforce".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "operationName", null, false, copy);
         uri = buildPathParameter(syntax, uri, "topicName", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

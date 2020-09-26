@@ -3,7 +3,9 @@ package org.apache.camel.component.grpc;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,23 +16,70 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port/service";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(30);
+        set.add("host");
+        set.add("port");
+        set.add("service");
+        set.add("flowControlWindow");
+        set.add("maxMessageSize");
+        set.add("bridgeErrorHandler");
+        set.add("consumerStrategy");
+        set.add("forwardOnCompleted");
+        set.add("forwardOnError");
+        set.add("maxConcurrentCallsPerConnection");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("method");
+        set.add("producerStrategy");
+        set.add("streamRepliesTo");
+        set.add("userAgent");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("authenticationType");
+        set.add("jwtAlgorithm");
+        set.add("jwtIssuer");
+        set.add("jwtSecret");
+        set.add("jwtSubject");
+        set.add("keyCertChainResource");
+        set.add("keyPassword");
+        set.add("keyResource");
+        set.add("negotiationType");
+        set.add("serviceAccountResource");
+        set.add("trustCertCollectionResource");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "grpc".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);
         uri = buildPathParameter(syntax, uri, "service", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

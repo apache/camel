@@ -3,7 +3,9 @@ package org.apache.camel.component.netty.http;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,17 +16,108 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":protocol:host:port/path";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(84);
+        set.add("protocol");
+        set.add("host");
+        set.add("port");
+        set.add("path");
+        set.add("bridgeEndpoint");
+        set.add("disconnect");
+        set.add("keepAlive");
+        set.add("reuseAddress");
+        set.add("reuseChannel");
+        set.add("sync");
+        set.add("tcpNoDelay");
+        set.add("bridgeErrorHandler");
+        set.add("matchOnUriPrefix");
+        set.add("muteException");
+        set.add("send503whenSuspended");
+        set.add("backlog");
+        set.add("bossCount");
+        set.add("bossGroup");
+        set.add("chunkedMaxContentLength");
+        set.add("compression");
+        set.add("disconnectOnNoReply");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("httpMethodRestrict");
+        set.add("logWarnOnBadRequest");
+        set.add("mapHeaders");
+        set.add("maxHeaderSize");
+        set.add("nettyServerBootstrapFactory");
+        set.add("nettySharedHttpServer");
+        set.add("noReplyLogLevel");
+        set.add("serverClosedChannelExceptionCaughtLogLevel");
+        set.add("serverExceptionCaughtLogLevel");
+        set.add("serverInitializerFactory");
+        set.add("traceEnabled");
+        set.add("urlDecodeHeaders");
+        set.add("usingExecutorService");
+        set.add("connectTimeout");
+        set.add("cookieHandler");
+        set.add("lazyStartProducer");
+        set.add("requestTimeout");
+        set.add("throwExceptionOnFailure");
+        set.add("clientInitializerFactory");
+        set.add("lazyChannelCreation");
+        set.add("okStatusCodeRange");
+        set.add("producerPoolEnabled");
+        set.add("producerPoolMaxActive");
+        set.add("producerPoolMaxIdle");
+        set.add("producerPoolMinEvictableIdle");
+        set.add("producerPoolMinIdle");
+        set.add("useRelativePath");
+        set.add("allowSerializedHeaders");
+        set.add("basicPropertyBinding");
+        set.add("channelGroup");
+        set.add("configuration");
+        set.add("disableStreamCache");
+        set.add("headerFilterStrategy");
+        set.add("nativeTransport");
+        set.add("nettyHttpBinding");
+        set.add("options");
+        set.add("receiveBufferSize");
+        set.add("receiveBufferSizePredictor");
+        set.add("sendBufferSize");
+        set.add("synchronous");
+        set.add("transferException");
+        set.add("transferExchange");
+        set.add("workerCount");
+        set.add("workerGroup");
+        set.add("decoders");
+        set.add("encoders");
+        set.add("enabledProtocols");
+        set.add("keyStoreFile");
+        set.add("keyStoreFormat");
+        set.add("keyStoreResource");
+        set.add("needClientAuth");
+        set.add("passphrase");
+        set.add("securityConfiguration");
+        set.add("securityOptions");
+        set.add("securityProvider");
+        set.add("ssl");
+        set.add("sslClientCertHeaders");
+        set.add("sslContextParameters");
+        set.add("sslHandler");
+        set.add("trustStoreFile");
+        set.add("trustStoreResource");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "netty-http".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "protocol", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
@@ -32,6 +125,16 @@ public class NettyHttpEndpointUriFactory extends org.apache.camel.support.compon
         uri = buildPathParameter(syntax, uri, "path", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

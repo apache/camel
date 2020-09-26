@@ -3,7 +3,9 @@ package org.apache.camel.component.rabbitmq;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,103 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":exchangeName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(65);
+        set.add("exchangeName");
+        set.add("addresses");
+        set.add("autoDelete");
+        set.add("automaticRecoveryEnabled");
+        set.add("connectionFactory");
+        set.add("deadLetterExchange");
+        set.add("deadLetterExchangeType");
+        set.add("deadLetterQueue");
+        set.add("deadLetterRoutingKey");
+        set.add("declare");
+        set.add("durable");
+        set.add("exchangeType");
+        set.add("exclusive");
+        set.add("hostname");
+        set.add("passive");
+        set.add("portNumber");
+        set.add("queue");
+        set.add("routingKey");
+        set.add("skipDlqDeclare");
+        set.add("skipExchangeDeclare");
+        set.add("skipQueueBind");
+        set.add("skipQueueDeclare");
+        set.add("vhost");
+        set.add("autoAck");
+        set.add("bridgeErrorHandler");
+        set.add("concurrentConsumers");
+        set.add("consumerTag");
+        set.add("exclusiveConsumer");
+        set.add("prefetchCount");
+        set.add("prefetchEnabled");
+        set.add("prefetchGlobal");
+        set.add("prefetchSize");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("threadPoolSize");
+        set.add("allowCustomHeaders");
+        set.add("allowNullHeaders");
+        set.add("bridgeEndpoint");
+        set.add("channelPoolMaxSize");
+        set.add("channelPoolMaxWait");
+        set.add("guaranteedDeliveries");
+        set.add("immediate");
+        set.add("lazyStartProducer");
+        set.add("mandatory");
+        set.add("publisherAcknowledgements");
+        set.add("publisherAcknowledgementsTimeout");
+        set.add("args");
+        set.add("basicPropertyBinding");
+        set.add("clientProperties");
+        set.add("connectionFactoryExceptionHandler");
+        set.add("connectionTimeout");
+        set.add("networkRecoveryInterval");
+        set.add("requestedChannelMax");
+        set.add("requestedFrameMax");
+        set.add("requestedHeartbeat");
+        set.add("requestTimeout");
+        set.add("requestTimeoutCheckerInterval");
+        set.add("synchronous");
+        set.add("topologyRecoveryEnabled");
+        set.add("transferException");
+        set.add("allowMessageBodySerialization");
+        set.add("password");
+        set.add("sslProtocol");
+        set.add("trustManager");
+        set.add("username");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "rabbitmq".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "exchangeName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

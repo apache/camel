@@ -3,7 +3,9 @@ package org.apache.camel.component.azure.eventhubs;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,64 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":namespace/eventHubName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(25);
+        set.add("namespace");
+        set.add("eventHubName");
+        set.add("amqpRetryOptions");
+        set.add("amqpTransportType");
+        set.add("autoDiscoverClient");
+        set.add("blobAccessKey");
+        set.add("blobAccountName");
+        set.add("blobContainerName");
+        set.add("blobStorageSharedKeyCredential");
+        set.add("bridgeErrorHandler");
+        set.add("checkpointStore");
+        set.add("consumerGroupName");
+        set.add("eventPosition");
+        set.add("prefetchCount");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("partitionId");
+        set.add("partitionKey");
+        set.add("producerAsyncClient");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("connectionString");
+        set.add("sharedAccessKey");
+        set.add("sharedAccessName");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "azure-eventhubs".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "namespace", null, false, copy);
         uri = buildPathParameter(syntax, uri, "eventHubName", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

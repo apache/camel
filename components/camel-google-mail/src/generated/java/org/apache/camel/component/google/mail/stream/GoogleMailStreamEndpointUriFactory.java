@@ -3,7 +3,9 @@ package org.apache.camel.component.google.mail.stream;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,69 @@ public class GoogleMailStreamEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":index";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(31);
+        set.add("index");
+        set.add("applicationName");
+        set.add("bridgeErrorHandler");
+        set.add("clientId");
+        set.add("labels");
+        set.add("markAsRead");
+        set.add("maxResults");
+        set.add("query");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("pollStrategy");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        set.add("accessToken");
+        set.add("clientSecret");
+        set.add("refreshToken");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "google-mail-stream".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "index", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

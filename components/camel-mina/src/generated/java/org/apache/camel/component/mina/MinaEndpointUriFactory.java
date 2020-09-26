@@ -3,7 +3,9 @@ package org.apache.camel.component.mina;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,23 +16,72 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":protocol:host:port";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(32);
+        set.add("protocol");
+        set.add("host");
+        set.add("port");
+        set.add("disconnect");
+        set.add("minaLogger");
+        set.add("sync");
+        set.add("timeout");
+        set.add("writeTimeout");
+        set.add("bridgeErrorHandler");
+        set.add("clientMode");
+        set.add("disconnectOnNoReply");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("noReplyLogLevel");
+        set.add("lazyStartProducer");
+        set.add("cachedAddress");
+        set.add("lazySessionCreation");
+        set.add("basicPropertyBinding");
+        set.add("maximumPoolSize");
+        set.add("orderedThreadPoolExecutor");
+        set.add("synchronous");
+        set.add("transferExchange");
+        set.add("allowDefaultCodec");
+        set.add("codec");
+        set.add("decoderMaxLineLength");
+        set.add("encoderMaxLineLength");
+        set.add("encoding");
+        set.add("filters");
+        set.add("textline");
+        set.add("textlineDelimiter");
+        set.add("autoStartTls");
+        set.add("sslContextParameters");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "mina".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "protocol", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

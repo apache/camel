@@ -3,7 +3,9 @@ package org.apache.camel.component.servicenow;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,85 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":instanceName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(47);
+        set.add("instanceName");
+        set.add("display");
+        set.add("displayValue");
+        set.add("excludeReferenceLink");
+        set.add("favorites");
+        set.add("includeAggregates");
+        set.add("includeAvailableAggregates");
+        set.add("includeAvailableBreakdowns");
+        set.add("includeScoreNotes");
+        set.add("includeScores");
+        set.add("inputDisplayValue");
+        set.add("key");
+        set.add("lazyStartProducer");
+        set.add("models");
+        set.add("perPage");
+        set.add("release");
+        set.add("requestModels");
+        set.add("resource");
+        set.add("responseModels");
+        set.add("sortBy");
+        set.add("sortDir");
+        set.add("suppressAutoSysField");
+        set.add("suppressPaginationHeader");
+        set.add("table");
+        set.add("target");
+        set.add("topLevelOnly");
+        set.add("apiVersion");
+        set.add("basicPropertyBinding");
+        set.add("dateFormat");
+        set.add("dateTimeFormat");
+        set.add("httpClientPolicy");
+        set.add("mapper");
+        set.add("proxyAuthorizationPolicy");
+        set.add("retrieveTargetRecordOnImport");
+        set.add("synchronous");
+        set.add("timeFormat");
+        set.add("proxyHost");
+        set.add("proxyPort");
+        set.add("apiUrl");
+        set.add("oauthClientId");
+        set.add("oauthClientSecret");
+        set.add("oauthTokenUrl");
+        set.add("password");
+        set.add("proxyPassword");
+        set.add("proxyUserName");
+        set.add("sslContextParameters");
+        set.add("userName");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "servicenow".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "instanceName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,73 @@ public class CxfRsEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":beanId:address";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(34);
+        set.add("beanId");
+        set.add("address");
+        set.add("features");
+        set.add("loggingFeatureEnabled");
+        set.add("loggingSizeLimit");
+        set.add("modelRef");
+        set.add("providers");
+        set.add("resourceClasses");
+        set.add("schemaLocations");
+        set.add("skipFaultLogging");
+        set.add("bindingStyle");
+        set.add("bridgeErrorHandler");
+        set.add("publishedEndpointUrl");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("serviceBeans");
+        set.add("cookieHandler");
+        set.add("hostnameVerifier");
+        set.add("lazyStartProducer");
+        set.add("sslContextParameters");
+        set.add("throwExceptionOnFailure");
+        set.add("httpClientAPI");
+        set.add("ignoreDeleteMethodMessageBody");
+        set.add("maxClientCacheSize");
+        set.add("basicPropertyBinding");
+        set.add("binding");
+        set.add("bus");
+        set.add("continuationTimeout");
+        set.add("cxfRsConfigurer");
+        set.add("defaultBus");
+        set.add("headerFilterStrategy");
+        set.add("performInvocation");
+        set.add("propagateContexts");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "cxfrs".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "beanId", null, false, copy);
         uri = buildPathParameter(syntax, uri, "address", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

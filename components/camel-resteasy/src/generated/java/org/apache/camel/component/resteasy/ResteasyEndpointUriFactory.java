@@ -3,7 +3,9 @@ package org.apache.camel.component.resteasy;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,81 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":httpUri";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(43);
+        set.add("httpUri");
+        set.add("chunked");
+        set.add("disableStreamCache");
+        set.add("resteasyMethod");
+        set.add("servletName");
+        set.add("transferException");
+        set.add("async");
+        set.add("bridgeErrorHandler");
+        set.add("httpMethodRestrict");
+        set.add("matchOnUriPrefix");
+        set.add("muteException");
+        set.add("responseBufferSize");
+        set.add("eagerCheckContentAvailable");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("optionsEnabled");
+        set.add("traceEnabled");
+        set.add("bridgeEndpoint");
+        set.add("clearExpiredCookies");
+        set.add("connectionClose");
+        set.add("copyHeaders");
+        set.add("customHostHeader");
+        set.add("httpMethod");
+        set.add("ignoreResponseBody");
+        set.add("lazyStartProducer");
+        set.add("preserveHostHeader");
+        set.add("throwExceptionOnFailure");
+        set.add("cookieHandler");
+        set.add("deleteWithBody");
+        set.add("getWithBody");
+        set.add("okStatusCodeRange");
+        set.add("basicPropertyBinding");
+        set.add("headerFilterStrategy");
+        set.add("mapHttpMessageBody");
+        set.add("mapHttpMessageFormUrlEncodedBody");
+        set.add("mapHttpMessageHeaders");
+        set.add("setHttpResponseDuringProcessing");
+        set.add("skipServletProcessing");
+        set.add("synchronous");
+        set.add("useSystemProperties");
+        set.add("proxyClientClass");
+        set.add("password");
+        set.add("username");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "resteasy".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "httpUri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

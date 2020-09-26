@@ -3,7 +3,9 @@ package org.apache.camel.component.irc;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,70 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":hostname:port";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(31);
+        set.add("hostname");
+        set.add("port");
+        set.add("autoRejoin");
+        set.add("channels");
+        set.add("commandTimeout");
+        set.add("keys");
+        set.add("namesOnJoin");
+        set.add("nickname");
+        set.add("persistent");
+        set.add("realname");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("colors");
+        set.add("synchronous");
+        set.add("onJoin");
+        set.add("onKick");
+        set.add("onMode");
+        set.add("onNick");
+        set.add("onPart");
+        set.add("onPrivmsg");
+        set.add("onQuit");
+        set.add("onReply");
+        set.add("onTopic");
+        set.add("nickPassword");
+        set.add("password");
+        set.add("sslContextParameters");
+        set.add("trustManager");
+        set.add("username");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "irc".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "hostname", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

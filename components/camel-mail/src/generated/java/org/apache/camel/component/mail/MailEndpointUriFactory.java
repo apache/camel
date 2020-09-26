@@ -3,7 +3,9 @@ package org.apache.camel.component.mail;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,6 +16,82 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":host:port";
     private static final String[] SCHEMES = new String[]{"imap", "imaps", "pop3", "pop3s", "smtp", "smtps"};
+
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(69);
+        set.add("host");
+        set.add("port");
+        set.add("bridgeErrorHandler");
+        set.add("closeFolder");
+        set.add("copyTo");
+        set.add("delete");
+        set.add("disconnect");
+        set.add("handleFailedMessage");
+        set.add("maxMessagesPerPoll");
+        set.add("mimeDecodeHeaders");
+        set.add("moveTo");
+        set.add("peek");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("skipFailedMessage");
+        set.add("unseen");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("fetchSize");
+        set.add("folderName");
+        set.add("mailUidGenerator");
+        set.add("mapMailMessage");
+        set.add("pollStrategy");
+        set.add("postProcessAction");
+        set.add("bcc");
+        set.add("cc");
+        set.add("from");
+        set.add("lazyStartProducer");
+        set.add("replyTo");
+        set.add("subject");
+        set.add("to");
+        set.add("javaMailSender");
+        set.add("additionalJavaMailProperties");
+        set.add("alternativeBodyHeader");
+        set.add("attachmentsContentTransferEncodingResolver");
+        set.add("authenticator");
+        set.add("basicPropertyBinding");
+        set.add("binding");
+        set.add("connectionTimeout");
+        set.add("contentType");
+        set.add("contentTypeResolver");
+        set.add("debugMode");
+        set.add("headerFilterStrategy");
+        set.add("ignoreUnsupportedCharset");
+        set.add("ignoreUriScheme");
+        set.add("javaMailProperties");
+        set.add("session");
+        set.add("synchronous");
+        set.add("useInlineAttachments");
+        set.add("idempotentRepository");
+        set.add("idempotentRepositoryRemoveOnCommit");
+        set.add("searchTerm");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        set.add("password");
+        set.add("sslContextParameters");
+        set.add("username");
+        set.add("sortTerm");
+        PROPERTY_NAMES = set;
+    }
+
 
     @Override
     public boolean isEnabled(String scheme) {
@@ -26,16 +104,26 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

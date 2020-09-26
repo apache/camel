@@ -220,16 +220,16 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> properties)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
 
             // append path parameters
-            uri = buildPathParameter(SYNTAX, uri, "name", null, true, parameters);
-            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "name", null, true, properties);
+            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, properties);
             // append remainder parameters
-            uri = buildQueryParameters(uri, parameters);
+            uri = buildQueryParameters(uri, properties);
 
             return uri;
         }
@@ -246,17 +246,17 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> properties)
                 throws URISyntaxException {
             // begin from syntax
             String uri = SYNTAX;
 
             // append path parameters
-            uri = buildPathParameter(SYNTAX, uri, "name", null, true, parameters);
-            uri = buildPathParameter(SYNTAX, uri, "path", null, false, parameters);
-            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "name", null, true, properties);
+            uri = buildPathParameter(SYNTAX, uri, "path", null, false, properties);
+            uri = buildPathParameter(SYNTAX, uri, "port", 8080, false, properties);
             // append remainder parameters
-            uri = buildQueryParameters(uri, parameters);
+            uri = buildQueryParameters(uri, properties);
 
             return uri;
         }
@@ -273,13 +273,13 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public String buildUri(String scheme, Map<String, Object> parameters)
+        public String buildUri(String scheme, Map<String, Object> properties)
                 throws URISyntaxException {
 
             String uri = SYNTAX;
-            uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, parameters);
-            uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, parameters);
-            uri = buildQueryParameters(uri, parameters);
+            uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
+            uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
+            uri = buildQueryParameters(uri, properties);
 
             return uri;
         }

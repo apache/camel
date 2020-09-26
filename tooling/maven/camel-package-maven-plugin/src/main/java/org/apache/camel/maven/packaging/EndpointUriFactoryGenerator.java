@@ -38,7 +38,9 @@ public final class EndpointUriFactoryGenerator {
         w.write("\n");
         w.write("import java.net.URISyntaxException;\n");
         w.write("import java.util.HashMap;\n");
+        w.write("import java.util.HashSet;\n");
         w.write("import java.util.Map;\n");
+        w.write("import java.util.Set;\n");
         w.write("\n");
         w.write("import org.apache.camel.spi.EndpointUriFactory;\n");
         w.write("\n");
@@ -53,6 +55,10 @@ public final class EndpointUriFactoryGenerator {
         if (alternative != null) {
             w.write("    private static final String[] SCHEMES = " + alternative + ";\n");
         }
+        w.write("\n");
+        w.write("    private static final Set<String> PROPERTY_NAMES;\n");
+        w.write(generatePropertyNames(model));
+        w.write("\n");
         w.write("\n");
         w.write("    @Override\n");
         w.write("    public boolean isEnabled(String scheme) {\n");
@@ -69,11 +75,11 @@ public final class EndpointUriFactoryGenerator {
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
-        w.write("    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {\n");
+        w.write("    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {\n");
         w.write("        String syntax = scheme + BASE;\n");
         w.write("        String uri = syntax;\n");
         w.write("\n");
-        w.write("        Map<String, Object> copy = new HashMap<>(parameters);\n");
+        w.write("        Map<String, Object> copy = new HashMap<>(properties);\n");
         w.write("\n");
         for (BaseOptionModel option : model.getEndpointPathOptions()) {
             w.write("        uri = buildPathParameter(syntax, uri, \"" + option.getName() + "\", "
@@ -82,8 +88,31 @@ public final class EndpointUriFactoryGenerator {
         w.write("        uri = buildQueryParameters(uri, copy);\n");
         w.write("        return uri;\n");
         w.write("    }\n");
+        w.write("\n");
+        w.write("    @Override\n");
+        w.write("    public Set<String> propertyNames() {\n");
+        w.write("        return PROPERTY_NAMES;\n");
+        w.write("    }\n");
+        w.write("\n");
+        w.write("    @Override\n");
+        w.write("    public boolean isLenientProperties() {\n");
+        w.write("        return " + model.isLenientProperties() + ";\n");
+        w.write("    }\n");
         w.write("}\n");
         w.write("\n");
+    }
+
+    private static String generatePropertyNames(ComponentModel model) {
+        int size = model.getEndpointOptions().size();
+        StringBuilder sb = new StringBuilder();
+        sb.append("    static {\n");
+        sb.append("        Set<String> set = new HashSet<>(").append(size).append(");\n");
+        for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
+            sb.append("        set.add(\"").append(option.getName()).append("\");\n");
+        }
+        sb.append("        PROPERTY_NAMES = set;\n");
+        sb.append("    }\n");
+        return sb.toString();
     }
 
     private static String alternativeSchemes(ComponentModel model) {

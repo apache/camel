@@ -3,7 +3,9 @@ package org.apache.camel.component.jmx;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,70 @@ public class JMXEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":serverURL";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(32);
+        set.add("serverURL");
+        set.add("bridgeErrorHandler");
+        set.add("format");
+        set.add("granularityPeriod");
+        set.add("monitorType");
+        set.add("objectDomain");
+        set.add("objectName");
+        set.add("observedAttribute");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("basicPropertyBinding");
+        set.add("executorService");
+        set.add("handback");
+        set.add("notificationFilter");
+        set.add("objectProperties");
+        set.add("reconnectDelay");
+        set.add("reconnectOnConnectionFailure");
+        set.add("synchronous");
+        set.add("testConnectionOnStartup");
+        set.add("initThreshold");
+        set.add("modulus");
+        set.add("offset");
+        set.add("differenceMode");
+        set.add("notifyHigh");
+        set.add("notifyLow");
+        set.add("thresholdHigh");
+        set.add("thresholdLow");
+        set.add("password");
+        set.add("user");
+        set.add("notifyDiffer");
+        set.add("notifyMatch");
+        set.add("stringToCompare");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "jmx".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "serverURL", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 
