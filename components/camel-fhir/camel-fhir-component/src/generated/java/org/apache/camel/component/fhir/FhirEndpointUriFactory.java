@@ -18,7 +18,7 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(48);
+        Set<String> set = new HashSet<>(83);
         set.add("apiName");
         set.add("methodName");
         set.add("encoding");
@@ -67,6 +67,41 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
         set.add("accessToken");
         set.add("password");
         set.add("username");
+        set.add("asynchronous");
+        set.add("bundle");
+        set.add("count");
+        set.add("cutoff");
+        set.add("extraParameters");
+        set.add("iCutoff");
+        set.add("iUrl");
+        set.add("id");
+        set.add("ifVersionMatches");
+        set.add("longId");
+        set.add("meta");
+        set.add("metaType");
+        set.add("msgBundle");
+        set.add("name");
+        set.add("outputParameterType");
+        set.add("parameters");
+        set.add("patchBody");
+        set.add("preferReturn");
+        set.add("resource");
+        set.add("resourceAsString");
+        set.add("resourceClass");
+        set.add("resourceType");
+        set.add("resources");
+        set.add("respondToUri");
+        set.add("responseClass");
+        set.add("returnNull");
+        set.add("returnResource");
+        set.add("returnType");
+        set.add("stringBundle");
+        set.add("stringId");
+        set.add("throwError");
+        set.add("type");
+        set.add("url");
+        set.add("useHttpGet");
+        set.add("version");
         PROPERTY_NAMES = set;
     }
 

@@ -18,7 +18,7 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(25);
+        Set<String> set = new HashSet<>(69);
         set.add("apiName");
         set.add("methodName");
         set.add("inBody");
@@ -44,6 +44,50 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
         set.add("startScheduler");
         set.add("timeUnit");
         set.add("useFixedDelay");
+        set.add("applicationSid");
+        set.add("areaCode");
+        set.add("body");
+        set.add("callbackUrl");
+        set.add("city");
+        set.add("credentialListSid");
+        set.add("customerName");
+        set.add("domainName");
+        set.add("endDate");
+        set.add("friendlyName");
+        set.add("from");
+        set.add("ipAccessControlListSid");
+        set.add("ipAddress");
+        set.add("isoCountry");
+        set.add("mediaUrl");
+        set.add("messagingServiceSid");
+        set.add("password");
+        set.add("pathAccountSid");
+        set.add("pathAddOnResultSid");
+        set.add("pathAddressSid");
+        set.add("pathCallSid");
+        set.add("pathConferenceSid");
+        set.add("pathCountryCode");
+        set.add("pathCredentialListSid");
+        set.add("pathDomainSid");
+        set.add("pathIpAccessControlListSid");
+        set.add("pathMessageSid");
+        set.add("pathQueueSid");
+        set.add("pathRecordingSid");
+        set.add("pathReferenceSid");
+        set.add("pathSid");
+        set.add("phoneNumber");
+        set.add("postalCode");
+        set.add("qualityScore");
+        set.add("region");
+        set.add("startDate");
+        set.add("status");
+        set.add("street");
+        set.add("to");
+        set.add("triggerValue");
+        set.add("twiml");
+        set.add("url");
+        set.add("usageCategory");
+        set.add("username");
         PROPERTY_NAMES = set;
     }
 
