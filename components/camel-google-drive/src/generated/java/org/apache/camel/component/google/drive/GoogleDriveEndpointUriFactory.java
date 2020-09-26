@@ -18,7 +18,7 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(32);
+        Set<String> set = new HashSet<>(48);
         set.add("apiName");
         set.add("methodName");
         set.add("applicationName");
@@ -51,6 +51,22 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         set.add("accessToken");
         set.add("clientSecret");
         set.add("refreshToken");
+        set.add("appId");
+        set.add("changeId");
+        set.add("childId");
+        set.add("commentId");
+        set.add("content");
+        set.add("contentChannel");
+        set.add("email");
+        set.add("fileId");
+        set.add("folderId");
+        set.add("mediaContent");
+        set.add("mimeType");
+        set.add("parentId");
+        set.add("permissionId");
+        set.add("propertyKey");
+        set.add("replyId");
+        set.add("revisionId");
         PROPERTY_NAMES = set;
     }
 

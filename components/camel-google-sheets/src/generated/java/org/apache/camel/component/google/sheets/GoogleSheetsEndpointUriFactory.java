@@ -18,7 +18,7 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
+        Set<String> set = new HashSet<>(42);
         set.add("apiName");
         set.add("methodName");
         set.add("applicationName");
@@ -50,6 +50,17 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         set.add("accessToken");
         set.add("clientSecret");
         set.add("refreshToken");
+        set.add("batchClearValuesRequest");
+        set.add("batchGetValuesByDataFilterRequest");
+        set.add("batchUpdateSpreadsheetRequest");
+        set.add("batchUpdateValuesByDataFilterRequest");
+        set.add("batchUpdateValuesRequest");
+        set.add("clearValuesRequest");
+        set.add("content");
+        set.add("getSpreadsheetByDataFilterRequest");
+        set.add("range");
+        set.add("spreadsheetId");
+        set.add("values");
         PROPERTY_NAMES = set;
     }
 
