@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -442,6 +443,48 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         assertEquals("C", body.get(2));
         assertEquals("D", body.get(3));
         assertEquals("E", body.get(4));
+    }
+
+    @Test
+    public void testStartupRaceCondition() throws Exception {
+        final int routeCount = 10;
+        final int consumerCount = 1;
+
+        List<String> queues = new ArrayList<>();
+
+        String queueNamePrefix = getQueueName();
+
+        // setup routeCount routes, each reading from its own queue but all writing to the same mock endpoint
+        for (int i = 0; i < routeCount; i++) {
+            String queueName = queueNamePrefix + "_" + i;
+            queues.add(queueName);
+            String routeId = "batchConsumer_" + i;
+            context.addRoutes(new RouteBuilder() {
+                public void configure() throws Exception {
+
+                    int completionTimeout = 1000;
+                    int completionSize = 1;
+
+                    fromF("sjms-batch:%s?completionTimeout=%s&completionSize=%s&consumerCount=%s&aggregationStrategy=#testStrategy&keepAliveDelay=100&asyncStartListener=true",
+                            queueName, completionTimeout, completionSize, consumerCount)
+                                    .routeId(routeId).autoStartup(true)
+                                    .split(body())
+                                    .to("mock:split");
+                }
+            });
+        }
+
+        context.start();
+
+        // expect to receive routeCount messages to the mock endpoint
+        MockEndpoint mockSplit = getMockEndpoint("mock:split");
+        mockSplit.setExpectedMessageCount(routeCount);
+
+        // send one message to all the queues
+        queues.forEach(queueName -> template.sendBody("sjms:queue:" + queueName, queueName));
+
+        assertMockEndpointsSatisfied();
+
     }
 
     private void assertFirstMessageBodyOfLength(MockEndpoint mockEndpoint, int expectedLength) {
