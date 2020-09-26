@@ -89,6 +89,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -128,6 +129,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -1411,8 +1413,23 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
+    public UriFactoryResolver getUriFactoryResolver() {
+        return getExtendedCamelContext().getUriFactoryResolver();
+    }
+
+    @Override
+    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
+        getExtendedCamelContext().setUriFactoryResolver(uriFactoryResolver);
+    }
+
+    @Override
     public RouteController getInternalRouteController() {
         return getExtendedCamelContext().getInternalRouteController();
+    }
+
+    @Override
+    public EndpointUriFactory getEndpointUriFactory(String scheme) {
+        return getExtendedCamelContext().getEndpointUriFactory(scheme);
     }
 
     @Override

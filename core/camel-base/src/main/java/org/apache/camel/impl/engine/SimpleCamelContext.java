@@ -71,6 +71,7 @@ import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
@@ -357,6 +358,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected ConfigurerResolver createConfigurerResolver() {
         return new DefaultConfigurerResolver();
+    }
+
+    @Override
+    protected UriFactoryResolver createUriFactoryResolver() {
+        return new DefaultUriFactoryResolver();
     }
 
     @Override

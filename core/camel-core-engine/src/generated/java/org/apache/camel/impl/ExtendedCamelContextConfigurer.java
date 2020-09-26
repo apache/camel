@@ -143,6 +143,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "TypeConverterStatisticsEnabled": target.setTypeConverterStatisticsEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "unitofworkfactory":
         case "UnitOfWorkFactory": target.setUnitOfWorkFactory(property(camelContext, org.apache.camel.spi.UnitOfWorkFactory.class, value)); return true;
+        case "urifactoryresolver":
+        case "UriFactoryResolver": target.setUriFactoryResolver(property(camelContext, org.apache.camel.spi.UriFactoryResolver.class, value)); return true;
         case "usebreadcrumb":
         case "UseBreadcrumb": target.setUseBreadcrumb(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usedatatype":
@@ -222,6 +224,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         answer.put("TypeConverterRegistry", org.apache.camel.spi.TypeConverterRegistry.class);
         answer.put("TypeConverterStatisticsEnabled", java.lang.Boolean.class);
         answer.put("UnitOfWorkFactory", org.apache.camel.spi.UnitOfWorkFactory.class);
+        answer.put("UriFactoryResolver", org.apache.camel.spi.UriFactoryResolver.class);
         answer.put("UseBreadcrumb", java.lang.Boolean.class);
         answer.put("UseDataType", java.lang.Boolean.class);
         answer.put("UseMDCLogging", java.lang.Boolean.class);
@@ -358,6 +361,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "TypeConverterStatisticsEnabled": return target.isTypeConverterStatisticsEnabled();
         case "unitofworkfactory":
         case "UnitOfWorkFactory": return target.getUnitOfWorkFactory();
+        case "urifactoryresolver":
+        case "UriFactoryResolver": return target.getUriFactoryResolver();
         case "usebreadcrumb":
         case "UseBreadcrumb": return target.isUseBreadcrumb();
         case "usedatatype":

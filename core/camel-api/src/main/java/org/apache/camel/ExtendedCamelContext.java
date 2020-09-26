@@ -36,6 +36,7 @@ import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
@@ -57,6 +58,7 @@ import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
 /**
@@ -550,10 +552,25 @@ public interface ExtendedCamelContext extends CamelContext {
     void setConfigurerResolver(ConfigurerResolver configurerResolver);
 
     /**
+     * Gets the {@link UriFactoryResolver} to use.
+     */
+    UriFactoryResolver getUriFactoryResolver();
+
+    /**
+     * Sets the {@link UriFactoryResolver} to use.
+     */
+    void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver);
+
+    /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
      * use this as end user.
      */
     RouteController getInternalRouteController();
+
+    /**
+     * Gets the {@link EndpointUriFactory} for the given component name.
+     */
+    EndpointUriFactory getEndpointUriFactory(String scheme);
 
     /**
      * Internal API for adding routes. Do not use this as end user.
