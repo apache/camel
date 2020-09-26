@@ -3,7 +3,9 @@ package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,17 +16,63 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":userID:password/systemName/objectPath.type";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(39);
+        set.add("userID");
+        set.add("password");
+        set.add("systemName");
+        set.add("objectPath");
+        set.add("type");
+        set.add("ccsid");
+        set.add("format");
+        set.add("guiAvailable");
+        set.add("keyed");
+        set.add("searchKey");
+        set.add("bridgeErrorHandler");
+        set.add("messageAction");
+        set.add("readTimeout");
+        set.add("searchType");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("pollStrategy");
+        set.add("lazyStartProducer");
+        set.add("outputFieldsIdxArray");
+        set.add("outputFieldsLengthArray");
+        set.add("procedureName");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        set.add("secured");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "jt400".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "userID", null, true, copy);
         uri = buildPathParameter(syntax, uri, "password", null, true, copy);
@@ -33,6 +81,16 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
         uri = buildPathParameter(syntax, uri, "type", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.jcache;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,63 @@ public class JCacheEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":cacheName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(25);
+        set.add("cacheName");
+        set.add("cacheConfiguration");
+        set.add("cacheConfigurationProperties");
+        set.add("cachingProvider");
+        set.add("configurationUri");
+        set.add("managementEnabled");
+        set.add("readThrough");
+        set.add("statisticsEnabled");
+        set.add("storeByValue");
+        set.add("writeThrough");
+        set.add("bridgeErrorHandler");
+        set.add("filteredEvents");
+        set.add("oldValueRequired");
+        set.add("synchronous");
+        set.add("eventFilters");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("action");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("cacheLoaderFactory");
+        set.add("cacheWriterFactory");
+        set.add("createCacheIfNotExists");
+        set.add("expiryPolicyFactory");
+        set.add("lookupProviders");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "jcache".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "cacheName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.aws2.sns;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,60 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":topicNameOrArn";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(22);
+        set.add("topicNameOrArn");
+        set.add("amazonSNSClient");
+        set.add("autoCreateTopic");
+        set.add("autoDiscoverClient");
+        set.add("headerFilterStrategy");
+        set.add("kmsMasterKeyId");
+        set.add("lazyStartProducer");
+        set.add("messageStructure");
+        set.add("policy");
+        set.add("proxyHost");
+        set.add("proxyPort");
+        set.add("proxyProtocol");
+        set.add("queueUrl");
+        set.add("region");
+        set.add("serverSideEncryptionEnabled");
+        set.add("subject");
+        set.add("subscribeSNStoSQS");
+        set.add("trustAllCertificates");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("accessKey");
+        set.add("secretKey");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "aws2-sns".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "topicNameOrArn", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

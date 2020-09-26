@@ -3,7 +3,9 @@ package org.apache.camel.component.pg.replication.slot;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,17 +16,55 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
 
     private static final String BASE = ":host:port/database/slot:outputPlugin";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(31);
+        set.add("slot");
+        set.add("host");
+        set.add("port");
+        set.add("database");
+        set.add("outputPlugin");
+        set.add("password");
+        set.add("user");
+        set.add("bridgeErrorHandler");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("pollStrategy");
+        set.add("autoCreateSlot");
+        set.add("basicPropertyBinding");
+        set.add("slotOptions");
+        set.add("statusInterval");
+        set.add("synchronous");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "pg-replication-slot".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "slot", null, true, copy);
         uri = buildPathParameter(syntax, uri, "host", "localhost", false, copy);
@@ -33,6 +73,16 @@ public class PgReplicationSlotEndpointUriFactory extends org.apache.camel.suppor
         uri = buildPathParameter(syntax, uri, "outputPlugin", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

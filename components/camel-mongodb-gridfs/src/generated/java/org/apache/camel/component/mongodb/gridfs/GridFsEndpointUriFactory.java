@@ -3,7 +3,9 @@ package org.apache.camel.component.mongodb.gridfs;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,57 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":connectionBean";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(19);
+        set.add("connectionBean");
+        set.add("bucket");
+        set.add("database");
+        set.add("readPreference");
+        set.add("writeConcern");
+        set.add("bridgeErrorHandler");
+        set.add("delay");
+        set.add("fileAttributeName");
+        set.add("initialDelay");
+        set.add("persistentTSCollection");
+        set.add("persistentTSObject");
+        set.add("query");
+        set.add("queryStrategy");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "mongodb-gridfs".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "connectionBean", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

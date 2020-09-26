@@ -3,7 +3,9 @@ package org.apache.camel.component.mybatis;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,47 @@ public class MyBatisBeanEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":beanName:methodName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(8);
+        set.add("beanName");
+        set.add("methodName");
+        set.add("executorType");
+        set.add("inputHeader");
+        set.add("lazyStartProducer");
+        set.add("outputHeader");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "mybatis-bean".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "beanName", null, true, copy);
         uri = buildPathParameter(syntax, uri, "methodName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

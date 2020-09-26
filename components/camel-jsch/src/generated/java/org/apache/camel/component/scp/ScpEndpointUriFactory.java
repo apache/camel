@@ -3,7 +3,9 @@ package org.apache.camel.component.scp;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,23 +16,67 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":host:port/directoryName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(27);
+        set.add("host");
+        set.add("port");
+        set.add("directoryName");
+        set.add("chmod");
+        set.add("disconnect");
+        set.add("fileName");
+        set.add("flatten");
+        set.add("jailStartingDirectory");
+        set.add("lazyStartProducer");
+        set.add("strictHostKeyChecking");
+        set.add("allowNullBody");
+        set.add("disconnectOnBatchComplete");
+        set.add("moveExistingFileStrategy");
+        set.add("basicPropertyBinding");
+        set.add("connectTimeout");
+        set.add("soTimeout");
+        set.add("synchronous");
+        set.add("timeout");
+        set.add("knownHostsFile");
+        set.add("password");
+        set.add("preferredAuthentications");
+        set.add("privateKeyBytes");
+        set.add("privateKeyFile");
+        set.add("privateKeyFilePassphrase");
+        set.add("username");
+        set.add("useUserKnownHostsFile");
+        set.add("ciphers");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "scp".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, false, copy);
         uri = buildPathParameter(syntax, uri, "directoryName", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

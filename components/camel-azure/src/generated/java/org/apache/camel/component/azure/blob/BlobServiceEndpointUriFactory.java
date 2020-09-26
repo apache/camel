@@ -3,7 +3,9 @@ package org.apache.camel.component.azure.blob;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,63 @@ public class BlobServiceEndpointUriFactory extends org.apache.camel.support.comp
 
     private static final String BASE = ":containerOrBlobUri";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(25);
+        set.add("containerOrBlobUri");
+        set.add("azureBlobClient");
+        set.add("blobOffset");
+        set.add("blobType");
+        set.add("closeStreamAfterRead");
+        set.add("credentials");
+        set.add("dataLength");
+        set.add("fileDir");
+        set.add("publicForRead");
+        set.add("streamReadSize");
+        set.add("validateClientURI");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("blobMetadata");
+        set.add("blobPrefix");
+        set.add("closeStreamAfterWrite");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("streamWriteSize");
+        set.add("useFlatListing");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("credentialsAccountKey");
+        set.add("credentialsAccountName");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "azure-blob".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "containerOrBlobUri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

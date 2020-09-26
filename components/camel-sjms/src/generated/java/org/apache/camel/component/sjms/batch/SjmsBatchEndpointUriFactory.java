@@ -3,7 +3,9 @@ package org.apache.camel.component.sjms.batch;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,63 @@ public class SjmsBatchEndpointUriFactory extends org.apache.camel.support.compon
 
     private static final String BASE = ":destinationName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(25);
+        set.add("destinationName");
+        set.add("aggregationStrategy");
+        set.add("allowNullBody");
+        set.add("bridgeErrorHandler");
+        set.add("completionInterval");
+        set.add("completionPredicate");
+        set.add("completionSize");
+        set.add("completionTimeout");
+        set.add("consumerCount");
+        set.add("eagerCheckCompletion");
+        set.add("includeAllJMSXProperties");
+        set.add("mapJmsMessage");
+        set.add("pollDuration");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("asyncStartListener");
+        set.add("basicPropertyBinding");
+        set.add("headerFilterStrategy");
+        set.add("jmsKeyFormatStrategy");
+        set.add("keepAliveDelay");
+        set.add("messageCreatedStrategy");
+        set.add("recoveryInterval");
+        set.add("synchronous");
+        set.add("timeoutCheckerExecutorService");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "sjms-batch".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "destinationName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

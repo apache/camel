@@ -3,7 +3,9 @@ package org.apache.camel.component.ahc;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,54 @@ public class AhcEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":httpUri";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(16);
+        set.add("httpUri");
+        set.add("bridgeEndpoint");
+        set.add("bufferSize");
+        set.add("connectionClose");
+        set.add("cookieHandler");
+        set.add("headerFilterStrategy");
+        set.add("lazyStartProducer");
+        set.add("throwExceptionOnFailure");
+        set.add("transferException");
+        set.add("basicPropertyBinding");
+        set.add("binding");
+        set.add("clientConfig");
+        set.add("clientConfigOptions");
+        set.add("synchronous");
+        set.add("clientConfigRealmOptions");
+        set.add("sslContextParameters");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "ahc".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "httpUri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

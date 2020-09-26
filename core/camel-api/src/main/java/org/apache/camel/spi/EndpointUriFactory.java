@@ -18,8 +18,10 @@ package org.apache.camel.spi;
 
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 
 /**
  * Factory to create {@link org.apache.camel.Endpoint} URI string from a {@link Map} of parameters.
@@ -37,9 +39,21 @@ public interface EndpointUriFactory extends CamelContextAware {
      * Assembles an endpoint uri for the given component name with the given parameters.
      *
      * @param  scheme     the component name
-     * @param  parameters endpoint options
+     * @param  properties endpoint options
      * @return            the constructed endpoint uri
      */
-    String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException;
+    String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException;
+
+    /**
+     * Returns all the names this endpoint supports.
+     */
+    Set<String> propertyNames();
+
+    /**
+     * Whether the endpoint is lenient or not.
+     *
+     * @see Endpoint#isLenientProperties()
+     */
+    boolean isLenientProperties();
 
 }

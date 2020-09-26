@@ -3,7 +3,9 @@ package org.apache.camel.component.sip;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,6 +16,60 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
 
     private static final String BASE = ":uri";
     private static final String[] SCHEMES = new String[]{"sip", "sips"};
+
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(47);
+        set.add("uri");
+        set.add("cacheConnections");
+        set.add("contentSubType");
+        set.add("contentType");
+        set.add("eventHeaderName");
+        set.add("eventId");
+        set.add("fromHost");
+        set.add("fromPort");
+        set.add("fromUser");
+        set.add("msgExpiration");
+        set.add("receiveTimeoutMillis");
+        set.add("stackName");
+        set.add("toHost");
+        set.add("toPort");
+        set.add("toUser");
+        set.add("transport");
+        set.add("bridgeErrorHandler");
+        set.add("consumer");
+        set.add("presenceAgent");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("addressFactory");
+        set.add("basicPropertyBinding");
+        set.add("callIdHeader");
+        set.add("contactHeader");
+        set.add("contentTypeHeader");
+        set.add("eventHeader");
+        set.add("expiresHeader");
+        set.add("extensionHeader");
+        set.add("fromHeader");
+        set.add("headerFactory");
+        set.add("listeningPoint");
+        set.add("maxForwardsHeader");
+        set.add("maxMessageSize");
+        set.add("messageFactory");
+        set.add("sipFactory");
+        set.add("sipStack");
+        set.add("sipUri");
+        set.add("synchronous");
+        set.add("toHeader");
+        set.add("viaHeaders");
+        set.add("implementationDebugLogFile");
+        set.add("implementationServerLogFile");
+        set.add("implementationTraceLevel");
+        set.add("maxForwards");
+        set.add("useRouterForAllUris");
+        PROPERTY_NAMES = set;
+    }
+
 
     @Override
     public boolean isEnabled(String scheme) {
@@ -26,15 +82,25 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "uri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

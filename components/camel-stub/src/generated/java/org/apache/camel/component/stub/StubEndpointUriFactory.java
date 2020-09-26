@@ -3,7 +3,9 @@ package org.apache.camel.component.stub;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,59 @@ public class StubEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":name";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(21);
+        set.add("name");
+        set.add("size");
+        set.add("bridgeErrorHandler");
+        set.add("concurrentConsumers");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("limitConcurrentConsumers");
+        set.add("multipleConsumers");
+        set.add("pollTimeout");
+        set.add("purgeWhenStopping");
+        set.add("blockWhenFull");
+        set.add("discardIfNoConsumers");
+        set.add("discardWhenFull");
+        set.add("failIfNoConsumers");
+        set.add("lazyStartProducer");
+        set.add("offerTimeout");
+        set.add("timeout");
+        set.add("waitForTaskToComplete");
+        set.add("basicPropertyBinding");
+        set.add("queue");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "stub".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "name", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

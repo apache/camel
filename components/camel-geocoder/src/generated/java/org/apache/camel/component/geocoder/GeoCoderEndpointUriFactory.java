@@ -3,7 +3,9 @@ package org.apache.camel.component.geocoder;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,58 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final String BASE = ":address:latlng";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(19);
+        set.add("address");
+        set.add("latlng");
+        set.add("headersOnly");
+        set.add("language");
+        set.add("lazyStartProducer");
+        set.add("serverUrl");
+        set.add("type");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("proxyAuthDomain");
+        set.add("proxyAuthHost");
+        set.add("proxyAuthMethod");
+        set.add("proxyAuthPassword");
+        set.add("proxyAuthUsername");
+        set.add("proxyHost");
+        set.add("proxyPort");
+        set.add("apiKey");
+        set.add("clientId");
+        set.add("clientKey");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "geocoder".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "address", null, false, copy);
         uri = buildPathParameter(syntax, uri, "latlng", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

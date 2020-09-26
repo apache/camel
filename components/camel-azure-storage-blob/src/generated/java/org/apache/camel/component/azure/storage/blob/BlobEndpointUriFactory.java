@@ -3,7 +3,9 @@ package org.apache.camel.component.azure.storage.blob;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,71 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":accountName/containerName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(32);
+        set.add("accountName");
+        set.add("containerName");
+        set.add("autoDiscoverClient");
+        set.add("blobName");
+        set.add("blobOffset");
+        set.add("blobServiceClient");
+        set.add("blobType");
+        set.add("closeStreamAfterRead");
+        set.add("credentials");
+        set.add("dataCount");
+        set.add("fileDir");
+        set.add("maxResultsPerPage");
+        set.add("maxRetryRequests");
+        set.add("prefix");
+        set.add("serviceClient");
+        set.add("timeout");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("blobSequenceNumber");
+        set.add("blockListType");
+        set.add("closeStreamAfterWrite");
+        set.add("commitBlockListLater");
+        set.add("createAppendBlob");
+        set.add("createPageBlob");
+        set.add("downloadLinkExpiration");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("pageBlobSize");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("accessKey");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "azure-storage-blob".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "accountName", null, false, copy);
         uri = buildPathParameter(syntax, uri, "containerName", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

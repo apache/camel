@@ -3,7 +3,9 @@ package org.apache.camel.component.jbpm;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,73 @@ public class JBPMEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":connectionURL";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(34);
+        set.add("connectionURL");
+        set.add("eventListenerType");
+        set.add("attachmentId");
+        set.add("contentId");
+        set.add("deploymentId");
+        set.add("emitterSendItems");
+        set.add("event");
+        set.add("eventType");
+        set.add("identifier");
+        set.add("maxNumber");
+        set.add("page");
+        set.add("pageSize");
+        set.add("processId");
+        set.add("processInstanceId");
+        set.add("targetUserId");
+        set.add("task");
+        set.add("taskId");
+        set.add("timeout");
+        set.add("userId");
+        set.add("value");
+        set.add("workItemId");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("basicPropertyBinding");
+        set.add("entities");
+        set.add("extraJaxbClasses");
+        set.add("parameters");
+        set.add("synchronous");
+        set.add("statuses");
+        set.add("password");
+        set.add("userName");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "jbpm".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "connectionURL", null, true, copy);
         uri = buildPathParameter(syntax, uri, "eventListenerType", null, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.http;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,6 +16,67 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":httpUri";
     private static final String[] SCHEMES = new String[]{"http", "https"};
+
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(54);
+        set.add("httpUri");
+        set.add("disableStreamCache");
+        set.add("headerFilterStrategy");
+        set.add("httpBinding");
+        set.add("bridgeEndpoint");
+        set.add("chunked");
+        set.add("clearExpiredCookies");
+        set.add("connectionClose");
+        set.add("copyHeaders");
+        set.add("customHostHeader");
+        set.add("httpMethod");
+        set.add("ignoreResponseBody");
+        set.add("lazyStartProducer");
+        set.add("preserveHostHeader");
+        set.add("throwExceptionOnFailure");
+        set.add("transferException");
+        set.add("cookieHandler");
+        set.add("cookieStore");
+        set.add("deleteWithBody");
+        set.add("getWithBody");
+        set.add("okStatusCodeRange");
+        set.add("basicPropertyBinding");
+        set.add("clientBuilder");
+        set.add("clientConnectionManager");
+        set.add("connectionsPerRoute");
+        set.add("httpClient");
+        set.add("httpClientConfigurer");
+        set.add("httpClientOptions");
+        set.add("httpContext");
+        set.add("mapHttpMessageBody");
+        set.add("mapHttpMessageFormUrlEncodedBody");
+        set.add("mapHttpMessageHeaders");
+        set.add("maxTotalConnections");
+        set.add("synchronous");
+        set.add("useSystemProperties");
+        set.add("proxyAuthDomain");
+        set.add("proxyAuthHost");
+        set.add("proxyAuthMethod");
+        set.add("proxyAuthNtHost");
+        set.add("proxyAuthPassword");
+        set.add("proxyAuthPort");
+        set.add("proxyAuthScheme");
+        set.add("proxyAuthUsername");
+        set.add("proxyHost");
+        set.add("proxyPort");
+        set.add("authDomain");
+        set.add("authenticationPreemptive");
+        set.add("authHost");
+        set.add("authMethod");
+        set.add("authMethodPriority");
+        set.add("authPassword");
+        set.add("authUsername");
+        set.add("sslContextParameters");
+        set.add("x509HostnameVerifier");
+        PROPERTY_NAMES = set;
+    }
+
 
     @Override
     public boolean isEnabled(String scheme) {
@@ -26,15 +89,25 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "httpUri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
 

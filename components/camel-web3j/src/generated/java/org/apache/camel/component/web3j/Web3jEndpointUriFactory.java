@@ -3,7 +3,9 @@ package org.apache.camel.component.web3j;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,79 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":nodeAddress";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(41);
+        set.add("nodeAddress");
+        set.add("addresses");
+        set.add("fromAddress");
+        set.add("fromBlock");
+        set.add("fullTransactionObjects");
+        set.add("gasLimit");
+        set.add("privateFor");
+        set.add("quorumAPI");
+        set.add("toAddress");
+        set.add("toBlock");
+        set.add("topics");
+        set.add("web3j");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("address");
+        set.add("atBlock");
+        set.add("blockHash");
+        set.add("clientId");
+        set.add("data");
+        set.add("databaseName");
+        set.add("filterId");
+        set.add("gasPrice");
+        set.add("hashrate");
+        set.add("headerPowHash");
+        set.add("index");
+        set.add("keyName");
+        set.add("lazyStartProducer");
+        set.add("mixDigest");
+        set.add("nonce");
+        set.add("operation");
+        set.add("position");
+        set.add("priority");
+        set.add("sha3HashOfDataToSign");
+        set.add("signedTransactionData");
+        set.add("sourceCode");
+        set.add("transactionHash");
+        set.add("ttl");
+        set.add("value");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "web3j".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "nodeAddress", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.crypto;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,62 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
 
     private static final String BASE = ":cryptoOperation:name";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(23);
+        set.add("cryptoOperation");
+        set.add("name");
+        set.add("algorithm");
+        set.add("alias");
+        set.add("certificateName");
+        set.add("keystore");
+        set.add("keystoreName");
+        set.add("lazyStartProducer");
+        set.add("privateKey");
+        set.add("privateKeyName");
+        set.add("provider");
+        set.add("publicKeyName");
+        set.add("secureRandomName");
+        set.add("signatureHeaderName");
+        set.add("basicPropertyBinding");
+        set.add("bufferSize");
+        set.add("certificate");
+        set.add("clearHeaders");
+        set.add("keyStoreParameters");
+        set.add("publicKey");
+        set.add("secureRandom");
+        set.add("synchronous");
+        set.add("password");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "crypto".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "cryptoOperation", null, true, copy);
         uri = buildPathParameter(syntax, uri, "name", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

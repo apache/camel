@@ -3,7 +3,9 @@ package org.apache.camel.component.iec60870.client;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,61 @@ public class ClientEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":uriPath";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(23);
+        set.add("uriPath");
+        set.add("dataModuleOptions");
+        set.add("protocolOptions");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("acknowledgeWindow");
+        set.add("adsuAddressType");
+        set.add("causeOfTransmissionType");
+        set.add("informationObjectAddressType");
+        set.add("maxUnacknowledged");
+        set.add("timeout1");
+        set.add("timeout2");
+        set.add("timeout3");
+        set.add("causeSourceAddress");
+        set.add("connectionTimeout");
+        set.add("ignoreBackgroundScan");
+        set.add("ignoreDaylightSavingTime");
+        set.add("timeZone");
+        set.add("connectionId");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "iec60870-client".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "uriPath", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

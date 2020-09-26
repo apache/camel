@@ -3,7 +3,9 @@ package org.apache.camel.component.elasticsearch;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,58 @@ public class ElasticsearchEndpointUriFactory extends org.apache.camel.support.co
 
     private static final String BASE = ":clusterName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(20);
+        set.add("clusterName");
+        set.add("connectionTimeout");
+        set.add("disconnect");
+        set.add("enableSniffer");
+        set.add("enableSSL");
+        set.add("from");
+        set.add("hostAddresses");
+        set.add("indexName");
+        set.add("lazyStartProducer");
+        set.add("maxRetryTimeout");
+        set.add("operation");
+        set.add("scrollKeepAliveMs");
+        set.add("size");
+        set.add("sniffAfterFailureDelay");
+        set.add("snifferInterval");
+        set.add("socketTimeout");
+        set.add("useScroll");
+        set.add("waitForActiveShards");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "elasticsearch-rest".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "clusterName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

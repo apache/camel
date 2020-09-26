@@ -3,7 +3,9 @@ package org.apache.camel.component.weka;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,51 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final String BASE = ":command";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(13);
+        set.add("command");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("apply");
+        set.add("build");
+        set.add("dsname");
+        set.add("folds");
+        set.add("loadFrom");
+        set.add("saveTo");
+        set.add("seed");
+        set.add("xval");
+        set.add("path");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "weka".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "command", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

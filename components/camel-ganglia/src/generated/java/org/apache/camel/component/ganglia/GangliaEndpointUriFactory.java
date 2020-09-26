@@ -3,7 +3,9 @@ package org.apache.camel.component.ganglia;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,56 @@ public class GangliaEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":host:port";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(17);
+        set.add("host");
+        set.add("port");
+        set.add("dmax");
+        set.add("groupName");
+        set.add("lazyStartProducer");
+        set.add("metricName");
+        set.add("mode");
+        set.add("prefix");
+        set.add("slope");
+        set.add("spoofHostname");
+        set.add("tmax");
+        set.add("ttl");
+        set.add("type");
+        set.add("units");
+        set.add("wireFormat31x");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "ganglia".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", "239.2.11.71", false, copy);
         uri = buildPathParameter(syntax, uri, "port", "8649", false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

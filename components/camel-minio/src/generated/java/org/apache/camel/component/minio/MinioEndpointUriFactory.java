@@ -3,7 +3,9 @@ package org.apache.camel.component.minio;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,104 @@ public class MinioEndpointUriFactory extends org.apache.camel.support.component.
 
     private static final String BASE = ":bucketName";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(66);
+        set.add("bucketName");
+        set.add("autoCreateBucket");
+        set.add("customHttpClient");
+        set.add("endpoint");
+        set.add("minioClient");
+        set.add("objectLock");
+        set.add("policy");
+        set.add("proxyPort");
+        set.add("region");
+        set.add("secure");
+        set.add("serverSideEncryption");
+        set.add("serverSideEncryptionCustomerKey");
+        set.add("autoCloseBody");
+        set.add("bridgeErrorHandler");
+        set.add("bypassGovernanceMode");
+        set.add("deleteAfterRead");
+        set.add("delimiter");
+        set.add("destinationBucketName");
+        set.add("destinationObjectName");
+        set.add("includeBody");
+        set.add("includeFolders");
+        set.add("includeUserMetadata");
+        set.add("includeVersions");
+        set.add("length");
+        set.add("matchETag");
+        set.add("maxConnections");
+        set.add("maxMessagesPerPoll");
+        set.add("modifiedSince");
+        set.add("moveAfterRead");
+        set.add("notMatchETag");
+        set.add("objectName");
+        set.add("offset");
+        set.add("prefix");
+        set.add("recursive");
+        set.add("sendEmptyMessageWhenIdle");
+        set.add("startAfter");
+        set.add("unModifiedSince");
+        set.add("useVersion1");
+        set.add("versionId");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("pollStrategy");
+        set.add("deleteAfterWrite");
+        set.add("keyName");
+        set.add("lazyStartProducer");
+        set.add("operation");
+        set.add("pojoRequest");
+        set.add("storageClass");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("backoffErrorThreshold");
+        set.add("backoffIdleThreshold");
+        set.add("backoffMultiplier");
+        set.add("delay");
+        set.add("greedy");
+        set.add("initialDelay");
+        set.add("repeatCount");
+        set.add("runLoggingLevel");
+        set.add("scheduledExecutorService");
+        set.add("scheduler");
+        set.add("schedulerProperties");
+        set.add("startScheduler");
+        set.add("timeUnit");
+        set.add("useFixedDelay");
+        set.add("accessKey");
+        set.add("secretKey");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "minio".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "bucketName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

@@ -3,7 +3,9 @@ package org.apache.camel.component.jclouds;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,22 +16,58 @@ public class JcloudsEndpointUriFactory extends org.apache.camel.support.componen
 
     private static final String BASE = ":command:providerId";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(19);
+        set.add("command");
+        set.add("providerId");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("blobName");
+        set.add("container");
+        set.add("directory");
+        set.add("group");
+        set.add("hardwareId");
+        set.add("imageId");
+        set.add("locationId");
+        set.add("nodeId");
+        set.add("nodeState");
+        set.add("operation");
+        set.add("user");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "jclouds".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "command", null, true, copy);
         uri = buildPathParameter(syntax, uri, "providerId", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

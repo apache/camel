@@ -3,7 +3,9 @@ package org.apache.camel.component.pulsar;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,17 +16,62 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
 
     private static final String BASE = ":persistence://tenant/namespace/topic";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(38);
+        set.add("persistence");
+        set.add("tenant");
+        set.add("namespace");
+        set.add("topic");
+        set.add("ackGroupTimeMillis");
+        set.add("ackTimeoutMillis");
+        set.add("allowManualAcknowledgement");
+        set.add("bridgeErrorHandler");
+        set.add("consumerName");
+        set.add("consumerNamePrefix");
+        set.add("consumerQueueSize");
+        set.add("deadLetterTopic");
+        set.add("maxRedeliverCount");
+        set.add("negativeAckRedeliveryDelayMicros");
+        set.add("numberOfConsumers");
+        set.add("subscriptionInitialPosition");
+        set.add("subscriptionName");
+        set.add("subscriptionTopicsMode");
+        set.add("subscriptionType");
+        set.add("topicsPattern");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("batcherBuilder");
+        set.add("batchingEnabled");
+        set.add("batchingMaxMessages");
+        set.add("batchingMaxPublishDelayMicros");
+        set.add("blockIfQueueFull");
+        set.add("compressionType");
+        set.add("initialSequenceId");
+        set.add("lazyStartProducer");
+        set.add("maxPendingMessages");
+        set.add("maxPendingMessagesAcrossPartitions");
+        set.add("messageRouter");
+        set.add("messageRoutingMode");
+        set.add("producerName");
+        set.add("sendTimeoutMs");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "pulsar".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "persistence", null, true, copy);
         uri = buildPathParameter(syntax, uri, "tenant", null, true, copy);
@@ -32,6 +79,16 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
         uri = buildPathParameter(syntax, uri, "topic", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 

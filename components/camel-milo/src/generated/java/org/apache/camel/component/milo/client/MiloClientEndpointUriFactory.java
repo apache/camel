@@ -3,7 +3,9 @@ package org.apache.camel.component.milo.client;
 
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.spi.EndpointUriFactory;
 
@@ -14,21 +16,69 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final String BASE = ":endpointUri";
 
+    private static final Set<String> PROPERTY_NAMES;
+    static {
+        Set<String> set = new HashSet<>(31);
+        set.add("endpointUri");
+        set.add("clientId");
+        set.add("defaultAwaitWrites");
+        set.add("discoveryEndpointSuffix");
+        set.add("discoveryEndpointUri");
+        set.add("method");
+        set.add("node");
+        set.add("samplingInterval");
+        set.add("bridgeErrorHandler");
+        set.add("exceptionHandler");
+        set.add("exchangePattern");
+        set.add("lazyStartProducer");
+        set.add("basicPropertyBinding");
+        set.add("synchronous");
+        set.add("allowedSecurityPolicies");
+        set.add("applicationName");
+        set.add("applicationUri");
+        set.add("channelLifetime");
+        set.add("keyAlias");
+        set.add("keyPassword");
+        set.add("keyStorePassword");
+        set.add("keyStoreType");
+        set.add("keyStoreUrl");
+        set.add("maxPendingPublishRequests");
+        set.add("maxResponseMessageSize");
+        set.add("overrideHost");
+        set.add("productUri");
+        set.add("requestedPublishingInterval");
+        set.add("requestTimeout");
+        set.add("sessionName");
+        set.add("sessionTimeout");
+        PROPERTY_NAMES = set;
+    }
+
+
     @Override
     public boolean isEnabled(String scheme) {
         return "milo-client".equals(scheme);
     }
 
     @Override
-    public String buildUri(String scheme, Map<String, Object> parameters) throws URISyntaxException {
+    public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
         String syntax = scheme + BASE;
         String uri = syntax;
 
-        Map<String, Object> copy = new HashMap<>(parameters);
+        Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "endpointUri", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
+    }
+
+    @Override
+    public Set<String> propertyNames() {
+        return PROPERTY_NAMES;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return false;
     }
 }
 
