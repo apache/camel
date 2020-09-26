@@ -20,13 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.URISupport;
 
-public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
+public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSupport {
 
     private String scheme;
 
@@ -42,9 +40,8 @@ public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-        Map<String, String> properties = catalog.endpointProperties(uri);
-        Map<String, String> lenient = catalog.endpointLenientProperties(uri);
+        Map<String, String> properties = endpointProperties(exchange, uri);
+        Map<String, String> lenient = endpointLenientProperties(exchange, uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
     }
 
@@ -106,8 +103,7 @@ public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
                 }
             }
 
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-            return catalog.asEndpointUri(scheme, params, false);
+            return asEndpointUri(exchange, scheme, params);
         } else {
             return entry.getUri();
         }

@@ -22,21 +22,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * HTTP based {@link SendDynamicAware} which allows to optimise HTTP components with the toD (dynamic to) DSL in Camel.
- * This implementation optimises by allowing to provide dynamic parameters via {@link Exchange#HTTP_PATH} and
- * {@link Exchange#HTTP_QUERY} headers instead of the endpoint uri. That allows to use a static endpoint and its
- * producer to service dynamic requests.
+ * HTTP based {@link org.apache.camel.spi.SendDynamicAware} which allows to optimise HTTP components with the toD
+ * (dynamic to) DSL in Camel. This implementation optimises by allowing to provide dynamic parameters via
+ * {@link Exchange#HTTP_PATH} and {@link Exchange#HTTP_QUERY} headers instead of the endpoint uri. That allows to use a
+ * static endpoint and its producer to service dynamic requests.
  */
-public class HttpSendDynamicAware implements SendDynamicAware {
+public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
     private final Processor postProcessor = new HttpSendDynamicPostProcessor();
 
@@ -54,9 +52,8 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-        Map<String, String> properties = catalog.endpointProperties(uri);
-        Map<String, String> lenient = catalog.endpointLenientProperties(uri);
+        Map<String, String> properties = endpointProperties(exchange, uri);
+        Map<String, String> lenient = endpointLenientProperties(exchange, uri);
         return new DynamicAwareEntry(uri, originalUri, properties, lenient);
     }
 
@@ -83,8 +80,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.remove("path");
                 }
             }
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
-            return catalog.asEndpointUri(scheme, params, false);
+            return asEndpointUri(exchange, scheme, params);
         } else {
             // no need for optimisation
             return null;
