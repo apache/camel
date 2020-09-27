@@ -117,6 +117,15 @@ public class Application {
 As a consequence of this change, the Camel Spring Boot starters have been amended to use Customizers instead of creating instances of components, languages or data formats.
 ====
 
+=== Component Verifiers
+
+Camel components which provides `ComponentVerifierExtension` should have `camel-core-catalog` added as dependency at runtime, if the verifier are in use.
+You will see an exception about `camel-core-catalog` not found on classpath otherwise.
+
+=== SendDynamicAware
+
+The API in `org.apache.camel.spi.SendDynamicAware` has changed and any custom implementations must be updated accordingly.
+There is a new abstract `org.apache.camel.support.component.SendDynamicAwareSupport` class which can be used as base for custom implementations.
 
 === Camel Caffeine
 
