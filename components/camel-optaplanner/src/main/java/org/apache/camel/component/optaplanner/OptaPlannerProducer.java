@@ -154,8 +154,8 @@ public class OptaPlannerProducer extends DefaultAsyncProducer {
         final SolverManager solverManager = getSolverManager(exchange);
 
         if (body.getClass().isAnnotationPresent(PlanningSolution.class)) {
-            LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body);
             Long problemId = endpoint.getConfiguration().getProblemId();
+            LOGGER.debug("Asynchronously solving problem: [{}] with id [{}]", body, problemId);
             if (isAsync(exchange)) {
                 executor.submit(() -> {
                     try {
