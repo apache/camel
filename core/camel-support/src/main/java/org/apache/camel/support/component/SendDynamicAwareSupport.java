@@ -36,6 +36,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
 
     private CamelContext camelContext;
     private Set<String> knownProperties;
+    private RuntimeCamelCatalog catalog;
     private String scheme;
 
     @Override
@@ -67,6 +68,8 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }
             knownProperties = factory.propertyNames();
+        } else {
+            catalog = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
         }
     }
 
@@ -87,7 +90,6 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 properties = map;
             }
         } else {
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
             properties = new LinkedHashMap<>(catalog.endpointProperties(uri));
         }
         return properties;
@@ -109,7 +111,6 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
                 properties = map;
             }
         } else {
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
             properties = new LinkedHashMap<>(catalog.endpointLenientProperties(uri));
         }
         return properties;
@@ -127,7 +128,6 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             }
             return answer;
         } else {
-            RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
             return catalog.asEndpointUri(getScheme(), new LinkedHashMap(properties), false);
         }
     }
