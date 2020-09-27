@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support.component;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
+import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
@@ -61,25 +61,23 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
     @Override
     protected void doInit() throws Exception {
         if (isOnlyDynamicQueryParameters()) {
-            knownProperties = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme()).propertyNames();
+            // optimize to eager load the list of known properties
+            EndpointUriFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme());
+            if (factory == null) {
+                throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
+            }
+            knownProperties = factory.propertyNames();
         }
     }
 
     public Map<String, Object> endpointProperties(Exchange exchange, String uri) throws Exception {
         Map<String, Object> properties;
         if (isOnlyDynamicQueryParameters()) {
-            // optimize as we know its only query parameters that can be dynamic, and that there are no lenient properties
-            Map<String, Object> map;
-            int pos = uri.indexOf('?');
-            if (pos != -1) {
-                String query = uri.substring(pos + 1);
-                map = URISupport.parseQuery(query);
-            } else {
-                map = Collections.EMPTY_MAP;
-            }
-            if (map != null && isLenientProperties()) {
-                properties = new LinkedHashMap<>(map.size());
+            // optimize as we know its only query parameters that can be dynamic
+            Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
+            if (map != null && !map.isEmpty() && isLenientProperties()) {
                 // okay so only add the known properties as they are the non lenient properties
+                properties = new LinkedHashMap<>();
                 map.forEach((k, v) -> {
                     if (knownProperties.contains(k)) {
                         properties.put(k, v);
@@ -99,13 +97,17 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         Map<String, Object> properties;
         if (isOnlyDynamicQueryParameters()) {
             // optimize as we know its only query parameters that can be dynamic
-            Map<String, Object> map  = URISupport.parseQuery(uri);
-            properties = new LinkedHashMap<>();
-            map.forEach((k, v) -> {
-                if (!knownProperties.contains(k)) {
-                    properties.put(k, v.toString());
-                }
-            });
+            Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
+            if (map != null && !map.isEmpty()) {
+                properties = new LinkedHashMap<>();
+                map.forEach((k, v) -> {
+                    if (!knownProperties.contains(k)) {
+                        properties.put(k, v.toString());
+                    }
+                });
+            } else {
+                properties = map;
+            }
         } else {
             RuntimeCamelCatalog catalog = exchange.getContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
             properties = new LinkedHashMap<>(catalog.endpointLenientProperties(uri));

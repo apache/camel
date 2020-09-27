@@ -116,6 +116,24 @@ public final class URISupport {
     }
 
     /**
+     * Extracts the query part of the given uri
+     *
+     * @param uri  the uri
+     * @return the query parameters or <tt>null</tt> if the uri has no query
+     */
+    public static String extractQuery(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        int pos = uri.indexOf('?');
+        if (pos != -1) {
+            return uri.substring(pos + 1);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Parses the query part of the uri (eg the parameters).
      * <p/>
      * The URI parameters will by default be URI encoded. However you can define a parameter values with the syntax:
