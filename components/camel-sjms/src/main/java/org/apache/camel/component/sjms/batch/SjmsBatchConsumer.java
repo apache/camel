@@ -191,6 +191,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
                     // its success so prepare for exit
                     connection = localConnection;
+                    running.set(true);
 
                     final List<AtomicBoolean> triggers = new ArrayList<>();
                     for (int i = 0; i < consumerCount; i++) {
@@ -211,7 +212,6 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     }
 
                     LOG.info("Started {} consumer(s) for {}:{}", consumerCount, destinationName, completionSize);
-                    running.set(true);
                     return;
                 } catch (Throwable e) {
                     // we failed so close the local connection as we create a new on next attempt
