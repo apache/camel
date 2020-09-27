@@ -69,7 +69,7 @@ public class ReadinessAndLivenessTest {
         assertTrue(result.getCheck() instanceof MyLiveCheck);
     }
 
-    private class MyReadyCheck extends AbstractHealthCheck implements CamelContextAware {
+    private static class MyReadyCheck extends AbstractHealthCheck implements CamelContextAware {
 
         private CamelContext context;
 
@@ -98,7 +98,7 @@ public class ReadinessAndLivenessTest {
         }
     }
 
-    private class MyLiveCheck extends AbstractHealthCheck implements CamelContextAware {
+    private static class MyLiveCheck extends AbstractHealthCheck implements CamelContextAware {
 
         private CamelContext context;
 

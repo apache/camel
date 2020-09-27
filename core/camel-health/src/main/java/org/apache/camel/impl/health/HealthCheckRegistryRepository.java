@@ -16,17 +16,17 @@
  */
 package org.apache.camel.impl.health;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.support.PatternHelper;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * {@link HealthCheckRepository} that uses the Camel {@link org.apache.camel.spi.Registry}.
@@ -109,14 +109,10 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
     }
 
     private HealthCheckConfiguration matchConfiguration(String id) {
-        if (configurations != null) {
-            for (String key : configurations.keySet()) {
-                if (PatternHelper.matchPattern(id, key)) {
-                    return configurations.get(key);
-                }
-            }
-        }
-        return fallbackConfiguration;
-    }
 
+        return configurations.values().stream()
+                .filter(s -> PatternHelper.matchPattern(id, s.getParent()))
+                .findAny()
+                .orElseGet(() -> fallbackConfiguration);
+    }
 }

@@ -54,7 +54,8 @@ public class RouteHealthCheck extends AbstractHealthCheck {
             if (route.getRouteController() != null || route.isAutoStartup()) {
                 if (status.isStarted()) {
                     builder.up();
-                } else if (status.isStopped()) {
+                }
+                if (status.isStopped()) {
                     builder.down();
                     builder.message(String.format("Route %s has status %s", route.getId(), status.name()));
                 }
@@ -63,16 +64,16 @@ public class RouteHealthCheck extends AbstractHealthCheck {
                     // if a route is configured to not to automatically start, then the
                     // route is always up as it is externally managed.
                     builder.up();
-                } else if (route.getRouteController() == null) {
+                }
+                if (route.getRouteController() == null) {
                     // the route has no route controller which mean it may be supervised and then failed
                     // all attempts and be exhausted, and if so then we are in unknown status
 
                     // the supervised route controller would store the last error if the route is regarded
                     // as unhealthy which we use to signal its down, otherwise we are in unknown state
+                    builder.unknown();
                     if (route.getLastError() != null && route.getLastError().isUnhealthy()) {
                         builder.down();
-                    } else {
-                        builder.unknown();
                     }
                 }
             }

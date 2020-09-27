@@ -62,7 +62,9 @@ public final class ContextHealthCheck extends AbstractHealthCheck implements Cam
 
             if (camelContext.getStatus().isStarted()) {
                 builder.up();
-            } else if (camelContext.getStatus().isStopped()) {
+            }
+
+            if (camelContext.getStatus().isStopped()) {
                 builder.down();
             }
         }

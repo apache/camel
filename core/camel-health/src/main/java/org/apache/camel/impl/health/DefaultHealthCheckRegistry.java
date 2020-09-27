@@ -166,10 +166,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @Override
     public boolean register(Object obj) {
-        boolean accept = obj instanceof HealthCheck || obj instanceof HealthCheckRepository;
-        if (!accept) {
-            throw new IllegalArgumentException();
-        }
+        checkIfAccepted(obj);
+
+        boolean result;
 
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
@@ -177,7 +176,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             if (getCheck(healthCheck.getId()).isPresent()) {
                 return false;
             }
-            boolean result = checks.add(healthCheck);
+            result = checks.add(healthCheck);
             if (result) {
                 if (obj instanceof CamelContextAware) {
                     ((CamelContextAware) obj).setCamelContext(camelContext);
@@ -185,14 +184,13 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
                 LOG.debug("HealthCheck with id {} successfully registered", healthCheck.getId());
             }
-            return result;
         } else {
             HealthCheckRepository repository = (HealthCheckRepository) obj;
             // do we have this already
             if (getRepository(repository.getId()).isPresent()) {
                 return false;
             }
-            boolean result = this.repositories.add(repository);
+            result = this.repositories.add(repository);
             if (result) {
                 if (repository instanceof CamelContextAware) {
                     ((CamelContextAware) repository).setCamelContext(camelContext);
@@ -200,32 +198,32 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
                 LOG.debug("HealthCheckRepository with id {} successfully registered", repository.getId());
             }
-            return result;
         }
+
+        return result;
     }
 
     @Override
     public boolean unregister(Object obj) {
-        boolean accept = obj instanceof HealthCheck || obj instanceof HealthCheckRepository;
-        if (!accept) {
-            throw new IllegalArgumentException();
-        }
+        checkIfAccepted(obj);
+
+        boolean result;
 
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
-            boolean result = checks.remove(healthCheck);
+            result = checks.remove(healthCheck);
             if (result) {
                 LOG.debug("HealthCheck with id {} successfully un-registered", healthCheck.getId());
             }
-            return result;
         } else {
             HealthCheckRepository repository = (HealthCheckRepository) obj;
-            boolean result = this.repositories.remove(repository);
+            result = this.repositories.remove(repository);
             if (result) {
                 LOG.debug("HealthCheckRepository with id {} successfully un-registered", repository.getId());
             }
-            return result;
         }
+
+        return result;
     }
 
     // ************************************
@@ -249,8 +247,14 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
             return Stream.concat(
                     checks.stream(),
                     repositories.stream().flatMap(HealthCheckRepository::stream)).distinct();
-        } else {
-            return Stream.empty();
+        }
+        return Stream.empty();
+    }
+
+    private void checkIfAccepted(Object obj) {
+        boolean accept = obj instanceof HealthCheck || obj instanceof HealthCheckRepository;
+        if (!accept) {
+            throw new IllegalArgumentException();
         }
     }
 }

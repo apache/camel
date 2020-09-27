@@ -200,7 +200,7 @@ public class DefaultHealthCheckRegistryTest {
         }
     }
 
-    private class MyHealthCheck extends AbstractHealthCheck implements CamelContextAware {
+    private static class MyHealthCheck extends AbstractHealthCheck implements CamelContextAware {
 
         private CamelContext context;
 
