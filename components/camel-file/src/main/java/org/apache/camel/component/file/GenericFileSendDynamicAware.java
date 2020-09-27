@@ -55,8 +55,7 @@ public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSuppor
         if (fileName || tempFileName || idempotentKey || move || moveFailed || preMove || moveExisting) {
             Map<String, Object> params = entry.getProperties();
 
-            // TODO: parseQuery should only have the query part, this is not correct
-            Map<String, Object> originalParams = URISupport.parseQuery(entry.getOriginalUri());
+            Map<String, Object> originalParams = URISupport.parseQuery(URISupport.extractQuery(entry.getOriginalUri()));
             if (fileName) {
                 Object val = originalParams.get("fileName");
                 if (val != null) {

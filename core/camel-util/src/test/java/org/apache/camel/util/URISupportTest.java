@@ -567,4 +567,14 @@ public class URISupportTest {
         assertThat(URISupport.joinPaths("/a/", null, null, null)).isEqualTo("/a/");
         assertThat(URISupport.joinPaths("a/", "/b", null, null)).isEqualTo("a/b");
     }
+
+    @Test
+    public void testExtractQuery() throws Exception {
+        assertEquals(null, URISupport.extractQuery(null));
+        assertEquals(null, URISupport.extractQuery(""));
+        assertEquals(null, URISupport.extractQuery("file:foo"));
+        assertEquals("recursive=true", URISupport.extractQuery("file:foo?recursive=true"));
+        assertEquals("recursive=true&delete=true", URISupport.extractQuery("file:foo?recursive=true&delete=true"));
+    }
+
 }
