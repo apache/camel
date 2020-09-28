@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cacheName", java.lang.String.class);
+        map.put("action", java.lang.String.class);
+        map.put("cacheLoader", com.github.benmanes.caffeine.cache.CacheLoader.class);
+        map.put("createCacheIfNotExist", boolean.class);
+        map.put("evictionType", org.apache.camel.component.caffeine.EvictionType.class);
+        map.put("expireAfterAccessTime", int.class);
+        map.put("expireAfterWriteTime", int.class);
+        map.put("initialCapacity", int.class);
+        map.put("key", java.lang.Object.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("maximumSize", int.class);
+        map.put("removalListener", com.github.benmanes.caffeine.cache.RemovalListener.class);
+        map.put("statsCounter", com.github.benmanes.caffeine.cache.stats.StatsCounter.class);
+        map.put("statsEnabled", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("keyType", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("valueType", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
@@ -56,25 +80,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("cacheLoader", com.github.benmanes.caffeine.cache.CacheLoader.class);
-        answer.put("createCacheIfNotExist", boolean.class);
-        answer.put("evictionType", org.apache.camel.component.caffeine.EvictionType.class);
-        answer.put("expireAfterAccessTime", int.class);
-        answer.put("expireAfterWriteTime", int.class);
-        answer.put("initialCapacity", int.class);
-        answer.put("key", java.lang.Object.class);
-        answer.put("keyType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumSize", int.class);
-        answer.put("removalListener", com.github.benmanes.caffeine.cache.RemovalListener.class);
-        answer.put("statsCounter", com.github.benmanes.caffeine.cache.stats.StatsCounter.class);
-        answer.put("statsEnabled", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("valueType", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

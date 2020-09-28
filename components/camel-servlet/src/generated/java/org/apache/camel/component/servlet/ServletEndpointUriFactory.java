@@ -47,7 +47,6 @@ public class ServletEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "servlet".equals(scheme);

@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("amazonKinesisFirehoseClient", software.amazon.awssdk.services.firehose.FirehoseClient.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("configuration", org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("trustAllCertificates", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration getOrCreateConfiguration(KinesisFirehose2Component target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration());
@@ -55,21 +74,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonKinesisFirehoseClient", software.amazon.awssdk.services.firehose.FirehoseClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("trustAllCertificates", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("command", java.lang.String.class);
+        map.put("language", org.apache.camel.spi.Language.class);
+        map.put("action", java.lang.String.class);
+        map.put("async", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("loggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("restartDelay", int.class);
+        map.put("routeId", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ControlBusEndpoint target = (ControlBusEndpoint) obj;
@@ -38,16 +54,7 @@ public class ControlBusEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("async", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("restartDelay", int.class);
-        answer.put("routeId", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

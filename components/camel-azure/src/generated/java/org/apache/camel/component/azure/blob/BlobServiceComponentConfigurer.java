@@ -15,6 +15,34 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("azureBlobClient", com.microsoft.azure.storage.blob.CloudBlob.class);
+        map.put("blobOffset", java.lang.Long.class);
+        map.put("blobType", org.apache.camel.component.azure.blob.BlobType.class);
+        map.put("closeStreamAfterRead", boolean.class);
+        map.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
+        map.put("dataLength", java.lang.Long.class);
+        map.put("fileDir", java.lang.String.class);
+        map.put("publicForRead", boolean.class);
+        map.put("streamReadSize", int.class);
+        map.put("validateClientURI", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("blobMetadata", java.util.Map.class);
+        map.put("blobPrefix", java.lang.String.class);
+        map.put("closeStreamAfterWrite", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.azure.blob.BlobServiceOperations.class);
+        map.put("streamWriteSize", int.class);
+        map.put("useFlatListing", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.azure.blob.BlobServiceConfiguration.class);
+        map.put("credentialsAccountKey", java.lang.String.class);
+        map.put("credentialsAccountName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.azure.blob.BlobServiceConfiguration getOrCreateConfiguration(BlobServiceComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.azure.blob.BlobServiceConfiguration());
@@ -73,30 +101,7 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("azureBlobClient", com.microsoft.azure.storage.blob.CloudBlob.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobMetadata", java.util.Map.class);
-        answer.put("blobOffset", java.lang.Long.class);
-        answer.put("blobPrefix", java.lang.String.class);
-        answer.put("blobType", org.apache.camel.component.azure.blob.BlobType.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("closeStreamAfterRead", boolean.class);
-        answer.put("closeStreamAfterWrite", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.blob.BlobServiceConfiguration.class);
-        answer.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        answer.put("credentialsAccountKey", java.lang.String.class);
-        answer.put("credentialsAccountName", java.lang.String.class);
-        answer.put("dataLength", java.lang.Long.class);
-        answer.put("fileDir", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.azure.blob.BlobServiceOperations.class);
-        answer.put("publicForRead", boolean.class);
-        answer.put("streamReadSize", int.class);
-        answer.put("streamWriteSize", int.class);
-        answer.put("useFlatListing", boolean.class);
-        answer.put("validateClientURI", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
+        map.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
+        map.put("validateClientURI", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("messageTimeToLive", int.class);
+        map.put("messageVisibilityDelay", int.class);
+        map.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
+        map.put("queuePrefix", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.azure.queue.QueueServiceConfiguration.class);
+        map.put("credentialsAccountKey", java.lang.String.class);
+        map.put("credentialsAccountName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.azure.queue.QueueServiceConfiguration getOrCreateConfiguration(QueueServiceComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.azure.queue.QueueServiceConfiguration());
@@ -55,21 +74,7 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.queue.QueueServiceConfiguration.class);
-        answer.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        answer.put("credentialsAccountKey", java.lang.String.class);
-        answer.put("credentialsAccountName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageTimeToLive", int.class);
-        answer.put("messageVisibilityDelay", int.class);
-        answer.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
-        answer.put("queuePrefix", java.lang.String.class);
-        answer.put("validateClientURI", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

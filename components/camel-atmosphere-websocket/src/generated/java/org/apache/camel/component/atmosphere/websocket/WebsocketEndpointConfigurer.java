@@ -15,6 +15,41 @@ import org.apache.camel.component.servlet.ServletEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("servicePath", java.lang.String.class);
+        map.put("chunked", boolean.class);
+        map.put("disableStreamCache", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("sendToAll", boolean.class);
+        map.put("transferException", boolean.class);
+        map.put("useStreaming", boolean.class);
+        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
+        map.put("async", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("httpMethodRestrict", java.lang.String.class);
+        map.put("matchOnUriPrefix", boolean.class);
+        map.put("muteException", boolean.class);
+        map.put("responseBufferSize", java.lang.Integer.class);
+        map.put("servletName", java.lang.String.class);
+        map.put("attachmentMultipartBinding", boolean.class);
+        map.put("eagerCheckContentAvailable", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("fileNameExtWhitelist", java.lang.String.class);
+        map.put("optionsEnabled", boolean.class);
+        map.put("traceEnabled", boolean.class);
+        map.put("bridgeEndpoint", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("mapHttpMessageBody", boolean.class);
+        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
+        map.put("mapHttpMessageHeaders", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
@@ -33,12 +68,7 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeEndpoint", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("sendToAll", boolean.class);
-        answer.put("useStreaming", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

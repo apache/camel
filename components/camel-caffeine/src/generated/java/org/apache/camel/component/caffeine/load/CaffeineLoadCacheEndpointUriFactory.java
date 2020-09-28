@@ -40,7 +40,6 @@ public class CaffeineLoadCacheEndpointUriFactory extends org.apache.camel.suppor
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "caffeine-loadcache".equals(scheme);

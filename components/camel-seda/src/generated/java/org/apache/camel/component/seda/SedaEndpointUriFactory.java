@@ -43,7 +43,6 @@ public class SedaEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "seda".equals(scheme);

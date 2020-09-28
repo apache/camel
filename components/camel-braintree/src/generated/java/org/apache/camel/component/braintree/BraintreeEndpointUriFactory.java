@@ -68,7 +68,6 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "braintree".equals(scheme);

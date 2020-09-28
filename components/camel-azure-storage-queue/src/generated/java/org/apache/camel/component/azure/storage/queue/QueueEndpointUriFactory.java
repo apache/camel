@@ -42,7 +42,6 @@ public class QueueEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "azure-storage-queue".equals(scheme);

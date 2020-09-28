@@ -52,7 +52,6 @@ public class AtomEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "atom".equals(scheme);

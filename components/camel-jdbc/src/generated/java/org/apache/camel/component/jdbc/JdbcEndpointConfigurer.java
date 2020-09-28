@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("dataSourceName", java.lang.String.class);
+        map.put("allowNamedParameters", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("outputClass", java.lang.String.class);
+        map.put("outputType", org.apache.camel.component.jdbc.JdbcOutputType.class);
+        map.put("parameters", java.util.Map.class);
+        map.put("readSize", int.class);
+        map.put("resetAutoCommit", boolean.class);
+        map.put("transacted", boolean.class);
+        map.put("useGetBytesForBlob", boolean.class);
+        map.put("useHeadersAsParameters", boolean.class);
+        map.put("useJDBC4ColumnNameAndLabelSemantics", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("beanRowMapper", org.apache.camel.component.jdbc.BeanRowMapper.class);
+        map.put("prepareStatementStrategy", org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JdbcEndpoint target = (JdbcEndpoint) obj;
@@ -52,23 +74,7 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowNamedParameters", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("beanRowMapper", org.apache.camel.component.jdbc.BeanRowMapper.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outputClass", java.lang.String.class);
-        answer.put("outputType", org.apache.camel.component.jdbc.JdbcOutputType.class);
-        answer.put("parameters", java.util.Map.class);
-        answer.put("prepareStatementStrategy", org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy.class);
-        answer.put("readSize", int.class);
-        answer.put("resetAutoCommit", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transacted", boolean.class);
-        answer.put("useGetBytesForBlob", boolean.class);
-        answer.put("useHeadersAsParameters", boolean.class);
-        answer.put("useJDBC4ColumnNameAndLabelSemantics", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

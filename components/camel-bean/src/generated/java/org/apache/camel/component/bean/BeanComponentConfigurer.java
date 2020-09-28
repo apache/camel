@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BeanComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cache", java.lang.Boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("scope", org.apache.camel.BeanScope.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanComponent target = (BeanComponent) obj;
@@ -31,12 +41,7 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("cache", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("scope", org.apache.camel.BeanScope.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

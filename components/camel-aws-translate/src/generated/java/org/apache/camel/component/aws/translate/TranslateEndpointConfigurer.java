@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TranslateEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("label", java.lang.String.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("autodetectSourceLanguage", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.aws.translate.TranslateOperations.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        map.put("sourceLanguage", java.lang.String.class);
+        map.put("targetLanguage", java.lang.String.class);
+        map.put("translateClient", com.amazonaws.services.translate.AmazonTranslate.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TranslateEndpoint target = (TranslateEndpoint) obj;
@@ -52,23 +74,7 @@ public class TranslateEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("autodetectSourceLanguage", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws.translate.TranslateOperations.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sourceLanguage", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("targetLanguage", java.lang.String.class);
-        answer.put("translateClient", com.amazonaws.services.translate.AmazonTranslate.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

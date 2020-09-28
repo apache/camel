@@ -43,7 +43,6 @@ public class VmEndpointUriFactory extends org.apache.camel.support.component.End
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "vm".equals(scheme);

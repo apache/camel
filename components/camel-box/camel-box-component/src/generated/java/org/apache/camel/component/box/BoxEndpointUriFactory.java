@@ -115,7 +115,6 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "box".equals(scheme);

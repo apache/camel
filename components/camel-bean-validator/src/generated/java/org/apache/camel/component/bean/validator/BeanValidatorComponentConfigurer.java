@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ignoreXmlConfiguration", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("constraintValidatorFactory", javax.validation.ConstraintValidatorFactory.class);
+        map.put("messageInterpolator", javax.validation.MessageInterpolator.class);
+        map.put("traversableResolver", javax.validation.TraversableResolver.class);
+        map.put("validationProviderResolver", javax.validation.ValidationProviderResolver.class);
+        map.put("validatorFactory", javax.validation.ValidatorFactory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
@@ -41,16 +55,7 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("constraintValidatorFactory", javax.validation.ConstraintValidatorFactory.class);
-        answer.put("ignoreXmlConfiguration", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageInterpolator", javax.validation.MessageInterpolator.class);
-        answer.put("traversableResolver", javax.validation.TraversableResolver.class);
-        answer.put("validationProviderResolver", javax.validation.ValidationProviderResolver.class);
-        answer.put("validatorFactory", javax.validation.ValidatorFactory.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

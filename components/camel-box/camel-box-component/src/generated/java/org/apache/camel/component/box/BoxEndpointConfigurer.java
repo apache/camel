@@ -15,6 +15,105 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", org.apache.camel.component.box.internal.BoxApiName.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("enterpriseId", java.lang.String.class);
+        map.put("inBody", java.lang.String.class);
+        map.put("userId", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpParams", java.util.Map.class);
+        map.put("synchronous", boolean.class);
+        map.put("authenticationType", java.lang.String.class);
+        map.put("accessTokenCache", com.box.sdk.IAccessTokenCache.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("encryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        map.put("maxCacheEntries", int.class);
+        map.put("privateKeyFile", java.lang.String.class);
+        map.put("privateKeyPassword", java.lang.String.class);
+        map.put("publicKeyId", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("userName", java.lang.String.class);
+        map.put("userPassword", java.lang.String.class);
+        map.put("access", com.box.sdk.BoxSharedLink.Access.class);
+        map.put("action", com.box.sdk.BoxTask.Action.class);
+        map.put("after", java.util.Date.class);
+        map.put("assignTo", com.box.sdk.BoxUser.class);
+        map.put("before", java.util.Date.class);
+        map.put("check", java.lang.Boolean.class);
+        map.put("collaborationId", java.lang.String.class);
+        map.put("collaborator", com.box.sdk.BoxCollaborator.class);
+        map.put("commentId", java.lang.String.class);
+        map.put("content", java.io.InputStream.class);
+        map.put("created", java.util.Date.class);
+        map.put("description", java.lang.String.class);
+        map.put("destinationFolderId", java.lang.String.class);
+        map.put("dueAt", java.util.Date.class);
+        map.put("email", java.lang.String.class);
+        map.put("emailAliasId", java.lang.String.class);
+        map.put("externalSyncIdentifier", java.lang.String.class);
+        map.put("fields", java.lang.String[].class);
+        map.put("fileContent", java.io.InputStream.class);
+        map.put("fileId", java.lang.String.class);
+        map.put("fileName", java.lang.String.class);
+        map.put("fileSize", java.lang.Long.class);
+        map.put("fileType", com.box.sdk.BoxFile.ThumbnailFileType.class);
+        map.put("filterTerm", java.lang.String.class);
+        map.put("folderId", java.lang.String.class);
+        map.put("folderName", java.lang.String.class);
+        map.put("force", java.lang.Boolean.class);
+        map.put("groupId", java.lang.String.class);
+        map.put("groupInfo", com.box.sdk.BoxGroup.Info.class);
+        map.put("groupMembershipId", java.lang.String.class);
+        map.put("info", com.box.sdk.BoxCollaboration.Info.class);
+        map.put("invitabilityLevel", java.lang.String.class);
+        map.put("limit", java.lang.Long.class);
+        map.put("listener", com.box.sdk.ProgressListener.class);
+        map.put("login", java.lang.String.class);
+        map.put("maxHeight", java.lang.Integer.class);
+        map.put("maxWidth", java.lang.Integer.class);
+        map.put("memberViewabilityLevel", java.lang.String.class);
+        map.put("message", java.lang.String.class);
+        map.put("metadata", com.box.sdk.Metadata.class);
+        map.put("minHeight", java.lang.Integer.class);
+        map.put("minWidth", java.lang.Integer.class);
+        map.put("modified", java.util.Date.class);
+        map.put("name", java.lang.String.class);
+        map.put("newFileName", java.lang.String.class);
+        map.put("newFolderName", java.lang.String.class);
+        map.put("newName", java.lang.String.class);
+        map.put("notifyUser", java.lang.Boolean.class);
+        map.put("offset", java.lang.Long.class);
+        map.put("output", java.io.OutputStream.class);
+        map.put("params", com.box.sdk.CreateUserParams.class);
+        map.put("parentFolderId", java.lang.String.class);
+        map.put("path", java.lang.String[].class);
+        map.put("permissions", com.box.sdk.BoxSharedLink.Permissions.class);
+        map.put("position", java.lang.String.class);
+        map.put("provenance", java.lang.String.class);
+        map.put("query", java.lang.String.class);
+        map.put("rangeEnd", java.lang.Long.class);
+        map.put("rangeStart", java.lang.Long.class);
+        map.put("role", com.box.sdk.BoxCollaboration.Role.class);
+        map.put("size", java.lang.Long.class);
+        map.put("sourceUserId", java.lang.String.class);
+        map.put("startingPosition", java.lang.Long.class);
+        map.put("taskAssignmentId", java.lang.String.class);
+        map.put("taskId", java.lang.String.class);
+        map.put("typeName", java.lang.String.class);
+        map.put("types", com.box.sdk.BoxEvent.Type[].class);
+        map.put("unshareDate", java.util.Date.class);
+        map.put("userId", java.lang.String.class);
+        map.put("version", java.lang.Integer.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BoxEndpoint target = (BoxEndpoint) obj;
@@ -66,29 +165,7 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        answer.put("authenticationType", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("encryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        answer.put("enterpriseId", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("httpParams", java.util.Map.class);
-        answer.put("inBody", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxCacheEntries", int.class);
-        answer.put("privateKeyFile", java.lang.String.class);
-        answer.put("privateKeyPassword", java.lang.String.class);
-        answer.put("publicKeyId", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("userId", java.lang.String.class);
-        answer.put("userName", java.lang.String.class);
-        answer.put("userPassword", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

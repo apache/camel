@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SesEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("from", java.lang.String.class);
+        map.put("amazonSESClient", com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("replyToAddresses", java.util.List.class);
+        map.put("returnPath", java.lang.String.class);
+        map.put("subject", java.lang.String.class);
+        map.put("to", java.util.List.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SesEndpoint target = (SesEndpoint) obj;
@@ -51,23 +73,7 @@ public class SesEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonSESClient", com.amazonaws.services.simpleemail.AmazonSimpleEmailService.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("replyToAddresses", java.util.List.class);
-        answer.put("returnPath", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("to", java.util.List.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

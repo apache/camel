@@ -33,7 +33,6 @@ public class AsteriskEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "asterisk".equals(scheme);

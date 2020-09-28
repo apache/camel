@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ApnsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apnsService", com.notnoop.apns.ApnsService.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ApnsComponent target = (ApnsComponent) obj;
@@ -33,12 +43,7 @@ public class ApnsComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apnsService", com.notnoop.apns.ApnsService.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

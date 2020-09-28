@@ -15,6 +15,15 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CronComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("cronService", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CronComponent target = (CronComponent) obj;
@@ -31,11 +40,7 @@ public class CronComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cronService", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

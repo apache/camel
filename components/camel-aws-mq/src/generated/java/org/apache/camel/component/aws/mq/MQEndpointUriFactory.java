@@ -35,7 +35,6 @@ public class MQEndpointUriFactory extends org.apache.camel.support.component.End
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-mq".equals(scheme);

@@ -43,7 +43,6 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "rest".equals(scheme);

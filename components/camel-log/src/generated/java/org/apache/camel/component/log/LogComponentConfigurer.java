@@ -15,6 +15,15 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LogComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LogComponent target = (LogComponent) obj;
@@ -31,11 +40,7 @@ public class LogComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

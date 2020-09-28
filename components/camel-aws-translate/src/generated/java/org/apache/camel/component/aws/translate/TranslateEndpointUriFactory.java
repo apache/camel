@@ -38,7 +38,6 @@ public class TranslateEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-translate".equals(scheme);

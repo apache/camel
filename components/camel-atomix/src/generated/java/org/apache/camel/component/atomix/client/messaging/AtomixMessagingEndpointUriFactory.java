@@ -44,7 +44,6 @@ public class AtomixMessagingEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "atomix-messaging".equals(scheme);

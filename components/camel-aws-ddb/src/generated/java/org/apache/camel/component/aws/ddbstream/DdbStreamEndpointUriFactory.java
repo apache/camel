@@ -55,7 +55,6 @@ public class DdbStreamEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-ddbstream".equals(scheme);

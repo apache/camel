@@ -38,7 +38,6 @@ public class JdbcEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jdbc".equals(scheme);

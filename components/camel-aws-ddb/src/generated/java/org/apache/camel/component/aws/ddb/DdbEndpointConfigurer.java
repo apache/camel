@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("tableName", java.lang.String.class);
+        map.put("amazonDDBClient", com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("consistentRead", boolean.class);
+        map.put("keyAttributeName", java.lang.String.class);
+        map.put("keyAttributeType", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.aws.ddb.DdbOperations.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("readCapacity", java.lang.Long.class);
+        map.put("region", java.lang.String.class);
+        map.put("writeCapacity", java.lang.Long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DdbEndpoint target = (DdbEndpoint) obj;
@@ -56,25 +80,7 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonDDBClient", com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("consistentRead", boolean.class);
-        answer.put("keyAttributeName", java.lang.String.class);
-        answer.put("keyAttributeType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws.ddb.DdbOperations.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("readCapacity", java.lang.Long.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("writeCapacity", java.lang.Long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

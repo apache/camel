@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TimerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("timerName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("delay", long.class);
+        map.put("fixedRate", boolean.class);
+        map.put("includeMetadata", boolean.class);
+        map.put("period", long.class);
+        map.put("repeatCount", long.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("daemon", boolean.class);
+        map.put("pattern", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("time", java.util.Date.class);
+        map.put("timer", java.util.Timer.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TimerEndpoint target = (TimerEndpoint) obj;
@@ -46,22 +67,7 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("daemon", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fixedRate", boolean.class);
-        answer.put("includeMetadata", boolean.class);
-        answer.put("pattern", java.lang.String.class);
-        answer.put("period", long.class);
-        answer.put("repeatCount", long.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("time", java.util.Date.class);
-        answer.put("timer", java.util.Timer.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

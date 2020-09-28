@@ -58,7 +58,6 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "cql".equals(scheme);

@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("httpUri", java.net.URI.class);
+        map.put("bridgeEndpoint", boolean.class);
+        map.put("bufferSize", int.class);
+        map.put("connectionClose", boolean.class);
+        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("throwExceptionOnFailure", boolean.class);
+        map.put("transferException", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
+        map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
+        map.put("clientConfigOptions", java.util.Map.class);
+        map.put("synchronous", boolean.class);
+        map.put("clientConfigRealmOptions", java.util.Map.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AhcEndpoint target = (AhcEndpoint) obj;
@@ -53,23 +75,7 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
-        answer.put("bridgeEndpoint", boolean.class);
-        answer.put("bufferSize", int.class);
-        answer.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
-        answer.put("clientConfigOptions", java.util.Map.class);
-        answer.put("clientConfigRealmOptions", java.util.Map.class);
-        answer.put("connectionClose", boolean.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        answer.put("transferException", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

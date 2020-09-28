@@ -15,6 +15,33 @@ import org.apache.camel.component.ahc.AhcEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class WsEndpointConfigurer extends AhcEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("httpUri", java.net.URI.class);
+        map.put("bridgeEndpoint", boolean.class);
+        map.put("bufferSize", int.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("throwExceptionOnFailure", boolean.class);
+        map.put("transferException", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendMessageOnError", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("connectionClose", boolean.class);
+        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("useStreaming", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
+        map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
+        map.put("clientConfigOptions", java.util.Map.class);
+        map.put("synchronous", boolean.class);
+        map.put("clientConfigRealmOptions", java.util.Map.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WsEndpoint target = (WsEndpoint) obj;
@@ -35,13 +62,7 @@ public class WsEndpointConfigurer extends AhcEndpointConfigurer implements Gener
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("sendMessageOnError", boolean.class);
-        answer.put("useStreaming", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

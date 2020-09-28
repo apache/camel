@@ -58,7 +58,6 @@ public class KinesisEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-kinesis".equals(scheme);

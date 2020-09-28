@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("atomix", io.atomix.Atomix.class);
+        map.put("broadcastType", org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType.class);
+        map.put("channelName", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration.class);
+        map.put("configurationUri", java.lang.String.class);
+        map.put("defaultAction", org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action.class);
+        map.put("memberName", java.lang.String.class);
+        map.put("nodes", java.util.List.class);
+        map.put("resultHeader", java.lang.String.class);
+        map.put("transportClassName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("defaultResourceConfig", java.util.Properties.class);
+        map.put("defaultResourceOptions", java.util.Properties.class);
+        map.put("ephemeral", boolean.class);
+        map.put("readConsistency", io.atomix.resource.ReadConsistency.class);
+        map.put("resourceConfigs", java.util.Map.class);
+        map.put("resourceOptions", java.util.Map.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration getOrCreateConfiguration(AtomixMessagingComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration());
@@ -66,27 +91,7 @@ public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("atomix", io.atomix.Atomix.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("broadcastType", org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType.class);
-        answer.put("channelName", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.atomix.client.messaging.AtomixMessagingConfiguration.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("defaultAction", org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action.class);
-        answer.put("defaultResourceConfig", java.util.Properties.class);
-        answer.put("defaultResourceOptions", java.util.Properties.class);
-        answer.put("ephemeral", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("memberName", java.lang.String.class);
-        answer.put("nodes", java.util.List.class);
-        answer.put("readConsistency", io.atomix.resource.ReadConsistency.class);
-        answer.put("resourceConfigs", java.util.Map.class);
-        answer.put("resourceOptions", java.util.Map.class);
-        answer.put("resultHeader", java.lang.String.class);
-        answer.put("transportClassName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

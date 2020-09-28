@@ -15,6 +15,44 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("continuationTimeout", java.lang.Long.class);
+        map.put("enableJmx", boolean.class);
+        map.put("maxThreads", java.lang.Integer.class);
+        map.put("minThreads", java.lang.Integer.class);
+        map.put("requestBufferSize", java.lang.Integer.class);
+        map.put("requestHeaderSize", java.lang.Integer.class);
+        map.put("responseBufferSize", java.lang.Integer.class);
+        map.put("responseHeaderSize", java.lang.Integer.class);
+        map.put("sendServerVersion", boolean.class);
+        map.put("useContinuation", boolean.class);
+        map.put("useXForwardedForHeader", boolean.class);
+        map.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
+        map.put("allowJavaSerializedObject", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("errorHandler", org.eclipse.jetty.server.handler.ErrorHandler.class);
+        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
+        map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
+        map.put("jettyHttpBinding", org.apache.camel.component.jetty.JettyHttpBinding.class);
+        map.put("mbContainer", org.eclipse.jetty.jmx.MBeanContainer.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("keystore", java.lang.String.class);
+        map.put("socketConnectorProperties", java.util.Map.class);
+        map.put("socketConnectors", java.util.Map.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("sslKeyPassword", java.lang.String.class);
+        map.put("sslPassword", java.lang.String.class);
+        map.put("sslSocketConnectorProperties", java.util.Map.class);
+        map.put("sslSocketConnectors", java.util.Map.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JettyHttpComponent9 target = (JettyHttpComponent9) obj;
@@ -88,40 +126,7 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("continuationTimeout", java.lang.Long.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("errorHandler", org.eclipse.jetty.server.handler.ErrorHandler.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("jettyHttpBinding", org.apache.camel.component.jetty.JettyHttpBinding.class);
-        answer.put("keystore", java.lang.String.class);
-        answer.put("maxThreads", java.lang.Integer.class);
-        answer.put("mbContainer", org.eclipse.jetty.jmx.MBeanContainer.class);
-        answer.put("minThreads", java.lang.Integer.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("requestBufferSize", java.lang.Integer.class);
-        answer.put("requestHeaderSize", java.lang.Integer.class);
-        answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("responseHeaderSize", java.lang.Integer.class);
-        answer.put("sendServerVersion", boolean.class);
-        answer.put("socketConnectorProperties", java.util.Map.class);
-        answer.put("socketConnectors", java.util.Map.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sslKeyPassword", java.lang.String.class);
-        answer.put("sslPassword", java.lang.String.class);
-        answer.put("sslSocketConnectorProperties", java.util.Map.class);
-        answer.put("sslSocketConnectors", java.util.Map.class);
-        answer.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
-        answer.put("useContinuation", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("useXForwardedForHeader", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

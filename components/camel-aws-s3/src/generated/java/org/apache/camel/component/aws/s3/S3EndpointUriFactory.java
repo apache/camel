@@ -82,7 +82,6 @@ public class S3EndpointUriFactory extends org.apache.camel.support.component.End
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-s3".equals(scheme);

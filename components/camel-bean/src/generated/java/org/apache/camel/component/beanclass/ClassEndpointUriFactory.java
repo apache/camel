@@ -30,7 +30,6 @@ public class ClassEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "class".equals(scheme);

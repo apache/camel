@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class QueueComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("configuration", org.apache.camel.component.azure.storage.queue.QueueConfiguration.class);
+        map.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("createQueue", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("maxMessages", java.lang.Integer.class);
+        map.put("messageId", java.lang.String.class);
+        map.put("popReceipt", java.lang.String.class);
+        map.put("timeout", java.time.Duration.class);
+        map.put("timeToLive", java.time.Duration.class);
+        map.put("visibilityTimeout", java.time.Duration.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.azure.storage.queue.QueueConfiguration getOrCreateConfiguration(QueueComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.azure.storage.queue.QueueConfiguration());
@@ -60,24 +82,7 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.storage.queue.QueueConfiguration.class);
-        answer.put("createQueue", boolean.class);
-        answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessages", java.lang.Integer.class);
-        answer.put("messageId", java.lang.String.class);
-        answer.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
-        answer.put("popReceipt", java.lang.String.class);
-        answer.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
-        answer.put("timeToLive", java.time.Duration.class);
-        answer.put("timeout", java.time.Duration.class);
-        answer.put("visibilityTimeout", java.time.Duration.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -74,7 +74,6 @@ public class AS2EndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "as2".equals(scheme);

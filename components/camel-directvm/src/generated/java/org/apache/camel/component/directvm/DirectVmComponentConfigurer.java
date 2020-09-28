@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DirectVmComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("block", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("timeout", long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("propagateProperties", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DirectVmComponent target = (DirectVmComponent) obj;
@@ -37,15 +50,7 @@ public class DirectVmComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("block", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("propagateProperties", boolean.class);
-        answer.put("timeout", long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,35 @@ import org.apache.camel.component.mock.MockEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", org.apache.camel.component.dataset.DataSet.class);
+        map.put("dataSetIndex", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("minRate", int.class);
+        map.put("preloadSize", long.class);
+        map.put("produceDelay", long.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("assertPeriod", long.class);
+        map.put("consumeDelay", long.class);
+        map.put("expectedCount", int.class);
+        map.put("failFast", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("reportGroup", int.class);
+        map.put("resultMinimumWaitTime", long.class);
+        map.put("resultWaitTime", long.class);
+        map.put("retainFirst", int.class);
+        map.put("retainLast", int.class);
+        map.put("sleepForEmptyTest", long.class);
+        map.put("copyOnExchange", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataSetEndpoint target = (DataSetEndpoint) obj;
@@ -43,17 +72,7 @@ public class DataSetEndpointConfigurer extends MockEndpointConfigurer implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumeDelay", long.class);
-        answer.put("dataSetIndex", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("initialDelay", long.class);
-        answer.put("minRate", int.class);
-        answer.put("preloadSize", long.class);
-        answer.put("produceDelay", long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

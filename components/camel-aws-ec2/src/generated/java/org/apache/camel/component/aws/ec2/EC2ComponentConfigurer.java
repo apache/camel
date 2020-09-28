@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EC2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("amazonEc2Client", com.amazonaws.services.ec2.AmazonEC2.class);
+        map.put("configuration", org.apache.camel.component.aws.ec2.EC2Configuration.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.aws.ec2.EC2Operations.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.aws.ec2.EC2Configuration getOrCreateConfiguration(EC2Component target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.aws.ec2.EC2Configuration());
@@ -53,20 +71,7 @@ public class EC2ComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonEc2Client", com.amazonaws.services.ec2.AmazonEC2.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws.ec2.EC2Configuration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws.ec2.EC2Operations.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceName", java.lang.String.class);
+        map.put("atomix", io.atomix.Atomix.class);
+        map.put("configurationUri", java.lang.String.class);
+        map.put("defaultAction", org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action.class);
+        map.put("key", java.lang.Object.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("nodes", java.lang.String.class);
+        map.put("resultHeader", java.lang.String.class);
+        map.put("transportClassName", java.lang.String.class);
+        map.put("ttl", long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("defaultResourceConfig", java.util.Properties.class);
+        map.put("defaultResourceOptions", java.util.Properties.class);
+        map.put("ephemeral", boolean.class);
+        map.put("readConsistency", io.atomix.resource.ReadConsistency.class);
+        map.put("resourceConfigs", java.util.Map.class);
+        map.put("resourceOptions", java.util.Map.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AtomixMultiMapEndpoint target = (AtomixMultiMapEndpoint) obj;
@@ -53,25 +77,7 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("atomix", io.atomix.Atomix.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("defaultAction", org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action.class);
-        answer.put("defaultResourceConfig", java.util.Properties.class);
-        answer.put("defaultResourceOptions", java.util.Properties.class);
-        answer.put("ephemeral", boolean.class);
-        answer.put("key", java.lang.Object.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("nodes", java.lang.String.class);
-        answer.put("readConsistency", io.atomix.resource.ReadConsistency.class);
-        answer.put("resourceConfigs", java.util.Map.class);
-        answer.put("resourceOptions", java.util.Map.class);
-        answer.put("resultHeader", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transportClassName", java.lang.String.class);
-        answer.put("ttl", long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

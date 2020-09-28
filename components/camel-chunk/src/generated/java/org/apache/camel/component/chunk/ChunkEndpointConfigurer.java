@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("allowContextMapAll", boolean.class);
+        map.put("allowTemplateFromHeader", boolean.class);
+        map.put("contentCache", boolean.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("extension", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("themeFolder", java.lang.String.class);
+        map.put("themeLayer", java.lang.String.class);
+        map.put("themeSubfolder", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ChunkEndpoint target = (ChunkEndpoint) obj;
@@ -44,19 +62,7 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("extension", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("themeFolder", java.lang.String.class);
-        answer.put("themeLayer", java.lang.String.class);
-        answer.put("themeSubfolder", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

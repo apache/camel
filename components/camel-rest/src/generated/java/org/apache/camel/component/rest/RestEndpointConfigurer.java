@@ -15,6 +15,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RestEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("method", java.lang.String.class);
+        map.put("path", java.lang.String.class);
+        map.put("uriTemplate", java.lang.String.class);
+        map.put("consumes", java.lang.String.class);
+        map.put("inType", java.lang.String.class);
+        map.put("outType", java.lang.String.class);
+        map.put("produces", java.lang.String.class);
+        map.put("routeId", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumerComponentName", java.lang.String.class);
+        map.put("description", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("apiDoc", java.lang.String.class);
+        map.put("bindingMode", org.apache.camel.spi.RestConfiguration.RestBindingMode.class);
+        map.put("host", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("producerComponentName", java.lang.String.class);
+        map.put("queryParameters", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestEndpoint target = (RestEndpoint) obj;
@@ -56,26 +83,7 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiDoc", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bindingMode", org.apache.camel.spi.RestConfiguration.RestBindingMode.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerComponentName", java.lang.String.class);
-        answer.put("consumes", java.lang.String.class);
-        answer.put("description", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("inType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outType", java.lang.String.class);
-        answer.put("producerComponentName", java.lang.String.class);
-        answer.put("produces", java.lang.String.class);
-        answer.put("queryParameters", java.lang.String.class);
-        answer.put("routeId", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

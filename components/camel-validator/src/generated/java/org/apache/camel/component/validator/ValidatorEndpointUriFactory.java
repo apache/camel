@@ -35,7 +35,6 @@ public class ValidatorEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "validator".equals(scheme);

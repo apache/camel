@@ -47,7 +47,6 @@ public class EventHubsEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "azure-eventhubs".equals(scheme);
