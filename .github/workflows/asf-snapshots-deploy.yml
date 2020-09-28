@@ -54,6 +54,6 @@ jobs:
       with:
         version: '11'
     - name: Deploy to ASF Snapshots Repository
-      run: ./mvnw -U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Pdeploy -Dmaven.test.skip.exec=true Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress clean deploy --settings .github/asf-deploy-settings.xml
+      run: ./mvnw -U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Pdeploy -Dmaven.test.skip.exec=true -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress clean deploy --settings .github/asf-deploy-settings.xml
 
 
