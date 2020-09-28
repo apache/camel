@@ -528,8 +528,8 @@
         <squareup-okio-version>1.17.2</squareup-okio-version>
         <sshd-version>2.0.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <swagger-java-version>1.5.24</swagger-java-version>
-        <swagger-java-parser-version>1.0.47</swagger-java-parser-version>
+        <swagger-java-version>1.6.2</swagger-java-version>
+        <swagger-java-parser-version>1.0.51</swagger-java-parser-version>
         <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <apicurio-version>1.0.16.Final</apicurio-version>
         <stax-api-version>1.0.1</stax-api-version>
