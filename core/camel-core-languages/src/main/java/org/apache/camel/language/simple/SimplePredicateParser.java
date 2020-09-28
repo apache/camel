@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.ast.BinaryExpression;
+import org.apache.camel.language.simple.ast.BooleanExpression;
 import org.apache.camel.language.simple.ast.DoubleQuoteEnd;
 import org.apache.camel.language.simple.ast.DoubleQuoteStart;
 import org.apache.camel.language.simple.ast.LiteralExpression;
@@ -275,6 +276,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new LogicalExpression(token);
         } else if (token.getType().isNullValue()) {
             return new NullExpression(token);
+        } else if (token.getType().isBooleanValue()) {
+            return new BooleanExpression(token);
         }
 
         // by returning null, we will let the parser determine what to do

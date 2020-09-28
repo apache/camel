@@ -169,6 +169,12 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def'", false);
         assertPredicate("${in.header.foo} == '1'", false);
 
+        // boolean to boolean comparison
+        exchange.getIn().setHeader("bool", true);
+        exchange.getIn().setHeader("booley", false);
+        assertPredicate("${in.header.bool} == true", true);
+        assertPredicate("${in.header.booley} == false", true);
+
         // integer to string comparison
         assertPredicate("${in.header.bar} == '123'", true);
         assertPredicate("${in.header.bar} == 123", true);

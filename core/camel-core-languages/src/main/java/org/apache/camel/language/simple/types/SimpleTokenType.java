@@ -131,6 +131,13 @@ public final class SimpleTokenType {
         return type == TokenType.minusValue;
     }
 
+    /**
+     * Whether the type is a boolean value
+     */
+    public boolean isBooleanValue() {
+        return type == TokenType.booleanValue;
+    }
+
     @Override
     public String toString() {
         return value;
