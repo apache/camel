@@ -446,7 +446,7 @@ public class EventbridgeProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void listRuleNamesByTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -455,14 +455,15 @@ public class EventbridgeProducer extends DefaultProducer {
                 try {
                     result = eventbridgeClient.listRuleNamesByTarget((ListRuleNamesByTargetRequest) payload);
                 } catch (AwsServiceException ase) {
-                    LOG.trace("List Rule Name by Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    LOG.trace("List Rule Name by Targets command returned the error code {}",
+                            ase.awsErrorDetails().errorCode());
                     throw ase;
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
         } else {
-        	ListRuleNamesByTargetRequest.Builder builder = ListRuleNamesByTargetRequest.builder();
+            ListRuleNamesByTargetRequest.Builder builder = ListRuleNamesByTargetRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.TARGET_ARN))) {
                 String targetArn = exchange.getIn().getHeader(EventbridgeConstants.TARGET_ARN, String.class);
                 builder.targetArn(targetArn);

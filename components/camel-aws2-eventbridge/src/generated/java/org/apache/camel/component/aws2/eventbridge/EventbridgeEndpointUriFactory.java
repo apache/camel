@@ -38,6 +38,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
         PROPERTY_NAMES = set;
     }
 
+
     @Override
     public boolean isEnabled(String scheme) {
         return "aws2-eventbridge".equals(scheme);
