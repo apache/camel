@@ -407,7 +407,8 @@ public interface EventbridgeEndpointBuilderFactory {
         enableRule,
         disableRule,
         describeRule,
-        listRules;
+        listRules,
+        listTargetsByRule;
     }
 
     /**

@@ -408,7 +408,7 @@ public class EventbridgeProducer extends DefaultProducer {
             message.setBody(result);
         }
     }
-    
+
     private void listTargetsByRule(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
@@ -424,7 +424,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 message.setBody(result);
             }
         } else {
-        	ListTargetsByRuleRequest.Builder builder = ListTargetsByRuleRequest.builder();
+            ListTargetsByRuleRequest.Builder builder = ListTargetsByRuleRequest.builder();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME))) {
                 String ruleName = exchange.getIn().getHeader(EventbridgeConstants.RULE_NAME, String.class);
                 builder.rule(ruleName);
