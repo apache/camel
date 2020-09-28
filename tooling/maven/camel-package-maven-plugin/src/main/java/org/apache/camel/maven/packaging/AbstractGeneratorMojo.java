@@ -172,7 +172,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             } catch (ClassNotFoundException e) {
                 int dotIndex = loadClassName.lastIndexOf('.');
                 if (dotIndex == -1) {
-                    throw new IllegalArgumentException(org);
+                    throw new NoClassDefFoundError(org);
                 } else {
                     loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
                 }

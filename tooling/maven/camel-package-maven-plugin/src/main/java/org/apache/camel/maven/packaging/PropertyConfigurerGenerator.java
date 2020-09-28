@@ -22,9 +22,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.Comparators;
+import org.apache.camel.tooling.model.ComponentModel;
 
 public final class PropertyConfigurerGenerator {
 
@@ -34,7 +37,7 @@ public final class PropertyConfigurerGenerator {
     public static void generatePropertyConfigurer(
             String pn, String cn, String en,
             String pfqn, String psn, boolean hasSuper, boolean component,
-            Collection<? extends BaseOptionModel> options, Writer w)
+            Collection<? extends BaseOptionModel> options, ComponentModel model, Writer w)
             throws IOException {
 
         w.write("/* " + AbstractGeneratorMojo.GENERATED_MSG + " */\n");
@@ -55,6 +58,15 @@ public final class PropertyConfigurerGenerator {
         w.write("public class " + cn + " extends " + psn
                 + " implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {\n");
         w.write("\n");
+
+        // if from component model then we can not optimize this and use a static block
+        if (model != null) {
+            // static block for all options which is immutable information
+            w.write("    private static final Map<String, Object> ALL_OPTIONS;\n");
+            w.write(generateAllOptions(component, model));
+            w.write("\n");
+        }
+
         if (!options.isEmpty() || !hasSuper) {
 
             // sort options A..Z so they always have same order
@@ -98,23 +110,28 @@ public final class PropertyConfigurerGenerator {
             w.write("\n");
             w.write("    @Override\n");
             w.write("    public Map<String, Object> getAllOptions(Object target) {\n");
-            if (hasSuper) {
-                w.write("        Map<String, Object> answer = super.getAllOptions(target);\n");
-            } else {
-                w.write("        Map<String, Object> answer = new CaseInsensitiveMap();\n");
-            }
-            if (!options.isEmpty() || !hasSuper) {
-                for (BaseOptionModel option : options) {
-                    // type may contain generics so remove those
-                    String type = option.getJavaType();
-                    if (type.indexOf('<') != -1) {
-                        type = type.substring(0, type.indexOf('<'));
-                    }
-                    type = type.replace('$', '.');
-                    w.write(String.format("        answer.put(\"%s\", %s.class);\n", option.getName(), type));
-                }
-                w.write("        return answer;\n");
+            if (model != null) {
+                w.write("        return ALL_OPTIONS;\n");
                 w.write("    }\n");
+            } else {
+                if (hasSuper) {
+                    w.write("        Map<String, Object> answer = super.getAllOptions(target);\n");
+                } else {
+                    w.write("        Map<String, Object> answer = new CaseInsensitiveMap();\n");
+                }
+                if (!options.isEmpty() || !hasSuper) {
+                    for (BaseOptionModel option : options) {
+                        // type may contain generics so remove those
+                        String type = option.getJavaType();
+                        if (type.indexOf('<') != -1) {
+                            type = type.substring(0, type.indexOf('<'));
+                        }
+                        type = type.replace('$', '.');
+                        w.write(String.format("        answer.put(\"%s\", %s.class);\n", option.getName(), type));
+                    }
+                    w.write("        return answer;\n");
+                    w.write("    }\n");
+                }
             }
 
             // generate API for getting a property
@@ -175,6 +192,52 @@ public final class PropertyConfigurerGenerator {
 
         w.write("}\n");
         w.write("\n");
+    }
+
+    private static String generateAllOptions(boolean component, ComponentModel model) {
+        // use sorted set so the code is always generated the same way
+        Set<ComponentModel.ApiOptionModel> apis
+                = new TreeSet<>(Comparators.apiOptionModelComparator());
+        if (!component && model.isApi()) {
+            // gather all the option names from the api (they can be duplicated as the same name can be used by multiple methods)
+            model.getApiOptions().forEach(a -> a.getMethods().forEach(m -> apis.addAll(m.getOptions())));
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("    static {\n");
+        sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
+        if (component) {
+            for (ComponentModel.ComponentOptionModel option : model.getComponentOptions()) {
+                // type may contain generics so remove those
+                String type = option.getJavaType();
+                if (type.indexOf('<') != -1) {
+                    type = type.substring(0, type.indexOf('<'));
+                }
+                type = type.replace('$', '.');
+                sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
+            }
+        } else {
+            for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
+                // type may contain generics so remove those
+                String type = option.getJavaType();
+                if (type.indexOf('<') != -1) {
+                    type = type.substring(0, type.indexOf('<'));
+                }
+                type = type.replace('$', '.');
+                sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
+            }
+            for (ComponentModel.ApiOptionModel apiOption : apis) {
+                // type may contain generics so remove those
+                String type = apiOption.getJavaType();
+                if (type.indexOf('<') != -1) {
+                    type = type.substring(0, type.indexOf('<'));
+                }
+                type = type.replace('$', '.');
+                sb.append(String.format("        map.put(\"%s\", %s.class);\n", apiOption.getName(), type));
+            }
+        }
+        sb.append("        ALL_OPTIONS = map;\n");
+        sb.append("    }\n");
+        return sb.toString();
     }
 
     private static Set<BaseOptionModel> findConfigurations(Collection<? extends BaseOptionModel> options) {
