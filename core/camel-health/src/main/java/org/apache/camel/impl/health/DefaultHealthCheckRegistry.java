@@ -166,9 +166,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @Override
     public boolean register(Object obj) {
-        checkIfAccepted(obj);
-
         boolean result;
+
+        checkIfAccepted(obj);
 
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
@@ -205,9 +205,9 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
 
     @Override
     public boolean unregister(Object obj) {
-        checkIfAccepted(obj);
-
         boolean result;
+
+        checkIfAccepted(obj);
 
         if (obj instanceof HealthCheck) {
             HealthCheck healthCheck = (HealthCheck) obj;
