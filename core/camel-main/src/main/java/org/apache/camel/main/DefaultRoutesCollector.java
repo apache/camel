@@ -146,7 +146,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 for (InputStream is : set) {
                     log.debug("Found XML rest from location: {}", part);
                     ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
-                    RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
+                    RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
                     answer.add(rests);
                     IOHelper.close(is);
                     count += rests.getRests().size();

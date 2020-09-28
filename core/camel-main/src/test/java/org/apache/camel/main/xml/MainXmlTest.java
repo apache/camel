@@ -28,25 +28,25 @@ public class MainXmlTest {
     @Test
     public void testMainRoutesCollector() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-dummy.xml,org/apache/camel/main/xml/camel-scan.xml");
+        doTestMain("org/apache/camel/main/xml/routes/camel-dummy.xml,org/apache/camel/main/xml/routes/camel-scan.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScan() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/xml/camel-*.xml");
+        doTestMain("org/apache/camel/main/xml/routes/camel-*.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirClasspathPath() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("org/apache/camel/main/**/*.xml");
+        doTestMain("org/apache/camel/main/**/camel-*.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
         // will load XML from target/classes when testing
-        doTestMain("classpath:org/apache/camel/main/xml/camel-*.xml");
+        doTestMain("classpath:org/apache/camel/main/xml/routes/camel-*.xml");
     }
 
     @Test
@@ -57,22 +57,22 @@ public class MainXmlTest {
 
     @Test
     public void testMainRoutesCollectorScanInDir() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-*.xml");
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/routes/camel-*.xml");
     }
 
     @Test
     public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
-        doTestMain("file:src/test/resources/**/*.xml");
+        doTestMain("file:src/test/resources/**/camel-*.xml");
     }
 
     @Test
     public void testMainRoutesCollectorFile() throws Exception {
-        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/routes/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/routes/camel-scan.xml,");
     }
 
     @Test
     public void testMainRoutesCollectorScanInJarAndDir() throws Exception {
-        doTestMain("classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
+        doTestMain("classpath:org/apache/camel/main/xml/routes/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/routes/*scan.xml");
     }
 
     protected void doTestMain(String xmlRoutes) throws Exception {
