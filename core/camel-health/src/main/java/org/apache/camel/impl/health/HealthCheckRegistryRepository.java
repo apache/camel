@@ -113,6 +113,6 @@ public class HealthCheckRegistryRepository implements CamelContextAware, HealthC
         return configurations.values().stream()
                 .filter(s -> PatternHelper.matchPattern(id, s.getParent()))
                 .findAny()
-                .orElseGet(() -> fallbackConfiguration);
+                .orElse(fallbackConfiguration);
     }
 }
