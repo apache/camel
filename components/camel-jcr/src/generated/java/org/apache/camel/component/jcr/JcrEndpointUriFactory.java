@@ -40,7 +40,6 @@ public class JcrEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jcr".equals(scheme);

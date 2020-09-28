@@ -29,7 +29,6 @@ public class DJLEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "djl".equals(scheme);

@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DozerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mappingConfiguration", org.apache.camel.converter.dozer.DozerBeanMapperConfiguration.class);
+        map.put("mappingFile", java.lang.String.class);
+        map.put("marshalId", java.lang.String.class);
+        map.put("sourceModel", java.lang.String.class);
+        map.put("targetModel", java.lang.String.class);
+        map.put("unmarshalId", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DozerEndpoint target = (DozerEndpoint) obj;
@@ -42,17 +58,7 @@ public class DozerEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mappingConfiguration", org.apache.camel.converter.dozer.DozerBeanMapperConfiguration.class);
-        answer.put("mappingFile", java.lang.String.class);
-        answer.put("marshalId", java.lang.String.class);
-        answer.put("sourceModel", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("targetModel", java.lang.String.class);
-        answer.put("unmarshalId", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

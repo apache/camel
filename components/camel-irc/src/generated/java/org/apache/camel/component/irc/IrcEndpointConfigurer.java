@@ -15,6 +15,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("hostname", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("autoRejoin", boolean.class);
+        map.put("channels", java.lang.String.class);
+        map.put("commandTimeout", long.class);
+        map.put("keys", java.lang.String.class);
+        map.put("namesOnJoin", boolean.class);
+        map.put("nickname", java.lang.String.class);
+        map.put("persistent", boolean.class);
+        map.put("realname", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("colors", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("onJoin", boolean.class);
+        map.put("onKick", boolean.class);
+        map.put("onMode", boolean.class);
+        map.put("onNick", boolean.class);
+        map.put("onPart", boolean.class);
+        map.put("onPrivmsg", boolean.class);
+        map.put("onQuit", boolean.class);
+        map.put("onReply", boolean.class);
+        map.put("onTopic", boolean.class);
+        map.put("nickPassword", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("trustManager", org.schwering.irc.lib.ssl.SSLTrustManager.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IrcEndpoint target = (IrcEndpoint) obj;
@@ -74,37 +111,7 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoRejoin", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channels", java.lang.String.class);
-        answer.put("colors", boolean.class);
-        answer.put("commandTimeout", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("keys", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("namesOnJoin", boolean.class);
-        answer.put("nickPassword", java.lang.String.class);
-        answer.put("nickname", java.lang.String.class);
-        answer.put("onJoin", boolean.class);
-        answer.put("onKick", boolean.class);
-        answer.put("onMode", boolean.class);
-        answer.put("onNick", boolean.class);
-        answer.put("onPart", boolean.class);
-        answer.put("onPrivmsg", boolean.class);
-        answer.put("onQuit", boolean.class);
-        answer.put("onReply", boolean.class);
-        answer.put("onTopic", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("persistent", boolean.class);
-        answer.put("realname", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustManager", org.schwering.irc.lib.ssl.SSLTrustManager.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

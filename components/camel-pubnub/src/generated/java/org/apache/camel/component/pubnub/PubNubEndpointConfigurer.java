@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("channel", java.lang.String.class);
+        map.put("uuid", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("withPresence", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("pubnub", com.pubnub.api.PubNub.class);
+        map.put("synchronous", boolean.class);
+        map.put("authKey", java.lang.String.class);
+        map.put("cipherKey", java.lang.String.class);
+        map.put("publishKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        map.put("secure", boolean.class);
+        map.put("subscribeKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PubNubEndpoint target = (PubNubEndpoint) obj;
@@ -52,24 +75,7 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authKey", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cipherKey", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("publishKey", java.lang.String.class);
-        answer.put("pubnub", com.pubnub.api.PubNub.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("secure", boolean.class);
-        answer.put("subscribeKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("uuid", java.lang.String.class);
-        answer.put("withPresence", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

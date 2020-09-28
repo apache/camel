@@ -15,6 +15,52 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", java.lang.Integer.class);
+        map.put("oids", org.apache.camel.component.snmp.OIDList.class);
+        map.put("protocol", java.lang.String.class);
+        map.put("retries", int.class);
+        map.put("snmpCommunity", java.lang.String.class);
+        map.put("snmpContextEngineId", java.lang.String.class);
+        map.put("snmpContextName", java.lang.String.class);
+        map.put("snmpVersion", int.class);
+        map.put("timeout", int.class);
+        map.put("type", org.apache.camel.component.snmp.SnmpActionType.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("delay", long.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("treeList", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("authenticationPassphrase", java.lang.String.class);
+        map.put("authenticationProtocol", java.lang.String.class);
+        map.put("privacyPassphrase", java.lang.String.class);
+        map.put("privacyProtocol", java.lang.String.class);
+        map.put("securityLevel", int.class);
+        map.put("securityName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SnmpEndpoint target = (SnmpEndpoint) obj;
@@ -92,46 +138,7 @@ public class SnmpEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authenticationPassphrase", java.lang.String.class);
-        answer.put("authenticationProtocol", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oids", org.apache.camel.component.snmp.OIDList.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("privacyPassphrase", java.lang.String.class);
-        answer.put("privacyProtocol", java.lang.String.class);
-        answer.put("protocol", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("retries", int.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("securityLevel", int.class);
-        answer.put("securityName", java.lang.String.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("snmpCommunity", java.lang.String.class);
-        answer.put("snmpContextEngineId", java.lang.String.class);
-        answer.put("snmpContextName", java.lang.String.class);
-        answer.put("snmpVersion", int.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("timeout", int.class);
-        answer.put("treeList", boolean.class);
-        answer.put("type", org.apache.camel.component.snmp.SnmpActionType.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

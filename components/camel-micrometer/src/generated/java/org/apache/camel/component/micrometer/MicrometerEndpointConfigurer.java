@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("metricsType", io.micrometer.core.instrument.Meter.Type.class);
+        map.put("metricsName", java.lang.String.class);
+        map.put("tags", java.lang.Iterable.class);
+        map.put("action", java.lang.String.class);
+        map.put("decrement", java.lang.String.class);
+        map.put("increment", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("value", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
@@ -34,15 +50,7 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("decrement", java.lang.String.class);
-        answer.put("increment", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("value", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

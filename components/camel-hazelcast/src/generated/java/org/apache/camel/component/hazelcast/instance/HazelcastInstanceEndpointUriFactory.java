@@ -31,7 +31,6 @@ public class HazelcastInstanceEndpointUriFactory extends org.apache.camel.suppor
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-instance".equals(scheme);

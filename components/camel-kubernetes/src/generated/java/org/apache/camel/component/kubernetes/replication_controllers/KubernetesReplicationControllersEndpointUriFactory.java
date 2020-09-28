@@ -53,7 +53,6 @@ public class KubernetesReplicationControllersEndpointUriFactory extends org.apac
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-replication-controllers".equals(scheme);

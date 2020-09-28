@@ -41,7 +41,6 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "geocoder".equals(scheme);

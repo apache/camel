@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("metricType", org.eclipse.microprofile.metrics.MetricType.class);
+        map.put("metricName", java.lang.String.class);
+        map.put("action", java.lang.String.class);
+        map.put("counterIncrement", java.lang.Long.class);
+        map.put("description", java.lang.String.class);
+        map.put("displayName", java.lang.String.class);
+        map.put("gaugeDecrement", java.lang.Boolean.class);
+        map.put("gaugeIncrement", java.lang.Boolean.class);
+        map.put("gaugeValue", java.lang.Number.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mark", java.lang.Long.class);
+        map.put("metricUnit", java.lang.String.class);
+        map.put("tags", java.lang.String.class);
+        map.put("value", java.lang.Long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
@@ -47,22 +69,7 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("counterIncrement", java.lang.Long.class);
-        answer.put("description", java.lang.String.class);
-        answer.put("displayName", java.lang.String.class);
-        answer.put("gaugeDecrement", java.lang.Boolean.class);
-        answer.put("gaugeIncrement", java.lang.Boolean.class);
-        answer.put("gaugeValue", java.lang.Number.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mark", java.lang.Long.class);
-        answer.put("metricUnit", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tags", java.lang.String.class);
-        answer.put("value", java.lang.Long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -45,7 +45,6 @@ public class KubernetesPersistentVolumesEndpointUriFactory extends org.apache.ca
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-persistent-volumes".equals(scheme);

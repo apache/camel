@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("basePath", java.lang.String.class);
+        map.put("componentName", java.lang.String.class);
+        map.put("consumes", java.lang.String.class);
+        map.put("host", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("produces", java.lang.String.class);
+        map.put("specificationUri", java.net.URI.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestSwaggerComponent target = (RestSwaggerComponent) obj;
@@ -42,18 +58,7 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basePath", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("componentName", java.lang.String.class);
-        answer.put("consumes", java.lang.String.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("produces", java.lang.String.class);
-        answer.put("specificationUri", java.net.URI.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

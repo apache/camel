@@ -65,7 +65,6 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "sjms2".equals(scheme);

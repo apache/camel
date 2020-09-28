@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JooqComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("configuration", org.apache.camel.component.jooq.JooqConfiguration.class);
+        map.put("databaseConfiguration", org.jooq.Configuration.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumeDelete", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.jooq.JooqOperation.class);
+        map.put("query", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.jooq.JooqConfiguration getOrCreateConfiguration(JooqComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.jooq.JooqConfiguration());
@@ -45,16 +59,7 @@ public class JooqComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.jooq.JooqConfiguration.class);
-        answer.put("consumeDelete", boolean.class);
-        answer.put("databaseConfiguration", org.jooq.Configuration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.jooq.JooqOperation.class);
-        answer.put("query", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

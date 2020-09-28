@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("configurationUri", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("sqlSessionFactory", org.apache.ibatis.session.SqlSessionFactory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisBeanComponent target = (MyBatisBeanComponent) obj;
@@ -33,12 +43,7 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("sqlSessionFactory", org.apache.ibatis.session.SqlSessionFactory.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

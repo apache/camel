@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("connectionBean", java.lang.String.class);
+        map.put("bucket", java.lang.String.class);
+        map.put("database", java.lang.String.class);
+        map.put("readPreference", com.mongodb.ReadPreference.class);
+        map.put("writeConcern", com.mongodb.WriteConcern.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("delay", long.class);
+        map.put("fileAttributeName", java.lang.String.class);
+        map.put("initialDelay", long.class);
+        map.put("persistentTSCollection", java.lang.String.class);
+        map.put("persistentTSObject", java.lang.String.class);
+        map.put("query", java.lang.String.class);
+        map.put("queryStrategy", org.apache.camel.component.mongodb.gridfs.QueryStrategy.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GridFsEndpoint target = (GridFsEndpoint) obj;
@@ -55,26 +80,7 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bucket", java.lang.String.class);
-        answer.put("database", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fileAttributeName", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("persistentTSCollection", java.lang.String.class);
-        answer.put("persistentTSObject", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("queryStrategy", org.apache.camel.component.mongodb.gridfs.QueryStrategy.class);
-        answer.put("readPreference", com.mongodb.ReadPreference.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("writeConcern", com.mongodb.WriteConcern.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

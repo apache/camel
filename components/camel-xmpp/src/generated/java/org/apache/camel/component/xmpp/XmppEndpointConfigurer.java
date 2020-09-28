@@ -15,6 +15,36 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("participant", java.lang.String.class);
+        map.put("login", boolean.class);
+        map.put("nickname", java.lang.String.class);
+        map.put("pubsub", boolean.class);
+        map.put("room", java.lang.String.class);
+        map.put("serviceName", java.lang.String.class);
+        map.put("testConnectionOnStartup", boolean.class);
+        map.put("createAccount", boolean.class);
+        map.put("resource", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("connectionPollDelay", int.class);
+        map.put("doc", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("connectionConfig", org.jivesoftware.smack.ConnectionConfiguration.class);
+        map.put("synchronous", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("password", java.lang.String.class);
+        map.put("roomPassword", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmppEndpoint target = (XmppEndpoint) obj;
@@ -58,29 +88,7 @@ public class XmppEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectionConfig", org.jivesoftware.smack.ConnectionConfiguration.class);
-        answer.put("connectionPollDelay", int.class);
-        answer.put("createAccount", boolean.class);
-        answer.put("doc", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("login", boolean.class);
-        answer.put("nickname", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("pubsub", boolean.class);
-        answer.put("resource", java.lang.String.class);
-        answer.put("room", java.lang.String.class);
-        answer.put("roomPassword", java.lang.String.class);
-        answer.put("serviceName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

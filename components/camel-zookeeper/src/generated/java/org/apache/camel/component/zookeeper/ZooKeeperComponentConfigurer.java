@@ -15,6 +15,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ZooKeeperComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("listChildren", boolean.class);
+        map.put("timeout", int.class);
+        map.put("backoff", long.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("repeat", boolean.class);
+        map.put("sendEmptyMessageOnDelete", boolean.class);
+        map.put("create", boolean.class);
+        map.put("createMode", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.zookeeper.ZooKeeperConfiguration.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.zookeeper.ZooKeeperConfiguration getOrCreateConfiguration(ZooKeeperComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.zookeeper.ZooKeeperConfiguration());
@@ -49,19 +66,7 @@ public class ZooKeeperComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backoff", long.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.zookeeper.ZooKeeperConfiguration.class);
-        answer.put("create", boolean.class);
-        answer.put("createMode", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("listChildren", boolean.class);
-        answer.put("repeat", boolean.class);
-        answer.put("sendEmptyMessageOnDelete", boolean.class);
-        answer.put("timeout", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

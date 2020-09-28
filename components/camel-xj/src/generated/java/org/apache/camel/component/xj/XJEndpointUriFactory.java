@@ -42,7 +42,6 @@ public class XJEndpointUriFactory extends org.apache.camel.support.component.End
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "xj".equals(scheme);

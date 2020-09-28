@@ -105,7 +105,6 @@ public class FhirEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "fhir".equals(scheme);

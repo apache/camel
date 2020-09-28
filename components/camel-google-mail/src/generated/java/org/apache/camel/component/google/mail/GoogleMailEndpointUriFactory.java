@@ -60,7 +60,6 @@ public class GoogleMailEndpointUriFactory extends org.apache.camel.support.compo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-mail".equals(scheme);

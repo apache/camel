@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("command", org.apache.camel.component.weka.WekaConfiguration.Command.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("apply", java.lang.String.class);
+        map.put("build", java.lang.String.class);
+        map.put("dsname", java.lang.String.class);
+        map.put("folds", int.class);
+        map.put("loadFrom", java.lang.String.class);
+        map.put("saveTo", java.lang.String.class);
+        map.put("seed", int.class);
+        map.put("xval", boolean.class);
+        map.put("path", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WekaEndpoint target = (WekaEndpoint) obj;
@@ -41,20 +60,7 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apply", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("build", java.lang.String.class);
-        answer.put("dsname", java.lang.String.class);
-        answer.put("folds", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loadFrom", java.lang.String.class);
-        answer.put("path", java.lang.String.class);
-        answer.put("saveTo", java.lang.String.class);
-        answer.put("seed", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("xval", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

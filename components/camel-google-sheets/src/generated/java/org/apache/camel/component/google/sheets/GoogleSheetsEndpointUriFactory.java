@@ -64,7 +64,6 @@ public class GoogleSheetsEndpointUriFactory extends org.apache.camel.support.com
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-sheets".equals(scheme);

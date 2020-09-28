@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SshComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("failOnUnknownHost", boolean.class);
+        map.put("knownHostsResource", java.lang.String.class);
+        map.put("timeout", long.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("pollCommand", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("channelType", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.ssh.SshConfiguration.class);
+        map.put("shellPrompt", java.lang.String.class);
+        map.put("sleepForShellPrompt", long.class);
+        map.put("certResource", java.lang.String.class);
+        map.put("certResourcePassword", java.lang.String.class);
+        map.put("keyPairProvider", org.apache.sshd.common.keyprovider.KeyPairProvider.class);
+        map.put("keyType", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.ssh.SshConfiguration getOrCreateConfiguration(SshComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.ssh.SshConfiguration());
@@ -62,25 +85,7 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("certResource", java.lang.String.class);
-        answer.put("certResourcePassword", java.lang.String.class);
-        answer.put("channelType", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.ssh.SshConfiguration.class);
-        answer.put("failOnUnknownHost", boolean.class);
-        answer.put("keyPairProvider", org.apache.sshd.common.keyprovider.KeyPairProvider.class);
-        answer.put("keyType", java.lang.String.class);
-        answer.put("knownHostsResource", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("pollCommand", java.lang.String.class);
-        answer.put("shellPrompt", java.lang.String.class);
-        answer.put("sleepForShellPrompt", long.class);
-        answer.put("timeout", long.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

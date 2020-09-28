@@ -15,6 +15,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("topic", java.lang.String.class);
+        map.put("servers", java.lang.String.class);
+        map.put("userAgent", java.lang.String.class);
+        map.put("autoFinish", java.lang.Boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("channel", java.lang.String.class);
+        map.put("customNSQLookup", com.github.brainlag.nsq.lookup.NSQLookup.class);
+        map.put("lookupInterval", long.class);
+        map.put("lookupServerPort", int.class);
+        map.put("messageTimeout", long.class);
+        map.put("poolSize", int.class);
+        map.put("requeueInterval", long.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("port", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("secure", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NsqEndpoint target = (NsqEndpoint) obj;
@@ -58,27 +84,7 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoFinish", java.lang.Boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channel", java.lang.String.class);
-        answer.put("customNSQLookup", com.github.brainlag.nsq.lookup.NSQLookup.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("lookupInterval", long.class);
-        answer.put("lookupServerPort", int.class);
-        answer.put("messageTimeout", long.class);
-        answer.put("poolSize", int.class);
-        answer.put("port", int.class);
-        answer.put("requeueInterval", long.class);
-        answer.put("secure", boolean.class);
-        answer.put("servers", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("userAgent", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

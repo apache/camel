@@ -55,7 +55,6 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "mybatis".equals(scheme);

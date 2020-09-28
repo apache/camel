@@ -61,7 +61,6 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jt400".equals(scheme);

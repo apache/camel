@@ -29,7 +29,6 @@ public class MasterEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "zookeeper-master".equals(scheme);

@@ -15,6 +15,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("queueName", java.lang.String.class);
+        map.put("client", io.iron.ironmq.Client.class);
+        map.put("ironMQCloud", java.lang.String.class);
+        map.put("preserveHeaders", boolean.class);
+        map.put("projectId", java.lang.String.class);
+        map.put("token", java.lang.String.class);
+        map.put("batchDelete", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("timeout", int.class);
+        map.put("wait", int.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("visibilityDelay", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IronMQEndpoint target = (IronMQEndpoint) obj;
@@ -83,41 +123,7 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("batchDelete", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", io.iron.ironmq.Client.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("ironMQCloud", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("preserveHeaders", boolean.class);
-        answer.put("projectId", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("timeout", int.class);
-        answer.put("token", java.lang.String.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("visibilityDelay", int.class);
-        answer.put("wait", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

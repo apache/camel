@@ -35,7 +35,6 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "platform-http".equals(scheme);

@@ -49,7 +49,6 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "mongodb".equals(scheme);

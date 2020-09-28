@@ -49,7 +49,6 @@ public class ScpEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "scp".equals(scheme);

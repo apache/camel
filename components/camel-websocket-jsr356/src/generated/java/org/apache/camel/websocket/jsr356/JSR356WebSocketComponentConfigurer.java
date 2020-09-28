@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JSR356WebSocketComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("serverEndpointDeploymentStrategy", org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JSR356WebSocketComponent target = (JSR356WebSocketComponent) obj;
@@ -33,12 +43,7 @@ public class JSR356WebSocketComponentConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("serverEndpointDeploymentStrategy", org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,42 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("service", java.lang.String.class);
+        map.put("flowControlWindow", int.class);
+        map.put("maxMessageSize", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumerStrategy", org.apache.camel.component.grpc.GrpcConsumerStrategy.class);
+        map.put("forwardOnCompleted", boolean.class);
+        map.put("forwardOnError", boolean.class);
+        map.put("maxConcurrentCallsPerConnection", int.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("method", java.lang.String.class);
+        map.put("producerStrategy", org.apache.camel.component.grpc.GrpcProducerStrategy.class);
+        map.put("streamRepliesTo", java.lang.String.class);
+        map.put("userAgent", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("authenticationType", org.apache.camel.component.grpc.GrpcAuthType.class);
+        map.put("jwtAlgorithm", org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class);
+        map.put("jwtIssuer", java.lang.String.class);
+        map.put("jwtSecret", java.lang.String.class);
+        map.put("jwtSubject", java.lang.String.class);
+        map.put("keyCertChainResource", java.lang.String.class);
+        map.put("keyPassword", java.lang.String.class);
+        map.put("keyResource", java.lang.String.class);
+        map.put("negotiationType", io.grpc.netty.NegotiationType.class);
+        map.put("serviceAccountResource", java.lang.String.class);
+        map.put("trustCertCollectionResource", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GrpcEndpoint target = (GrpcEndpoint) obj;
@@ -77,35 +113,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authenticationType", org.apache.camel.component.grpc.GrpcAuthType.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerStrategy", org.apache.camel.component.grpc.GrpcConsumerStrategy.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flowControlWindow", int.class);
-        answer.put("forwardOnCompleted", boolean.class);
-        answer.put("forwardOnError", boolean.class);
-        answer.put("jwtAlgorithm", org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm.class);
-        answer.put("jwtIssuer", java.lang.String.class);
-        answer.put("jwtSecret", java.lang.String.class);
-        answer.put("jwtSubject", java.lang.String.class);
-        answer.put("keyCertChainResource", java.lang.String.class);
-        answer.put("keyPassword", java.lang.String.class);
-        answer.put("keyResource", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxConcurrentCallsPerConnection", int.class);
-        answer.put("maxMessageSize", int.class);
-        answer.put("method", java.lang.String.class);
-        answer.put("negotiationType", io.grpc.netty.NegotiationType.class);
-        answer.put("producerStrategy", org.apache.camel.component.grpc.GrpcProducerStrategy.class);
-        answer.put("serviceAccountResource", java.lang.String.class);
-        answer.put("streamRepliesTo", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustCertCollectionResource", java.lang.String.class);
-        answer.put("userAgent", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

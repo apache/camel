@@ -15,6 +15,55 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WeatherEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("appid", java.lang.String.class);
+        map.put("headerName", java.lang.String.class);
+        map.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
+        map.put("mode", org.apache.camel.component.weather.WeatherMode.class);
+        map.put("period", java.lang.String.class);
+        map.put("units", org.apache.camel.component.weather.WeatherUnits.class);
+        map.put("weatherApi", org.apache.camel.component.weather.WeatherApi.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("geoLocationProvider", org.apache.camel.component.weather.geolocation.GeoLocationProvider.class);
+        map.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
+        map.put("synchronous", boolean.class);
+        map.put("cnt", java.lang.Integer.class);
+        map.put("ids", java.lang.String.class);
+        map.put("lat", java.lang.String.class);
+        map.put("location", java.lang.String.class);
+        map.put("lon", java.lang.String.class);
+        map.put("rightLon", java.lang.String.class);
+        map.put("topLat", java.lang.String.class);
+        map.put("zip", java.lang.String.class);
+        map.put("zoom", java.lang.Integer.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("geolocationAccessKey", java.lang.String.class);
+        map.put("geolocationRequestHostIP", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WeatherEndpoint target = (WeatherEndpoint) obj;
@@ -93,50 +142,7 @@ public class WeatherEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("appid", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cnt", java.lang.Integer.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("geoLocationProvider", org.apache.camel.component.weather.geolocation.GeoLocationProvider.class);
-        answer.put("geolocationAccessKey", java.lang.String.class);
-        answer.put("geolocationRequestHostIP", java.lang.String.class);
-        answer.put("greedy", boolean.class);
-        answer.put("headerName", java.lang.String.class);
-        answer.put("httpClient", org.apache.http.impl.client.CloseableHttpClient.class);
-        answer.put("ids", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("language", org.apache.camel.component.weather.WeatherLanguage.class);
-        answer.put("lat", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("location", java.lang.String.class);
-        answer.put("lon", java.lang.String.class);
-        answer.put("mode", org.apache.camel.component.weather.WeatherMode.class);
-        answer.put("period", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("repeatCount", long.class);
-        answer.put("rightLon", java.lang.String.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("topLat", java.lang.String.class);
-        answer.put("units", org.apache.camel.component.weather.WeatherUnits.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("weatherApi", org.apache.camel.component.weather.WeatherApi.class);
-        answer.put("zip", java.lang.String.class);
-        answer.put("zoom", java.lang.Integer.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

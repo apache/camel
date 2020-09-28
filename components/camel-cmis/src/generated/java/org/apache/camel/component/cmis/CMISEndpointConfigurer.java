@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cmsUrl", java.lang.String.class);
+        map.put("pageSize", int.class);
+        map.put("readContent", boolean.class);
+        map.put("readCount", int.class);
+        map.put("repositoryId", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("query", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("queryMode", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("sessionFacadeFactory", org.apache.camel.component.cmis.CMISSessionFacadeFactory.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CMISEndpoint target = (CMISEndpoint) obj;
@@ -51,23 +73,7 @@ public class CMISEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("pageSize", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("queryMode", boolean.class);
-        answer.put("readContent", boolean.class);
-        answer.put("readCount", int.class);
-        answer.put("repositoryId", java.lang.String.class);
-        answer.put("sessionFacadeFactory", org.apache.camel.component.cmis.CMISSessionFacadeFactory.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

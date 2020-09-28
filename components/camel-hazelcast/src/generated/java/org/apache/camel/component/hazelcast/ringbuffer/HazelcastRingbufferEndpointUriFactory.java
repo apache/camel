@@ -29,7 +29,6 @@ public class HazelcastRingbufferEndpointUriFactory extends org.apache.camel.supp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-ringbuffer".equals(scheme);

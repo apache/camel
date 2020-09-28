@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("uri", java.net.URI.class);
+        map.put("alias", java.lang.String.class);
+        map.put("cipherSuites", java.lang.String.class);
+        map.put("clientAuthentication", java.lang.String.class);
+        map.put("privateKey", java.security.PrivateKey.class);
+        map.put("pskStore", org.eclipse.californium.scandium.dtls.pskstore.PskStore.class);
+        map.put("publicKey", java.security.PublicKey.class);
+        map.put("recommendedCipherSuitesOnly", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("trustedRpkStore", org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("coapMethodRestrict", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CoAPEndpoint target = (CoAPEndpoint) obj;
@@ -55,24 +78,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("alias", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cipherSuites", java.lang.String.class);
-        answer.put("clientAuthentication", java.lang.String.class);
-        answer.put("coapMethodRestrict", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("privateKey", java.security.PrivateKey.class);
-        answer.put("pskStore", org.eclipse.californium.scandium.dtls.pskstore.PskStore.class);
-        answer.put("publicKey", java.security.PublicKey.class);
-        answer.put("recommendedCipherSuitesOnly", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustedRpkStore", org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

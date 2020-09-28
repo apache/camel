@@ -47,7 +47,6 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "vertx-http".equals(scheme);

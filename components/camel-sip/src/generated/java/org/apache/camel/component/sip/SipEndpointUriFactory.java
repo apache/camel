@@ -70,7 +70,6 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         for (String s : SCHEMES) {

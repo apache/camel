@@ -49,7 +49,6 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "spring-ws".equals(scheme);

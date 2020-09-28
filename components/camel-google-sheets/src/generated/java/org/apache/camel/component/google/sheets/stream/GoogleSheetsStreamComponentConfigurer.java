@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("applicationName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class);
+        map.put("includeGridData", boolean.class);
+        map.put("majorDimension", java.lang.String.class);
+        map.put("maxResults", int.class);
+        map.put("range", java.lang.String.class);
+        map.put("scopes", java.util.List.class);
+        map.put("splitResults", boolean.class);
+        map.put("spreadsheetId", java.lang.String.class);
+        map.put("valueRenderOption", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("clientFactory", org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("refreshToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration getOrCreateConfiguration(GoogleSheetsStreamComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration());
@@ -63,25 +86,7 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientFactory", org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class);
-        answer.put("includeGridData", boolean.class);
-        answer.put("majorDimension", java.lang.String.class);
-        answer.put("maxResults", int.class);
-        answer.put("range", java.lang.String.class);
-        answer.put("refreshToken", java.lang.String.class);
-        answer.put("scopes", java.util.List.class);
-        answer.put("splitResults", boolean.class);
-        answer.put("spreadsheetId", java.lang.String.class);
-        answer.put("valueRenderOption", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

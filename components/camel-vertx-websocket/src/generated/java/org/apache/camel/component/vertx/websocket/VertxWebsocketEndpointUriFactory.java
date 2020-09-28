@@ -37,7 +37,6 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "vertx-websocket".equals(scheme);

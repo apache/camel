@@ -38,7 +38,6 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "wordpress".equals(scheme);

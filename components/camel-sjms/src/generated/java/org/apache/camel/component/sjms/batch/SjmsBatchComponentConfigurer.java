@@ -15,6 +15,18 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("asyncStartListener", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("connectionFactory", javax.jms.ConnectionFactory.class);
+        map.put("recoveryInterval", int.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SjmsBatchComponent target = (SjmsBatchComponent) obj;
@@ -37,14 +49,7 @@ public class SjmsBatchComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("asyncStartListener", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("recoveryInterval", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

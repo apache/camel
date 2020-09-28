@@ -15,6 +15,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("clusterName", java.lang.String.class);
+        map.put("connectionTimeout", int.class);
+        map.put("disconnect", boolean.class);
+        map.put("enableSniffer", boolean.class);
+        map.put("enableSSL", boolean.class);
+        map.put("from", java.lang.Integer.class);
+        map.put("hostAddresses", java.lang.String.class);
+        map.put("indexName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("maxRetryTimeout", int.class);
+        map.put("operation", org.apache.camel.component.elasticsearch.ElasticsearchOperation.class);
+        map.put("scrollKeepAliveMs", int.class);
+        map.put("size", java.lang.Integer.class);
+        map.put("sniffAfterFailureDelay", int.class);
+        map.put("snifferInterval", int.class);
+        map.put("socketTimeout", int.class);
+        map.put("useScroll", boolean.class);
+        map.put("waitForActiveShards", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
@@ -58,27 +84,7 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("enableSSL", boolean.class);
-        answer.put("enableSniffer", boolean.class);
-        answer.put("from", java.lang.Integer.class);
-        answer.put("hostAddresses", java.lang.String.class);
-        answer.put("indexName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxRetryTimeout", int.class);
-        answer.put("operation", org.apache.camel.component.elasticsearch.ElasticsearchOperation.class);
-        answer.put("scrollKeepAliveMs", int.class);
-        answer.put("size", java.lang.Integer.class);
-        answer.put("sniffAfterFailureDelay", int.class);
-        answer.put("snifferInterval", int.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("useScroll", boolean.class);
-        answer.put("waitForActiveShards", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

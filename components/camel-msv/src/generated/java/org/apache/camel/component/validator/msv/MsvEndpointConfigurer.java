@@ -15,5 +15,24 @@ import org.apache.camel.component.validator.ValidatorEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class MsvEndpointConfigurer extends ValidatorEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("failOnNullBody", boolean.class);
+        map.put("failOnNullHeader", boolean.class);
+        map.put("headerName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("errorHandler", org.apache.camel.support.processor.validation.ValidatorErrorHandler.class);
+        map.put("resourceResolver", org.w3c.dom.ls.LSResourceResolver.class);
+        map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
+        map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
+        map.put("schemaLanguage", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("useSharedSchema", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
 }
 

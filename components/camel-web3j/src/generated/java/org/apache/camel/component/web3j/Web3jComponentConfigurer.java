@@ -15,6 +15,50 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Web3jComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("addresses", java.util.List.class);
+        map.put("configuration", org.apache.camel.component.web3j.Web3jConfiguration.class);
+        map.put("fromAddress", java.lang.String.class);
+        map.put("fromBlock", java.lang.String.class);
+        map.put("fullTransactionObjects", boolean.class);
+        map.put("gasLimit", java.math.BigInteger.class);
+        map.put("privateFor", java.util.List.class);
+        map.put("quorumAPI", boolean.class);
+        map.put("toAddress", java.lang.String.class);
+        map.put("toBlock", java.lang.String.class);
+        map.put("topics", java.lang.String.class);
+        map.put("web3j", org.web3j.protocol.Web3j.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("address", java.lang.String.class);
+        map.put("atBlock", java.lang.String.class);
+        map.put("blockHash", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("data", java.lang.String.class);
+        map.put("databaseName", java.lang.String.class);
+        map.put("filterId", java.math.BigInteger.class);
+        map.put("gasPrice", java.math.BigInteger.class);
+        map.put("hashrate", java.lang.String.class);
+        map.put("headerPowHash", java.lang.String.class);
+        map.put("index", java.math.BigInteger.class);
+        map.put("keyName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mixDigest", java.lang.String.class);
+        map.put("nonce", java.lang.String.class);
+        map.put("operation", java.lang.String.class);
+        map.put("position", java.math.BigInteger.class);
+        map.put("priority", java.math.BigInteger.class);
+        map.put("sha3HashOfDataToSign", java.lang.String.class);
+        map.put("signedTransactionData", java.lang.String.class);
+        map.put("sourceCode", java.lang.String.class);
+        map.put("transactionHash", java.lang.String.class);
+        map.put("ttl", java.math.BigInteger.class);
+        map.put("value", java.math.BigInteger.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.web3j.Web3jConfiguration getOrCreateConfiguration(Web3jComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.web3j.Web3jConfiguration());
@@ -94,46 +138,7 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("address", java.lang.String.class);
-        answer.put("addresses", java.util.List.class);
-        answer.put("atBlock", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blockHash", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.web3j.Web3jConfiguration.class);
-        answer.put("data", java.lang.String.class);
-        answer.put("databaseName", java.lang.String.class);
-        answer.put("filterId", java.math.BigInteger.class);
-        answer.put("fromAddress", java.lang.String.class);
-        answer.put("fromBlock", java.lang.String.class);
-        answer.put("fullTransactionObjects", boolean.class);
-        answer.put("gasLimit", java.math.BigInteger.class);
-        answer.put("gasPrice", java.math.BigInteger.class);
-        answer.put("hashrate", java.lang.String.class);
-        answer.put("headerPowHash", java.lang.String.class);
-        answer.put("index", java.math.BigInteger.class);
-        answer.put("keyName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mixDigest", java.lang.String.class);
-        answer.put("nonce", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("position", java.math.BigInteger.class);
-        answer.put("priority", java.math.BigInteger.class);
-        answer.put("privateFor", java.util.List.class);
-        answer.put("quorumAPI", boolean.class);
-        answer.put("sha3HashOfDataToSign", java.lang.String.class);
-        answer.put("signedTransactionData", java.lang.String.class);
-        answer.put("sourceCode", java.lang.String.class);
-        answer.put("toAddress", java.lang.String.class);
-        answer.put("toBlock", java.lang.String.class);
-        answer.put("topics", java.lang.String.class);
-        answer.put("transactionHash", java.lang.String.class);
-        answer.put("ttl", java.math.BigInteger.class);
-        answer.put("value", java.math.BigInteger.class);
-        answer.put("web3j", org.web3j.protocol.Web3j.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

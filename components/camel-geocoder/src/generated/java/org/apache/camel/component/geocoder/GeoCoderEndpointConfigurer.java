@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("address", java.lang.String.class);
+        map.put("latlng", java.lang.String.class);
+        map.put("headersOnly", boolean.class);
+        map.put("language", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("serverUrl", java.lang.String.class);
+        map.put("type", org.apache.camel.component.geocoder.GeoCoderType.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("proxyAuthDomain", java.lang.String.class);
+        map.put("proxyAuthHost", java.lang.String.class);
+        map.put("proxyAuthMethod", java.lang.String.class);
+        map.put("proxyAuthPassword", java.lang.String.class);
+        map.put("proxyAuthUsername", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("apiKey", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("clientKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GeoCoderEndpoint target = (GeoCoderEndpoint) obj;
@@ -56,25 +81,7 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiKey", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientKey", java.lang.String.class);
-        answer.put("headersOnly", boolean.class);
-        answer.put("language", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("proxyAuthDomain", java.lang.String.class);
-        answer.put("proxyAuthHost", java.lang.String.class);
-        answer.put("proxyAuthMethod", java.lang.String.class);
-        answer.put("proxyAuthPassword", java.lang.String.class);
-        answer.put("proxyAuthUsername", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("serverUrl", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("type", org.apache.camel.component.geocoder.GeoCoderType.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("executable", java.lang.String.class);
+        map.put("args", java.lang.String.class);
+        map.put("binding", org.apache.camel.component.exec.ExecBinding.class);
+        map.put("commandExecutor", org.apache.camel.component.exec.ExecCommandExecutor.class);
+        map.put("commandLogLevel", org.apache.camel.LoggingLevel.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("outFile", java.lang.String.class);
+        map.put("timeout", long.class);
+        map.put("useStderrOnEmptyStdout", boolean.class);
+        map.put("workingDir", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ExecEndpoint target = (ExecEndpoint) obj;
@@ -43,19 +61,7 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("args", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binding", org.apache.camel.component.exec.ExecBinding.class);
-        answer.put("commandExecutor", org.apache.camel.component.exec.ExecCommandExecutor.class);
-        answer.put("commandLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outFile", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", long.class);
-        answer.put("useStderrOnEmptyStdout", boolean.class);
-        answer.put("workingDir", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("beanName", java.lang.String.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("executorType", org.apache.ibatis.session.ExecutorType.class);
+        map.put("inputHeader", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("outputHeader", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
@@ -36,14 +50,7 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("executorType", org.apache.ibatis.session.ExecutorType.class);
-        answer.put("inputHeader", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("outputHeader", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -69,7 +69,6 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "salesforce".equals(scheme);

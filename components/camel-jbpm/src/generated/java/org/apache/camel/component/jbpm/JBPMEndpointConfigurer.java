@@ -15,6 +15,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("connectionURL", java.net.URL.class);
+        map.put("eventListenerType", java.lang.String.class);
+        map.put("attachmentId", java.lang.Long.class);
+        map.put("contentId", java.lang.Long.class);
+        map.put("deploymentId", java.lang.String.class);
+        map.put("emitterSendItems", java.lang.Boolean.class);
+        map.put("event", java.lang.Object.class);
+        map.put("eventType", java.lang.String.class);
+        map.put("identifier", java.lang.String.class);
+        map.put("maxNumber", java.lang.Integer.class);
+        map.put("page", java.lang.Integer.class);
+        map.put("pageSize", java.lang.Integer.class);
+        map.put("processId", java.lang.String.class);
+        map.put("processInstanceId", java.lang.Long.class);
+        map.put("targetUserId", java.lang.String.class);
+        map.put("task", org.kie.api.task.model.Task.class);
+        map.put("taskId", java.lang.Long.class);
+        map.put("timeout", java.lang.Integer.class);
+        map.put("userId", java.lang.String.class);
+        map.put("value", java.lang.Object.class);
+        map.put("workItemId", java.lang.Long.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("entities", java.util.List.class);
+        map.put("extraJaxbClasses", java.lang.Class[].class);
+        map.put("parameters", java.util.Map.class);
+        map.put("synchronous", boolean.class);
+        map.put("statuses", java.util.List.class);
+        map.put("password", java.lang.String.class);
+        map.put("userName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JBPMEndpoint target = (JBPMEndpoint) obj;
@@ -77,40 +117,7 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("attachmentId", java.lang.Long.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("contentId", java.lang.Long.class);
-        answer.put("deploymentId", java.lang.String.class);
-        answer.put("emitterSendItems", java.lang.Boolean.class);
-        answer.put("entities", java.util.List.class);
-        answer.put("event", java.lang.Object.class);
-        answer.put("eventType", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("extraJaxbClasses", java.lang.Class[].class);
-        answer.put("identifier", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxNumber", java.lang.Integer.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("page", java.lang.Integer.class);
-        answer.put("pageSize", java.lang.Integer.class);
-        answer.put("parameters", java.util.Map.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("processId", java.lang.String.class);
-        answer.put("processInstanceId", java.lang.Long.class);
-        answer.put("statuses", java.util.List.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("targetUserId", java.lang.String.class);
-        answer.put("task", org.kie.api.task.model.Task.class);
-        answer.put("taskId", java.lang.Long.class);
-        answer.put("timeout", java.lang.Integer.class);
-        answer.put("userId", java.lang.String.class);
-        answer.put("userName", java.lang.String.class);
-        answer.put("value", java.lang.Object.class);
-        answer.put("workItemId", java.lang.Long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,50 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SmppComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("initialReconnectDelay", long.class);
+        map.put("maxReconnect", int.class);
+        map.put("reconnectDelay", long.class);
+        map.put("splittingPolicy", org.apache.camel.component.smpp.SmppSplittingPolicy.class);
+        map.put("systemType", java.lang.String.class);
+        map.put("addressRange", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("destAddr", java.lang.String.class);
+        map.put("destAddrNpi", byte.class);
+        map.put("destAddrTon", byte.class);
+        map.put("lazySessionCreation", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("numberingPlanIndicator", byte.class);
+        map.put("priorityFlag", byte.class);
+        map.put("protocolId", byte.class);
+        map.put("registeredDelivery", byte.class);
+        map.put("replaceIfPresentFlag", byte.class);
+        map.put("serviceType", java.lang.String.class);
+        map.put("sourceAddr", java.lang.String.class);
+        map.put("sourceAddrNpi", byte.class);
+        map.put("sourceAddrTon", byte.class);
+        map.put("typeOfNumber", byte.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.smpp.SmppConfiguration.class);
+        map.put("enquireLinkTimer", java.lang.Integer.class);
+        map.put("sessionStateListener", org.jsmpp.session.SessionStateListener.class);
+        map.put("transactionTimer", java.lang.Integer.class);
+        map.put("alphabet", byte.class);
+        map.put("dataCoding", byte.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("httpProxyHost", java.lang.String.class);
+        map.put("httpProxyPassword", java.lang.String.class);
+        map.put("httpProxyPort", java.lang.Integer.class);
+        map.put("httpProxyUsername", java.lang.String.class);
+        map.put("proxyHeaders", java.util.Map.class);
+        map.put("password", java.lang.String.class);
+        map.put("systemId", java.lang.String.class);
+        map.put("usingSSL", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.smpp.SmppConfiguration getOrCreateConfiguration(SmppComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.smpp.SmppConfiguration());
@@ -104,46 +148,7 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("addressRange", java.lang.String.class);
-        answer.put("alphabet", byte.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.smpp.SmppConfiguration.class);
-        answer.put("dataCoding", byte.class);
-        answer.put("destAddr", java.lang.String.class);
-        answer.put("destAddrNpi", byte.class);
-        answer.put("destAddrTon", byte.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("enquireLinkTimer", java.lang.Integer.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUsername", java.lang.String.class);
-        answer.put("initialReconnectDelay", long.class);
-        answer.put("lazySessionCreation", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxReconnect", int.class);
-        answer.put("numberingPlanIndicator", byte.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("priorityFlag", byte.class);
-        answer.put("protocolId", byte.class);
-        answer.put("proxyHeaders", java.util.Map.class);
-        answer.put("reconnectDelay", long.class);
-        answer.put("registeredDelivery", byte.class);
-        answer.put("replaceIfPresentFlag", byte.class);
-        answer.put("serviceType", java.lang.String.class);
-        answer.put("sessionStateListener", org.jsmpp.session.SessionStateListener.class);
-        answer.put("sourceAddr", java.lang.String.class);
-        answer.put("sourceAddrNpi", byte.class);
-        answer.put("sourceAddrTon", byte.class);
-        answer.put("splittingPolicy", org.apache.camel.component.smpp.SmppSplittingPolicy.class);
-        answer.put("systemId", java.lang.String.class);
-        answer.put("systemType", java.lang.String.class);
-        answer.put("transactionTimer", java.lang.Integer.class);
-        answer.put("typeOfNumber", byte.class);
-        answer.put("usingSSL", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

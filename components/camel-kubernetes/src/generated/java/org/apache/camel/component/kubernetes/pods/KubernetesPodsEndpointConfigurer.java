@@ -15,6 +15,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class KubernetesPodsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("masterUrl", java.lang.String.class);
+        map.put("apiVersion", java.lang.String.class);
+        map.put("dnsDomain", java.lang.String.class);
+        map.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
+        map.put("portName", java.lang.String.class);
+        map.put("portProtocol", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("labelKey", java.lang.String.class);
+        map.put("labelValue", java.lang.String.class);
+        map.put("namespace", java.lang.String.class);
+        map.put("poolSize", int.class);
+        map.put("resourceName", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("connectionTimeout", java.lang.Integer.class);
+        map.put("synchronous", boolean.class);
+        map.put("caCertData", java.lang.String.class);
+        map.put("caCertFile", java.lang.String.class);
+        map.put("clientCertData", java.lang.String.class);
+        map.put("clientCertFile", java.lang.String.class);
+        map.put("clientKeyAlgo", java.lang.String.class);
+        map.put("clientKeyData", java.lang.String.class);
+        map.put("clientKeyFile", java.lang.String.class);
+        map.put("clientKeyPassphrase", java.lang.String.class);
+        map.put("oauthToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("trustCerts", java.lang.Boolean.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KubernetesPodsEndpoint target = (KubernetesPodsEndpoint) obj;
@@ -80,38 +117,7 @@ public class KubernetesPodsEndpointConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("caCertData", java.lang.String.class);
-        answer.put("caCertFile", java.lang.String.class);
-        answer.put("clientCertData", java.lang.String.class);
-        answer.put("clientCertFile", java.lang.String.class);
-        answer.put("clientKeyAlgo", java.lang.String.class);
-        answer.put("clientKeyData", java.lang.String.class);
-        answer.put("clientKeyFile", java.lang.String.class);
-        answer.put("clientKeyPassphrase", java.lang.String.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("dnsDomain", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        answer.put("labelKey", java.lang.String.class);
-        answer.put("labelValue", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("namespace", java.lang.String.class);
-        answer.put("oauthToken", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("poolSize", int.class);
-        answer.put("portName", java.lang.String.class);
-        answer.put("portProtocol", java.lang.String.class);
-        answer.put("resourceName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("trustCerts", java.lang.Boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

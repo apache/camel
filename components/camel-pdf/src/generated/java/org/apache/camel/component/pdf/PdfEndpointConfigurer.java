@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.pdf.PdfOperation.class);
+        map.put("font", java.lang.String.class);
+        map.put("fontSize", float.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("marginBottom", int.class);
+        map.put("marginLeft", int.class);
+        map.put("marginRight", int.class);
+        map.put("marginTop", int.class);
+        map.put("pageSize", java.lang.String.class);
+        map.put("textProcessingFactory", org.apache.camel.component.pdf.TextProcessingFactory.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
@@ -45,19 +63,7 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("font", java.lang.String.class);
-        answer.put("fontSize", float.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("marginBottom", int.class);
-        answer.put("marginLeft", int.class);
-        answer.put("marginRight", int.class);
-        answer.put("marginTop", int.class);
-        answer.put("pageSize", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("textProcessingFactory", org.apache.camel.component.pdf.TextProcessingFactory.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

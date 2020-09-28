@@ -15,6 +15,95 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", org.apache.camel.component.fhir.internal.FhirApiName.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("fhirVersion", java.lang.String.class);
+        map.put("inBody", java.lang.String.class);
+        map.put("log", boolean.class);
+        map.put("prettyPrint", boolean.class);
+        map.put("serverUrl", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
+        map.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
+        map.put("compress", boolean.class);
+        map.put("connectionTimeout", java.lang.Integer.class);
+        map.put("deferModelScanning", boolean.class);
+        map.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
+        map.put("forceConformanceCheck", boolean.class);
+        map.put("sessionCookie", java.lang.String.class);
+        map.put("socketTimeout", java.lang.Integer.class);
+        map.put("summary", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("validationMode", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPassword", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyUser", java.lang.String.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("asynchronous", java.lang.Boolean.class);
+        map.put("bundle", org.hl7.fhir.instance.model.api.IBaseBundle.class);
+        map.put("count", java.lang.Integer.class);
+        map.put("cutoff", java.util.Date.class);
+        map.put("extraParameters", java.util.Map.class);
+        map.put("iCutoff", org.hl7.fhir.instance.model.api.IPrimitiveType.class);
+        map.put("id", org.hl7.fhir.instance.model.api.IIdType.class);
+        map.put("ifVersionMatches", java.lang.String.class);
+        map.put("iUrl", org.hl7.fhir.instance.model.api.IIdType.class);
+        map.put("longId", java.lang.Long.class);
+        map.put("meta", org.hl7.fhir.instance.model.api.IBaseMetaType.class);
+        map.put("metaType", java.lang.Class.class);
+        map.put("msgBundle", org.hl7.fhir.instance.model.api.IBaseBundle.class);
+        map.put("name", java.lang.String.class);
+        map.put("outputParameterType", java.lang.Class.class);
+        map.put("parameters", org.hl7.fhir.instance.model.api.IBaseParameters.class);
+        map.put("patchBody", java.lang.String.class);
+        map.put("preferReturn", ca.uhn.fhir.rest.api.PreferReturnEnum.class);
+        map.put("resource", org.hl7.fhir.instance.model.api.IBaseResource.class);
+        map.put("resourceAsString", java.lang.String.class);
+        map.put("resourceClass", java.lang.String.class);
+        map.put("resources", java.util.List.class);
+        map.put("resourceType", java.lang.Class.class);
+        map.put("respondToUri", java.lang.String.class);
+        map.put("responseClass", java.lang.Class.class);
+        map.put("returnNull", java.lang.Boolean.class);
+        map.put("returnResource", org.hl7.fhir.instance.model.api.IBaseResource.class);
+        map.put("returnType", java.lang.Class.class);
+        map.put("stringBundle", java.lang.String.class);
+        map.put("stringId", java.lang.String.class);
+        map.put("throwError", java.lang.Boolean.class);
+        map.put("type", java.lang.Class.class);
+        map.put("url", java.lang.String.class);
+        map.put("useHttpGet", java.lang.Boolean.class);
+        map.put("version", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FhirEndpoint target = (FhirEndpoint) obj;
@@ -106,54 +195,7 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
-        answer.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
-        answer.put("compress", boolean.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("deferModelScanning", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
-        answer.put("fhirVersion", java.lang.String.class);
-        answer.put("forceConformanceCheck", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("inBody", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("log", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("prettyPrint", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPassword", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyUser", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serverUrl", java.lang.String.class);
-        answer.put("sessionCookie", java.lang.String.class);
-        answer.put("socketTimeout", java.lang.Integer.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("summary", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("validationMode", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -68,7 +68,6 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "twitter-timeline".equals(scheme);

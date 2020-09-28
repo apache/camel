@@ -45,7 +45,6 @@ public class OpenshiftBuildConfigsEndpointUriFactory extends org.apache.camel.su
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "openshift-build-configs".equals(scheme);

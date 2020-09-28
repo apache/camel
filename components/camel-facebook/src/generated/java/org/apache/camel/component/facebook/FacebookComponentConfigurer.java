@@ -15,6 +15,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FacebookComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("clientURL", java.lang.String.class);
+        map.put("clientVersion", java.lang.String.class);
+        map.put("debugEnabled", java.lang.Boolean.class);
+        map.put("gzipEnabled", java.lang.Boolean.class);
+        map.put("httpConnectionTimeout", java.lang.Integer.class);
+        map.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
+        map.put("httpMaxTotalConnections", java.lang.Integer.class);
+        map.put("httpReadTimeout", java.lang.Integer.class);
+        map.put("httpRetryCount", java.lang.Integer.class);
+        map.put("httpRetryIntervalSeconds", java.lang.Integer.class);
+        map.put("httpStreamingReadTimeout", java.lang.Integer.class);
+        map.put("jsonStoreEnabled", java.lang.Boolean.class);
+        map.put("mbeanEnabled", java.lang.Boolean.class);
+        map.put("prettyDebugEnabled", java.lang.Boolean.class);
+        map.put("restBaseURL", java.lang.String.class);
+        map.put("useSSL", java.lang.Boolean.class);
+        map.put("videoBaseURL", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.facebook.config.FacebookConfiguration.class);
+        map.put("httpProxyHost", java.lang.String.class);
+        map.put("httpProxyPassword", java.lang.String.class);
+        map.put("httpProxyPort", java.lang.Integer.class);
+        map.put("httpProxyUser", java.lang.String.class);
+        map.put("oAuthAccessToken", java.lang.String.class);
+        map.put("oAuthAccessTokenURL", java.lang.String.class);
+        map.put("oAuthAppId", java.lang.String.class);
+        map.put("oAuthAppSecret", java.lang.String.class);
+        map.put("oAuthAuthorizationURL", java.lang.String.class);
+        map.put("oAuthPermissions", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.facebook.config.FacebookConfiguration getOrCreateConfiguration(FacebookComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.facebook.config.FacebookConfiguration());
@@ -93,39 +130,7 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientURL", java.lang.String.class);
-        answer.put("clientVersion", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.facebook.config.FacebookConfiguration.class);
-        answer.put("debugEnabled", java.lang.Boolean.class);
-        answer.put("gzipEnabled", java.lang.Boolean.class);
-        answer.put("httpConnectionTimeout", java.lang.Integer.class);
-        answer.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
-        answer.put("httpMaxTotalConnections", java.lang.Integer.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUser", java.lang.String.class);
-        answer.put("httpReadTimeout", java.lang.Integer.class);
-        answer.put("httpRetryCount", java.lang.Integer.class);
-        answer.put("httpRetryIntervalSeconds", java.lang.Integer.class);
-        answer.put("httpStreamingReadTimeout", java.lang.Integer.class);
-        answer.put("jsonStoreEnabled", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mbeanEnabled", java.lang.Boolean.class);
-        answer.put("oAuthAccessToken", java.lang.String.class);
-        answer.put("oAuthAccessTokenURL", java.lang.String.class);
-        answer.put("oAuthAppId", java.lang.String.class);
-        answer.put("oAuthAppSecret", java.lang.String.class);
-        answer.put("oAuthAuthorizationURL", java.lang.String.class);
-        answer.put("oAuthPermissions", java.lang.String.class);
-        answer.put("prettyDebugEnabled", java.lang.Boolean.class);
-        answer.put("restBaseURL", java.lang.String.class);
-        answer.put("useSSL", java.lang.Boolean.class);
-        answer.put("videoBaseURL", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -70,7 +70,6 @@ public class GoogleDriveEndpointUriFactory extends org.apache.camel.support.comp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-drive".equals(scheme);

@@ -15,6 +15,22 @@ import org.apache.camel.component.xslt.XsltComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("contentCache", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("saxonConfiguration", net.sf.saxon.Configuration.class);
+        map.put("saxonConfigurationProperties", java.util.Map.class);
+        map.put("saxonExtensionFunctions", java.lang.String.class);
+        map.put("transformerFactoryClass", java.lang.String.class);
+        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
+        map.put("uriResolver", javax.xml.transform.URIResolver.class);
+        map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XsltSaxonComponent target = (XsltSaxonComponent) obj;
@@ -31,11 +47,7 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("saxonConfiguration", net.sf.saxon.Configuration.class);
-        answer.put("saxonConfigurationProperties", java.util.Map.class);
-        answer.put("saxonExtensionFunctions", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

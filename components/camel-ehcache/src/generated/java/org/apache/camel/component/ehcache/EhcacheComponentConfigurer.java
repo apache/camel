@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cacheManager", org.ehcache.CacheManager.class);
+        map.put("cacheManagerConfiguration", org.ehcache.config.Configuration.class);
+        map.put("configurationUri", java.lang.String.class);
+        map.put("createCacheIfNotExist", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("eventFiring", org.ehcache.event.EventFiring.class);
+        map.put("eventOrdering", org.ehcache.event.EventOrdering.class);
+        map.put("eventTypes", java.lang.String.class);
+        map.put("action", java.lang.String.class);
+        map.put("key", java.lang.Object.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.ehcache.config.CacheConfiguration.class);
+        map.put("configurations", java.util.Map.class);
+        map.put("keyType", java.lang.String.class);
+        map.put("valueType", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.ehcache.EhcacheConfiguration getOrCreateConfiguration(EhcacheComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.ehcache.EhcacheConfiguration());
@@ -60,24 +82,7 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheManager", org.ehcache.CacheManager.class);
-        answer.put("cacheManagerConfiguration", org.ehcache.config.Configuration.class);
-        answer.put("configuration", org.ehcache.config.CacheConfiguration.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("configurations", java.util.Map.class);
-        answer.put("createCacheIfNotExist", boolean.class);
-        answer.put("eventFiring", org.ehcache.event.EventFiring.class);
-        answer.put("eventOrdering", org.ehcache.event.EventOrdering.class);
-        answer.put("eventTypes", java.lang.String.class);
-        answer.put("key", java.lang.Object.class);
-        answer.put("keyType", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("valueType", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

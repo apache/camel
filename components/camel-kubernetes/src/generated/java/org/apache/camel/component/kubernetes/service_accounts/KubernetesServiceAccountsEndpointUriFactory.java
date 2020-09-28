@@ -45,7 +45,6 @@ public class KubernetesServiceAccountsEndpointUriFactory extends org.apache.came
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-service-accounts".equals(scheme);

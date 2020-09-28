@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("command", org.apache.camel.component.jclouds.JcloudsCommand.class);
+        map.put("providerId", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("blobName", java.lang.String.class);
+        map.put("container", java.lang.String.class);
+        map.put("directory", java.lang.String.class);
+        map.put("group", java.lang.String.class);
+        map.put("hardwareId", java.lang.String.class);
+        map.put("imageId", java.lang.String.class);
+        map.put("locationId", java.lang.String.class);
+        map.put("nodeId", java.lang.String.class);
+        map.put("nodeState", java.lang.String.class);
+        map.put("operation", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcloudsEndpoint target = (JcloudsEndpoint) obj;
@@ -53,25 +78,7 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobName", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("container", java.lang.String.class);
-        answer.put("directory", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("group", java.lang.String.class);
-        answer.put("hardwareId", java.lang.String.class);
-        answer.put("imageId", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("locationId", java.lang.String.class);
-        answer.put("nodeId", java.lang.String.class);
-        answer.put("nodeState", java.lang.String.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

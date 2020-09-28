@@ -39,7 +39,6 @@ public class CordaEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "corda".equals(scheme);

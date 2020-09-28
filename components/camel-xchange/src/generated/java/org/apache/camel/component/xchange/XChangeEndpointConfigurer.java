@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XChangeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("currency", org.knowm.xchange.currency.Currency.class);
+        map.put("currencyPair", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("method", org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class);
+        map.put("service", org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
@@ -35,15 +49,7 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("currency", org.knowm.xchange.currency.Currency.class);
-        answer.put("currencyPair", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("method", org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod.class);
-        answer.put("service", org.apache.camel.component.xchange.XChangeConfiguration.XChangeService.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,18 @@ import org.apache.camel.component.http.HttpComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class ResteasyComponentConfigurer extends HttpComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("proxyConsumersClasses", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("allowJavaSerializedObject", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ResteasyComponent target = (ResteasyComponent) obj;
@@ -29,10 +41,7 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("proxyConsumersClasses", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

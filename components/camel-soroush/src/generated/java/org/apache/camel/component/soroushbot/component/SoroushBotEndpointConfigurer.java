@@ -15,6 +15,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("action", org.apache.camel.component.soroushbot.models.SoroushAction.class);
+        map.put("connectionTimeout", int.class);
+        map.put("maxConnectionRetry", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("queueCapacityPerThread", int.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("autoDownload", boolean.class);
+        map.put("autoUploadFile", boolean.class);
+        map.put("downloadThumbnail", boolean.class);
+        map.put("forceDownload", boolean.class);
+        map.put("forceUpload", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backOffStrategy", java.lang.String.class);
+        map.put("maxRetryWaitingTime", long.class);
+        map.put("reconnectIdleConnectionTimeout", long.class);
+        map.put("retryExponentialCoefficient", long.class);
+        map.put("retryLinearIncrement", long.class);
+        map.put("retryWaitingTime", long.class);
+        map.put("authorizationToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SoroushBotEndpoint target = (SoroushBotEndpoint) obj;
@@ -68,30 +97,7 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authorizationToken", java.lang.String.class);
-        answer.put("autoDownload", boolean.class);
-        answer.put("autoUploadFile", boolean.class);
-        answer.put("backOffStrategy", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("downloadThumbnail", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("forceDownload", boolean.class);
-        answer.put("forceUpload", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxConnectionRetry", int.class);
-        answer.put("maxRetryWaitingTime", long.class);
-        answer.put("queueCapacityPerThread", int.class);
-        answer.put("reconnectIdleConnectionTimeout", long.class);
-        answer.put("retryExponentialCoefficient", long.class);
-        answer.put("retryLinearIncrement", long.class);
-        answer.put("retryWaitingTime", long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

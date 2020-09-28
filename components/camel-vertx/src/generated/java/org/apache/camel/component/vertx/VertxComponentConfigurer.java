@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("timeout", int.class);
+        map.put("vertx", io.vertx.core.Vertx.class);
+        map.put("vertxOptions", io.vertx.core.VertxOptions.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("vertxFactory", io.vertx.core.spi.VertxFactory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxComponent target = (VertxComponent) obj;
@@ -39,17 +54,7 @@ public class VertxComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("port", int.class);
-        answer.put("timeout", int.class);
-        answer.put("vertx", io.vertx.core.Vertx.class);
-        answer.put("vertxFactory", io.vertx.core.spi.VertxFactory.class);
-        answer.put("vertxOptions", io.vertx.core.VertxOptions.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -45,7 +45,6 @@ public class KubernetesConfigMapsEndpointUriFactory extends org.apache.camel.sup
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-config-maps".equals(scheme);

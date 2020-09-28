@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cryptoOperation", org.apache.camel.component.crypto.cms.CryptoOperation.class);
+        map.put("name", java.lang.String.class);
+        map.put("keyStore", java.security.KeyStore.class);
+        map.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", char[].class);
+        map.put("fromBase64", boolean.class);
+        map.put("contentEncryptionAlgorithm", java.lang.String.class);
+        map.put("originatorInformationProvider", org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class);
+        map.put("recipient", java.util.List.class);
+        map.put("secretKeyLength", int.class);
+        map.put("unprotectedAttributesGeneratorProvider", org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class);
+        map.put("toBase64", java.lang.Boolean.class);
+        map.put("includeContent", java.lang.Boolean.class);
+        map.put("signer", java.lang.String.class);
+        map.put("signedDataHeaderBase64", boolean.class);
+        map.put("verifySignaturesOfAllSigners", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
@@ -55,25 +80,7 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentEncryptionAlgorithm", java.lang.String.class);
-        answer.put("fromBase64", boolean.class);
-        answer.put("includeContent", java.lang.Boolean.class);
-        answer.put("keyStore", java.security.KeyStore.class);
-        answer.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("originatorInformationProvider", org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider.class);
-        answer.put("password", char[].class);
-        answer.put("recipient", java.util.List.class);
-        answer.put("secretKeyLength", int.class);
-        answer.put("signedDataHeaderBase64", boolean.class);
-        answer.put("signer", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("toBase64", java.lang.Boolean.class);
-        answer.put("unprotectedAttributesGeneratorProvider", org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider.class);
-        answer.put("verifySignaturesOfAllSigners", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

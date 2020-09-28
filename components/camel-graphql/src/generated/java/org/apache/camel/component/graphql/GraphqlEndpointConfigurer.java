@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("httpUri", java.net.URI.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operationName", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("query", java.lang.String.class);
+        map.put("queryFile", java.lang.String.class);
+        map.put("variables", org.apache.camel.util.json.JsonObject.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GraphqlEndpoint target = (GraphqlEndpoint) obj;
@@ -42,19 +60,7 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operationName", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("queryFile", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("variables", org.apache.camel.util.json.JsonObject.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

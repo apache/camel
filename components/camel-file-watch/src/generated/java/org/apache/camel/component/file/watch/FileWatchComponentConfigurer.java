@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FileWatchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("fileHasher", io.methvin.watcher.hashing.FileHasher.class);
+        map.put("pollThreads", int.class);
+        map.put("queueSize", int.class);
+        map.put("useFileHashing", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FileWatchComponent target = (FileWatchComponent) obj;
@@ -39,15 +52,7 @@ public class FileWatchComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("fileHasher", io.methvin.watcher.hashing.FileHasher.class);
-        answer.put("pollThreads", int.class);
-        answer.put("queueSize", int.class);
-        answer.put("useFileHashing", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

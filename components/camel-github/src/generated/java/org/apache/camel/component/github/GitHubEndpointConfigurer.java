@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("type", org.apache.camel.component.github.GitHubType.class);
+        map.put("branchName", java.lang.String.class);
+        map.put("oauthToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("repoName", java.lang.String.class);
+        map.put("repoOwner", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("state", java.lang.String.class);
+        map.put("targetUrl", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GitHubEndpoint target = (GitHubEndpoint) obj;
@@ -48,22 +70,7 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oauthToken", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("repoName", java.lang.String.class);
-        answer.put("repoOwner", java.lang.String.class);
-        answer.put("state", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("targetUrl", java.lang.String.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

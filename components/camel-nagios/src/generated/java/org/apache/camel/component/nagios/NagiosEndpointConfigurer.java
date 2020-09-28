@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("connectionTimeout", int.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("sendSync", boolean.class);
+        map.put("timeout", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
+        map.put("password", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NagiosEndpoint target = (NagiosEndpoint) obj;
@@ -37,16 +53,7 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("sendSync", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

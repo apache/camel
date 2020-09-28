@@ -42,7 +42,6 @@ public class EhcacheEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "ehcache".equals(scheme);

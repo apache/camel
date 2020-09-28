@@ -15,6 +15,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("allowContextMapAll", boolean.class);
+        map.put("contentCache", boolean.class);
+        map.put("failOnNullBody", boolean.class);
+        map.put("failOnNullHeader", boolean.class);
+        map.put("headerName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("errorHandler", org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class);
+        map.put("schemaLoader", org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsonValidatorEndpoint target = (JsonValidatorEndpoint) obj;
@@ -44,18 +61,7 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("errorHandler", org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler.class);
-        answer.put("failOnNullBody", boolean.class);
-        answer.put("failOnNullHeader", boolean.class);
-        answer.put("headerName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("schemaLoader", org.apache.camel.component.jsonvalidator.JsonSchemaLoader.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

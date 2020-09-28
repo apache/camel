@@ -54,7 +54,6 @@ public class JMXEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jmx".equals(scheme);

@@ -15,6 +15,44 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("serverURL", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("format", java.lang.String.class);
+        map.put("granularityPeriod", long.class);
+        map.put("monitorType", java.lang.String.class);
+        map.put("objectDomain", java.lang.String.class);
+        map.put("objectName", java.lang.String.class);
+        map.put("observedAttribute", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("executorService", java.util.concurrent.ExecutorService.class);
+        map.put("handback", java.lang.Object.class);
+        map.put("notificationFilter", javax.management.NotificationFilter.class);
+        map.put("objectProperties", java.util.Map.class);
+        map.put("reconnectDelay", int.class);
+        map.put("reconnectOnConnectionFailure", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("testConnectionOnStartup", boolean.class);
+        map.put("initThreshold", int.class);
+        map.put("modulus", int.class);
+        map.put("offset", int.class);
+        map.put("differenceMode", boolean.class);
+        map.put("notifyHigh", boolean.class);
+        map.put("notifyLow", boolean.class);
+        map.put("thresholdHigh", java.lang.Double.class);
+        map.put("thresholdLow", java.lang.Double.class);
+        map.put("password", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        map.put("notifyDiffer", boolean.class);
+        map.put("notifyMatch", boolean.class);
+        map.put("stringToCompare", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JMXEndpoint target = (JMXEndpoint) obj;
@@ -80,39 +118,7 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("differenceMode", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("executorService", java.util.concurrent.ExecutorService.class);
-        answer.put("format", java.lang.String.class);
-        answer.put("granularityPeriod", long.class);
-        answer.put("handback", java.lang.Object.class);
-        answer.put("initThreshold", int.class);
-        answer.put("modulus", int.class);
-        answer.put("monitorType", java.lang.String.class);
-        answer.put("notificationFilter", javax.management.NotificationFilter.class);
-        answer.put("notifyDiffer", boolean.class);
-        answer.put("notifyHigh", boolean.class);
-        answer.put("notifyLow", boolean.class);
-        answer.put("notifyMatch", boolean.class);
-        answer.put("objectDomain", java.lang.String.class);
-        answer.put("objectName", java.lang.String.class);
-        answer.put("objectProperties", java.util.Map.class);
-        answer.put("observedAttribute", java.lang.String.class);
-        answer.put("offset", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("reconnectDelay", int.class);
-        answer.put("reconnectOnConnectionFailure", boolean.class);
-        answer.put("stringToCompare", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        answer.put("thresholdHigh", java.lang.Double.class);
-        answer.put("thresholdLow", java.lang.Double.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

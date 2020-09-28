@@ -15,6 +15,44 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("protocol", java.lang.String.class);
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("disconnect", boolean.class);
+        map.put("minaLogger", boolean.class);
+        map.put("sync", boolean.class);
+        map.put("timeout", long.class);
+        map.put("writeTimeout", long.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("clientMode", boolean.class);
+        map.put("disconnectOnNoReply", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("cachedAddress", boolean.class);
+        map.put("lazySessionCreation", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("maximumPoolSize", int.class);
+        map.put("orderedThreadPoolExecutor", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("transferExchange", boolean.class);
+        map.put("allowDefaultCodec", boolean.class);
+        map.put("codec", org.apache.mina.filter.codec.ProtocolCodecFactory.class);
+        map.put("decoderMaxLineLength", int.class);
+        map.put("encoderMaxLineLength", int.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("filters", java.util.List.class);
+        map.put("textline", boolean.class);
+        map.put("textlineDelimiter", org.apache.camel.component.mina.MinaTextLineDelimiter.class);
+        map.put("autoStartTls", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MinaEndpoint target = (MinaEndpoint) obj;
@@ -75,37 +113,7 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowDefaultCodec", boolean.class);
-        answer.put("autoStartTls", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cachedAddress", boolean.class);
-        answer.put("clientMode", boolean.class);
-        answer.put("codec", org.apache.mina.filter.codec.ProtocolCodecFactory.class);
-        answer.put("decoderMaxLineLength", int.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("disconnectOnNoReply", boolean.class);
-        answer.put("encoderMaxLineLength", int.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filters", java.util.List.class);
-        answer.put("lazySessionCreation", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maximumPoolSize", int.class);
-        answer.put("minaLogger", boolean.class);
-        answer.put("noReplyLogLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("orderedThreadPoolExecutor", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sync", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("textline", boolean.class);
-        answer.put("textlineDelimiter", org.apache.camel.component.mina.MinaTextLineDelimiter.class);
-        answer.put("timeout", long.class);
-        answer.put("transferExchange", boolean.class);
-        answer.put("writeTimeout", long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

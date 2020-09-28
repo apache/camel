@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("stream", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("exchangesRefillLowWatermark", double.class);
+        map.put("forwardOnComplete", boolean.class);
+        map.put("forwardOnError", boolean.class);
+        map.put("maxInflightExchanges", java.lang.Integer.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("backpressureStrategy", org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ReactiveStreamsEndpoint target = (ReactiveStreamsEndpoint) obj;
@@ -48,20 +67,7 @@ public class ReactiveStreamsEndpointConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backpressureStrategy", org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("exchangesRefillLowWatermark", double.class);
-        answer.put("forwardOnComplete", boolean.class);
-        answer.put("forwardOnError", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxInflightExchanges", java.lang.Integer.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

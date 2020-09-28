@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SjmsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("connectionCount", java.lang.Integer.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("reconnectBackOff", long.class);
+        map.put("reconnectOnError", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("connectionClientId", java.lang.String.class);
+        map.put("connectionFactory", javax.jms.ConnectionFactory.class);
+        map.put("connectionMaxWait", long.class);
+        map.put("connectionResource", org.apache.camel.component.sjms.jms.ConnectionResource.class);
+        map.put("connectionTestOnBorrow", boolean.class);
+        map.put("destinationCreationStrategy", org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class);
+        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
+        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
+        map.put("timedTaskManager", org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("connectionPassword", java.lang.String.class);
+        map.put("connectionUsername", java.lang.String.class);
+        map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SjmsComponent target = (SjmsComponent) obj;
@@ -63,27 +88,7 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectionClientId", java.lang.String.class);
-        answer.put("connectionCount", java.lang.Integer.class);
-        answer.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        answer.put("connectionMaxWait", long.class);
-        answer.put("connectionPassword", java.lang.String.class);
-        answer.put("connectionResource", org.apache.camel.component.sjms.jms.ConnectionResource.class);
-        answer.put("connectionTestOnBorrow", boolean.class);
-        answer.put("connectionUsername", java.lang.String.class);
-        answer.put("destinationCreationStrategy", org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        answer.put("reconnectBackOff", long.class);
-        answer.put("reconnectOnError", boolean.class);
-        answer.put("timedTaskManager", org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class);
-        answer.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

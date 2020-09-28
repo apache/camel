@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("path", java.lang.String.class);
+        map.put("antInclude", java.lang.String.class);
+        map.put("autoCreate", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("events", java.util.Set.class);
+        map.put("fileHasher", io.methvin.watcher.hashing.FileHasher.class);
+        map.put("pollThreads", int.class);
+        map.put("queueSize", int.class);
+        map.put("recursive", boolean.class);
+        map.put("useFileHashing", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FileWatchEndpoint target = (FileWatchEndpoint) obj;
@@ -50,22 +71,7 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("antInclude", java.lang.String.class);
-        answer.put("autoCreate", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("events", java.util.Set.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fileHasher", io.methvin.watcher.hashing.FileHasher.class);
-        answer.put("pollThreads", int.class);
-        answer.put("queueSize", int.class);
-        answer.put("recursive", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("useFileHashing", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

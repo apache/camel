@@ -32,7 +32,6 @@ public class VelocityEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "velocity".equals(scheme);

@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("serverUrl", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.zendesk.ZendeskConfiguration.class);
+        map.put("zendesk", org.zendesk.client.v2.Zendesk.class);
+        map.put("oauthToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("token", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ZendeskComponent target = (ZendeskComponent) obj;
@@ -40,18 +56,7 @@ public class ZendeskComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.zendesk.ZendeskConfiguration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oauthToken", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("serverUrl", java.lang.String.class);
-        answer.put("token", java.lang.String.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("zendesk", org.zendesk.client.v2.Zendesk.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

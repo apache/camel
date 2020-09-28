@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("router", io.vertx.ext.web.Router.class);
+        map.put("vertx", io.vertx.core.Vertx.class);
+        map.put("vertxOptions", io.vertx.core.VertxOptions.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxWebsocketComponent target = (VertxWebsocketComponent) obj;
@@ -37,15 +50,7 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("router", io.vertx.ext.web.Router.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("vertx", io.vertx.core.Vertx.class);
-        answer.put("vertxOptions", io.vertx.core.VertxOptions.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

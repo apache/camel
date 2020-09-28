@@ -46,7 +46,6 @@ public class ServerEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "iec60870-server".equals(scheme);

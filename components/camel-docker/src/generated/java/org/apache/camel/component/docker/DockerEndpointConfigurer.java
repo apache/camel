@@ -15,6 +15,36 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DockerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.docker.DockerOperation.class);
+        map.put("email", java.lang.String.class);
+        map.put("host", java.lang.String.class);
+        map.put("port", java.lang.Integer.class);
+        map.put("requestTimeout", java.lang.Integer.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("cmdExecFactory", java.lang.String.class);
+        map.put("followRedirectFilter", boolean.class);
+        map.put("loggingFilter", boolean.class);
+        map.put("maxPerRouteConnections", java.lang.Integer.class);
+        map.put("maxTotalConnections", java.lang.Integer.class);
+        map.put("parameters", java.util.Map.class);
+        map.put("serverAddress", java.lang.String.class);
+        map.put("socket", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("certPath", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("secure", boolean.class);
+        map.put("tlsVerify", boolean.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DockerEndpoint target = (DockerEndpoint) obj;
@@ -62,31 +92,7 @@ public class DockerEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("certPath", java.lang.String.class);
-        answer.put("cmdExecFactory", java.lang.String.class);
-        answer.put("email", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("followRedirectFilter", boolean.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loggingFilter", boolean.class);
-        answer.put("maxPerRouteConnections", java.lang.Integer.class);
-        answer.put("maxTotalConnections", java.lang.Integer.class);
-        answer.put("parameters", java.util.Map.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("port", java.lang.Integer.class);
-        answer.put("requestTimeout", java.lang.Integer.class);
-        answer.put("secure", boolean.class);
-        answer.put("serverAddress", java.lang.String.class);
-        answer.put("socket", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tlsVerify", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

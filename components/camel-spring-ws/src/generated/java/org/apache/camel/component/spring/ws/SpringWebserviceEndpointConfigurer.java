@@ -15,6 +15,39 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("type", org.apache.camel.component.spring.ws.type.EndpointMappingType.class);
+        map.put("lookupKey", java.lang.String.class);
+        map.put("webServiceEndpointUri", java.lang.String.class);
+        map.put("expression", java.lang.String.class);
+        map.put("messageFilter", org.apache.camel.component.spring.ws.filter.MessageFilter.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("endpointDispatcher", org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class);
+        map.put("endpointMapping", org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class);
+        map.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("allowResponseAttachmentOverride", boolean.class);
+        map.put("allowResponseHeaderOverride", boolean.class);
+        map.put("faultAction", java.net.URI.class);
+        map.put("faultTo", java.net.URI.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("messageFactory", org.springframework.ws.WebServiceMessageFactory.class);
+        map.put("messageSender", org.springframework.ws.transport.WebServiceMessageSender.class);
+        map.put("outputAction", java.net.URI.class);
+        map.put("replyTo", java.net.URI.class);
+        map.put("soapAction", java.lang.String.class);
+        map.put("timeout", int.class);
+        map.put("webServiceTemplate", org.springframework.ws.client.core.WebServiceTemplate.class);
+        map.put("wsAddressingAction", java.net.URI.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringWebserviceEndpoint target = (SpringWebserviceEndpoint) obj;
@@ -69,31 +102,7 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowResponseAttachmentOverride", boolean.class);
-        answer.put("allowResponseHeaderOverride", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("endpointDispatcher", org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class);
-        answer.put("endpointMapping", org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("faultAction", java.net.URI.class);
-        answer.put("faultTo", java.net.URI.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageFactory", org.springframework.ws.WebServiceMessageFactory.class);
-        answer.put("messageFilter", org.apache.camel.component.spring.ws.filter.MessageFilter.class);
-        answer.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
-        answer.put("messageSender", org.springframework.ws.transport.WebServiceMessageSender.class);
-        answer.put("outputAction", java.net.URI.class);
-        answer.put("replyTo", java.net.URI.class);
-        answer.put("soapAction", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        answer.put("webServiceTemplate", org.springframework.ws.client.core.WebServiceTemplate.class);
-        answer.put("wsAddressingAction", java.net.URI.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

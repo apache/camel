@@ -60,7 +60,6 @@ public class PulsarEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "pulsar".equals(scheme);

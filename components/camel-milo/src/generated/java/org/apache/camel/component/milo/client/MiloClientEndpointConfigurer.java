@@ -15,6 +15,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("endpointUri", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("defaultAwaitWrites", boolean.class);
+        map.put("discoveryEndpointSuffix", java.lang.String.class);
+        map.put("discoveryEndpointUri", java.lang.String.class);
+        map.put("method", java.lang.String.class);
+        map.put("node", java.lang.String.class);
+        map.put("samplingInterval", java.lang.Double.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("allowedSecurityPolicies", java.lang.String.class);
+        map.put("applicationName", java.lang.String.class);
+        map.put("applicationUri", java.lang.String.class);
+        map.put("channelLifetime", java.lang.Long.class);
+        map.put("keyAlias", java.lang.String.class);
+        map.put("keyPassword", java.lang.String.class);
+        map.put("keyStorePassword", java.lang.String.class);
+        map.put("keyStoreType", java.lang.String.class);
+        map.put("keyStoreUrl", java.lang.String.class);
+        map.put("maxPendingPublishRequests", java.lang.Long.class);
+        map.put("maxResponseMessageSize", java.lang.Long.class);
+        map.put("overrideHost", boolean.class);
+        map.put("productUri", java.lang.String.class);
+        map.put("requestedPublishingInterval", java.lang.Double.class);
+        map.put("requestTimeout", java.lang.Long.class);
+        map.put("sessionName", java.lang.String.class);
+        map.put("sessionTimeout", java.lang.Long.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloClientEndpoint target = (MiloClientEndpoint) obj;
@@ -82,38 +119,7 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedSecurityPolicies", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("applicationUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelLifetime", java.lang.Long.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("defaultAwaitWrites", boolean.class);
-        answer.put("discoveryEndpointSuffix", java.lang.String.class);
-        answer.put("discoveryEndpointUri", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("keyAlias", java.lang.String.class);
-        answer.put("keyPassword", java.lang.String.class);
-        answer.put("keyStorePassword", java.lang.String.class);
-        answer.put("keyStoreType", java.lang.String.class);
-        answer.put("keyStoreUrl", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxPendingPublishRequests", java.lang.Long.class);
-        answer.put("maxResponseMessageSize", java.lang.Long.class);
-        answer.put("method", java.lang.String.class);
-        answer.put("node", java.lang.String.class);
-        answer.put("overrideHost", boolean.class);
-        answer.put("productUri", java.lang.String.class);
-        answer.put("requestTimeout", java.lang.Long.class);
-        answer.put("requestedPublishingInterval", java.lang.Double.class);
-        answer.put("samplingInterval", java.lang.Double.class);
-        answer.put("sessionName", java.lang.String.class);
-        answer.put("sessionTimeout", java.lang.Long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

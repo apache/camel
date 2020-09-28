@@ -41,7 +41,6 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "mongodb-gridfs".equals(scheme);

@@ -15,6 +15,59 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("instanceName", java.lang.String.class);
+        map.put("display", java.lang.String.class);
+        map.put("displayValue", java.lang.String.class);
+        map.put("excludeReferenceLink", java.lang.Boolean.class);
+        map.put("favorites", java.lang.Boolean.class);
+        map.put("includeAggregates", java.lang.Boolean.class);
+        map.put("includeAvailableAggregates", java.lang.Boolean.class);
+        map.put("includeAvailableBreakdowns", java.lang.Boolean.class);
+        map.put("includeScoreNotes", java.lang.Boolean.class);
+        map.put("includeScores", java.lang.Boolean.class);
+        map.put("inputDisplayValue", java.lang.Boolean.class);
+        map.put("key", java.lang.Boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("models", java.util.Map.class);
+        map.put("perPage", java.lang.Integer.class);
+        map.put("release", org.apache.camel.component.servicenow.ServiceNowRelease.class);
+        map.put("requestModels", java.util.Map.class);
+        map.put("resource", java.lang.String.class);
+        map.put("responseModels", java.util.Map.class);
+        map.put("sortBy", java.lang.String.class);
+        map.put("sortDir", java.lang.String.class);
+        map.put("suppressAutoSysField", java.lang.Boolean.class);
+        map.put("suppressPaginationHeader", java.lang.Boolean.class);
+        map.put("table", java.lang.String.class);
+        map.put("target", java.lang.Boolean.class);
+        map.put("topLevelOnly", java.lang.Boolean.class);
+        map.put("apiVersion", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("dateFormat", java.lang.String.class);
+        map.put("dateTimeFormat", java.lang.String.class);
+        map.put("httpClientPolicy", org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class);
+        map.put("mapper", com.fasterxml.jackson.databind.ObjectMapper.class);
+        map.put("proxyAuthorizationPolicy", org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class);
+        map.put("retrieveTargetRecordOnImport", java.lang.Boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("timeFormat", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("apiUrl", java.lang.String.class);
+        map.put("oauthClientId", java.lang.String.class);
+        map.put("oauthClientSecret", java.lang.String.class);
+        map.put("oauthTokenUrl", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("proxyPassword", java.lang.String.class);
+        map.put("proxyUserName", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("userName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceNowEndpoint target = (ServiceNowEndpoint) obj;
@@ -106,54 +159,7 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiUrl", java.lang.String.class);
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("dateFormat", java.lang.String.class);
-        answer.put("dateTimeFormat", java.lang.String.class);
-        answer.put("display", java.lang.String.class);
-        answer.put("displayValue", java.lang.String.class);
-        answer.put("excludeReferenceLink", java.lang.Boolean.class);
-        answer.put("favorites", java.lang.Boolean.class);
-        answer.put("httpClientPolicy", org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class);
-        answer.put("includeAggregates", java.lang.Boolean.class);
-        answer.put("includeAvailableAggregates", java.lang.Boolean.class);
-        answer.put("includeAvailableBreakdowns", java.lang.Boolean.class);
-        answer.put("includeScoreNotes", java.lang.Boolean.class);
-        answer.put("includeScores", java.lang.Boolean.class);
-        answer.put("inputDisplayValue", java.lang.Boolean.class);
-        answer.put("key", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mapper", com.fasterxml.jackson.databind.ObjectMapper.class);
-        answer.put("models", java.util.Map.class);
-        answer.put("oauthClientId", java.lang.String.class);
-        answer.put("oauthClientSecret", java.lang.String.class);
-        answer.put("oauthTokenUrl", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("perPage", java.lang.Integer.class);
-        answer.put("proxyAuthorizationPolicy", org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPassword", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyUserName", java.lang.String.class);
-        answer.put("release", org.apache.camel.component.servicenow.ServiceNowRelease.class);
-        answer.put("requestModels", java.util.Map.class);
-        answer.put("resource", java.lang.String.class);
-        answer.put("responseModels", java.util.Map.class);
-        answer.put("retrieveTargetRecordOnImport", java.lang.Boolean.class);
-        answer.put("sortBy", java.lang.String.class);
-        answer.put("sortDir", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("suppressAutoSysField", java.lang.Boolean.class);
-        answer.put("suppressPaginationHeader", java.lang.Boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("table", java.lang.String.class);
-        answer.put("target", java.lang.Boolean.class);
-        answer.put("timeFormat", java.lang.String.class);
-        answer.put("topLevelOnly", java.lang.Boolean.class);
-        answer.put("userName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

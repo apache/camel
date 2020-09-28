@@ -33,7 +33,6 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "splunk-hec".equals(scheme);

@@ -44,7 +44,6 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "quartz".equals(scheme);

@@ -15,6 +15,78 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MinioEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bucketName", java.lang.String.class);
+        map.put("autoCreateBucket", boolean.class);
+        map.put("customHttpClient", okhttp3.OkHttpClient.class);
+        map.put("endpoint", java.lang.String.class);
+        map.put("minioClient", io.minio.MinioClient.class);
+        map.put("objectLock", boolean.class);
+        map.put("policy", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("region", java.lang.String.class);
+        map.put("secure", boolean.class);
+        map.put("serverSideEncryption", io.minio.ServerSideEncryption.class);
+        map.put("serverSideEncryptionCustomerKey", io.minio.ServerSideEncryptionCustomerKey.class);
+        map.put("autoCloseBody", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("bypassGovernanceMode", boolean.class);
+        map.put("deleteAfterRead", boolean.class);
+        map.put("delimiter", java.lang.String.class);
+        map.put("destinationBucketName", java.lang.String.class);
+        map.put("destinationObjectName", java.lang.String.class);
+        map.put("includeBody", boolean.class);
+        map.put("includeFolders", boolean.class);
+        map.put("includeUserMetadata", boolean.class);
+        map.put("includeVersions", boolean.class);
+        map.put("length", long.class);
+        map.put("matchETag", java.lang.String.class);
+        map.put("maxConnections", int.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("modifiedSince", java.time.ZonedDateTime.class);
+        map.put("moveAfterRead", boolean.class);
+        map.put("notMatchETag", java.lang.String.class);
+        map.put("objectName", java.lang.String.class);
+        map.put("offset", long.class);
+        map.put("prefix", java.lang.String.class);
+        map.put("recursive", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("startAfter", java.lang.String.class);
+        map.put("unModifiedSince", java.time.ZonedDateTime.class);
+        map.put("useVersion1", boolean.class);
+        map.put("versionId", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("deleteAfterWrite", boolean.class);
+        map.put("keyName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.minio.MinioOperations.class);
+        map.put("pojoRequest", boolean.class);
+        map.put("storageClass", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MinioEndpoint target = (MinioEndpoint) obj;
@@ -141,73 +213,7 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoCloseBody", boolean.class);
-        answer.put("autoCreateBucket", boolean.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bypassGovernanceMode", boolean.class);
-        answer.put("customHttpClient", okhttp3.OkHttpClient.class);
-        answer.put("delay", long.class);
-        answer.put("deleteAfterRead", boolean.class);
-        answer.put("deleteAfterWrite", boolean.class);
-        answer.put("delimiter", java.lang.String.class);
-        answer.put("destinationBucketName", java.lang.String.class);
-        answer.put("destinationObjectName", java.lang.String.class);
-        answer.put("endpoint", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("includeBody", boolean.class);
-        answer.put("includeFolders", boolean.class);
-        answer.put("includeUserMetadata", boolean.class);
-        answer.put("includeVersions", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("keyName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("length", long.class);
-        answer.put("matchETag", java.lang.String.class);
-        answer.put("maxConnections", int.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("minioClient", io.minio.MinioClient.class);
-        answer.put("modifiedSince", java.time.ZonedDateTime.class);
-        answer.put("moveAfterRead", boolean.class);
-        answer.put("notMatchETag", java.lang.String.class);
-        answer.put("objectLock", boolean.class);
-        answer.put("objectName", java.lang.String.class);
-        answer.put("offset", long.class);
-        answer.put("operation", org.apache.camel.component.minio.MinioOperations.class);
-        answer.put("pojoRequest", boolean.class);
-        answer.put("policy", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("prefix", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("recursive", boolean.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("secure", boolean.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serverSideEncryption", io.minio.ServerSideEncryption.class);
-        answer.put("serverSideEncryptionCustomerKey", io.minio.ServerSideEncryptionCustomerKey.class);
-        answer.put("startAfter", java.lang.String.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("storageClass", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("unModifiedSince", java.time.ZonedDateTime.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useVersion1", boolean.class);
-        answer.put("versionId", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

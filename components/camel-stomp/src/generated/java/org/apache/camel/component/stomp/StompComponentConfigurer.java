@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class StompComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("brokerURL", java.lang.String.class);
+        map.put("customHeaders", java.util.Properties.class);
+        map.put("host", java.lang.String.class);
+        map.put("version", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.stomp.StompConfiguration.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("login", java.lang.String.class);
+        map.put("passcode", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.stomp.StompConfiguration getOrCreateConfiguration(StompComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.stomp.StompConfiguration());
@@ -53,21 +72,7 @@ public class StompComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("brokerURL", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.stomp.StompConfiguration.class);
-        answer.put("customHeaders", java.util.Properties.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("login", java.lang.String.class);
-        answer.put("passcode", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("version", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

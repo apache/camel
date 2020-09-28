@@ -45,7 +45,6 @@ public class KubernetesSecretsEndpointUriFactory extends org.apache.camel.suppor
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-secrets".equals(scheme);

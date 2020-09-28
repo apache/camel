@@ -45,7 +45,6 @@ public class ClientEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "iec60870-client".equals(scheme);

@@ -55,7 +55,6 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-calendar-stream".equals(scheme);

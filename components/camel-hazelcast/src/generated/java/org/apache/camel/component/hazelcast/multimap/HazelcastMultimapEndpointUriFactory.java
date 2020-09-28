@@ -32,7 +32,6 @@ public class HazelcastMultimapEndpointUriFactory extends org.apache.camel.suppor
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-multimap".equals(scheme);
