@@ -35,20 +35,21 @@ public class CamelPlugin implements AnalyzerPlugin {
         Jar jar = analyzer.getJar();
         Map<String, Map<String, Resource>> dir = jar.getDirectories();
 
-        Stream<String> components = dir.getOrDefault("META-INF/services/org/apache/camel/component", Collections.emptyMap())
-                .keySet().stream()
+        Stream<String> components = dir
+                .getOrDefault("META-INF/services/org/apache/camel/component", Collections.emptyMap()).keySet().stream()
                 .map(s -> s.substring(s.lastIndexOf('/') + 1))
                 .map(s -> "osgi.service;effective:=active;objectClass=\"org.apache.camel.spi.ComponentResolver\";component="
-                          + s);
-        Stream<String> languages = dir.getOrDefault("META-INF/services/org/apache/camel/language", Collections.emptyMap())
-                .keySet().stream()
+                        + s);
+        Stream<String> languages = dir
+                .getOrDefault("META-INF/services/org/apache/camel/language", Collections.emptyMap()).keySet().stream()
                 .map(s -> s.substring(s.lastIndexOf('/') + 1))
-                .map(s -> "osgi.service;effective:=active;objectClass=\"org.apache.camel.spi.LanguageResolver\";language=" + s);
-        Stream<String> dataformats = dir.getOrDefault("META-INF/services/org/apache/camel/dataformat", Collections.emptyMap())
-                .keySet().stream()
+                .map(s -> "osgi.service;effective:=active;objectClass=\"org.apache.camel.spi.LanguageResolver\";language="
+                        + s);
+        Stream<String> dataformats = dir
+                .getOrDefault("META-INF/services/org/apache/camel/dataformat", Collections.emptyMap()).keySet().stream()
                 .map(s -> s.substring(s.lastIndexOf('/') + 1))
                 .map(s -> "osgi.service;effective:=active;objectClass=\"org.apache.camel.spi.DataformatResolver\";dataformat="
-                          + s);
+                        + s);
         String header = analyzer.getProperty("Provide-Capability");
 
         header = Stream

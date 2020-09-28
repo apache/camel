@@ -82,8 +82,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     private static final String CACHE_PROPERTIES_FILENAME = "formatter-maven-cache.properties";
 
     /** The Constant DEFAULT_INCLUDES. */
-    private static final String[] DEFAULT_INCLUDES = new String[] {
-            "**/*.css", "**/*.json", "**/*.html", "**/*.java",
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/*.css", "**/*.json", "**/*.html", "**/*.java",
             "**/*.js", "**/*.xml" };
 
     /**
@@ -311,10 +310,12 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Execute.
      *
-     * @throws MojoExecutionException the mojo execution exception
-     * @throws MojoFailureException   the mojo failure exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
+     * @throws MojoFailureException
+     *             the mojo failure exception
      * 
-     * @see                           AbstractMojo#execute()
+     * @see AbstractMojo#execute()
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -328,7 +329,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         if (StringUtils.isEmpty(this.encoding)) {
             this.encoding = ReaderFactory.FILE_ENCODING;
             getLog().warn("File encoding has not been set, using platform encoding (" + this.encoding
-                          + ") to format source files, i.e. build is platform dependent!");
+                    + ") to format source files, i.e. build is platform dependent!");
         } else {
             if (!Charset.isSupported(this.encoding)) {
                 throw new MojoExecutionException("Encoding '" + this.encoding + "' is not supported");
@@ -436,7 +437,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Store file hash cache.
      *
-     * @param props the props
+     * @param props
+     *            the props
      */
     private void storeFileHashCache(Properties props) {
         File cacheFile = new File(this.cachedir, CACHE_PROPERTIES_FILENAME);
@@ -459,7 +461,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             this.cachedir.mkdirs();
         } else if (!this.cachedir.isDirectory()) {
             log.warn("Something strange here as the '" + this.cachedir.getPath()
-                     + "' supposedly cache directory is not a directory.");
+                    + "' supposedly cache directory is not a directory.");
             return props;
         }
 
@@ -479,13 +481,19 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Format file.
      *
-     * @param  file                   the file
-     * @param  rc                     the rc
-     * @param  hashCache              the hash cache
-     * @param  basedirPath            the basedir path
+     * @param file
+     *            the file
+     * @param rc
+     *            the rc
+     * @param hashCache
+     *            the hash cache
+     * @param basedirPath
+     *            the basedir path
      * 
-     * @throws MojoFailureException   the mojo failure exception
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws MojoFailureException
+     *             the mojo failure exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     private void formatFile(File file, ResultCollector rc, Properties hashCache, String basedirPath)
             throws MojoFailureException, MojoExecutionException {
@@ -500,16 +508,25 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Format individual file.
      *
-     * @param  file                   the file
-     * @param  rc                     the rc
-     * @param  hashCache              the hash cache
-     * @param  basedirPath            the basedir path
-     * @param  dryRun                 the dry run
+     * @param file
+     *            the file
+     * @param rc
+     *            the rc
+     * @param hashCache
+     *            the hash cache
+     * @param basedirPath
+     *            the basedir path
+     * @param dryRun
+     *            the dry run
      * 
-     * @throws IOException            Signals that an I/O exception has occurred.
-     * @throws BadLocationException   the bad location exception
-     * @throws MojoFailureException   the mojo failure exception
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
+     * @throws BadLocationException
+     *             the bad location exception
+     * @throws MojoFailureException
+     *             the mojo failure exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     protected void doFormatFile(File file, ResultCollector rc, Properties hashCache, String basedirPath, boolean dryRun)
             throws IOException, BadLocationException, MojoFailureException, MojoExecutionException {
@@ -629,9 +646,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * sha512hash.
      *
-     * @param  str the str
+     * @param str
+     *            the str
      * 
-     * @return     the string
+     * @return the string
      */
     private String sha512hash(String str) {
         return Hashing.sha512().hashBytes(str.getBytes(getEncoding())).toString();
@@ -640,11 +658,13 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Read the given file and return the content as a string.
      *
-     * @param  file        the file
+     * @param file
+     *            the file
      * 
-     * @return             the string
+     * @return the string
      * 
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private String readFileAsString(File file) throws IOException {
         StringBuilder fileData = new StringBuilder(1000);
@@ -663,10 +683,13 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Write the given string to a file.
      *
-     * @param  str         the str
-     * @param  file        the file
+     * @param str
+     *            the str
+     * @param file
+     *            the file
      * 
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws IOException
+     *             Signals that an I/O exception has occurred.
      */
     private void writeStringToFile(String str, File file) throws IOException {
         if (!file.exists() && file.isDirectory()) {
@@ -681,7 +704,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Create a {@link CodeFormatter} instance to be used by this mojo.
      *
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     private void createCodeFormatter() throws MojoExecutionException {
         // Java Setup
@@ -725,9 +749,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Return the options to be passed when creating {@link CodeFormatter} instance.
      *
-     * @return                        the formatting options or null if not config file found
+     * @return the formatting options or null if not config file found
      * 
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     private Map<String, String> getFormattingOptions(String newConfigFile) throws MojoExecutionException {
         if (this.useEclipseDefaults) {
@@ -746,9 +771,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Read config file and return the config as {@link Map}.
      *
-     * @return                        the options from config file
+     * @return the options from config file
      * 
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     private Map<String, String> getOptionsFromConfigFile(String newConfigFile) throws MojoExecutionException {
 
@@ -771,9 +797,10 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
     /**
      * Read properties file and return the properties as {@link Map}.
      *
-     * @return                        the options from properties file or null if not properties file found
+     * @return the options from properties file or null if not properties file found
      * 
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws MojoExecutionException
+     *             the mojo execution exception
      */
     private Map<String, String> getOptionsFromPropertiesFile(String newPropertiesFile) throws MojoExecutionException {
 

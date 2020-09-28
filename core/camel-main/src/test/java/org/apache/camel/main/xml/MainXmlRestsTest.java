@@ -105,8 +105,11 @@ public class MainXmlRestsTest {
 
     private static final class MockRestConsumerFactory implements RestConsumerFactory {
         @Override
-        public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes,
-                String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                String consumes,
+                String produces, RestConfiguration configuration, Map<String, Object> parameters)
+                throws Exception {
             return null;
         }
     }
