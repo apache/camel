@@ -383,7 +383,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
         StringWriter sw = new StringWriter();
         PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
-                false, false, options, sw);
+                false, false, options, null, sw);
 
         String source = sw.toString();
 

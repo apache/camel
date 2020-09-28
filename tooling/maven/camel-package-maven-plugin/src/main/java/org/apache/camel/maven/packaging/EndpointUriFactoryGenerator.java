@@ -61,7 +61,6 @@ public final class EndpointUriFactoryGenerator {
         w.write("    private static final Set<String> PROPERTY_NAMES;\n");
         w.write(generatePropertyNames(model));
         w.write("\n");
-        w.write("\n");
         w.write("    @Override\n");
         w.write("    public boolean isEnabled(String scheme) {\n");
         if (alternative == null) {

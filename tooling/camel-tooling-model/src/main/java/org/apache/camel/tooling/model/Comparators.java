@@ -30,4 +30,8 @@ public final class Comparators {
     public static Comparator<ApiMethodModel> apiMethodModelModelComparator() {
         return (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
     }
+
+    public static Comparator<ComponentModel.ApiOptionModel> apiOptionModelComparator() {
+        return (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
+    }
 }

@@ -443,7 +443,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generatePropertyConfigurer(packageName, className, fqClassName, componentClassName,
                 pfqn, psn,
                 componentModel.getScheme() + "-component", hasSuper, true,
-                options);
+                options, componentModel);
     }
 
     private void generateEndpointConfigurer(
@@ -492,7 +492,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         generatePropertyConfigurer(packageName, className, fqClassName, endpointClassName,
                 pfqn, psn,
                 componentModel.getScheme() + "-endpoint", hasSuper, false,
-                options);
+                options, componentModel);
     }
 
     protected ComponentModel findComponentProperties(
@@ -1216,10 +1216,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     protected void generatePropertyConfigurer(
             String pn, String cn, String fqn, String en,
             String pfqn, String psn, String scheme, boolean hasSuper, boolean component,
-            Collection<? extends BaseOptionModel> options) {
+            Collection<? extends BaseOptionModel> options, ComponentModel model) {
 
         try (Writer w = new StringWriter()) {
-            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, options, w);
+            PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn, hasSuper, component, options, model,
+                    w);
             updateResource(sourcesOutputDir.toPath(), fqn.replace('.', '/') + ".java", w.toString());
         } catch (Exception e) {
             throw new RuntimeException("Unable to generate source code file: " + fqn + ": " + e.getMessage(), e);
