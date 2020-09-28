@@ -75,6 +75,16 @@ public final class TemplatedRouteBuilder {
     }
 
     /**
+     * Adds parameters the route template will use when creating the route.
+     *
+     * @param parameters the template parameters to add
+     */
+    public TemplatedRouteBuilder parameters(Map<String, Object> parameters) {
+        this.parameters.putAll(parameters);
+        return this;
+    }
+
+    /**
      * Sets a handler which gives access to the route template model that will be used for creating the route. This can
      * be used to do validation. Any changes to the model happens before the route is created and added, however these
      * changes affect future usage of the same template.
