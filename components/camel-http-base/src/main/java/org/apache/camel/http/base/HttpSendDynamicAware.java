@@ -71,10 +71,6 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             if (path != null) {
                 params.remove("httpUri");
                 params.remove("httpURI");
-                params.remove("path");
-                // httpUri/httpURI contains the host and path, so replace it with just the host as the context-path is dynamic
-                params.remove("httpUri");
-                params.remove("httpURI");
                 if ("netty-http".equals(getScheme())) {
                     // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
