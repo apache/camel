@@ -43,11 +43,5 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-        <!-- needed for dynamic to -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-catalog</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

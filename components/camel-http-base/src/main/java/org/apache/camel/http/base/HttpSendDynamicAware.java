@@ -40,7 +40,8 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
 
     @Override
     public boolean isOnlyDynamicQueryParameters() {
-        return false;
+        // we compute our own host:port/path so its okay so say true here
+        return true;
     }
 
     @Override
@@ -68,17 +69,24 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
                 params.remove(k);
             }
             if (path != null) {
+                params.remove("httpUri");
+                params.remove("httpURI");
+                params.remove("path");
                 // httpUri/httpURI contains the host and path, so replace it with just the host as the context-path is dynamic
-                if (params.containsKey("httpUri")) {
-                    params.put("httpUri", host);
-                } else if (params.containsKey("httpURI")) {
-                    params.put("httpURI", host);
-                } else if ("netty-http".equals(getScheme())) {
+                params.remove("httpUri");
+                params.remove("httpURI");
+                if ("netty-http".equals(getScheme())) {
                     // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
                 }
             }
-            return asEndpointUri(exchange, entry.getUri(), params);
+
+            // build static url with the known parameters
+            String url = getScheme() + ":" + host;
+            if (!params.isEmpty()) {
+                url += "?" + URISupport.createQueryString(params, false);
+            }
+            return url;
         } else {
             // no need for optimisation
             return null;
@@ -142,6 +150,10 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
                 int port = parse.getPort();
                 if (port > 0 && port != 80 && port != 443) {
                     host += ":" + port;
+                }
+                // remove double slash for path
+                while (path.startsWith("//")) {
+                    path = path.substring(1);
                 }
                 if (!httpComponent) {
                     // include scheme for components that are not camel-http
