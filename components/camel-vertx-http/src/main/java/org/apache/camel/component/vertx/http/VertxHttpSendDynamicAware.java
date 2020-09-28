@@ -16,26 +16,10 @@
  */
 package org.apache.camel.component.vertx.http;
 
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.http.base.HttpSendDynamicAware;
+import org.apache.camel.spi.annotations.SendDynamic;
 
-public class VertxHttpTestSupport extends CamelTestSupport {
+@SendDynamic("vertx-http")
+public class VertxHttpSendDynamicAware extends HttpSendDynamicAware {
 
-    protected final int port = AvailablePortFinder.getNextAvailable();
-
-    protected String getTestServerUrl() {
-        return String.format("http://localhost:%d", port);
-    }
-
-    protected String getTestServerUri() {
-        return String.format("undertow:%s", getTestServerUrl());
-    }
-
-    protected String getProducerUri() {
-        return String.format("vertx-http:http://localhost:%d", port);
-    }
-
-    protected int getPort() {
-        return port;
-    }
 }
