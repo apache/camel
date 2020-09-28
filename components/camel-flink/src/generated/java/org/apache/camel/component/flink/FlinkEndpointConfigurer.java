@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("endpointType", org.apache.camel.component.flink.EndpointType.class);
+        map.put("collect", boolean.class);
+        map.put("dataSet", org.apache.flink.api.java.DataSet.class);
+        map.put("dataSetCallback", org.apache.camel.component.flink.DataSetCallback.class);
+        map.put("dataStream", org.apache.flink.streaming.api.datastream.DataStream.class);
+        map.put("dataStreamCallback", org.apache.camel.component.flink.DataStreamCallback.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
@@ -39,16 +54,7 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collect", boolean.class);
-        answer.put("dataSet", org.apache.flink.api.java.DataSet.class);
-        answer.put("dataSetCallback", org.apache.camel.component.flink.DataSetCallback.class);
-        answer.put("dataStream", org.apache.flink.streaming.api.datastream.DataStream.class);
-        answer.put("dataStreamCallback", org.apache.camel.component.flink.DataStreamCallback.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,16 @@ import org.apache.camel.component.validator.ValidatorComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class MsvComponentConfigurer extends ValidatorComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
+        map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MsvComponent target = (MsvComponent) obj;
@@ -27,9 +37,7 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

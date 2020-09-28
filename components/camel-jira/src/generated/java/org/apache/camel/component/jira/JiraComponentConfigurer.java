@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JiraComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("delay", java.lang.Integer.class);
+        map.put("jiraUrl", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.jira.JiraConfiguration.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("consumerKey", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("privateKey", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("verificationCode", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.jira.JiraConfiguration getOrCreateConfiguration(JiraComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.jira.JiraConfiguration());
@@ -52,20 +70,7 @@ public class JiraComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.jira.JiraConfiguration.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("delay", java.lang.Integer.class);
-        answer.put("jiraUrl", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("privateKey", java.lang.String.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("verificationCode", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

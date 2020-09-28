@@ -15,6 +15,65 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("addresses", java.lang.String.class);
+        map.put("autoDelete", boolean.class);
+        map.put("connectionFactory", com.rabbitmq.client.ConnectionFactory.class);
+        map.put("deadLetterExchange", java.lang.String.class);
+        map.put("deadLetterExchangeType", java.lang.String.class);
+        map.put("deadLetterQueue", java.lang.String.class);
+        map.put("deadLetterRoutingKey", java.lang.String.class);
+        map.put("declare", boolean.class);
+        map.put("durable", boolean.class);
+        map.put("exclusive", boolean.class);
+        map.put("hostname", java.lang.String.class);
+        map.put("passive", boolean.class);
+        map.put("portNumber", int.class);
+        map.put("skipExchangeDeclare", boolean.class);
+        map.put("skipQueueBind", boolean.class);
+        map.put("skipQueueDeclare", boolean.class);
+        map.put("vhost", java.lang.String.class);
+        map.put("autoAck", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exclusiveConsumer", boolean.class);
+        map.put("prefetchCount", int.class);
+        map.put("prefetchEnabled", boolean.class);
+        map.put("prefetchGlobal", boolean.class);
+        map.put("prefetchSize", int.class);
+        map.put("threadPoolSize", int.class);
+        map.put("allowNullHeaders", boolean.class);
+        map.put("channelPoolMaxSize", int.class);
+        map.put("channelPoolMaxWait", long.class);
+        map.put("guaranteedDeliveries", boolean.class);
+        map.put("immediate", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mandatory", boolean.class);
+        map.put("publisherAcknowledgements", boolean.class);
+        map.put("publisherAcknowledgementsTimeout", long.class);
+        map.put("args", java.util.Map.class);
+        map.put("autoDetectConnectionFactory", boolean.class);
+        map.put("automaticRecoveryEnabled", java.lang.Boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("clientProperties", java.util.Map.class);
+        map.put("connectionFactoryExceptionHandler", com.rabbitmq.client.ExceptionHandler.class);
+        map.put("connectionTimeout", int.class);
+        map.put("networkRecoveryInterval", java.lang.Integer.class);
+        map.put("requestedChannelMax", int.class);
+        map.put("requestedFrameMax", int.class);
+        map.put("requestedHeartbeat", int.class);
+        map.put("requestTimeout", long.class);
+        map.put("requestTimeoutCheckerInterval", long.class);
+        map.put("topologyRecoveryEnabled", java.lang.Boolean.class);
+        map.put("transferException", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslProtocol", java.lang.String.class);
+        map.put("trustManager", javax.net.ssl.TrustManager.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RabbitMQComponent target = (RabbitMQComponent) obj;
@@ -119,61 +178,7 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("addresses", java.lang.String.class);
-        answer.put("allowNullHeaders", boolean.class);
-        answer.put("args", java.util.Map.class);
-        answer.put("autoAck", boolean.class);
-        answer.put("autoDelete", boolean.class);
-        answer.put("autoDetectConnectionFactory", boolean.class);
-        answer.put("automaticRecoveryEnabled", java.lang.Boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelPoolMaxSize", int.class);
-        answer.put("channelPoolMaxWait", long.class);
-        answer.put("clientProperties", java.util.Map.class);
-        answer.put("connectionFactory", com.rabbitmq.client.ConnectionFactory.class);
-        answer.put("connectionFactoryExceptionHandler", com.rabbitmq.client.ExceptionHandler.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("deadLetterExchange", java.lang.String.class);
-        answer.put("deadLetterExchangeType", java.lang.String.class);
-        answer.put("deadLetterQueue", java.lang.String.class);
-        answer.put("deadLetterRoutingKey", java.lang.String.class);
-        answer.put("declare", boolean.class);
-        answer.put("durable", boolean.class);
-        answer.put("exclusive", boolean.class);
-        answer.put("exclusiveConsumer", boolean.class);
-        answer.put("guaranteedDeliveries", boolean.class);
-        answer.put("hostname", java.lang.String.class);
-        answer.put("immediate", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mandatory", boolean.class);
-        answer.put("networkRecoveryInterval", java.lang.Integer.class);
-        answer.put("passive", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("portNumber", int.class);
-        answer.put("prefetchCount", int.class);
-        answer.put("prefetchEnabled", boolean.class);
-        answer.put("prefetchGlobal", boolean.class);
-        answer.put("prefetchSize", int.class);
-        answer.put("publisherAcknowledgements", boolean.class);
-        answer.put("publisherAcknowledgementsTimeout", long.class);
-        answer.put("requestTimeout", long.class);
-        answer.put("requestTimeoutCheckerInterval", long.class);
-        answer.put("requestedChannelMax", int.class);
-        answer.put("requestedFrameMax", int.class);
-        answer.put("requestedHeartbeat", int.class);
-        answer.put("skipExchangeDeclare", boolean.class);
-        answer.put("skipQueueBind", boolean.class);
-        answer.put("skipQueueDeclare", boolean.class);
-        answer.put("sslProtocol", java.lang.String.class);
-        answer.put("threadPoolSize", int.class);
-        answer.put("topologyRecoveryEnabled", java.lang.Boolean.class);
-        answer.put("transferException", boolean.class);
-        answer.put("trustManager", javax.net.ssl.TrustManager.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("vhost", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

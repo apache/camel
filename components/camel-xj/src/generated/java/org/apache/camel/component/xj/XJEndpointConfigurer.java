@@ -15,6 +15,32 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("allowStAX", boolean.class);
+        map.put("contentCache", boolean.class);
+        map.put("deleteOutputFile", boolean.class);
+        map.put("failOnNullBody", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("output", org.apache.camel.component.xslt.XsltOutput.class);
+        map.put("transformDirection", org.apache.camel.component.xj.TransformDirection.class);
+        map.put("transformerCacheSize", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("entityResolver", org.xml.sax.EntityResolver.class);
+        map.put("errorListener", javax.xml.transform.ErrorListener.class);
+        map.put("resultHandlerFactory", org.apache.camel.component.xslt.ResultHandlerFactory.class);
+        map.put("saxonConfiguration", net.sf.saxon.Configuration.class);
+        map.put("saxonExtensionFunctions", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("transformerFactory", javax.xml.transform.TransformerFactory.class);
+        map.put("transformerFactoryClass", java.lang.String.class);
+        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
+        map.put("uriResolver", javax.xml.transform.URIResolver.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XJEndpoint target = (XJEndpoint) obj;
@@ -27,9 +53,7 @@ public class XJEndpointConfigurer extends XsltSaxonEndpointConfigurer implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("transformDirection", org.apache.camel.component.xj.TransformDirection.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

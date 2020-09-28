@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("configuration", org.apache.camel.component.olingo2.Olingo2Configuration.class);
+        map.put("connectTimeout", int.class);
+        map.put("contentType", java.lang.String.class);
+        map.put("entityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
+        map.put("entityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
+        map.put("filterAlreadySeen", boolean.class);
+        map.put("httpHeaders", java.util.Map.class);
+        map.put("proxy", org.apache.http.HttpHost.class);
+        map.put("serviceUri", java.lang.String.class);
+        map.put("socketTimeout", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("splitResult", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
+        map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.olingo2.Olingo2Configuration getOrCreateConfiguration(Olingo2Component target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.olingo2.Olingo2Configuration());
@@ -66,26 +90,7 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.olingo2.Olingo2Configuration.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("entityProviderReadProperties", org.apache.olingo.odata2.api.ep.EntityProviderReadProperties.class);
-        answer.put("entityProviderWriteProperties", org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties.class);
-        answer.put("filterAlreadySeen", boolean.class);
-        answer.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
-        answer.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        answer.put("httpHeaders", java.util.Map.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("proxy", org.apache.http.HttpHost.class);
-        answer.put("serviceUri", java.lang.String.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("splitResult", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

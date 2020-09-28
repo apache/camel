@@ -15,6 +15,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MetricsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("metricsType", org.apache.camel.component.metrics.MetricsType.class);
+        map.put("metricsName", java.lang.String.class);
+        map.put("action", org.apache.camel.component.metrics.MetricsTimerAction.class);
+        map.put("decrement", java.lang.Long.class);
+        map.put("increment", java.lang.Long.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mark", java.lang.Long.class);
+        map.put("subject", java.lang.Object.class);
+        map.put("value", java.lang.Long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MetricsEndpoint target = (MetricsEndpoint) obj;
@@ -36,17 +53,7 @@ public class MetricsEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", org.apache.camel.component.metrics.MetricsTimerAction.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("decrement", java.lang.Long.class);
-        answer.put("increment", java.lang.Long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mark", java.lang.Long.class);
-        answer.put("subject", java.lang.Object.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("value", java.lang.Long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

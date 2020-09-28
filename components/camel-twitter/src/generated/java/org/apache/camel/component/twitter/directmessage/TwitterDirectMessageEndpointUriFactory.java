@@ -67,7 +67,6 @@ public class TwitterDirectMessageEndpointUriFactory extends org.apache.camel.sup
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "twitter-directmessage".equals(scheme);

@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NovaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("apiVersion", java.lang.String.class);
+        map.put("config", org.openstack4j.core.transport.Config.class);
+        map.put("domain", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("project", java.lang.String.class);
+        map.put("subsystem", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NovaEndpoint target = (NovaEndpoint) obj;
@@ -39,19 +57,7 @@ public class NovaEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("config", org.openstack4j.core.transport.Config.class);
-        answer.put("domain", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("project", java.lang.String.class);
-        answer.put("subsystem", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

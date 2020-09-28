@@ -31,7 +31,6 @@ public class StringTemplateEndpointUriFactory extends org.apache.camel.support.c
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "string-template".equals(scheme);

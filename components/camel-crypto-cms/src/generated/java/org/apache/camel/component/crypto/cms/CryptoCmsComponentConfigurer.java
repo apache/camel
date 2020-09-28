@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("envelopedDataDecryptorConfiguration", org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class);
+        map.put("signedDataVerifierConfiguration", org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsComponent target = (CryptoCmsComponent) obj;
@@ -33,12 +43,7 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("envelopedDataDecryptorConfiguration", org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("signedDataVerifierConfiguration", org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

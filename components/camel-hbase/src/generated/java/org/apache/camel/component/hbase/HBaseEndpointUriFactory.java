@@ -41,7 +41,6 @@ public class HBaseEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hbase".equals(scheme);

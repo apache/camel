@@ -15,6 +15,54 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MailComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("closeFolder", boolean.class);
+        map.put("copyTo", java.lang.String.class);
+        map.put("delete", boolean.class);
+        map.put("disconnect", boolean.class);
+        map.put("handleFailedMessage", boolean.class);
+        map.put("mimeDecodeHeaders", boolean.class);
+        map.put("moveTo", java.lang.String.class);
+        map.put("peek", boolean.class);
+        map.put("skipFailedMessage", boolean.class);
+        map.put("unseen", boolean.class);
+        map.put("fetchSize", int.class);
+        map.put("folderName", java.lang.String.class);
+        map.put("mapMailMessage", boolean.class);
+        map.put("bcc", java.lang.String.class);
+        map.put("cc", java.lang.String.class);
+        map.put("from", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("replyTo", java.lang.String.class);
+        map.put("subject", java.lang.String.class);
+        map.put("to", java.lang.String.class);
+        map.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
+        map.put("additionalJavaMailProperties", java.util.Properties.class);
+        map.put("alternativeBodyHeader", java.lang.String.class);
+        map.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
+        map.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.mail.MailConfiguration.class);
+        map.put("connectionTimeout", int.class);
+        map.put("contentType", java.lang.String.class);
+        map.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
+        map.put("debugMode", boolean.class);
+        map.put("ignoreUnsupportedCharset", boolean.class);
+        map.put("ignoreUriScheme", boolean.class);
+        map.put("javaMailProperties", java.util.Properties.class);
+        map.put("session", javax.mail.Session.class);
+        map.put("useInlineAttachments", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.mail.MailConfiguration getOrCreateConfiguration(MailComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.mail.MailConfiguration());
@@ -102,50 +150,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalJavaMailProperties", java.util.Properties.class);
-        answer.put("alternativeBodyHeader", java.lang.String.class);
-        answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
-        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bcc", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cc", java.lang.String.class);
-        answer.put("closeFolder", boolean.class);
-        answer.put("configuration", org.apache.camel.component.mail.MailConfiguration.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
-        answer.put("copyTo", java.lang.String.class);
-        answer.put("debugMode", boolean.class);
-        answer.put("delete", boolean.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("fetchSize", int.class);
-        answer.put("folderName", java.lang.String.class);
-        answer.put("from", java.lang.String.class);
-        answer.put("handleFailedMessage", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("ignoreUnsupportedCharset", boolean.class);
-        answer.put("ignoreUriScheme", boolean.class);
-        answer.put("javaMailProperties", java.util.Properties.class);
-        answer.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mapMailMessage", boolean.class);
-        answer.put("mimeDecodeHeaders", boolean.class);
-        answer.put("moveTo", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("peek", boolean.class);
-        answer.put("replyTo", java.lang.String.class);
-        answer.put("session", javax.mail.Session.class);
-        answer.put("skipFailedMessage", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("to", java.lang.String.class);
-        answer.put("unseen", boolean.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("useInlineAttachments", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JpaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("entityManagerFactory", javax.persistence.EntityManagerFactory.class);
+        map.put("joinTransaction", boolean.class);
+        map.put("sharedEntityManager", boolean.class);
+        map.put("transactionManager", org.springframework.transaction.PlatformTransactionManager.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JpaComponent target = (JpaComponent) obj;
@@ -39,15 +52,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("entityManagerFactory", javax.persistence.EntityManagerFactory.class);
-        answer.put("joinTransaction", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("sharedEntityManager", boolean.class);
-        answer.put("transactionManager", org.springframework.transaction.PlatformTransactionManager.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

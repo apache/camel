@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("type", org.apache.camel.component.jira.JiraType.class);
+        map.put("delay", java.lang.Integer.class);
+        map.put("jiraUrl", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("jql", java.lang.String.class);
+        map.put("maxResults", java.lang.Integer.class);
+        map.put("sendOnlyUpdatedField", boolean.class);
+        map.put("watchedFields", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("consumerKey", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("privateKey", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("verificationCode", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JiraEndpoint target = (JiraEndpoint) obj;
@@ -56,26 +81,7 @@ public class JiraEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("delay", java.lang.Integer.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("jiraUrl", java.lang.String.class);
-        answer.put("jql", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxResults", java.lang.Integer.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("privateKey", java.lang.String.class);
-        answer.put("sendOnlyUpdatedField", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("verificationCode", java.lang.String.class);
-        answer.put("watchedFields", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

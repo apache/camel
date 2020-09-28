@@ -15,6 +15,54 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", org.apache.camel.component.olingo4.internal.Olingo4ApiName.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("connectTimeout", int.class);
+        map.put("contentType", java.lang.String.class);
+        map.put("filterAlreadySeen", boolean.class);
+        map.put("httpHeaders", java.util.Map.class);
+        map.put("inBody", java.lang.String.class);
+        map.put("proxy", org.apache.http.HttpHost.class);
+        map.put("serviceUri", java.lang.String.class);
+        map.put("socketTimeout", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("splitResult", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
+        map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("data", java.lang.Object.class);
+        map.put("edm", org.apache.olingo.commons.api.edm.Edm.class);
+        map.put("endpointHttpHeaders", java.util.Map.class);
+        map.put("queryParams", java.util.Map.class);
+        map.put("resourcePath", java.lang.String.class);
+        map.put("responseHandler", org.apache.camel.component.olingo4.api.Olingo4ResponseHandler.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Olingo4Endpoint target = (Olingo4Endpoint) obj;
@@ -88,42 +136,7 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filterAlreadySeen", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
-        answer.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        answer.put("httpHeaders", java.util.Map.class);
-        answer.put("inBody", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("proxy", org.apache.http.HttpHost.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serviceUri", java.lang.String.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("splitResult", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CordaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("configuration", org.apache.camel.component.corda.CordaConfiguration.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
+        map.put("processSnapshot", boolean.class);
+        map.put("sort", net.corda.core.node.services.vault.Sort.class);
+        map.put("contractStateClass", java.lang.Class.class);
+        map.put("flowLogicArguments", java.lang.Object[].class);
+        map.put("flowLogicClass", java.lang.Class.class);
+        map.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.corda.CordaConfiguration getOrCreateConfiguration(CordaComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.corda.CordaConfiguration());
@@ -55,22 +75,7 @@ public class CordaComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.corda.CordaConfiguration.class);
-        answer.put("contractStateClass", java.lang.Class.class);
-        answer.put("flowLogicArguments", java.lang.Object[].class);
-        answer.put("flowLogicClass", java.lang.Class.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("processSnapshot", boolean.class);
-        answer.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
-        answer.put("sort", net.corda.core.node.services.vault.Sort.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -45,7 +45,6 @@ public class KubernetesPersistentVolumesClaimsEndpointUriFactory extends org.apa
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-persistent-volumes-claims".equals(scheme);

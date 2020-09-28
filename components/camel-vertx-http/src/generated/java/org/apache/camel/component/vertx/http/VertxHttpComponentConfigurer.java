@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("lazyStartProducer", boolean.class);
+        map.put("allowJavaSerializedObject", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("vertx", io.vertx.core.Vertx.class);
+        map.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
+        map.put("vertxOptions", io.vertx.core.VertxOptions.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPassword", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyType", io.vertx.core.net.ProxyType.class);
+        map.put("proxyUsername", java.lang.String.class);
+        map.put("basicAuthPassword", java.lang.String.class);
+        map.put("basicAuthUsername", java.lang.String.class);
+        map.put("bearerToken", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxHttpComponent target = (VertxHttpComponent) obj;
@@ -58,25 +81,7 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("basicAuthPassword", java.lang.String.class);
-        answer.put("basicAuthUsername", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bearerToken", java.lang.String.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPassword", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyType", io.vertx.core.net.ProxyType.class);
-        answer.put("proxyUsername", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("vertx", io.vertx.core.Vertx.class);
-        answer.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
-        answer.put("vertxOptions", io.vertx.core.VertxOptions.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ClientEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("uriPath", org.apache.camel.component.iec60870.ObjectAddress.class);
+        map.put("dataModuleOptions", org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class);
+        map.put("protocolOptions", org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("acknowledgeWindow", short.class);
+        map.put("adsuAddressType", org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class);
+        map.put("causeOfTransmissionType", org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class);
+        map.put("informationObjectAddressType", org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class);
+        map.put("maxUnacknowledged", short.class);
+        map.put("timeout1", int.class);
+        map.put("timeout2", int.class);
+        map.put("timeout3", int.class);
+        map.put("causeSourceAddress", byte.class);
+        map.put("connectionTimeout", int.class);
+        map.put("ignoreBackgroundScan", boolean.class);
+        map.put("ignoreDaylightSavingTime", boolean.class);
+        map.put("timeZone", java.util.TimeZone.class);
+        map.put("connectionId", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ClientEndpoint target = (ClientEndpoint) obj;
@@ -65,30 +94,7 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("acknowledgeWindow", short.class);
-        answer.put("adsuAddressType", org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("causeOfTransmissionType", org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class);
-        answer.put("causeSourceAddress", byte.class);
-        answer.put("connectionId", java.lang.String.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("dataModuleOptions", org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("ignoreBackgroundScan", boolean.class);
-        answer.put("ignoreDaylightSavingTime", boolean.class);
-        answer.put("informationObjectAddressType", org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxUnacknowledged", short.class);
-        answer.put("protocolOptions", org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeZone", java.util.TimeZone.class);
-        answer.put("timeout1", int.class);
-        answer.put("timeout2", int.class);
-        answer.put("timeout3", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -45,7 +45,6 @@ public class KubernetesResourcesQuotaEndpointUriFactory extends org.apache.camel
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-resources-quota".equals(scheme);

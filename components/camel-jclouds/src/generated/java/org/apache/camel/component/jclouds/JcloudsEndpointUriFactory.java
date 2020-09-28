@@ -41,7 +41,6 @@ public class JcloudsEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jclouds".equals(scheme);

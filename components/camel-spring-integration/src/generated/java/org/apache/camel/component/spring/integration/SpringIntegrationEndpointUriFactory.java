@@ -32,7 +32,6 @@ public class SpringIntegrationEndpointUriFactory extends org.apache.camel.suppor
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "spring-integration".equals(scheme);

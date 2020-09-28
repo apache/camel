@@ -37,7 +37,6 @@ public class EtcdWatchEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "etcd-watch".equals(scheme);

@@ -32,7 +32,6 @@ public class HazelcastSetEndpointUriFactory extends org.apache.camel.support.com
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-set".equals(scheme);

@@ -15,6 +15,39 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("connectionBean", java.lang.String.class);
+        map.put("collection", java.lang.String.class);
+        map.put("collectionIndex", java.lang.String.class);
+        map.put("createCollection", boolean.class);
+        map.put("database", java.lang.String.class);
+        map.put("mongoConnection", com.mongodb.client.MongoClient.class);
+        map.put("operation", org.apache.camel.component.mongodb.MongoDbOperation.class);
+        map.put("outputType", org.apache.camel.component.mongodb.MongoDbOutputType.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumerType", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("cursorRegenerationDelay", long.class);
+        map.put("dynamicity", boolean.class);
+        map.put("readPreference", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("writeConcern", java.lang.String.class);
+        map.put("writeResultAsHeader", boolean.class);
+        map.put("streamFilter", java.lang.String.class);
+        map.put("persistentId", java.lang.String.class);
+        map.put("persistentTailTracking", boolean.class);
+        map.put("tailTrackCollection", java.lang.String.class);
+        map.put("tailTrackDb", java.lang.String.class);
+        map.put("tailTrackField", java.lang.String.class);
+        map.put("tailTrackIncreasingField", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MongoDbEndpoint target = (MongoDbEndpoint) obj;
@@ -72,34 +105,7 @@ public class MongoDbEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("collection", java.lang.String.class);
-        answer.put("collectionIndex", java.lang.String.class);
-        answer.put("consumerType", java.lang.String.class);
-        answer.put("createCollection", boolean.class);
-        answer.put("cursorRegenerationDelay", long.class);
-        answer.put("database", java.lang.String.class);
-        answer.put("dynamicity", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mongoConnection", com.mongodb.client.MongoClient.class);
-        answer.put("operation", org.apache.camel.component.mongodb.MongoDbOperation.class);
-        answer.put("outputType", org.apache.camel.component.mongodb.MongoDbOutputType.class);
-        answer.put("persistentId", java.lang.String.class);
-        answer.put("persistentTailTracking", boolean.class);
-        answer.put("readPreference", java.lang.String.class);
-        answer.put("streamFilter", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tailTrackCollection", java.lang.String.class);
-        answer.put("tailTrackDb", java.lang.String.class);
-        answer.put("tailTrackField", java.lang.String.class);
-        answer.put("tailTrackIncreasingField", java.lang.String.class);
-        answer.put("writeConcern", java.lang.String.class);
-        answer.put("writeResultAsHeader", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

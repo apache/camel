@@ -34,7 +34,6 @@ public class NovaEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "openstack-nova".equals(scheme);

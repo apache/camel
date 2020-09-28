@@ -15,6 +15,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class HazelcastMultimapComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("hazelcastInstance", com.hazelcast.core.HazelcastInstance.class);
+        map.put("hazelcastMode", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastMultimapComponent target = (HazelcastMultimapComponent) obj;
@@ -35,13 +46,7 @@ public class HazelcastMultimapComponentConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("hazelcastInstance", com.hazelcast.core.HazelcastInstance.class);
-        answer.put("hazelcastMode", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

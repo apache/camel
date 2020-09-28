@@ -28,7 +28,6 @@ public class SpringLdapEndpointUriFactory extends org.apache.camel.support.compo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "spring-ldap".equals(scheme);

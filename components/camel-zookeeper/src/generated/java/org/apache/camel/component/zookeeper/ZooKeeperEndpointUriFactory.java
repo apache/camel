@@ -37,7 +37,6 @@ public class ZooKeeperEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "zookeeper".equals(scheme);

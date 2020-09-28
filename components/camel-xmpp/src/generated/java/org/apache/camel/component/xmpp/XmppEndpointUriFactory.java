@@ -46,7 +46,6 @@ public class XmppEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "xmpp".equals(scheme);

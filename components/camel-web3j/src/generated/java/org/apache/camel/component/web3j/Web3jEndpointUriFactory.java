@@ -63,7 +63,6 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "web3j".equals(scheme);

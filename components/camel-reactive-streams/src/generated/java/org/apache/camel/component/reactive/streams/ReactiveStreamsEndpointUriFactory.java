@@ -35,7 +35,6 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "reactive-streams".equals(scheme);

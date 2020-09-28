@@ -53,7 +53,6 @@ public class KubernetesHPAEndpointUriFactory extends org.apache.camel.support.co
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-hpa".equals(scheme);

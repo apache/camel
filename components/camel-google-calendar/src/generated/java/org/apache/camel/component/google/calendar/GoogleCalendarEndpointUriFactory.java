@@ -64,7 +64,6 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-calendar".equals(scheme);

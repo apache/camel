@@ -15,6 +15,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("httpUri", java.net.URI.class);
+        map.put("connectTimeout", int.class);
+        map.put("cookieStore", io.vertx.ext.web.client.spi.CookieStore.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("httpMethod", io.vertx.core.http.HttpMethod.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("okStatusCodeRange", java.lang.String.class);
+        map.put("sessionManagement", boolean.class);
+        map.put("throwExceptionOnFailure", boolean.class);
+        map.put("timeout", long.class);
+        map.put("transferException", boolean.class);
+        map.put("useCompression", boolean.class);
+        map.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
+        map.put("webClientOptions", io.vertx.ext.web.client.WebClientOptions.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPassword", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyType", io.vertx.core.net.ProxyType.class);
+        map.put("proxyUsername", java.lang.String.class);
+        map.put("basicAuthPassword", java.lang.String.class);
+        map.put("basicAuthUsername", java.lang.String.class);
+        map.put("bearerToken", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxHttpEndpoint target = (VertxHttpEndpoint) obj;
@@ -71,32 +102,7 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicAuthPassword", java.lang.String.class);
-        answer.put("basicAuthUsername", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bearerToken", java.lang.String.class);
-        answer.put("connectTimeout", int.class);
-        answer.put("cookieStore", io.vertx.ext.web.client.spi.CookieStore.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpMethod", io.vertx.core.http.HttpMethod.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("okStatusCodeRange", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPassword", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyType", io.vertx.core.net.ProxyType.class);
-        answer.put("proxyUsername", java.lang.String.class);
-        answer.put("sessionManagement", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        answer.put("timeout", long.class);
-        answer.put("transferException", boolean.class);
-        answer.put("useCompression", boolean.class);
-        answer.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
-        answer.put("webClientOptions", io.vertx.ext.web.client.WebClientOptions.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

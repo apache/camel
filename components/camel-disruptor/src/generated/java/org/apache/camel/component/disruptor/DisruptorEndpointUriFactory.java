@@ -38,7 +38,6 @@ public class DisruptorEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         for (String s : SCHEMES) {

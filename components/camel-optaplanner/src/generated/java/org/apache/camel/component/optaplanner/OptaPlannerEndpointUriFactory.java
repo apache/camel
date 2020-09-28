@@ -34,7 +34,6 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "optaplanner".equals(scheme);

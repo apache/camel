@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MustacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("allowContextMapAll", boolean.class);
+        map.put("allowTemplateFromHeader", boolean.class);
+        map.put("contentCache", boolean.class);
+        map.put("encoding", java.lang.String.class);
+        map.put("endDelimiter", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("startDelimiter", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MustacheEndpoint target = (MustacheEndpoint) obj;
@@ -41,17 +57,7 @@ public class MustacheEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("endDelimiter", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("startDelimiter", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

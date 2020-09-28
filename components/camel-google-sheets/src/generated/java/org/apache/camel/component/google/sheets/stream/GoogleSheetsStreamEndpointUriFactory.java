@@ -57,7 +57,6 @@ public class GoogleSheetsStreamEndpointUriFactory extends org.apache.camel.suppo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-sheets-stream".equals(scheme);

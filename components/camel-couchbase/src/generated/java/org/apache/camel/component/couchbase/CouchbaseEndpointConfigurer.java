@@ -15,6 +15,60 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("protocol", java.lang.String.class);
+        map.put("hostname", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("bucket", java.lang.String.class);
+        map.put("collection", java.lang.String.class);
+        map.put("key", java.lang.String.class);
+        map.put("scope", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumerProcessedStrategy", java.lang.String.class);
+        map.put("descending", boolean.class);
+        map.put("designDocumentName", java.lang.String.class);
+        map.put("limit", int.class);
+        map.put("rangeEndKey", java.lang.String.class);
+        map.put("rangeStartKey", java.lang.String.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("skip", int.class);
+        map.put("viewName", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("autoStartIdForInserts", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("persistTo", int.class);
+        map.put("producerRetryAttempts", int.class);
+        map.put("producerRetryPause", int.class);
+        map.put("replicateTo", int.class);
+        map.put("startingIdForInsertsFrom", long.class);
+        map.put("additionalHosts", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("queryTimeout", long.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CouchbaseEndpoint target = (CouchbaseEndpoint) obj;
@@ -101,53 +155,7 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalHosts", java.lang.String.class);
-        answer.put("autoStartIdForInserts", boolean.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bucket", java.lang.String.class);
-        answer.put("collection", java.lang.String.class);
-        answer.put("consumerProcessedStrategy", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("descending", boolean.class);
-        answer.put("designDocumentName", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("key", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limit", int.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("persistTo", int.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("producerRetryAttempts", int.class);
-        answer.put("producerRetryPause", int.class);
-        answer.put("queryTimeout", long.class);
-        answer.put("rangeEndKey", java.lang.String.class);
-        answer.put("rangeStartKey", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("replicateTo", int.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("scope", java.lang.String.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("skip", int.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("startingIdForInsertsFrom", long.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("viewName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

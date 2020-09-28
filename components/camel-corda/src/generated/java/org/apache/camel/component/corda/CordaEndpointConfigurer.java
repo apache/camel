@@ -15,6 +15,29 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CordaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("node", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
+        map.put("processSnapshot", boolean.class);
+        map.put("sort", net.corda.core.node.services.vault.Sort.class);
+        map.put("contractStateClass", java.lang.Class.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("flowLogicArguments", java.lang.Object[].class);
+        map.put("flowLogicClass", java.lang.Class.class);
+        map.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CordaEndpoint target = (CordaEndpoint) obj;
@@ -52,24 +75,7 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("contractStateClass", java.lang.Class.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("flowLogicArguments", java.lang.Object[].class);
-        answer.put("flowLogicClass", java.lang.Class.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("pageSpecification", net.corda.core.node.services.vault.PageSpecification.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("processSnapshot", boolean.class);
-        answer.put("queryCriteria", net.corda.core.node.services.vault.QueryCriteria.class);
-        answer.put("sort", net.corda.core.node.services.vault.Sort.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

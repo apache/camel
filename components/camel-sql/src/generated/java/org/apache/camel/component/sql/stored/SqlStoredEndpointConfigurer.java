@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("template", java.lang.String.class);
+        map.put("batch", boolean.class);
+        map.put("dataSource", javax.sql.DataSource.class);
+        map.put("function", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("noop", boolean.class);
+        map.put("outputHeader", java.lang.String.class);
+        map.put("useMessageBodyForTemplate", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlStoredEndpoint target = (SqlStoredEndpoint) obj;
@@ -39,17 +55,7 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("batch", boolean.class);
-        answer.put("dataSource", javax.sql.DataSource.class);
-        answer.put("function", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("noop", boolean.class);
-        answer.put("outputHeader", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("useMessageBodyForTemplate", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

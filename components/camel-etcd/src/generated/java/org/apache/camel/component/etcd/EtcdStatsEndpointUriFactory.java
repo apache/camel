@@ -55,7 +55,6 @@ public class EtcdStatsEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "etcd-stats".equals(scheme);

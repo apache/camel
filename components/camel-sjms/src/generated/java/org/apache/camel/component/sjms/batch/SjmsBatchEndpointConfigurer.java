@@ -15,6 +15,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("destinationName", java.lang.String.class);
+        map.put("aggregationStrategy", org.apache.camel.AggregationStrategy.class);
+        map.put("allowNullBody", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("completionInterval", int.class);
+        map.put("completionPredicate", java.lang.String.class);
+        map.put("completionSize", int.class);
+        map.put("completionTimeout", int.class);
+        map.put("consumerCount", int.class);
+        map.put("eagerCheckCompletion", boolean.class);
+        map.put("includeAllJMSXProperties", boolean.class);
+        map.put("mapJmsMessage", boolean.class);
+        map.put("pollDuration", int.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("asyncStartListener", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
+        map.put("keepAliveDelay", int.class);
+        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
+        map.put("recoveryInterval", int.class);
+        map.put("synchronous", boolean.class);
+        map.put("timeoutCheckerExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SjmsBatchEndpoint target = (SjmsBatchEndpoint) obj;
@@ -72,32 +103,7 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("aggregationStrategy", org.apache.camel.AggregationStrategy.class);
-        answer.put("allowNullBody", boolean.class);
-        answer.put("asyncStartListener", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("completionInterval", int.class);
-        answer.put("completionPredicate", java.lang.String.class);
-        answer.put("completionSize", int.class);
-        answer.put("completionTimeout", int.class);
-        answer.put("consumerCount", int.class);
-        answer.put("eagerCheckCompletion", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("includeAllJMSXProperties", boolean.class);
-        answer.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        answer.put("keepAliveDelay", int.class);
-        answer.put("mapJmsMessage", boolean.class);
-        answer.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        answer.put("pollDuration", int.class);
-        answer.put("recoveryInterval", int.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeoutCheckerExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

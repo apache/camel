@@ -45,7 +45,6 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "crypto".equals(scheme);

@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TelegramComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("baseUri", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("client", org.asynchttpclient.AsyncHttpClient.class);
+        map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
+        map.put("authorizationToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TelegramComponent target = (TelegramComponent) obj;
@@ -38,15 +51,7 @@ public class TelegramComponentConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("authorizationToken", java.lang.String.class);
-        answer.put("baseUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", org.asynchttpclient.AsyncHttpClient.class);
-        answer.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

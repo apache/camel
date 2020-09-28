@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("base", java.lang.String.class);
+        map.put("deep", boolean.class);
+        map.put("eventTypes", int.class);
+        map.put("nodeTypeNames", java.lang.String.class);
+        map.put("noLocal", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("sessionLiveCheckInterval", long.class);
+        map.put("sessionLiveCheckIntervalOnStart", long.class);
+        map.put("username", java.lang.String.class);
+        map.put("uuids", java.lang.String.class);
+        map.put("workspaceName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcrEndpoint target = (JcrEndpoint) obj;
@@ -52,24 +76,7 @@ public class JcrEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("deep", boolean.class);
-        answer.put("eventTypes", int.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("noLocal", boolean.class);
-        answer.put("nodeTypeNames", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("sessionLiveCheckInterval", long.class);
-        answer.put("sessionLiveCheckIntervalOnStart", long.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("uuids", java.lang.String.class);
-        answer.put("workspaceName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

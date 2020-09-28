@@ -15,6 +15,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GuavaEventBusComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("eventBus", com.google.common.eventbus.EventBus.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("listenerInterface", java.lang.Class.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GuavaEventBusComponent target = (GuavaEventBusComponent) obj;
@@ -35,13 +46,7 @@ public class GuavaEventBusComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("eventBus", com.google.common.eventbus.EventBus.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("listenerInterface", java.lang.Class.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

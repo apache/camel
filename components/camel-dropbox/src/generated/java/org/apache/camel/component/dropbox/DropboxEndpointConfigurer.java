@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DropboxEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.dropbox.util.DropboxOperation.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("client", com.dropbox.core.v2.DbxClientV2.class);
+        map.put("clientIdentifier", java.lang.String.class);
+        map.put("localPath", java.lang.String.class);
+        map.put("newRemotePath", java.lang.String.class);
+        map.put("query", java.lang.String.class);
+        map.put("remotePath", java.lang.String.class);
+        map.put("uploadMode", org.apache.camel.component.dropbox.util.DropboxUploadMode.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DropboxEndpoint target = (DropboxEndpoint) obj;
@@ -50,22 +71,7 @@ public class DropboxEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", com.dropbox.core.v2.DbxClientV2.class);
-        answer.put("clientIdentifier", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("localPath", java.lang.String.class);
-        answer.put("newRemotePath", java.lang.String.class);
-        answer.put("query", java.lang.String.class);
-        answer.put("remotePath", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("uploadMode", org.apache.camel.component.dropbox.util.DropboxUploadMode.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

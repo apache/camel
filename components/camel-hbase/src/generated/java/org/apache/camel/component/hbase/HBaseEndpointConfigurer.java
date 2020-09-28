@@ -15,6 +15,31 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("tableName", java.lang.String.class);
+        map.put("cellMappingStrategyFactory", org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class);
+        map.put("filters", java.util.List.class);
+        map.put("mappingStrategyClassName", java.lang.String.class);
+        map.put("mappingStrategyName", java.lang.String.class);
+        map.put("rowMapping", java.util.Map.class);
+        map.put("rowModel", org.apache.camel.component.hbase.model.HBaseRow.class);
+        map.put("userGroupInformation", org.apache.hadoop.security.UserGroupInformation.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("operation", java.lang.String.class);
+        map.put("remove", boolean.class);
+        map.put("removeHandler", org.apache.camel.component.hbase.HBaseRemoveHandler.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("maxResults", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HBaseEndpoint target = (HBaseEndpoint) obj;
@@ -57,26 +82,7 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cellMappingStrategyFactory", org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filters", java.util.List.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mappingStrategyClassName", java.lang.String.class);
-        answer.put("mappingStrategyName", java.lang.String.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("maxResults", int.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("remove", boolean.class);
-        answer.put("removeHandler", org.apache.camel.component.hbase.HBaseRemoveHandler.class);
-        answer.put("rowMapping", java.util.Map.class);
-        answer.put("rowModel", org.apache.camel.component.hbase.model.HBaseRow.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("userGroupInformation", org.apache.hadoop.security.UserGroupInformation.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

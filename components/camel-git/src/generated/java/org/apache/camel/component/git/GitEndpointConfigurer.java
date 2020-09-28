@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GitEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("localPath", java.lang.String.class);
+        map.put("branchName", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("remoteName", java.lang.String.class);
+        map.put("remotePath", java.lang.String.class);
+        map.put("tagName", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("type", org.apache.camel.component.git.consumer.GitType.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("allowEmpty", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GitEndpoint target = (GitEndpoint) obj;
@@ -50,23 +72,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowEmpty", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("branchName", java.lang.String.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("remoteName", java.lang.String.class);
-        answer.put("remotePath", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tagName", java.lang.String.class);
-        answer.put("type", org.apache.camel.component.git.consumer.GitType.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

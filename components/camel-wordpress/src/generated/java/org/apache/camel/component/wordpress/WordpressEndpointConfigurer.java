@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WordpressEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", java.lang.String.class);
+        map.put("operationDetail", java.lang.String.class);
+        map.put("apiVersion", java.lang.String.class);
+        map.put("criteria", java.util.Map.class);
+        map.put("force", boolean.class);
+        map.put("id", java.lang.Integer.class);
+        map.put("password", java.lang.String.class);
+        map.put("searchCriteria", org.apache.camel.component.wordpress.api.model.SearchCriteria.class);
+        map.put("url", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WordpressEndpoint target = (WordpressEndpoint) obj;
@@ -46,22 +68,7 @@ public class WordpressEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("criteria", java.util.Map.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("force", boolean.class);
-        answer.put("id", java.lang.Integer.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("searchCriteria", org.apache.camel.component.wordpress.api.model.SearchCriteria.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("url", java.lang.String.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

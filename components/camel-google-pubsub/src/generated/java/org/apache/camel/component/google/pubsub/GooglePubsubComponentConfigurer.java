@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("endpoint", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("publisherCacheSize", int.class);
+        map.put("publisherCacheTimeout", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("publisherTerminationTimeout", int.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GooglePubsubComponent target = (GooglePubsubComponent) obj;
@@ -38,15 +51,7 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("endpoint", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("publisherCacheSize", int.class);
-        answer.put("publisherCacheTimeout", int.class);
-        answer.put("publisherTerminationTimeout", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

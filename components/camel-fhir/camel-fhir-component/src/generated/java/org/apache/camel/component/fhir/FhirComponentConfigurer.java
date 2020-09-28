@@ -15,6 +15,39 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FhirComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("encoding", java.lang.String.class);
+        map.put("fhirVersion", java.lang.String.class);
+        map.put("log", boolean.class);
+        map.put("prettyPrint", boolean.class);
+        map.put("serverUrl", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
+        map.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
+        map.put("compress", boolean.class);
+        map.put("configuration", org.apache.camel.component.fhir.FhirConfiguration.class);
+        map.put("connectionTimeout", java.lang.Integer.class);
+        map.put("deferModelScanning", boolean.class);
+        map.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
+        map.put("forceConformanceCheck", boolean.class);
+        map.put("sessionCookie", java.lang.String.class);
+        map.put("socketTimeout", java.lang.Integer.class);
+        map.put("summary", java.lang.String.class);
+        map.put("validationMode", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPassword", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyUser", java.lang.String.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.fhir.FhirConfiguration getOrCreateConfiguration(FhirComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.fhir.FhirConfiguration());
@@ -78,35 +111,7 @@ public class FhirComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
-        answer.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
-        answer.put("compress", boolean.class);
-        answer.put("configuration", org.apache.camel.component.fhir.FhirConfiguration.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("deferModelScanning", boolean.class);
-        answer.put("encoding", java.lang.String.class);
-        answer.put("fhirContext", ca.uhn.fhir.context.FhirContext.class);
-        answer.put("fhirVersion", java.lang.String.class);
-        answer.put("forceConformanceCheck", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("log", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("prettyPrint", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPassword", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyUser", java.lang.String.class);
-        answer.put("serverUrl", java.lang.String.class);
-        answer.put("sessionCookie", java.lang.String.class);
-        answer.put("socketTimeout", java.lang.Integer.class);
-        answer.put("summary", java.lang.String.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("validationMode", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

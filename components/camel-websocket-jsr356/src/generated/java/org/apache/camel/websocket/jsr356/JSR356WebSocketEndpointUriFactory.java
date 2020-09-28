@@ -30,7 +30,6 @@ public class JSR356WebSocketEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "websocket-jsr356".equals(scheme);

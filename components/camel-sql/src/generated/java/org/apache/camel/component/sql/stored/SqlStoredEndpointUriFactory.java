@@ -32,7 +32,6 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "sql-stored".equals(scheme);

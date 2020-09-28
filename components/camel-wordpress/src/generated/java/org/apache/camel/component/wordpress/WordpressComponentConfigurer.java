@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WordpressComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiVersion", java.lang.String.class);
+        map.put("criteria", java.util.Map.class);
+        map.put("force", boolean.class);
+        map.put("id", java.lang.Integer.class);
+        map.put("password", java.lang.String.class);
+        map.put("searchCriteria", org.apache.camel.component.wordpress.api.model.SearchCriteria.class);
+        map.put("url", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.wordpress.WordpressComponentConfiguration.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.wordpress.WordpressComponentConfiguration getOrCreateConfiguration(WordpressComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.wordpress.WordpressComponentConfiguration());
@@ -49,20 +67,7 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiVersion", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.wordpress.WordpressComponentConfiguration.class);
-        answer.put("criteria", java.util.Map.class);
-        answer.put("force", boolean.class);
-        answer.put("id", java.lang.Integer.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("searchCriteria", org.apache.camel.component.wordpress.api.model.SearchCriteria.class);
-        answer.put("url", java.lang.String.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

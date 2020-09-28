@@ -26,7 +26,6 @@ public class DnsEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "dns".equals(scheme);

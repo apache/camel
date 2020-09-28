@@ -99,7 +99,6 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "debezium-postgres".equals(scheme);

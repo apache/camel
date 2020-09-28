@@ -15,6 +15,61 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("additionalProperties", java.util.Map.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("configuration", org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class);
+        map.put("internalKeyConverter", java.lang.String.class);
+        map.put("internalValueConverter", java.lang.String.class);
+        map.put("offsetCommitPolicy", java.lang.String.class);
+        map.put("offsetCommitTimeoutMs", long.class);
+        map.put("offsetFlushIntervalMs", long.class);
+        map.put("offsetStorage", java.lang.String.class);
+        map.put("offsetStorageFileName", java.lang.String.class);
+        map.put("offsetStoragePartitions", int.class);
+        map.put("offsetStorageReplicationFactor", int.class);
+        map.put("offsetStorageTopic", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("collectionBlacklist", java.lang.String.class);
+        map.put("collectionWhitelist", java.lang.String.class);
+        map.put("connectBackoffInitialDelayMs", long.class);
+        map.put("connectBackoffMaxDelayMs", long.class);
+        map.put("connectMaxAttempts", int.class);
+        map.put("converters", java.lang.String.class);
+        map.put("databaseBlacklist", java.lang.String.class);
+        map.put("databaseHistoryFileFilename", java.lang.String.class);
+        map.put("databaseWhitelist", java.lang.String.class);
+        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
+        map.put("fieldBlacklist", java.lang.String.class);
+        map.put("fieldRenames", java.lang.String.class);
+        map.put("heartbeatIntervalMs", int.class);
+        map.put("heartbeatTopicsPrefix", java.lang.String.class);
+        map.put("initialSyncMaxThreads", int.class);
+        map.put("maxBatchSize", int.class);
+        map.put("maxQueueSize", int.class);
+        map.put("mongodbAuthsource", java.lang.String.class);
+        map.put("mongodbHosts", java.lang.String.class);
+        map.put("mongodbMembersAutoDiscover", boolean.class);
+        map.put("mongodbName", java.lang.String.class);
+        map.put("mongodbPassword", java.lang.String.class);
+        map.put("mongodbPollIntervalSec", int.class);
+        map.put("mongodbSslEnabled", boolean.class);
+        map.put("mongodbSslInvalidHostnameAllowed", boolean.class);
+        map.put("mongodbUser", java.lang.String.class);
+        map.put("pollIntervalMs", long.class);
+        map.put("provideTransactionMetadata", boolean.class);
+        map.put("sanitizeFieldNames", boolean.class);
+        map.put("skippedOperations", java.lang.String.class);
+        map.put("snapshotDelayMs", long.class);
+        map.put("snapshotFetchSize", int.class);
+        map.put("snapshotMode", java.lang.String.class);
+        map.put("sourceStructVersion", java.lang.String.class);
+        map.put("tombstonesOnDelete", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration getOrCreateConfiguration(DebeziumMongodbComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration());
@@ -128,57 +183,7 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalProperties", java.util.Map.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("collectionBlacklist", java.lang.String.class);
-        answer.put("collectionWhitelist", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class);
-        answer.put("connectBackoffInitialDelayMs", long.class);
-        answer.put("connectBackoffMaxDelayMs", long.class);
-        answer.put("connectMaxAttempts", int.class);
-        answer.put("converters", java.lang.String.class);
-        answer.put("databaseBlacklist", java.lang.String.class);
-        answer.put("databaseHistoryFileFilename", java.lang.String.class);
-        answer.put("databaseWhitelist", java.lang.String.class);
-        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        answer.put("fieldBlacklist", java.lang.String.class);
-        answer.put("fieldRenames", java.lang.String.class);
-        answer.put("heartbeatIntervalMs", int.class);
-        answer.put("heartbeatTopicsPrefix", java.lang.String.class);
-        answer.put("initialSyncMaxThreads", int.class);
-        answer.put("internalKeyConverter", java.lang.String.class);
-        answer.put("internalValueConverter", java.lang.String.class);
-        answer.put("maxBatchSize", int.class);
-        answer.put("maxQueueSize", int.class);
-        answer.put("mongodbAuthsource", java.lang.String.class);
-        answer.put("mongodbHosts", java.lang.String.class);
-        answer.put("mongodbMembersAutoDiscover", boolean.class);
-        answer.put("mongodbName", java.lang.String.class);
-        answer.put("mongodbPassword", java.lang.String.class);
-        answer.put("mongodbPollIntervalSec", int.class);
-        answer.put("mongodbSslEnabled", boolean.class);
-        answer.put("mongodbSslInvalidHostnameAllowed", boolean.class);
-        answer.put("mongodbUser", java.lang.String.class);
-        answer.put("offsetCommitPolicy", java.lang.String.class);
-        answer.put("offsetCommitTimeoutMs", long.class);
-        answer.put("offsetFlushIntervalMs", long.class);
-        answer.put("offsetStorage", java.lang.String.class);
-        answer.put("offsetStorageFileName", java.lang.String.class);
-        answer.put("offsetStoragePartitions", int.class);
-        answer.put("offsetStorageReplicationFactor", int.class);
-        answer.put("offsetStorageTopic", java.lang.String.class);
-        answer.put("pollIntervalMs", long.class);
-        answer.put("provideTransactionMetadata", boolean.class);
-        answer.put("sanitizeFieldNames", boolean.class);
-        answer.put("skippedOperations", java.lang.String.class);
-        answer.put("snapshotDelayMs", long.class);
-        answer.put("snapshotFetchSize", int.class);
-        answer.put("snapshotMode", java.lang.String.class);
-        answer.put("sourceStructVersion", java.lang.String.class);
-        answer.put("tombstonesOnDelete", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

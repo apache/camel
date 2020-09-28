@@ -15,6 +15,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CometdEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("channelName", java.lang.String.class);
+        map.put("allowedOrigins", java.lang.String.class);
+        map.put("baseResource", java.lang.String.class);
+        map.put("crossOriginFilterOn", boolean.class);
+        map.put("filterPath", java.lang.String.class);
+        map.put("interval", int.class);
+        map.put("jsonCommented", boolean.class);
+        map.put("logLevel", int.class);
+        map.put("maxInterval", int.class);
+        map.put("multiFrameInterval", int.class);
+        map.put("timeout", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sessionHeadersEnabled", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("disconnectLocalSession", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CometdEndpoint target = (CometdEndpoint) obj;
@@ -58,26 +85,7 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedOrigins", java.lang.String.class);
-        answer.put("baseResource", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("crossOriginFilterOn", boolean.class);
-        answer.put("disconnectLocalSession", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filterPath", java.lang.String.class);
-        answer.put("interval", int.class);
-        answer.put("jsonCommented", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("logLevel", int.class);
-        answer.put("maxInterval", int.class);
-        answer.put("multiFrameInterval", int.class);
-        answer.put("sessionHeadersEnabled", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

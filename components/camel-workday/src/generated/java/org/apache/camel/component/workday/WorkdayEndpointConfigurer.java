@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("entity", org.apache.camel.component.workday.WorkdayConfiguration.Entity.class);
+        map.put("path", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpConnectionManager", org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class);
+        map.put("synchronous", boolean.class);
+        map.put("reportFormat", java.lang.String.class);
+        map.put("host", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("tokenRefresh", java.lang.String.class);
+        map.put("tenant", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WorkdayEndpoint target = (WorkdayEndpoint) obj;
@@ -42,18 +60,7 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("httpConnectionManager", org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("reportFormat", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tenant", java.lang.String.class);
-        answer.put("tokenRefresh", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

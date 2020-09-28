@@ -15,6 +15,30 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("url", java.lang.String.class);
+        map.put("allowCompression", java.lang.Boolean.class);
+        map.put("connectionTimeout", java.lang.Integer.class);
+        map.put("defaultMaxConnectionsPerHost", java.lang.Integer.class);
+        map.put("followRedirects", java.lang.Boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("maxRetries", java.lang.Integer.class);
+        map.put("maxTotalConnections", java.lang.Integer.class);
+        map.put("requestHandler", java.lang.String.class);
+        map.put("soTimeout", java.lang.Integer.class);
+        map.put("streamingQueueSize", int.class);
+        map.put("streamingThreadCount", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        map.put("collection", java.lang.String.class);
+        map.put("zkHost", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
@@ -55,25 +79,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowCompression", java.lang.Boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collection", java.lang.String.class);
-        answer.put("connectionTimeout", java.lang.Integer.class);
-        answer.put("defaultMaxConnectionsPerHost", java.lang.Integer.class);
-        answer.put("followRedirects", java.lang.Boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxRetries", java.lang.Integer.class);
-        answer.put("maxTotalConnections", java.lang.Integer.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("requestHandler", java.lang.String.class);
-        answer.put("soTimeout", java.lang.Integer.class);
-        answer.put("streamingQueueSize", int.class);
-        answer.put("streamingThreadCount", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        answer.put("zkHost", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

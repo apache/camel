@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MasterComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("maximumConnectionTimeout", int.class);
+        map.put("zkRoot", java.lang.String.class);
+        map.put("zooKeeperUrl", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("containerIdFactory", org.apache.camel.component.zookeepermaster.ContainerIdFactory.class);
+        map.put("curator", org.apache.curator.framework.CuratorFramework.class);
+        map.put("zooKeeperPassword", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MasterComponent target = (MasterComponent) obj;
@@ -40,16 +54,7 @@ public class MasterComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("containerIdFactory", org.apache.camel.component.zookeepermaster.ContainerIdFactory.class);
-        answer.put("curator", org.apache.curator.framework.CuratorFramework.class);
-        answer.put("maximumConnectionTimeout", int.class);
-        answer.put("zkRoot", java.lang.String.class);
-        answer.put("zooKeeperPassword", java.lang.String.class);
-        answer.put("zooKeeperUrl", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

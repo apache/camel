@@ -38,7 +38,6 @@ public class MicroProfileMetricsEndpointUriFactory extends org.apache.camel.supp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "microprofile-metrics".equals(scheme);

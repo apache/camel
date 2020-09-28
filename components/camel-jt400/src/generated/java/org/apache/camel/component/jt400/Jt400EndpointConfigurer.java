@@ -15,6 +15,51 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("userID", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("systemName", java.lang.String.class);
+        map.put("objectPath", java.lang.String.class);
+        map.put("type", org.apache.camel.component.jt400.Jt400Type.class);
+        map.put("ccsid", int.class);
+        map.put("format", org.apache.camel.component.jt400.Jt400Configuration.Format.class);
+        map.put("guiAvailable", boolean.class);
+        map.put("keyed", boolean.class);
+        map.put("searchKey", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("messageAction", org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class);
+        map.put("readTimeout", int.class);
+        map.put("searchType", org.apache.camel.component.jt400.Jt400Configuration.SearchType.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("outputFieldsIdxArray", java.lang.Integer[].class);
+        map.put("outputFieldsLengthArray", java.lang.Integer[].class);
+        map.put("procedureName", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("secured", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Jt400Endpoint target = (Jt400Endpoint) obj;
@@ -85,42 +130,7 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("ccsid", int.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("format", org.apache.camel.component.jt400.Jt400Configuration.Format.class);
-        answer.put("greedy", boolean.class);
-        answer.put("guiAvailable", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("keyed", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageAction", org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class);
-        answer.put("outputFieldsIdxArray", java.lang.Integer[].class);
-        answer.put("outputFieldsLengthArray", java.lang.Integer[].class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("procedureName", java.lang.String.class);
-        answer.put("readTimeout", int.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("searchKey", java.lang.String.class);
-        answer.put("searchType", org.apache.camel.component.jt400.Jt400Configuration.SearchType.class);
-        answer.put("secured", boolean.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,81 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MailEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("closeFolder", boolean.class);
+        map.put("copyTo", java.lang.String.class);
+        map.put("delete", boolean.class);
+        map.put("disconnect", boolean.class);
+        map.put("handleFailedMessage", boolean.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("mimeDecodeHeaders", boolean.class);
+        map.put("moveTo", java.lang.String.class);
+        map.put("peek", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("skipFailedMessage", boolean.class);
+        map.put("unseen", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("fetchSize", int.class);
+        map.put("folderName", java.lang.String.class);
+        map.put("mailUidGenerator", org.apache.camel.component.mail.MailUidGenerator.class);
+        map.put("mapMailMessage", boolean.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("postProcessAction", org.apache.camel.component.mail.MailBoxPostProcessAction.class);
+        map.put("bcc", java.lang.String.class);
+        map.put("cc", java.lang.String.class);
+        map.put("from", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("replyTo", java.lang.String.class);
+        map.put("subject", java.lang.String.class);
+        map.put("to", java.lang.String.class);
+        map.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
+        map.put("additionalJavaMailProperties", java.util.Properties.class);
+        map.put("alternativeBodyHeader", java.lang.String.class);
+        map.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
+        map.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("binding", org.apache.camel.component.mail.MailBinding.class);
+        map.put("connectionTimeout", int.class);
+        map.put("contentType", java.lang.String.class);
+        map.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
+        map.put("debugMode", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("ignoreUnsupportedCharset", boolean.class);
+        map.put("ignoreUriScheme", boolean.class);
+        map.put("javaMailProperties", java.util.Properties.class);
+        map.put("session", javax.mail.Session.class);
+        map.put("synchronous", boolean.class);
+        map.put("useInlineAttachments", boolean.class);
+        map.put("idempotentRepository", org.apache.camel.spi.IdempotentRepository.class);
+        map.put("idempotentRepositoryRemoveOnCommit", boolean.class);
+        map.put("searchTerm", javax.mail.search.SearchTerm.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("username", java.lang.String.class);
+        map.put("sortTerm", com.sun.mail.imap.SortTerm[].class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MailEndpoint target = (MailEndpoint) obj;
@@ -141,75 +216,7 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalJavaMailProperties", java.util.Properties.class);
-        answer.put("alternativeBodyHeader", java.lang.String.class);
-        answer.put("attachmentsContentTransferEncodingResolver", org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class);
-        answer.put("authenticator", org.apache.camel.component.mail.MailAuthenticator.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bcc", java.lang.String.class);
-        answer.put("binding", org.apache.camel.component.mail.MailBinding.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cc", java.lang.String.class);
-        answer.put("closeFolder", boolean.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("contentType", java.lang.String.class);
-        answer.put("contentTypeResolver", org.apache.camel.component.mail.ContentTypeResolver.class);
-        answer.put("copyTo", java.lang.String.class);
-        answer.put("debugMode", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("delete", boolean.class);
-        answer.put("disconnect", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fetchSize", int.class);
-        answer.put("folderName", java.lang.String.class);
-        answer.put("from", java.lang.String.class);
-        answer.put("greedy", boolean.class);
-        answer.put("handleFailedMessage", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("idempotentRepository", org.apache.camel.spi.IdempotentRepository.class);
-        answer.put("idempotentRepositoryRemoveOnCommit", boolean.class);
-        answer.put("ignoreUnsupportedCharset", boolean.class);
-        answer.put("ignoreUriScheme", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("javaMailProperties", java.util.Properties.class);
-        answer.put("javaMailSender", org.apache.camel.component.mail.JavaMailSender.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mailUidGenerator", org.apache.camel.component.mail.MailUidGenerator.class);
-        answer.put("mapMailMessage", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("mimeDecodeHeaders", boolean.class);
-        answer.put("moveTo", java.lang.String.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("peek", boolean.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("postProcessAction", org.apache.camel.component.mail.MailBoxPostProcessAction.class);
-        answer.put("repeatCount", long.class);
-        answer.put("replyTo", java.lang.String.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("searchTerm", javax.mail.search.SearchTerm.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("session", javax.mail.Session.class);
-        answer.put("skipFailedMessage", boolean.class);
-        answer.put("sortTerm", com.sun.mail.imap.SortTerm[].class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("subject", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("to", java.lang.String.class);
-        answer.put("unseen", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useInlineAttachments", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

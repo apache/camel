@@ -15,6 +15,50 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", org.apache.camel.component.google.mail.internal.GoogleMailApiName.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("applicationName", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("inBody", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("refreshToken", java.lang.String.class);
+        map.put("batchDeleteMessagesRequest", com.google.api.services.gmail.model.BatchDeleteMessagesRequest.class);
+        map.put("batchModifyMessagesRequest", com.google.api.services.gmail.model.BatchModifyMessagesRequest.class);
+        map.put("content", com.google.api.services.gmail.model.Draft.class);
+        map.put("id", java.lang.String.class);
+        map.put("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
+        map.put("messageId", java.lang.String.class);
+        map.put("modifyMessageRequest", com.google.api.services.gmail.model.ModifyMessageRequest.class);
+        map.put("userId", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleMailEndpoint target = (GoogleMailEndpoint) obj;
@@ -77,36 +121,7 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("inBody", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("refreshToken", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JCacheComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cacheConfiguration", javax.cache.configuration.Configuration.class);
+        map.put("cacheConfigurationProperties", java.util.Map.class);
+        map.put("cacheConfigurationPropertiesRef", java.lang.String.class);
+        map.put("cachingProvider", java.lang.String.class);
+        map.put("configurationUri", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JCacheComponent target = (JCacheComponent) obj;
@@ -41,16 +55,7 @@ public class JCacheComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheConfiguration", javax.cache.configuration.Configuration.class);
-        answer.put("cacheConfigurationProperties", java.util.Map.class);
-        answer.put("cacheConfigurationPropertiesRef", java.lang.String.class);
-        answer.put("cachingProvider", java.lang.String.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

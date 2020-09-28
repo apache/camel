@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("applicationName", java.lang.String.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.google.mail.GoogleMailConfiguration.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("clientFactory", org.apache.camel.component.google.mail.GoogleMailClientFactory.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("refreshToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.google.mail.GoogleMailConfiguration getOrCreateConfiguration(GoogleMailComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.google.mail.GoogleMailConfiguration());
@@ -51,18 +67,7 @@ public class GoogleMailComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientFactory", org.apache.camel.component.google.mail.GoogleMailClientFactory.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.google.mail.GoogleMailConfiguration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("refreshToken", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

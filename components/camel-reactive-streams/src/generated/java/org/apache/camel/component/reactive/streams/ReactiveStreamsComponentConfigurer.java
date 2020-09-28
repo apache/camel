@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("threadPoolMaxSize", int.class);
+        map.put("threadPoolMinSize", int.class);
+        map.put("threadPoolName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("backpressureStrategy", org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("reactiveStreamsEngineConfiguration", org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class);
+        map.put("serviceType", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ReactiveStreamsComponent target = (ReactiveStreamsComponent) obj;
@@ -43,17 +58,7 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backpressureStrategy", org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("reactiveStreamsEngineConfiguration", org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration.class);
-        answer.put("serviceType", java.lang.String.class);
-        answer.put("threadPoolMaxSize", int.class);
-        answer.put("threadPoolMinSize", int.class);
-        answer.put("threadPoolName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

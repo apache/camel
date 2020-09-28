@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class QuartzComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("enableJmx", boolean.class);
+        map.put("prefixInstanceName", boolean.class);
+        map.put("prefixJobNameWithEndpointId", boolean.class);
+        map.put("properties", java.util.Map.class);
+        map.put("propertiesFile", java.lang.String.class);
+        map.put("propertiesRef", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("scheduler", org.quartz.Scheduler.class);
+        map.put("schedulerFactory", org.quartz.SchedulerFactory.class);
+        map.put("autoStartScheduler", boolean.class);
+        map.put("interruptJobsOnShutdown", boolean.class);
+        map.put("startDelayedSeconds", int.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QuartzComponent target = (QuartzComponent) obj;
@@ -49,21 +68,7 @@ public class QuartzComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("autoStartScheduler", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("interruptJobsOnShutdown", boolean.class);
-        answer.put("prefixInstanceName", boolean.class);
-        answer.put("prefixJobNameWithEndpointId", boolean.class);
-        answer.put("properties", java.util.Map.class);
-        answer.put("propertiesFile", java.lang.String.class);
-        answer.put("propertiesRef", java.lang.String.class);
-        answer.put("scheduler", org.quartz.Scheduler.class);
-        answer.put("schedulerFactory", org.quartz.SchedulerFactory.class);
-        answer.put("startDelayedSeconds", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

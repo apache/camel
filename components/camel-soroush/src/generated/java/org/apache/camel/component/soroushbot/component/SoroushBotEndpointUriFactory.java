@@ -45,7 +45,6 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "soroush".equals(scheme);

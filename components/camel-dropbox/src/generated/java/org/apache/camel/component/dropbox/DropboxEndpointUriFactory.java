@@ -37,7 +37,6 @@ public class DropboxEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "dropbox".equals(scheme);

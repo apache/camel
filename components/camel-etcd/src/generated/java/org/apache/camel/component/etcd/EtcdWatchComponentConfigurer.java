@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("configuration", org.apache.camel.component.etcd.EtcdConfiguration.class);
+        map.put("recursive", boolean.class);
+        map.put("servicePath", java.lang.String.class);
+        map.put("timeout", java.lang.Long.class);
+        map.put("uris", java.lang.String.class);
+        map.put("sendEmptyExchangeOnTimeout", boolean.class);
+        map.put("fromIndex", long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        map.put("userName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(EtcdWatchComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.etcd.EtcdConfiguration());
@@ -53,21 +72,7 @@ public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.etcd.EtcdConfiguration.class);
-        answer.put("fromIndex", long.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("recursive", boolean.class);
-        answer.put("sendEmptyExchangeOnTimeout", boolean.class);
-        answer.put("servicePath", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("timeout", java.lang.Long.class);
-        answer.put("uris", java.lang.String.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        answer.put("userName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -53,7 +53,6 @@ public class KubernetesNamespacesEndpointUriFactory extends org.apache.camel.sup
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-namespaces".equals(scheme);

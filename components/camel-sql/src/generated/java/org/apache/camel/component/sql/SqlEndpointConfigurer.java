@@ -15,6 +15,61 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("query", java.lang.String.class);
+        map.put("allowNamedParameters", boolean.class);
+        map.put("dataSource", javax.sql.DataSource.class);
+        map.put("dataSourceRef", java.lang.String.class);
+        map.put("outputClass", java.lang.String.class);
+        map.put("outputHeader", java.lang.String.class);
+        map.put("outputType", org.apache.camel.component.sql.SqlOutputType.class);
+        map.put("separator", char.class);
+        map.put("breakBatchOnConsumeFail", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("expectedUpdateCount", int.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("onConsume", java.lang.String.class);
+        map.put("onConsumeBatchComplete", java.lang.String.class);
+        map.put("onConsumeFailed", java.lang.String.class);
+        map.put("routeEmptyResultSet", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("transacted", boolean.class);
+        map.put("useIterator", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("processingStrategy", org.apache.camel.component.sql.SqlProcessingStrategy.class);
+        map.put("batch", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("noop", boolean.class);
+        map.put("useMessageBodyForSql", boolean.class);
+        map.put("alwaysPopulateStatement", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("parametersCount", int.class);
+        map.put("placeholder", java.lang.String.class);
+        map.put("prepareStatementStrategy", org.apache.camel.component.sql.SqlPrepareStatementStrategy.class);
+        map.put("synchronous", boolean.class);
+        map.put("templateOptions", java.util.Map.class);
+        map.put("usePlaceholder", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlEndpoint target = (SqlEndpoint) obj;
@@ -112,56 +167,7 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowNamedParameters", boolean.class);
-        answer.put("alwaysPopulateStatement", boolean.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("batch", boolean.class);
-        answer.put("breakBatchOnConsumeFail", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("dataSource", javax.sql.DataSource.class);
-        answer.put("dataSourceRef", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("expectedUpdateCount", int.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("noop", boolean.class);
-        answer.put("onConsume", java.lang.String.class);
-        answer.put("onConsumeBatchComplete", java.lang.String.class);
-        answer.put("onConsumeFailed", java.lang.String.class);
-        answer.put("outputClass", java.lang.String.class);
-        answer.put("outputHeader", java.lang.String.class);
-        answer.put("outputType", org.apache.camel.component.sql.SqlOutputType.class);
-        answer.put("parametersCount", int.class);
-        answer.put("placeholder", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("prepareStatementStrategy", org.apache.camel.component.sql.SqlPrepareStatementStrategy.class);
-        answer.put("processingStrategy", org.apache.camel.component.sql.SqlProcessingStrategy.class);
-        answer.put("repeatCount", long.class);
-        answer.put("routeEmptyResultSet", boolean.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("separator", char.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("templateOptions", java.util.Map.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("transacted", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useIterator", boolean.class);
-        answer.put("useMessageBodyForSql", boolean.class);
-        answer.put("usePlaceholder", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

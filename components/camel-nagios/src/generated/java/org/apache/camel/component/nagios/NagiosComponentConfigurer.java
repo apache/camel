@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NagiosComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("connectionTimeout", int.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("timeout", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.nagios.NagiosConfiguration.class);
+        map.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
+        map.put("password", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.nagios.NagiosConfiguration getOrCreateConfiguration(NagiosComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.nagios.NagiosConfiguration());
@@ -42,15 +55,7 @@ public class NagiosComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.nagios.NagiosConfiguration.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("timeout", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

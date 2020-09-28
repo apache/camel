@@ -33,7 +33,6 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "metrics".equals(scheme);

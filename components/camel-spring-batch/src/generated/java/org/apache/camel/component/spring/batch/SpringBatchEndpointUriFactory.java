@@ -29,7 +29,6 @@ public class SpringBatchEndpointUriFactory extends org.apache.camel.support.comp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "spring-batch".equals(scheme);

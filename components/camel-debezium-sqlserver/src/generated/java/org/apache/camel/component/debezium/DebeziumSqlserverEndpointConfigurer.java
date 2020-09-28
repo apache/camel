@@ -15,6 +15,70 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("additionalProperties", java.util.Map.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("internalKeyConverter", java.lang.String.class);
+        map.put("internalValueConverter", java.lang.String.class);
+        map.put("offsetCommitPolicy", java.lang.String.class);
+        map.put("offsetCommitTimeoutMs", long.class);
+        map.put("offsetFlushIntervalMs", long.class);
+        map.put("offsetStorage", java.lang.String.class);
+        map.put("offsetStorageFileName", java.lang.String.class);
+        map.put("offsetStoragePartitions", int.class);
+        map.put("offsetStorageReplicationFactor", int.class);
+        map.put("offsetStorageTopic", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("columnBlacklist", java.lang.String.class);
+        map.put("columnWhitelist", java.lang.String.class);
+        map.put("converters", java.lang.String.class);
+        map.put("databaseDbname", java.lang.String.class);
+        map.put("databaseHistory", java.lang.String.class);
+        map.put("databaseHistoryFileFilename", java.lang.String.class);
+        map.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
+        map.put("databaseHistoryKafkaRecoveryAttempts", int.class);
+        map.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
+        map.put("databaseHistoryKafkaTopic", java.lang.String.class);
+        map.put("databaseHostname", java.lang.String.class);
+        map.put("databasePassword", java.lang.String.class);
+        map.put("databasePort", int.class);
+        map.put("databaseServerName", java.lang.String.class);
+        map.put("databaseServerTimezone", java.lang.String.class);
+        map.put("databaseUser", java.lang.String.class);
+        map.put("decimalHandlingMode", java.lang.String.class);
+        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
+        map.put("heartbeatIntervalMs", int.class);
+        map.put("heartbeatTopicsPrefix", java.lang.String.class);
+        map.put("includeSchemaChanges", boolean.class);
+        map.put("maxBatchSize", int.class);
+        map.put("maxQueueSize", int.class);
+        map.put("messageKeyColumns", java.lang.String.class);
+        map.put("pollIntervalMs", long.class);
+        map.put("provideTransactionMetadata", boolean.class);
+        map.put("sanitizeFieldNames", boolean.class);
+        map.put("skippedOperations", java.lang.String.class);
+        map.put("snapshotDelayMs", long.class);
+        map.put("snapshotFetchSize", int.class);
+        map.put("snapshotIsolationMode", java.lang.String.class);
+        map.put("snapshotLockTimeoutMs", long.class);
+        map.put("snapshotMode", java.lang.String.class);
+        map.put("snapshotSelectStatementOverrides", java.lang.String.class);
+        map.put("sourceStructVersion", java.lang.String.class);
+        map.put("sourceTimestampMode", java.lang.String.class);
+        map.put("tableBlacklist", java.lang.String.class);
+        map.put("tableIgnoreBuiltin", boolean.class);
+        map.put("tableWhitelist", java.lang.String.class);
+        map.put("timePrecisionMode", java.lang.String.class);
+        map.put("tombstonesOnDelete", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumSqlserverEndpoint target = (DebeziumSqlserverEndpoint) obj;
@@ -137,65 +201,7 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("additionalProperties", java.util.Map.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("columnBlacklist", java.lang.String.class);
-        answer.put("columnWhitelist", java.lang.String.class);
-        answer.put("converters", java.lang.String.class);
-        answer.put("databaseDbname", java.lang.String.class);
-        answer.put("databaseHistory", java.lang.String.class);
-        answer.put("databaseHistoryFileFilename", java.lang.String.class);
-        answer.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
-        answer.put("databaseHistoryKafkaRecoveryAttempts", int.class);
-        answer.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
-        answer.put("databaseHistoryKafkaTopic", java.lang.String.class);
-        answer.put("databaseHostname", java.lang.String.class);
-        answer.put("databasePassword", java.lang.String.class);
-        answer.put("databasePort", int.class);
-        answer.put("databaseServerName", java.lang.String.class);
-        answer.put("databaseServerTimezone", java.lang.String.class);
-        answer.put("databaseUser", java.lang.String.class);
-        answer.put("decimalHandlingMode", java.lang.String.class);
-        answer.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("heartbeatIntervalMs", int.class);
-        answer.put("heartbeatTopicsPrefix", java.lang.String.class);
-        answer.put("includeSchemaChanges", boolean.class);
-        answer.put("internalKeyConverter", java.lang.String.class);
-        answer.put("internalValueConverter", java.lang.String.class);
-        answer.put("maxBatchSize", int.class);
-        answer.put("maxQueueSize", int.class);
-        answer.put("messageKeyColumns", java.lang.String.class);
-        answer.put("offsetCommitPolicy", java.lang.String.class);
-        answer.put("offsetCommitTimeoutMs", long.class);
-        answer.put("offsetFlushIntervalMs", long.class);
-        answer.put("offsetStorage", java.lang.String.class);
-        answer.put("offsetStorageFileName", java.lang.String.class);
-        answer.put("offsetStoragePartitions", int.class);
-        answer.put("offsetStorageReplicationFactor", int.class);
-        answer.put("offsetStorageTopic", java.lang.String.class);
-        answer.put("pollIntervalMs", long.class);
-        answer.put("provideTransactionMetadata", boolean.class);
-        answer.put("sanitizeFieldNames", boolean.class);
-        answer.put("skippedOperations", java.lang.String.class);
-        answer.put("snapshotDelayMs", long.class);
-        answer.put("snapshotFetchSize", int.class);
-        answer.put("snapshotIsolationMode", java.lang.String.class);
-        answer.put("snapshotLockTimeoutMs", long.class);
-        answer.put("snapshotMode", java.lang.String.class);
-        answer.put("snapshotSelectStatementOverrides", java.lang.String.class);
-        answer.put("sourceStructVersion", java.lang.String.class);
-        answer.put("sourceTimestampMode", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tableBlacklist", java.lang.String.class);
-        answer.put("tableIgnoreBuiltin", boolean.class);
-        answer.put("tableWhitelist", java.lang.String.class);
-        answer.put("timePrecisionMode", java.lang.String.class);
-        answer.put("tombstonesOnDelete", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

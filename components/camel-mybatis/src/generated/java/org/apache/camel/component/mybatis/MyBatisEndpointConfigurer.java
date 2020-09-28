@@ -15,6 +15,45 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("statement", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("onConsume", java.lang.String.class);
+        map.put("routeEmptyResultSet", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("transacted", boolean.class);
+        map.put("useIterator", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("processingStrategy", org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class);
+        map.put("executorType", org.apache.ibatis.session.ExecutorType.class);
+        map.put("inputHeader", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("outputHeader", java.lang.String.class);
+        map.put("statementType", org.apache.camel.component.mybatis.StatementType.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisEndpoint target = (MyBatisEndpoint) obj;
@@ -84,40 +123,7 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("executorType", org.apache.ibatis.session.ExecutorType.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("inputHeader", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("onConsume", java.lang.String.class);
-        answer.put("outputHeader", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("processingStrategy", org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class);
-        answer.put("repeatCount", long.class);
-        answer.put("routeEmptyResultSet", boolean.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("statementType", org.apache.camel.component.mybatis.StatementType.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("transacted", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useIterator", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

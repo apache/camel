@@ -15,6 +15,47 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", java.lang.String.class);
+        map.put("applicationName", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("includeGridData", boolean.class);
+        map.put("majorDimension", java.lang.String.class);
+        map.put("maxResults", int.class);
+        map.put("range", java.lang.String.class);
+        map.put("scopes", java.util.List.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("splitResults", boolean.class);
+        map.put("spreadsheetId", java.lang.String.class);
+        map.put("valueRenderOption", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("clientSecret", java.lang.String.class);
+        map.put("refreshToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleSheetsStreamEndpoint target = (GoogleSheetsStreamEndpoint) obj;
@@ -87,42 +128,7 @@ public class GoogleSheetsStreamEndpointConfigurer extends PropertyConfigurerSupp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("clientSecret", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("includeGridData", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("majorDimension", java.lang.String.class);
-        answer.put("maxResults", int.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("range", java.lang.String.class);
-        answer.put("refreshToken", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("scopes", java.util.List.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("splitResults", boolean.class);
-        answer.put("spreadsheetId", java.lang.String.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("valueRenderOption", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

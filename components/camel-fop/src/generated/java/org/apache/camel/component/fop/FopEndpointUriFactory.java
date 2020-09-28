@@ -28,7 +28,6 @@ public class FopEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "fop".equals(scheme);

@@ -65,7 +65,6 @@ public class ResteasyEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "resteasy".equals(scheme);

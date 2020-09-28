@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("operation", org.apache.camel.component.lucene.LuceneOperation.class);
+        map.put("analyzer", org.apache.lucene.analysis.Analyzer.class);
+        map.put("indexDir", java.io.File.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("maxHits", int.class);
+        map.put("srcDir", java.io.File.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LuceneEndpoint target = (LuceneEndpoint) obj;
@@ -37,15 +52,7 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("analyzer", org.apache.lucene.analysis.Analyzer.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("indexDir", java.io.File.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxHits", int.class);
-        answer.put("srcDir", java.io.File.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,36 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MiloClientComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("clientId", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.milo.client.MiloClientConfiguration.class);
+        map.put("discoveryEndpointSuffix", java.lang.String.class);
+        map.put("discoveryEndpointUri", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("allowedSecurityPolicies", java.lang.String.class);
+        map.put("applicationName", java.lang.String.class);
+        map.put("applicationUri", java.lang.String.class);
+        map.put("channelLifetime", java.lang.Long.class);
+        map.put("keyAlias", java.lang.String.class);
+        map.put("keyPassword", java.lang.String.class);
+        map.put("keyStorePassword", java.lang.String.class);
+        map.put("keyStoreType", java.lang.String.class);
+        map.put("keyStoreUrl", java.lang.String.class);
+        map.put("maxPendingPublishRequests", java.lang.Long.class);
+        map.put("maxResponseMessageSize", java.lang.Long.class);
+        map.put("overrideHost", boolean.class);
+        map.put("productUri", java.lang.String.class);
+        map.put("requestedPublishingInterval", java.lang.Double.class);
+        map.put("requestTimeout", java.lang.Long.class);
+        map.put("sessionName", java.lang.String.class);
+        map.put("sessionTimeout", java.lang.Long.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.milo.client.MiloClientConfiguration getOrCreateConfiguration(MiloClientComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.milo.client.MiloClientConfiguration());
@@ -79,32 +109,7 @@ public class MiloClientComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedSecurityPolicies", java.lang.String.class);
-        answer.put("applicationName", java.lang.String.class);
-        answer.put("applicationUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelLifetime", java.lang.Long.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.milo.client.MiloClientConfiguration.class);
-        answer.put("discoveryEndpointSuffix", java.lang.String.class);
-        answer.put("discoveryEndpointUri", java.lang.String.class);
-        answer.put("keyAlias", java.lang.String.class);
-        answer.put("keyPassword", java.lang.String.class);
-        answer.put("keyStorePassword", java.lang.String.class);
-        answer.put("keyStoreType", java.lang.String.class);
-        answer.put("keyStoreUrl", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxPendingPublishRequests", java.lang.Long.class);
-        answer.put("maxResponseMessageSize", java.lang.Long.class);
-        answer.put("overrideHost", boolean.class);
-        answer.put("productUri", java.lang.String.class);
-        answer.put("requestTimeout", java.lang.Long.class);
-        answer.put("requestedPublishingInterval", java.lang.Double.class);
-        answer.put("sessionName", java.lang.String.class);
-        answer.put("sessionTimeout", java.lang.Long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

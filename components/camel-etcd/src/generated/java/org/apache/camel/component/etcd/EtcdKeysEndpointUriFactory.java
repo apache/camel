@@ -34,7 +34,6 @@ public class EtcdKeysEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "etcd-keys".equals(scheme);

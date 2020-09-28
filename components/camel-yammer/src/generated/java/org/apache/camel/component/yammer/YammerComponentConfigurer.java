@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class YammerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("useJson", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("delay", long.class);
+        map.put("limit", int.class);
+        map.put("newerThan", long.class);
+        map.put("olderThan", long.class);
+        map.put("threaded", java.lang.String.class);
+        map.put("userId", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.yammer.YammerConfiguration.class);
+        map.put("requestor", org.apache.camel.component.yammer.ApiRequestor.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("consumerKey", java.lang.String.class);
+        map.put("consumerSecret", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.yammer.YammerConfiguration getOrCreateConfiguration(YammerComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.yammer.YammerConfiguration());
@@ -57,23 +78,7 @@ public class YammerComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.yammer.YammerConfiguration.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("consumerSecret", java.lang.String.class);
-        answer.put("delay", long.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limit", int.class);
-        answer.put("newerThan", long.class);
-        answer.put("olderThan", long.class);
-        answer.put("requestor", org.apache.camel.component.yammer.ApiRequestor.class);
-        answer.put("threaded", java.lang.String.class);
-        answer.put("useJson", boolean.class);
-        answer.put("userId", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

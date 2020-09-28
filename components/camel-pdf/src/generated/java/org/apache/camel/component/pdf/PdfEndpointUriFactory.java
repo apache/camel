@@ -34,7 +34,6 @@ public class PdfEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "pdf".equals(scheme);

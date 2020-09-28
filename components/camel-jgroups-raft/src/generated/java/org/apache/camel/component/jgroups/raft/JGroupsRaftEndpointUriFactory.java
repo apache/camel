@@ -30,7 +30,6 @@ public class JGroupsRaftEndpointUriFactory extends org.apache.camel.support.comp
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jgroups-raft".equals(scheme);

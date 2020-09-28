@@ -53,7 +53,6 @@ public class KubernetesServicesEndpointUriFactory extends org.apache.camel.suppo
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-services".equals(scheme);

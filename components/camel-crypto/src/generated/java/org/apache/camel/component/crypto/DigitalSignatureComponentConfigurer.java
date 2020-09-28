@@ -15,6 +15,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("algorithm", java.lang.String.class);
+        map.put("alias", java.lang.String.class);
+        map.put("certificateName", java.lang.String.class);
+        map.put("keystore", java.security.KeyStore.class);
+        map.put("keystoreName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("privateKey", java.security.PrivateKey.class);
+        map.put("privateKeyName", java.lang.String.class);
+        map.put("provider", java.lang.String.class);
+        map.put("publicKeyName", java.lang.String.class);
+        map.put("secureRandomName", java.lang.String.class);
+        map.put("signatureHeaderName", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("bufferSize", java.lang.Integer.class);
+        map.put("certificate", java.security.cert.Certificate.class);
+        map.put("clearHeaders", boolean.class);
+        map.put("configuration", org.apache.camel.component.crypto.DigitalSignatureConfiguration.class);
+        map.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
+        map.put("publicKey", java.security.PublicKey.class);
+        map.put("secureRandom", java.security.SecureRandom.class);
+        map.put("password", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.crypto.DigitalSignatureConfiguration getOrCreateConfiguration(DigitalSignatureComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.crypto.DigitalSignatureConfiguration());
@@ -67,29 +94,7 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("algorithm", java.lang.String.class);
-        answer.put("alias", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bufferSize", java.lang.Integer.class);
-        answer.put("certificate", java.security.cert.Certificate.class);
-        answer.put("certificateName", java.lang.String.class);
-        answer.put("clearHeaders", boolean.class);
-        answer.put("configuration", org.apache.camel.component.crypto.DigitalSignatureConfiguration.class);
-        answer.put("keyStoreParameters", org.apache.camel.support.jsse.KeyStoreParameters.class);
-        answer.put("keystore", java.security.KeyStore.class);
-        answer.put("keystoreName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("privateKey", java.security.PrivateKey.class);
-        answer.put("privateKeyName", java.lang.String.class);
-        answer.put("provider", java.lang.String.class);
-        answer.put("publicKey", java.security.PublicKey.class);
-        answer.put("publicKeyName", java.lang.String.class);
-        answer.put("secureRandom", java.security.SecureRandom.class);
-        answer.put("secureRandomName", java.lang.String.class);
-        answer.put("signatureHeaderName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

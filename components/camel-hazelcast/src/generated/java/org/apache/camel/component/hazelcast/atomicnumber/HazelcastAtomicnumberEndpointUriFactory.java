@@ -29,7 +29,6 @@ public class HazelcastAtomicnumberEndpointUriFactory extends org.apache.camel.su
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-atomicvalue".equals(scheme);

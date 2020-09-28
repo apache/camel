@@ -38,7 +38,6 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "github".equals(scheme);

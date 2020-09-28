@@ -15,6 +15,17 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JsltComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("allowTemplateFromHeader", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("functions", java.util.Collection.class);
+        map.put("objectFilter", com.schibsted.spt.data.jslt.filters.JsonFilter.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JsltComponent target = (JsltComponent) obj;
@@ -34,13 +45,7 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowTemplateFromHeader", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("functions", java.util.Collection.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("objectFilter", com.schibsted.spt.data.jslt.filters.JsonFilter.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

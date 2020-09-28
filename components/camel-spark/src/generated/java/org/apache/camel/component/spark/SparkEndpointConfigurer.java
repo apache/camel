@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SparkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("endpointType", org.apache.camel.component.spark.EndpointType.class);
+        map.put("collect", boolean.class);
+        map.put("dataFrame", org.apache.spark.sql.Dataset.class);
+        map.put("dataFrameCallback", org.apache.camel.component.spark.DataFrameCallback.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("rdd", org.apache.spark.api.java.JavaRDDLike.class);
+        map.put("rddCallback", org.apache.camel.component.spark.RddCallback.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SparkEndpoint target = (SparkEndpoint) obj;
@@ -38,16 +53,7 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("collect", boolean.class);
-        answer.put("dataFrame", org.apache.spark.sql.Dataset.class);
-        answer.put("dataFrameCallback", org.apache.camel.component.spark.DataFrameCallback.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("rdd", org.apache.spark.api.java.JavaRDDLike.class);
-        answer.put("rddCallback", org.apache.camel.component.spark.RddCallback.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

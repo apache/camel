@@ -15,6 +15,57 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("keywords", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("type", org.apache.camel.component.twitter.data.EndpointType.class);
+        map.put("distanceMetric", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("extendedMode", boolean.class);
+        map.put("latitude", java.lang.Double.class);
+        map.put("locations", java.lang.String.class);
+        map.put("longitude", java.lang.Double.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("radius", java.lang.Double.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("count", java.lang.Integer.class);
+        map.put("filterOld", boolean.class);
+        map.put("lang", java.lang.String.class);
+        map.put("numberOfPages", java.lang.Integer.class);
+        map.put("sinceId", long.class);
+        map.put("userIds", java.lang.String.class);
+        map.put("httpProxyHost", java.lang.String.class);
+        map.put("httpProxyPassword", java.lang.String.class);
+        map.put("httpProxyPort", java.lang.Integer.class);
+        map.put("httpProxyUser", java.lang.String.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("accessTokenSecret", java.lang.String.class);
+        map.put("consumerKey", java.lang.String.class);
+        map.put("consumerSecret", java.lang.String.class);
+        map.put("sortById", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TwitterSearchEndpoint target = (TwitterSearchEndpoint) obj;
@@ -102,52 +153,7 @@ public class TwitterSearchEndpointConfigurer extends PropertyConfigurerSupport i
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("accessTokenSecret", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("consumerKey", java.lang.String.class);
-        answer.put("consumerSecret", java.lang.String.class);
-        answer.put("count", java.lang.Integer.class);
-        answer.put("delay", long.class);
-        answer.put("distanceMetric", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("extendedMode", boolean.class);
-        answer.put("filterOld", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUser", java.lang.String.class);
-        answer.put("initialDelay", long.class);
-        answer.put("lang", java.lang.String.class);
-        answer.put("latitude", java.lang.Double.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("locations", java.lang.String.class);
-        answer.put("longitude", java.lang.Double.class);
-        answer.put("numberOfPages", java.lang.Integer.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("radius", java.lang.Double.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("sinceId", long.class);
-        answer.put("sortById", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("type", org.apache.camel.component.twitter.data.EndpointType.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("userIds", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

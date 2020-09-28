@@ -32,7 +32,6 @@ public class HazelcastReplicatedmapEndpointUriFactory extends org.apache.camel.s
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "hazelcast-replicatedmap".equals(scheme);

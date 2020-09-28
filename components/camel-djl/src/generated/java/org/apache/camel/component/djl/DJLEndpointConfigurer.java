@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("application", java.lang.String.class);
+        map.put("artifactId", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("model", java.lang.String.class);
+        map.put("translator", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DJLEndpoint target = (DJLEndpoint) obj;
@@ -34,14 +47,7 @@ public class DJLEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("artifactId", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("model", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("translator", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

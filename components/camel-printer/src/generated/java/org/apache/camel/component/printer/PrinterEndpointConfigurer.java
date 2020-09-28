@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PrinterEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("hostname", java.lang.String.class);
+        map.put("port", int.class);
+        map.put("printername", java.lang.String.class);
+        map.put("copies", int.class);
+        map.put("docFlavor", javax.print.DocFlavor.class);
+        map.put("flavor", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("mediaSize", java.lang.String.class);
+        map.put("mediaTray", java.lang.String.class);
+        map.put("mimeType", java.lang.String.class);
+        map.put("orientation", java.lang.String.class);
+        map.put("printerPrefix", java.lang.String.class);
+        map.put("sendToPrinter", boolean.class);
+        map.put("sides", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PrinterEndpoint target = (PrinterEndpoint) obj;
@@ -46,21 +68,7 @@ public class PrinterEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("copies", int.class);
-        answer.put("docFlavor", javax.print.DocFlavor.class);
-        answer.put("flavor", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("mediaSize", java.lang.String.class);
-        answer.put("mediaTray", java.lang.String.class);
-        answer.put("mimeType", java.lang.String.class);
-        answer.put("orientation", java.lang.String.class);
-        answer.put("printerPrefix", java.lang.String.class);
-        answer.put("sendToPrinter", boolean.class);
-        answer.put("sides", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -53,7 +53,6 @@ public class KubernetesJobEndpointUriFactory extends org.apache.camel.support.co
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-job".equals(scheme);

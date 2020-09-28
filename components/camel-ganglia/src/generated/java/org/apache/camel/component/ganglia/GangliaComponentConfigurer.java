@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GangliaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("dmax", int.class);
+        map.put("groupName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("metricName", java.lang.String.class);
+        map.put("mode", info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class);
+        map.put("prefix", java.lang.String.class);
+        map.put("slope", info.ganglia.gmetric4j.gmetric.GMetricSlope.class);
+        map.put("spoofHostname", java.lang.String.class);
+        map.put("tmax", int.class);
+        map.put("ttl", int.class);
+        map.put("type", info.ganglia.gmetric4j.gmetric.GMetricType.class);
+        map.put("units", java.lang.String.class);
+        map.put("wireFormat31x", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("configuration", org.apache.camel.component.ganglia.GangliaConfiguration.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.ganglia.GangliaConfiguration getOrCreateConfiguration(GangliaComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.ganglia.GangliaConfiguration());
@@ -53,23 +74,7 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.ganglia.GangliaConfiguration.class);
-        answer.put("dmax", int.class);
-        answer.put("groupName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("metricName", java.lang.String.class);
-        answer.put("mode", info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class);
-        answer.put("prefix", java.lang.String.class);
-        answer.put("slope", info.ganglia.gmetric4j.gmetric.GMetricSlope.class);
-        answer.put("spoofHostname", java.lang.String.class);
-        answer.put("tmax", int.class);
-        answer.put("ttl", int.class);
-        answer.put("type", info.ganglia.gmetric4j.gmetric.GMetricType.class);
-        answer.put("units", java.lang.String.class);
-        answer.put("wireFormat31x", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

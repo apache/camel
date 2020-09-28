@@ -87,7 +87,6 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "rabbitmq".equals(scheme);

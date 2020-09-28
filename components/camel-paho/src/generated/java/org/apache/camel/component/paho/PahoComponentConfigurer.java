@@ -15,6 +15,43 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PahoComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("automaticReconnect", boolean.class);
+        map.put("brokerUrl", java.lang.String.class);
+        map.put("cleanSession", boolean.class);
+        map.put("clientId", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.paho.PahoConfiguration.class);
+        map.put("connectionTimeout", int.class);
+        map.put("filePersistenceDirectory", java.lang.String.class);
+        map.put("keepAliveInterval", int.class);
+        map.put("maxInflight", int.class);
+        map.put("maxReconnectDelay", int.class);
+        map.put("mqttVersion", int.class);
+        map.put("persistence", org.apache.camel.component.paho.PahoPersistence.class);
+        map.put("qos", int.class);
+        map.put("retained", boolean.class);
+        map.put("serverURIs", java.lang.String.class);
+        map.put("willPayload", java.lang.String.class);
+        map.put("willQos", int.class);
+        map.put("willRetained", boolean.class);
+        map.put("willTopic", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("client", org.eclipse.paho.client.mqttv3.MqttClient.class);
+        map.put("customWebSocketHeaders", java.util.Properties.class);
+        map.put("executorServiceTimeout", int.class);
+        map.put("httpsHostnameVerificationEnabled", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("socketFactory", javax.net.SocketFactory.class);
+        map.put("sslClientProps", java.util.Properties.class);
+        map.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
+        map.put("userName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.paho.PahoConfiguration getOrCreateConfiguration(PahoComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.paho.PahoConfiguration());
@@ -88,39 +125,7 @@ public class PahoComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("automaticReconnect", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("brokerUrl", java.lang.String.class);
-        answer.put("cleanSession", boolean.class);
-        answer.put("client", org.eclipse.paho.client.mqttv3.MqttClient.class);
-        answer.put("clientId", java.lang.String.class);
-        answer.put("configuration", org.apache.camel.component.paho.PahoConfiguration.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("customWebSocketHeaders", java.util.Properties.class);
-        answer.put("executorServiceTimeout", int.class);
-        answer.put("filePersistenceDirectory", java.lang.String.class);
-        answer.put("httpsHostnameVerificationEnabled", boolean.class);
-        answer.put("keepAliveInterval", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxInflight", int.class);
-        answer.put("maxReconnectDelay", int.class);
-        answer.put("mqttVersion", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("persistence", org.apache.camel.component.paho.PahoPersistence.class);
-        answer.put("qos", int.class);
-        answer.put("retained", boolean.class);
-        answer.put("serverURIs", java.lang.String.class);
-        answer.put("socketFactory", javax.net.SocketFactory.class);
-        answer.put("sslClientProps", java.util.Properties.class);
-        answer.put("sslHostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        answer.put("userName", java.lang.String.class);
-        answer.put("willPayload", java.lang.String.class);
-        answer.put("willQos", int.class);
-        answer.put("willRetained", boolean.class);
-        answer.put("willTopic", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

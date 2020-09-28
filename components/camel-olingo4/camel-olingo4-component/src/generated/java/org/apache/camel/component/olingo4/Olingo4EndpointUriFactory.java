@@ -64,7 +64,6 @@ public class Olingo4EndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "olingo4".equals(scheme);

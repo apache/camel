@@ -15,6 +15,55 @@ import org.apache.camel.component.http.HttpEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("httpUri", java.net.URI.class);
+        map.put("chunked", boolean.class);
+        map.put("disableStreamCache", boolean.class);
+        map.put("resteasyMethod", java.lang.String.class);
+        map.put("servletName", java.lang.String.class);
+        map.put("transferException", boolean.class);
+        map.put("async", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("httpMethodRestrict", java.lang.String.class);
+        map.put("matchOnUriPrefix", boolean.class);
+        map.put("muteException", boolean.class);
+        map.put("responseBufferSize", java.lang.Integer.class);
+        map.put("eagerCheckContentAvailable", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("optionsEnabled", boolean.class);
+        map.put("traceEnabled", boolean.class);
+        map.put("bridgeEndpoint", boolean.class);
+        map.put("clearExpiredCookies", boolean.class);
+        map.put("connectionClose", boolean.class);
+        map.put("copyHeaders", boolean.class);
+        map.put("customHostHeader", java.lang.String.class);
+        map.put("httpMethod", org.apache.camel.http.common.HttpMethods.class);
+        map.put("ignoreResponseBody", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("preserveHostHeader", boolean.class);
+        map.put("throwExceptionOnFailure", boolean.class);
+        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
+        map.put("deleteWithBody", boolean.class);
+        map.put("getWithBody", boolean.class);
+        map.put("okStatusCodeRange", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("mapHttpMessageBody", boolean.class);
+        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
+        map.put("mapHttpMessageHeaders", boolean.class);
+        map.put("setHttpResponseDuringProcessing", java.lang.Boolean.class);
+        map.put("skipServletProcessing", java.lang.Boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("useSystemProperties", boolean.class);
+        map.put("proxyClientClass", java.lang.String.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ResteasyEndpoint target = (ResteasyEndpoint) obj;
@@ -58,26 +107,7 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("async", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("eagerCheckContentAvailable", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("httpMethodRestrict", java.lang.String.class);
-        answer.put("matchOnUriPrefix", boolean.class);
-        answer.put("muteException", boolean.class);
-        answer.put("optionsEnabled", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("proxyClientClass", java.lang.String.class);
-        answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("resteasyMethod", java.lang.String.class);
-        answer.put("servletName", java.lang.String.class);
-        answer.put("setHttpResponseDuringProcessing", java.lang.Boolean.class);
-        answer.put("skipServletProcessing", java.lang.Boolean.class);
-        answer.put("traceEnabled", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -100,7 +100,6 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "debezium-mysql".equals(scheme);

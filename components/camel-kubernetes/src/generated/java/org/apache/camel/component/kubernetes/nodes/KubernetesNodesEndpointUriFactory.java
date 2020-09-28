@@ -53,7 +53,6 @@ public class KubernetesNodesEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "kubernetes-nodes".equals(scheme);

@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("client", org.elasticsearch.client.RestClient.class);
+        map.put("connectionTimeout", int.class);
+        map.put("enableSniffer", java.lang.Boolean.class);
+        map.put("hostAddresses", java.lang.String.class);
+        map.put("maxRetryTimeout", int.class);
+        map.put("sniffAfterFailureDelay", int.class);
+        map.put("snifferInterval", int.class);
+        map.put("socketTimeout", int.class);
+        map.put("enableSSL", java.lang.Boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("user", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
@@ -48,21 +67,7 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("client", org.elasticsearch.client.RestClient.class);
-        answer.put("connectionTimeout", int.class);
-        answer.put("enableSSL", java.lang.Boolean.class);
-        answer.put("enableSniffer", java.lang.Boolean.class);
-        answer.put("hostAddresses", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxRetryTimeout", int.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("sniffAfterFailureDelay", int.class);
-        answer.put("snifferInterval", int.class);
-        answer.put("socketTimeout", int.class);
-        answer.put("user", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

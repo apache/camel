@@ -15,6 +15,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RedisEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", java.lang.Integer.class);
+        map.put("channels", java.lang.String.class);
+        map.put("command", org.apache.camel.component.redis.Command.class);
+        map.put("connectionFactory", org.springframework.data.redis.connection.RedisConnectionFactory.class);
+        map.put("redisTemplate", org.springframework.data.redis.core.RedisTemplate.class);
+        map.put("serializer", org.springframework.data.redis.serializer.RedisSerializer.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("listenerContainer", org.springframework.data.redis.listener.RedisMessageListenerContainer.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RedisEndpoint target = (RedisEndpoint) obj;
@@ -45,20 +65,7 @@ public class RedisEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channels", java.lang.String.class);
-        answer.put("command", org.apache.camel.component.redis.Command.class);
-        answer.put("connectionFactory", org.springframework.data.redis.connection.RedisConnectionFactory.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("listenerContainer", org.springframework.data.redis.listener.RedisMessageListenerContainer.class);
-        answer.put("redisTemplate", org.springframework.data.redis.core.RedisTemplate.class);
-        answer.put("serializer", org.springframework.data.redis.serializer.RedisSerializer.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

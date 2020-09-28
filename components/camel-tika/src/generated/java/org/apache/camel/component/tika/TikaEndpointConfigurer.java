@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.tika.TikaOperation.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("tikaConfig", org.apache.tika.config.TikaConfig.class);
+        map.put("tikaConfigUri", java.lang.String.class);
+        map.put("tikaParseOutputEncoding", java.lang.String.class);
+        map.put("tikaParseOutputFormat", org.apache.camel.component.tika.TikaParseOutputFormat.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TikaEndpoint target = (TikaEndpoint) obj;
@@ -38,15 +52,7 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("tikaConfig", org.apache.tika.config.TikaConfig.class);
-        answer.put("tikaConfigUri", java.lang.String.class);
-        answer.put("tikaParseOutputEncoding", java.lang.String.class);
-        answer.put("tikaParseOutputFormat", org.apache.camel.component.tika.TikaParseOutputFormat.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SchematronEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("path", java.lang.String.class);
+        map.put("abort", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("rules", javax.xml.transform.Templates.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("uriResolver", javax.xml.transform.URIResolver.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SchematronEndpoint target = (SchematronEndpoint) obj;
@@ -34,14 +47,7 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("abort", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("rules", javax.xml.transform.Templates.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("uriResolver", javax.xml.transform.URIResolver.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

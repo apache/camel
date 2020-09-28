@@ -15,6 +15,35 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", java.lang.Integer.class);
+        map.put("resourceUri", java.lang.String.class);
+        map.put("maxBinaryMessageSize", java.lang.Integer.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("sessionSupport", boolean.class);
+        map.put("staticResources", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("sendTimeout", java.lang.Integer.class);
+        map.put("sendToAll", java.lang.Boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("bufferSize", java.lang.Integer.class);
+        map.put("maxIdleTime", java.lang.Integer.class);
+        map.put("maxTextMessageSize", java.lang.Integer.class);
+        map.put("minVersion", java.lang.Integer.class);
+        map.put("synchronous", boolean.class);
+        map.put("allowedOrigins", java.lang.String.class);
+        map.put("crossOriginFilterOn", boolean.class);
+        map.put("filterPath", java.lang.String.class);
+        map.put("enableJmx", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
@@ -64,28 +93,7 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowedOrigins", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bufferSize", java.lang.Integer.class);
-        answer.put("crossOriginFilterOn", boolean.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("filterPath", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxBinaryMessageSize", java.lang.Integer.class);
-        answer.put("maxIdleTime", java.lang.Integer.class);
-        answer.put("maxTextMessageSize", java.lang.Integer.class);
-        answer.put("minVersion", java.lang.Integer.class);
-        answer.put("sendTimeout", java.lang.Integer.class);
-        answer.put("sendToAll", java.lang.Boolean.class);
-        answer.put("sessionSupport", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("staticResources", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

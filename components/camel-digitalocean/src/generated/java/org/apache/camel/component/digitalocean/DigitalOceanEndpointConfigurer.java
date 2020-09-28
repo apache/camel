@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.digitalocean.constants.DigitalOceanOperations.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("page", java.lang.Integer.class);
+        map.put("perPage", java.lang.Integer.class);
+        map.put("resource", org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("digitalOceanClient", com.myjeeva.digitalocean.impl.DigitalOceanClient.class);
+        map.put("synchronous", boolean.class);
+        map.put("httpProxyHost", java.lang.String.class);
+        map.put("httpProxyPassword", java.lang.String.class);
+        map.put("httpProxyPort", java.lang.Integer.class);
+        map.put("httpProxyUser", java.lang.String.class);
+        map.put("oAuthToken", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
@@ -46,20 +65,7 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("digitalOceanClient", com.myjeeva.digitalocean.impl.DigitalOceanClient.class);
-        answer.put("httpProxyHost", java.lang.String.class);
-        answer.put("httpProxyPassword", java.lang.String.class);
-        answer.put("httpProxyPort", java.lang.Integer.class);
-        answer.put("httpProxyUser", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("oAuthToken", java.lang.String.class);
-        answer.put("page", java.lang.Integer.class);
-        answer.put("perPage", java.lang.Integer.class);
-        answer.put("resource", org.apache.camel.component.digitalocean.constants.DigitalOceanResources.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("channelProperties", java.lang.String.class);
+        map.put("raftHandle", org.jgroups.raft.RaftHandle.class);
+        map.put("raftId", java.lang.String.class);
+        map.put("stateMachine", org.jgroups.protocols.raft.StateMachine.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JGroupsRaftComponent target = (JGroupsRaftComponent) obj;
@@ -39,15 +52,7 @@ public class JGroupsRaftComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("channelProperties", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("raftHandle", org.jgroups.raft.RaftHandle.class);
-        answer.put("raftId", java.lang.String.class);
-        answer.put("stateMachine", org.jgroups.protocols.raft.StateMachine.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

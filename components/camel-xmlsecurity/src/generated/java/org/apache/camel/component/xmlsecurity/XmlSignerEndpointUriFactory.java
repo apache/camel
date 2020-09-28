@@ -52,7 +52,6 @@ public class XmlSignerEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "xmlsecurity-sign".equals(scheme);

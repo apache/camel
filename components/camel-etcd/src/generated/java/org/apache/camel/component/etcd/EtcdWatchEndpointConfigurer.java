@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("path", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("recursive", boolean.class);
+        map.put("servicePath", java.lang.String.class);
+        map.put("uris", java.lang.String.class);
+        map.put("sendEmptyExchangeOnTimeout", boolean.class);
+        map.put("timeout", java.lang.Long.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("fromIndex", long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("userName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EtcdWatchEndpoint target = (EtcdWatchEndpoint) obj;
@@ -48,22 +69,7 @@ public class EtcdWatchEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fromIndex", long.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("recursive", boolean.class);
-        answer.put("sendEmptyExchangeOnTimeout", boolean.class);
-        answer.put("servicePath", java.lang.String.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", java.lang.Long.class);
-        answer.put("uris", java.lang.String.class);
-        answer.put("userName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

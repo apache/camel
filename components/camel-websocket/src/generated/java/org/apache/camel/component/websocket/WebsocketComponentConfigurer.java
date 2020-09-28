@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WebsocketComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("port", java.lang.Integer.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("staticResources", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("enableJmx", boolean.class);
+        map.put("maxThreads", java.lang.Integer.class);
+        map.put("minThreads", java.lang.Integer.class);
+        map.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("sslKeyPassword", java.lang.String.class);
+        map.put("sslKeystore", java.lang.String.class);
+        map.put("sslPassword", java.lang.String.class);
+        map.put("useGlobalSslContextParameters", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketComponent target = (WebsocketComponent) obj;
@@ -53,23 +74,7 @@ public class WebsocketComponentConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("enableJmx", boolean.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxThreads", java.lang.Integer.class);
-        answer.put("minThreads", java.lang.Integer.class);
-        answer.put("port", java.lang.Integer.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("sslKeyPassword", java.lang.String.class);
-        answer.put("sslKeystore", java.lang.String.class);
-        answer.put("sslPassword", java.lang.String.class);
-        answer.put("staticResources", java.lang.String.class);
-        answer.put("threadPool", org.eclipse.jetty.util.thread.ThreadPool.class);
-        answer.put("useGlobalSslContextParameters", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

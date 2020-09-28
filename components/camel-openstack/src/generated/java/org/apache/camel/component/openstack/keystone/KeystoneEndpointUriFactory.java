@@ -33,7 +33,6 @@ public class KeystoneEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "openstack-keystone".equals(scheme);

@@ -15,6 +15,24 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("configFile", java.lang.String.class);
+        map.put("problemId", java.lang.Long.class);
+        map.put("solverId", java.lang.String.class);
+        map.put("useSolverManager", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("async", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("threadPoolSize", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OptaPlannerEndpoint target = (OptaPlannerEndpoint) obj;
@@ -45,19 +63,7 @@ public class OptaPlannerEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("async", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("problemId", java.lang.Long.class);
-        answer.put("solverId", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("threadPoolSize", int.class);
-        answer.put("useSolverManager", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

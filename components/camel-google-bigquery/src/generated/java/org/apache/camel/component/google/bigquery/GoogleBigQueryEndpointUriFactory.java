@@ -30,7 +30,6 @@ public class GoogleBigQueryEndpointUriFactory extends org.apache.camel.support.c
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "google-bigquery".equals(scheme);

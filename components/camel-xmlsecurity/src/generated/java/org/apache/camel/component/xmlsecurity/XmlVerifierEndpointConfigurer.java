@@ -15,6 +15,32 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("baseUri", java.lang.String.class);
+        map.put("clearHeaders", java.lang.Boolean.class);
+        map.put("cryptoContextProperties", java.util.Map.class);
+        map.put("disallowDoctypeDecl", java.lang.Boolean.class);
+        map.put("keySelector", javax.xml.crypto.KeySelector.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("omitXmlDeclaration", java.lang.Boolean.class);
+        map.put("outputNodeSearch", java.lang.Object.class);
+        map.put("outputNodeSearchType", java.lang.String.class);
+        map.put("outputXmlEncoding", java.lang.String.class);
+        map.put("removeSignatureElements", java.lang.Boolean.class);
+        map.put("schemaResourceUri", java.lang.String.class);
+        map.put("secureValidation", java.lang.Boolean.class);
+        map.put("validationFailedHandler", org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class);
+        map.put("xmlSignature2Message", org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class);
+        map.put("xmlSignatureChecker", org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmlVerifierEndpoint target = (XmlVerifierEndpoint) obj;
@@ -62,27 +88,7 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("baseUri", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("clearHeaders", java.lang.Boolean.class);
-        answer.put("cryptoContextProperties", java.util.Map.class);
-        answer.put("disallowDoctypeDecl", java.lang.Boolean.class);
-        answer.put("keySelector", javax.xml.crypto.KeySelector.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("omitXmlDeclaration", java.lang.Boolean.class);
-        answer.put("outputNodeSearch", java.lang.Object.class);
-        answer.put("outputNodeSearchType", java.lang.String.class);
-        answer.put("outputXmlEncoding", java.lang.String.class);
-        answer.put("removeSignatureElements", java.lang.Boolean.class);
-        answer.put("schemaResourceUri", java.lang.String.class);
-        answer.put("secureValidation", java.lang.Boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
-        answer.put("validationFailedHandler", org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class);
-        answer.put("xmlSignature2Message", org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class);
-        answer.put("xmlSignatureChecker", org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

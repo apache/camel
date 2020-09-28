@@ -15,6 +15,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cacheName", java.lang.String.class);
+        map.put("cacheConfiguration", javax.cache.configuration.Configuration.class);
+        map.put("cacheConfigurationProperties", java.util.Properties.class);
+        map.put("cachingProvider", java.lang.String.class);
+        map.put("configurationUri", java.lang.String.class);
+        map.put("managementEnabled", boolean.class);
+        map.put("readThrough", boolean.class);
+        map.put("statisticsEnabled", boolean.class);
+        map.put("storeByValue", boolean.class);
+        map.put("writeThrough", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("filteredEvents", java.lang.String.class);
+        map.put("oldValueRequired", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("eventFilters", java.util.List.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("action", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("cacheLoaderFactory", javax.cache.configuration.Factory.class);
+        map.put("cacheWriterFactory", javax.cache.configuration.Factory.class);
+        map.put("createCacheIfNotExists", boolean.class);
+        map.put("expiryPolicyFactory", javax.cache.configuration.Factory.class);
+        map.put("lookupProviders", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JCacheEndpoint target = (JCacheEndpoint) obj;
@@ -71,32 +102,7 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("action", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("cacheConfiguration", javax.cache.configuration.Configuration.class);
-        answer.put("cacheConfigurationProperties", java.util.Properties.class);
-        answer.put("cacheLoaderFactory", javax.cache.configuration.Factory.class);
-        answer.put("cacheWriterFactory", javax.cache.configuration.Factory.class);
-        answer.put("cachingProvider", java.lang.String.class);
-        answer.put("configurationUri", java.lang.String.class);
-        answer.put("createCacheIfNotExists", boolean.class);
-        answer.put("eventFilters", java.util.List.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("expiryPolicyFactory", javax.cache.configuration.Factory.class);
-        answer.put("filteredEvents", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("lookupProviders", boolean.class);
-        answer.put("managementEnabled", boolean.class);
-        answer.put("oldValueRequired", boolean.class);
-        answer.put("readThrough", boolean.class);
-        answer.put("statisticsEnabled", boolean.class);
-        answer.put("storeByValue", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("writeThrough", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

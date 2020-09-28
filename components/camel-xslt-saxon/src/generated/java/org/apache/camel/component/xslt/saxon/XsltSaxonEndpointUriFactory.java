@@ -41,7 +41,6 @@ public class XsltSaxonEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "xslt-saxon".equals(scheme);
