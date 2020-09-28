@@ -47,9 +47,8 @@ public interface SendDynamicAware extends Service, CamelContextAware {
     /**
      * Whether only the query parameters can be dynamic and the context-path must be static.
      *
-     * If true then Camel can restructure endpoint uri using a simple and faster parser.
-     * On the other hand if the context-path and authority part of the URI can be dynamic
-     * then Camel has to use a more complex and slower parser.
+     * If true then Camel can restructure endpoint uri using a simple and faster parser. On the other hand if the
+     * context-path and authority part of the URI can be dynamic then Camel has to use a more complex and slower parser.
      */
     boolean isOnlyDynamicQueryParameters();
 

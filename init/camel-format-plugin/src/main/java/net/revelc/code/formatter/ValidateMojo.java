@@ -55,9 +55,8 @@ public class ValidateMojo extends FormatterMojo {
         super.doFormatFile(file, rc, hashCache, basedirPath, true);
 
         if (rc.successCount != 0) {
-            throw new MojoFailureException(
-                    "File '" + file
-                                           + "' has not been previously formatted.  Please format file and commit before running validation!");
+            throw new MojoFailureException("File '" + file
+                    + "' has not been previously formatted.  Please format file and commit before running validation!");
         }
         if (rc.failCount != 0) {
             throw new MojoExecutionException("Error formating '" + file + "' ");

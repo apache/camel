@@ -41,15 +41,15 @@ public class SedaWireTapOnCompleteTest extends ContextTestSupport {
                 onCompletion().log("Done ${header.foo}").to("mock:done");
 
                 from("direct:start")
-                    .setHeader("foo", constant("123"))
-                    .log("First ${header.foo}")
-                    .wireTap("seda:cheese")
-                    .to("mock:first");
+                        .setHeader("foo", constant("123"))
+                        .log("First ${header.foo}")
+                        .wireTap("seda:cheese")
+                        .to("mock:first");
 
                 from("seda:cheese")
-                    .setHeader("foo", constant("456"))
-                    .log("Second ${header.foo}")
-                    .to("mock:second");
+                        .setHeader("foo", constant("456"))
+                        .log("Second ${header.foo}")
+                        .to("mock:second");
             }
         };
     }

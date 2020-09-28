@@ -66,8 +66,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 /**
  * Generate an OSGi manifest for this project
  */
-@Mojo(name = "manifest", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true,
-      defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+@Mojo(name = "manifest", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class ManifestPlugin extends BundlePlugin {
     /**
      * When true, generate the manifest by rebuilding the full bundle in memory
@@ -168,9 +167,8 @@ public class ManifestPlugin extends BundlePlugin {
         return getManifest(project, new LinkedHashMap<String, String>(), classpath, buildContext);
     }
 
-    public Manifest getManifest(
-            MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath, BuildContext buildContext)
-            throws IOException, MojoFailureException, MojoExecutionException, Exception {
+    public Manifest getManifest(MavenProject project, Map<String, String> instructions, ClassPathItem[] classpath,
+            BuildContext buildContext) throws IOException, MojoFailureException, MojoExecutionException, Exception {
         Analyzer analyzer = getAnalyzer(project, instructions, classpath);
 
         Jar jar = analyzer.getJar();
@@ -213,7 +211,8 @@ public class ManifestPlugin extends BundlePlugin {
 
     }
 
-    private static void writeSCR(Resource resource, File destination, BuildContext buildContext, Log log) throws Exception {
+    private static void writeSCR(Resource resource, File destination, BuildContext buildContext, Log log)
+            throws Exception {
         log.debug("Write SCR file: " + destination.getPath());
         destination.getParentFile().mkdirs();
         OutputStream os = buildContext.newFileOutputStream(destination);
@@ -260,7 +259,8 @@ public class ManifestPlugin extends BundlePlugin {
 
         boolean isOutputDirectory = file.equals(getOutputDirectory());
 
-        if (analyzer.getProperty(Analyzer.EXPORT_PACKAGE) == null && analyzer.getProperty(Analyzer.EXPORT_CONTENTS) == null
+        if (analyzer.getProperty(Analyzer.EXPORT_PACKAGE) == null
+                && analyzer.getProperty(Analyzer.EXPORT_CONTENTS) == null
                 && analyzer.getProperty(Analyzer.PRIVATE_PACKAGE) == null && !isOutputDirectory) {
             String export = calculateExportsFromContents(analyzer.getJar());
             analyzer.setProperty(Analyzer.EXPORT_PACKAGE, export);
@@ -388,7 +388,8 @@ public class ManifestPlugin extends BundlePlugin {
                         try (ZipFile zf = new ZipFile(file)) {
                             return zf.stream().filter(ze -> !ze.isDirectory())
                                     .filter(ze -> ze.getLastModifiedTime().toMillis() > lastmod)
-                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList()).stream();
+                                    .map(ze -> file.toString() + "!" + ze.getName()).collect(Collectors.toList())
+                                    .stream();
                         }
                     } else {
                         return Stream.of(file.toString());
@@ -404,10 +405,8 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    public static void writeManifest(
-            Analyzer analyzer, File outputFile, boolean niceManifest, boolean exportScr, File scrLocation,
-            BuildContext buildContext, Log log)
-            throws Exception {
+    public static void writeManifest(Analyzer analyzer, File outputFile, boolean niceManifest, boolean exportScr,
+            File scrLocation, BuildContext buildContext, Log log) throws Exception {
         Properties properties = analyzer.getProperties();
         Jar jar = analyzer.getJar();
         Manifest manifest = jar.getManifest();
@@ -433,9 +432,8 @@ public class ManifestPlugin extends BundlePlugin {
         }
     }
 
-    public static void writeManifest(
-            Manifest manifest, File outputFile, boolean niceManifest, BuildContext buildContext, Log log)
-            throws IOException {
+    public static void writeManifest(Manifest manifest, File outputFile, boolean niceManifest,
+            BuildContext buildContext, Log log) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             ManifestWriter.outputManifest(manifest, baos, niceManifest);
@@ -457,10 +455,15 @@ public class ManifestPlugin extends BundlePlugin {
      * Update a file with the given binary content if neeed. The file won't be modified if the content is already the
      * same.
      *
-     * @param  path        the path of the file to update
-     * @param  newdata     the new binary data, <code>null</code> to delete the file
-     * @return             <code>true</code> if the file was modified, <code>false</code> otherwise
-     * @throws IOException if an exception occurs
+     * @param path
+     *            the path of the file to update
+     * @param newdata
+     *            the new binary data, <code>null</code> to delete the file
+     * 
+     * @return <code>true</code> if the file was modified, <code>false</code> otherwise
+     * 
+     * @throws IOException
+     *             if an exception occurs
      */
     public static boolean updateFile(Path path, byte[] newdata) throws IOException {
         if (newdata == null) {
@@ -478,8 +481,8 @@ public class ManifestPlugin extends BundlePlugin {
                 return false;
             }
             Files.createDirectories(path.getParent());
-            Files.write(path, newdata, StandardOpenOption.WRITE,
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(path, newdata, StandardOpenOption.WRITE, StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         }
     }
