@@ -42,6 +42,8 @@ import software.amazon.awssdk.services.eventbridge.model.DisableRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.DisableRuleResponse;
 import software.amazon.awssdk.services.eventbridge.model.EnableRuleRequest;
 import software.amazon.awssdk.services.eventbridge.model.EnableRuleResponse;
+import software.amazon.awssdk.services.eventbridge.model.ListRuleNamesByTargetRequest;
+import software.amazon.awssdk.services.eventbridge.model.ListRuleNamesByTargetResponse;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesRequest;
 import software.amazon.awssdk.services.eventbridge.model.ListRulesResponse;
 import software.amazon.awssdk.services.eventbridge.model.ListTargetsByRuleRequest;
@@ -97,6 +99,9 @@ public class EventbridgeProducer extends DefaultProducer {
                 break;
             case listTargetsByRule:
                 listTargetsByRule(getEndpoint().getEventbridgeClient(), exchange);
+                break;
+            case listRuleNamesByTarget:
+                listRuleNamesByTarget(getEndpoint().getEventbridgeClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -435,6 +440,39 @@ public class EventbridgeProducer extends DefaultProducer {
                 result = eventbridgeClient.listTargetsByRule(builder.build());
             } catch (AwsServiceException ase) {
                 LOG.trace("List Targets by Rule command returned the error code {}", ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
+    
+    private void listRuleNamesByTarget(EventBridgeClient eventbridgeClient, Exchange exchange) throws InvalidPayloadException {
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (payload instanceof ListRuleNamesByTargetRequest) {
+                ListRuleNamesByTargetResponse result;
+                try {
+                    result = eventbridgeClient.listRuleNamesByTarget((ListRuleNamesByTargetRequest) payload);
+                } catch (AwsServiceException ase) {
+                    LOG.trace("List Rule Name by Targets command returned the error code {}", ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+                Message message = getMessageForResponse(exchange);
+                message.setBody(result);
+            }
+        } else {
+        	ListRuleNamesByTargetRequest.Builder builder = ListRuleNamesByTargetRequest.builder();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EventbridgeConstants.TARGET_ARN))) {
+                String targetArn = exchange.getIn().getHeader(EventbridgeConstants.TARGET_ARN, String.class);
+                builder.targetArn(targetArn);
+            }
+            builder.eventBusName(getConfiguration().getEventbusName());
+            ListRuleNamesByTargetResponse result;
+            try {
+                result = eventbridgeClient.listRuleNamesByTarget(builder.build());
+            } catch (AwsServiceException ase) {
+                LOG.trace("List Rule by Target command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
