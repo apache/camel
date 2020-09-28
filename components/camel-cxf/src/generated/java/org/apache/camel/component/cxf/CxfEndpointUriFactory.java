@@ -60,7 +60,6 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "cxf".equals(scheme);

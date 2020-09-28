@@ -15,6 +15,72 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("queueNameOrArn", java.lang.String.class);
+        map.put("amazonAWSHost", java.lang.String.class);
+        map.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
+        map.put("autoCreateQueue", boolean.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("protocol", java.lang.String.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("queueOwnerAWSAccountId", java.lang.String.class);
+        map.put("region", java.lang.String.class);
+        map.put("attributeNames", java.lang.String.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("defaultVisibilityTimeout", java.lang.Integer.class);
+        map.put("deleteAfterRead", boolean.class);
+        map.put("deleteIfFiltered", boolean.class);
+        map.put("extendMessageVisibility", boolean.class);
+        map.put("kmsDataKeyReusePeriodSeconds", java.lang.Integer.class);
+        map.put("kmsMasterKeyId", java.lang.String.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("messageAttributeNames", java.lang.String.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("serverSideEncryptionEnabled", boolean.class);
+        map.put("visibilityTimeout", java.lang.Integer.class);
+        map.put("waitTimeSeconds", java.lang.Integer.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("delaySeconds", java.lang.Integer.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("messageDeduplicationIdStrategy", java.lang.String.class);
+        map.put("messageGroupIdStrategy", java.lang.String.class);
+        map.put("operation", org.apache.camel.component.aws.sqs.SqsOperations.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("delayQueue", boolean.class);
+        map.put("queueUrl", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("maximumMessageSize", java.lang.Integer.class);
+        map.put("messageRetentionPeriod", java.lang.Integer.class);
+        map.put("policy", java.lang.String.class);
+        map.put("receiveMessageWaitTimeSeconds", java.lang.Integer.class);
+        map.put("redrivePolicy", java.lang.String.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqsEndpoint target = (SqsEndpoint) obj;
@@ -135,67 +201,7 @@ public class SqsEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonAWSHost", java.lang.String.class);
-        answer.put("amazonSQSClient", com.amazonaws.services.sqs.AmazonSQS.class);
-        answer.put("attributeNames", java.lang.String.class);
-        answer.put("autoCreateQueue", boolean.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("defaultVisibilityTimeout", java.lang.Integer.class);
-        answer.put("delay", long.class);
-        answer.put("delayQueue", boolean.class);
-        answer.put("delaySeconds", java.lang.Integer.class);
-        answer.put("deleteAfterRead", boolean.class);
-        answer.put("deleteIfFiltered", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("extendMessageVisibility", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("initialDelay", long.class);
-        answer.put("kmsDataKeyReusePeriodSeconds", java.lang.Integer.class);
-        answer.put("kmsMasterKeyId", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("maximumMessageSize", java.lang.Integer.class);
-        answer.put("messageAttributeNames", java.lang.String.class);
-        answer.put("messageDeduplicationIdStrategy", java.lang.String.class);
-        answer.put("messageGroupIdStrategy", java.lang.String.class);
-        answer.put("messageRetentionPeriod", java.lang.Integer.class);
-        answer.put("operation", org.apache.camel.component.aws.sqs.SqsOperations.class);
-        answer.put("policy", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("protocol", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("queueOwnerAWSAccountId", java.lang.String.class);
-        answer.put("queueUrl", java.lang.String.class);
-        answer.put("receiveMessageWaitTimeSeconds", java.lang.Integer.class);
-        answer.put("redrivePolicy", java.lang.String.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serverSideEncryptionEnabled", boolean.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("visibilityTimeout", java.lang.Integer.class);
-        answer.put("waitTimeSeconds", java.lang.Integer.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

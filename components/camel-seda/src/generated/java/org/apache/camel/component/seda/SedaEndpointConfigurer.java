@@ -15,6 +15,33 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("size", int.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("concurrentConsumers", int.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("limitConcurrentConsumers", boolean.class);
+        map.put("multipleConsumers", boolean.class);
+        map.put("pollTimeout", int.class);
+        map.put("purgeWhenStopping", boolean.class);
+        map.put("blockWhenFull", boolean.class);
+        map.put("discardIfNoConsumers", boolean.class);
+        map.put("discardWhenFull", boolean.class);
+        map.put("failIfNoConsumers", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("offerTimeout", long.class);
+        map.put("timeout", long.class);
+        map.put("waitForTaskToComplete", org.apache.camel.WaitForTaskToComplete.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("queue", java.util.concurrent.BlockingQueue.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SedaEndpoint target = (SedaEndpoint) obj;
@@ -61,28 +88,7 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blockWhenFull", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("concurrentConsumers", int.class);
-        answer.put("discardIfNoConsumers", boolean.class);
-        answer.put("discardWhenFull", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("failIfNoConsumers", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("limitConcurrentConsumers", boolean.class);
-        answer.put("multipleConsumers", boolean.class);
-        answer.put("offerTimeout", long.class);
-        answer.put("pollTimeout", int.class);
-        answer.put("purgeWhenStopping", boolean.class);
-        answer.put("queue", java.util.concurrent.BlockingQueue.class);
-        answer.put("size", int.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeout", long.class);
-        answer.put("waitForTaskToComplete", org.apache.camel.WaitForTaskToComplete.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

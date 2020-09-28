@@ -33,7 +33,6 @@ public class LanguageEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "language".equals(scheme);

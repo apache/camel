@@ -15,6 +15,27 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("amazonDynamoDbStreamsClient", software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("configuration", org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class);
+        map.put("iteratorType", software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class);
+        map.put("maxResultsPerRequest", int.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("sequenceNumberProvider", org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class);
+        map.put("trustAllCertificates", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration getOrCreateConfiguration(Ddb2StreamComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration());
@@ -60,23 +81,7 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonDynamoDbStreamsClient", software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.class);
-        answer.put("iteratorType", software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class);
-        answer.put("maxResultsPerRequest", int.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sequenceNumberProvider", org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class);
-        answer.put("trustAllCertificates", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

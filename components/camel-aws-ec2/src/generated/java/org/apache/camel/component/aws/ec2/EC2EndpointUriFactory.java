@@ -35,7 +35,6 @@ public class EC2EndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-ec2".equals(scheme);

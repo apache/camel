@@ -15,6 +15,72 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class S3EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bucketNameOrArn", java.lang.String.class);
+        map.put("amazonS3Client", com.amazonaws.services.s3.AmazonS3.class);
+        map.put("autoCreateBucket", boolean.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("endpointConfiguration", com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class);
+        map.put("pathStyleAccess", boolean.class);
+        map.put("policy", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", com.amazonaws.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("useIAMCredentials", boolean.class);
+        map.put("encryptionMaterials", com.amazonaws.services.s3.model.EncryptionMaterials.class);
+        map.put("useEncryption", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("deleteAfterRead", boolean.class);
+        map.put("delimiter", java.lang.String.class);
+        map.put("fileName", java.lang.String.class);
+        map.put("includeBody", boolean.class);
+        map.put("maxConnections", int.class);
+        map.put("maxMessagesPerPoll", int.class);
+        map.put("prefix", java.lang.String.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("autocloseBody", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("deleteAfterWrite", boolean.class);
+        map.put("keyName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("multiPartUpload", boolean.class);
+        map.put("operation", org.apache.camel.component.aws.s3.S3Operations.class);
+        map.put("partSize", long.class);
+        map.put("serverSideEncryption", java.lang.String.class);
+        map.put("storageClass", java.lang.String.class);
+        map.put("awsKMSKeyId", java.lang.String.class);
+        map.put("useAwsKMS", boolean.class);
+        map.put("accelerateModeEnabled", boolean.class);
+        map.put("chunkedEncodingDisabled", boolean.class);
+        map.put("dualstackEnabled", boolean.class);
+        map.put("forceGlobalBucketAccessEnabled", boolean.class);
+        map.put("payloadSigningEnabled", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         S3Endpoint target = (S3Endpoint) obj;
@@ -134,67 +200,7 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accelerateModeEnabled", boolean.class);
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonS3Client", com.amazonaws.services.s3.AmazonS3.class);
-        answer.put("autoCreateBucket", boolean.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("autocloseBody", boolean.class);
-        answer.put("awsKMSKeyId", java.lang.String.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("chunkedEncodingDisabled", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("deleteAfterRead", boolean.class);
-        answer.put("deleteAfterWrite", boolean.class);
-        answer.put("delimiter", java.lang.String.class);
-        answer.put("dualstackEnabled", boolean.class);
-        answer.put("encryptionMaterials", com.amazonaws.services.s3.model.EncryptionMaterials.class);
-        answer.put("endpointConfiguration", com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fileName", java.lang.String.class);
-        answer.put("forceGlobalBucketAccessEnabled", boolean.class);
-        answer.put("greedy", boolean.class);
-        answer.put("includeBody", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("keyName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxConnections", int.class);
-        answer.put("maxMessagesPerPoll", int.class);
-        answer.put("multiPartUpload", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws.s3.S3Operations.class);
-        answer.put("partSize", long.class);
-        answer.put("pathStyleAccess", boolean.class);
-        answer.put("payloadSigningEnabled", boolean.class);
-        answer.put("policy", java.lang.String.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("prefix", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", com.amazonaws.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("serverSideEncryption", java.lang.String.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("storageClass", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("useAwsKMS", boolean.class);
-        answer.put("useEncryption", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        answer.put("useIAMCredentials", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

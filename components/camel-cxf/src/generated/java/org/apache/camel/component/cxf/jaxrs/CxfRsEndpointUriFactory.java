@@ -56,7 +56,6 @@ public class CxfRsEndpointUriFactory extends org.apache.camel.support.component.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "cxfrs".equals(scheme);

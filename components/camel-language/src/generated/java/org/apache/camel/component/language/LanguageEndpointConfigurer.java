@@ -15,6 +15,23 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("languageName", java.lang.String.class);
+        map.put("resourceUri", java.lang.String.class);
+        map.put("allowContextMapAll", boolean.class);
+        map.put("binary", boolean.class);
+        map.put("cacheScript", boolean.class);
+        map.put("contentCache", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("script", java.lang.String.class);
+        map.put("transform", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LanguageEndpoint target = (LanguageEndpoint) obj;
@@ -39,17 +56,7 @@ public class LanguageEndpointConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowContextMapAll", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binary", boolean.class);
-        answer.put("cacheScript", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("script", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transform", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

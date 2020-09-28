@@ -15,6 +15,16 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("service", org.apache.camel.cloud.ServiceRegistry.class);
+        map.put("serviceSelector", org.apache.camel.cloud.ServiceRegistry.Selector.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceComponent target = (ServiceComponent) obj;
@@ -32,12 +42,7 @@ public class ServiceComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("service", org.apache.camel.cloud.ServiceRegistry.class);
-        answer.put("serviceSelector", org.apache.camel.cloud.ServiceRegistry.Selector.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -39,7 +39,6 @@ public class Cw2EndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws2-cw".equals(scheme);

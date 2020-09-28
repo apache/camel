@@ -15,5 +15,15 @@ import org.apache.camel.component.bean.BeanComponentConfigurer;
 @SuppressWarnings("unchecked")
 public class ClassComponentConfigurer extends BeanComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("cache", java.lang.Boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("scope", org.apache.camel.BeanScope.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
 }
 

@@ -45,7 +45,6 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "dataset".equals(scheme);

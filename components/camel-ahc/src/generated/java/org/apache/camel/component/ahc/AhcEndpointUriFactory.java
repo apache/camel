@@ -38,7 +38,6 @@ public class AhcEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "ahc".equals(scheme);

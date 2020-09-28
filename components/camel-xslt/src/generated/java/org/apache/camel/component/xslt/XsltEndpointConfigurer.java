@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("contentCache", boolean.class);
+        map.put("deleteOutputFile", boolean.class);
+        map.put("failOnNullBody", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("output", org.apache.camel.component.xslt.XsltOutput.class);
+        map.put("transformerCacheSize", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("entityResolver", org.xml.sax.EntityResolver.class);
+        map.put("errorListener", javax.xml.transform.ErrorListener.class);
+        map.put("resultHandlerFactory", org.apache.camel.component.xslt.ResultHandlerFactory.class);
+        map.put("synchronous", boolean.class);
+        map.put("transformerFactory", javax.xml.transform.TransformerFactory.class);
+        map.put("transformerFactoryClass", java.lang.String.class);
+        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
+        map.put("uriResolver", javax.xml.transform.URIResolver.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XsltEndpoint target = (XsltEndpoint) obj;
@@ -53,23 +75,7 @@ public class XsltEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("contentCache", boolean.class);
-        answer.put("deleteOutputFile", boolean.class);
-        answer.put("entityResolver", org.xml.sax.EntityResolver.class);
-        answer.put("errorListener", javax.xml.transform.ErrorListener.class);
-        answer.put("failOnNullBody", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("output", org.apache.camel.component.xslt.XsltOutput.class);
-        answer.put("resultHandlerFactory", org.apache.camel.component.xslt.ResultHandlerFactory.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("transformerCacheSize", int.class);
-        answer.put("transformerFactory", javax.xml.transform.TransformerFactory.class);
-        answer.put("transformerFactoryClass", java.lang.String.class);
-        answer.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
-        answer.put("uriResolver", javax.xml.transform.URIResolver.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

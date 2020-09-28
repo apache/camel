@@ -35,7 +35,6 @@ public class KMSEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-kms".equals(scheme);

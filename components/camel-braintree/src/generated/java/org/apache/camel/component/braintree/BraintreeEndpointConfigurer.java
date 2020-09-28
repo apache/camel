@@ -15,6 +15,58 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("apiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
+        map.put("methodName", java.lang.String.class);
+        map.put("environment", java.lang.String.class);
+        map.put("inBody", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("merchantId", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpReadTimeout", java.lang.Integer.class);
+        map.put("synchronous", boolean.class);
+        map.put("httpLogLevel", java.lang.String.class);
+        map.put("httpLogName", java.lang.String.class);
+        map.put("logHandlerEnabled", boolean.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("accessToken", java.lang.String.class);
+        map.put("privateKey", java.lang.String.class);
+        map.put("publicKey", java.lang.String.class);
+        map.put("amount", java.math.BigDecimal.class);
+        map.put("associationFilterId", java.lang.String.class);
+        map.put("challenge", java.lang.String.class);
+        map.put("cloneRequest", com.braintreegateway.TransactionCloneRequest.class);
+        map.put("content", java.lang.String.class);
+        map.put("currencyRequest", com.braintreegateway.MerchantAccountCreateForCurrencyRequest.class);
+        map.put("customerId", java.lang.String.class);
+        map.put("deleteRequest", com.braintreegateway.PaymentMethodDeleteRequest.class);
+        map.put("disputeId", java.lang.String.class);
+        map.put("documentId", java.lang.String.class);
+        map.put("evidenceId", java.lang.String.class);
+        map.put("fileEvidenceRequest", com.braintreegateway.FileEvidenceRequest.class);
+        map.put("grantRequest", com.braintreegateway.PaymentMethodGrantRequest.class);
+        map.put("groupByCustomField", java.lang.String.class);
+        map.put("id", java.lang.String.class);
+        map.put("page", java.lang.Integer.class);
+        map.put("payload", java.lang.String.class);
+        map.put("paymentMethodNonce", java.lang.String.class);
+        map.put("paymentMethodToken", java.lang.String.class);
+        map.put("query", com.braintreegateway.CreditCardVerificationSearchRequest.class);
+        map.put("refundRequest", com.braintreegateway.TransactionRefundRequest.class);
+        map.put("request", com.braintreegateway.AddressRequest.class);
+        map.put("searchRequest", com.braintreegateway.SubscriptionSearchRequest.class);
+        map.put("settlementDate", java.util.Calendar.class);
+        map.put("signature", java.lang.String.class);
+        map.put("submitForSettlement", java.lang.Boolean.class);
+        map.put("subscriptionId", java.lang.String.class);
+        map.put("textEvidenceRequest", com.braintreegateway.TextEvidenceRequest.class);
+        map.put("token", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BraintreeEndpoint target = (BraintreeEndpoint) obj;
@@ -53,23 +105,7 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessToken", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("environment", java.lang.String.class);
-        answer.put("httpLogLevel", java.lang.String.class);
-        answer.put("httpLogName", java.lang.String.class);
-        answer.put("httpReadTimeout", java.lang.Integer.class);
-        answer.put("inBody", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("logHandlerEnabled", boolean.class);
-        answer.put("merchantId", java.lang.String.class);
-        answer.put("privateKey", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("publicKey", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

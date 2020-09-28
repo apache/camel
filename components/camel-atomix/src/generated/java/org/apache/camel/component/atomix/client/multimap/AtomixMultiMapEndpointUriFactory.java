@@ -40,7 +40,6 @@ public class AtomixMultiMapEndpointUriFactory extends org.apache.camel.support.c
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "atomix-multimap".equals(scheme);

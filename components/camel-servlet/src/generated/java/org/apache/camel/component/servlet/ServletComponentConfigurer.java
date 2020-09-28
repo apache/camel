@@ -15,6 +15,22 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServletComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("servletName", java.lang.String.class);
+        map.put("attachmentMultipartBinding", boolean.class);
+        map.put("fileNameExtWhitelist", java.lang.String.class);
+        map.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
+        map.put("allowJavaSerializedObject", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
+        map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServletComponent target = (ServletComponent) obj;
@@ -45,18 +61,7 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("allowJavaSerializedObject", boolean.class);
-        answer.put("attachmentMultipartBinding", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("fileNameExtWhitelist", java.lang.String.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
-        answer.put("servletName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

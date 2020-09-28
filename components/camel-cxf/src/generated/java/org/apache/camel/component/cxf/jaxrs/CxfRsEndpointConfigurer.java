@@ -15,6 +15,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("beanId", java.lang.String.class);
+        map.put("address", java.lang.String.class);
+        map.put("features", java.util.List.class);
+        map.put("loggingFeatureEnabled", boolean.class);
+        map.put("loggingSizeLimit", int.class);
+        map.put("modelRef", java.lang.String.class);
+        map.put("providers", java.lang.String.class);
+        map.put("resourceClasses", java.util.List.class);
+        map.put("schemaLocations", java.util.List.class);
+        map.put("skipFaultLogging", boolean.class);
+        map.put("bindingStyle", org.apache.camel.component.cxf.jaxrs.BindingStyle.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("publishedEndpointUrl", java.lang.String.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("serviceBeans", java.lang.String.class);
+        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
+        map.put("hostnameVerifier", javax.net.ssl.HostnameVerifier.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("throwExceptionOnFailure", boolean.class);
+        map.put("httpClientAPI", boolean.class);
+        map.put("ignoreDeleteMethodMessageBody", boolean.class);
+        map.put("maxClientCacheSize", int.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("binding", org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class);
+        map.put("bus", org.apache.cxf.Bus.class);
+        map.put("continuationTimeout", long.class);
+        map.put("cxfRsConfigurer", org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class);
+        map.put("defaultBus", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("performInvocation", boolean.class);
+        map.put("propagateContexts", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
@@ -84,40 +124,7 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("binding", org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class);
-        answer.put("bindingStyle", org.apache.camel.component.cxf.jaxrs.BindingStyle.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("bus", org.apache.cxf.Bus.class);
-        answer.put("continuationTimeout", long.class);
-        answer.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        answer.put("cxfRsConfigurer", org.apache.camel.component.cxf.jaxrs.CxfRsConfigurer.class);
-        answer.put("defaultBus", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("features", java.util.List.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("hostnameVerifier", javax.net.ssl.HostnameVerifier.class);
-        answer.put("httpClientAPI", boolean.class);
-        answer.put("ignoreDeleteMethodMessageBody", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("loggingFeatureEnabled", boolean.class);
-        answer.put("loggingSizeLimit", int.class);
-        answer.put("maxClientCacheSize", int.class);
-        answer.put("modelRef", java.lang.String.class);
-        answer.put("performInvocation", boolean.class);
-        answer.put("propagateContexts", boolean.class);
-        answer.put("providers", java.lang.String.class);
-        answer.put("publishedEndpointUrl", java.lang.String.class);
-        answer.put("resourceClasses", java.util.List.class);
-        answer.put("schemaLocations", java.util.List.class);
-        answer.put("serviceBeans", java.lang.String.class);
-        answer.put("skipFaultLogging", boolean.class);
-        answer.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("throwExceptionOnFailure", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

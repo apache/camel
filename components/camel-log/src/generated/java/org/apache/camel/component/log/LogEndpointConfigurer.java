@@ -15,6 +15,41 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LogEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("loggerName", java.lang.String.class);
+        map.put("groupActiveOnly", java.lang.Boolean.class);
+        map.put("groupDelay", java.lang.Long.class);
+        map.put("groupInterval", java.lang.Long.class);
+        map.put("groupSize", java.lang.Integer.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("level", java.lang.String.class);
+        map.put("logMask", java.lang.Boolean.class);
+        map.put("marker", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
+        map.put("synchronous", boolean.class);
+        map.put("maxChars", int.class);
+        map.put("multiline", boolean.class);
+        map.put("showAll", boolean.class);
+        map.put("showBody", boolean.class);
+        map.put("showBodyType", boolean.class);
+        map.put("showCaughtException", boolean.class);
+        map.put("showException", boolean.class);
+        map.put("showExchangeId", boolean.class);
+        map.put("showExchangePattern", boolean.class);
+        map.put("showFiles", boolean.class);
+        map.put("showFuture", boolean.class);
+        map.put("showHeaders", boolean.class);
+        map.put("showProperties", boolean.class);
+        map.put("showStackTrace", boolean.class);
+        map.put("showStreams", boolean.class);
+        map.put("skipBodyLineSeparator", boolean.class);
+        map.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
@@ -76,36 +111,7 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
-        answer.put("groupActiveOnly", java.lang.Boolean.class);
-        answer.put("groupDelay", java.lang.Long.class);
-        answer.put("groupInterval", java.lang.Long.class);
-        answer.put("groupSize", java.lang.Integer.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("level", java.lang.String.class);
-        answer.put("logMask", java.lang.Boolean.class);
-        answer.put("marker", java.lang.String.class);
-        answer.put("maxChars", int.class);
-        answer.put("multiline", boolean.class);
-        answer.put("showAll", boolean.class);
-        answer.put("showBody", boolean.class);
-        answer.put("showBodyType", boolean.class);
-        answer.put("showCaughtException", boolean.class);
-        answer.put("showException", boolean.class);
-        answer.put("showExchangeId", boolean.class);
-        answer.put("showExchangePattern", boolean.class);
-        answer.put("showFiles", boolean.class);
-        answer.put("showFuture", boolean.class);
-        answer.put("showHeaders", boolean.class);
-        answer.put("showProperties", boolean.class);
-        answer.put("showStackTrace", boolean.class);
-        answer.put("showStreams", boolean.class);
-        answer.put("skipBodyLineSeparator", boolean.class);
-        answer.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,46 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("tableName", java.lang.String.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("amazonDynamoDbStreamsClient", software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("iteratorType", software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class);
+        map.put("maxResultsPerRequest", int.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("sendEmptyMessageWhenIdle", boolean.class);
+        map.put("sequenceNumberProvider", org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class);
+        map.put("trustAllCertificates", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("backoffErrorThreshold", int.class);
+        map.put("backoffIdleThreshold", int.class);
+        map.put("backoffMultiplier", int.class);
+        map.put("delay", long.class);
+        map.put("greedy", boolean.class);
+        map.put("initialDelay", long.class);
+        map.put("repeatCount", long.class);
+        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
+        map.put("scheduler", java.lang.Object.class);
+        map.put("schedulerProperties", java.util.Map.class);
+        map.put("startScheduler", boolean.class);
+        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
+        map.put("useFixedDelay", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Ddb2StreamEndpoint target = (Ddb2StreamEndpoint) obj;
@@ -86,41 +126,7 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonDynamoDbStreamsClient", software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("backoffErrorThreshold", int.class);
-        answer.put("backoffIdleThreshold", int.class);
-        answer.put("backoffMultiplier", int.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("delay", long.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("greedy", boolean.class);
-        answer.put("initialDelay", long.class);
-        answer.put("iteratorType", software.amazon.awssdk.services.dynamodb.model.ShardIteratorType.class);
-        answer.put("maxResultsPerRequest", int.class);
-        answer.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("repeatCount", long.class);
-        answer.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        answer.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        answer.put("scheduler", java.lang.Object.class);
-        answer.put("schedulerProperties", java.util.Map.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sendEmptyMessageWhenIdle", boolean.class);
-        answer.put("sequenceNumberProvider", org.apache.camel.component.aws2.ddbstream.SequenceNumberProvider.class);
-        answer.put("startScheduler", boolean.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        answer.put("trustAllCertificates", boolean.class);
-        answer.put("useFixedDelay", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

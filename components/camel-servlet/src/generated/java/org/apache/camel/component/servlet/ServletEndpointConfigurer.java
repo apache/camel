@@ -15,6 +15,37 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServletEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("contextPath", java.lang.String.class);
+        map.put("chunked", boolean.class);
+        map.put("disableStreamCache", boolean.class);
+        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
+        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
+        map.put("async", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("httpMethodRestrict", java.lang.String.class);
+        map.put("matchOnUriPrefix", boolean.class);
+        map.put("muteException", boolean.class);
+        map.put("responseBufferSize", java.lang.Integer.class);
+        map.put("servletName", java.lang.String.class);
+        map.put("transferException", boolean.class);
+        map.put("attachmentMultipartBinding", boolean.class);
+        map.put("eagerCheckContentAvailable", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("fileNameExtWhitelist", java.lang.String.class);
+        map.put("optionsEnabled", boolean.class);
+        map.put("traceEnabled", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("mapHttpMessageBody", boolean.class);
+        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
+        map.put("mapHttpMessageHeaders", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServletEndpoint target = (ServletEndpoint) obj;
@@ -70,32 +101,7 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("async", boolean.class);
-        answer.put("attachmentMultipartBinding", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("chunked", boolean.class);
-        answer.put("disableStreamCache", boolean.class);
-        answer.put("eagerCheckContentAvailable", boolean.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("fileNameExtWhitelist", java.lang.String.class);
-        answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        answer.put("httpMethodRestrict", java.lang.String.class);
-        answer.put("mapHttpMessageBody", boolean.class);
-        answer.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        answer.put("mapHttpMessageHeaders", boolean.class);
-        answer.put("matchOnUriPrefix", boolean.class);
-        answer.put("muteException", boolean.class);
-        answer.put("optionsEnabled", boolean.class);
-        answer.put("responseBufferSize", java.lang.Integer.class);
-        answer.put("servletName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("traceEnabled", boolean.class);
-        answer.put("transferException", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

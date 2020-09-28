@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("containerAndQueueUri", java.lang.String.class);
+        map.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
+        map.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
+        map.put("validateClientURI", boolean.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
+        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("messageTimeToLive", int.class);
+        map.put("messageVisibilityDelay", int.class);
+        map.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
+        map.put("queuePrefix", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("credentialsAccountKey", java.lang.String.class);
+        map.put("credentialsAccountName", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QueueServiceEndpoint target = (QueueServiceEndpoint) obj;
@@ -52,23 +74,7 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        answer.put("credentialsAccountKey", java.lang.String.class);
-        answer.put("credentialsAccountName", java.lang.String.class);
-        answer.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        answer.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("messageTimeToLive", int.class);
-        answer.put("messageVisibilityDelay", int.class);
-        answer.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
-        answer.put("queuePrefix", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("validateClientURI", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

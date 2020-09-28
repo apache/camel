@@ -119,7 +119,6 @@ public class JmsEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "jms".equals(scheme);

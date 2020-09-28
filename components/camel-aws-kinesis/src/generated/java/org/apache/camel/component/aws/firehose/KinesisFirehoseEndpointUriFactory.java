@@ -34,7 +34,6 @@ public class KinesisFirehoseEndpointUriFactory extends org.apache.camel.support.
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-kinesis-firehose".equals(scheme);

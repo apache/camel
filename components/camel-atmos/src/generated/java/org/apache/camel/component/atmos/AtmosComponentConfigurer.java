@@ -15,6 +15,19 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class AtmosComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("uri", java.lang.String.class);
+        map.put("fullTokenId", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        map.put("sslValidation", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AtmosComponent target = (AtmosComponent) obj;
@@ -38,15 +51,7 @@ public class AtmosComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("fullTokenId", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("sslValidation", boolean.class);
-        answer.put("uri", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

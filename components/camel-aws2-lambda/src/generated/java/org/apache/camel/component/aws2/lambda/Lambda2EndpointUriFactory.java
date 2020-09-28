@@ -37,7 +37,6 @@ public class Lambda2EndpointUriFactory extends org.apache.camel.support.componen
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws2-lambda".equals(scheme);

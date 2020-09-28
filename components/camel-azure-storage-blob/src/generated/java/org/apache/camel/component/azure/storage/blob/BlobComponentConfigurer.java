@@ -15,6 +15,39 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BlobComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("blobName", java.lang.String.class);
+        map.put("blobOffset", long.class);
+        map.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
+        map.put("closeStreamAfterRead", boolean.class);
+        map.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
+        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
+        map.put("dataCount", java.lang.Long.class);
+        map.put("fileDir", java.lang.String.class);
+        map.put("maxResultsPerPage", java.lang.Integer.class);
+        map.put("maxRetryRequests", int.class);
+        map.put("prefix", java.lang.String.class);
+        map.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
+        map.put("timeout", java.time.Duration.class);
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("blobSequenceNumber", java.lang.Long.class);
+        map.put("blockListType", com.azure.storage.blob.models.BlockListType.class);
+        map.put("closeStreamAfterWrite", boolean.class);
+        map.put("commitBlockListLater", boolean.class);
+        map.put("createAppendBlob", boolean.class);
+        map.put("createPageBlob", boolean.class);
+        map.put("downloadLinkExpiration", java.lang.Long.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
+        map.put("pageBlobSize", java.lang.Long.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.azure.storage.blob.BlobConfiguration getOrCreateConfiguration(BlobComponent target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.azure.storage.blob.BlobConfiguration());
@@ -81,35 +114,7 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("blobName", java.lang.String.class);
-        answer.put("blobOffset", long.class);
-        answer.put("blobSequenceNumber", java.lang.Long.class);
-        answer.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
-        answer.put("blockListType", com.azure.storage.blob.models.BlockListType.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("closeStreamAfterRead", boolean.class);
-        answer.put("closeStreamAfterWrite", boolean.class);
-        answer.put("commitBlockListLater", boolean.class);
-        answer.put("configuration", org.apache.camel.component.azure.storage.blob.BlobConfiguration.class);
-        answer.put("createAppendBlob", boolean.class);
-        answer.put("createPageBlob", boolean.class);
-        answer.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        answer.put("dataCount", java.lang.Long.class);
-        answer.put("downloadLinkExpiration", java.lang.Long.class);
-        answer.put("fileDir", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("maxResultsPerPage", java.lang.Integer.class);
-        answer.put("maxRetryRequests", int.class);
-        answer.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
-        answer.put("pageBlobSize", java.lang.Long.class);
-        answer.put("prefix", java.lang.String.class);
-        answer.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
-        answer.put("timeout", java.time.Duration.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

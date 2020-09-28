@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CMEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("host", java.lang.String.class);
+        map.put("defaultFrom", java.lang.String.class);
+        map.put("defaultMaxNumberOfParts", int.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("productToken", java.lang.String.class);
+        map.put("testConnectionOnStartup", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CMEndpoint target = (CMEndpoint) obj;
@@ -38,15 +52,7 @@ public class CMEndpointConfigurer extends PropertyConfigurerSupport implements G
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("defaultFrom", java.lang.String.class);
-        answer.put("defaultMaxNumberOfParts", int.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("productToken", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("testConnectionOnStartup", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

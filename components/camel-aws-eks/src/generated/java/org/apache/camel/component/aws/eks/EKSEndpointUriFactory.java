@@ -35,7 +35,6 @@ public class EKSEndpointUriFactory extends org.apache.camel.support.component.En
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws-eks".equals(scheme);

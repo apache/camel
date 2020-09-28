@@ -15,6 +15,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MockEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("assertPeriod", long.class);
+        map.put("expectedCount", int.class);
+        map.put("failFast", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("reportGroup", int.class);
+        map.put("resultMinimumWaitTime", long.class);
+        map.put("resultWaitTime", long.class);
+        map.put("retainFirst", int.class);
+        map.put("retainLast", int.class);
+        map.put("sleepForEmptyTest", long.class);
+        map.put("copyOnExchange", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MockEndpoint target = (MockEndpoint) obj;
@@ -50,21 +70,7 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("assertPeriod", long.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("copyOnExchange", boolean.class);
-        answer.put("expectedCount", int.class);
-        answer.put("failFast", boolean.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("reportGroup", int.class);
-        answer.put("resultMinimumWaitTime", long.class);
-        answer.put("resultWaitTime", long.class);
-        answer.put("retainFirst", int.class);
-        answer.put("retainLast", int.class);
-        answer.put("sleepForEmptyTest", long.class);
-        answer.put("synchronous", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

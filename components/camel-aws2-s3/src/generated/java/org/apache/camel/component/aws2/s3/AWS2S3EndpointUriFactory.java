@@ -85,7 +85,6 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "aws2-s3".equals(scheme);

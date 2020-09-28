@@ -15,6 +15,26 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class IAM2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("configuration", org.apache.camel.component.aws2.iam.IAM2Configuration.class);
+        map.put("iamClient", software.amazon.awssdk.services.iam.IamClient.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("operation", org.apache.camel.component.aws2.iam.IAM2Operations.class);
+        map.put("pojoRequest", boolean.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("trustAllCertificates", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.aws2.iam.IAM2Configuration getOrCreateConfiguration(IAM2Component target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.aws2.iam.IAM2Configuration());
@@ -57,22 +77,7 @@ public class IAM2ComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.iam.IAM2Configuration.class);
-        answer.put("iamClient", software.amazon.awssdk.services.iam.IamClient.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("operation", org.apache.camel.component.aws2.iam.IAM2Operations.class);
-        answer.put("pojoRequest", boolean.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("trustAllCertificates", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

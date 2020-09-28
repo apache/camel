@@ -15,6 +15,28 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("amazonCwClient", software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class);
+        map.put("autoDiscoverClient", boolean.class);
+        map.put("configuration", org.apache.camel.component.aws2.cw.Cw2Configuration.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("name", java.lang.String.class);
+        map.put("proxyHost", java.lang.String.class);
+        map.put("proxyPort", java.lang.Integer.class);
+        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
+        map.put("region", java.lang.String.class);
+        map.put("timestamp", java.time.Instant.class);
+        map.put("trustAllCertificates", boolean.class);
+        map.put("unit", java.lang.String.class);
+        map.put("value", java.lang.Double.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("accessKey", java.lang.String.class);
+        map.put("secretKey", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     private org.apache.camel.component.aws2.cw.Cw2Configuration getOrCreateConfiguration(Cw2Component target) {
         if (target.getConfiguration() == null) {
             target.setConfiguration(new org.apache.camel.component.aws2.cw.Cw2Configuration());
@@ -58,24 +80,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("accessKey", java.lang.String.class);
-        answer.put("amazonCwClient", software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class);
-        answer.put("autoDiscoverClient", boolean.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("configuration", org.apache.camel.component.aws2.cw.Cw2Configuration.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("name", java.lang.String.class);
-        answer.put("proxyHost", java.lang.String.class);
-        answer.put("proxyPort", java.lang.Integer.class);
-        answer.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        answer.put("region", java.lang.String.class);
-        answer.put("secretKey", java.lang.String.class);
-        answer.put("timestamp", java.time.Instant.class);
-        answer.put("trustAllCertificates", boolean.class);
-        answer.put("unit", java.lang.String.class);
-        answer.put("value", java.lang.Double.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

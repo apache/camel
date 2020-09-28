@@ -42,7 +42,6 @@ public class AtomixSetEndpointUriFactory extends org.apache.camel.support.compon
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "atomix-set".equals(scheme);

@@ -30,7 +30,6 @@ public class CMEndpointUriFactory extends org.apache.camel.support.component.End
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "cm-sms".equals(scheme);

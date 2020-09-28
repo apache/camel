@@ -15,6 +15,20 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RestComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("bridgeErrorHandler", boolean.class);
+        map.put("consumerComponentName", java.lang.String.class);
+        map.put("apiDoc", java.lang.String.class);
+        map.put("componentName", java.lang.String.class);
+        map.put("host", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("producerComponentName", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestComponent target = (RestComponent) obj;
@@ -40,16 +54,7 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("apiDoc", java.lang.String.class);
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("bridgeErrorHandler", boolean.class);
-        answer.put("componentName", java.lang.String.class);
-        answer.put("consumerComponentName", java.lang.String.class);
-        answer.put("host", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("producerComponentName", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

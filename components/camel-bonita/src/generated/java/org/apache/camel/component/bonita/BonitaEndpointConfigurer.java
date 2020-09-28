@@ -15,6 +15,21 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("operation", org.apache.camel.component.bonita.util.BonitaOperation.class);
+        map.put("hostname", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("port", java.lang.String.class);
+        map.put("processName", java.lang.String.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BonitaEndpoint target = (BonitaEndpoint) obj;
@@ -36,16 +51,7 @@ public class BonitaEndpointConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("hostname", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("password", java.lang.String.class);
-        answer.put("port", java.lang.String.class);
-        answer.put("processName", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

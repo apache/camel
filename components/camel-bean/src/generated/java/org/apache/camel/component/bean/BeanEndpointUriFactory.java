@@ -30,7 +30,6 @@ public class BeanEndpointUriFactory extends org.apache.camel.support.component.E
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "bean".equals(scheme);

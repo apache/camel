@@ -15,6 +15,30 @@ import org.apache.camel.component.mock.MockEndpointConfigurer;
 @SuppressWarnings("unchecked")
 public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("name", java.lang.String.class);
+        map.put("anyOrder", boolean.class);
+        map.put("assertPeriod", long.class);
+        map.put("delimiter", java.lang.String.class);
+        map.put("expectedCount", int.class);
+        map.put("failFast", boolean.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("reportGroup", int.class);
+        map.put("resultMinimumWaitTime", long.class);
+        map.put("resultWaitTime", long.class);
+        map.put("retainFirst", int.class);
+        map.put("retainLast", int.class);
+        map.put("sleepForEmptyTest", long.class);
+        map.put("split", boolean.class);
+        map.put("timeout", long.class);
+        map.put("copyOnExchange", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("synchronous", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DataSetTestEndpoint target = (DataSetTestEndpoint) obj;
@@ -30,12 +54,7 @@ public class DataSetTestEndpointConfigurer extends MockEndpointConfigurer implem
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = super.getAllOptions(target);
-        answer.put("anyOrder", boolean.class);
-        answer.put("delimiter", java.lang.String.class);
-        answer.put("split", boolean.class);
-        answer.put("timeout", long.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

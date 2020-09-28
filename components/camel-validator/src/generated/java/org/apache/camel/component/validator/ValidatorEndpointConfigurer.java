@@ -15,6 +15,25 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("resourceUri", java.lang.String.class);
+        map.put("failOnNullBody", boolean.class);
+        map.put("failOnNullHeader", boolean.class);
+        map.put("headerName", java.lang.String.class);
+        map.put("lazyStartProducer", boolean.class);
+        map.put("basicPropertyBinding", boolean.class);
+        map.put("errorHandler", org.apache.camel.support.processor.validation.ValidatorErrorHandler.class);
+        map.put("resourceResolver", org.w3c.dom.ls.LSResourceResolver.class);
+        map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
+        map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
+        map.put("schemaLanguage", java.lang.String.class);
+        map.put("synchronous", boolean.class);
+        map.put("useSharedSchema", boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
@@ -48,20 +67,7 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("basicPropertyBinding", boolean.class);
-        answer.put("errorHandler", org.apache.camel.support.processor.validation.ValidatorErrorHandler.class);
-        answer.put("failOnNullBody", boolean.class);
-        answer.put("failOnNullHeader", boolean.class);
-        answer.put("headerName", java.lang.String.class);
-        answer.put("lazyStartProducer", boolean.class);
-        answer.put("resourceResolver", org.w3c.dom.ls.LSResourceResolver.class);
-        answer.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
-        answer.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
-        answer.put("schemaLanguage", java.lang.String.class);
-        answer.put("synchronous", boolean.class);
-        answer.put("useSharedSchema", boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

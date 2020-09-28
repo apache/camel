@@ -119,7 +119,6 @@ public class ActiveMQEndpointUriFactory extends org.apache.camel.support.compone
         PROPERTY_NAMES = set;
     }
 
-
     @Override
     public boolean isEnabled(String scheme) {
         return "activemq".equals(scheme);
