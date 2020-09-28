@@ -118,8 +118,8 @@ public final class URISupport {
     /**
      * Extracts the query part of the given uri
      *
-     * @param uri the uri
-     * @return the query parameters or <tt>null</tt> if the uri has no query
+     * @param  uri the uri
+     * @return     the query parameters or <tt>null</tt> if the uri has no query
      */
     public static String extractQuery(String uri) {
         if (uri == null) {
