@@ -47,7 +47,7 @@ for this component:
 
 [source,text]
 ----------------------------------------------------
-telegram:type/authorizationToken[?options]
+telegram:type[?options]
 ----------------------------------------------------
 
 You can append query options to the URI in the following format,
@@ -175,7 +175,7 @@ in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("direct:start").to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
+from("direct:start").to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -184,7 +184,7 @@ or in Spring XML
 ---------------------------------------------
 <route>
     <from uri="direct:start"/>
-    <to uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
+    <to uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
 <route>
 ---------------------------------------------
 
@@ -226,7 +226,7 @@ In Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
+from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
 .bean(ProcessorBean.class)
 ---------------------------------------------------------
 
@@ -235,7 +235,7 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
+    <from uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
     <bean ref="myBean" />
 <route>
 
@@ -281,9 +281,9 @@ The following is a basic configuration of the chat-bot in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
+from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
 .bean(ChatBotLogic.class)
-.to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
+.to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -291,9 +291,9 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
+    <from uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
     <bean ref="chatBotLogic" />
-    <to uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
+    <to uri="telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere"/>
 <route>
 
 <bean id="chatBotLogic" class="com.example.ChatBotLogic"/>
@@ -331,7 +331,7 @@ First, add the bot to the chat where you want to push messages, then run a route
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
+from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
 .to("log:INFO?showHeaders=true");
 ---------------------------------------------------------
 
@@ -344,7 +344,7 @@ Once you get the chat ID, you can use the following sample route to push message
 ---------------------------------------------------------
 from("timer:tick")
 .setBody().constant("Hello")
-to("telegram:bots/123456789:insertYourAuthorizationTokenHere?chatId=123456")
+to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere?chatId=123456")
 ---------------------------------------------------------
 
 Note that the corresponding URI parameter is simply `chatId`.
@@ -355,7 +355,7 @@ You can customize the user keyboard instead of asking him to write an option. `O
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
+from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
@@ -382,14 +382,14 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         exchange.getIn().setBody(msg);
     })
-    .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
+    .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 If you want to disable it the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
+from("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
@@ -403,7 +403,7 @@ from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 
         exchange.getIn().setBody(msg);
     })
-    .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
+    .to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 
@@ -430,7 +430,7 @@ In Java DSL:
 
 [source,java]
 ---------------------------------------------------------
-from("webhook:telegram:bots/123456789:insertYourAuthorizationTokenHere").to("log:info");
+from("webhook:telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere").to("log:info");
 ---------------------------------------------------------
 
 Some endpoints will be exposed by your application and Telegram will be configured to send messages to them.
