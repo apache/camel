@@ -3994,6 +3994,7 @@
                         <skipHtmlFormatting>true</skipHtmlFormatting>
                         <cachedir>${basedir}/target</cachedir>
                         <excludes>${sourcecheckExcludes}</excludes>
+                        <lineEnding>KEEP</lineEnding>
                     </configuration>
                     <dependencies>
                         <dependency>
