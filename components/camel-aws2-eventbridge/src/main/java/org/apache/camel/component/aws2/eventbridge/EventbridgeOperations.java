@@ -25,5 +25,6 @@ public enum EventbridgeOperations {
     enableRule,
     disableRule,
     describeRule,
-    listRules
+    listRules,
+    listTargetsByRule
 }
