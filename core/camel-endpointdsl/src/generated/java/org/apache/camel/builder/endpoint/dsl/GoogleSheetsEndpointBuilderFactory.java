@@ -150,7 +150,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * When consumer return an array or collection this will generate one
          * exchange per element, and their routes will be executed once for each
-         * exchange.Set this value to false to use a single exchange for the
+         * exchange. Set this value to false to use a single exchange for the
          * entire list or array.
          * 
          * The option is a: <code>boolean</code> type.
@@ -166,7 +166,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * When consumer return an array or collection this will generate one
          * exchange per element, and their routes will be executed once for each
-         * exchange.Set this value to false to use a single exchange for the
+         * exchange. Set this value to false to use a single exchange for the
          * entire list or array.
          * 
          * The option will be converted to a <code>boolean</code> type.
