@@ -379,7 +379,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         HealthCheckRegistry healthCheckRegistry = getBeanForType(HealthCheckRegistry.class);
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(getContext());
-            LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
+            LOG.debug("Using HealthCheckRegistry: {}", healthCheckRegistry);
             getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             // okay attempt to inject this camel context into existing health check (if any)
