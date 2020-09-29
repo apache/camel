@@ -6,6 +6,16 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.5 to 3.6
 
+=== Simple language
+
+The simple language have been optimized to handle numeric and boolean values more naturally.
+We have also optimized for unneeded type conversions in predicates such as comparing left and right hand side in operators
+with their given type as-is, or the least amount of conversion when possible.
+
+The `contains` and `not contains` operator now handles numerics naturally. For example `${header.numbers} contains '123,456'`
+would return `false` if the numbers header has the value `-123`, as the operator now compares numerically. Previously it
+would compare with String based values.
+
 === API components upgrade
 
 The `camel-braintree`, `camel-twilio` and `camel-zendesk` has updated to newer versions and regenerated their API
