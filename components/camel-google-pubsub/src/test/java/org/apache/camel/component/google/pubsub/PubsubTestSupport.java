@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -28,8 +25,9 @@ import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.pubsub.v1.TopicAdminSettings;
 import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.ProjectTopicName;
-import com.google.pubsub.v1.PushConfig;
+import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.Topic;
+import com.google.pubsub.v1.TopicName;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
@@ -37,6 +35,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class PubsubTestSupport extends ContainerAwareTestSupport {
 
@@ -103,50 +105,68 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
     }
 
     public void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDeadlineSeconds) {
-        ManagedChannel channel = null;
-        TopicAdminClient topicAdminClient = null;
-        SubscriptionAdminClient subscriptionAdminClient = null;
+        TopicName projectTopicName = TopicName.of(PROJECT_ID, topicName);
+        ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, subscriptionName);
+
+        Topic topic = Topic.newBuilder().setName(projectTopicName.toString()).build();
+        Subscription subscription = Subscription.newBuilder()
+                .setName(projectSubscriptionName.toString())
+                .setTopic(topic.getName())
+                .setAckDeadlineSeconds(ackDeadlineSeconds)
+                .build();
+
+        createTopicSubscriptionPair(topic, subscription);
+    }
+
+    public void createTopicSubscriptionPair(Topic topic, Subscription subscription) {
+        TopicAdminClient topicAdminClient = createTopicAdminClient();
+        SubscriptionAdminClient subscriptionAdminClient = createSubscriptionAdminClient();
+
+        topicAdminClient.createTopic(topic);
+        subscriptionAdminClient.createSubscription(subscription);
+
+        topicAdminClient.shutdown();
+        subscriptionAdminClient.shutdown();
+    }
+
+
+    private FixedTransportChannelProvider createChannelProvider() {
+        Integer port = container.getFirstMappedPort();
+        ManagedChannel channel = ManagedChannelBuilder
+                .forTarget(String.format("%s:%s", "localhost", port))
+                .usePlaintext()
+                .build();
+
+        return FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+    }
+
+    private TopicAdminClient createTopicAdminClient() {
+        FixedTransportChannelProvider channelProvider = createChannelProvider();
+        CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
         try {
-            Integer port = container.getFirstMappedPort();
-            channel = ManagedChannelBuilder
-                    .forTarget(String.format("%s:%s", "localhost", port))
-                    .usePlaintext()
-                    .build();
-
-            FixedTransportChannelProvider channelProvider
-                    = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
-            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
-
-            ProjectTopicName projectTopicName = ProjectTopicName.of(PROJECT_ID, topicName);
-            ProjectSubscriptionName projectSubscriptionName = ProjectSubscriptionName.of(PROJECT_ID, subscriptionName);
-
-            topicAdminClient = TopicAdminClient.create(
+            return TopicAdminClient.create(
                     TopicAdminSettings.newBuilder()
                             .setTransportChannelProvider(channelProvider)
                             .setCredentialsProvider(credentialsProvider)
                             .build());
-            topicAdminClient.createTopic(projectTopicName);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-            subscriptionAdminClient = SubscriptionAdminClient.create(
+    private SubscriptionAdminClient createSubscriptionAdminClient() {
+        FixedTransportChannelProvider channelProvider = createChannelProvider();
+        CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+
+        try {
+            return SubscriptionAdminClient.create(
                     SubscriptionAdminSettings.newBuilder()
                             .setTransportChannelProvider(channelProvider)
                             .setCredentialsProvider(credentialsProvider)
                             .build());
-            subscriptionAdminClient.createSubscription(projectSubscriptionName, projectTopicName,
-                    PushConfig.getDefaultInstance(), ackDeadlineSeconds);
-
-        } catch (Exception ignored) {
-        } finally {
-            if (channel != null) {
-                channel.shutdown();
-            }
-            if (topicAdminClient != null) {
-                topicAdminClient.shutdown();
-            }
-            if (subscriptionAdminClient != null) {
-                subscriptionAdminClient.shutdown();
-            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
