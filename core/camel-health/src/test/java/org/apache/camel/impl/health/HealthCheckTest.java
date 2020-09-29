@@ -145,7 +145,7 @@ public class HealthCheckTest {
     //
     // ********************************
 
-    private class MyHealthCheck extends AbstractHealthCheck {
+    private static class MyHealthCheck extends AbstractHealthCheck {
         private HealthCheck.State state;
 
         MyHealthCheck() {
