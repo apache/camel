@@ -314,7 +314,7 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.contains(leftValue, rightValue);
+                return ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {
@@ -335,7 +335,7 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.containsIgnoreCase(leftValue, rightValue);
+                return ObjectHelper.typeCoerceContainsIgnoreCase(exchange.getContext().getTypeConverter(), leftValue, rightValue);
             }
 
             protected String getOperationText() {

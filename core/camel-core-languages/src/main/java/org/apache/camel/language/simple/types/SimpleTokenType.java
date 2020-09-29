@@ -138,6 +138,13 @@ public final class SimpleTokenType {
         return type == TokenType.booleanValue;
     }
 
+    /**
+     * Whether the type is a numeric value (can be integer based or floating point)
+     */
+    public boolean isNumericValue() {
+        return type == TokenType.numericValue;
+    }
+
     @Override
     public String toString() {
         return value;

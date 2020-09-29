@@ -37,11 +37,15 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests a Simple operator expression
  */
 public class SimpleOperatorTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleOperatorTest.class);
 
     @Test
     public void launchBenchmark() throws Exception {
@@ -70,7 +74,9 @@ public class SimpleOperatorTest {
     @State(Scope.Thread)
     public static class BenchmarkState {
         CamelContext camel;
-        String expression = "${header.gold} == true";
+        String expression = "${header.gold} == 123";
+        String expression2 = "${header.gold} > 123";
+        String expression3 = "${header.gold} < 123";
         Exchange exchange;
         Language simple;
 
@@ -78,10 +84,11 @@ public class SimpleOperatorTest {
         public void initialize() {
             camel = new DefaultCamelContext();
             try {
+                camel.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
                 camel.start();
                 exchange = new DefaultExchange(camel);
                 exchange.getIn().setBody("World");
-                exchange.getIn().setHeader("gold", true);
+                exchange.getIn().setHeader("gold", "123");
                 simple = camel.resolveLanguage("simple");
 
             } catch (Exception e) {
@@ -92,6 +99,7 @@ public class SimpleOperatorTest {
         @TearDown(Level.Trial)
         public void close() {
             try {
+                LOG.info("" + camel.getTypeConverterRegistry().getStatistics());
                 camel.stop();
             } catch (Exception e) {
                 // ignore
@@ -108,6 +116,16 @@ public class SimpleOperatorTest {
             throw new IllegalArgumentException("Evaluation failed");
         }
         bh.consume(out);
+        boolean out2 = state.simple.createPredicate(state.expression2).matches(state.exchange);
+        if (out2) {
+            throw new IllegalArgumentException("Evaluation failed");
+        }
+        bh.consume(out2);
+        boolean out3 = state.simple.createPredicate(state.expression3).matches(state.exchange);
+        if (out3) {
+            throw new IllegalArgumentException("Evaluation failed");
+        }
+        bh.consume(out3);
     }
 
 }

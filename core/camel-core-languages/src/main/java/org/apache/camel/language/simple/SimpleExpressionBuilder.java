@@ -481,7 +481,13 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "date(" + commandWithOffsets + ":" + pattern + ":" + timezone + ")";
+                if (timezone != null && pattern != null) {
+                    return "date(" + commandWithOffsets + ":" + timezone + ":" + pattern + ")";
+                } else if (pattern != null) {
+                    return "date(" + commandWithOffsets + ":" + pattern + ")";
+                } else {
+                    return "date(" + commandWithOffsets + ")";
+                }
             }
         };
     }
