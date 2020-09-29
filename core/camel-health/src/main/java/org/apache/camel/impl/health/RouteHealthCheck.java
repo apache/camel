@@ -69,10 +69,9 @@ public class RouteHealthCheck extends AbstractHealthCheck {
 
                     // the supervised route controller would store the last error if the route is regarded
                     // as unhealthy which we use to signal its down, otherwise we are in unknown state
+                    builder.unknown();
                     if (route.getLastError() != null && route.getLastError().isUnhealthy()) {
                         builder.down();
-                    } else {
-                        builder.unknown();
                     }
                 }
             }
