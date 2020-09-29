@@ -113,6 +113,23 @@ and classpath resources (expanded jar). If you set `contentCache=true`,
 Camel loads the resource only once and hot-reloading is not possible.
 This scenario can be used in production when the resource never changes.
 
+== Dynamic templates
+
+Camel provides two headers by which you can define a different resource
+location for a template or the template content itself. If any of these
+headers is set then Camel uses this over the endpoint configured
+resource. This allows you to provide a dynamic template at runtime.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|CamelStringTemplateResourceUri |String |A URI for the template resource to use instead of the
+endpoint configured.
+
+|CamelStringTemplateTemplate |String |The template to use instead of the endpoint configured.
+|=======================================================================
+
 == StringTemplate Attributes
 
 You can define the custom context map by setting the
