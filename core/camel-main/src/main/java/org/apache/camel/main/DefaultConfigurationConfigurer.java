@@ -388,7 +388,7 @@ public final class DefaultConfigurationConfigurer {
         HealthCheckRegistry healthCheckRegistry = getSingleBeanOfType(registry, HealthCheckRegistry.class);
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(camelContext);
-            LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
+            LOG.debug("Using HealthCheckRegistry: {}", healthCheckRegistry);
             camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             // okay attempt to inject this camel context into existing health check (if any)
