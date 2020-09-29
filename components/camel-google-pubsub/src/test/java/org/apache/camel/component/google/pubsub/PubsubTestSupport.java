@@ -119,16 +119,25 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
     }
 
     public void createTopicSubscriptionPair(Topic topic, Subscription subscription) {
-        TopicAdminClient topicAdminClient = createTopicAdminClient();
-        SubscriptionAdminClient subscriptionAdminClient = createSubscriptionAdminClient();
-
-        topicAdminClient.createTopic(topic);
-        subscriptionAdminClient.createSubscription(subscription);
-
-        topicAdminClient.shutdown();
-        subscriptionAdminClient.shutdown();
+        createTopic(topic);
+        createSubscription(subscription);
     }
 
+    public void createTopic(Topic topic) {
+        TopicAdminClient topicAdminClient = createTopicAdminClient();
+
+        topicAdminClient.createTopic(topic);
+
+        topicAdminClient.shutdown();
+    }
+
+    public void createSubscription(Subscription subscription) {
+        SubscriptionAdminClient subscriptionAdminClient = createSubscriptionAdminClient();
+
+        subscriptionAdminClient.createSubscription(subscription);
+
+        subscriptionAdminClient.shutdown();
+    }
 
     private FixedTransportChannelProvider createChannelProvider() {
         Integer port = container.getFirstMappedPort();
