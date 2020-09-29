@@ -33,7 +33,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 public class Aws2KmsBaseTest extends ContainerAwareTestSupport {
 
     public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.5";
-    public static final String CONTAINER_NAME = "eventbridge";
+    public static final String CONTAINER_NAME = "kms";
 
     @Override
     protected GenericContainer<?> createContainer() {
