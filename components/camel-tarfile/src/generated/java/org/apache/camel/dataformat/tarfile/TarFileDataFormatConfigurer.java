@@ -24,6 +24,8 @@ public class TarFileDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "allowEmptyDirectory": dataformat.setAllowEmptyDirectory(property(camelContext, boolean.class, value)); return true;
         case "preservepathelements":
         case "preservePathElements": dataformat.setPreservePathElements(property(camelContext, boolean.class, value)); return true;
+        case "maxdecompressedsize":
+        case "maxDecompressedSize": dataformat.setMaxDecompressedSize(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }

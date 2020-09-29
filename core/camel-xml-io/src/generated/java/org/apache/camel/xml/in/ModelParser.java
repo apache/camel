@@ -2120,6 +2120,7 @@ public class ModelParser extends BaseParser {
         return doParse(new TarFileDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -2317,6 +2318,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ZipFileDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
