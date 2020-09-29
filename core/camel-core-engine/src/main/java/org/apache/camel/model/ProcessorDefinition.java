@@ -885,7 +885,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} so that the message will get processed by each endpoint in turn and
      * for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -898,7 +898,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
      * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -913,7 +913,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
      * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
@@ -928,7 +928,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a> Creates a
+     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
      * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
      * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
      *
