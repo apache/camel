@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class KmsEnableKeyLocalstackTest2 extends Aws2KmsBaseTest {
+public class KmsEnableKeyLocalstackTest extends Aws2KmsBaseTest {
 
     @EndpointInject
     private ProducerTemplate template;
