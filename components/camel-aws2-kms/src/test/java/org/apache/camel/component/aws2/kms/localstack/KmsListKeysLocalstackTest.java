@@ -24,11 +24,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.kms.KMS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.kms.model.CreateKeyResponse;
 import software.amazon.awssdk.services.kms.model.ListKeysResponse;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
@@ -50,7 +48,7 @@ public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
                 exchange.getIn().setHeader(KMS2Constants.OPERATION, "createKey");
             }
         });
-        
+
         template.send("direct:listKeys", new Processor() {
 
             @Override
@@ -73,7 +71,7 @@ public class KmsListKeysLocalstackTest extends Aws2KmsBaseTest {
                         = "aws2-kms://default?operation=createKey";
                 String listKeys = "aws2-kms://default?operation=listKeys";
                 from("direct:createKey").to(awsEndpoint);
-                from("direct:listKeys").to(listKeys);
+                from("direct:listKeys").to(listKeys).to("mock:result");
             }
         };
     }
