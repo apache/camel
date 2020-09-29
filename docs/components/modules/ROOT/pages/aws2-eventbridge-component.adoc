@@ -313,6 +313,11 @@ this operation will return a list of targets associated with the firstrule rule.
 
 this operation will return a list of rule associated with a target.
 
+== Updating the rule
+
+To update a rule you'll need to perform the putRule operation again. 
+There is not explicit update rule operation in the Java SDK.
+
 == Automatic detection of EventbridgeClient client in registry
 
 The component is capable of detecting the presence of an EventbridgeClient bean into the registry.
