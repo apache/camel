@@ -156,6 +156,15 @@ public interface Model {
     void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception;
 
     /**
+     * Add a converter to translate a {@link RouteTemplateDefinition} to a {@link RouteDefinition}.
+     *
+     * @param templateIdPattern the route template ut to whom a pattern should eb applied
+     * @param converter         the {@link RouteTemplateDefinition.Converter} used to convert a
+     *                          {@link RouteTemplateDefinition} to a {@link RouteDefinition}
+     */
+    void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter);
+
+    /**
      * Adds a new route from a given route template
      *
      * @param  routeId         the id of the new route to add (optional)

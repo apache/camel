@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.function.ThrowingFunction;
 
 /**
  * Defines a route template (parameterized routes)
@@ -212,5 +213,9 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
         }
 
         return copy;
+    }
+
+    @FunctionalInterface
+    public interface Converter extends ThrowingFunction<RouteTemplateDefinition, RouteDefinition, Exception> {
     }
 }

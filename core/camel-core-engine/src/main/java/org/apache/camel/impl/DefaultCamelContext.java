@@ -183,6 +183,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        model.addRouteTemplateDefinitionConverter(templateIdPattern, converter);
+    }
+
+    @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
         return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
@@ -487,5 +492,4 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                 ? new TransformerKey(def.getScheme())
                 : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
-
 }

@@ -46,6 +46,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
 
@@ -55,6 +56,7 @@ public class DefaultModel implements Model {
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
     private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
+    private final Map<String, RouteTemplateDefinition.Converter> routeTemplateConverters = new ConcurrentHashMap<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
@@ -66,6 +68,15 @@ public class DefaultModel implements Model {
 
     public DefaultModel(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+        try {
+            return context.getRegistry().lookupByNameAndType(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
     }
 
     public CamelContext getCamelContext() {
@@ -194,6 +205,11 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        routeTemplateConverters.put(templateIdPattern, converter);
+    }
+
+    @Override
     public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
             throws Exception {
         RouteTemplateDefinition target = null;
@@ -208,7 +224,7 @@ public class DefaultModel implements Model {
         }
 
         StringJoiner templatesBuilder = new StringJoiner(", ");
-        final Map<String, Object> prop = new HashMap();
+        final Map<String, Object> prop = new HashMap<>();
         // include default values first from the template (and validate that we have inputs for all required parameters)
         if (target.getTemplateParameters() != null) {
             for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
@@ -232,7 +248,25 @@ public class DefaultModel implements Model {
             prop.putAll(parameters);
         }
 
-        RouteDefinition def = target.asRouteDefinition();
+        RouteTemplateDefinition.Converter converter = RouteTemplateDefinition::asRouteDefinition;
+
+        for (Map.Entry<String, RouteTemplateDefinition.Converter> entry : routeTemplateConverters.entrySet()) {
+            final String key = entry.getKey();
+            final String templateId = target.getId();
+
+            if ("*".equals(key) || templateId.equals(key)) {
+                converter = entry.getValue();
+                break;
+            } else if (AntPathMatcher.INSTANCE.match(key, templateId)) {
+                converter = entry.getValue();
+                break;
+            } else if (templateId.matches(key)) {
+                converter = entry.getValue();
+                break;
+            }
+        }
+
+        RouteDefinition def = converter.apply(target);
         if (routeId != null) {
             def.setId(routeId);
         }
@@ -411,18 +445,13 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
-        this.dataFormats = dataFormats;
-    }
-
-    @Override
     public Map<String, DataFormatDefinition> getDataFormats() {
         return dataFormats;
     }
 
     @Override
-    public void setTransformers(List<TransformerDefinition> transformers) {
-        this.transformers = transformers;
+    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
+        this.dataFormats = dataFormats;
     }
 
     @Override
@@ -431,13 +460,18 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setValidators(List<ValidatorDefinition> validators) {
-        this.validators = validators;
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        this.transformers = transformers;
     }
 
     @Override
     public List<ValidatorDefinition> getValidators() {
         return validators;
+    }
+
+    @Override
+    public void setValidators(List<ValidatorDefinition> validators) {
+        this.validators = validators;
     }
 
     @Override
@@ -460,15 +494,6 @@ public class DefaultModel implements Model {
      */
     protected boolean shouldStartRoutes() {
         return camelContext.isStarted() && !camelContext.isStarting();
-    }
-
-    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
-        try {
-            return context.getRegistry().lookupByNameAndType(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
-        }
     }
 
 }
