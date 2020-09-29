@@ -35,6 +35,7 @@ import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.LogicalExpression;
 import org.apache.camel.language.simple.ast.NullExpression;
+import org.apache.camel.language.simple.ast.NumericExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
@@ -49,6 +50,9 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+
+import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
+import static org.apache.camel.support.ObjectHelper.isNumber;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
@@ -171,7 +175,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
                 // a new token was created so the current image token need to be added first
                 if (imageToken != null) {
-                    nodes.add(imageToken);
+                    addImageToken(imageToken);
                     imageToken = null;
                 }
                 // and then add the created node
@@ -190,7 +194,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
         // append any leftover image tokens (when we reached eol)
         if (imageToken != null) {
-            nodes.add(imageToken);
+            addImageToken(imageToken);
         }
 
         // validate the single, double quote pairs and functions is in balance
@@ -206,6 +210,19 @@ public class SimplePredicateParser extends BaseSimpleParser {
             // we have a start function, but no ending function
             int index = lastFunction != null ? lastFunction.getToken().getIndex() : 0;
             throw new SimpleParserException("function has no ending token", index);
+        }
+    }
+
+    private void addImageToken(LiteralNode imageToken) {
+        // this can be many things but lets check if this is numeric based, then we can optimize this
+        String text = imageToken.getText();
+
+        // lets see if its numeric then we can optimize this
+        boolean numeric = isNumber(text) || isFloatingNumber(text);
+        if (numeric) {
+            nodes.add(new NumericExpression(imageToken.getToken(), text));
+        } else {
+            nodes.add(imageToken);
         }
     }
 
@@ -267,7 +284,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
 
         // okay we are not inside a function or quote, so we want to support operators
-        // and the special null value as well
+        // and the special null/boolean value as well
         if (token.getType().isUnary()) {
             return new UnaryExpression(token);
         } else if (token.getType().isBinary()) {

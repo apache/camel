@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.MyOtherFooBean;
 import org.apache.camel.component.bean.MyOtherFooBean.AbstractClassSize;
 import org.apache.camel.component.bean.MyOtherFooBean.Clazz;
@@ -89,44 +90,62 @@ public class ObjectHelperTest {
 
     @Test
     public void testContains() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
         String[] array = { "foo", "bar" };
         Collection<String> collection = Arrays.asList(array);
 
-        assertTrue(ObjectHelper.contains(array, "foo"));
-        assertTrue(ObjectHelper.contains(collection, "foo"));
-        assertTrue(ObjectHelper.contains("foo", "foo"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo"));
 
-        assertFalse(ObjectHelper.contains(array, "xyz"));
-        assertFalse(ObjectHelper.contains(collection, "xyz"));
-        assertFalse(ObjectHelper.contains("foo", "xyz"));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz"));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz"));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz"));
+
+        context.stop();
     }
 
     @Test
     public void testContainsStringBuilder() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
         StringBuilder sb = new StringBuilder();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.contains(sb, "World"));
-        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World")));
 
-        assertFalse(ObjectHelper.contains(sb, "Camel"));
-        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel"));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel")));
+
+        context.stop();
     }
 
     @Test
     public void testContainsStringBuffer() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
         StringBuffer sb = new StringBuffer();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.contains(sb, "World"));
-        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World")));
 
-        assertFalse(ObjectHelper.contains(sb, "Camel"));
-        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel"));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel")));
+
+        context.stop();
     }
 
     @Test

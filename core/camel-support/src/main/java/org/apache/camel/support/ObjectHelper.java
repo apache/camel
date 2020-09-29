@@ -81,6 +81,50 @@ public final class ObjectHelper {
             return false;
         }
 
+        // optimize for common combinations of comparing numbers
+        if (leftValue instanceof String && rightValue instanceof String) {
+            String leftNum = (String) leftValue;
+            String rightNum = (String) rightValue;
+            if (isNumber(leftNum) && isNumber(rightNum)) {
+                // favour to use numeric comparison
+                Long num1 = Long.parseLong(leftNum);
+                Long num2 = Long.parseLong(rightNum);
+                return num1.compareTo(num2) == 0;
+            }
+            if (ignoreCase) {
+                return leftNum.compareToIgnoreCase(rightNum) == 0;
+            } else {
+                return leftNum.compareTo(rightNum) == 0;
+            }
+        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
+            Integer leftNum = (Integer) leftValue;
+            Integer rightNum = (Integer) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if (leftValue instanceof Long && rightValue instanceof Long) {
+            Long leftNum = (Long) leftValue;
+            Long rightNum = (Long) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if (leftValue instanceof Double && rightValue instanceof Double) {
+            Double leftNum = (Double) leftValue;
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
+                (leftValue instanceof String && isNumber((String) leftValue))) {
+            if (rightValue instanceof Integer) {
+                Integer leftNum = Integer.valueOf((String) leftValue);
+                Integer rightNum = (Integer) rightValue;
+                return leftNum.compareTo(rightNum) == 0;
+            } else {
+                Long leftNum = Long.valueOf((String) leftValue);
+                Long rightNum = (Long) rightValue;
+                return leftNum.compareTo(rightNum) == 0;
+            }
+        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
+            Double leftNum = Double.valueOf((String) leftValue);
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum) == 0;
+        }
+
         // try without type coerce
         boolean answer = org.apache.camel.util.ObjectHelper.equal(leftValue, rightValue, ignoreCase);
         if (answer) {
@@ -121,6 +165,46 @@ public final class ObjectHelper {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
+
+        // optimize for common combinations of comparing numbers
+        if (leftValue instanceof String && rightValue instanceof String) {
+            String leftNum = (String) leftValue;
+            String rightNum = (String) rightValue;
+            if (isNumber(leftNum) && isNumber(rightNum)) {
+                // favour to use numeric comparison
+                Long num1 = Long.parseLong(leftNum);
+                Long num2 = Long.parseLong(rightNum);
+                return num1.compareTo(num2);
+            }
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Integer && rightValue instanceof Integer) {
+            Integer leftNum = (Integer) leftValue;
+            Integer rightNum = (Integer) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Long && rightValue instanceof Long) {
+            Long leftNum = (Long) leftValue;
+            Long rightNum = (Long) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if (leftValue instanceof Double && rightValue instanceof Double) {
+            Double leftNum = (Double) leftValue;
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        } else if ((rightValue instanceof Integer || rightValue instanceof Long) &&
+                (leftValue instanceof String && isNumber((String) leftValue))) {
+            if (rightValue instanceof Integer) {
+                Integer leftNum = Integer.valueOf((String) leftValue);
+                Integer rightNum = (Integer) rightValue;
+                return leftNum.compareTo(rightNum);
+            } else {
+                Long leftNum = Long.valueOf((String) leftValue);
+                Long rightNum = (Long) rightValue;
+                return leftNum.compareTo(rightNum);
+            }
+        } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
+            Double leftNum = Double.valueOf((String) leftValue);
+            Double rightNum = (Double) rightValue;
+            return leftNum.compareTo(rightNum);
+        }
 
         // if both values is numeric then compare using numeric
         Long leftNum = converter.tryConvertTo(Long.class, leftValue);
@@ -164,6 +248,48 @@ public final class ObjectHelper {
 
         // use regular compare
         return compare(leftValue, rightValue);
+    }
+
+    /**
+     * Checks whether the text is an integer number
+     */
+    public static boolean isNumber(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (i == 0 && ch == '-') {
+                // skip leading negative
+            } else if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks whether the text is a float point number
+     */
+    public static boolean isFloatingNumber(String text) {
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+        boolean dots = false;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (i == 0 && ch == '-') {
+                // skip leading negative
+            } else if (ch == '.') {
+                if (dots) {
+                    return false;
+                }
+                dots = true;
+            } else if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -618,7 +744,10 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the collection contains the specified value
+     * 
+     * @deprecated use {@link #typeCoerceContains(TypeConverter, Object, Object)}
      */
+    @Deprecated
     public static boolean contains(Object collectionOrArray, Object value) {
         // favor String types
         if (collectionOrArray != null
@@ -648,9 +777,40 @@ public final class ObjectHelper {
     }
 
     /**
+     * Returns true if the collection contains the specified value
+     */
+    public static boolean typeCoerceContains(TypeConverter typeConverter, Object collectionOrArray, Object value) {
+        // favor String types
+        if (collectionOrArray != null
+                && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+            collectionOrArray = collectionOrArray.toString();
+        }
+        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+            value = value.toString();
+        }
+
+        if (collectionOrArray instanceof Collection) {
+            Collection<?> collection = (Collection<?>) collectionOrArray;
+            return collection.contains(value);
+        } else if (collectionOrArray instanceof String && value instanceof String) {
+            String str = (String) collectionOrArray;
+            String subStr = (String) value;
+            return str.contains(subStr);
+        } else {
+            Iterator<?> iter = createIterator(collectionOrArray);
+            while (iter.hasNext()) {
+                if (typeCoerceEquals(typeConverter, value, iter.next())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns true if the collection contains the specified value by considering case insensitivity
      */
-    public static boolean containsIgnoreCase(Object collectionOrArray, Object value) {
+    public static boolean typeCoerceContainsIgnoreCase(TypeConverter typeConverter, Object collectionOrArray, Object value) {
         // favor String types
         if (collectionOrArray != null
                 && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
@@ -670,7 +830,7 @@ public final class ObjectHelper {
         } else {
             Iterator<?> iter = createIterator(collectionOrArray);
             while (iter.hasNext()) {
-                if (org.apache.camel.util.ObjectHelper.equalIgnoreCase(value, iter.next())) {
+                if (typeCoerceEquals(typeConverter, value, iter.next(), true)) {
                     return true;
                 }
             }
