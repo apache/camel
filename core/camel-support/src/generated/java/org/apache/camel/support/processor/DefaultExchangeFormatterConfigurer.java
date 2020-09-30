@@ -15,6 +15,29 @@ import org.apache.camel.support.processor.DefaultExchangeFormatter;
 @SuppressWarnings("unchecked")
 public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("MaxChars", int.class);
+        map.put("Multiline", boolean.class);
+        map.put("ShowAll", boolean.class);
+        map.put("ShowBody", boolean.class);
+        map.put("ShowBodyType", boolean.class);
+        map.put("ShowCaughtException", boolean.class);
+        map.put("ShowException", boolean.class);
+        map.put("ShowExchangeId", boolean.class);
+        map.put("ShowExchangePattern", boolean.class);
+        map.put("ShowFiles", boolean.class);
+        map.put("ShowFuture", boolean.class);
+        map.put("ShowHeaders", boolean.class);
+        map.put("ShowProperties", boolean.class);
+        map.put("ShowStackTrace", boolean.class);
+        map.put("ShowStreams", boolean.class);
+        map.put("SkipBodyLineSeparator", boolean.class);
+        map.put("Style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.support.processor.DefaultExchangeFormatter target = (org.apache.camel.support.processor.DefaultExchangeFormatter) obj;
@@ -59,25 +82,7 @@ public class DefaultExchangeFormatterConfigurer extends org.apache.camel.support
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("MaxChars", int.class);
-        answer.put("Multiline", boolean.class);
-        answer.put("ShowAll", boolean.class);
-        answer.put("ShowBody", boolean.class);
-        answer.put("ShowBodyType", boolean.class);
-        answer.put("ShowCaughtException", boolean.class);
-        answer.put("ShowException", boolean.class);
-        answer.put("ShowExchangeId", boolean.class);
-        answer.put("ShowExchangePattern", boolean.class);
-        answer.put("ShowFiles", boolean.class);
-        answer.put("ShowFuture", boolean.class);
-        answer.put("ShowHeaders", boolean.class);
-        answer.put("ShowProperties", boolean.class);
-        answer.put("ShowStackTrace", boolean.class);
-        answer.put("ShowStreams", boolean.class);
-        answer.put("SkipBodyLineSeparator", boolean.class);
-        answer.put("Style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

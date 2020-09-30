@@ -15,6 +15,44 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 @SuppressWarnings("unchecked")
 public class HystrixConfigurationDefinitionConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowMaximumSizeToDivergeFromCoreSize", java.lang.String.class);
+        map.put("CircuitBreakerEnabled", java.lang.String.class);
+        map.put("CircuitBreakerErrorThresholdPercentage", java.lang.String.class);
+        map.put("CircuitBreakerForceClosed", java.lang.String.class);
+        map.put("CircuitBreakerForceOpen", java.lang.String.class);
+        map.put("CircuitBreakerRequestVolumeThreshold", java.lang.String.class);
+        map.put("CircuitBreakerSleepWindowInMilliseconds", java.lang.String.class);
+        map.put("CorePoolSize", java.lang.String.class);
+        map.put("ExecutionIsolationSemaphoreMaxConcurrentRequests", java.lang.String.class);
+        map.put("ExecutionIsolationStrategy", java.lang.String.class);
+        map.put("ExecutionIsolationThreadInterruptOnTimeout", java.lang.String.class);
+        map.put("ExecutionTimeoutEnabled", java.lang.String.class);
+        map.put("ExecutionTimeoutInMilliseconds", java.lang.String.class);
+        map.put("FallbackEnabled", java.lang.String.class);
+        map.put("FallbackIsolationSemaphoreMaxConcurrentRequests", java.lang.String.class);
+        map.put("GroupKey", java.lang.String.class);
+        map.put("Id", java.lang.String.class);
+        map.put("KeepAliveTime", java.lang.String.class);
+        map.put("MaxQueueSize", java.lang.String.class);
+        map.put("MaximumSize", java.lang.String.class);
+        map.put("MetricsHealthSnapshotIntervalInMilliseconds", java.lang.String.class);
+        map.put("MetricsRollingPercentileBucketSize", java.lang.String.class);
+        map.put("MetricsRollingPercentileEnabled", java.lang.String.class);
+        map.put("MetricsRollingPercentileWindowBuckets", java.lang.String.class);
+        map.put("MetricsRollingPercentileWindowInMilliseconds", java.lang.String.class);
+        map.put("MetricsRollingStatisticalWindowBuckets", java.lang.String.class);
+        map.put("MetricsRollingStatisticalWindowInMilliseconds", java.lang.String.class);
+        map.put("QueueSizeRejectionThreshold", java.lang.String.class);
+        map.put("RequestLogEnabled", java.lang.String.class);
+        map.put("ThreadPoolKey", java.lang.String.class);
+        map.put("ThreadPoolRollingNumberStatisticalWindowBuckets", java.lang.String.class);
+        map.put("ThreadPoolRollingNumberStatisticalWindowInMilliseconds", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.HystrixConfigurationDefinition target = (org.apache.camel.model.HystrixConfigurationDefinition) obj;
@@ -89,40 +127,7 @@ public class HystrixConfigurationDefinitionConfigurer extends org.apache.camel.s
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AllowMaximumSizeToDivergeFromCoreSize", java.lang.String.class);
-        answer.put("CircuitBreakerEnabled", java.lang.String.class);
-        answer.put("CircuitBreakerErrorThresholdPercentage", java.lang.String.class);
-        answer.put("CircuitBreakerForceClosed", java.lang.String.class);
-        answer.put("CircuitBreakerForceOpen", java.lang.String.class);
-        answer.put("CircuitBreakerRequestVolumeThreshold", java.lang.String.class);
-        answer.put("CircuitBreakerSleepWindowInMilliseconds", java.lang.String.class);
-        answer.put("CorePoolSize", java.lang.String.class);
-        answer.put("ExecutionIsolationSemaphoreMaxConcurrentRequests", java.lang.String.class);
-        answer.put("ExecutionIsolationStrategy", java.lang.String.class);
-        answer.put("ExecutionIsolationThreadInterruptOnTimeout", java.lang.String.class);
-        answer.put("ExecutionTimeoutEnabled", java.lang.String.class);
-        answer.put("ExecutionTimeoutInMilliseconds", java.lang.String.class);
-        answer.put("FallbackEnabled", java.lang.String.class);
-        answer.put("FallbackIsolationSemaphoreMaxConcurrentRequests", java.lang.String.class);
-        answer.put("GroupKey", java.lang.String.class);
-        answer.put("Id", java.lang.String.class);
-        answer.put("KeepAliveTime", java.lang.String.class);
-        answer.put("MaxQueueSize", java.lang.String.class);
-        answer.put("MaximumSize", java.lang.String.class);
-        answer.put("MetricsHealthSnapshotIntervalInMilliseconds", java.lang.String.class);
-        answer.put("MetricsRollingPercentileBucketSize", java.lang.String.class);
-        answer.put("MetricsRollingPercentileEnabled", java.lang.String.class);
-        answer.put("MetricsRollingPercentileWindowBuckets", java.lang.String.class);
-        answer.put("MetricsRollingPercentileWindowInMilliseconds", java.lang.String.class);
-        answer.put("MetricsRollingStatisticalWindowBuckets", java.lang.String.class);
-        answer.put("MetricsRollingStatisticalWindowInMilliseconds", java.lang.String.class);
-        answer.put("QueueSizeRejectionThreshold", java.lang.String.class);
-        answer.put("RequestLogEnabled", java.lang.String.class);
-        answer.put("ThreadPoolKey", java.lang.String.class);
-        answer.put("ThreadPoolRollingNumberStatisticalWindowBuckets", java.lang.String.class);
-        answer.put("ThreadPoolRollingNumberStatisticalWindowInMilliseconds", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

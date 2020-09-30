@@ -15,6 +15,80 @@ import org.apache.camel.ExtendedCamelContext;
 @SuppressWarnings("unchecked")
 public class ExtendedCamelContextConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowUseOriginalMessage", java.lang.Boolean.class);
+        map.put("ApplicationContextClassLoader", java.lang.ClassLoader.class);
+        map.put("AsyncProcessorAwaitManager", org.apache.camel.spi.AsyncProcessorAwaitManager.class);
+        map.put("AutoStartup", java.lang.Boolean.class);
+        map.put("BacklogTracing", java.lang.Boolean.class);
+        map.put("BeanIntrospection", org.apache.camel.spi.BeanIntrospection.class);
+        map.put("CaseInsensitiveHeaders", java.lang.Boolean.class);
+        map.put("ClassResolver", org.apache.camel.spi.ClassResolver.class);
+        map.put("ComponentNameResolver", org.apache.camel.spi.ComponentNameResolver.class);
+        map.put("ComponentResolver", org.apache.camel.spi.ComponentResolver.class);
+        map.put("ConfigurerResolver", org.apache.camel.spi.ConfigurerResolver.class);
+        map.put("DataFormatResolver", org.apache.camel.spi.DataFormatResolver.class);
+        map.put("Debugger", org.apache.camel.spi.Debugger.class);
+        map.put("Debugging", java.lang.Boolean.class);
+        map.put("Delayer", java.lang.Long.class);
+        map.put("ErrorHandlerFactory", org.apache.camel.ErrorHandlerFactory.class);
+        map.put("EventNotificationApplicable", boolean.class);
+        map.put("ExecutorServiceManager", org.apache.camel.spi.ExecutorServiceManager.class);
+        map.put("FactoryFinderResolver", org.apache.camel.spi.FactoryFinderResolver.class);
+        map.put("GlobalOptions", java.util.Map.class);
+        map.put("HeadersMapFactory", org.apache.camel.spi.HeadersMapFactory.class);
+        map.put("InflightRepository", org.apache.camel.spi.InflightRepository.class);
+        map.put("Injector", org.apache.camel.spi.Injector.class);
+        map.put("LanguageResolver", org.apache.camel.spi.LanguageResolver.class);
+        map.put("LoadTypeConverters", java.lang.Boolean.class);
+        map.put("LogExhaustedMessageBody", java.lang.Boolean.class);
+        map.put("LogMask", java.lang.Boolean.class);
+        map.put("MDCLoggingKeysPattern", java.lang.String.class);
+        map.put("ManagementName", java.lang.String.class);
+        map.put("ManagementNameStrategy", org.apache.camel.spi.ManagementNameStrategy.class);
+        map.put("ManagementStrategy", org.apache.camel.spi.ManagementStrategy.class);
+        map.put("MessageHistory", java.lang.Boolean.class);
+        map.put("MessageHistoryFactory", org.apache.camel.spi.MessageHistoryFactory.class);
+        map.put("ModelJAXBContextFactory", org.apache.camel.spi.ModelJAXBContextFactory.class);
+        map.put("ModelToXMLDumper", org.apache.camel.spi.ModelToXMLDumper.class);
+        map.put("Name", java.lang.String.class);
+        map.put("NameStrategy", org.apache.camel.spi.CamelContextNameStrategy.class);
+        map.put("NodeIdFactory", org.apache.camel.spi.NodeIdFactory.class);
+        map.put("PackageScanClassResolver", org.apache.camel.spi.PackageScanClassResolver.class);
+        map.put("PackageScanResourceResolver", org.apache.camel.spi.PackageScanResourceResolver.class);
+        map.put("ProcessorFactory", org.apache.camel.spi.ProcessorFactory.class);
+        map.put("PropertiesComponent", org.apache.camel.spi.PropertiesComponent.class);
+        map.put("ReactiveExecutor", org.apache.camel.spi.ReactiveExecutor.class);
+        map.put("Registry", org.apache.camel.spi.Registry.class);
+        map.put("RestBindingJaxbDataFormatFactory", org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class);
+        map.put("RestConfiguration", org.apache.camel.spi.RestConfiguration.class);
+        map.put("RestRegistry", org.apache.camel.spi.RestRegistry.class);
+        map.put("RouteController", org.apache.camel.spi.RouteController.class);
+        map.put("RuntimeCamelCatalog", org.apache.camel.catalog.RuntimeCamelCatalog.class);
+        map.put("RuntimeEndpointRegistry", org.apache.camel.spi.RuntimeEndpointRegistry.class);
+        map.put("SSLContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("ShutdownRoute", org.apache.camel.ShutdownRoute.class);
+        map.put("ShutdownRunningTask", org.apache.camel.ShutdownRunningTask.class);
+        map.put("ShutdownStrategy", org.apache.camel.spi.ShutdownStrategy.class);
+        map.put("StreamCaching", java.lang.Boolean.class);
+        map.put("StreamCachingStrategy", org.apache.camel.spi.StreamCachingStrategy.class);
+        map.put("Tracer", org.apache.camel.spi.Tracer.class);
+        map.put("Tracing", java.lang.Boolean.class);
+        map.put("TracingPattern", java.lang.String.class);
+        map.put("TypeConverterRegistry", org.apache.camel.spi.TypeConverterRegistry.class);
+        map.put("TypeConverterStatisticsEnabled", java.lang.Boolean.class);
+        map.put("UnitOfWorkFactory", org.apache.camel.spi.UnitOfWorkFactory.class);
+        map.put("UriFactoryResolver", org.apache.camel.spi.UriFactoryResolver.class);
+        map.put("UseBreadcrumb", java.lang.Boolean.class);
+        map.put("UseDataType", java.lang.Boolean.class);
+        map.put("UseMDCLogging", java.lang.Boolean.class);
+        map.put("UuidGenerator", org.apache.camel.spi.UuidGenerator.class);
+        map.put("XMLRoutesDefinitionLoader", org.apache.camel.spi.XMLRoutesDefinitionLoader.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
@@ -161,76 +235,7 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AllowUseOriginalMessage", java.lang.Boolean.class);
-        answer.put("ApplicationContextClassLoader", java.lang.ClassLoader.class);
-        answer.put("AsyncProcessorAwaitManager", org.apache.camel.spi.AsyncProcessorAwaitManager.class);
-        answer.put("AutoStartup", java.lang.Boolean.class);
-        answer.put("BacklogTracing", java.lang.Boolean.class);
-        answer.put("BeanIntrospection", org.apache.camel.spi.BeanIntrospection.class);
-        answer.put("CaseInsensitiveHeaders", java.lang.Boolean.class);
-        answer.put("ClassResolver", org.apache.camel.spi.ClassResolver.class);
-        answer.put("ComponentNameResolver", org.apache.camel.spi.ComponentNameResolver.class);
-        answer.put("ComponentResolver", org.apache.camel.spi.ComponentResolver.class);
-        answer.put("ConfigurerResolver", org.apache.camel.spi.ConfigurerResolver.class);
-        answer.put("DataFormatResolver", org.apache.camel.spi.DataFormatResolver.class);
-        answer.put("Debugger", org.apache.camel.spi.Debugger.class);
-        answer.put("Debugging", java.lang.Boolean.class);
-        answer.put("Delayer", java.lang.Long.class);
-        answer.put("ErrorHandlerFactory", org.apache.camel.ErrorHandlerFactory.class);
-        answer.put("EventNotificationApplicable", boolean.class);
-        answer.put("ExecutorServiceManager", org.apache.camel.spi.ExecutorServiceManager.class);
-        answer.put("FactoryFinderResolver", org.apache.camel.spi.FactoryFinderResolver.class);
-        answer.put("GlobalOptions", java.util.Map.class);
-        answer.put("HeadersMapFactory", org.apache.camel.spi.HeadersMapFactory.class);
-        answer.put("InflightRepository", org.apache.camel.spi.InflightRepository.class);
-        answer.put("Injector", org.apache.camel.spi.Injector.class);
-        answer.put("LanguageResolver", org.apache.camel.spi.LanguageResolver.class);
-        answer.put("LoadTypeConverters", java.lang.Boolean.class);
-        answer.put("LogExhaustedMessageBody", java.lang.Boolean.class);
-        answer.put("LogMask", java.lang.Boolean.class);
-        answer.put("MDCLoggingKeysPattern", java.lang.String.class);
-        answer.put("ManagementName", java.lang.String.class);
-        answer.put("ManagementNameStrategy", org.apache.camel.spi.ManagementNameStrategy.class);
-        answer.put("ManagementStrategy", org.apache.camel.spi.ManagementStrategy.class);
-        answer.put("MessageHistory", java.lang.Boolean.class);
-        answer.put("MessageHistoryFactory", org.apache.camel.spi.MessageHistoryFactory.class);
-        answer.put("ModelJAXBContextFactory", org.apache.camel.spi.ModelJAXBContextFactory.class);
-        answer.put("ModelToXMLDumper", org.apache.camel.spi.ModelToXMLDumper.class);
-        answer.put("Name", java.lang.String.class);
-        answer.put("NameStrategy", org.apache.camel.spi.CamelContextNameStrategy.class);
-        answer.put("NodeIdFactory", org.apache.camel.spi.NodeIdFactory.class);
-        answer.put("PackageScanClassResolver", org.apache.camel.spi.PackageScanClassResolver.class);
-        answer.put("PackageScanResourceResolver", org.apache.camel.spi.PackageScanResourceResolver.class);
-        answer.put("ProcessorFactory", org.apache.camel.spi.ProcessorFactory.class);
-        answer.put("PropertiesComponent", org.apache.camel.spi.PropertiesComponent.class);
-        answer.put("ReactiveExecutor", org.apache.camel.spi.ReactiveExecutor.class);
-        answer.put("Registry", org.apache.camel.spi.Registry.class);
-        answer.put("RestBindingJaxbDataFormatFactory", org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class);
-        answer.put("RestConfiguration", org.apache.camel.spi.RestConfiguration.class);
-        answer.put("RestRegistry", org.apache.camel.spi.RestRegistry.class);
-        answer.put("RouteController", org.apache.camel.spi.RouteController.class);
-        answer.put("RuntimeCamelCatalog", org.apache.camel.catalog.RuntimeCamelCatalog.class);
-        answer.put("RuntimeEndpointRegistry", org.apache.camel.spi.RuntimeEndpointRegistry.class);
-        answer.put("SSLContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("ShutdownRoute", org.apache.camel.ShutdownRoute.class);
-        answer.put("ShutdownRunningTask", org.apache.camel.ShutdownRunningTask.class);
-        answer.put("ShutdownStrategy", org.apache.camel.spi.ShutdownStrategy.class);
-        answer.put("StreamCaching", java.lang.Boolean.class);
-        answer.put("StreamCachingStrategy", org.apache.camel.spi.StreamCachingStrategy.class);
-        answer.put("Tracer", org.apache.camel.spi.Tracer.class);
-        answer.put("Tracing", java.lang.Boolean.class);
-        answer.put("TracingPattern", java.lang.String.class);
-        answer.put("TypeConverterRegistry", org.apache.camel.spi.TypeConverterRegistry.class);
-        answer.put("TypeConverterStatisticsEnabled", java.lang.Boolean.class);
-        answer.put("UnitOfWorkFactory", org.apache.camel.spi.UnitOfWorkFactory.class);
-        answer.put("UriFactoryResolver", org.apache.camel.spi.UriFactoryResolver.class);
-        answer.put("UseBreadcrumb", java.lang.Boolean.class);
-        answer.put("UseDataType", java.lang.Boolean.class);
-        answer.put("UseMDCLogging", java.lang.Boolean.class);
-        answer.put("UuidGenerator", org.apache.camel.spi.UuidGenerator.class);
-        answer.put("XMLRoutesDefinitionLoader", org.apache.camel.spi.XMLRoutesDefinitionLoader.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

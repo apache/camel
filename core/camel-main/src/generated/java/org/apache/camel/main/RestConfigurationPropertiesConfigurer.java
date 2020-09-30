@@ -15,6 +15,40 @@ import org.apache.camel.main.RestConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class RestConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiComponent", java.lang.String.class);
+        map.put("ApiContextIdPattern", java.lang.String.class);
+        map.put("ApiContextListing", boolean.class);
+        map.put("ApiContextPath", java.lang.String.class);
+        map.put("ApiContextRouteId", java.lang.String.class);
+        map.put("ApiHost", java.lang.String.class);
+        map.put("ApiProperties", java.util.Map.class);
+        map.put("ApiVendorExtension", boolean.class);
+        map.put("BindingMode", java.lang.String.class);
+        map.put("ClientRequestValidation", boolean.class);
+        map.put("Component", java.lang.String.class);
+        map.put("ComponentProperties", java.util.Map.class);
+        map.put("ConsumerProperties", java.util.Map.class);
+        map.put("ContextPath", java.lang.String.class);
+        map.put("CorsHeaders", java.util.Map.class);
+        map.put("DataFormatProperties", java.util.Map.class);
+        map.put("EnableCORS", boolean.class);
+        map.put("EndpointProperties", java.util.Map.class);
+        map.put("Host", java.lang.String.class);
+        map.put("HostNameResolver", java.lang.String.class);
+        map.put("JsonDataFormat", java.lang.String.class);
+        map.put("Port", int.class);
+        map.put("ProducerApiDoc", java.lang.String.class);
+        map.put("ProducerComponent", java.lang.String.class);
+        map.put("Scheme", java.lang.String.class);
+        map.put("SkipBindingOnErrorCode", boolean.class);
+        map.put("UseXForwardHeaders", boolean.class);
+        map.put("XmlDataFormat", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.RestConfigurationProperties target = (org.apache.camel.main.RestConfigurationProperties) obj;
@@ -81,36 +115,7 @@ public class RestConfigurationPropertiesConfigurer extends org.apache.camel.supp
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiComponent", java.lang.String.class);
-        answer.put("ApiContextIdPattern", java.lang.String.class);
-        answer.put("ApiContextListing", boolean.class);
-        answer.put("ApiContextPath", java.lang.String.class);
-        answer.put("ApiContextRouteId", java.lang.String.class);
-        answer.put("ApiHost", java.lang.String.class);
-        answer.put("ApiProperties", java.util.Map.class);
-        answer.put("ApiVendorExtension", boolean.class);
-        answer.put("BindingMode", java.lang.String.class);
-        answer.put("ClientRequestValidation", boolean.class);
-        answer.put("Component", java.lang.String.class);
-        answer.put("ComponentProperties", java.util.Map.class);
-        answer.put("ConsumerProperties", java.util.Map.class);
-        answer.put("ContextPath", java.lang.String.class);
-        answer.put("CorsHeaders", java.util.Map.class);
-        answer.put("DataFormatProperties", java.util.Map.class);
-        answer.put("EnableCORS", boolean.class);
-        answer.put("EndpointProperties", java.util.Map.class);
-        answer.put("Host", java.lang.String.class);
-        answer.put("HostNameResolver", java.lang.String.class);
-        answer.put("JsonDataFormat", java.lang.String.class);
-        answer.put("Port", int.class);
-        answer.put("ProducerApiDoc", java.lang.String.class);
-        answer.put("ProducerComponent", java.lang.String.class);
-        answer.put("Scheme", java.lang.String.class);
-        answer.put("SkipBindingOnErrorCode", boolean.class);
-        answer.put("UseXForwardHeaders", boolean.class);
-        answer.put("XmlDataFormat", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override
