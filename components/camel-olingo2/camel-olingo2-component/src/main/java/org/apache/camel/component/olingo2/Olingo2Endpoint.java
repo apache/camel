@@ -131,8 +131,11 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
             for (String name : getter.getAllOptions(this).keySet()) {
                 if (known.containsKey(name)) {
-                    Object value = known.remove(name);
-                    configurer.configure(getCamelContext(), this, name, value, true);
+                    Object value = known.get(name);
+                    boolean hit = configurer.configure(getCamelContext(), this, name, value, true);
+                    if (hit) {
+                        known.remove(name);
+                    }
                 }
             }
         }
