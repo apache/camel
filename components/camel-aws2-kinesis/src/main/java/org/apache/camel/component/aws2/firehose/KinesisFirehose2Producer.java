@@ -127,29 +127,6 @@ public class KinesisFirehose2Producer extends DefaultProducer {
                     "The updateDestination operation expects an UpdateDestinationRequest instance as body");
         }
     }
-    
-    private void describeDeliveryStream(FirehoseClient client, Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof DescribeDeliveryStreamRequest) {
-        	DescribeDeliveryStreamRequest req = exchange.getIn().getBody(DescribeDeliveryStreamRequest.class);
-            DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
-                DescribeDeliveryStreamRequest req
-                        = DescribeDeliveryStreamRequest.builder()
-                                .deliveryStreamName(exchange.getIn()
-                                        .getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME, String.class))
-                                .build();
-                DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            } else {
-                throw new IllegalArgumentException(
-                        "The describeDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
-            }
-        }
-    }
 
     private void describeDeliveryStream(FirehoseClient client, Exchange exchange) {
         if (exchange.getIn().getBody() instanceof DescribeDeliveryStreamRequest) {
