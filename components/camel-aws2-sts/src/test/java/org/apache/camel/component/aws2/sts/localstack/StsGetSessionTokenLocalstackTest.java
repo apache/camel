@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.sts.STS2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
 import static org.junit.Assert.assertEquals;
@@ -42,7 +41,7 @@ public class StsGetSessionTokenLocalstackTest extends Aws2StsBaseTest {
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
 
-        template.send("direct:createKey", new Processor() {
+        template.send("direct:getSessonToken", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
