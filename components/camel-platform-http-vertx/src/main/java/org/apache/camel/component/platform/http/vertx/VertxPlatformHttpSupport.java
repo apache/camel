@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,8 +33,6 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
@@ -158,10 +155,11 @@ public final class VertxPlatformHttpSupport {
         return codeToUse;
     }
 
-    static void writeResponse(RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy) {
+    static void writeResponse(RoutingContext ctx, Exchange camelExchange, HeaderFilterStrategy headerFilterStrategy)
+            throws Exception {
         final Object body = toHttpResponse(ctx.response(), camelExchange.getMessage(), headerFilterStrategy);
-
         final HttpServerResponse response = ctx.response();
+
         if (body == null) {
             LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
             response.end();
@@ -176,20 +174,15 @@ public final class VertxPlatformHttpSupport {
                     b.appendBytes(bytes, 0, len);
                     response.write(b);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
             response.end();
         } else {
             final TypeConverter tc = camelExchange.getContext().getTypeConverter();
-            try {
-                final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, body);
-                final Buffer b = Buffer.buffer(bb.capacity());
-                b.setBytes(0, bb);
-                response.end(b);
-            } catch (TypeConversionException | NoTypeConversionAvailableException e) {
-                throw new RuntimeException(e);
-            }
+            final ByteBuffer bb = tc.mandatoryConvertTo(ByteBuffer.class, body);
+            final Buffer b = Buffer.buffer(bb.capacity());
+
+            b.setBytes(0, bb);
+            response.end(b);
         }
 
     }

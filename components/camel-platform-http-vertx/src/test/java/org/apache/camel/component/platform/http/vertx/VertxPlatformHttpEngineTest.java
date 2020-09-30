@@ -17,7 +17,9 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
+import io.vertx.core.VertxOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
@@ -76,6 +78,28 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
+    public void testEngineSetup() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.start();
+
+            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
+                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
+            });
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testEngine() throws Exception {
         final int port = AvailablePortFinder.getNextAvailable();
         final CamelContext context = new DefaultCamelContext();
@@ -99,11 +123,6 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
-            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
-            });
-
             given()
                     .port(conf.getBindPort())
                     .when()
@@ -120,6 +139,82 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("POST"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSlowConsumer() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.getRegistry().bind(
+                    "vertx-options",
+                    new VertxOptions()
+                            .setMaxEventLoopExecuteTime(2)
+                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/get")
+                            .routeId("get")
+                            .process(e -> Thread.sleep(TimeUnit.SECONDS.toMillis(3)))
+                            .setBody().constant("get");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("get"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testFailingConsumer() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/get")
+                            .routeId("get")
+                            .process(exchange -> {
+                                throw new RuntimeException();
+                            });
+                }
+            });
+
+            context.start();
+
+            given()
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(500);
 
         } finally {
             context.stop();

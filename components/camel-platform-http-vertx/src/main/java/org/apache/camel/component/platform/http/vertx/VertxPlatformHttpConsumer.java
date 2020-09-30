@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.FileUpload;
@@ -106,25 +107,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             newRoute.handler(handler);
         }
 
-        newRoute.handler(
-                ctx -> {
-                    Exchange exchg = null;
-                    try {
-                        final Exchange exchange = exchg = toExchange(ctx);
-                        createUoW(exchange);
-                        getAsyncProcessor().process(
-                                exchange,
-                                doneSync -> writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy()));
-                    } catch (Exception e) {
-                        ctx.fail(e);
-                        getExceptionHandler().handleException("Failed handling platform-http endpoint " + endpoint.getPath(),
-                                exchg, e);
-                    } finally {
-                        if (exchg != null) {
-                            doneUoW(exchg);
-                        }
-                    }
-                });
+        newRoute.handler(this::handleRequest);
 
         this.route = newRoute;
     }
@@ -161,6 +144,67 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         }
         // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
+    }
+
+    private void handleRequest(RoutingContext ctx) {
+        final Vertx vertx = ctx.vertx();
+        final Exchange exchange = toExchange(ctx);
+
+        //
+        // We do not know if any of the processing logic of the route is synchronous or not so we
+        // need to process the request on a thread on the Vert.x worker pool.
+        //
+        // As example, assuming the platform-http component is configured as the transport provider
+        // for the rest dsl, then the following code may result in a blocking operation that could
+        // block Vert.x event-loop for too long if the target service takes long to respond, as
+        // example in case the service is a knative service scaled to zero that could take some time
+        // to be come available:
+        //
+        //     rest("/results")
+        //         .get("/{id}")
+        //         .route()
+        //             .removeHeaders("*", "CamelHttpPath")
+        //             .to("rest:get:?bridgeEndpoint=true");
+        //
+        vertx.executeBlocking(
+                promise -> {
+                    try {
+                        createUoW(exchange);
+                    } catch (Exception e) {
+                        promise.fail(e);
+                        return;
+                    }
+
+                    getAsyncProcessor().process(exchange, c -> {
+                        if (!exchange.isFailed()) {
+                            promise.complete();
+                        } else {
+                            promise.fail(exchange.getException());
+                        }
+                    });
+                },
+                false,
+                result -> {
+                    try {
+                        if (result.succeeded()) {
+                            try {
+                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
+                            } catch (Exception e) {
+                                getExceptionHandler().handleException(
+                                        "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                                        e);
+                            }
+                        } else {
+                            getExceptionHandler().handleException(
+                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                                    result.cause());
+
+                            ctx.fail(result.cause());
+                        }
+                    } finally {
+                        doneUoW(exchange);
+                    }
+                });
     }
 
     private Exchange toExchange(RoutingContext ctx) {
