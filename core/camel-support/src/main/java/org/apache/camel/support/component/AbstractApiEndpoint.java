@@ -117,11 +117,10 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     private void initState() {
 
         // compute endpoint property names and values
-        this.endpointPropertyNames = Collections.unmodifiableSet(
-                getPropertiesHelper().getEndpointPropertyNames(getCamelContext(), configuration));
         final HashMap<String, Object> properties = new HashMap<>();
         getPropertiesHelper().getEndpointProperties(getCamelContext(), configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
+        this.endpointPropertyNames = Collections.unmodifiableSet(properties.keySet());
 
         // get endpoint property names
         final Set<String> arguments = new HashSet<>(endpointPropertyNames);
