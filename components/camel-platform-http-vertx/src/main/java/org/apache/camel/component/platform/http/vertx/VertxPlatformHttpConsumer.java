@@ -64,16 +64,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private Route route;
 
     public VertxPlatformHttpConsumer(
-                                     PlatformHttpEndpoint endpoint,
-                                     Processor processor,
-                                     List<Handler<RoutingContext>> handlers,
-                                     UploadAttacher uploadAttacher) {
+            PlatformHttpEndpoint endpoint,
+            Processor processor,
+            List<Handler<RoutingContext>> handlers,
+            UploadAttacher uploadAttacher) {
         super(endpoint, processor);
 
         this.handlers = handlers;
         this.uploadAttacher = uploadAttacher;
-        this.fileNameExtWhitelist
-                = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
+        this.fileNameExtWhitelist = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
     }
 
     @Override
@@ -167,44 +166,44 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         //             .to("rest:get:?bridgeEndpoint=true");
         //
         vertx.executeBlocking(
-                promise -> {
-                    try {
-                        createUoW(exchange);
-                    } catch (Exception e) {
-                        promise.fail(e);
-                        return;
-                    }
+            promise -> {
+                try {
+                    createUoW(exchange);
+                } catch (Exception e) {
+                    promise.fail(e);
+                    return;
+                }
 
-                    getAsyncProcessor().process(exchange, c -> {
-                        if (!exchange.isFailed()) {
-                            promise.complete();
-                        } else {
-                            promise.fail(exchange.getException());
-                        }
-                    });
-                },
-                false,
-                result -> {
-                    try {
-                        if (result.succeeded()) {
-                            try {
-                                writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException(
-                                        "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                        e);
-                            }
-                        } else {
-                            getExceptionHandler().handleException(
-                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                    result.cause());
-
-                            ctx.fail(result.cause());
-                        }
-                    } finally {
-                        doneUoW(exchange);
+                getAsyncProcessor().process(exchange, c -> {
+                    if (!exchange.isFailed()) {
+                        promise.complete();
+                    } else {
+                        promise.fail(exchange.getException());
                     }
                 });
+            },
+            false,
+            result -> {
+                try {
+                    if (result.succeeded()) {
+                        try {
+                            writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
+                        } catch (Exception e) {
+                            getExceptionHandler().handleException(
+                                    "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                                    e);
+                        }
+                    } else {
+                        getExceptionHandler().handleException(
+                                "Failed handling platform-http endpoint " + getEndpoint().getPath(),
+                                result.cause());
+
+                        ctx.fail(result.cause());
+                    }
+                } finally {
+                    doneUoW(exchange);
+                }
+            });
     }
 
     private Exchange toExchange(RoutingContext ctx) {
@@ -286,8 +285,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 uploadAttacher.attachUpload(localFile, fileName, message);
             } else {
                 LOGGER.debug(
-                        "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
-                        fileName, fileNameExtWhitelist);
+                    "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                    fileName, fileNameExtWhitelist);
             }
         }
     }
