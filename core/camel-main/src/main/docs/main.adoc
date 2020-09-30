@@ -254,7 +254,7 @@ camel.component.sql.dataSource = #bean:myDS
 === Creating a custom bean with constructor parameters
 
 When creating a bean then parameters to the constructor can be provided.
-Suppose we have a class `MyFoo` with a constructur:
+Suppose we have a class `MyFoo` with a constructor:
 
 [source,java]
 ----
