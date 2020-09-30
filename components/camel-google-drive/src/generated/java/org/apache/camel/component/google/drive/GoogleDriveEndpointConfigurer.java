@@ -50,22 +50,6 @@ public class GoogleDriveEndpointConfigurer extends PropertyConfigurerSupport imp
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
-        map.put("appId", java.lang.String.class);
-        map.put("changeId", java.lang.String.class);
-        map.put("childId", java.lang.String.class);
-        map.put("commentId", java.lang.String.class);
-        map.put("content", com.google.api.services.drive.model.ChildReference.class);
-        map.put("contentChannel", com.google.api.services.drive.model.Channel.class);
-        map.put("email", java.lang.String.class);
-        map.put("fileId", java.lang.String.class);
-        map.put("folderId", java.lang.String.class);
-        map.put("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
-        map.put("mimeType", java.lang.String.class);
-        map.put("parentId", java.lang.String.class);
-        map.put("permissionId", java.lang.String.class);
-        map.put("propertyKey", java.lang.String.class);
-        map.put("replyId", java.lang.String.class);
-        map.put("revisionId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 

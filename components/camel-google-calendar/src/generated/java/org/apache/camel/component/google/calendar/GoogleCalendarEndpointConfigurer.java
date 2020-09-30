@@ -52,14 +52,6 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
-        map.put("calendarId", java.lang.String.class);
-        map.put("content", com.google.api.services.calendar.model.AclRule.class);
-        map.put("contentChannel", com.google.api.services.calendar.model.Channel.class);
-        map.put("destination", java.lang.String.class);
-        map.put("eventId", java.lang.String.class);
-        map.put("ruleId", java.lang.String.class);
-        map.put("setting", java.lang.String.class);
-        map.put("text", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
