@@ -15,6 +15,19 @@ import org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("CallbackUrl", java.net.URI.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("TriggerValue", java.lang.String.class);
+        map.put("UsageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration target = (org.apache.camel.component.twilio.UsageTriggerEndpointConfiguration) obj;
@@ -39,15 +52,7 @@ public class UsageTriggerEndpointConfigurationConfigurer extends org.apache.came
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("CallbackUrl", java.net.URI.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("TriggerValue", java.lang.String.class);
-        answer.put("UsageCategory", com.twilio.rest.api.v2010.account.usage.Trigger.UsageCategory.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,22 @@ import org.apache.camel.component.google.mail.GmailUsersMessagesAttachmentsEndpo
 @SuppressWarnings("unchecked")
 public class GmailUsersMessagesAttachmentsEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.google.mail.internal.GoogleMailApiName.class);
+        map.put("ApplicationName", java.lang.String.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("Id", java.lang.String.class);
+        map.put("MessageId", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("RefreshToken", java.lang.String.class);
+        map.put("UserId", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.google.mail.GmailUsersMessagesAttachmentsEndpointConfiguration target = (org.apache.camel.component.google.mail.GmailUsersMessagesAttachmentsEndpointConfiguration) obj;
@@ -45,18 +61,7 @@ public class GmailUsersMessagesAttachmentsEndpointConfigurationConfigurer extend
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.google.mail.internal.GoogleMailApiName.class);
-        answer.put("ApplicationName", java.lang.String.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("Id", java.lang.String.class);
-        answer.put("MessageId", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("RefreshToken", java.lang.String.class);
-        answer.put("UserId", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

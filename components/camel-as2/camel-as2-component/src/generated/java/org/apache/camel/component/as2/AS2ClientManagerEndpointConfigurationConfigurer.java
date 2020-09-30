@@ -15,6 +15,42 @@ import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.as2.internal.AS2ApiName.class);
+        map.put("As2From", java.lang.String.class);
+        map.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
+        map.put("As2To", java.lang.String.class);
+        map.put("As2Version", java.lang.String.class);
+        map.put("ClientFqdn", java.lang.String.class);
+        map.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
+        map.put("DecryptingPrivateKey", java.security.PrivateKey.class);
+        map.put("DispositionNotificationTo", java.lang.String.class);
+        map.put("EdiMessage", java.lang.String.class);
+        map.put("EdiMessageContentType", org.apache.http.entity.ContentType.class);
+        map.put("EdiMessageTransferEncoding", java.lang.String.class);
+        map.put("EdiMessageType", org.apache.http.entity.ContentType.class);
+        map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
+        map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("From", java.lang.String.class);
+        map.put("MdnMessageTemplate", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("RequestUri", java.lang.String.class);
+        map.put("Server", java.lang.String.class);
+        map.put("ServerFqdn", java.lang.String.class);
+        map.put("ServerPortNumber", java.lang.Integer.class);
+        map.put("SignedReceiptMicAlgorithms", java.lang.String[].class);
+        map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
+        map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
+        map.put("SigningPrivateKey", java.security.PrivateKey.class);
+        map.put("Subject", java.lang.String.class);
+        map.put("TargetHostname", java.lang.String.class);
+        map.put("TargetPortNumber", java.lang.Integer.class);
+        map.put("UserAgent", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration target = (org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration) obj;
@@ -85,38 +121,7 @@ public class AS2ClientManagerEndpointConfigurationConfigurer extends org.apache.
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.as2.internal.AS2ApiName.class);
-        answer.put("As2From", java.lang.String.class);
-        answer.put("As2MessageStructure", org.apache.camel.component.as2.api.AS2MessageStructure.class);
-        answer.put("As2To", java.lang.String.class);
-        answer.put("As2Version", java.lang.String.class);
-        answer.put("ClientFqdn", java.lang.String.class);
-        answer.put("CompressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
-        answer.put("DecryptingPrivateKey", java.security.PrivateKey.class);
-        answer.put("DispositionNotificationTo", java.lang.String.class);
-        answer.put("EdiMessage", java.lang.String.class);
-        answer.put("EdiMessageContentType", org.apache.http.entity.ContentType.class);
-        answer.put("EdiMessageTransferEncoding", java.lang.String.class);
-        answer.put("EdiMessageType", org.apache.http.entity.ContentType.class);
-        answer.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
-        answer.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
-        answer.put("From", java.lang.String.class);
-        answer.put("MdnMessageTemplate", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("RequestUri", java.lang.String.class);
-        answer.put("Server", java.lang.String.class);
-        answer.put("ServerFqdn", java.lang.String.class);
-        answer.put("ServerPortNumber", java.lang.Integer.class);
-        answer.put("SignedReceiptMicAlgorithms", java.lang.String[].class);
-        answer.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
-        answer.put("SigningCertificateChain", java.security.cert.Certificate[].class);
-        answer.put("SigningPrivateKey", java.security.PrivateKey.class);
-        answer.put("Subject", java.lang.String.class);
-        answer.put("TargetHostname", java.lang.String.class);
-        answer.put("TargetPortNumber", java.lang.Integer.class);
-        answer.put("UserAgent", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

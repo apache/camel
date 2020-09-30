@@ -57,18 +57,24 @@ public final class PropertyConfigurerGenerator {
                 + " implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {\n");
         w.write("\n");
 
+        // sort options A..Z so they always have same order
+        if (!options.isEmpty()) {
+            options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
+        }
+
         // if from component model then we can not optimize this and use a static block
-        if (model != null) {
+        if (model != null || !hasSuper) {
             // static block for all options which is immutable information
             w.write("    private static final Map<String, Object> ALL_OPTIONS;\n");
-            w.write(generateAllOptions(component, model));
+            if (model != null) {
+                w.write(generateAllOptions(component, model));
+            } else {
+                w.write(generateAllOptions(options));
+            }
             w.write("\n");
         }
 
         if (!options.isEmpty() || !hasSuper) {
-
-            // sort options A..Z so they always have same order
-            options = options.stream().sorted(Comparator.comparing(BaseOptionModel::getName)).collect(Collectors.toList());
 
             if (component) {
                 // if its a component configurer then configuration classes are optional and we need
@@ -108,16 +114,12 @@ public final class PropertyConfigurerGenerator {
             w.write("\n");
             w.write("    @Override\n");
             w.write("    public Map<String, Object> getAllOptions(Object target) {\n");
-            if (model != null) {
+            if (model != null || !hasSuper) {
                 w.write("        return ALL_OPTIONS;\n");
                 w.write("    }\n");
             } else {
-                if (hasSuper) {
-                    w.write("        Map<String, Object> answer = super.getAllOptions(target);\n");
-                } else {
-                    w.write("        Map<String, Object> answer = new CaseInsensitiveMap();\n");
-                }
-                if (!options.isEmpty() || !hasSuper) {
+                w.write("        Map<String, Object> answer = super.getAllOptions(target);\n");
+                if (!options.isEmpty()) {
                     for (BaseOptionModel option : options) {
                         // type may contain generics so remove those
                         String type = option.getJavaType();
@@ -216,6 +218,24 @@ public final class PropertyConfigurerGenerator {
                 type = type.replace('$', '.');
                 sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
             }
+        }
+        sb.append("        ALL_OPTIONS = map;\n");
+        sb.append("    }\n");
+        return sb.toString();
+    }
+
+    private static String generateAllOptions(Collection<? extends BaseOptionModel> options) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("    static {\n");
+        sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
+        for (BaseOptionModel option : options) {
+            // type may contain generics so remove those
+            String type = option.getJavaType();
+            if (type.indexOf('<') != -1) {
+                type = type.substring(0, type.indexOf('<'));
+            }
+            type = type.replace('$', '.');
+            sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
         }
         sb.append("        ALL_OPTIONS = map;\n");
         sb.append("    }\n");

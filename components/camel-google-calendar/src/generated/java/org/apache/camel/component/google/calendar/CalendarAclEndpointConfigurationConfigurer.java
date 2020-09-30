@@ -15,6 +15,27 @@ import org.apache.camel.component.google.calendar.CalendarAclEndpointConfigurati
 @SuppressWarnings("unchecked")
 public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class);
+        map.put("ApplicationName", java.lang.String.class);
+        map.put("CalendarId", java.lang.String.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("Content", com.google.api.services.calendar.model.AclRule.class);
+        map.put("ContentChannel", com.google.api.services.calendar.model.Channel.class);
+        map.put("EmailAddress", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("P12FileName", java.lang.String.class);
+        map.put("RefreshToken", java.lang.String.class);
+        map.put("RuleId", java.lang.String.class);
+        map.put("Scopes", java.lang.String.class);
+        map.put("User", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.google.calendar.CalendarAclEndpointConfiguration target = (org.apache.camel.component.google.calendar.CalendarAclEndpointConfiguration) obj;
@@ -55,23 +76,7 @@ public class CalendarAclEndpointConfigurationConfigurer extends org.apache.camel
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName.class);
-        answer.put("ApplicationName", java.lang.String.class);
-        answer.put("CalendarId", java.lang.String.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("Content", com.google.api.services.calendar.model.AclRule.class);
-        answer.put("ContentChannel", com.google.api.services.calendar.model.Channel.class);
-        answer.put("EmailAddress", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("P12FileName", java.lang.String.class);
-        answer.put("RefreshToken", java.lang.String.class);
-        answer.put("RuleId", java.lang.String.class);
-        answer.put("Scopes", java.lang.String.class);
-        answer.put("User", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

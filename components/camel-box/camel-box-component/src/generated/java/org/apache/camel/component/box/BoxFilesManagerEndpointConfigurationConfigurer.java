@@ -15,6 +15,59 @@ import org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Access", com.box.sdk.BoxSharedLink.Access.class);
+        map.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
+        map.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
+        map.put("AuthenticationType", java.lang.String.class);
+        map.put("Check", java.lang.Boolean.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("Content", java.io.InputStream.class);
+        map.put("Created", java.util.Date.class);
+        map.put("DestinationFolderId", java.lang.String.class);
+        map.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        map.put("EnterpriseId", java.lang.String.class);
+        map.put("Fields", java.lang.String[].class);
+        map.put("FileContent", java.io.InputStream.class);
+        map.put("FileId", java.lang.String.class);
+        map.put("FileName", java.lang.String.class);
+        map.put("FileSize", java.lang.Long.class);
+        map.put("FileType", com.box.sdk.BoxFile.ThumbnailFileType.class);
+        map.put("HttpParams", java.util.Map.class);
+        map.put("Info", com.box.sdk.BoxFile.Info.class);
+        map.put("Listener", com.box.sdk.ProgressListener.class);
+        map.put("MaxCacheEntries", int.class);
+        map.put("MaxHeight", java.lang.Integer.class);
+        map.put("MaxWidth", java.lang.Integer.class);
+        map.put("Metadata", com.box.sdk.Metadata.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("MinHeight", java.lang.Integer.class);
+        map.put("MinWidth", java.lang.Integer.class);
+        map.put("Modified", java.util.Date.class);
+        map.put("NewFileName", java.lang.String.class);
+        map.put("NewName", java.lang.String.class);
+        map.put("Output", java.io.OutputStream.class);
+        map.put("ParentFolderId", java.lang.String.class);
+        map.put("Permissions", com.box.sdk.BoxSharedLink.Permissions.class);
+        map.put("PrivateKeyFile", java.lang.String.class);
+        map.put("PrivateKeyPassword", java.lang.String.class);
+        map.put("PublicKeyId", java.lang.String.class);
+        map.put("RangeEnd", java.lang.Long.class);
+        map.put("RangeStart", java.lang.Long.class);
+        map.put("Size", java.lang.Long.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("TypeName", java.lang.String.class);
+        map.put("UnshareDate", java.util.Date.class);
+        map.put("UserId", java.lang.String.class);
+        map.put("UserName", java.lang.String.class);
+        map.put("UserPassword", java.lang.String.class);
+        map.put("Version", java.lang.Integer.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxFilesManagerEndpointConfiguration) obj;
@@ -119,55 +172,7 @@ public class BoxFilesManagerEndpointConfigurationConfigurer extends org.apache.c
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Access", com.box.sdk.BoxSharedLink.Access.class);
-        answer.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        answer.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
-        answer.put("AuthenticationType", java.lang.String.class);
-        answer.put("Check", java.lang.Boolean.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("Content", java.io.InputStream.class);
-        answer.put("Created", java.util.Date.class);
-        answer.put("DestinationFolderId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        answer.put("EnterpriseId", java.lang.String.class);
-        answer.put("Fields", java.lang.String[].class);
-        answer.put("FileContent", java.io.InputStream.class);
-        answer.put("FileId", java.lang.String.class);
-        answer.put("FileName", java.lang.String.class);
-        answer.put("FileSize", java.lang.Long.class);
-        answer.put("FileType", com.box.sdk.BoxFile.ThumbnailFileType.class);
-        answer.put("HttpParams", java.util.Map.class);
-        answer.put("Info", com.box.sdk.BoxFile.Info.class);
-        answer.put("Listener", com.box.sdk.ProgressListener.class);
-        answer.put("MaxCacheEntries", int.class);
-        answer.put("MaxHeight", java.lang.Integer.class);
-        answer.put("MaxWidth", java.lang.Integer.class);
-        answer.put("Metadata", com.box.sdk.Metadata.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("MinHeight", java.lang.Integer.class);
-        answer.put("MinWidth", java.lang.Integer.class);
-        answer.put("Modified", java.util.Date.class);
-        answer.put("NewFileName", java.lang.String.class);
-        answer.put("NewName", java.lang.String.class);
-        answer.put("Output", java.io.OutputStream.class);
-        answer.put("ParentFolderId", java.lang.String.class);
-        answer.put("Permissions", com.box.sdk.BoxSharedLink.Permissions.class);
-        answer.put("PrivateKeyFile", java.lang.String.class);
-        answer.put("PrivateKeyPassword", java.lang.String.class);
-        answer.put("PublicKeyId", java.lang.String.class);
-        answer.put("RangeEnd", java.lang.Long.class);
-        answer.put("RangeStart", java.lang.Long.class);
-        answer.put("Size", java.lang.Long.class);
-        answer.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("TypeName", java.lang.String.class);
-        answer.put("UnshareDate", java.util.Date.class);
-        answer.put("UserId", java.lang.String.class);
-        answer.put("UserName", java.lang.String.class);
-        answer.put("UserPassword", java.lang.String.class);
-        answer.put("Version", java.lang.Integer.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

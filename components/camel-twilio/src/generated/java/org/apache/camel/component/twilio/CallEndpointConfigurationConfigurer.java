@@ -15,6 +15,21 @@ import org.apache.camel.component.twilio.CallEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class CallEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("ApplicationSid", java.lang.String.class);
+        map.put("From", com.twilio.type.Endpoint.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("To", com.twilio.type.Endpoint.class);
+        map.put("Twiml", com.twilio.type.Twiml.class);
+        map.put("Url", java.net.URI.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.CallEndpointConfiguration target = (org.apache.camel.component.twilio.CallEndpointConfiguration) obj;
@@ -43,17 +58,7 @@ public class CallEndpointConfigurationConfigurer extends org.apache.camel.suppor
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("ApplicationSid", java.lang.String.class);
-        answer.put("From", com.twilio.type.Endpoint.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("To", com.twilio.type.Endpoint.class);
-        answer.put("Twiml", com.twilio.type.Twiml.class);
-        answer.put("Url", java.net.URI.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

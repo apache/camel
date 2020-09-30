@@ -15,6 +15,40 @@ import org.apache.camel.component.box.BoxUsersManagerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
+        map.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
+        map.put("AuthenticationType", java.lang.String.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("Email", java.lang.String.class);
+        map.put("EmailAliasId", java.lang.String.class);
+        map.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        map.put("EnterpriseId", java.lang.String.class);
+        map.put("Fields", java.lang.String[].class);
+        map.put("FilterTerm", java.lang.String.class);
+        map.put("Force", java.lang.Boolean.class);
+        map.put("HttpParams", java.util.Map.class);
+        map.put("Info", com.box.sdk.BoxUser.Info.class);
+        map.put("Login", java.lang.String.class);
+        map.put("MaxCacheEntries", int.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("Name", java.lang.String.class);
+        map.put("NotifyUser", java.lang.Boolean.class);
+        map.put("Params", com.box.sdk.CreateUserParams.class);
+        map.put("PrivateKeyFile", java.lang.String.class);
+        map.put("PrivateKeyPassword", java.lang.String.class);
+        map.put("PublicKeyId", java.lang.String.class);
+        map.put("SourceUserId", java.lang.String.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("UserId", java.lang.String.class);
+        map.put("UserName", java.lang.String.class);
+        map.put("UserPassword", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxUsersManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxUsersManagerEndpointConfiguration) obj;
@@ -81,36 +115,7 @@ public class BoxUsersManagerEndpointConfigurationConfigurer extends org.apache.c
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        answer.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
-        answer.put("AuthenticationType", java.lang.String.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("Email", java.lang.String.class);
-        answer.put("EmailAliasId", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        answer.put("EnterpriseId", java.lang.String.class);
-        answer.put("Fields", java.lang.String[].class);
-        answer.put("FilterTerm", java.lang.String.class);
-        answer.put("Force", java.lang.Boolean.class);
-        answer.put("HttpParams", java.util.Map.class);
-        answer.put("Info", com.box.sdk.BoxUser.Info.class);
-        answer.put("Login", java.lang.String.class);
-        answer.put("MaxCacheEntries", int.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("Name", java.lang.String.class);
-        answer.put("NotifyUser", java.lang.Boolean.class);
-        answer.put("Params", com.box.sdk.CreateUserParams.class);
-        answer.put("PrivateKeyFile", java.lang.String.class);
-        answer.put("PrivateKeyPassword", java.lang.String.class);
-        answer.put("PublicKeyId", java.lang.String.class);
-        answer.put("SourceUserId", java.lang.String.class);
-        answer.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("UserId", java.lang.String.class);
-        answer.put("UserName", java.lang.String.class);
-        answer.put("UserPassword", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,29 @@ import org.apache.camel.component.google.sheets.SheetsSpreadsheetsValuesEndpoint
 @SuppressWarnings("unchecked")
 public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class);
+        map.put("ApplicationName", java.lang.String.class);
+        map.put("BatchClearValuesRequest", com.google.api.services.sheets.v4.model.BatchClearValuesRequest.class);
+        map.put("BatchGetValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest.class);
+        map.put("BatchUpdateValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest.class);
+        map.put("BatchUpdateValuesRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest.class);
+        map.put("ClearValuesRequest", com.google.api.services.sheets.v4.model.ClearValuesRequest.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("Content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("Range", java.lang.String.class);
+        map.put("RefreshToken", java.lang.String.class);
+        map.put("SplitResult", boolean.class);
+        map.put("SpreadsheetId", java.lang.String.class);
+        map.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.google.sheets.SheetsSpreadsheetsValuesEndpointConfiguration target = (org.apache.camel.component.google.sheets.SheetsSpreadsheetsValuesEndpointConfiguration) obj;
@@ -59,25 +82,7 @@ public class SheetsSpreadsheetsValuesEndpointConfigurationConfigurer extends org
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName.class);
-        answer.put("ApplicationName", java.lang.String.class);
-        answer.put("BatchClearValuesRequest", com.google.api.services.sheets.v4.model.BatchClearValuesRequest.class);
-        answer.put("BatchGetValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest.class);
-        answer.put("BatchUpdateValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest.class);
-        answer.put("BatchUpdateValuesRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest.class);
-        answer.put("ClearValuesRequest", com.google.api.services.sheets.v4.model.ClearValuesRequest.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("Content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("Range", java.lang.String.class);
-        answer.put("RefreshToken", java.lang.String.class);
-        answer.put("SplitResult", boolean.class);
-        answer.put("SpreadsheetId", java.lang.String.class);
-        answer.put("Values", com.google.api.services.sheets.v4.model.ValueRange.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

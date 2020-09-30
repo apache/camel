@@ -15,6 +15,18 @@ import org.apache.camel.component.twilio.CallRecordingEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class CallRecordingEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathCallSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("Status", com.twilio.rest.api.v2010.account.call.Recording.Status.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.CallRecordingEndpointConfiguration target = (org.apache.camel.component.twilio.CallRecordingEndpointConfiguration) obj;
@@ -37,14 +49,7 @@ public class CallRecordingEndpointConfigurationConfigurer extends org.apache.cam
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathCallSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("Status", com.twilio.rest.api.v2010.account.call.Recording.Status.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

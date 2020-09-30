@@ -15,6 +15,49 @@ import org.apache.camel.component.fhir.FhirOperationEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class FhirOperationEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.fhir.internal.FhirApiName.class);
+        map.put("Asynchronous", java.lang.Boolean.class);
+        map.put("Client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
+        map.put("ClientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
+        map.put("Compress", boolean.class);
+        map.put("ConnectionTimeout", java.lang.Integer.class);
+        map.put("DeferModelScanning", boolean.class);
+        map.put("Encoding", java.lang.String.class);
+        map.put("ExtraParameters", java.util.Map.class);
+        map.put("FhirContext", ca.uhn.fhir.context.FhirContext.class);
+        map.put("FhirVersion", java.lang.String.class);
+        map.put("ForceConformanceCheck", boolean.class);
+        map.put("Id", org.hl7.fhir.instance.model.api.IIdType.class);
+        map.put("Log", boolean.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("MsgBundle", org.hl7.fhir.instance.model.api.IBaseBundle.class);
+        map.put("Name", java.lang.String.class);
+        map.put("OutputParameterType", java.lang.Class.class);
+        map.put("Parameters", org.hl7.fhir.instance.model.api.IBaseParameters.class);
+        map.put("Password", java.lang.String.class);
+        map.put("PrettyPrint", boolean.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPassword", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
+        map.put("ProxyUser", java.lang.String.class);
+        map.put("ResourceType", java.lang.Class.class);
+        map.put("RespondToUri", java.lang.String.class);
+        map.put("ResponseClass", java.lang.Class.class);
+        map.put("ReturnType", java.lang.Class.class);
+        map.put("ServerUrl", java.lang.String.class);
+        map.put("SessionCookie", java.lang.String.class);
+        map.put("SocketTimeout", java.lang.Integer.class);
+        map.put("Summary", java.lang.String.class);
+        map.put("UseHttpGet", java.lang.Boolean.class);
+        map.put("Username", java.lang.String.class);
+        map.put("ValidationMode", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.fhir.FhirOperationEndpointConfiguration target = (org.apache.camel.component.fhir.FhirOperationEndpointConfiguration) obj;
@@ -99,45 +142,7 @@ public class FhirOperationEndpointConfigurationConfigurer extends org.apache.cam
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.fhir.internal.FhirApiName.class);
-        answer.put("Asynchronous", java.lang.Boolean.class);
-        answer.put("Client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
-        answer.put("ClientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
-        answer.put("Compress", boolean.class);
-        answer.put("ConnectionTimeout", java.lang.Integer.class);
-        answer.put("DeferModelScanning", boolean.class);
-        answer.put("Encoding", java.lang.String.class);
-        answer.put("ExtraParameters", java.util.Map.class);
-        answer.put("FhirContext", ca.uhn.fhir.context.FhirContext.class);
-        answer.put("FhirVersion", java.lang.String.class);
-        answer.put("ForceConformanceCheck", boolean.class);
-        answer.put("Id", org.hl7.fhir.instance.model.api.IIdType.class);
-        answer.put("Log", boolean.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("MsgBundle", org.hl7.fhir.instance.model.api.IBaseBundle.class);
-        answer.put("Name", java.lang.String.class);
-        answer.put("OutputParameterType", java.lang.Class.class);
-        answer.put("Parameters", org.hl7.fhir.instance.model.api.IBaseParameters.class);
-        answer.put("Password", java.lang.String.class);
-        answer.put("PrettyPrint", boolean.class);
-        answer.put("ProxyHost", java.lang.String.class);
-        answer.put("ProxyPassword", java.lang.String.class);
-        answer.put("ProxyPort", java.lang.Integer.class);
-        answer.put("ProxyUser", java.lang.String.class);
-        answer.put("ResourceType", java.lang.Class.class);
-        answer.put("RespondToUri", java.lang.String.class);
-        answer.put("ResponseClass", java.lang.Class.class);
-        answer.put("ReturnType", java.lang.Class.class);
-        answer.put("ServerUrl", java.lang.String.class);
-        answer.put("SessionCookie", java.lang.String.class);
-        answer.put("SocketTimeout", java.lang.Integer.class);
-        answer.put("Summary", java.lang.String.class);
-        answer.put("UseHttpGet", java.lang.Boolean.class);
-        answer.put("Username", java.lang.String.class);
-        answer.put("ValidationMode", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

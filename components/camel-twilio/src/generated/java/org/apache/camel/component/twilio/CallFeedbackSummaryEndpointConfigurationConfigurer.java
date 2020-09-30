@@ -15,6 +15,18 @@ import org.apache.camel.component.twilio.CallFeedbackSummaryEndpointConfiguratio
 @SuppressWarnings("unchecked")
 public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("EndDate", org.joda.time.LocalDate.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("StartDate", org.joda.time.LocalDate.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.CallFeedbackSummaryEndpointConfiguration target = (org.apache.camel.component.twilio.CallFeedbackSummaryEndpointConfiguration) obj;
@@ -37,14 +49,7 @@ public class CallFeedbackSummaryEndpointConfigurationConfigurer extends org.apac
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("EndDate", org.joda.time.LocalDate.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("StartDate", org.joda.time.LocalDate.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override
