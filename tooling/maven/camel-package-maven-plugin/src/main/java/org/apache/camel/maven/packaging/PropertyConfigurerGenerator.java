@@ -22,11 +22,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
-import org.apache.camel.tooling.model.Comparators;
 import org.apache.camel.tooling.model.ComponentModel;
 
 public final class PropertyConfigurerGenerator {
@@ -195,13 +193,6 @@ public final class PropertyConfigurerGenerator {
     }
 
     private static String generateAllOptions(boolean component, ComponentModel model) {
-        // use sorted set so the code is always generated the same way
-        Set<ComponentModel.ApiOptionModel> apis
-                = new TreeSet<>(Comparators.apiOptionModelComparator());
-        if (!component && model.isApi()) {
-            // gather all the option names from the api (they can be duplicated as the same name can be used by multiple methods)
-            model.getApiOptions().forEach(a -> a.getMethods().forEach(m -> apis.addAll(m.getOptions())));
-        }
         StringBuilder sb = new StringBuilder();
         sb.append("    static {\n");
         sb.append("        Map<String, Object> map = new CaseInsensitiveMap();\n");
@@ -224,15 +215,6 @@ public final class PropertyConfigurerGenerator {
                 }
                 type = type.replace('$', '.');
                 sb.append(String.format("        map.put(\"%s\", %s.class);\n", option.getName(), type));
-            }
-            for (ComponentModel.ApiOptionModel apiOption : apis) {
-                // type may contain generics so remove those
-                String type = apiOption.getJavaType();
-                if (type.indexOf('<') != -1) {
-                    type = type.substring(0, type.indexOf('<'));
-                }
-                type = type.replace('$', '.');
-                sb.append(String.format("        map.put(\"%s\", %s.class);\n", apiOption.getName(), type));
             }
         }
         sb.append("        ALL_OPTIONS = map;\n");

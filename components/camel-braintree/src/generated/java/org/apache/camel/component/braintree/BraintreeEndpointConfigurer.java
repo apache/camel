@@ -35,35 +35,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("accessToken", java.lang.String.class);
         map.put("privateKey", java.lang.String.class);
         map.put("publicKey", java.lang.String.class);
-        map.put("amount", java.math.BigDecimal.class);
-        map.put("associationFilterId", java.lang.String.class);
-        map.put("challenge", java.lang.String.class);
-        map.put("cloneRequest", com.braintreegateway.TransactionCloneRequest.class);
-        map.put("content", java.lang.String.class);
-        map.put("currencyRequest", com.braintreegateway.MerchantAccountCreateForCurrencyRequest.class);
-        map.put("customerId", java.lang.String.class);
-        map.put("deleteRequest", com.braintreegateway.PaymentMethodDeleteRequest.class);
-        map.put("disputeId", java.lang.String.class);
-        map.put("documentId", java.lang.String.class);
-        map.put("evidenceId", java.lang.String.class);
-        map.put("fileEvidenceRequest", com.braintreegateway.FileEvidenceRequest.class);
-        map.put("grantRequest", com.braintreegateway.PaymentMethodGrantRequest.class);
-        map.put("groupByCustomField", java.lang.String.class);
-        map.put("id", java.lang.String.class);
-        map.put("page", java.lang.Integer.class);
-        map.put("payload", java.lang.String.class);
-        map.put("paymentMethodNonce", java.lang.String.class);
-        map.put("paymentMethodToken", java.lang.String.class);
-        map.put("query", com.braintreegateway.CreditCardVerificationSearchRequest.class);
-        map.put("refundRequest", com.braintreegateway.TransactionRefundRequest.class);
-        map.put("request", com.braintreegateway.AddressRequest.class);
-        map.put("searchRequest", com.braintreegateway.SubscriptionSearchRequest.class);
-        map.put("settlementDate", java.util.Calendar.class);
-        map.put("signature", java.lang.String.class);
-        map.put("submitForSettlement", java.lang.Boolean.class);
-        map.put("subscriptionId", java.lang.String.class);
-        map.put("textEvidenceRequest", com.braintreegateway.TextEvidenceRequest.class);
-        map.put("token", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 

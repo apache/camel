@@ -48,14 +48,6 @@ public class GoogleMailEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
-        map.put("batchDeleteMessagesRequest", com.google.api.services.gmail.model.BatchDeleteMessagesRequest.class);
-        map.put("batchModifyMessagesRequest", com.google.api.services.gmail.model.BatchModifyMessagesRequest.class);
-        map.put("content", com.google.api.services.gmail.model.Draft.class);
-        map.put("id", java.lang.String.class);
-        map.put("mediaContent", com.google.api.client.http.AbstractInputStreamContent.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("modifyMessageRequest", com.google.api.services.gmail.model.ModifyMessageRequest.class);
-        map.put("userId", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 

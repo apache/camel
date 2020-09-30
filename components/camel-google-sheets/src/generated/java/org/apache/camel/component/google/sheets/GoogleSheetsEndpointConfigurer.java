@@ -49,17 +49,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
-        map.put("batchClearValuesRequest", com.google.api.services.sheets.v4.model.BatchClearValuesRequest.class);
-        map.put("batchGetValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchGetValuesByDataFilterRequest.class);
-        map.put("batchUpdateSpreadsheetRequest", com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest.class);
-        map.put("batchUpdateValuesByDataFilterRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesByDataFilterRequest.class);
-        map.put("batchUpdateValuesRequest", com.google.api.services.sheets.v4.model.BatchUpdateValuesRequest.class);
-        map.put("clearValuesRequest", com.google.api.services.sheets.v4.model.ClearValuesRequest.class);
-        map.put("content", com.google.api.services.sheets.v4.model.BatchClearValuesByDataFilterRequest.class);
-        map.put("getSpreadsheetByDataFilterRequest", com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest.class);
-        map.put("range", java.lang.String.class);
-        map.put("spreadsheetId", java.lang.String.class);
-        map.put("values", com.google.api.services.sheets.v4.model.ValueRange.class);
         ALL_OPTIONS = map;
     }
 

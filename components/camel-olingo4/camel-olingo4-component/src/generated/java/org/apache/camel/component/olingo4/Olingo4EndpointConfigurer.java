@@ -54,12 +54,6 @@ public class Olingo4EndpointConfigurer extends PropertyConfigurerSupport impleme
         map.put("timeUnit", java.util.concurrent.TimeUnit.class);
         map.put("useFixedDelay", boolean.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("data", java.lang.Object.class);
-        map.put("edm", org.apache.olingo.commons.api.edm.Edm.class);
-        map.put("endpointHttpHeaders", java.util.Map.class);
-        map.put("queryParams", java.util.Map.class);
-        map.put("resourcePath", java.lang.String.class);
-        map.put("responseHandler", org.apache.camel.component.olingo4.api.Olingo4ResponseHandler.class);
         ALL_OPTIONS = map;
     }
 
