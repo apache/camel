@@ -29,7 +29,7 @@ import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StsGetFederartionTokenLocalstackTest extends Aws2StsBaseTest {
+public class StsGetFederationTokenLocalstackTest extends Aws2StsBaseTest {
 
     @EndpointInject
     private ProducerTemplate template;
