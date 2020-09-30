@@ -15,6 +15,18 @@ import org.apache.camel.component.zendesk.ZendeskConfiguration;
 @SuppressWarnings("unchecked")
 public class ZendeskConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("MethodName", org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class);
+        map.put("OauthToken", java.lang.String.class);
+        map.put("Password", java.lang.String.class);
+        map.put("ServerUrl", java.lang.String.class);
+        map.put("Token", java.lang.String.class);
+        map.put("Username", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.zendesk.ZendeskConfiguration target = (org.apache.camel.component.zendesk.ZendeskConfiguration) obj;
@@ -37,14 +49,7 @@ public class ZendeskConfigurationConfigurer extends org.apache.camel.support.com
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("MethodName", org.apache.camel.component.zendesk.internal.ZendeskApiMethod.class);
-        answer.put("OauthToken", java.lang.String.class);
-        answer.put("Password", java.lang.String.class);
-        answer.put("ServerUrl", java.lang.String.class);
-        answer.put("Token", java.lang.String.class);
-        answer.put("Username", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

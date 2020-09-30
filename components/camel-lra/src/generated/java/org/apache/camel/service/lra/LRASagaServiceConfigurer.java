@@ -15,6 +15,17 @@ import org.apache.camel.service.lra.LRASagaService;
 @SuppressWarnings("unchecked")
 public class LRASagaServiceConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CamelContext", org.apache.camel.CamelContext.class);
+        map.put("CoordinatorContextPath", java.lang.String.class);
+        map.put("CoordinatorUrl", java.lang.String.class);
+        map.put("LocalParticipantContextPath", java.lang.String.class);
+        map.put("LocalParticipantUrl", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.service.lra.LRASagaService target = (org.apache.camel.service.lra.LRASagaService) obj;
@@ -35,13 +46,7 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("CamelContext", org.apache.camel.CamelContext.class);
-        answer.put("CoordinatorContextPath", java.lang.String.class);
-        answer.put("CoordinatorUrl", java.lang.String.class);
-        answer.put("LocalParticipantContextPath", java.lang.String.class);
-        answer.put("LocalParticipantUrl", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

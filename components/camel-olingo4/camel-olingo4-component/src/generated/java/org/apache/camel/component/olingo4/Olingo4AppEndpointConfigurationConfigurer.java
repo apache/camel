@@ -15,6 +15,32 @@ import org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.olingo4.internal.Olingo4ApiName.class);
+        map.put("ConnectTimeout", int.class);
+        map.put("ContentType", java.lang.String.class);
+        map.put("Data", java.lang.Object.class);
+        map.put("Edm", org.apache.olingo.commons.api.edm.Edm.class);
+        map.put("EndpointHttpHeaders", java.util.Map.class);
+        map.put("FilterAlreadySeen", boolean.class);
+        map.put("HttpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
+        map.put("HttpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
+        map.put("HttpHeaders", java.util.Map.class);
+        map.put("KeyPredicate", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("Proxy", org.apache.http.HttpHost.class);
+        map.put("QueryParams", java.util.Map.class);
+        map.put("ResourcePath", java.lang.String.class);
+        map.put("ResponseHandler", org.apache.camel.component.olingo4.api.Olingo4ResponseHandler.class);
+        map.put("ServiceUri", java.lang.String.class);
+        map.put("SocketTimeout", int.class);
+        map.put("SplitResult", boolean.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration target = (org.apache.camel.component.olingo4.Olingo4AppEndpointConfiguration) obj;
@@ -65,28 +91,7 @@ public class Olingo4AppEndpointConfigurationConfigurer extends org.apache.camel.
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.olingo4.internal.Olingo4ApiName.class);
-        answer.put("ConnectTimeout", int.class);
-        answer.put("ContentType", java.lang.String.class);
-        answer.put("Data", java.lang.Object.class);
-        answer.put("Edm", org.apache.olingo.commons.api.edm.Edm.class);
-        answer.put("EndpointHttpHeaders", java.util.Map.class);
-        answer.put("FilterAlreadySeen", boolean.class);
-        answer.put("HttpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
-        answer.put("HttpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
-        answer.put("HttpHeaders", java.util.Map.class);
-        answer.put("KeyPredicate", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("Proxy", org.apache.http.HttpHost.class);
-        answer.put("QueryParams", java.util.Map.class);
-        answer.put("ResourcePath", java.lang.String.class);
-        answer.put("ResponseHandler", org.apache.camel.component.olingo4.api.Olingo4ResponseHandler.class);
-        answer.put("ServiceUri", java.lang.String.class);
-        answer.put("SocketTimeout", int.class);
-        answer.put("SplitResult", boolean.class);
-        answer.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

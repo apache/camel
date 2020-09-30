@@ -15,6 +15,22 @@ import org.apache.camel.component.twilio.AddressEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class AddressEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("City", java.lang.String.class);
+        map.put("CustomerName", java.lang.String.class);
+        map.put("IsoCountry", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("PostalCode", java.lang.String.class);
+        map.put("Region", java.lang.String.class);
+        map.put("Street", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.AddressEndpointConfiguration target = (org.apache.camel.component.twilio.AddressEndpointConfiguration) obj;
@@ -45,18 +61,7 @@ public class AddressEndpointConfigurationConfigurer extends org.apache.camel.sup
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("City", java.lang.String.class);
-        answer.put("CustomerName", java.lang.String.class);
-        answer.put("IsoCountry", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("PostalCode", java.lang.String.class);
-        answer.put("Region", java.lang.String.class);
-        answer.put("Street", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,16 @@ import org.apache.camel.component.twilio.AvailablePhoneNumberCountryLocalEndpoin
 @SuppressWarnings("unchecked")
 public class AvailablePhoneNumberCountryLocalEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathCountryCode", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.AvailablePhoneNumberCountryLocalEndpointConfiguration target = (org.apache.camel.component.twilio.AvailablePhoneNumberCountryLocalEndpointConfiguration) obj;
@@ -33,12 +43,7 @@ public class AvailablePhoneNumberCountryLocalEndpointConfigurationConfigurer ext
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathCountryCode", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

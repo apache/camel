@@ -15,6 +15,28 @@ import org.apache.camel.component.braintree.PaymentMethodNonceGatewayEndpointCon
 @SuppressWarnings("unchecked")
 public class PaymentMethodNonceGatewayEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
+        map.put("Environment", java.lang.String.class);
+        map.put("HttpLogLevel", java.lang.String.class);
+        map.put("HttpLogName", java.lang.String.class);
+        map.put("HttpReadTimeout", java.lang.Integer.class);
+        map.put("LogHandlerEnabled", boolean.class);
+        map.put("MerchantId", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PaymentMethodNonce", java.lang.String.class);
+        map.put("PaymentMethodToken", java.lang.String.class);
+        map.put("PrivateKey", java.lang.String.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
+        map.put("PublicKey", java.lang.String.class);
+        map.put("Request", com.braintreegateway.PaymentMethodNonceRequest.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.braintree.PaymentMethodNonceGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.PaymentMethodNonceGatewayEndpointConfiguration) obj;
@@ -57,24 +79,7 @@ public class PaymentMethodNonceGatewayEndpointConfigurationConfigurer extends or
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
-        answer.put("Environment", java.lang.String.class);
-        answer.put("HttpLogLevel", java.lang.String.class);
-        answer.put("HttpLogName", java.lang.String.class);
-        answer.put("HttpReadTimeout", java.lang.Integer.class);
-        answer.put("LogHandlerEnabled", boolean.class);
-        answer.put("MerchantId", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PaymentMethodNonce", java.lang.String.class);
-        answer.put("PaymentMethodToken", java.lang.String.class);
-        answer.put("PrivateKey", java.lang.String.class);
-        answer.put("ProxyHost", java.lang.String.class);
-        answer.put("ProxyPort", java.lang.Integer.class);
-        answer.put("PublicKey", java.lang.String.class);
-        answer.put("Request", com.braintreegateway.PaymentMethodNonceRequest.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

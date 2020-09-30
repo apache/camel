@@ -15,6 +15,31 @@ import org.apache.camel.component.box.BoxSearchManagerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class BoxSearchManagerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
+        map.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
+        map.put("AuthenticationType", java.lang.String.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        map.put("EnterpriseId", java.lang.String.class);
+        map.put("FolderId", java.lang.String.class);
+        map.put("HttpParams", java.util.Map.class);
+        map.put("MaxCacheEntries", int.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PrivateKeyFile", java.lang.String.class);
+        map.put("PrivateKeyPassword", java.lang.String.class);
+        map.put("PublicKeyId", java.lang.String.class);
+        map.put("Query", java.lang.String.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("UserId", java.lang.String.class);
+        map.put("UserName", java.lang.String.class);
+        map.put("UserPassword", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxSearchManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxSearchManagerEndpointConfiguration) obj;
@@ -63,27 +88,7 @@ public class BoxSearchManagerEndpointConfigurationConfigurer extends org.apache.
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        answer.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
-        answer.put("AuthenticationType", java.lang.String.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        answer.put("EnterpriseId", java.lang.String.class);
-        answer.put("FolderId", java.lang.String.class);
-        answer.put("HttpParams", java.util.Map.class);
-        answer.put("MaxCacheEntries", int.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PrivateKeyFile", java.lang.String.class);
-        answer.put("PrivateKeyPassword", java.lang.String.class);
-        answer.put("PublicKeyId", java.lang.String.class);
-        answer.put("Query", java.lang.String.class);
-        answer.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("UserId", java.lang.String.class);
-        answer.put("UserName", java.lang.String.class);
-        answer.put("UserPassword", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

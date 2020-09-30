@@ -15,6 +15,21 @@ import org.apache.camel.component.twilio.MessageEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class MessageEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
+        map.put("Body", java.lang.String.class);
+        map.put("From", com.twilio.type.PhoneNumber.class);
+        map.put("MediaUrl", java.util.List.class);
+        map.put("MessagingServiceSid", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PathAccountSid", java.lang.String.class);
+        map.put("PathSid", java.lang.String.class);
+        map.put("To", com.twilio.type.PhoneNumber.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.twilio.MessageEndpointConfiguration target = (org.apache.camel.component.twilio.MessageEndpointConfiguration) obj;
@@ -43,17 +58,7 @@ public class MessageEndpointConfigurationConfigurer extends org.apache.camel.sup
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        answer.put("Body", java.lang.String.class);
-        answer.put("From", com.twilio.type.PhoneNumber.class);
-        answer.put("MediaUrl", java.util.List.class);
-        answer.put("MessagingServiceSid", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PathAccountSid", java.lang.String.class);
-        answer.put("PathSid", java.lang.String.class);
-        answer.put("To", com.twilio.type.PhoneNumber.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

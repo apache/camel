@@ -15,6 +15,33 @@ import org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
+        map.put("After", java.util.Date.class);
+        map.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
+        map.put("AuthenticationType", java.lang.String.class);
+        map.put("Before", java.util.Date.class);
+        map.put("ClientId", java.lang.String.class);
+        map.put("ClientSecret", java.lang.String.class);
+        map.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
+        map.put("EnterpriseId", java.lang.String.class);
+        map.put("HttpParams", java.util.Map.class);
+        map.put("MaxCacheEntries", int.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("Position", java.lang.String.class);
+        map.put("PrivateKeyFile", java.lang.String.class);
+        map.put("PrivateKeyPassword", java.lang.String.class);
+        map.put("PublicKeyId", java.lang.String.class);
+        map.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
+        map.put("Types", com.box.sdk.BoxEvent.Type[].class);
+        map.put("UserId", java.lang.String.class);
+        map.put("UserName", java.lang.String.class);
+        map.put("UserPassword", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration target = (org.apache.camel.component.box.BoxEventLogsManagerEndpointConfiguration) obj;
@@ -67,29 +94,7 @@ public class BoxEventLogsManagerEndpointConfigurationConfigurer extends org.apac
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessTokenCache", com.box.sdk.IAccessTokenCache.class);
-        answer.put("After", java.util.Date.class);
-        answer.put("ApiName", org.apache.camel.component.box.internal.BoxApiName.class);
-        answer.put("AuthenticationType", java.lang.String.class);
-        answer.put("Before", java.util.Date.class);
-        answer.put("ClientId", java.lang.String.class);
-        answer.put("ClientSecret", java.lang.String.class);
-        answer.put("EncryptionAlgorithm", com.box.sdk.EncryptionAlgorithm.class);
-        answer.put("EnterpriseId", java.lang.String.class);
-        answer.put("HttpParams", java.util.Map.class);
-        answer.put("MaxCacheEntries", int.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("Position", java.lang.String.class);
-        answer.put("PrivateKeyFile", java.lang.String.class);
-        answer.put("PrivateKeyPassword", java.lang.String.class);
-        answer.put("PublicKeyId", java.lang.String.class);
-        answer.put("SslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        answer.put("Types", com.box.sdk.BoxEvent.Type[].class);
-        answer.put("UserId", java.lang.String.class);
-        answer.put("UserName", java.lang.String.class);
-        answer.put("UserPassword", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

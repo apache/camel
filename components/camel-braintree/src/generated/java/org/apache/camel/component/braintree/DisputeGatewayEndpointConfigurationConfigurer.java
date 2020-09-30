@@ -15,6 +15,33 @@ import org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration;
 @SuppressWarnings("unchecked")
 public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AccessToken", java.lang.String.class);
+        map.put("ApiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
+        map.put("Content", java.lang.String.class);
+        map.put("DisputeId", java.lang.String.class);
+        map.put("DocumentId", java.lang.String.class);
+        map.put("Environment", java.lang.String.class);
+        map.put("EvidenceId", java.lang.String.class);
+        map.put("FileEvidenceRequest", com.braintreegateway.FileEvidenceRequest.class);
+        map.put("HttpLogLevel", java.lang.String.class);
+        map.put("HttpLogName", java.lang.String.class);
+        map.put("HttpReadTimeout", java.lang.Integer.class);
+        map.put("Id", java.lang.String.class);
+        map.put("LogHandlerEnabled", boolean.class);
+        map.put("MerchantId", java.lang.String.class);
+        map.put("MethodName", java.lang.String.class);
+        map.put("PrivateKey", java.lang.String.class);
+        map.put("ProxyHost", java.lang.String.class);
+        map.put("ProxyPort", java.lang.Integer.class);
+        map.put("PublicKey", java.lang.String.class);
+        map.put("Query", com.braintreegateway.DisputeSearchRequest.class);
+        map.put("TextEvidenceRequest", com.braintreegateway.TextEvidenceRequest.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration target = (org.apache.camel.component.braintree.DisputeGatewayEndpointConfiguration) obj;
@@ -67,29 +94,7 @@ public class DisputeGatewayEndpointConfigurationConfigurer extends org.apache.ca
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AccessToken", java.lang.String.class);
-        answer.put("ApiName", org.apache.camel.component.braintree.internal.BraintreeApiName.class);
-        answer.put("Content", java.lang.String.class);
-        answer.put("DisputeId", java.lang.String.class);
-        answer.put("DocumentId", java.lang.String.class);
-        answer.put("Environment", java.lang.String.class);
-        answer.put("EvidenceId", java.lang.String.class);
-        answer.put("FileEvidenceRequest", com.braintreegateway.FileEvidenceRequest.class);
-        answer.put("HttpLogLevel", java.lang.String.class);
-        answer.put("HttpLogName", java.lang.String.class);
-        answer.put("HttpReadTimeout", java.lang.Integer.class);
-        answer.put("Id", java.lang.String.class);
-        answer.put("LogHandlerEnabled", boolean.class);
-        answer.put("MerchantId", java.lang.String.class);
-        answer.put("MethodName", java.lang.String.class);
-        answer.put("PrivateKey", java.lang.String.class);
-        answer.put("ProxyHost", java.lang.String.class);
-        answer.put("ProxyPort", java.lang.Integer.class);
-        answer.put("PublicKey", java.lang.String.class);
-        answer.put("Query", com.braintreegateway.DisputeSearchRequest.class);
-        answer.put("TextEvidenceRequest", com.braintreegateway.TextEvidenceRequest.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override
