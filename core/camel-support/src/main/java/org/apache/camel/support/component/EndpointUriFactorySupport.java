@@ -30,7 +30,7 @@ import org.apache.camel.util.URISupport;
  * Base class used by Camel Package Maven Plugin when it generates source code for fast endpoint uri factory via
  * {@link EndpointUriFactory}.
  */
-public abstract class EndpointUriFactorySupport implements CamelContextAware {
+public abstract class EndpointUriFactorySupport implements CamelContextAware, EndpointUriFactory {
 
     protected CamelContext camelContext;
 
