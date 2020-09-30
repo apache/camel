@@ -57,7 +57,7 @@ public class Aws2StsBaseTest extends ContainerAwareTestSupport {
     }
 
     public StsClient getStsClient() {
-    	StsClient stsClient = StsClient
+        StsClient stsClient = StsClient
                 .builder()
                 .endpointOverride(URI.create("http://" + getEventbridgeUrl()))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
