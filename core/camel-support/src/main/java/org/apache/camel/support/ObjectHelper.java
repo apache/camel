@@ -123,6 +123,14 @@ public final class ObjectHelper {
             Double leftNum = Double.valueOf((String) leftValue);
             Double rightNum = (Double) rightValue;
             return leftNum.compareTo(rightNum) == 0;
+        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
+            Boolean leftBool = Boolean.valueOf((String) leftValue);
+            Boolean rightBool = (Boolean) rightValue;
+            return leftBool.compareTo(rightBool) == 0;
+        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
+            Boolean leftBool = (Boolean) leftValue;
+            Boolean rightBool = Boolean.valueOf((String) rightValue);
+            return leftBool.compareTo(rightBool) == 0;
         }
 
         // try without type coerce
@@ -204,6 +212,14 @@ public final class ObjectHelper {
             Double leftNum = Double.valueOf((String) leftValue);
             Double rightNum = (Double) rightValue;
             return leftNum.compareTo(rightNum);
+        } else if (rightValue instanceof Boolean && leftValue instanceof String) {
+            Boolean leftBool = Boolean.valueOf((String) leftValue);
+            Boolean rightBool = (Boolean) rightValue;
+            return leftBool.compareTo(rightBool);
+        } else if (rightValue instanceof String && leftValue instanceof Boolean) {
+            Boolean leftBool = (Boolean) leftValue;
+            Boolean rightBool = Boolean.valueOf((String) rightValue);
+            return leftBool.compareTo(rightBool);
         }
 
         // if both values is numeric then compare using numeric
