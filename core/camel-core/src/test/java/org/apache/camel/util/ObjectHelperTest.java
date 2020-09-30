@@ -97,13 +97,18 @@ public class ObjectHelperTest {
         String[] array = { "foo", "bar" };
         Collection<String> collection = Arrays.asList(array);
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo"));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo"));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "FOO", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "FOO", false));
 
-        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz"));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz"));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "FOO", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "FOO", false));
+
+        assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
 
         context.stop();
     }
@@ -117,13 +122,15 @@ public class ObjectHelperTest {
         StringBuilder sb = new StringBuilder();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World"));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", false));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel"));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
 
         context.stop();
     }
@@ -137,13 +144,13 @@ public class ObjectHelperTest {
         StringBuffer sb = new StringBuffer();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World"));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel"));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
 
         context.stop();
     }
