@@ -1165,6 +1165,10 @@ public final class PropertyBindingSupport {
      * @throws Exception is thrown if error resolving the bean, or if the value is invalid.
      */
     public static Object resolveBean(CamelContext camelContext, String name, Object value) throws Exception {
+        // resolve placeholders
+        if (value != null) {
+            value = camelContext.resolvePropertyPlaceholders(value.toString());
+        }
         if (value.toString().startsWith("#class:")) {
             // its a new class to be created
             String className = value.toString().substring(7);
