@@ -15,6 +15,16 @@ import org.apache.camel.main.LraConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class LraConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("CoordinatorContextPath", java.lang.String.class);
+        map.put("CoordinatorUrl", java.lang.String.class);
+        map.put("LocalParticipantContextPath", java.lang.String.class);
+        map.put("LocalParticipantUrl", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
@@ -33,12 +43,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("CoordinatorContextPath", java.lang.String.class);
-        answer.put("CoordinatorUrl", java.lang.String.class);
-        answer.put("LocalParticipantContextPath", java.lang.String.class);
-        answer.put("LocalParticipantUrl", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

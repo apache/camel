@@ -15,6 +15,14 @@ import org.apache.camel.main.MySecondBar;
 @SuppressWarnings("unchecked")
 public class MySecondBarConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Names", java.util.List.class);
+        map.put("Number", int.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MySecondBar target = (org.apache.camel.main.MySecondBar) obj;
@@ -29,10 +37,7 @@ public class MySecondBarConfigurer extends org.apache.camel.support.component.Pr
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Names", java.util.List.class);
-        answer.put("Number", int.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

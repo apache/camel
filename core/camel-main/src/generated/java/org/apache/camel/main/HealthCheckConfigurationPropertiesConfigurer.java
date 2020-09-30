@@ -15,6 +15,16 @@ import org.apache.camel.main.HealthCheckConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Enabled", boolean.class);
+        map.put("FailureThreshold", int.class);
+        map.put("Interval", long.class);
+        map.put("Parent", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HealthCheckConfigurationProperties target = (org.apache.camel.main.HealthCheckConfigurationProperties) obj;
@@ -33,12 +43,7 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Enabled", boolean.class);
-        answer.put("FailureThreshold", int.class);
-        answer.put("Interval", long.class);
-        answer.put("Parent", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

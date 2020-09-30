@@ -15,6 +15,26 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 @SuppressWarnings("unchecked")
 public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("BulkheadEnabled", java.lang.String.class);
+        map.put("BulkheadExecutorServiceRef", java.lang.String.class);
+        map.put("BulkheadMaxConcurrentCalls", java.lang.String.class);
+        map.put("BulkheadWaitingTaskQueue", java.lang.String.class);
+        map.put("CircuitBreakerRef", java.lang.String.class);
+        map.put("Delay", java.lang.String.class);
+        map.put("FailureRatio", java.lang.String.class);
+        map.put("Id", java.lang.String.class);
+        map.put("RequestVolumeThreshold", java.lang.String.class);
+        map.put("SuccessThreshold", java.lang.String.class);
+        map.put("TimeoutDuration", java.lang.String.class);
+        map.put("TimeoutEnabled", java.lang.String.class);
+        map.put("TimeoutPoolSize", java.lang.String.class);
+        map.put("TimeoutScheduledExecutorServiceRef", java.lang.String.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.FaultToleranceConfigurationDefinition target = (org.apache.camel.model.FaultToleranceConfigurationDefinition) obj;
@@ -53,22 +73,7 @@ public class FaultToleranceConfigurationDefinitionConfigurer extends org.apache.
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("BulkheadEnabled", java.lang.String.class);
-        answer.put("BulkheadExecutorServiceRef", java.lang.String.class);
-        answer.put("BulkheadMaxConcurrentCalls", java.lang.String.class);
-        answer.put("BulkheadWaitingTaskQueue", java.lang.String.class);
-        answer.put("CircuitBreakerRef", java.lang.String.class);
-        answer.put("Delay", java.lang.String.class);
-        answer.put("FailureRatio", java.lang.String.class);
-        answer.put("Id", java.lang.String.class);
-        answer.put("RequestVolumeThreshold", java.lang.String.class);
-        answer.put("SuccessThreshold", java.lang.String.class);
-        answer.put("TimeoutDuration", java.lang.String.class);
-        answer.put("TimeoutEnabled", java.lang.String.class);
-        answer.put("TimeoutPoolSize", java.lang.String.class);
-        answer.put("TimeoutScheduledExecutorServiceRef", java.lang.String.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

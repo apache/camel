@@ -15,6 +15,17 @@ import org.apache.camel.main.HealthConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Config", java.util.Map.class);
+        map.put("ContextEnabled", java.lang.Boolean.class);
+        map.put("Enabled", java.lang.Boolean.class);
+        map.put("RegistryEnabled", java.lang.Boolean.class);
+        map.put("RoutesEnabled", java.lang.Boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.HealthConfigurationProperties target = (org.apache.camel.main.HealthConfigurationProperties) obj;
@@ -35,13 +46,7 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Config", java.util.Map.class);
-        answer.put("ContextEnabled", java.lang.Boolean.class);
-        answer.put("Enabled", java.lang.Boolean.class);
-        answer.put("RegistryEnabled", java.lang.Boolean.class);
-        answer.put("RoutesEnabled", java.lang.Boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

@@ -15,6 +15,20 @@ import org.apache.camel.main.ThreadPoolConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowCoreThreadTimeOut", java.lang.Boolean.class);
+        map.put("Config", java.util.Map.class);
+        map.put("KeepAliveTime", java.lang.Long.class);
+        map.put("MaxPoolSize", java.lang.Integer.class);
+        map.put("MaxQueueSize", java.lang.Integer.class);
+        map.put("PoolSize", java.lang.Integer.class);
+        map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
+        map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.ThreadPoolConfigurationProperties target = (org.apache.camel.main.ThreadPoolConfigurationProperties) obj;
@@ -41,16 +55,7 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AllowCoreThreadTimeOut", java.lang.Boolean.class);
-        answer.put("Config", java.util.Map.class);
-        answer.put("KeepAliveTime", java.lang.Long.class);
-        answer.put("MaxPoolSize", java.lang.Integer.class);
-        answer.put("MaxQueueSize", java.lang.Integer.class);
-        answer.put("PoolSize", java.lang.Integer.class);
-        answer.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
-        answer.put("TimeUnit", java.util.concurrent.TimeUnit.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

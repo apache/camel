@@ -15,6 +15,31 @@ import org.apache.camel.main.Resilience4jConfigurationProperties;
 @SuppressWarnings("unchecked")
 public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AutomaticTransitionFromOpenToHalfOpenEnabled", java.lang.Boolean.class);
+        map.put("BulkheadEnabled", java.lang.Boolean.class);
+        map.put("BulkheadMaxConcurrentCalls", java.lang.Integer.class);
+        map.put("BulkheadMaxWaitDuration", java.lang.Integer.class);
+        map.put("CircuitBreakerRef", java.lang.String.class);
+        map.put("ConfigRef", java.lang.String.class);
+        map.put("FailureRateThreshold", java.lang.Float.class);
+        map.put("MinimumNumberOfCalls", java.lang.Integer.class);
+        map.put("PermittedNumberOfCallsInHalfOpenState", java.lang.Integer.class);
+        map.put("SlidingWindowSize", java.lang.Integer.class);
+        map.put("SlidingWindowType", java.lang.String.class);
+        map.put("SlowCallDurationThreshold", java.lang.Integer.class);
+        map.put("SlowCallRateThreshold", java.lang.Float.class);
+        map.put("TimeoutCancelRunningFuture", java.lang.Boolean.class);
+        map.put("TimeoutDuration", java.lang.Integer.class);
+        map.put("TimeoutEnabled", java.lang.Boolean.class);
+        map.put("TimeoutExecutorServiceRef", java.lang.String.class);
+        map.put("WaitDurationInOpenState", java.lang.Integer.class);
+        map.put("WritableStackTraceEnabled", java.lang.Boolean.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.Resilience4jConfigurationProperties target = (org.apache.camel.main.Resilience4jConfigurationProperties) obj;
@@ -63,27 +88,7 @@ public class Resilience4jConfigurationPropertiesConfigurer extends org.apache.ca
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("AutomaticTransitionFromOpenToHalfOpenEnabled", java.lang.Boolean.class);
-        answer.put("BulkheadEnabled", java.lang.Boolean.class);
-        answer.put("BulkheadMaxConcurrentCalls", java.lang.Integer.class);
-        answer.put("BulkheadMaxWaitDuration", java.lang.Integer.class);
-        answer.put("CircuitBreakerRef", java.lang.String.class);
-        answer.put("ConfigRef", java.lang.String.class);
-        answer.put("FailureRateThreshold", java.lang.Float.class);
-        answer.put("MinimumNumberOfCalls", java.lang.Integer.class);
-        answer.put("PermittedNumberOfCallsInHalfOpenState", java.lang.Integer.class);
-        answer.put("SlidingWindowSize", java.lang.Integer.class);
-        answer.put("SlidingWindowType", java.lang.String.class);
-        answer.put("SlowCallDurationThreshold", java.lang.Integer.class);
-        answer.put("SlowCallRateThreshold", java.lang.Float.class);
-        answer.put("TimeoutCancelRunningFuture", java.lang.Boolean.class);
-        answer.put("TimeoutDuration", java.lang.Integer.class);
-        answer.put("TimeoutEnabled", java.lang.Boolean.class);
-        answer.put("TimeoutExecutorServiceRef", java.lang.String.class);
-        answer.put("WaitDurationInOpenState", java.lang.Integer.class);
-        answer.put("WritableStackTraceEnabled", java.lang.Boolean.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override

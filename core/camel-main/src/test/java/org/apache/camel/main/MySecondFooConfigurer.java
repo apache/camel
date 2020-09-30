@@ -15,6 +15,13 @@ import org.apache.camel.main.MySecondFoo;
 @SuppressWarnings("unchecked")
 public class MySecondFooConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
+    private static final Map<String, Object> ALL_OPTIONS;
+    static {
+        Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("Bars", java.util.List.class);
+        ALL_OPTIONS = map;
+    }
+
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.MySecondFoo target = (org.apache.camel.main.MySecondFoo) obj;
@@ -27,9 +34,7 @@ public class MySecondFooConfigurer extends org.apache.camel.support.component.Pr
 
     @Override
     public Map<String, Object> getAllOptions(Object target) {
-        Map<String, Object> answer = new CaseInsensitiveMap();
-        answer.put("Bars", java.util.List.class);
-        return answer;
+        return ALL_OPTIONS;
     }
 
     @Override
