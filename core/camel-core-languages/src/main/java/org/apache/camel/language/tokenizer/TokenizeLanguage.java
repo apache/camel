@@ -160,16 +160,17 @@ public class TokenizeLanguage extends LanguageSupport {
     @Override
     public Expression createExpression(Map<String, Object> properties) {
         TokenizeLanguage answer = new TokenizeLanguage();
-        answer.setInheritNamespaceTagName(property(String.class, properties, "inheritNamespaceTagName", null));
-        answer.setToken(property(String.class, properties, "token", null));
-        answer.setEndToken(property(String.class, properties, "endToken", null));
-        answer.setHeaderName(property(String.class, properties, "headerName", null));
-        answer.setRegex(property(boolean.class, properties, "regex", false));
-        answer.setXml(property(boolean.class, properties, "xml", false));
-        answer.setIncludeTokens(property(boolean.class, properties, "includeTokens", false));
-        answer.setGroup(property(String.class, properties, "group", null));
-        answer.setGroupDelimiter(property(String.class, properties, "groupDelimiter", null));
-        answer.setSkipFirst(property(boolean.class, properties, "skipFirst", false));
+        answer.setInheritNamespaceTagName(
+                property(String.class, properties, "inheritNamespaceTagName", inheritNamespaceTagName));
+        answer.setToken(property(String.class, properties, "token", token));
+        answer.setEndToken(property(String.class, properties, "endToken", endToken));
+        answer.setHeaderName(property(String.class, properties, "headerName", headerName));
+        answer.setRegex(property(boolean.class, properties, "regex", regex));
+        answer.setXml(property(boolean.class, properties, "xml", xml));
+        answer.setIncludeTokens(property(boolean.class, properties, "includeTokens", includeTokens));
+        answer.setGroup(property(String.class, properties, "group", group));
+        answer.setGroupDelimiter(property(String.class, properties, "groupDelimiter", groupDelimiter));
+        answer.setSkipFirst(property(boolean.class, properties, "skipFirst", skipFirst));
         return answer.createExpression();
     }
 

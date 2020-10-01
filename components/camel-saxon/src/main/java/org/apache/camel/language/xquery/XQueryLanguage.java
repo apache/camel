@@ -78,7 +78,7 @@ public class XQueryLanguage extends LanguageSupport {
         if (clazz != null) {
             setResultType(clazz);
         }
-        setHeaderName(property(String.class, properties, "headerName", null));
+        setHeaderName(property(String.class, properties, "headerName", headerName));
 
         XQueryBuilder builder = XQueryBuilder.xquery(expression);
         configureBuilder(builder);
