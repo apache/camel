@@ -396,7 +396,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                             <dependency>
                                 <groupId>org.apache.ant</groupId>
                                 <artifactId>ant</artifactId>
-                                <version>1.10.1</version>
+                                <version>1.10.9</version>
                             </dependency>
                         </dependencies>
                     </plugin>
