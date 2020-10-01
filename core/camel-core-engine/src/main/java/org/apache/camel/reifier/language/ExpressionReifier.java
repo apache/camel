@@ -61,7 +61,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     static {
         Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
-                = new LinkedHashMap<>();
+                = new LinkedHashMap<>(18);
         map.put(ConstantExpression.class, ExpressionReifier::new);
         map.put(ExchangePropertyExpression.class, ExpressionReifier::new);
         map.put(ExpressionDefinition.class, ExpressionReifier::new);
