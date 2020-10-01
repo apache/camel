@@ -16,15 +16,13 @@
  */
 package org.apache.camel.language.tokenizer;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  * <tt>token</tt> and <tt>endToken</tt>. And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 @org.apache.camel.spi.annotations.Language("tokenize")
-public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigurer {
+public class TokenizeLanguage extends LanguageSupport {
 
     private String token;
     private String endToken;
@@ -90,53 +88,6 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
         return language.createExpression((String) null);
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "token":
-                setToken(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "endtoken":
-            case "endToken":
-                setEndToken(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "inheritnamespacetagname":
-            case "inheritNamespaceTagName":
-                setInheritNamespaceTagName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "regex":
-                setRegex(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
-                return true;
-            case "xml":
-                setXml(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
-                return true;
-            case "includetokens":
-            case "includeTokens":
-                setIncludeTokens(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
-                return true;
-            case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "groupdelimiter":
-            case "groupDelimiter":
-                setGroupDelimiter(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "skipfirst":
-            case "skipFirst":
-                setSkipFirst(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
-                return true;
-            default:
-                return false;
-        }
     }
 
     @Override
@@ -199,6 +150,27 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
             this.token = expression;
         }
         return createExpression();
+    }
+
+    @Override
+    public Predicate createPredicate(Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    }
+
+    @Override
+    public Expression createExpression(Map<String, Object> properties) {
+        TokenizeLanguage answer = new TokenizeLanguage();
+        answer.setInheritNamespaceTagName(property(String.class, properties, "inheritNamespaceTagName", null));
+        answer.setToken(property(String.class, properties, "token", null));
+        answer.setEndToken(property(String.class, properties, "endToken", null));
+        answer.setHeaderName(property(String.class, properties, "headerName", null));
+        answer.setRegex(property(boolean.class, properties, "regex", false));
+        answer.setXml(property(boolean.class, properties, "xml", false));
+        answer.setIncludeTokens(property(boolean.class, properties, "includeTokens", false));
+        answer.setGroup(property(String.class, properties, "group", null));
+        answer.setGroupDelimiter(property(String.class, properties, "groupDelimiter", null));
+        answer.setSkipFirst(property(boolean.class, properties, "skipFirst", false));
+        return answer.createExpression();
     }
 
     public String getToken() {
@@ -281,8 +253,4 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         this.skipFirst = skipFirst;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
 }

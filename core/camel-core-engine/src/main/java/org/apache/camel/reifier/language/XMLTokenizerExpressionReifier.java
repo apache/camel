@@ -24,28 +24,42 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XMLTokenizerExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenizerExpression> {
-
-    // TODO: Update me
 
     public XMLTokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XMLTokenizerExpression) definition);
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        configureNamespaceAware(expression);
-        super.configureExpression(expression);
+    public Predicate createPredicate() {
+        Expression exp = createExpression();
+        return ExpressionToPredicateAdapter.toPredicate(exp);
+    }
+
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createExpression(createProperties());
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createPredicate(createProperties());
     }
 
     @Override
     protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
         configureNamespaceAware(predicate);
-        super.configurePredicate(predicate);
+    }
+
+    @Override
+    protected void configureExpression(Expression expression) {
+        configureNamespaceAware(expression);
     }
 
     protected void configureNamespaceAware(Object builder) {
@@ -55,12 +69,13 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
         }
     }
 
-    protected void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(3);
         properties.put("headerName", definition.getHeaderName());
         properties.put("mode", definition.getMode());
         properties.put("group", definition.getGroup());
-        setProperties(target, properties);
+        properties.put("path", definition.getExpression());
+        return properties;
     }
 
 }
