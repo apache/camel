@@ -69,10 +69,10 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         Map<String, Object> properties = new HashMap<>(9);
         properties.put("expression", expression);
         properties.put("documentType", definition.getDocumentType());
-        properties.put("XPathTest", asQName(definition.getResultTypeName()));
+        properties.put("resultQName", asQName(definition.getResultTypeName()));
         properties.put("resultType", definition.getResultType());
         properties.put("useSaxon", definition.getSaxon());
-        properties.put("xPathFactory", definition.getXPathFactory());
+        properties.put("xpathFactory", definition.getXPathFactory());
         properties.put("objectModelUri", definition.getObjectModel());
         properties.put("threadSafety", definition.getThreadSafety());
         properties.put("logNamespaces", definition.getLogNamespaces());
