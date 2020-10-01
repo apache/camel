@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
@@ -35,9 +37,10 @@ import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.Method;
-import org.apache.camel.component.platform.http.spi.UploadAttacher;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
@@ -58,7 +61,6 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
     private final List<Handler<RoutingContext>> handlers;
-    private final UploadAttacher uploadAttacher;
     private final String fileNameExtWhitelist;
 
     private Route route;
@@ -66,12 +68,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     public VertxPlatformHttpConsumer(
                                      PlatformHttpEndpoint endpoint,
                                      Processor processor,
-                                     List<Handler<RoutingContext>> handlers,
-                                     UploadAttacher uploadAttacher) {
+                                     List<Handler<RoutingContext>> handlers) {
         super(endpoint, processor);
 
         this.handlers = handlers;
-        this.uploadAttacher = uploadAttacher;
         this.fileNameExtWhitelist
                 = endpoint.getFileNameExtWhitelist() == null ? null : endpoint.getFileNameExtWhitelist().toLowerCase(Locale.US);
     }
@@ -185,21 +185,23 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 },
                 false,
                 result -> {
+                    Throwable failure = null;
                     try {
                         if (result.succeeded()) {
                             try {
                                 writeResponse(ctx, exchange, getEndpoint().getHeaderFilterStrategy());
                             } catch (Exception e) {
-                                getExceptionHandler().handleException(
-                                        "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                        e);
+                                failure = e;
                             }
                         } else {
+                            failure = result.cause();
+                        }
+
+                        if (failure != null) {
                             getExceptionHandler().handleException(
                                     "Failed handling platform-http endpoint " + getEndpoint().getPath(),
-                                    result.cause());
-
-                            ctx.fail(result.cause());
+                                    failure);
+                            ctx.fail(failure);
                         }
                     } finally {
                         doneUoW(exchange);
@@ -283,7 +285,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
             }
             if (accepted) {
                 final File localFile = new File(upload.uploadedFileName());
-                uploadAttacher.attachUpload(localFile, fileName, message);
+                final AttachmentMessage attachmentMessage = message.getExchange().getMessage(AttachmentMessage.class);
+                attachmentMessage.addAttachment(fileName, new DataHandler(new CamelFileDataSource(localFile, fileName)));
             } else {
                 LOGGER.debug(
                         "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
