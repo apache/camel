@@ -44,7 +44,6 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     private boolean allowEasyPredicate = true;
     private boolean writeAsString;
     private String headerName;
-    private String option;
     private Option[] options;
 
     public JsonPathExpression(String expression) {

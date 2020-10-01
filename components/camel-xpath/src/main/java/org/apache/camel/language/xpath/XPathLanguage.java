@@ -81,12 +81,12 @@ public class XPathLanguage extends LanguageSupport {
         if (qname != null) {
             setResultQName(qname);
         }
-        setUseSaxon(property(Boolean.class, properties, "useSaxon", null));
-        setObjectModelUri(property(String.class, properties, "objectModelUri", null));
-        setThreadSafety(property(Boolean.class, properties, "threadSafety", null));
-        setLogNamespaces(property(Boolean.class, properties, "logNamespaces", null));
-        setHeaderName(property(String.class, properties, "headerName", null));
-        setXpathFactory(property(XPathFactory.class, properties, "xpathFactory", null));
+        setUseSaxon(property(Boolean.class, properties, "useSaxon", useSaxon));
+        setObjectModelUri(property(String.class, properties, "objectModelUri", objectModelUri));
+        setThreadSafety(property(Boolean.class, properties, "threadSafety", threadSafety));
+        setLogNamespaces(property(Boolean.class, properties, "logNamespaces", logNamespaces));
+        setHeaderName(property(String.class, properties, "headerName", headerName));
+        setXpathFactory(property(XPathFactory.class, properties, "xpathFactory", xpathFactory));
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
         configureBuilder(builder);
