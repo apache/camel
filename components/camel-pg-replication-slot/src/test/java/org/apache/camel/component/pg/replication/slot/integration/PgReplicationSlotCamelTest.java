@@ -22,42 +22,17 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.PropertyInject;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PgReplicationSlotIntegrationTest extends CamelTestSupport {
+public class PgReplicationSlotCamelTest extends PgReplicationTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
-
-    @EndpointInject("pg-replication-slot://{{host}}:{{port}}/{{database}}/camel_test_slot:test_decoding?"
-                    + "user={{username}}&password={{password}}&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false")
-    private Endpoint pgReplicationSlotEndpoint;
-
-    @PropertyInject("host")
-    private String host;
-
-    @PropertyInject("port")
-    private String port;
-
-    @PropertyInject("database")
-    private String database;
-
-    @PropertyInject("username")
-    private String username;
-
-    @PropertyInject("password")
-    private String password;
-
     private Connection connection;
 
     @Override
@@ -65,10 +40,10 @@ public class PgReplicationSlotIntegrationTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        String url = String.format("jdbc:postgresql://%s:%s/%s", this.host, this.port, this.database);
+        String url = String.format("jdbc:postgresql://%s/camel", getAuthority());
         Properties props = new Properties();
-        props.setProperty("user", username);
-        props.setProperty("password", password);
+        props.setProperty("user", "camel");
+        props.setProperty("password", "camel");
 
         this.connection = DriverManager.getConnection(url, props);
         try (Statement statement = this.connection.createStatement()) {
@@ -79,28 +54,21 @@ public class PgReplicationSlotIntegrationTest extends CamelTestSupport {
     @Override
     @AfterEach
     public void tearDown() throws Exception {
-        super.tearDown();
-
-        try (Statement statement = this.connection.createStatement()) {
-            statement.execute("DROP TABLE IF EXISTS camel_test_table;");
-            statement.execute("SELECT pg_drop_replication_slot('camel_test_slot');");
-        }
         this.connection.close();
+        super.tearDown();
     }
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getPropertiesComponent().setLocation("classpath:/test-options.properties");
-        return camelContext;
-    }
-
-    @Override
-    protected RoutesBuilder createRouteBuilder() {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from(pgReplicationSlotEndpoint).to(mockEndpoint);
+            public void configure() {
+
+                String uriFormat = "pg-replication-slot://%s/camel/camel_test_slot:test_decoding?user=%s" +
+                                   "&password=%s&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
+
+                String uri = String.format(uriFormat, getAuthority(), getUser(), getPassword());
+                from(uri).to(mockEndpoint);
             }
         };
     }
