@@ -1071,7 +1071,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Stats resultStats = exchange.getIn().getBody(Stats.class);
         assertEquals(2L, resultStats.getTotalNumberOfEntries());
     }
-    
+
     @Test
     public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptions() throws Exception {
         template.send("direct:explicitput", new Processor() {
@@ -1084,7 +1084,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Object value = currentCache().get("a");
         assertEquals("3", value.toString());
     }
-    
+
     @Test
     public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptionsHeaderHavePriorities() throws Exception {
         template.send("direct:explicitput", new Processor() {
@@ -1096,8 +1096,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
             }
         });
 
-        Object value = currentCache().get("a");
-        assertEquals("3", value.toString());
+        Object value = currentCache().get(KEY_ONE);
+        assertEquals(VALUE_ONE, value.toString());
     }
 
     @Override
