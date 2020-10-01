@@ -101,10 +101,11 @@ public class GooglePubsubProducer extends DefaultProducer {
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
         Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
         if (attributes != null) {
-            for (Map.Entry<String, String> attribute : attributes.entrySet())
+            for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 if (!attribute.getKey().startsWith(RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX)) {
                     messageBuilder.putAttributes(attribute.getKey(), attribute.getValue());
                 }
+            }
         }
         PubsubMessage message = messageBuilder.build();
 

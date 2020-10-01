@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -35,10 +39,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class PubsubTestSupport extends ContainerAwareTestSupport {
 

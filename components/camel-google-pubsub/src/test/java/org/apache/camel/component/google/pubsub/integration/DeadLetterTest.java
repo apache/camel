@@ -16,8 +16,16 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import com.google.pubsub.v1.*;
-import org.apache.camel.*;
+import com.google.pubsub.v1.DeadLetterPolicy;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.Topic;
+import com.google.pubsub.v1.TopicName;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,6 +40,7 @@ public class DeadLetterTest extends PubsubTestSupport {
     private static final String OUTPUT_SUBSCRIPTION_NAME = "camel.output-topic-subscription";
     private static final String DEAD_LETTER_TOPIC_NAME = "camel.dead-letter-topic";
     private static final String DEAD_LETTER_SUBSCRIPTION_NAME = "camel.dead-letter-topic-subscription";
+    private static int count = 1;
 
     @EndpointInject("google-pubsub:{{project.id}}:" + INPUT_SUBSCRIPTION_NAME)
     private Endpoint inputPubSubSubscription;
@@ -57,8 +66,6 @@ public class DeadLetterTest extends PubsubTestSupport {
     @Produce("google-pubsub:{{project.id}}:" + INPUT_TOPIC_NAME)
     private ProducerTemplate producer;
 
-    private static int COUNT = 1;
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -67,8 +74,8 @@ public class DeadLetterTest extends PubsubTestSupport {
                         .routeId("receiver")
                         .to(inputMock)
                         .process(e -> {
-                            if (COUNT < 3) {
-                                COUNT = ++COUNT;
+                            if (count < 3) {
+                                count = ++count;
                                 throw new Exception("Redeliver please");
                             }
                         })
@@ -121,11 +128,10 @@ public class DeadLetterTest extends PubsubTestSupport {
     }
 
     /**
-     * Expecting the route to, on the third attempt, send the message to PubSub without the
-     * "googclient_deliveryattempt" attribute. This attribute is set when a message gets redelivered,
-     * but it is not allowed to be set when sending.
-     * The the PubSub emulator currently doesn't support dead letter topics so this test is only representative
-     * when run against the Google Cloud PubSub.
+     * Expecting the route to, on the third attempt, send the message to PubSub without the "googclient_deliveryattempt"
+     * attribute. This attribute is set when a message gets redelivered, but it is not allowed to be set when sending.
+     * The the PubSub emulator currently doesn't support dead letter topics so this test is only representative when run
+     * against the Google Cloud PubSub.
      *
      * @throws InterruptedException
      */
