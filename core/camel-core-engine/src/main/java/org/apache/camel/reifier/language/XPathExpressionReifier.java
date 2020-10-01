@@ -19,6 +19,7 @@ package org.apache.camel.reifier.language;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.CamelContext;
@@ -68,6 +69,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         Map<String, Object> properties = new HashMap<>(9);
         properties.put("expression", expression);
         properties.put("documentType", definition.getDocumentType());
+        properties.put("XPathTest", asQName(definition.getResultTypeName()));
         properties.put("resultType", definition.getResultType());
         properties.put("useSaxon", definition.getSaxon());
         properties.put("xPathFactory", definition.getXPathFactory());
@@ -78,16 +80,26 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         return properties;
     }
 
+    private Object asQName(String resultTypeName) {
+        if (resultTypeName == null) {
+            return null;
+        }
+        if ("NUMBER".equalsIgnoreCase(resultTypeName)) {
+            return XPathConstants.NUMBER;
+        } else if ("STRING".equalsIgnoreCase(resultTypeName)) {
+            return XPathConstants.STRING;
+        } else if ("BOOLEAN".equalsIgnoreCase(resultTypeName)) {
+            return XPathConstants.BOOLEAN;
+        } else if ("NODESET".equalsIgnoreCase(resultTypeName)) {
+            return XPathConstants.NODESET;
+        } else if ("NODE".equalsIgnoreCase(resultTypeName)) {
+            return XPathConstants.NODE;
+        }
+        return null;
+    }
+
     @Override
     protected void configureLanguage(Language language) {
-        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
-            try {
-                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
-                definition.setResultType(clazz);
-            } catch (ClassNotFoundException e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
-            }
-        }
         if (definition.getDocumentType() == null && definition.getDocumentTypeName() != null) {
             try {
                 Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getDocumentTypeName());
