@@ -19,33 +19,42 @@ package org.apache.camel.reifier.language;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.CamelContextHelper;
 
 public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
-
-    // TODO: Update me
 
     public XPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XPathExpression) definition);
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        configureNamespaceAware(expression);
-        super.configureExpression(expression);
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(createProperties(exp));
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(createProperties(exp));
     }
 
     @Override
     protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
         configureNamespaceAware(predicate);
-        super.configurePredicate(predicate);
+    }
+
+    @Override
+    protected void configureExpression(Expression expression) {
+        configureNamespaceAware(expression);
     }
 
     protected void configureNamespaceAware(Object builder) {
@@ -55,17 +64,42 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         }
     }
 
-    protected void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("documentType", or(definition.getDocumentType(), definition.getDocumentTypeName()));
-        properties.put("resultType", or(definition.getResultType(), definition.getResultTypeName()));
+    protected Map<String, Object> createProperties(String expression) {
+        Map<String, Object> properties = new HashMap<>(9);
+        properties.put("expression", expression);
+        properties.put("documentType", definition.getDocumentType());
+        properties.put("resultType", definition.getResultType());
         properties.put("useSaxon", definition.getSaxon());
-        properties.put("xPathFactory", or(definition.getXPathFactory(), asRef(definition.getFactoryRef())));
+        properties.put("xPathFactory", definition.getXPathFactory());
         properties.put("objectModelUri", definition.getObjectModel());
         properties.put("threadSafety", definition.getThreadSafety());
         properties.put("logNamespaces", definition.getLogNamespaces());
         properties.put("headerName", definition.getHeaderName());
-        setProperties(target, properties);
+        return properties;
+    }
+
+    @Override
+    protected void configureLanguage(Language language) {
+        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
+                definition.setResultType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+        if (definition.getDocumentType() == null && definition.getDocumentTypeName() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getDocumentTypeName());
+                definition.setDocumentType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
+        if (definition.getXPathFactory() == null && definition.getFactoryRef() != null) {
+            definition.setXPathFactory(
+                    CamelContextHelper.mandatoryLookupAndConvert(camelContext, definition.getFactoryRef(), XPathFactory.class));
+        }
     }
 
 }
