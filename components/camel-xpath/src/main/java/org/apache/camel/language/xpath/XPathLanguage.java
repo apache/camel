@@ -18,6 +18,7 @@ package org.apache.camel.language.xpath;
 
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
@@ -31,6 +32,7 @@ import org.apache.camel.support.LanguageSupport;
 @Language("xpath")
 public class XPathLanguage extends LanguageSupport {
     private Class<?> resultType;
+    private QName resultQName;
     private Class<?> documentType;
     private XPathFactory xpathFactory;
     private Boolean useSaxon;
@@ -75,6 +77,10 @@ public class XPathLanguage extends LanguageSupport {
         if (clazz != null) {
             setResultType(clazz);
         }
+        QName qname = property(QName.class, properties, "resultQName", null);
+        if (qname != null) {
+            setResultQName(qname);
+        }
         setUseSaxon(property(Boolean.class, properties, "useSaxon", null));
         setObjectModelUri(property(String.class, properties, "objectModelUri", null));
         setThreadSafety(property(Boolean.class, properties, "threadSafety", null));
@@ -89,6 +95,14 @@ public class XPathLanguage extends LanguageSupport {
 
     public Class<?> getResultType() {
         return resultType;
+    }
+
+    public void setResultQName(QName qName) {
+        this.resultQName = qName;
+    }
+
+    public QName getResultQName() {
+        return resultQName;
     }
 
     public void setResultType(Class<?> resultType) {
@@ -158,6 +172,9 @@ public class XPathLanguage extends LanguageSupport {
     protected void configureBuilder(XPathBuilder builder) {
         if (threadSafety != null) {
             builder.setThreadSafety(threadSafety);
+        }
+        if (resultQName != null) {
+            builder.setResultQName(resultQName);
         }
         if (resultType != null) {
             builder.setResultType(resultType);
