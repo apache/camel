@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
@@ -31,18 +33,36 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
         super(camelContext, (MethodCallExpression) definition);
     }
 
-    protected void configureLanguage(Language language) {
-        Map<String, Object> properties = new HashMap<>();
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(4);
         properties.put("bean", definition.getInstance());
         properties.put("beanType", or(definition.getBeanType(), definition.getBeanTypeName()));
         properties.put("ref", definition.getRef());
         properties.put("method", definition.getMethod());
-        setProperties(language, properties);
+        return properties;
     }
 
     @Override
-    public Predicate createPredicate() {
-        return (Predicate) createExpression();
+    protected void configureLanguage(Language language) {
+        if (definition.getBeanType() == null && definition.getBeanTypeName() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getBeanTypeName());
+                definition.setBeanType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
     }
 
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createExpression(createProperties());
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createPredicate(createProperties());
+    }
 }

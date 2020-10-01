@@ -16,13 +16,12 @@
  */
 package org.apache.camel.language.bean;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -37,70 +36,9 @@ import org.apache.camel.util.StringHelper;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements GeneratedPropertyConfigurer {
-
-    private Object bean;
-    private Class<?> beanType;
-    private String ref;
-    private String method;
+public class BeanLanguage extends LanguageSupport {
 
     public BeanLanguage() {
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "bean":
-                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value));
-                return true;
-            case "beantype":
-            case "beanType":
-                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "ref":
-                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "method":
-                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    public Object getBean() {
-        return bean;
-    }
-
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
-
-    public Class<?> getBeanType() {
-        return beanType;
-    }
-
-    public void setBeanType(Class<?> beanType) {
-        this.beanType = beanType;
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     @Override
@@ -109,16 +47,31 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        // favour using the configured options
+    public Predicate createPredicate(Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    }
+
+    @Override
+    public Expression createExpression(Map<String, Object> properties) {
+        Object bean = properties.get("bean");
+        Class<?> beanType = (Class<?>) properties.get("beanType");
+        String ref = (String) properties.get("ref");
+        String method = (String) properties.get("method");
+
         if (bean != null) {
             return new BeanExpression(bean, method);
         } else if (beanType != null) {
             return new BeanExpression(beanType, method);
         } else if (ref != null) {
             return new BeanExpression(ref, method);
+        } else {
+            throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
+    }
 
+    @Override
+    public Expression createExpression(String expression) {
+        // favour using the configured options
         String beanName = expression;
         String method = null;
 
@@ -147,8 +100,4 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
         return new BeanExpression(beanName, method);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
 }

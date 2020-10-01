@@ -1637,6 +1637,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public Language resolveLanguage(String language) {
+        LOG.debug("Resolving language: {}", language);
+
         Language answer;
         synchronized (languages) {
             // as first iteration, check if there is a language instance for the given name

@@ -16,16 +16,15 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.spi.Language;
 
 public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression> {
 
@@ -68,15 +67,29 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
     protected SimpleBuilder createBuilder() {
         String exp = parseString(definition.getExpression());
         // should be true by default
-        boolean isTrim = parseBoolean(definition.getTrim(), true);
+        boolean isTrim = true;
+        if (definition.getTrim() != null) {
+            isTrim = parseBoolean(definition.getTrim());
+        }
         if (exp != null && isTrim) {
             exp = exp.trim();
         }
         SimpleBuilder answer = new SimpleBuilder(exp);
-        Map<String, Object> props = new HashMap<>();
-        props.put("resultType", or(definition.getResultType(), definition.getResultTypeName()));
-        setProperties(answer, props);
+        answer.setResultType(definition.getResultType());
         return answer;
+    }
+
+    @Override
+    protected void configureLanguage(Language language) {
+        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
+            Class<?> clazz;
+            try {
+                clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+            definition.setResultType(clazz);
+        }
     }
 
 }

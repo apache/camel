@@ -28,6 +28,8 @@ import org.apache.camel.spi.NamespaceAware;
 
 public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression> {
 
+    // TODO: Update me
+
     public XQueryExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (XQueryExpression) definition);
     }

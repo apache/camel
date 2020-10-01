@@ -61,7 +61,7 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
         language.setRegex(regex);
-        return language.createExpression(null);
+        return language.createExpression((String) null);
     }
 
     public static Expression tokenize(String headerName, String token) {
@@ -73,7 +73,7 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         language.setHeaderName(headerName);
         language.setToken(token);
         language.setRegex(regex);
-        return language.createExpression(null);
+        return language.createExpression((String) null);
     }
 
     public static Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
@@ -81,7 +81,7 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         language.setToken(startToken);
         language.setEndToken(endToken);
         language.setIncludeTokens(includeTokens);
-        return language.createExpression(null);
+        return language.createExpression((String) null);
     }
 
     public static Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
@@ -89,7 +89,7 @@ public class TokenizeLanguage implements Language, IsSingleton, PropertyConfigur
         language.setToken(tagName);
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
-        return language.createExpression(null);
+        return language.createExpression((String) null);
     }
 
     @Override
