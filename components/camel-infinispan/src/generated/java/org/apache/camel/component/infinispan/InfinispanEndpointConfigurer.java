@@ -29,8 +29,12 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("sync", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
+        map.put("defaultValue", java.lang.Object.class);
+        map.put("key", java.lang.Object.class);
         map.put("lazyStartProducer", boolean.class);
+        map.put("oldValue", java.lang.Object.class);
         map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
+        map.put("value", java.lang.Object.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
         map.put("cacheContainerConfiguration", java.lang.Object.class);
@@ -64,6 +68,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "customlistener":
         case "customListener": target.getConfiguration().setCustomListener(property(camelContext, org.apache.camel.component.infinispan.InfinispanCustomListener.class, value)); return true;
+        case "defaultvalue":
+        case "defaultValue": target.getConfiguration().setDefaultValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "eventtypes":
         case "eventTypes": target.getConfiguration().setEventTypes(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -72,8 +78,11 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "flags": target.getConfiguration().setFlags(property(camelContext, java.lang.String.class, value)); return true;
         case "hosts": target.getConfiguration().setHosts(property(camelContext, java.lang.String.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oldvalue":
+        case "oldValue": target.getConfiguration().setOldValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.infinispan.InfinispanOperation.class, value)); return true;
         case "querybuilder":
         case "queryBuilder": target.getConfiguration().setQueryBuilder(property(camelContext, org.apache.camel.component.infinispan.InfinispanQueryBuilder.class, value)); return true;
@@ -83,6 +92,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Object.class, value)); return true;
         default: return false;
         }
     }
@@ -113,6 +123,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "configurationUri": return target.getConfiguration().getConfigurationUri();
         case "customlistener":
         case "customListener": return target.getConfiguration().getCustomListener();
+        case "defaultvalue":
+        case "defaultValue": return target.getConfiguration().getDefaultValue();
         case "eventtypes":
         case "eventTypes": return target.getConfiguration().getEventTypes();
         case "exceptionhandler":
@@ -121,8 +133,11 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "exchangePattern": return target.getExchangePattern();
         case "flags": return target.getConfiguration().getFlags();
         case "hosts": return target.getConfiguration().getHosts();
+        case "key": return target.getConfiguration().getKey();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oldvalue":
+        case "oldValue": return target.getConfiguration().getOldValue();
         case "operation": return target.getConfiguration().getOperation();
         case "querybuilder":
         case "queryBuilder": return target.getConfiguration().getQueryBuilder();
@@ -132,6 +147,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "resultHeader": return target.getConfiguration().getResultHeader();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();
+        case "value": return target.getConfiguration().getValue();
         default: return null;
         }
     }
