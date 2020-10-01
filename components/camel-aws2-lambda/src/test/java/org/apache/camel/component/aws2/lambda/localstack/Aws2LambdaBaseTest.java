@@ -43,7 +43,7 @@ public class Aws2LambdaBaseTest extends ContainerAwareTestSupport {
     public static GenericContainer localstackContainer() {
         return new GenericContainer(CONTAINER_IMAGE)
                 .withNetworkAliases(CONTAINER_NAME)
-                .withEnv("SERVICES", "kms")
+                .withEnv("SERVICES", "lambda")
                 .withExposedPorts(4566)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
@@ -57,7 +57,7 @@ public class Aws2LambdaBaseTest extends ContainerAwareTestSupport {
     }
 
     public LambdaClient getLambdaClient() {
-    	LambdaClient lambdaClient = LambdaClient
+        LambdaClient lambdaClient = LambdaClient
                 .builder()
                 .endpointOverride(URI.create("http://" + getEventbridgeUrl()))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
