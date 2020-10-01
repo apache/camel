@@ -69,8 +69,15 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         Map<String, Object> properties = new HashMap<>(9);
         properties.put("expression", expression);
         properties.put("documentType", definition.getDocumentType());
-        properties.put("resultQName", asQName(definition.getResultTypeName()));
-        properties.put("resultType", definition.getResultType());
+        // resultType can either point to a QName or it can be a regular class that influence the qname
+        // so we need this special logic to set resultQName and resultType accordingly
+        Object qname = asQName(definition.getResultTypeName());
+        properties.put("resultQName", qname);
+        if (definition.getResultType() == null && qname == null && definition.getResultTypeName() != null) {
+            properties.put("resultType", definition.getResultTypeName());
+        } else {
+            properties.put("resultType", definition.getResultType());
+        }
         properties.put("useSaxon", definition.getSaxon());
         properties.put("xpathFactory", definition.getXPathFactory());
         properties.put("objectModelUri", definition.getObjectModel());
