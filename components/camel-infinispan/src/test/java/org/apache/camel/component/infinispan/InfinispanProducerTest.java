@@ -1071,6 +1071,34 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         Stats resultStats = exchange.getIn().getBody(Stats.class);
         assertEquals(2L, resultStats.getTotalNumberOfEntries());
     }
+    
+    @Test
+    public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptions() throws Exception {
+        template.send("direct:explicitput", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
+            }
+        });
+
+        Object value = currentCache().get("a");
+        assertEquals("3", value.toString());
+    }
+    
+    @Test
+    public void publishKeyAndValueByExplicitlySpecifyingTheKeyAndValueOptionsHeaderHavePriorities() throws Exception {
+        template.send("direct:explicitput", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.VALUE, VALUE_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.PUT);
+            }
+        });
+
+        Object value = currentCache().get("a");
+        assertEquals("3", value.toString());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -1121,6 +1149,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                         .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
                 from("direct:computeAsync")
                         .to("infinispan:default?cacheContainer=#cacheContainer&operation=COMPUTEASYNC&remappingFunction=#mappingFunction");
+                from("direct:explicitput")
+                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT&key=a&value=3");
             }
         };
     }
