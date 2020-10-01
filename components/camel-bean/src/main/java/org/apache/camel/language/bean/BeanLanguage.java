@@ -38,7 +38,44 @@ import org.apache.camel.util.StringHelper;
 @org.apache.camel.spi.annotations.Language("bean")
 public class BeanLanguage extends LanguageSupport {
 
+    private Object bean;
+    private Class<?> beanType;
+    private String ref;
+    private String method;
+
     public BeanLanguage() {
+    }
+
+    public Object getBean() {
+        return bean;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
+    }
+
+    public Class<?> getBeanType() {
+        return beanType;
+    }
+
+    public void setBeanType(Class<?> beanType) {
+        this.beanType = beanType;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     @Override
@@ -72,6 +109,14 @@ public class BeanLanguage extends LanguageSupport {
     @Override
     public Expression createExpression(String expression) {
         // favour using the configured options
+        if (bean != null) {
+            return new BeanExpression(bean, method);
+        } else if (beanType != null) {
+            return new BeanExpression(beanType, method);
+        } else if (ref != null) {
+            return new BeanExpression(ref, method);
+        }
+
         String beanName = expression;
         String method = null;
 

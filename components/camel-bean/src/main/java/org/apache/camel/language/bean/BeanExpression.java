@@ -81,32 +81,16 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return bean;
     }
 
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
-
     public String getBeanName() {
         return beanName;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
     }
 
     public Class<?> getType() {
         return type;
     }
 
-    public void setType(Class<?> type) {
-        this.type = type;
-    }
-
     public String getMethod() {
         return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     @Override

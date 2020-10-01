@@ -50,6 +50,9 @@ public class JsonPathExpression extends ExpressionDefinition {
     private String writeAsString;
     @XmlAttribute
     private String headerName;
+    @XmlAttribute
+    @Metadata(enums = "DEFAULT_PATH_LEAF_TO_NULL,ALWAYS_RETURN_LIST,AS_PATH_LIST,SUPPRESS_EXCEPTIONS,REQUIRE_PROPERTIES")
+    private String option;
 
     public JsonPathExpression() {
     }
@@ -133,6 +136,17 @@ public class JsonPathExpression extends ExpressionDefinition {
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    /**
+     * To configure additional options on json path. Multiple values can be separated by comma.
+     */
+    public void setOption(String option) {
+        this.option = option;
     }
 
     @Override
