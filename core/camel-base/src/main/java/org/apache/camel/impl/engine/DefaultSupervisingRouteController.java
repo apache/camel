@@ -89,7 +89,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
     public DefaultSupervisingRouteController() {
         this.lock = new Object();
         this.contextStarted = new AtomicBoolean(false);
-        this.routeCount = new AtomicInteger(0);
+        this.routeCount = new AtomicInteger();
         this.routes = new TreeSet<>();
         this.nonSupervisedRoutes = new HashSet<>();
         this.routeManager = new RouteManager();

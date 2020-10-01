@@ -158,7 +158,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             org.apache.camel.util.ObjectHelper.notNull(separator,
                     "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
             Boolean removeQuotes = factory.getRemoveQuotes();
-            AtomicInteger count = new AtomicInteger(0);
+            AtomicInteger count = new AtomicInteger();
 
             // Use a Stream to stream a file across.
             try (Stream<String> lines = new BufferedReader(in).lines()) {

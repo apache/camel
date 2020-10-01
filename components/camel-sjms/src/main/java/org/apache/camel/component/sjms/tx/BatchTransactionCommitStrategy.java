@@ -27,7 +27,7 @@ import org.apache.camel.component.sjms.TransactionCommitStrategy;
 @Deprecated
 public class BatchTransactionCommitStrategy implements TransactionCommitStrategy {
 
-    private final AtomicInteger current = new AtomicInteger(0);
+    private final AtomicInteger current = new AtomicInteger();
     private final int count;
 
     public BatchTransactionCommitStrategy(int count) {

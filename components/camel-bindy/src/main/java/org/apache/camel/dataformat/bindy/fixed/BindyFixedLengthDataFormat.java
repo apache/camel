@@ -195,7 +195,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             isEolSet = true;
         }
 
-        AtomicInteger count = new AtomicInteger(0);
+        AtomicInteger count = new AtomicInteger();
 
         try {
 

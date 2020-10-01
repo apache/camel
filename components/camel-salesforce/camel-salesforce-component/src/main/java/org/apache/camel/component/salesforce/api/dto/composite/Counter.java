@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Counter implements ReferenceGenerator {
 
-    private final AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger();
 
     @Override
     public String nextReferenceFor(final Object object) {

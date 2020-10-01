@@ -50,7 +50,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport
     private final Object lock = new Object();
     private final AtomicBoolean leader = new AtomicBoolean(false);
     private final Set<Route> suspendedRoutes = new HashSet<>();
-    private final AtomicLong index = new AtomicLong(0);
+    private final AtomicLong index = new AtomicLong();
 
     private int ttl = 60;
     private int watchTimeout = 60 / 3;

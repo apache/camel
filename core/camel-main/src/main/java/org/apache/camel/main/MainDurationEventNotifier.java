@@ -55,7 +55,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.maxIdleSeconds = maxIdleSeconds;
         this.shutdownStrategy = shutdownStrategy;
         this.stopCamelContext = stopCamelContext;
-        this.doneMessages = new AtomicInteger(0);
+        this.doneMessages = new AtomicInteger();
     }
 
     @Override

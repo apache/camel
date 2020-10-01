@@ -99,7 +99,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         this.listenerMap = new ConcurrentHashMap<>();
 
-        restartBackoff = new AtomicLong(0);
+        restartBackoff = new AtomicLong();
         backoffIncrement = component.getConfig().getBackoffIncrement();
         maxBackoff = component.getConfig().getMaxBackoff();
     }

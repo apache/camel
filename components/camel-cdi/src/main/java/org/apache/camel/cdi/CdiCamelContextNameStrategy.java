@@ -34,7 +34,7 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 @Vetoed
 final class CdiCamelContextNameStrategy extends DefaultCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger();
 
     @Override
     public String getNextName() {

@@ -67,7 +67,7 @@ public final class BacklogDebugger extends ServiceSupport {
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
     private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
-    private final AtomicLong debugCounter = new AtomicLong(0);
+    private final AtomicLong debugCounter = new AtomicLong();
     private final Debugger debugger;
     private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<>();

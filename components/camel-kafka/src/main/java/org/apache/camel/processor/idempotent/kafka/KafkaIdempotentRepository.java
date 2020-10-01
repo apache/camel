@@ -75,7 +75,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final AtomicLong duplicateCount = new AtomicLong(0);
+    private final AtomicLong duplicateCount = new AtomicLong();
 
     // configurable
     private String topic;

@@ -48,7 +48,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
-    private AtomicInteger connectCount = new AtomicInteger(0);
+    private AtomicInteger connectCount = new AtomicInteger();
 
     private JChannel channel;
     private JChannel resolvedChannel;

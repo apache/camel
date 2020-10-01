@@ -30,7 +30,7 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     private final int expectedConsumers;
 
-    private final AtomicInteger processedConsumers = new AtomicInteger(0);
+    private final AtomicInteger processedConsumers = new AtomicInteger();
 
     private final AtomicBoolean resultHandled = new AtomicBoolean(false);
 
