@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.xtokenizer;
 
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.annotations.Language;
@@ -87,6 +89,21 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         return expr;
     }
 
+    @Override
+    public Predicate createPredicate(Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    }
+
+    @Override
+    public Expression createExpression(Map<String, Object> properties) {
+        XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
+        answer.setHeaderName(property(String.class, properties, "headerName", null));
+        answer.setMode(property(char.class, properties, "mode", 'i'));
+        answer.setGroup(property(int.class, properties, "group", 1));
+        String path = property(String.class, properties, "path", null);
+        return answer.createExpression(path);
+    }
+
     public String getHeaderName() {
         return headerName;
     }
@@ -127,8 +144,4 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         this.namespaces = namespaces;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
 }

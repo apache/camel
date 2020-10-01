@@ -29,38 +29,47 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpression> {
 
-    // TODO: Update me
-
     public TokenizerExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (TokenizerExpression) definition);
     }
 
-    @Override
-    protected void configureLanguage(Language language) {
-        Map<String, Object> props = new HashMap<>();
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(10);
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
         if (token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
-        props.put("token", token);
-        props.put("endToken", definition.getEndToken());
-        props.put("inheritNamespaceTagName", definition.getInheritNamespaceTagName());
-        props.put("headerName", definition.getHeaderName());
-        props.put("groupDelimiter", definition.getGroupDelimiter());
-        props.put("regex", definition.getRegex());
-        props.put("xml", definition.getXml());
-        props.put("includeTokens", definition.getIncludeTokens());
-        props.put("group", definition.getGroup());
-        props.put("skipFirst", definition.getSkipFirst());
-        setProperties(language, props);
+        properties.put("token", token);
+        properties.put("endToken", definition.getEndToken());
+        properties.put("inheritNamespaceTagName", definition.getInheritNamespaceTagName());
+        properties.put("headerName", definition.getHeaderName());
+        properties.put("groupDelimiter", definition.getGroupDelimiter());
+        properties.put("regex", definition.getRegex());
+        properties.put("xml", definition.getXml());
+        properties.put("includeTokens", definition.getIncludeTokens());
+        properties.put("group", definition.getGroup());
+        properties.put("skipFirst", definition.getSkipFirst());
+        return properties;
     }
 
     @Override
     public Predicate createPredicate() {
         Expression exp = createExpression();
         return ExpressionToPredicateAdapter.toPredicate(exp);
+    }
+
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createExpression(createProperties());
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        // method call does not use the string exp so its not in use
+        return language.createPredicate(createProperties());
     }
 
 }

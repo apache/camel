@@ -61,24 +61,6 @@ public class LanguageServiceTest extends ContextTestSupport {
         assertTrue(context.getLanguageNames().isEmpty());
     }
 
-    @Test
-    public void testNonSingletonLanguage() throws Exception {
-        Language tol = context.resolveLanguage("tokenize");
-        assertNotNull(tol);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        // resolve again, should find another instance
-        Language tol2 = context.resolveLanguage("tokenize");
-        assertNotNull(tol2);
-        assertNotSame(tol, tol2);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        context.stop();
-        assertTrue(context.getLanguageNames().isEmpty());
-    }
-
     public class MyLanguage extends ServiceSupport implements Language, IsSingleton {
 
         private String state;
