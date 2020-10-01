@@ -35,6 +35,14 @@ public class InfinispanConfiguration implements Cloneable {
     private String hosts;
     @UriParam(label = "producer", defaultValue = "PUT")
     private InfinispanOperation operation = InfinispanOperation.PUT;
+    @UriParam(label = "producer")
+    private Object key;
+    @UriParam(label = "producer")
+    private Object value;
+    @UriParam(label = "producer")
+    private Object oldValue;
+    @UriParam(label = "producer")
+    private Object defaultValue;
     @Deprecated
     @UriParam(label = "consumer", defaultValue = "PUT")
     private String command = "PUT";
@@ -302,4 +310,49 @@ public class InfinispanConfiguration implements Cloneable {
     public void setRemappingFunction(BiFunction remappingFunction) {
         this.remappingFunction = remappingFunction;
     }
+
+    public Object getKey() {
+        return key;
+    }
+
+    /**
+     * Set a specific key for producer operations
+     */
+    public void setKey(Object key) {
+        this.key = key;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    /**
+     * Set a specific value for producer operations
+     */
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
+    public Object getOldValue() {
+        return oldValue;
+    }
+
+    /**
+     * Set a specific old value for some producer operations
+     */
+    public void setOldValue(Object oldValue) {
+        this.oldValue = oldValue;
+    }
+
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * Set a specific default value for some producer operations
+     */
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
 }

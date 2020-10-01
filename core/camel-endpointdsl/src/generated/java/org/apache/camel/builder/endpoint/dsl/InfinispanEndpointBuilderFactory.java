@@ -605,6 +605,52 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder defaultValue(
+                Object defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder defaultValue(
+                String defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder key(Object key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder key(String key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -647,6 +693,28 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder oldValue(Object oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder oldValue(String oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -671,6 +739,28 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder value(Object value) {
+            doSetProperty("value", value);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanEndpointProducerBuilder value(String value) {
+            doSetProperty("value", value);
             return this;
         }
     }

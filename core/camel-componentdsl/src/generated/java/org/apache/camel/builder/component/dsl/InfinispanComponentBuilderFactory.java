@@ -176,6 +176,29 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder defaultValue(
+                java.lang.Object defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder key(java.lang.Object key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -197,6 +220,17 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder oldValue(java.lang.Object oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -208,6 +242,17 @@ public interface InfinispanComponentBuilderFactory {
         default InfinispanComponentBuilder operation(
                 org.apache.camel.component.infinispan.InfinispanOperation operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder value(java.lang.Object value) {
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -355,8 +400,12 @@ public interface InfinispanComponentBuilderFactory {
             case "customListener": getOrCreateConfiguration((InfinispanComponent) component).setCustomListener((org.apache.camel.component.infinispan.InfinispanCustomListener) value); return true;
             case "eventTypes": getOrCreateConfiguration((InfinispanComponent) component).setEventTypes((java.lang.String) value); return true;
             case "sync": getOrCreateConfiguration((InfinispanComponent) component).setSync((boolean) value); return true;
+            case "defaultValue": getOrCreateConfiguration((InfinispanComponent) component).setDefaultValue((java.lang.Object) value); return true;
+            case "key": getOrCreateConfiguration((InfinispanComponent) component).setKey((java.lang.Object) value); return true;
             case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "oldValue": getOrCreateConfiguration((InfinispanComponent) component).setOldValue((java.lang.Object) value); return true;
             case "operation": getOrCreateConfiguration((InfinispanComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
+            case "value": getOrCreateConfiguration((InfinispanComponent) component).setValue((java.lang.Object) value); return true;
             case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
             case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainerConfiguration((java.lang.Object) value); return true;
