@@ -231,7 +231,7 @@
     <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
     <google-api-services-sheets-version>v4-rev551-1.22.0</google-api-services-sheets-version>
     <google-auto-value-version>1.7</google-auto-value-version>
-    <google-cloud-pubsub-version>1.102.0</google-cloud-pubsub-version>
+    <google-cloud-pubsub-version>1.108.1</google-cloud-pubsub-version>
     <google-errorprone-version>2.3.3</google-errorprone-version>
     <google-findbugs-annotations2-version>2.0.3</google-findbugs-annotations2-version>
     <google-findbugs-jsr305-version>3.0.2</google-findbugs-jsr305-version>
@@ -245,7 +245,7 @@
     <google-proto-common-version>1.17.0</google-proto-common-version>
     <google-proto-iam-version>0.13.0</google-proto-iam-version>
     <google-proto-pubsub-version>1.84.0</google-proto-pubsub-version>
-    <google-pubsub-guava-version>28.2-jre</google-pubsub-guava-version>
+    <google-pubsub-guava-version>29.0-jre</google-pubsub-guava-version>
     <graphql-java-version>14.0</graphql-java-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
     <grpc-google-auth-library-version>0.19.0</grpc-google-auth-library-version>
