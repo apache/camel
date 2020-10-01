@@ -22,38 +22,50 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.JsonPathExpression;
+import org.apache.camel.spi.Language;
 
 public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpression> {
-
-    // TODO: Update me
 
     public JsonPathExpressionReifier(CamelContext camelContext, ExpressionDefinition definition) {
         super(camelContext, (JsonPathExpression) definition);
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        super.configureExpression(expression);
+    protected void configureLanguage(Language language) {
+        if (definition.getResultType() == null && definition.getResultTypeName() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getResultTypeName());
+                definition.setResultType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
     }
 
-    @Override
-    protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
-        super.configurePredicate(predicate);
-    }
-
-    private void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("resultType", or(definition.getResultType(), definition.getResultTypeName()));
+    private Map<String, Object> createProperties(String exp) {
+        Map<String, Object> properties = new HashMap<>(8);
+        properties.put("expression", exp);
+        properties.put("resultType", definition.getResultType());
         properties.put("suppressExceptions", definition.getSuppressExceptions());
         properties.put("allowSimple", definition.getAllowSimple());
         properties.put("allowEasyPredicate", definition.getAllowEasyPredicate());
         properties.put("writeAsString", definition.getWriteAsString());
         properties.put("headerName", definition.getHeaderName());
-        setProperties(target, properties);
+        properties.put("option", definition.getOption());
+        return properties;
+    }
+
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(createProperties(exp));
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(createProperties(exp));
     }
 
 }

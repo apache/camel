@@ -45,8 +45,8 @@ public interface Language {
     /**
      * Creates an expression based on the given inputs properties
      *
-     * This is used for languages that have been configured with custom properties
-     * most noticeable for xpath/xquery/tokenizer languages that have several options.
+     * This is used for languages that have been configured with custom properties most noticeable for
+     * xpath/xquery/tokenizer languages that have several options.
      *
      * @param  properties arguments
      * @return            the created predicate
@@ -58,8 +58,8 @@ public interface Language {
     /**
      * Creates an expression based on the given inputs properties
      *
-     * This is used for languages that have been configured with custom properties
-     * most noticeable for xpath/xquery/tokenizer languages that have several options.
+     * This is used for languages that have been configured with custom properties most noticeable for
+     * xpath/xquery/tokenizer languages that have several options.
      *
      * @param  properties arguments
      * @return            the created expression

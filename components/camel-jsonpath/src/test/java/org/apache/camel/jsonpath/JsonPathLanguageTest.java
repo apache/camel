@@ -128,7 +128,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         exchange.getIn().setBody(new File("src/test/resources/type.json"));
 
         JsonPathLanguage lan = (JsonPathLanguage) context.resolveLanguage("jsonpath");
-        lan.setOption(Option.SUPPRESS_EXCEPTIONS);
+        lan.setOptions(Option.SUPPRESS_EXCEPTIONS);
 
         Expression exp = lan.createExpression("$.foo");
         String nofoo = exp.evaluate(exchange, String.class);
