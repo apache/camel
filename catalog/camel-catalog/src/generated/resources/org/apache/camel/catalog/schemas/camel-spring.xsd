@@ -5386,8 +5386,8 @@ number of endpoints and/or processors specified in the load balancer list.
         <xs:attribute name="distributionRatioDelimiter" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Delimiter used to specify the distribution ratio. The default value is ,
-(comma). Default value: ,
+Delimiter used to specify the distribution ratio. The default value is ,.
+Default value: ,
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
