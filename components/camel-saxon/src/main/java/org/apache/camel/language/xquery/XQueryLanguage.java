@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.xquery;
 
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
@@ -25,15 +27,71 @@ import org.apache.camel.support.LanguageSupport;
 @Language("xquery")
 public class XQueryLanguage extends LanguageSupport {
 
+    private Class<?> resultType;
+    private String headerName;
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return XQueryBuilder.xquery(expression);
+
+        XQueryBuilder builder = XQueryBuilder.xquery(expression);
+        configureBuilder(builder);
+        return builder;
     }
 
     @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return XQueryBuilder.xquery(expression);
+
+        XQueryBuilder builder = XQueryBuilder.xquery(expression);
+        configureBuilder(builder);
+        return builder;
     }
+
+    @Override
+    public Predicate createPredicate(Map<String, Object> properties) {
+        return (Predicate) createExpression(properties);
+    }
+
+    @Override
+    public Expression createExpression(Map<String, Object> properties) {
+        String expression = (String) properties.get("expression");
+        expression = loadResource(expression);
+
+        Class<?> clazz = property(Class.class, properties, "resultType", null);
+        if (clazz != null) {
+            setResultType(clazz);
+        }
+        setHeaderName(property(String.class, properties, "headerName", null));
+
+        XQueryBuilder builder = XQueryBuilder.xquery(expression);
+        configureBuilder(builder);
+        return builder;
+    }
+
+    protected void configureBuilder(XQueryBuilder builder) {
+        if (resultType != null) {
+            builder.setResultType(resultType);
+        }
+        if (headerName != null) {
+            builder.setHeaderName(headerName);
+        }
+    }
+
 }
