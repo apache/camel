@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1529,17 +1530,18 @@ public class ExpressionBuilder {
         };
     }
 
-    public static Expression beanExpression(final Object bean, final String expression) {
+    public static Expression beanExpression(final Object bean, final String method) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Language language = exchange.getContext().resolveLanguage("bean");
-                setProperty(exchange.getContext(), language, "bean", bean);
-                setProperty(exchange.getContext(), language, "method", expression);
-                return language.createExpression(null).evaluate(exchange, Object.class);
+                Map<String, Object> properties = new HashMap<>(2);
+                properties.put("bean", bean);
+                properties.put("method", method);
+                return language.createExpression(properties).evaluate(exchange, Object.class);
             }
 
             public String toString() {
-                return "bean(" + bean + ", " + expression + ")";
+                return "bean(" + bean + ", " + method + ")";
             }
         };
     }
@@ -1623,7 +1625,7 @@ public class ExpressionBuilder {
                     setProperty(exchange.getContext(), language, "namespaces", namespaces);
                 }
                 setProperty(exchange.getContext(), language, "path", path);
-                return language.createExpression(null).evaluate(exchange, Object.class);
+                return language.createExpression((String)null).evaluate(exchange, Object.class);
             }
 
             @Override

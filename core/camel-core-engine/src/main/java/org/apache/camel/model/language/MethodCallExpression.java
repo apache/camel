@@ -51,7 +51,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(String beanName, String method) {
-        super((String) null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         if (beanName != null && beanName.startsWith("ref:")) {
             beanName = beanName.substring(4);
         } else if (beanName != null && beanName.startsWith("bean:")) {
@@ -66,7 +66,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Object instance, String method) {
-        super((String) null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         // must use setter as they have special logic
         setInstance(instance);
         setMethod(method);
@@ -77,7 +77,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     public MethodCallExpression(Class<?> type, String method) {
-        super((String) null); // we dont use @XmlValue but the attributes instead
+        super(""); // we dont use @XmlValue but the attributes instead
         setBeanType(type);
         setBeanTypeName(type.getName());
         setMethod(method);
