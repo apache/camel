@@ -71,7 +71,7 @@ public class InfinispanConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private BiFunction remappingFunction;
     @UriParam(label = "common", defaultValue = "false")
-    private boolean secure = false;
+    private boolean secure;
     @UriParam(label = "common, security")
     private String username;
     @UriParam(label = "common, security", secret = true)
