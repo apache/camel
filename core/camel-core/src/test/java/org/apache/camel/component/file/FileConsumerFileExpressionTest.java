@@ -24,8 +24,6 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * Unit test for expression option for file consumer.
  */
@@ -74,7 +72,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/filelanguage/date", "Hello World", Exchange.FILE_NAME,
                 "myfile-20081129.txt");
         template.sendBodyAndHeader("file://target/data/filelanguage/date", "Goodday World", Exchange.FILE_NAME,
-                simple("myfile-${date:now:yyyyMMdd}.txt"));
+                context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
         context.addRoutes(new RouteBuilder() {
             @Override
