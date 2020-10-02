@@ -24,7 +24,6 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
@@ -120,7 +119,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             }
             rcList = replicationControllers.list();
         } else {
-            FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList, Boolean, Watch, Watcher<ReplicationController>> replicationControllers
+            FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList, Boolean, Watch> replicationControllers
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {

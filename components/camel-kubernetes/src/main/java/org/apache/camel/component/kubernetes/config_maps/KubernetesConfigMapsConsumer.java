@@ -89,7 +89,8 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>> w = null;
+
+            FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch> w = null;
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                     && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w = getEndpoint().getKubernetesClient().configMaps().withLabel(
@@ -97,7 +98,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                         getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>>) getEndpoint()
+                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch>) getEndpoint()
                         .getKubernetesClient().configMaps()
                         .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }

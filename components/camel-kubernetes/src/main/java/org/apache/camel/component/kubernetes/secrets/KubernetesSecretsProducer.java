@@ -22,7 +22,6 @@ import io.fabric8.kubernetes.api.model.DoneableSecret;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -104,8 +103,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             }
             secretsList = secrets.list();
         } else {
-            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch, Watcher<Secret>> secrets;
-            secrets = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
+            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch> secrets
+                    = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }

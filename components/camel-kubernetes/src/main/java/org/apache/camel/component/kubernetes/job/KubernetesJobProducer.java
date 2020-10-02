@@ -18,13 +18,13 @@ package org.apache.camel.component.kubernetes.job;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.batch.DoneableJob;
 import io.fabric8.kubernetes.api.model.batch.Job;
 import io.fabric8.kubernetes.api.model.batch.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.JobList;
 import io.fabric8.kubernetes.api.model.batch.JobSpec;
-import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.ScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -99,7 +99,7 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Job, JobList, Boolean, Watch, Watcher<Job>> jobs
+        MixedOperation<Job, JobList, DoneableJob, ScalableResource<Job, DoneableJob>> jobs
                 = getEndpoint().getKubernetesClient().batch().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());

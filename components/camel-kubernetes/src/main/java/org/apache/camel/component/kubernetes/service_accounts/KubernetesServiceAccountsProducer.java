@@ -22,7 +22,6 @@ import io.fabric8.kubernetes.api.model.DoneableServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -105,8 +104,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             }
             saList = serviceAccounts.list();
         } else {
-            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch, Watcher<ServiceAccount>> serviceAccounts;
-            serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
+            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch> serviceAccounts
+                    = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
             }
