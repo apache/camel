@@ -86,7 +86,8 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.GT) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GTE) {
-            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp,
+                    PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LT) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isLessThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LTE) {
@@ -99,7 +100,8 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.CONTAINS) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
-            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
+            return createExpression(camelContext, leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
@@ -122,7 +124,8 @@ public class BinaryExpression extends BaseSimpleNode {
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
     }
 
-    private Expression createIsExpression(final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
+    private Expression createIsExpression(
+            final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -156,7 +159,8 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createRegexExpression(final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
+    private Expression createRegexExpression(
+            final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -176,7 +180,8 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createInExpression(final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
+    private Expression createInExpression(
+            final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -205,7 +210,8 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createRangeExpression(final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
+    private Expression createRangeExpression(
+            final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -241,7 +247,8 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createExpression(final CamelContext camelContext, final Expression left, final Expression right, final Predicate predicate) {
+    private Expression createExpression(
+            final CamelContext camelContext, final Expression left, final Expression right, final Predicate predicate) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {

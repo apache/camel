@@ -63,11 +63,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
     /**
      * Creates a Camel {@link Expression} based on this model.
      *
-     * @param expression not in use
-     * @param strict     whether to throw exception if the expression
-     *                   was not a function, otherwise <tt>null</tt>
-     *                   is returned
-     * @return the created {@link Expression}
+     * @param  expression                                                   not in use
+     * @param  strict                                                       whether to throw exception if the expression
+     *                                                                      was not a function, otherwise <tt>null</tt>
+     *                                                                      is returned
+     * @return                                                              the created {@link Expression}
      * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
      */
     public Expression createExpression(CamelContext camelContext, String expression, boolean strict) {
