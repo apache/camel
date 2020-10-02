@@ -17,6 +17,7 @@
 package org.apache.camel.parser.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CamelNodeDetails {
@@ -84,6 +85,9 @@ public class CamelNodeDetails {
     }
 
     public List<CamelNodeDetails> getOutputs() {
+        if (outputs == null) {
+            return Collections.emptyList();
+        }
         return outputs;
     }
 
