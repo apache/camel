@@ -33,6 +33,7 @@ public class ZipFileDataFormatReifier extends DataFormatReifier<ZipFileDataForma
         properties.put("usingIterator", definition.getUsingIterator());
         properties.put("allowEmptyDirectory", definition.getAllowEmptyDirectory());
         properties.put("preservePathElements", definition.getPreservePathElements());
+        properties.put("maxDecompressedSize", definition.getMaxDecompressedSize());
     }
 
 }
