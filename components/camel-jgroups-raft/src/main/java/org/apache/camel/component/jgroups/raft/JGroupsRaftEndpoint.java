@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
-    private AtomicInteger connectCount = new AtomicInteger(0);
+    private AtomicInteger connectCount = new AtomicInteger();
 
     private RaftHandle raftHandle;
     private RaftHandle resolvedRaftHandle;

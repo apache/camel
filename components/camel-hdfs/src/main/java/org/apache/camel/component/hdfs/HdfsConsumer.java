@@ -137,7 +137,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private int processFileStatuses(HdfsInfo info, FileStatus[] fileStatuses) {
-        final AtomicInteger totalMessageCount = new AtomicInteger(0);
+        final AtomicInteger totalMessageCount = new AtomicInteger();
 
         List<HdfsInputStream> hdfsFiles = Arrays.stream(fileStatuses)
                 .filter(status -> normalFileIsDirectoryHasSuccessFile(status, info))
@@ -164,7 +164,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     }
 
     private int processHdfsInputStream(HdfsInputStream hdfsFile, AtomicInteger totalMessageCount) {
-        final AtomicInteger messageCount = new AtomicInteger(0);
+        final AtomicInteger messageCount = new AtomicInteger();
         Holder<Object> currentKey = new Holder<>();
         Holder<Object> currentValue = new Holder<>();
 

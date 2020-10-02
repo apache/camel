@@ -78,7 +78,7 @@ public class SubscriptionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
 
-    private final AtomicLong clientHandleCounter = new AtomicLong(0);
+    private final AtomicLong clientHandleCounter = new AtomicLong();
 
     private final class SubscriptionListenerImpl implements SubscriptionListener {
         @Override

@@ -25,7 +25,7 @@ import org.apache.camel.spi.CamelContextNameStrategy;
  */
 public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger();
     private final String prefix;
     private String name;
 

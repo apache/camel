@@ -44,7 +44,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     private final boolean shutdownExecutorService;
     private boolean asyncDelayed = true;
     private boolean callerRunsWhenRejected = true;
-    private final AtomicInteger delayedCount = new AtomicInteger(0);
+    private final AtomicInteger delayedCount = new AtomicInteger();
 
     private final class ProcessCall implements Runnable {
         private final Exchange exchange;

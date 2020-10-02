@@ -45,7 +45,7 @@ public final class BacklogTracer extends ServiceSupport {
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
     private final CamelContext camelContext;
     private boolean enabled;
-    private final AtomicLong traceCounter = new AtomicLong(0);
+    private final AtomicLong traceCounter = new AtomicLong();
     // use a queue with a upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
