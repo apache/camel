@@ -21,6 +21,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("cacheName", java.lang.String.class);
         map.put("hosts", java.lang.String.class);
         map.put("queryBuilder", org.apache.camel.component.infinispan.InfinispanQueryBuilder.class);
+        map.put("secure", boolean.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("clusteredListener", boolean.class);
         map.put("command", java.lang.String.class);
@@ -35,6 +36,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("oldValue", java.lang.Object.class);
         map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
         map.put("value", java.lang.Object.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
         map.put("cacheContainerConfiguration", java.lang.Object.class);
@@ -84,14 +87,17 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "oldvalue":
         case "oldValue": target.getConfiguration().setOldValue(property(camelContext, java.lang.Object.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.infinispan.InfinispanOperation.class, value)); return true;
+        case "password": target.getConfiguration().setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "querybuilder":
         case "queryBuilder": target.getConfiguration().setQueryBuilder(property(camelContext, org.apache.camel.component.infinispan.InfinispanQueryBuilder.class, value)); return true;
         case "remappingfunction":
         case "remappingFunction": target.getConfiguration().setRemappingFunction(property(camelContext, java.util.function.BiFunction.class, value)); return true;
         case "resultheader":
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
+        case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "value": target.getConfiguration().setValue(property(camelContext, java.lang.Object.class, value)); return true;
         default: return false;
         }
@@ -139,14 +145,17 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "oldvalue":
         case "oldValue": return target.getConfiguration().getOldValue();
         case "operation": return target.getConfiguration().getOperation();
+        case "password": return target.getConfiguration().getPassword();
         case "querybuilder":
         case "queryBuilder": return target.getConfiguration().getQueryBuilder();
         case "remappingfunction":
         case "remappingFunction": return target.getConfiguration().getRemappingFunction();
         case "resultheader":
         case "resultHeader": return target.getConfiguration().getResultHeader();
+        case "secure": return target.getConfiguration().isSecure();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();
+        case "username": return target.getConfiguration().getUsername();
         case "value": return target.getConfiguration().getValue();
         default: return null;
         }

@@ -87,6 +87,18 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -256,6 +268,28 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
+            return this;
+        }
+        /**
          * Whether the component should use basic property binding (Camel 2.x)
          * or the newer property binding with additional capabilities.
          * 
@@ -394,6 +428,7 @@ public interface InfinispanComponentBuilderFactory {
             case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
             case "hosts": getOrCreateConfiguration((InfinispanComponent) component).setHosts((java.lang.String) value); return true;
             case "queryBuilder": getOrCreateConfiguration((InfinispanComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
+            case "secure": getOrCreateConfiguration((InfinispanComponent) component).setSecure((boolean) value); return true;
             case "bridgeErrorHandler": ((InfinispanComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clusteredListener": getOrCreateConfiguration((InfinispanComponent) component).setClusteredListener((boolean) value); return true;
             case "command": getOrCreateConfiguration((InfinispanComponent) component).setCommand((java.lang.String) value); return true;
@@ -406,6 +441,8 @@ public interface InfinispanComponentBuilderFactory {
             case "oldValue": getOrCreateConfiguration((InfinispanComponent) component).setOldValue((java.lang.Object) value); return true;
             case "operation": getOrCreateConfiguration((InfinispanComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
             case "value": getOrCreateConfiguration((InfinispanComponent) component).setValue((java.lang.Object) value); return true;
+            case "password": getOrCreateConfiguration((InfinispanComponent) component).setPassword((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
             case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
             case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainerConfiguration((java.lang.Object) value); return true;
