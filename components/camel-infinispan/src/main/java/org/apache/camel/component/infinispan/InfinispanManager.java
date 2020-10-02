@@ -107,6 +107,9 @@ public class InfinispanManager extends ServiceSupport {
                         throw new IllegalArgumentException(
                                 "If the Infinispan instance is secured, username and password are needed");
                     }
+                    if (ObjectHelper.isNotEmpty(configuration.getSaslMechanism())) {
+                        builder.security().authentication().saslMechanism(configuration.getSaslMechanism());
+                    }
                 }
 
                 Properties properties = new Properties();

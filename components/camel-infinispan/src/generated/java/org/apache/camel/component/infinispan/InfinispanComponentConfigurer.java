@@ -35,6 +35,7 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
         map.put("value", java.lang.Object.class);
         map.put("password", java.lang.String.class);
+        map.put("saslMechanism", java.lang.String.class);
         map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
@@ -95,6 +96,8 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "remappingFunction": getOrCreateConfiguration(target).setRemappingFunction(property(camelContext, java.util.function.BiFunction.class, value)); return true;
         case "resultheader":
         case "resultHeader": getOrCreateConfiguration(target).setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
+        case "saslmechanism":
+        case "saslMechanism": getOrCreateConfiguration(target).setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
         case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
         case "sync": getOrCreateConfiguration(target).setSync(property(camelContext, boolean.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -149,6 +152,8 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "remappingFunction": return getOrCreateConfiguration(target).getRemappingFunction();
         case "resultheader":
         case "resultHeader": return getOrCreateConfiguration(target).getResultHeader();
+        case "saslmechanism":
+        case "saslMechanism": return getOrCreateConfiguration(target).getSaslMechanism();
         case "secure": return getOrCreateConfiguration(target).isSecure();
         case "sync": return getOrCreateConfiguration(target).isSync();
         case "username": return getOrCreateConfiguration(target).getUsername();
