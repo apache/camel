@@ -82,6 +82,30 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointConsumerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointConsumerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -245,6 +269,28 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointConsumerBuilder sync(String sync) {
             doSetProperty("sync", sync);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointConsumerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointConsumerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -605,6 +651,30 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointProducerBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointProducerBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
          * Set a specific default value for some producer operations.
          * 
          * The option is a: <code>java.lang.Object</code> type.
@@ -761,6 +831,28 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointProducerBuilder value(String value) {
             doSetProperty("value", value);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1060,6 +1152,52 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointBuilder queryBuilder(String queryBuilder) {
             doSetProperty("queryBuilder", queryBuilder);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanEndpointBuilder secure(String secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
     }

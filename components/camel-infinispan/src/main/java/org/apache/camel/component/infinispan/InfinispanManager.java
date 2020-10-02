@@ -98,6 +98,11 @@ public class InfinispanManager extends ServiceSupport {
                     builder.classLoader(Thread.currentThread().getContextClassLoader());
                 }
 
+                if (configuration.isSecure()) {
+                    builder.security().authentication().username(configuration.getUsername())
+                            .password(configuration.getPassword());
+                }
+
                 Properties properties = new Properties();
 
                 // Properties can be set either via a properties file or via

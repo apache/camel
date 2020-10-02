@@ -70,6 +70,12 @@ public class InfinispanConfiguration implements Cloneable {
     private Object resultHeader;
     @UriParam(label = "advanced")
     private BiFunction remappingFunction;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean secure = false;
+    @UriParam(label = "common, security")
+    private String username;
+    @UriParam(label = "common, security", secret = true)
+    private String password;
 
     public String getCommand() {
         return operation.toString();
@@ -355,4 +361,36 @@ public class InfinispanConfiguration implements Cloneable {
         this.defaultValue = defaultValue;
     }
 
+    public boolean isSecure() {
+        return secure;
+    }
+
+    /**
+     * Define if we are connecting to a secured Infinispan instance
+     */
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Define the username to access the infinispan instance
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Define the password to access the infinispan instance
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
