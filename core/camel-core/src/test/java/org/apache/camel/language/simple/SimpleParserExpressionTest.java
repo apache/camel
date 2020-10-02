@@ -64,7 +64,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     @Test
     public void testSimpleSingleQuoteWithFunctionBodyAs() throws Exception {
         exchange.getIn().setBody("World");
-        SimpleExpressionParser parser = new SimpleExpressionParser(context, "'Hello ${bodyAs(String)} how are you?'", true, null);
+        SimpleExpressionParser parser
+                = new SimpleExpressionParser(context, "'Hello ${bodyAs(String)} how are you?'", true, null);
         Expression exp = parser.parseExpression();
 
         assertEquals("'Hello World how are you?'", exp.evaluate(exchange, String.class));
@@ -216,7 +217,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
 
-        SimpleExpressionParser parser = new SimpleExpressionParser(context, "THE MSG ID ${header.JMSMessageID} isA --", true, null);
+        SimpleExpressionParser parser
+                = new SimpleExpressionParser(context, "THE MSG ID ${header.JMSMessageID} isA --", true, null);
         Expression exp = parser.parseExpression();
 
         assertEquals("THE MSG ID JMSMessageID-123 isA --", exp.evaluate(exchange, String.class));
@@ -240,7 +242,8 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         exchange.getIn().setBody("------------ THE MSG ID ${header.JMSMessageID} ------------");
 
         SimpleExpressionParser parser
-                = new SimpleExpressionParser(context, "------------ THE MSG ID ${header.JMSMessageID} ------------", true, null);
+                = new SimpleExpressionParser(
+                        context, "------------ THE MSG ID ${header.JMSMessageID} ------------", true, null);
         Expression exp = parser.parseExpression();
 
         assertEquals("------------ THE MSG ID JMSMessageID-123 ------------", exp.evaluate(exchange, String.class));

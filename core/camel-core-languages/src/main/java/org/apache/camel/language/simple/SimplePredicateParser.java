@@ -63,7 +63,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
 
-    public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape, Map<String, Expression> cacheExpression) {
+    public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape,
+                                 Map<String, Expression> cacheExpression) {
         super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
     }
