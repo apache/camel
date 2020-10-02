@@ -158,3 +158,9 @@ Should eb replaced by:
 === Camel Karaf
 
 The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
+
+=== CamelFileDataSource
+
+Class `CamelFileDataSource` has moved from `camel-http-common` in package `org.apache.camel.http.common` to `camel-attachments` package `org.apache.camel.attachment.CamelFileDataSource`.
+
+If your code directly depends on this class, you will need to update the package reference to the new location.
