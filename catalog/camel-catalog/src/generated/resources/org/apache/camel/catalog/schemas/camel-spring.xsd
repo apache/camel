@@ -12231,6 +12231,14 @@ Name of header to use as input, instead of the message body.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="option" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To configure additional options on json path. Multiple values can be separated
+by comma.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
