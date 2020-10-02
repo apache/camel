@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.InfinispanConstants;
-import org.infinispan.client.hotrod.RemoteCache;
-import org.junit.jupiter.api.BeforeAll;
+import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,11 +30,11 @@ public class InfinispanTestContainersProducerTest extends InfinispanTestContaine
 
     private static final String COMMAND_VALUE = "commandValue";
     private static final String COMMAND_KEY = "commandKey1";
-    private RemoteCache<Object, Object> cache;
+    private RemoteCacheManager remoteCacheManager;
 
-    @BeforeAll
-    public void init() {
-        cache = getDefaultCache();
+    @Before
+    public void doPreSetup() {
+        remoteCacheManager = createAndGetDefaultCache();
     }
 
     @Test
@@ -46,8 +46,6 @@ public class InfinispanTestContainersProducerTest extends InfinispanTestContaine
                 exchange.getIn().setHeader(InfinispanConstants.VALUE, COMMAND_VALUE);
             }
         });
-        String result = (String) cache.get(COMMAND_KEY);
-        assertEquals(COMMAND_VALUE, result);
 
         Exchange exchange;
         exchange = template.send("direct:get", new Processor() {
@@ -66,9 +64,11 @@ public class InfinispanTestContainersProducerTest extends InfinispanTestContaine
             @Override
             public void configure() {
                 from("direct:put")
-                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=PUT&user=admin&password=password&secure=true");
+                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
+                            + "&operation=PUT&username=admin&password=password&secure=true");
                 from("direct:get")
-                        .to("infinispan:default?cacheContainer=#cacheContainer&operation=GET&user=admin&password=password&secure=true");
+                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
+                            + "&operation=GET&username=admin&password=password&secure=true");
             }
         };
     }

@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.testcontainers;
 
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.infinispan.client.hotrod.DefaultTemplate;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
@@ -39,7 +40,7 @@ public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
         return new GenericContainer(CONTAINER_IMAGE)
                 .withNetworkAliases(CONTAINER_NAME)
                 .withEnv("USER", "admin")
-                .withEnv("PASSWORD", "password")
+                .withEnv("PASS", "password")
                 .withExposedPorts(11222)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessageContaining("Infinispan Server 11.0.3.Final started", 1));
@@ -52,13 +53,14 @@ public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
                 getContainerPort(CONTAINER_NAME, 11222));
     }
 
-    public RemoteCache<Object, Object> getDefaultCache() {
+    public RemoteCacheManager createAndGetDefaultCache() {
         ConfigurationBuilder clientBuilder = new ConfigurationBuilder();
-        clientBuilder.addServer().host(getContainerHost(CONTAINER_NAME)).port(11222)
-                .security().authentication().username("user").password("password");
+        clientBuilder.addServer().host(getContainerHost(CONTAINER_NAME)).port(getContainerPort(CONTAINER_NAME, 11222))
+                .security().authentication().username("admin").password("password").serverName("infinispan")
+                .saslMechanism("DIGEST-MD5").realm("default").remoteCache("mycache").templateName(DefaultTemplate.DIST_SYNC);
 
         RemoteCacheManager remoteCacheManager = new RemoteCacheManager(clientBuilder.build());
-        RemoteCache<Object, Object> cache = remoteCacheManager.getCache("default");
-        return cache;
+        remoteCacheManager.getCache("mycache");
+        return remoteCacheManager;
     }
 }
