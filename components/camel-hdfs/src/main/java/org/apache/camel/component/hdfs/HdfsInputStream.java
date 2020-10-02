@@ -40,8 +40,8 @@ public class HdfsInputStream implements Closeable {
     private Closeable in;
     private boolean opened;
     private int chunkSize;
-    private final AtomicLong numOfReadBytes = new AtomicLong(0L);
-    private final AtomicLong numOfReadMessages = new AtomicLong(0L);
+    private final AtomicLong numOfReadBytes = new AtomicLong();
+    private final AtomicLong numOfReadMessages = new AtomicLong();
 
     private boolean streamDownload;
 
