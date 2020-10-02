@@ -152,9 +152,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
         SimpleNode lastSingle = null;
         SimpleNode lastDouble = null;
         SimpleNode lastFunction = null;
-        AtomicBoolean startSingle = new AtomicBoolean(false);
-        AtomicBoolean startDouble = new AtomicBoolean(false);
-        AtomicBoolean startFunction = new AtomicBoolean(false);
+        AtomicBoolean startSingle = new AtomicBoolean();
+        AtomicBoolean startDouble = new AtomicBoolean();
+        AtomicBoolean startFunction = new AtomicBoolean();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {

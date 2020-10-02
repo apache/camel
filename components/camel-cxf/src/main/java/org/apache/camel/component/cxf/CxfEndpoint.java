@@ -130,7 +130,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected Bus bus;
 
     protected volatile boolean createBus;
-    private final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
+    private final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean();
 
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;

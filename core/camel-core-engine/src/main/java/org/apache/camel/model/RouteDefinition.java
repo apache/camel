@@ -54,7 +54,7 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute {
-    private final AtomicBoolean prepared = new AtomicBoolean(false);
+    private final AtomicBoolean prepared = new AtomicBoolean();
     private FromDefinition input;
     private String group;
     private String streamCache;

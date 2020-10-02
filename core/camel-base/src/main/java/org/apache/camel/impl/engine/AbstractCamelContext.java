@@ -540,7 +540,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         try {
             // Flag used to mark a component of being created.
-            final AtomicBoolean created = new AtomicBoolean(false);
+            final AtomicBoolean created = new AtomicBoolean();
 
             // atomic operation to get/create a component. Avoid global locks.
             final Component component = components.computeIfAbsent(name, new Function<String, Component>() {
