@@ -32,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchLanguageException;
@@ -300,7 +299,11 @@ public class ExpressionBuilder {
      * @return an expression object which will return the bean
      */
     public static Expression refExpression(final String ref) {
-        return refExpression(simpleExpression(ref));
+        if (LanguageSupport.hasSimpleFunction(ref)) {
+            return refExpression(simpleExpression(ref));
+        } else {
+            return refExpression(constantExpression(ref));
+        }
     }
 
     /**
@@ -1632,21 +1635,23 @@ public class ExpressionBuilder {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // TODO: resolve language early
                 Language language = exchange.getContext().resolveLanguage("xtokenize");
+                Map<String, Object> map = new HashMap<>(5);
                 if (headerName != null) {
-                    setProperty(exchange.getContext(), language, "headerName", headerName);
+                    map.put("headerName", headerName);
                 }
                 if (mode != 'i') {
-                    setProperty(exchange.getContext(), language, "mode", mode);
+                    map.put("mode", mode);
                 }
                 if (group > 1) {
-                    setProperty(exchange.getContext(), language, "group", group);
+                    map.put("group", group);
                 }
                 if (namespaces != null) {
-                    setProperty(exchange.getContext(), language, "namespaces", namespaces);
+                    map.put("namespaces", namespaces);
                 }
-                setProperty(exchange.getContext(), language, "path", path);
-                return language.createExpression((String)null).evaluate(exchange, Object.class);
+                map.put("path", path);
+                return language.createExpression(map).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -1675,14 +1680,6 @@ public class ExpressionBuilder {
                 return "bodyOneLine()";
             }
         };
-    }
-
-    protected static void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
-        try {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
-        }
     }
 
 }
