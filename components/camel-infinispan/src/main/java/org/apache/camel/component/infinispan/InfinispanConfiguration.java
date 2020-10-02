@@ -76,6 +76,8 @@ public class InfinispanConfiguration implements Cloneable {
     private String username;
     @UriParam(label = "common, security", secret = true)
     private String password;
+    @UriParam(label = "common, security")
+    private String saslMechanism;
 
     public String getCommand() {
         return operation.toString();
@@ -393,4 +395,16 @@ public class InfinispanConfiguration implements Cloneable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getSaslMechanism() {
+        return saslMechanism;
+    }
+
+    /**
+     * Define the SASL Mechanism to access the infinispan instance
+     */
+    public void setSaslMechanism(String saslMechanism) {
+        this.saslMechanism = saslMechanism;
+    }
+
 }

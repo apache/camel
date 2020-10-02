@@ -37,6 +37,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
         map.put("value", java.lang.Object.class);
         map.put("password", java.lang.String.class);
+        map.put("saslMechanism", java.lang.String.class);
         map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
@@ -94,6 +95,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "remappingFunction": target.getConfiguration().setRemappingFunction(property(camelContext, java.util.function.BiFunction.class, value)); return true;
         case "resultheader":
         case "resultHeader": target.getConfiguration().setResultHeader(property(camelContext, java.lang.Object.class, value)); return true;
+        case "saslmechanism":
+        case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -152,6 +155,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "remappingFunction": return target.getConfiguration().getRemappingFunction();
         case "resultheader":
         case "resultHeader": return target.getConfiguration().getResultHeader();
+        case "saslmechanism":
+        case "saslMechanism": return target.getConfiguration().getSaslMechanism();
         case "secure": return target.getConfiguration().isSecure();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();

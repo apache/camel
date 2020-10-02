@@ -283,6 +283,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointConsumerBuilder saslMechanism(
+                String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -845,6 +857,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointProducerBuilder saslMechanism(
+                String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1187,6 +1211,17 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointBuilder saslMechanism(String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
             return this;
         }
         /**

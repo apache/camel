@@ -279,6 +279,18 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder saslMechanism(
+                java.lang.String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -442,6 +454,7 @@ public interface InfinispanComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((InfinispanComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
             case "value": getOrCreateConfiguration((InfinispanComponent) component).setValue((java.lang.Object) value); return true;
             case "password": getOrCreateConfiguration((InfinispanComponent) component).setPassword((java.lang.String) value); return true;
+            case "saslMechanism": getOrCreateConfiguration((InfinispanComponent) component).setSaslMechanism((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
             case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
