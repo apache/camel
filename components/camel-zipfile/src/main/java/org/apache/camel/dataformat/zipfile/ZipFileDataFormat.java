@@ -42,9 +42,14 @@ import static org.apache.camel.Exchange.FILE_NAME;
  */
 @Dataformat("zipfile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+    /**
+     * The default maximum decompressed size (in bytes), which corresponds to 1G.
+     */
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824L;
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
+    private long maxDecompressedSize = DEFAULT_MAXIMUM_DECOMPRESSED_SIZE;
 
     @Override
     public String getDataFormatName() {
@@ -96,7 +101,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
                 ZipEntry entry = zis.getNextEntry();
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, entry.getName());
-                    IOHelper.copy(zis, osb);
+                    IOHelper.copy(zis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
                 } else {
                     throw new IllegalStateException("Unable to unzip the file, it may be corrupted.");
                 }
@@ -156,6 +161,14 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setPreservePathElements(boolean preservePathElements) {
         this.preservePathElements = preservePathElements;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override
