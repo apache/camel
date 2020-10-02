@@ -99,8 +99,14 @@ public class InfinispanManager extends ServiceSupport {
                 }
 
                 if (configuration.isSecure()) {
-                    builder.security().authentication().username(configuration.getUsername())
-                            .password(configuration.getPassword());
+                    if (ObjectHelper.isNotEmpty(configuration.getUsername())
+                            && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+                        builder.security().authentication().username(configuration.getUsername())
+                                .password(configuration.getPassword());
+                    } else {
+                        throw new IllegalArgumentException(
+                                "If the Infinispan instance is secured, username and password are needed");
+                    }
                 }
 
                 Properties properties = new Properties();

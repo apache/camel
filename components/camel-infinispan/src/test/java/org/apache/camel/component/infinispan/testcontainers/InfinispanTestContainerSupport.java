@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan.testcontainers;
 import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.infinispan.client.hotrod.DefaultTemplate;
-import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.junit.jupiter.api.TestInstance;
