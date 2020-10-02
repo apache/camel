@@ -24,7 +24,6 @@ import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimList;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimSpec;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -110,9 +109,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
             }
             pvcList = pvcs.list();
         } else {
-            FilterWatchListMultiDeletable<PersistentVolumeClaim, PersistentVolumeClaimList, Boolean, Watch, Watcher<PersistentVolumeClaim>> pvcs
-                    = getEndpoint()
-                            .getKubernetesClient().persistentVolumeClaims().inAnyNamespace();
+            FilterWatchListMultiDeletable<PersistentVolumeClaim, PersistentVolumeClaimList, Boolean, Watch> pvcs = getEndpoint()
+                    .getKubernetesClient().persistentVolumeClaims().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 pvcs.withLabel(entry.getKey(), entry.getValue());
             }

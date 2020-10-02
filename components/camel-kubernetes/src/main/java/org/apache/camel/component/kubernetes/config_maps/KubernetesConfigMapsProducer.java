@@ -23,7 +23,6 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapList;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -95,7 +94,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
     protected void doListConfigMapsByLabels(Exchange exchange, String operation) throws Exception {
         ConfigMapList configMapsList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, Map.class);
-        FilterWatchListMultiDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>> configMaps
+        FilterWatchListMultiDeletable<ConfigMap, ConfigMapList, Boolean, Watch> configMaps
                 = getEndpoint().getKubernetesClient().configMaps().inAnyNamespace();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             configMaps.withLabel(entry.getKey(), entry.getValue());

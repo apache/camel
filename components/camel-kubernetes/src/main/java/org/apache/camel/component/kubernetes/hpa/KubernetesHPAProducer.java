@@ -18,13 +18,13 @@ package org.apache.camel.component.kubernetes.hpa;
 
 import java.util.Map;
 
+import io.fabric8.kubernetes.api.model.autoscaling.v1.DoneableHorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerList;
 import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscalerSpec;
-import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -100,7 +100,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get HPA by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, Boolean, Watch, Watcher<HorizontalPodAutoscaler>> hpas
+        MixedOperation<HorizontalPodAutoscaler, HorizontalPodAutoscalerList, DoneableHorizontalPodAutoscaler, Resource<HorizontalPodAutoscaler, DoneableHorizontalPodAutoscaler>> hpas
                 = getEndpoint()
                         .getKubernetesClient().autoscaling().v1().horizontalPodAutoscalers();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
