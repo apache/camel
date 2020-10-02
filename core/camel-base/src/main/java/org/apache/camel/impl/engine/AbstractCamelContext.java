@@ -1636,60 +1636,43 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public Language resolveLanguage(String language) {
-        LOG.debug("Resolving language: {}", language);
+    public Language resolveLanguage(String name) {
+        LOG.debug("Resolving language: {}", name);
 
-        Language answer;
-        synchronized (languages) {
-            // as first iteration, check if there is a language instance for the given name
-            // bound to the registry
-            answer = ResolverHelper.lookupLanguageInRegistryWithFallback(getCamelContextReference(), language);
-            if (answer != null) {
-                Language old = languages.put(language, answer);
-                // if the language has already been loaded, thus it is already registered
-                // in the local language cache, we can return it as it has already been
-                // initialized and configured
-                if (old == answer) {
-                    return answer;
+        return languages.computeIfAbsent(name, new Function<String, Language>() {
+            @Override
+            public Language apply(String s) {
+                final CamelContext camelContext = getCamelContextReference();
+
+                // as first iteration, check if there is a language instance for the given name
+                // bound to the registry
+                Language language = ResolverHelper.lookupLanguageInRegistryWithFallback(camelContext, name);
+
+                if (language == null) {
+                    // language not known, then use resolver
+                    language = getLanguageResolver().resolveLanguage(name, camelContext);
                 }
-            } else {
-                answer = languages.get(language);
 
-                // check if the language is singleton, if so return the shared
-                // instance
-                if (IsSingleton.test(answer)) {
-                    return answer;
-                } else {
-                    answer = null;
-                }
-            }
+                if (language != null) {
+                    if (language instanceof Service) {
+                        try {
+                            startService((Service) language);
+                        } catch (Exception e) {
+                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                        }
+                    }
 
-            if (answer == null) {
-                // language not known or not singleton, then use resolver
-                answer = getLanguageResolver().resolveLanguage(language, getCamelContextReference());
-            }
+                    // inject CamelContext if aware
+                    CamelContextAware.trySetCamelContext(language, camelContext);
 
-            if (answer != null) {
-                // inject CamelContext if aware
-                CamelContextAware.trySetCamelContext(answer, getCamelContextReference());
-
-                if (answer instanceof Service) {
-                    try {
-                        startService((Service) answer);
-                    } catch (Exception e) {
-                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                    for (LifecycleStrategy strategy : lifecycleStrategies) {
+                        strategy.onLanguageCreated(name, language);
                     }
                 }
 
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onLanguageCreated(language, answer);
-                }
-
-                languages.put(language, answer);
+                return language;
             }
-        }
-
-        return answer;
+        });
     }
 
     // Properties
