@@ -48,7 +48,7 @@ import static org.apache.camel.util.StringHelper.after;
 public final class EndpointHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
-    private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
+    private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong();
 
     private EndpointHelper() {
         //Utility Class
