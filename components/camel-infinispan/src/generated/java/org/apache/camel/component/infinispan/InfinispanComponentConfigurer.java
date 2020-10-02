@@ -37,6 +37,7 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         map.put("password", java.lang.String.class);
         map.put("saslMechanism", java.lang.String.class);
         map.put("securityRealm", java.lang.String.class);
+        map.put("securityServerName", java.lang.String.class);
         map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
@@ -102,6 +103,8 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "secure": getOrCreateConfiguration(target).setSecure(property(camelContext, boolean.class, value)); return true;
         case "securityrealm":
         case "securityRealm": getOrCreateConfiguration(target).setSecurityRealm(property(camelContext, java.lang.String.class, value)); return true;
+        case "securityservername":
+        case "securityServerName": getOrCreateConfiguration(target).setSecurityServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "sync": getOrCreateConfiguration(target).setSync(property(camelContext, boolean.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "value": getOrCreateConfiguration(target).setValue(property(camelContext, java.lang.Object.class, value)); return true;
@@ -160,6 +163,8 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "secure": return getOrCreateConfiguration(target).isSecure();
         case "securityrealm":
         case "securityRealm": return getOrCreateConfiguration(target).getSecurityRealm();
+        case "securityservername":
+        case "securityServerName": return getOrCreateConfiguration(target).getSecurityServerName();
         case "sync": return getOrCreateConfiguration(target).isSync();
         case "username": return getOrCreateConfiguration(target).getUsername();
         case "value": return getOrCreateConfiguration(target).getValue();
