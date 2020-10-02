@@ -32,7 +32,7 @@ public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
     public void testSimpleRegexp() throws Exception {
         exchange.getIn().setBody("12.34.5678");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange));

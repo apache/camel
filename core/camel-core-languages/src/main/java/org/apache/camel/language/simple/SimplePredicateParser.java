@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.ast.BinaryExpression;
@@ -62,8 +63,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
 
-    public SimplePredicateParser(String expression, boolean allowEscape, Map<String, Expression> cacheExpression) {
-        super(expression, allowEscape);
+    public SimplePredicateParser(CamelContext camelContext, String expression, boolean allowEscape, Map<String, Expression> cacheExpression) {
+        super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
     }
 
@@ -467,7 +468,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     private List<Predicate> createPredicates() {
         List<Predicate> answer = new ArrayList<>();
         for (SimpleNode node : nodes) {
-            Expression exp = node.createExpression(expression);
+            Expression exp = node.createExpression(camelContext, expression);
             if (exp != null) {
                 Predicate predicate = ExpressionToPredicateAdapter.toPredicate(exp);
                 answer.add(predicate);

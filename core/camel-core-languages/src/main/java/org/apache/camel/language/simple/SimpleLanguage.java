@@ -104,7 +104,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             expression = loadResource(expression);
 
-            SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
+            SimplePredicateParser parser = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
@@ -124,7 +124,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             expression = loadResource(expression);
 
-            SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
+            SimpleExpressionParser parser = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parseExpression();
 
             if (cacheExpression != null && answer != null) {

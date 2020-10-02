@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -71,57 +72,57 @@ public class BinaryExpression extends BaseSimpleNode {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
         org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
 
-        final Expression leftExp = left.createExpression(expression);
-        final Expression rightExp = right.createExpression(expression);
+        final Expression leftExp = left.createExpression(camelContext, expression);
+        final Expression rightExp = right.createExpression(camelContext, expression);
 
         if (operator == BinaryOperatorType.EQ) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isEqualTo(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.EQ_IGNORE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GT) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isGreaterThan(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.GTE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isGreaterThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LT) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isLessThan(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isLessThan(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.LTE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isLessThanOrEqualTo(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isLessThanOrEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.isNotEqualTo(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.isNotEqualTo(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
-            return createExpression(leftExp, rightExp,
+            return createExpression(camelContext, leftExp, rightExp,
                     PredicateBuilder.not(PredicateBuilder.isEqualToIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
-            return createExpression(leftExp, rightExp,
+            return createExpression(camelContext, leftExp, rightExp,
                     PredicateBuilder.not(PredicateBuilder.containsIgnoreCase(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.IS || operator == BinaryOperatorType.NOT_IS) {
-            return createIsExpression(expression, leftExp, rightExp);
+            return createIsExpression(camelContext, expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.REGEX || operator == BinaryOperatorType.NOT_REGEX) {
-            return createRegexExpression(leftExp, rightExp);
+            return createRegexExpression(camelContext, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.IN || operator == BinaryOperatorType.NOT_IN) {
-            return createInExpression(leftExp, rightExp);
+            return createInExpression(camelContext, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.RANGE || operator == BinaryOperatorType.NOT_RANGE) {
-            return createRangeExpression(expression, leftExp, rightExp);
+            return createRangeExpression(camelContext, expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.STARTS_WITH) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.startsWith(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.startsWith(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.ENDS_WITH) {
-            return createExpression(leftExp, rightExp, PredicateBuilder.endsWith(leftExp, rightExp));
+            return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.endsWith(leftExp, rightExp));
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
     }
 
-    private Expression createIsExpression(final String expression, final Expression leftExp, final Expression rightExp) {
+    private Expression createIsExpression(final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -132,7 +133,7 @@ public class BinaryExpression extends BaseSimpleNode {
                             expression, right.getToken().getIndex(),
                             operator + " operator cannot accept null. A class type must be provided.");
                 }
-                Class<?> rightType = exchange.getContext().getClassResolver().resolveClass(name);
+                Class<?> rightType = camelContext.getClassResolver().resolveClass(name);
                 if (rightType == null) {
                     throw new SimpleIllegalSyntaxException(
                             expression, right.getToken().getIndex(),
@@ -145,7 +146,7 @@ public class BinaryExpression extends BaseSimpleNode {
                 }
                 boolean answer = predicate.matches(exchange);
 
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
+                return camelContext.getTypeConverter().convertTo(type, answer);
             }
 
             @Override
@@ -155,7 +156,7 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createRegexExpression(final Expression leftExp, final Expression rightExp) {
+    private Expression createRegexExpression(final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -165,7 +166,7 @@ public class BinaryExpression extends BaseSimpleNode {
                     predicate = PredicateBuilder.not(predicate);
                 }
                 boolean answer = predicate.matches(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
+                return camelContext.getTypeConverter().convertTo(type, answer);
             }
 
             @Override
@@ -175,7 +176,7 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createInExpression(final Expression leftExp, final Expression rightExp) {
+    private Expression createInExpression(final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -194,7 +195,7 @@ public class BinaryExpression extends BaseSimpleNode {
                     predicate = PredicateBuilder.not(predicate);
                 }
                 boolean answer = predicate.matches(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
+                return camelContext.getTypeConverter().convertTo(type, answer);
             }
 
             @Override
@@ -204,7 +205,7 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createRangeExpression(final String expression, final Expression leftExp, final Expression rightExp) {
+    private Expression createRangeExpression(final CamelContext camelContext, final String expression, final Expression leftExp, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -230,7 +231,7 @@ public class BinaryExpression extends BaseSimpleNode {
                 }
 
                 boolean answer = predicate.matches(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
+                return camelContext.getTypeConverter().convertTo(type, answer);
             }
 
             @Override
@@ -240,12 +241,12 @@ public class BinaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createExpression(final Expression left, final Expression right, final Predicate predicate) {
+    private Expression createExpression(final CamelContext camelContext, final Expression left, final Expression right, final Predicate predicate) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 boolean answer = predicate.matches(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, answer);
+                return camelContext.getTypeConverter().convertTo(type, answer);
             }
 
             @Override

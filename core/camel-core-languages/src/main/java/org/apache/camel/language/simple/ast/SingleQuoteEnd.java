@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleToken;
 
@@ -29,7 +30,7 @@ public class SingleQuoteEnd extends BaseSimpleNode implements BlockEnd {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         return null;
     }
 
