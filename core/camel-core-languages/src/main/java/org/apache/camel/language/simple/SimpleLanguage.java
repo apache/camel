@@ -72,7 +72,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void start() {
-        // noop
+        if (getCamelContext() != null) {
+            SIMPLE.setCamelContext(getCamelContext());
+        }
     }
 
     @Override
@@ -143,6 +145,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
      * {@link #predicate(String)} instead.
      */
+    @Deprecated
     public static Expression simple(String expression) {
         return expression(expression);
     }
@@ -151,6 +154,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * Creates a new {@link Expression} (or {@link Predicate} if the resultType is a <tt>Boolean</tt>, or
      * <tt>boolean</tt> type).
      */
+    @Deprecated
     public static Expression simple(String expression, Class<?> resultType) {
         return new SimpleLanguage().createExpression(expression, resultType);
     }
@@ -175,6 +179,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
      * {@link #predicate(String)} instead.
      */
+    @Deprecated
     public static Expression expression(String expression) {
         return SIMPLE.createExpression(expression);
     }
@@ -182,6 +187,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     /**
      * Creates a new {@link Predicate}.
      */
+    @Deprecated
     public static Predicate predicate(String predicate) {
         return SIMPLE.createPredicate(predicate);
     }

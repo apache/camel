@@ -72,6 +72,8 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
             exp = exp.trim();
         }
         SimpleBuilder answer = new SimpleBuilder(exp);
+        // need to configure result type which can be set via xml dsl vs java dsl
+        configureLanguage(null);
         answer.setResultType(definition.getResultType());
         return answer;
     }

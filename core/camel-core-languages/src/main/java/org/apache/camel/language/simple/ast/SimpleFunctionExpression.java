@@ -23,6 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -206,7 +207,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // bean: prefix
         remainder = ifStartsWithReturnRemainder("bean:", function);
         if (remainder != null) {
-            return ExpressionBuilder.beanExpression(remainder);
+            // resolve bean language early
+            Language bean = camelContext.resolveLanguage("bean");
+            return ExpressionBuilder.languageExpression("bean", bean, remainder);
         }
 
         // properties: prefix

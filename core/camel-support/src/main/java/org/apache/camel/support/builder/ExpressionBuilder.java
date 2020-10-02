@@ -668,6 +668,27 @@ public class ExpressionBuilder {
     /**
      * Returns an expression for evaluating the expression/predicate using the given language
      *
+     * @param languageName  the language name
+     * @param language      the language
+     * @param expression  the expression or predicate
+     * @return an expression object which will evaluate the expression/predicate using the given language
+     */
+    public static Expression languageExpression(final String languageName, final Language language, final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return language.createExpression(expression).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return languageName + "(" + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for evaluating the expression/predicate using the given language
+     *
      * @param expression  the expression or predicate
      * @return an expression object which will evaluate the expression/predicate using the given language
      */
