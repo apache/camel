@@ -307,6 +307,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointConsumerBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -893,6 +905,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointProducerBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1257,6 +1281,18 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointBuilder securityRealm(String securityRealm) {
             doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointBuilder securityServerName(
+                String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
             return this;
         }
         /**

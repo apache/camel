@@ -303,6 +303,18 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder securityServerName(
+                java.lang.String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -468,6 +480,7 @@ public interface InfinispanComponentBuilderFactory {
             case "password": getOrCreateConfiguration((InfinispanComponent) component).setPassword((java.lang.String) value); return true;
             case "saslMechanism": getOrCreateConfiguration((InfinispanComponent) component).setSaslMechanism((java.lang.String) value); return true;
             case "securityRealm": getOrCreateConfiguration((InfinispanComponent) component).setSecurityRealm((java.lang.String) value); return true;
+            case "securityServerName": getOrCreateConfiguration((InfinispanComponent) component).setSecurityServerName((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
             case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
