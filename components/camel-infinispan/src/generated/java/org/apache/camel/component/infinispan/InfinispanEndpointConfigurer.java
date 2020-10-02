@@ -38,6 +38,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("value", java.lang.Object.class);
         map.put("password", java.lang.String.class);
         map.put("saslMechanism", java.lang.String.class);
+        map.put("securityRealm", java.lang.String.class);
         map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
@@ -98,6 +99,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslmechanism":
         case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
+        case "securityrealm":
+        case "securityRealm": target.getConfiguration().setSecurityRealm(property(camelContext, java.lang.String.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -158,6 +161,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "saslmechanism":
         case "saslMechanism": return target.getConfiguration().getSaslMechanism();
         case "secure": return target.getConfiguration().isSecure();
+        case "securityrealm":
+        case "securityRealm": return target.getConfiguration().getSecurityRealm();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();

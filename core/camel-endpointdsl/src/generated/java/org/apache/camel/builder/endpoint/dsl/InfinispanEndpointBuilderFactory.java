@@ -295,6 +295,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointConsumerBuilder securityRealm(
+                String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -869,6 +881,18 @@ public interface InfinispanEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointProducerBuilder securityRealm(
+                String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
          * Define the username to access the infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1222,6 +1246,17 @@ public interface InfinispanEndpointBuilderFactory {
          */
         default InfinispanEndpointBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanEndpointBuilder securityRealm(String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
             return this;
         }
         /**
