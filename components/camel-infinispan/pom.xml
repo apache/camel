@@ -73,6 +73,7 @@
             <artifactId>camel-test-spring-junit5</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
             <version>${infinispan-version}</version>
