@@ -36,9 +36,9 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
     protected Map<String, Object> createProperties() {
         Map<String, Object> properties = new HashMap<>(4);
         properties.put("bean", definition.getInstance());
-        properties.put("beanType", or(definition.getBeanType(), definition.getBeanTypeName()));
-        properties.put("ref", definition.getRef());
-        properties.put("method", definition.getMethod());
+        properties.put("beanType", definition.getBeanType());
+        properties.put("ref", parseString(definition.getRef()));
+        properties.put("method", parseString(definition.getMethod()));
         return properties;
     }
 

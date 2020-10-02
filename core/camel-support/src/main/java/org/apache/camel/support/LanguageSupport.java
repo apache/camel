@@ -110,6 +110,10 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             value = defaultValue;
         }
 
+        if (value instanceof String) {
+            value = getCamelContext().resolvePropertyPlaceholders(value.toString());
+        }
+
         // if the type is not string based and the value is a bean reference, then we need to lookup
         // the bean from the registry
         if (value instanceof String && String.class != type) {

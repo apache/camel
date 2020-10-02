@@ -41,16 +41,16 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
         if (token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
-        properties.put("token", token);
-        properties.put("endToken", definition.getEndToken());
-        properties.put("inheritNamespaceTagName", definition.getInheritNamespaceTagName());
-        properties.put("headerName", definition.getHeaderName());
-        properties.put("groupDelimiter", definition.getGroupDelimiter());
-        properties.put("regex", definition.getRegex());
-        properties.put("xml", definition.getXml());
-        properties.put("includeTokens", definition.getIncludeTokens());
-        properties.put("group", definition.getGroup());
-        properties.put("skipFirst", definition.getSkipFirst());
+        properties.put("token", parseString(token));
+        properties.put("endToken", parseString(definition.getEndToken()));
+        properties.put("inheritNamespaceTagName", parseString(definition.getInheritNamespaceTagName()));
+        properties.put("headerName", parseString(definition.getHeaderName()));
+        properties.put("groupDelimiter", parseString(definition.getGroupDelimiter()));
+        properties.put("regex", parseBoolean(definition.getRegex()));
+        properties.put("xml", parseBoolean(definition.getXml()));
+        properties.put("includeTokens", parseBoolean(definition.getIncludeTokens()));
+        properties.put("group", parseString(definition.getGroup()));
+        properties.put("skipFirst", parseBoolean(definition.getSkipFirst()));
         return properties;
     }
 
@@ -62,13 +62,11 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        // method call does not use the string exp so its not in use
         return language.createExpression(createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        // method call does not use the string exp so its not in use
         return language.createPredicate(createProperties());
     }
 

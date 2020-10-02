@@ -67,16 +67,25 @@ public class SimpleExpressionReifier extends ExpressionReifier<SimpleExpression>
     protected SimpleBuilder createBuilder() {
         String exp = parseString(definition.getExpression());
         // should be true by default
-        boolean isTrim = true;
-        if (definition.getTrim() != null) {
-            isTrim = parseBoolean(definition.getTrim());
-        }
+        boolean isTrim = parseBoolean(definition.getTrim(), true);
         if (exp != null && isTrim) {
             exp = exp.trim();
         }
         SimpleBuilder answer = new SimpleBuilder(exp);
         answer.setResultType(definition.getResultType());
         return answer;
+    }
+
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        definition.setExpression(exp);
+        return createBuilder();
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        definition.setExpression(exp);
+        return createBuilder();
     }
 
     @Override
