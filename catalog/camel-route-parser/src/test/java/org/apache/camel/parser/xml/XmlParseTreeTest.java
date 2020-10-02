@@ -16,13 +16,17 @@
  */
 package org.apache.camel.parser.xml;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class XmlParseTreeTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlParseTreeTest.class);
+
+    @TempDir
+    File tempDir;
 
     @Test
     void testXmlTree() throws Exception {
@@ -53,6 +60,20 @@ public class XmlParseTreeTest {
         assertTrue(tree.contains("32\tfrom"));
         assertTrue(tree.contains("35\t  transform"));
         assertTrue(tree.contains("39\t  to"));
+    }
+
+    @Test
+    void testXmlTreeWithEmptyRoute() throws Exception {
+        String textTotest = "<camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\">\r\n" +
+                            "    <route id=\"a route\">\r\n" +
+                            "    </route>\r\n" +
+                            "</camelContext>\n";
+        File camelFile = new File(tempDir, "testXmlTreeWithEmptyRoute.xml");
+        Files.copy(new ByteArrayInputStream(textTotest.getBytes()), camelFile.toPath());
+        List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(new ByteArrayInputStream(textTotest.getBytes()), "",
+                camelFile.getAbsolutePath());
+
+        assertEquals(0, list.size());
     }
 
 }
