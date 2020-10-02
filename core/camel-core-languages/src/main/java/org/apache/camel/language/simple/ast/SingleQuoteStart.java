@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -39,10 +40,10 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         Expression answer = null;
         if (block != null) {
-            answer = block.createExpression(expression);
+            answer = block.createExpression(camelContext, expression);
         }
         if (answer == null) {
             // there quoted literal is empty

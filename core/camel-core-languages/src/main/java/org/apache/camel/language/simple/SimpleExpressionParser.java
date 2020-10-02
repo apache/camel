@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
@@ -42,9 +43,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
 
-    public SimpleExpressionParser(String expression, boolean allowEscape,
+    public SimpleExpressionParser(CamelContext camelContext, String expression, boolean allowEscape,
                                   Map<String, Expression> cacheExpression) {
-        super(expression, allowEscape);
+        super(camelContext, expression, allowEscape);
         this.cacheExpression = cacheExpression;
     }
 
@@ -161,7 +162,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     private List<Expression> createExpressions() {
         List<Expression> answer = new ArrayList<>();
         for (SimpleNode token : nodes) {
-            Expression exp = token.createExpression(expression);
+            Expression exp = token.createExpression(camelContext, expression);
             if (exp != null) {
                 answer.add(exp);
             }

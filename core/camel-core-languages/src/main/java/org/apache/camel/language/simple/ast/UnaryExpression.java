@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -62,21 +63,21 @@ public class UnaryExpression extends BaseSimpleNode {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         ObjectHelper.notNull(left, "left node", this);
 
-        final Expression leftExp = left.createExpression(expression);
+        final Expression leftExp = left.createExpression(camelContext, expression);
 
         if (operator == UnaryOperatorType.INC) {
-            return createIncExpression(leftExp);
+            return createIncExpression(camelContext, leftExp);
         } else if (operator == UnaryOperatorType.DEC) {
-            return createDecExpression(leftExp);
+            return createDecExpression(camelContext, leftExp);
         }
 
         throw new SimpleParserException("Unknown unary operator " + operator, token.getIndex());
     }
 
-    private Expression createIncExpression(final Expression leftExp) {
+    private Expression createIncExpression(CamelContext camelContext, final Expression leftExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -88,13 +89,13 @@ public class UnaryExpression extends BaseSimpleNode {
                     // convert value back to same type as input as we want to preserve type
                     Object left = leftExp.evaluate(exchange, Object.class);
                     try {
-                        left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
+                        left = camelContext.getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
                     } catch (NoTypeConversionAvailableException e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
 
                     // and return the result
-                    return exchange.getContext().getTypeConverter().convertTo(type, left);
+                    return camelContext.getTypeConverter().convertTo(type, left);
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);
@@ -108,7 +109,7 @@ public class UnaryExpression extends BaseSimpleNode {
         };
     }
 
-    private Expression createDecExpression(final Expression leftExp) {
+    private Expression createDecExpression(CamelContext camelContext, final Expression leftExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -120,13 +121,13 @@ public class UnaryExpression extends BaseSimpleNode {
                     // convert value back to same type as input as we want to preserve type
                     Object left = leftExp.evaluate(exchange, Object.class);
                     try {
-                        left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
+                        left = camelContext.getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
                     } catch (NoTypeConversionAvailableException e) {
                         throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
 
                     // and return the result
-                    return exchange.getContext().getTypeConverter().convertTo(type, left);
+                    return camelContext.getTypeConverter().convertTo(type, left);
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);

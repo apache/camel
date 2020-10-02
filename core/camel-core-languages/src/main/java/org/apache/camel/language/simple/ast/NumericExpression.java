@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -47,7 +48,7 @@ public class NumericExpression extends BaseSimpleNode {
     }
 
     @Override
-    public Expression createExpression(String expression) throws SimpleParserException {
+    public Expression createExpression(CamelContext camelContext, String expression) throws SimpleParserException {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
