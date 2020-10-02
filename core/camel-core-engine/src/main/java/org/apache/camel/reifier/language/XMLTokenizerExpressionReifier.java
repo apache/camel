@@ -42,13 +42,11 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        // method call does not use the string exp so its not in use
         return language.createExpression(createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        // method call does not use the string exp so its not in use
         return language.createPredicate(createProperties());
     }
 
@@ -70,11 +68,11 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
     }
 
     protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(3);
-        properties.put("headerName", definition.getHeaderName());
-        properties.put("mode", definition.getMode());
-        properties.put("group", definition.getGroup());
-        properties.put("path", definition.getExpression());
+        Map<String, Object> properties = new HashMap<>(4);
+        properties.put("headerName", parseString(definition.getHeaderName()));
+        properties.put("mode", parseString(definition.getMode()));
+        properties.put("group", parseInt(definition.getGroup()));
+        properties.put("path", parseString(definition.getExpression()));
         return properties;
     }
 

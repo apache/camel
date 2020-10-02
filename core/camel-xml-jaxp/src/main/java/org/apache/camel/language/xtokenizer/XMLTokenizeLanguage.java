@@ -41,8 +41,8 @@ public class XMLTokenizeLanguage extends LanguageSupport {
 
     private String headerName;
     private String path;
-    private char mode = 'i';
-    private int group = 1;
+    private char mode;
+    private int group;
     private Namespaces namespaces;
 
     public static Expression tokenize(String path) {
@@ -98,7 +98,9 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     public Expression createExpression(Map<String, Object> properties) {
         XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
         answer.setHeaderName(property(String.class, properties, "headerName", headerName));
-        answer.setMode(property(char.class, properties, "mode", mode));
+        if (properties.get("mode") != null) {
+            answer.setMode(property(char.class, properties, "mode", 'i'));
+        }
         answer.setGroup(property(int.class, properties, "group", group));
         String path = property(String.class, properties, "path", null);
         return answer.createExpression(path);

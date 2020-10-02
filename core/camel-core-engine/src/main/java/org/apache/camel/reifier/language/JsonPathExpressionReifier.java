@@ -47,14 +47,14 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
 
     private Map<String, Object> createProperties(String exp) {
         Map<String, Object> properties = new HashMap<>(8);
-        properties.put("expression", exp);
+        properties.put("expression", parseString(exp));
         properties.put("resultType", definition.getResultType());
-        properties.put("suppressExceptions", definition.getSuppressExceptions());
-        properties.put("allowSimple", definition.getAllowSimple());
-        properties.put("allowEasyPredicate", definition.getAllowEasyPredicate());
-        properties.put("writeAsString", definition.getWriteAsString());
-        properties.put("headerName", definition.getHeaderName());
-        properties.put("option", definition.getOption());
+        properties.put("suppressExceptions", parseBoolean(definition.getSuppressExceptions()));
+        properties.put("allowSimple", parseBoolean(definition.getAllowSimple()));
+        properties.put("allowEasyPredicate", parseBoolean(definition.getAllowEasyPredicate()));
+        properties.put("writeAsString", parseBoolean(definition.getWriteAsString()));
+        properties.put("headerName", parseString(definition.getHeaderName()));
+        properties.put("option", parseString(definition.getOption()));
         return properties;
     }
 

@@ -63,9 +63,9 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
 
     protected Map<String, Object> createProperties(String expression) {
         Map<String, Object> properties = new HashMap<>(3);
-        properties.put("expression", expression);
+        properties.put("expression", parseString(expression));
         properties.put("resultType", definition.getResultType());
-        properties.put("headerName", definition.getHeaderName());
+        properties.put("headerName", parseString(definition.getHeaderName()));
         return properties;
     }
 
