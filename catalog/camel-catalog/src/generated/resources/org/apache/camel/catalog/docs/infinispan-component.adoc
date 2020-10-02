@@ -63,7 +63,7 @@ If no cache configuration is provided, embedded cacheContainer is created direct
 
 
 // component options: START
-The Infinispan component supports 23 options, which are listed below.
+The Infinispan component supports 26 options, which are listed below.
 
 
 
@@ -73,6 +73,7 @@ The Infinispan component supports 23 options, which are listed below.
 | *configuration* (common) | Component configuration |  | InfinispanConfiguration
 | *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
 | *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
+| *secure* (common) | Define if we are connecting to a secured Infinispan instance | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clusteredListener* (consumer) | If true, the listener will be installed for the entire cluster | false | boolean
 | *command* (consumer) | *Deprecated* The operation to perform. | PUT | String
@@ -85,6 +86,8 @@ The Infinispan component supports 23 options, which are listed below.
 | *oldValue* (producer) | Set a specific old value for some producer operations |  | Object
 | *operation* (producer) | The operation to perform. There are 21 enums and the value can be one of: PUT, PUTASYNC, PUTALL, PUTALLASYNC, PUTIFABSENT, PUTIFABSENTASYNC, GET, GETORDEFAULT, CONTAINSKEY, CONTAINSVALUE, REMOVE, REMOVEASYNC, REPLACE, REPLACEASYNC, SIZE, CLEAR, CLEARASYNC, QUERY, STATS, COMPUTE, COMPUTEASYNC | PUT | InfinispanOperation
 | *value* (producer) | Set a specific value for producer operations |  | Object
+| *password* ( security) | Define the password to access the infinispan instance |  | String
+| *username* ( security) | Define the username to access the infinispan instance |  | String
 | *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
 | *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
@@ -118,7 +121,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (25 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -126,6 +129,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *hosts* (common) | Specifies the host of the cache on Infinispan instance |  | String
 | *queryBuilder* (common) | Specifies the query builder. |  | InfinispanQueryBuilder
+| *secure* (common) | Define if we are connecting to a secured Infinispan instance | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *clusteredListener* (consumer) | If true, the listener will be installed for the entire cluster | false | boolean
 | *command* (consumer) | *Deprecated* The operation to perform. | PUT | String
@@ -140,6 +144,8 @@ with the following path and query parameters:
 | *oldValue* (producer) | Set a specific old value for some producer operations |  | Object
 | *operation* (producer) | The operation to perform. There are 21 enums and the value can be one of: PUT, PUTASYNC, PUTALL, PUTALLASYNC, PUTIFABSENT, PUTIFABSENTASYNC, GET, GETORDEFAULT, CONTAINSKEY, CONTAINSVALUE, REMOVE, REMOVEASYNC, REPLACE, REPLACEASYNC, SIZE, CLEAR, CLEARASYNC, QUERY, STATS, COMPUTE, COMPUTEASYNC | PUT | InfinispanOperation
 | *value* (producer) | Set a specific value for producer operations |  | Object
+| *password* ( security) | Define the password to access the infinispan instance |  | String
+| *username* ( security) | Define the username to access the infinispan instance |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
 | *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
