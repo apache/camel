@@ -227,6 +227,7 @@
         <google-proto-iam-version>0.13.0</google-proto-iam-version>
         <graphql-java-version>14.0</graphql-java-version>
         <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
+        <google-pubsub-grpc-version>1.30.2</google-pubsub-grpc-version>
         <grpc-version>1.28.0</grpc-version>
         <grpc-google-auth-library-version>0.19.0</grpc-google-auth-library-version>
         <grpc-guava-version>28.2-jre</grpc-guava-version>
