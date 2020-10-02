@@ -207,9 +207,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // bean: prefix
         remainder = ifStartsWithReturnRemainder("bean:", function);
         if (remainder != null) {
-            // resolve bean language early
             Language bean = camelContext.resolveLanguage("bean");
-            return ExpressionBuilder.languageExpression("bean", bean, remainder);
+            return bean.createExpression(remainder);
         }
 
         // properties: prefix
