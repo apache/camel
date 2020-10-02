@@ -18,7 +18,7 @@ public class InfinispanEndpointUriFactory extends org.apache.camel.support.compo
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
+        Set<String> set = new HashSet<>(32);
         set.add("cacheName");
         set.add("hosts");
         set.add("queryBuilder");
@@ -40,6 +40,7 @@ public class InfinispanEndpointUriFactory extends org.apache.camel.support.compo
         set.add("password");
         set.add("saslMechanism");
         set.add("securityRealm");
+        set.add("securityServerName");
         set.add("username");
         set.add("basicPropertyBinding");
         set.add("cacheContainer");

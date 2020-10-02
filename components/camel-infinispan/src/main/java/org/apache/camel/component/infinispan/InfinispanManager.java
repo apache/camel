@@ -113,6 +113,9 @@ public class InfinispanManager extends ServiceSupport {
                     if (ObjectHelper.isNotEmpty(configuration.getSecurityRealm())) {
                         builder.security().authentication().realm(configuration.getSecurityRealm());
                     }
+                    if (ObjectHelper.isNotEmpty(configuration.getSecurityServerName())) {
+                        builder.security().authentication().serverName(configuration.getSecurityServerName());
+                    }
                 }
 
                 Properties properties = new Properties();

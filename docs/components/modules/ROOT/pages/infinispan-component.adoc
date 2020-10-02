@@ -65,7 +65,7 @@ If no cache configuration is provided, embedded cacheContainer is created direct
 
 
 // component options: START
-The Infinispan component supports 28 options, which are listed below.
+The Infinispan component supports 29 options, which are listed below.
 
 
 
@@ -91,6 +91,7 @@ The Infinispan component supports 28 options, which are listed below.
 | *password* ( security) | Define the password to access the infinispan instance |  | String
 | *saslMechanism* ( security) | Define the SASL Mechanism to access the infinispan instance |  | String
 | *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
+| *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
 | *username* ( security) | Define the username to access the infinispan instance |  | String
 | *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
@@ -125,7 +126,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -151,6 +152,7 @@ with the following path and query parameters:
 | *password* ( security) | Define the password to access the infinispan instance |  | String
 | *saslMechanism* ( security) | Define the SASL Mechanism to access the infinispan instance |  | String
 | *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
+| *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
 | *username* ( security) | Define the username to access the infinispan instance |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer

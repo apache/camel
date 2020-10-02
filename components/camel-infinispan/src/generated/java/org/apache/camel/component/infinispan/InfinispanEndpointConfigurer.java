@@ -39,6 +39,7 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         map.put("password", java.lang.String.class);
         map.put("saslMechanism", java.lang.String.class);
         map.put("securityRealm", java.lang.String.class);
+        map.put("securityServerName", java.lang.String.class);
         map.put("username", java.lang.String.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
@@ -101,6 +102,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "secure": target.getConfiguration().setSecure(property(camelContext, boolean.class, value)); return true;
         case "securityrealm":
         case "securityRealm": target.getConfiguration().setSecurityRealm(property(camelContext, java.lang.String.class, value)); return true;
+        case "securityservername":
+        case "securityServerName": target.getConfiguration().setSecurityServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "sync": target.getConfiguration().setSync(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "username": target.getConfiguration().setUsername(property(camelContext, java.lang.String.class, value)); return true;
@@ -163,6 +166,8 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         case "secure": return target.getConfiguration().isSecure();
         case "securityrealm":
         case "securityRealm": return target.getConfiguration().getSecurityRealm();
+        case "securityservername":
+        case "securityServerName": return target.getConfiguration().getSecurityServerName();
         case "sync": return target.getConfiguration().isSync();
         case "synchronous": return target.isSynchronous();
         case "username": return target.getConfiguration().getUsername();
