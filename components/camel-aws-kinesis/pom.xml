@@ -45,6 +45,11 @@
             <artifactId>aws-java-sdk-kinesis</artifactId>
             <version>${aws-java-sdk-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
