@@ -110,6 +110,9 @@ public class InfinispanManager extends ServiceSupport {
                     if (ObjectHelper.isNotEmpty(configuration.getSaslMechanism())) {
                         builder.security().authentication().saslMechanism(configuration.getSaslMechanism());
                     }
+                    if (ObjectHelper.isNotEmpty(configuration.getSecurityRealm())) {
+                        builder.security().authentication().realm(configuration.getSecurityRealm());
+                    }
                 }
 
                 Properties properties = new Properties();

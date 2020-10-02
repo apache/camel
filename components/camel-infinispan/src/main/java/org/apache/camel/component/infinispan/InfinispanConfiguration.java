@@ -78,6 +78,8 @@ public class InfinispanConfiguration implements Cloneable {
     private String password;
     @UriParam(label = "common, security")
     private String saslMechanism;
+    @UriParam(label = "common, security")
+    private String securityRealm;
 
     public String getCommand() {
         return operation.toString();
@@ -407,4 +409,14 @@ public class InfinispanConfiguration implements Cloneable {
         this.saslMechanism = saslMechanism;
     }
 
+    public String getSecurityRealm() {
+        return securityRealm;
+    }
+
+    /**
+     * Define the security realm to access the infinispan instance
+     */
+    public void setSecurityRealm(String securityRealm) {
+        this.securityRealm = securityRealm;
+    }
 }

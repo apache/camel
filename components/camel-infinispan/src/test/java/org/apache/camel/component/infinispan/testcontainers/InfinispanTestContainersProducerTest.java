@@ -65,10 +65,10 @@ public class InfinispanTestContainersProducerTest extends InfinispanTestContaine
             public void configure() {
                 from("direct:put")
                         .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=PUT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)");
+                            + "&operation=PUT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default");
                 from("direct:get")
                         .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=GET&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)");
+                            + "&operation=GET&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default");
             }
         };
     }
