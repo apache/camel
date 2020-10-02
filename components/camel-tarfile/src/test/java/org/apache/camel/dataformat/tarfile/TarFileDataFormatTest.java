@@ -227,6 +227,13 @@ public class TarFileDataFormatTest extends CamelTestSupport {
         deleteDirectory(new File("hello_out"));
     }
 
+    @Test
+    public void testUnzipMaxDecompressedSize() throws Exception {
+        // We are only allowing 10 bytes to be decompressed, so we expect an error
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:untarMaxDecompressedSize", getTaredText("file")));
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -299,6 +306,11 @@ public class TarFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslTar").marshal(tar).to("mock:dslTar");
                 from("direct:dslUntar").unmarshal(tar).to("mock:dslUntar");
                 from("direct:corruptUntar").unmarshal(tar).to("mock:corruptUntar");
+
+                TarFileDataFormat maxDecompressedSizeTar = new TarFileDataFormat();
+                // Only allow 10 bytes to be decompressed
+                maxDecompressedSizeTar.setMaxDecompressedSize(10L);
+                from("direct:untarMaxDecompressedSize").unmarshal(maxDecompressedSizeTar).to("mock:untar");
             }
         };
     }

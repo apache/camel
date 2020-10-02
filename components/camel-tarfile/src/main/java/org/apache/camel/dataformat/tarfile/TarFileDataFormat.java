@@ -49,6 +49,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
+    private long maxDecompressedSize = -1;
 
     @Override
     public String getDataFormatName() {
@@ -108,7 +109,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
                 TarArchiveEntry entry = tis.getNextTarEntry();
                 if (entry != null) {
                     exchange.getMessage().setHeader(FILE_NAME, entry.getName());
-                    IOHelper.copy(tis, osb);
+                    IOHelper.copy(tis, osb, IOHelper.DEFAULT_BUFFER_SIZE, false, maxDecompressedSize);
                 } else {
                     throw new IllegalStateException("Unable to untar the file, it may be corrupted.");
                 }
@@ -173,6 +174,14 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setPreservePathElements(boolean preservePathElements) {
         this.preservePathElements = preservePathElements;
+    }
+
+    public long getMaxDecompressedSize() {
+        return maxDecompressedSize;
+    }
+
+    public void setMaxDecompressedSize(long maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
     }
 
     @Override

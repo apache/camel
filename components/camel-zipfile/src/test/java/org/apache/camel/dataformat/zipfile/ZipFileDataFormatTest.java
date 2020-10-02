@@ -245,6 +245,13 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testUnzipMaxDecompressedSize() throws Exception {
+        // We are only allowing 10 bytes to be decompressed, so we expect an error
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unzipMaxDecompressedSize", getZippedText("file")));
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -316,6 +323,11 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
                 from("direct:corruptUnzip").unmarshal().zipFile().to("mock:corruptUnzip");
                 from("direct:zipStreamCache").streamCaching().marshal().zipFile().to("mock:zipStreamCache");
+
+                ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
+                // Only allow 10 bytes to be decompressed
+                maxDecompressedSizeZip.setMaxDecompressedSize(10L);
+                from("direct:unzipMaxDecompressedSize").unmarshal(maxDecompressedSizeZip).to("mock:unzip");
             }
         };
     }

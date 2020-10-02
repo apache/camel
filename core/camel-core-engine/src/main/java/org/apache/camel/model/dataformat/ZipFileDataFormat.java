@@ -40,6 +40,9 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String preservePathElements;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Long")
+    private String maxDecompressedSize;
 
     public ZipFileDataFormat() {
         super("zipfile");
@@ -55,6 +58,10 @@ public class ZipFileDataFormat extends DataFormatDefinition {
 
     public String getPreservePathElements() {
         return preservePathElements;
+    }
+
+    public String getMaxDecompressedSize() {
+        return maxDecompressedSize;
     }
 
     /**
@@ -82,4 +89,14 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         this.preservePathElements = preservePathElements;
     }
 
+    /**
+     * Set the maximum decompressed size of a zip file (in bytes). An IOException will be thrown if the decompressed
+     * size exceeds this amount. Set to -1 to disable setting a maximum decompressed size. By default there is no
+     * maximum size enforced.
+     *
+     * @param maxDecompressedSize the maximum decompressed size of a zip file (in bytes)
+     */
+    public void setMaxDecompressedSize(String maxDecompressedSize) {
+        this.maxDecompressedSize = maxDecompressedSize;
+    }
 }
