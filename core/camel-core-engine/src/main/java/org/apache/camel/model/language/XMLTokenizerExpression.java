@@ -25,8 +25,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Tokenize XML payloads using the specified path expression.
- *
- * @see org.apache.camel.language.xtokenizer.XMLTokenizeLanguage
  */
 @Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
@@ -35,6 +33,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlAttribute
     private String headerName;
     @XmlAttribute
+    @Metadata(enums = "i,w,u,t")
     private String mode;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Integer")

@@ -45,9 +45,8 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
         }
     }
 
-    private Map<String, Object> createProperties(String exp) {
-        Map<String, Object> properties = new HashMap<>(8);
-        properties.put("expression", parseString(exp));
+    private Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(7);
         properties.put("resultType", definition.getResultType());
         properties.put("suppressExceptions", parseBoolean(definition.getSuppressExceptions()));
         properties.put("allowSimple", parseBoolean(definition.getAllowSimple()));
@@ -60,12 +59,12 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(createProperties(exp));
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(createProperties(exp));
+        return language.createPredicate(exp, createProperties());
     }
 
 }

@@ -65,13 +65,12 @@ public class XQueryLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(Map<String, Object> properties) {
-        return (Predicate) createExpression(properties);
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return (Predicate) createExpression(expression, properties);
     }
 
     @Override
-    public Expression createExpression(Map<String, Object> properties) {
-        String expression = (String) properties.get("expression");
+    public Expression createExpression(String expression, Map<String, Object> properties) {
         expression = loadResource(expression);
 
         Class<?> clazz = property(Class.class, properties, "resultType", null);

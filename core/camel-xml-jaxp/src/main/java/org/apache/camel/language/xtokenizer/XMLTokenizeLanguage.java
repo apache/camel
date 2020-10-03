@@ -31,9 +31,10 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This xmltokenizer language can operate in the following modes:
  * <ul>
- * <li>inject - injecting the contextual namespace bindings into the extracted token</li>
- * <li>wrap - wrapping the extracted token in its ancestor context</li>
- * <li>unwrap - unwrapping the extracted token to its child content</li>
+ * <li>i - injecting the contextual namespace bindings into the extracted token (default)</li>
+ * <li>w - wrapping the extracted token in its ancestor context</li>
+ * <li>u - unwrapping the extracted token to its child content</li>
+ * <li>t - extracting the text content of the specified element</li>
  * </ul>
  */
 @Language("xtokenize")
@@ -90,19 +91,27 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(Map<String, Object> properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(Map<String, Object> properties) {
+    public Expression createExpression(String expression, Map<String, Object> properties) {
         XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
         answer.setHeaderName(property(String.class, properties, "headerName", headerName));
-        if (properties.get("mode") != null) {
-            answer.setMode(property(char.class, properties, "mode", 'i'));
+        answer.setMode(property(Character.class, properties, "mode", "i"));
+        answer.setGroup(property(Integer.class, properties, "group", group));
+        Object obj = properties.get("namespaces");
+        if (obj instanceof Namespaces) {
+            answer.setNamespaces((Namespaces) obj);
+        } else if (obj instanceof Map) {
+            Namespaces ns = new Namespaces();
+            ((Map<String, String>) obj).forEach(ns::add);
+            answer.setNamespaces(ns);
+        } else {
+            throw new IllegalArgumentException("Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
         }
-        answer.setGroup(property(int.class, properties, "group", group));
-        String path = property(String.class, properties, "path", null);
+        String path = expression != null ? expression : this.path;
         return answer.createExpression(path);
     }
 

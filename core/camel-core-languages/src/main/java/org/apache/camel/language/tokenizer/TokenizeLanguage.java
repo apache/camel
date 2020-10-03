@@ -153,12 +153,12 @@ public class TokenizeLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(Map<String, Object> properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(Map<String, Object> properties) {
+    public Expression createExpression(String expression, Map<String, Object> properties) {
         TokenizeLanguage answer = new TokenizeLanguage();
         answer.setInheritNamespaceTagName(
                 property(String.class, properties, "inheritNamespaceTagName", inheritNamespaceTagName));
@@ -171,7 +171,7 @@ public class TokenizeLanguage extends LanguageSupport {
         answer.setGroup(property(String.class, properties, "group", group));
         answer.setGroupDelimiter(property(String.class, properties, "groupDelimiter", groupDelimiter));
         answer.setSkipFirst(property(boolean.class, properties, "skipFirst", skipFirst));
-        return answer.createExpression();
+        return answer.createExpression(expression);
     }
 
     public String getToken() {

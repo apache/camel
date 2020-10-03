@@ -56,13 +56,11 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        // method call does not use the string exp so its not in use
-        return language.createExpression(createProperties());
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        // method call does not use the string exp so its not in use
-        return language.createPredicate(createProperties());
+        return language.createPredicate(exp, createProperties());
     }
 }

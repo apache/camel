@@ -27,15 +27,15 @@ import org.apache.camel.Predicate;
 public interface Language {
 
     /**
-     * Creates a predicate based on the given string input
+     * Creates a predicate based on <b>only</b> the given string input
      *
-     * @param  expression the expression
+     * @param  expression the expression as a string input
      * @return            the created predicate
      */
     Predicate createPredicate(String expression);
 
     /**
-     * Creates an expression based on the given string input
+     * Creates an expression based on <b>only</b> the given string input
      *
      * @param  expression the expression as a string input
      * @return            the created expression
@@ -43,28 +43,26 @@ public interface Language {
     Expression createExpression(String expression);
 
     /**
-     * Creates an expression based on the given inputs properties
-     *
+     * Creates an expression based on the input with properties
+     * <p>
      * This is used for languages that have been configured with custom properties most noticeable for
      * xpath/xquery/tokenizer languages that have several options.
      *
-     * @param  properties arguments
+     * @param  expression the expression
+     * @param  properties configuration properties
      * @return            the created predicate
      */
-    default Predicate createPredicate(Map<String, Object> properties) {
-        return null;
-    }
+    Predicate createPredicate(String expression, Map<String, Object> properties);
 
     /**
-     * Creates an expression based on the given inputs properties
-     *
+     * Creates an expression based on the input with properties
+     * <p>
      * This is used for languages that have been configured with custom properties most noticeable for
      * xpath/xquery/tokenizer languages that have several options.
      *
-     * @param  properties arguments
+     * @param  expression the expression
+     * @param  properties configuration properties
      * @return            the created expression
      */
-    default Expression createExpression(Map<String, Object> properties) {
-        return null;
-    }
+    Expression createExpression(String expression, Map<String, Object> properties);
 }

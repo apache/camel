@@ -84,12 +84,12 @@ public class BeanLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(Map<String, Object> properties) {
-        return ExpressionToPredicateAdapter.toPredicate(createExpression(properties));
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(Map<String, Object> properties) {
+    public Expression createExpression(String expression, Map<String, Object> properties) {
         Object bean = properties.get("bean");
         Class<?> beanType = (Class<?>) properties.get("beanType");
         String ref = (String) properties.get("ref");

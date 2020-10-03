@@ -1561,7 +1561,7 @@ public class ExpressionBuilder {
                 Map<String, Object> properties = new HashMap<>(2);
                 properties.put("bean", bean);
                 properties.put("method", method);
-                return language.createExpression(properties).evaluate(exchange, Object.class);
+                return language.createExpression(null, properties).evaluate(exchange, Object.class);
             }
 
             public String toString() {
@@ -1637,21 +1637,16 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // TODO: resolve language early
                 Language language = exchange.getContext().resolveLanguage("xtokenize");
-                Map<String, Object> map = new HashMap<>(5);
+                Map<String, Object> map = new HashMap<>(4);
+                map.put("mode", mode);
+                map.put("group", group);
                 if (headerName != null) {
                     map.put("headerName", headerName);
-                }
-                if (mode != 'i') {
-                    map.put("mode", mode);
-                }
-                if (group > 1) {
-                    map.put("group", group);
                 }
                 if (namespaces != null) {
                     map.put("namespaces", namespaces);
                 }
-                map.put("path", path);
-                return language.createExpression(map).evaluate(exchange, Object.class);
+                return language.createExpression(path, map).evaluate(exchange, Object.class);
             }
 
             @Override

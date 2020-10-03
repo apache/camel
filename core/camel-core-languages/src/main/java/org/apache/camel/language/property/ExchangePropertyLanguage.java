@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.property;
 
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
@@ -41,6 +43,16 @@ public class ExchangePropertyLanguage implements Language, IsSingleton {
     @Override
     public Expression createExpression(String expression) {
         return ExchangePropertyLanguage.exchangeProperty(expression);
+    }
+
+    @Override
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return createPredicate(expression);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        return createExpression(expression);
     }
 
     @Override

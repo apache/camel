@@ -116,16 +116,15 @@ public class JsonPathLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(Map<String, Object> properties) {
-        JsonPathExpression json = (JsonPathExpression) createExpression(properties);
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
         json.setPredicate(true);
         return json;
     }
 
     @Override
-    public Expression createExpression(Map<String, Object> properties) {
-        String exp = (String) properties.get("expression");
-        JsonPathExpression answer = new JsonPathExpression(exp);
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        JsonPathExpression answer = new JsonPathExpression(expression);
         answer.setResultType(property(Class.class, properties, "resultType", resultType));
         answer.setSuppressExceptions(property(boolean.class, properties, "suppressExceptions", suppressExceptions));
         answer.setAllowEasyPredicate(property(boolean.class, properties, "allowEasyPredicate", allowEasyPredicate));
