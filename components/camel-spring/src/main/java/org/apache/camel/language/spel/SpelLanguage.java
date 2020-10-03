@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.spel;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Service;
@@ -48,16 +46,6 @@ public class SpelLanguage extends LanguageSupport implements Service {
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
         return new SpelExpression(expression, Object.class, beanResolver);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
-        return createPredicate(expression);
-    }
-
-    @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
-        return createExpression(expression);
     }
 
     @Override
