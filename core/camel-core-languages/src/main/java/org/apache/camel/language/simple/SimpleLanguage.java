@@ -139,6 +139,16 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
+    @Override
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return createPredicate(expression);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        return createExpression(expression);
+    }
+
     /**
      * Creates a new {@link Expression}.
      * <p/>

@@ -42,12 +42,12 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(createProperties());
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(createProperties());
+        return language.createPredicate(exp, createProperties());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
         properties.put("headerName", parseString(definition.getHeaderName()));
         properties.put("mode", parseString(definition.getMode()));
         properties.put("group", parseInt(definition.getGroup()));
-        properties.put("path", parseString(definition.getExpression()));
+        properties.put("namespaces", definition.getNamespaces());
         return properties;
     }
 

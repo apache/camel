@@ -40,12 +40,12 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(createProperties(exp));
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(createProperties(exp));
+        return language.createPredicate(exp, createProperties());
     }
 
     @Override
@@ -65,9 +65,8 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         }
     }
 
-    protected Map<String, Object> createProperties(String expression) {
-        Map<String, Object> properties = new HashMap<>(10);
-        properties.put("expression", parseString(expression));
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(9);
         properties.put("documentType", definition.getDocumentType());
         // resultType can either point to a QName or it can be a regular class that influence the qname
         // so we need this special logic to set resultQName and resultType accordingly

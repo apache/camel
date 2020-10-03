@@ -62,12 +62,12 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(createProperties());
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(createProperties());
+        return language.createPredicate(exp, createProperties());
     }
 
 }

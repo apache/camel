@@ -36,12 +36,12 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
 
     @Override
     protected Expression createExpression(Language language, String exp) {
-        return language.createExpression(createProperties(exp));
+        return language.createExpression(exp, createProperties());
     }
 
     @Override
     protected Predicate createPredicate(Language language, String exp) {
-        return language.createPredicate(createProperties(exp));
+        return language.createPredicate(exp, createProperties());
     }
 
     @Override
@@ -61,9 +61,8 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
         }
     }
 
-    protected Map<String, Object> createProperties(String expression) {
-        Map<String, Object> properties = new HashMap<>(3);
-        properties.put("expression", parseString(expression));
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(2);
         properties.put("resultType", definition.getResultType());
         properties.put("headerName", parseString(definition.getHeaderName()));
         return properties;

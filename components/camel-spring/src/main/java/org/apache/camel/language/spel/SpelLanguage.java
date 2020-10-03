@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Service;
@@ -49,7 +51,17 @@ public class SpelLanguage extends LanguageSupport implements Service {
     }
 
     @Override
-    public void start() {
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return createPredicate(expression);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        return createExpression(expression);
+    }
+
+    @Override
+    public void init() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
         if (getCamelContext() instanceof SpringCamelContext) {
@@ -58,6 +70,11 @@ public class SpelLanguage extends LanguageSupport implements Service {
         } else {
             beanResolver = new RegistryBeanResolver(getCamelContext().getRegistry());
         }
+    }
+
+    @Override
+    public void start() {
+        // noop
     }
 
     @Override
