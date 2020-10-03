@@ -72,7 +72,7 @@ public class WatchUpdatesConsumer extends AbstractJiraConsumer {
 
     private void checkIfIssueChanged(Issue issue) throws Exception {
         Issue original = watchedIssues.get(issue.getId());
-        AtomicBoolean issueChanged = new AtomicBoolean(false);
+        AtomicBoolean issueChanged = new AtomicBoolean();
         if (original != null) {
             for (String field : this.watchedFieldsList) {
                 if (hasFieldChanged(issue, original, field)) {

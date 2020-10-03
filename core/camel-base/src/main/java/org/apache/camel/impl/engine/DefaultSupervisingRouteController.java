@@ -88,7 +88,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
 
     public DefaultSupervisingRouteController() {
         this.lock = new Object();
-        this.contextStarted = new AtomicBoolean(false);
+        this.contextStarted = new AtomicBoolean();
         this.routeCount = new AtomicInteger();
         this.routes = new TreeSet<>();
         this.nonSupervisedRoutes = new HashSet<>();
@@ -280,7 +280,7 @@ public class DefaultSupervisingRouteController extends DefaultRouteController im
             // from super class.
             return super.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
         } else {
-            final AtomicBoolean result = new AtomicBoolean(false);
+            final AtomicBoolean result = new AtomicBoolean();
 
             doStopRoute(route.get(), true, r -> result.set(super.stopRoute(r.getId(), timeout, timeUnit, abortAfterTimeout)));
             return result.get();

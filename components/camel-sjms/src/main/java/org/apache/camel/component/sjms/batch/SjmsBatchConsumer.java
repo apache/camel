@@ -75,7 +75,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private final ConnectionFactory connectionFactory;
     private final String destinationName;
     private ExecutorService jmsConsumerExecutors;
-    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean running = new AtomicBoolean();
     private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
     private volatile Connection connection;
 

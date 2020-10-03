@@ -137,7 +137,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
     // ***********************************************
 
     private final class ConsulLocalMember implements CamelClusterMember {
-        private AtomicBoolean master = new AtomicBoolean(false);
+        private AtomicBoolean master = new AtomicBoolean();
 
         void setMaster(boolean master) {
             if (master && this.master.compareAndSet(false, true)) {

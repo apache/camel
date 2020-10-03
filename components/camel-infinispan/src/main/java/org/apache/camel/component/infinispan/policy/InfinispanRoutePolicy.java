@@ -87,7 +87,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         this.manager = manager;
         this.stoppeddRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
-        this.leader = new AtomicBoolean(false);
+        this.leader = new AtomicBoolean();
         this.shouldStopRoute = true;
         this.lockKey = lockKey;
         this.lockValue = lockValue;
