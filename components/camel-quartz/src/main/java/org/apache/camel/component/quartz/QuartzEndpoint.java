@@ -68,8 +68,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private volatile AsyncProcessor processor;
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
+    private final AtomicBoolean jobAdded = new AtomicBoolean();
+    private final AtomicBoolean jobPaused = new AtomicBoolean();
 
     @UriPath(description = "The quartz group name to use. The combination of group name and trigger name should be unique.",
              defaultValue = "Camel")

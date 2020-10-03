@@ -60,8 +60,8 @@ public class RouteService extends ChildServiceSupport {
     private final Route route;
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<>();
-    private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
-    private final AtomicBoolean endpointDone = new AtomicBoolean(false);
+    private final AtomicBoolean warmUpDone = new AtomicBoolean();
+    private final AtomicBoolean endpointDone = new AtomicBoolean();
 
     public RouteService(Route route) {
         this.route = route;

@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder, Ordered {
     protected Logger log = LoggerFactory.getLogger(getClass());
-    private AtomicBoolean initialized = new AtomicBoolean(false);
+    private AtomicBoolean initialized = new AtomicBoolean();
     private RestsDefinition restCollection = new RestsDefinition();
     private RestConfigurationDefinition restConfiguration;
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();

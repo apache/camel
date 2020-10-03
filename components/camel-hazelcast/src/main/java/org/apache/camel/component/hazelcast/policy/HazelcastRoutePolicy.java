@@ -69,7 +69,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         this.instance = instance;
         this.managedInstance = managedInstance;
         this.suspendedRoutes = new HashSet<>();
-        this.leader = new AtomicBoolean(false);
+        this.leader = new AtomicBoolean();
         this.lockMapName = null;
         this.lockKey = null;
         this.lockValue = null;

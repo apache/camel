@@ -84,8 +84,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         this.stoppedRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
-        this.leader = new AtomicBoolean(false);
-        this.contextStarted = new AtomicBoolean(false);
+        this.leader = new AtomicBoolean();
+        this.contextStarted = new AtomicBoolean();
         this.initialDelay = Duration.ofMillis(0);
 
         try {

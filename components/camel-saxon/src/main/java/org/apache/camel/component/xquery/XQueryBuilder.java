@@ -95,7 +95,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class<?> resultType;
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean();
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;

@@ -37,7 +37,7 @@ public class HdfsOutputStream implements Closeable {
     private final AtomicLong numOfWrittenBytes = new AtomicLong();
     private final AtomicLong numOfWrittenMessages = new AtomicLong();
     private final AtomicLong lastAccess = new AtomicLong(Long.MAX_VALUE);
-    private final AtomicBoolean busy = new AtomicBoolean(false);
+    private final AtomicBoolean busy = new AtomicBoolean();
 
     protected HdfsOutputStream() {
     }

@@ -98,7 +98,7 @@ public class QuickfixjEngine extends ServiceSupport {
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
     private final SessionSettings settings;
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean();
     private boolean lazy;
 
     public enum ThreadModel {

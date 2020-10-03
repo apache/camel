@@ -48,7 +48,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdRoutePolicy.class);
 
     private final Object lock = new Object();
-    private final AtomicBoolean leader = new AtomicBoolean(false);
+    private final AtomicBoolean leader = new AtomicBoolean();
     private final Set<Route> suspendedRoutes = new HashSet<>();
     private final AtomicLong index = new AtomicLong();
 
