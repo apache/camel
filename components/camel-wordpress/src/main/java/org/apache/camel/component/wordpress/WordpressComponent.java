@@ -36,26 +36,26 @@ public class WordpressComponent extends DefaultComponent {
     private static final String OP_SEPARATOR = ":";
 
     @Metadata(label = "advanced", description = "Wordpress component configuration")
-    private WordpressComponentConfiguration configuration;
+    private WordpressConfiguration configuration;
 
     public WordpressComponent() {
-        this(new WordpressComponentConfiguration());
+        this(new WordpressConfiguration());
     }
 
-    public WordpressComponent(WordpressComponentConfiguration configuration) {
+    public WordpressComponent(WordpressConfiguration configuration) {
         this.configuration = configuration;
     }
 
     public WordpressComponent(CamelContext camelContext) {
         super(camelContext);
-        this.configuration = new WordpressComponentConfiguration();
+        this.configuration = new WordpressConfiguration();
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(WordpressComponentConfiguration configuration) {
+    public void setConfiguration(WordpressConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -67,7 +67,7 @@ public class WordpressComponent extends DefaultComponent {
             beanIntrospection.getProperties(configuration, properties, null, false);
             properties.forEach(parameters::putIfAbsent);
         }
-        WordpressComponentConfiguration config = new WordpressComponentConfiguration();
+        WordpressConfiguration config = new WordpressConfiguration();
         WordpressEndpoint endpoint = new WordpressEndpoint(uri, this, config);
         discoverOperations(endpoint, remaining);
         setProperties(endpoint, parameters);

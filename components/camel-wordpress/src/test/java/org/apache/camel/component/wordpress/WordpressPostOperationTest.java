@@ -100,7 +100,7 @@ public class WordpressPostOperationTest extends WordpressComponentTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                final WordpressComponentConfiguration configuration = new WordpressComponentConfiguration();
+                final WordpressConfiguration configuration = new WordpressConfiguration();
                 final WordpressComponent component = new WordpressComponent();
                 configuration.setApiVersion(WordpressConstants.API_VERSION);
                 configuration.setUrl(getServerBaseUrl());
