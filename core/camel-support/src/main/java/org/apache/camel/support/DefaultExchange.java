@@ -19,11 +19,11 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -176,7 +176,8 @@ public final class DefaultExchange implements ExtendedExchange {
             // safe copy message history using a defensive copy
             List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
             if (history != null) {
-                target.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
+                // use thread-safe list as message history may be accessed concurrently
+                target.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
             }
         }
     }
