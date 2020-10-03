@@ -547,8 +547,8 @@ public class ExpressionBuilder {
     public static Expression systemPropertyExpression(final String propertyName,
                                                       final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
-        Expression exprDeflt = simpleExpression(defaultValue);
-        return systemPropertyExpression(exprName, exprDeflt);
+        Expression exprDefault = simpleExpression(defaultValue);
+        return systemPropertyExpression(exprName, exprDefault);
     }
 
     /**
@@ -601,8 +601,8 @@ public class ExpressionBuilder {
     public static Expression systemEnvironmentExpression(final String propertyName,
                                                          final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
-        Expression expDeflt = simpleExpression(defaultValue);
-        return systemEnvironmentExpression(exprName, expDeflt);
+        Expression expDefault = simpleExpression(defaultValue);
+        return systemEnvironmentExpression(exprName, expDefault);
     }
 
     /**
@@ -673,7 +673,7 @@ public class ExpressionBuilder {
      *
      * @param languageName  the language name
      * @param language      the language
-     * @param expression  the expression or predicate
+     * @param expression    the expression or predicate
      * @return an expression object which will evaluate the expression/predicate using the given language
      */
     public static Expression languageExpression(final String languageName, final Language language, final String expression) {
@@ -1459,7 +1459,7 @@ public class ExpressionBuilder {
                 if (description != null) {
                     return description;
                 } else {
-                    return "concat" + expressions;
+                    return "concat(" + expressions + ")";
                 }
             }
         };
@@ -1503,8 +1503,7 @@ public class ExpressionBuilder {
     public static Expression routeIdExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String answer = ExchangeHelper.getRouteId(exchange);
-                return answer;
+                return ExchangeHelper.getRouteId(exchange);
             }
 
             @Override
@@ -1517,12 +1516,20 @@ public class ExpressionBuilder {
     public static Expression simpleExpression(final String expression) {
         if (LanguageSupport.hasSimpleFunction(expression)) {
             return new ExpressionAdapter() {
+                private Language language;
+
                 public Object evaluate(Exchange exchange) {
-                    // resolve language using context to have a clear separation of packages
                     // must call evaluate to return the nested language evaluate when evaluating
                     // stacked expressions
-                    Language language = exchange.getContext().resolveLanguage("simple");
+                    init(exchange.getContext());
                     return language.createExpression(expression).evaluate(exchange, Object.class);
+                }
+
+                @Override
+                public void init(CamelContext context) {
+                    if (this.language == null) {
+                        this.language = context.resolveLanguage("simple");
+                    }
                 }
 
                 @Override
@@ -1537,14 +1544,22 @@ public class ExpressionBuilder {
 
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
+            private Language language;
+
             public Object evaluate(Exchange exchange) {
                 // bean is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate expression as a string
-                // resolve language using context to have a clear separation of packages
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
-                Language language = exchange.getContext().resolveLanguage("bean");
+                init(exchange.getContext());
                 return language.createExpression(expression).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("bean");
+                }
             }
 
             @Override
@@ -1556,12 +1571,21 @@ public class ExpressionBuilder {
 
     public static Expression beanExpression(final Object bean, final String method) {
         return new ExpressionAdapter() {
+            private Language language;
+
             public Object evaluate(Exchange exchange) {
-                Language language = exchange.getContext().resolveLanguage("bean");
                 Map<String, Object> properties = new HashMap<>(2);
                 properties.put("bean", bean);
                 properties.put("method", method);
+                init(exchange.getContext());
                 return language.createExpression(null, properties).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("bean");
+                }
             }
 
             public String toString() {
@@ -1635,6 +1659,7 @@ public class ExpressionBuilder {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
             private Language language;
+
             public Object evaluate(Exchange exchange) {
                 Map<String, Object> map = new HashMap<>(4);
                 map.put("mode", mode);
