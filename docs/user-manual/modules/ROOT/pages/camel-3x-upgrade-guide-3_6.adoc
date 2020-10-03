@@ -171,6 +171,11 @@ Class `CamelFileDataSource` has moved from `camel-http-common` in package `org.a
 
 If your code directly depends on this class, you will need to update the package reference to the new location.
 
+=== Message History
+
+When message history is enabled then there is a slight performance overhead as the history data is now stored
+in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread safe.
+
 === Default limit set on decompressed file size
 
 From Apache Camel 3.6.0, a default limit is enforced on the maximum size of a decompressed file, to prevent possible denial of service attacks.
