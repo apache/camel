@@ -300,8 +300,8 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     @SuppressWarnings("unchecked")
     protected void onEvent(Exchange exchange, ExchangeEvent event, Breakpoint breakpoint) {
         // try to get the last known definition
-        LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
-        MessageHistory last = list != null ? list.getLast() : null;
+        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        MessageHistory last = list != null ? list.get(list.size() - 1) : null;
         NamedNode definition = last != null ? last.getNode() : null;
 
         try {

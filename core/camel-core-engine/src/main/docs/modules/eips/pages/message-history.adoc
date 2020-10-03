@@ -16,6 +16,9 @@ if needed, such as during development, where Camel can report route stack-traces
 But for production usage, then message history should only be enabled if you have monitoring systems that rely on gather these
 fine grained details.
 
+IMPORTANT: When message history is enabled then there is a slight performance overhead as the history data is stored
+in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread safe.
+
 == Enabling or disabling Message History
 
 The Message History can be enabled or disabled per CamelContext or per route (disabled by default).

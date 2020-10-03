@@ -276,8 +276,10 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     private static Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
-        // we do not want to copy the message history for splitted sub-messages
-        answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
+        if (exchange.getContext().isMessageHistory()) {
+            // we do not want to copy the message history for splitted sub-messages
+            answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
+        }
         return answer;
     }
 }

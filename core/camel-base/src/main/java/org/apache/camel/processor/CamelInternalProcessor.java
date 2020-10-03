@@ -17,9 +17,9 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -723,7 +723,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (history != null) {
                 List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
                 if (list == null) {
-                    list = new LinkedList<>();
+                    // use thread-safe list as message history may be accessed concurrently
+                    list = new CopyOnWriteArrayList<>();
                     exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
                 }
                 list.add(history);
