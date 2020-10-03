@@ -52,7 +52,9 @@ public interface Language {
      * @param  properties configuration properties
      * @return            the created predicate
      */
-    Predicate createPredicate(String expression, Map<String, Object> properties);
+    default Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return createPredicate(expression);
+    }
 
     /**
      * Creates an expression based on the input with properties
@@ -64,5 +66,7 @@ public interface Language {
      * @param  properties configuration properties
      * @return            the created expression
      */
-    Expression createExpression(String expression, Map<String, Object> properties);
+    default Expression createExpression(String expression, Map<String, Object> properties) {
+        return createExpression(expression);
+    }
 }

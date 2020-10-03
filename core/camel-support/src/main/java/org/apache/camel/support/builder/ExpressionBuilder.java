@@ -1634,9 +1634,8 @@ public class ExpressionBuilder {
     public static Expression tokenizeXMLAwareExpression(String headerName, String path, char mode, int group, Namespaces namespaces) {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
+            private Language language;
             public Object evaluate(Exchange exchange) {
-                // TODO: resolve language early
-                Language language = exchange.getContext().resolveLanguage("xtokenize");
                 Map<String, Object> map = new HashMap<>(4);
                 map.put("mode", mode);
                 map.put("group", group);
@@ -1647,6 +1646,13 @@ public class ExpressionBuilder {
                     map.put("namespaces", namespaces);
                 }
                 return language.createExpression(path, map).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("xtokenize");
+                }
             }
 
             @Override
