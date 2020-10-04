@@ -44,9 +44,9 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Exception exception = exchange.getException();
-        exchange.setException(null);
-        // but store the caught exception as a property
         if (exception != null) {
+            // store the caught exception as a property
+            exchange.setException(null);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
         }
 
