@@ -66,7 +66,7 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
         log.info("Some: " + counter);
 
         exchange.setProperty("EXIT", "NO");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append(UUID.randomUUID().toString());
         }

@@ -203,12 +203,12 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     }
 
     private static String readAll(Reader reader) {
-        StringBuffer strbuf = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         try {
             char[] buf = new char[4024];
             int n;
             while ((n = reader.read(buf, 0, buf.length)) > 0) {
-                strbuf.append(buf, 0, n);
+                builder.append(buf, 0, n);
             }
         } catch (IOException e) {
             // ignore
@@ -220,7 +220,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
             }
         }
 
-        return strbuf.toString();
+        return builder.toString();
     }
 
     private static byte[] readAll(InputStream is) {

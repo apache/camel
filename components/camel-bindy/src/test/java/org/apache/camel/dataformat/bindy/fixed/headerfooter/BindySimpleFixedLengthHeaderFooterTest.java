@@ -68,12 +68,12 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
     @Test
     public void testUnmarshallMessage() throws Exception {
 
-        StringBuffer buff = new StringBuffer();
-        buff.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
+        StringBuilder sb = new StringBuilder();
+        sb.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
 
         unmarshallResult.expectedMessageCount(1);
 
-        template.sendBody(URI_DIRECT_UNMARSHALL, buff.toString());
+        template.sendBody(URI_DIRECT_UNMARSHALL, sb.toString());
 
         unmarshallResult.assertIsSatisfied();
 
@@ -138,9 +138,9 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         input.add(createFooterRow());
 
         marshallResult.expectedMessageCount(1);
-        StringBuffer buff = new StringBuffer();
-        buff.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { buff.toString() }));
+        StringBuilder sb = new StringBuilder();
+        sb.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { sb.toString() }));
         template.sendBody(URI_DIRECT_MARSHALL, input);
         marshallResult.assertIsSatisfied();
     }
@@ -177,9 +177,9 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
 
         marshallResult.reset();
         marshallResult.expectedMessageCount(1);
-        StringBuffer buff = new StringBuffer();
-        buff.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { buff.toString() }));
+        StringBuilder sb = new StringBuilder();
+        sb.append(TEST_HEADER).append(TEST_RECORD).append(TEST_FOOTER);
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { sb.toString() }));
         template.sendBodyAndHeaders(URI_DIRECT_MARSHALL, input, headers);
         marshallResult.assertIsSatisfied();
     }

@@ -38,7 +38,7 @@ public class JettyStreamCacheIssueTest extends BaseJettyTest {
 
     @Test
     public void testStreamCache() throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 10000; i++) {
             sb.append("0123456789");
         }
