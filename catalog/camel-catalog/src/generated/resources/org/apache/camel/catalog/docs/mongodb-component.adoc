@@ -311,6 +311,8 @@ documents must fit within a maximum size, and it removes the need to
 send a request to close the cursor server-side. The batch size can be
 changed even after a cursor is iterated, in which case the setting will
 apply on the next batch retrieval. |int/Integer
+|`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Sets allowDiskUse MongoDB flag.
+This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail. |boolean/Boolean
 |=======================================================================
 
 Example with option outputType=MongoIterable and batch size :

@@ -29,7 +29,7 @@ public class MongoDbContainer extends GenericContainer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbContainer.class);
     private static final String CONTAINER_NAME = "mongo";
     private static final int MONGODB_PORT = 27017;
-    private static final String MONGO_IMAGE = "mongo:4.0";
+    private static final String MONGO_IMAGE = "mongo:4.4";
 
     public MongoDbContainer() {
         super(MONGO_IMAGE);
@@ -43,9 +43,7 @@ public class MongoDbContainer extends GenericContainer {
                 "--replSet", "replicationName",
                 "--oplogSize", "5000",
                 "--syncdelay", "0",
-                "--noauth",
-                "--noprealloc",
-                "--smallfiles");
+                "--noauth");
     }
 
     @Override
