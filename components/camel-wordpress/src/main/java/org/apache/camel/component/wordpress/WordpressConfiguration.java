@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.StringHelper;
 
 @UriParams
-public class WordpressComponentConfiguration {
+public class WordpressConfiguration {
 
     private URI uri;
 

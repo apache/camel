@@ -60,14 +60,14 @@ public class WordpressEndpoint extends DefaultEndpoint {
     private String operationDetail;
 
     @UriParam
-    private WordpressComponentConfiguration configuration;
+    private WordpressConfiguration configuration;
 
-    public WordpressEndpoint(String uri, WordpressComponent component, WordpressComponentConfiguration configuration) {
+    public WordpressEndpoint(String uri, WordpressComponent component, WordpressConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
-    public WordpressComponentConfiguration getConfiguration() {
+    public WordpressConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -120,7 +120,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         // set configuration properties first
         try {
             if (configuration == null) {
-                configuration = new WordpressComponentConfiguration();
+                configuration = new WordpressConfiguration();
             }
             PropertyBindingSupport.bindProperties(getCamelContext(), configuration, options);
 
