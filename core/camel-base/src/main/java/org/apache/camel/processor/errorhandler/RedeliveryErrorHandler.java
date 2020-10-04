@@ -804,9 +804,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         protected void prepareExchangeForContinue(Exchange exchange, boolean isDeadLetterChannel) {
             Exception caught = exchange.getException();
-
-            // we continue so clear any exceptions
-            exchange.setException(null);
+            if (caught != null) {
+                // we continue so clear any exceptions
+                exchange.setException(null);
+            }
             // clear rollback flags
             exchange.setRollbackOnly(false);
             // reset cached streams so they can be read again
@@ -994,15 +995,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
          */
         protected void deliverToFailureProcessor(
                 final Processor processor, final boolean isDeadLetterChannel, final Exchange exchange) {
-            Exception caught = exchange.getException();
 
             // we did not success with the redelivery so now we let the failure processor handle it
             // clear exception as we let the failure processor handle it
-            exchange.setException(null);
+            Exception caught = exchange.getException();
+            if (caught != null) {
+                exchange.setException(null);
+            }
 
             final boolean shouldHandle = shouldHandle(exchange);
             final boolean shouldContinue = shouldContinue(exchange);
-
             // regard both handled or continued as being handled
             boolean handled = false;
 
