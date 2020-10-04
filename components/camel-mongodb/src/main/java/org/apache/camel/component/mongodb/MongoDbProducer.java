@@ -298,7 +298,6 @@ public class MongoDbProducer extends DefaultProducer {
 
                 Bson sortBy = exchange.getIn().getHeader(SORT_BY, Bson.class);
                 Bson fieldFilter = exchange.getIn().getHeader(FIELDS_PROJECTION, Bson.class);
-
                 if (fieldFilter == null) {
                     fieldFilter = new Document();
                 }
@@ -307,7 +306,13 @@ public class MongoDbProducer extends DefaultProducer {
                     sortBy = new Document();
                 }
 
-                Document ret = dbCol.find(query).projection(fieldFilter).sort(sortBy).first();
+                Document ret = dbCol
+                        .find(query)
+                        .projection(fieldFilter)
+                        .sort(sortBy)
+                        .allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class))
+                        .first();
+
                 exchange.getMessage().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
                 return ret;
             } catch (InvalidPayloadException e) {
@@ -344,7 +349,6 @@ public class MongoDbProducer extends DefaultProducer {
             } else {
                 ret = dbCol.distinct(distinctFieldName, String.class);
             }
-
             try {
                 ret.iterator().forEachRemaining(result::add);
                 exchange.getMessage().setHeader(MongoDbConstants.RESULT_PAGE_SIZE, result.size());
@@ -401,6 +405,7 @@ public class MongoDbProducer extends DefaultProducer {
                 ret.limit(limit);
             }
 
+            ret.allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class));
             if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
                 try {
                     result = new ArrayList<>();
@@ -543,9 +548,7 @@ public class MongoDbProducer extends DefaultProducer {
                     aggregationResult.batchSize(batchSize);
                 }
 
-                Boolean allowDiskUse
-                        = exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.FALSE, Boolean.class);
-                aggregationResult.allowDiskUse(allowDiskUse);
+                aggregationResult.allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class));
 
                 Iterable<Document> result;
                 if (!MongoDbOutputType.MongoIterable.equals(endpoint.getOutputType())) {
@@ -595,7 +598,11 @@ public class MongoDbProducer extends DefaultProducer {
                 if (fieldFilter == null) {
                     fieldFilter = new Document();
                 }
-                ret = dbCol.find(o).projection(fieldFilter).first();
+                ret = dbCol
+                        .find(o)
+                        .projection(fieldFilter)
+                        .allowDiskUse(exchange.getIn().getHeader(MongoDbConstants.ALLOW_DISK_USE, Boolean.class))
+                        .first();
                 exchange.getMessage().setHeader(RESULT_TOTAL_SIZE, ret == null ? 0 : 1);
                 return ret;
             } catch (InvalidPayloadException e) {
