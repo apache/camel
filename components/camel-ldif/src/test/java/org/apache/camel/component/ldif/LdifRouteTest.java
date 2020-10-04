@@ -352,13 +352,13 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
      */
     private String readUrl(URL in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in.openStream()));
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String s;
 
         while (null != (s = br.readLine())) {
-            buf.append(s);
-            buf.append('\n');
+            sb.append(s);
+            sb.append('\n');
         }
-        return buf.toString();
+        return sb.toString();
     }
 }
