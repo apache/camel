@@ -27,15 +27,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link WordpressEndpoint}.
- */
 @Component("wordpress")
 public class WordpressComponent extends DefaultComponent {
 
     private static final String OP_SEPARATOR = ":";
 
-    @Metadata(label = "advanced", description = "Wordpress component configuration")
+    @Metadata(description = "Wordpress configuration")
     private WordpressConfiguration configuration;
 
     public WordpressComponent() {
@@ -62,6 +59,7 @@ public class WordpressComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (configuration != null) {
+            // TODO: Better to make WordpressConfiguration cloneable
             Map<String, Object> properties = new HashMap<>();
             BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             beanIntrospection.getProperties(configuration, properties, null, false);

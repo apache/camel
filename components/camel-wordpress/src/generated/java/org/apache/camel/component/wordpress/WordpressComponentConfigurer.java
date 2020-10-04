@@ -19,6 +19,7 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("apiVersion", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.wordpress.WordpressConfiguration.class);
         map.put("criteria", java.util.Map.class);
         map.put("force", boolean.class);
         map.put("id", java.lang.Integer.class);
@@ -29,7 +30,6 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.wordpress.WordpressConfiguration.class);
         ALL_OPTIONS = map;
     }
 
