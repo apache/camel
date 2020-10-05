@@ -118,7 +118,7 @@ public class MethodInfo {
         this.parametersExpression = createParametersExpression();
 
         Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
-
+        // TODO: Optimize to make this find via above
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
@@ -170,21 +170,24 @@ public class MethodInfo {
         return annotations;
     }
 
-    private void collectMethodAnnotations(Class<?> c, Method method, Map<Class<?>, Annotation> annotations) {
-        for (Class<?> i : c.getInterfaces()) {
-            collectMethodAnnotations(i, method, annotations);
-        }
-        if (!c.isInterface() && c.getSuperclass() != null) {
-            collectMethodAnnotations(c.getSuperclass(), method, annotations);
-        }
-        // make sure the sub class can override the definition
-        try {
-            Annotation[] ma = c.getDeclaredMethod(method.getName(), method.getParameterTypes()).getAnnotations();
-            for (Annotation a : ma) {
-                annotations.put(a.annotationType(), a);
+    private void collectMethodAnnotations(Class<?> targetClazz, Method targetMethod, Map<Class<?>, Annotation> annotations) {
+        Class<?> searchType = targetClazz;
+        String name = targetMethod.getName();
+        Class<?>[] paramTypes = method.getParameterTypes();
+        while (searchType != null) {
+            Method[] methods = searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods();
+            for (Method method : methods) {
+                if (name.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
+                    for (Annotation a : method.getAnnotations()) {
+                        // favour existing annotation so only add if not exists
+                        Class<?> at = a.annotationType();
+                        if (!annotations.containsKey(at)) {
+                            annotations.put(at, a);
+                        }
+                    }
+                }
             }
-        } catch (SecurityException | NoSuchMethodException e) {
-            // do nothing here
+            searchType = searchType.getSuperclass();
         }
     }
 
@@ -232,7 +235,6 @@ public class MethodInfo {
                     if (!ServiceHelper.isStarted(dynamicRouter)) {
                         ServiceHelper.startService(dynamicRouter);
                     }
-                    // TODO: Maybe use a new constant than EVALUATE_EXPRESSION_RESULT
                     // use a expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
                     exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, expression);
