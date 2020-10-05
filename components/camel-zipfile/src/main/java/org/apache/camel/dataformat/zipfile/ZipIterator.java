@@ -103,11 +103,14 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader("zipFileName", current.getName());
+                answer.setHeader("zipFileLastModified", current.getLastModifiedTime() == null ? null : current.getLastModifiedTime().toInstant());
+                answer.setHeader("zipFileCreated", current.getCreationTime() == null ? null : current.getCreationTime().toInstant());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 answer.setBody(new ZipInputStreamWrapper(zipInputStream));
                 return answer;
             } else {
                 LOGGER.trace("close zipInputStream");
+                exchange.getMessage().setHeader(Exchange.SPLIT_COMPLETE, true);
                 return null;
             }
         } catch (IOException exception) {
