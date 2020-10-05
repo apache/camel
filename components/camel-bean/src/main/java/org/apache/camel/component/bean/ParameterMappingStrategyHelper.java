@@ -17,22 +17,24 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import org.apache.camel.spi.Registry;
 
-/**
- * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class where the intention is to
- * only invoke static methods, without the need for creating an instance of the type.
- */
-public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
+public final class ParameterMappingStrategyHelper {
 
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context,
-                                        ParameterMappingStrategy parameterMappingStrategy) {
-        super(type, context, parameterMappingStrategy);
+    private ParameterMappingStrategyHelper() {
     }
 
-    @Override
-    public Object getBean(Exchange exchange) {
-        // we cannot create a bean as there is no default constructor
-        return null;
+    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        // lookup in registry first if there is a user define strategy
+        Registry registry = camelContext.getRegistry();
+        ParameterMappingStrategy answer
+                = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
+        if (answer == null) {
+            // no then use the default one
+            answer = DefaultParameterMappingStrategy.INSTANCE;
+        }
+
+        return answer;
     }
+
 }

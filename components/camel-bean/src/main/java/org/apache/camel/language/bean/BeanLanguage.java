@@ -20,6 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StaticService;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
@@ -36,7 +40,9 @@ import org.apache.camel.util.StringHelper;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport {
+public class BeanLanguage extends LanguageSupport implements StaticService {
+
+    private volatile ParameterMappingStrategy parameterMappingStrategy;
 
     private Object bean;
     private Class<?> beanType;
@@ -95,54 +101,83 @@ public class BeanLanguage extends LanguageSupport {
         String ref = (String) properties.get("ref");
         String method = (String) properties.get("method");
 
+        BeanExpression answer;
         if (bean != null) {
-            return new BeanExpression(bean, method);
+            answer = new BeanExpression(bean, method);
         } else if (beanType != null) {
-            return new BeanExpression(beanType, method);
+            answer = new BeanExpression(beanType, method);
         } else if (ref != null) {
-            return new BeanExpression(ref, method);
+            answer = new BeanExpression(ref, method);
         } else {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
+
+        answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.init(getCamelContext());
+        return answer;
     }
 
     @Override
     public Expression createExpression(String expression) {
+        BeanExpression answer;
+
         // favour using the configured options
         if (bean != null) {
-            return new BeanExpression(bean, method);
+            answer = new BeanExpression(bean, method);
         } else if (beanType != null) {
-            return new BeanExpression(beanType, method);
+            answer = new BeanExpression(beanType, method);
         } else if (ref != null) {
-            return new BeanExpression(ref, method);
-        }
-
-        String beanName = expression;
-        String method = null;
-
-        // we support both the .method name and the ?method= syntax
-        // as the ?method= syntax is very common for the bean component
-        if (expression.contains("?method=")) {
-            beanName = StringHelper.before(expression, "?");
-            method = StringHelper.after(expression, "?method=");
+            answer = new BeanExpression(ref, method);
         } else {
-            //first check case :: because of my.own.Bean::method
-            int doubleColonIndex = expression.indexOf("::");
-            //need to check that not inside params
-            int beginOfParameterDeclaration = expression.indexOf('(');
-            if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
-                beanName = expression.substring(0, doubleColonIndex);
-                method = expression.substring(doubleColonIndex + 2);
+            String beanName = expression;
+            String method = null;
+
+            // we support both the .method name and the ?method= syntax
+            // as the ?method= syntax is very common for the bean component
+            if (expression.contains("?method=")) {
+                beanName = StringHelper.before(expression, "?");
+                method = StringHelper.after(expression, "?method=");
             } else {
-                int idx = expression.indexOf('.');
-                if (idx > 0) {
-                    beanName = expression.substring(0, idx);
-                    method = expression.substring(idx + 1);
+                //first check case :: because of my.own.Bean::method
+                int doubleColonIndex = expression.indexOf("::");
+                //need to check that not inside params
+                int beginOfParameterDeclaration = expression.indexOf('(');
+                if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                    beanName = expression.substring(0, doubleColonIndex);
+                    method = expression.substring(doubleColonIndex + 2);
+                } else {
+                    int idx = expression.indexOf('.');
+                    if (idx > 0) {
+                        beanName = expression.substring(0, idx);
+                        method = expression.substring(idx + 1);
+                    }
                 }
+            }
+
+            if (beanName.startsWith("type:")) {
+                try {
+                    Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
+                    answer = new BeanExpression(clazz, method);
+                } catch (ClassNotFoundException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            } else {
+                answer = new BeanExpression(beanName, method);
             }
         }
 
-        return new BeanExpression(beanName, method);
+        answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.init(getCamelContext());
+        return answer;
     }
 
+    @Override
+    public void start() {
+        parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+    }
+
+    @Override
+    public void stop() {
+        // noop
+    }
 }

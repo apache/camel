@@ -38,6 +38,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         this.delegate = new DelegateBeanProcessor(pojo, camelContext, parameterMappingStrategy);
     }
 
+    @Deprecated
     public BeanProcessor(Object pojo, CamelContext camelContext) {
         this.delegate = new DelegateBeanProcessor(pojo, camelContext);
     }
@@ -123,6 +124,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             super(pojo, camelContext, parameterMappingStrategy);
         }
 
+        @Deprecated
         public DelegateBeanProcessor(Object pojo, CamelContext camelContext) {
             super(pojo, camelContext);
         }
