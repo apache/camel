@@ -16,20 +16,34 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Registry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ParameterMappingStrategyHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterMappingStrategyHelper.class);
 
     private ParameterMappingStrategyHelper() {
     }
 
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        ParameterMappingStrategy answer;
+
         // lookup in registry first if there is a user define strategy
         Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer
-                = registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
-        if (answer == null) {
+        Set<ParameterMappingStrategy> set = registry.findByType(ParameterMappingStrategy.class);
+        if (set.size() == 1) {
+            answer = set.iterator().next();
+        } else if (set.size() > 1) {
+            LOG.warn(
+                    "Found {} beans of type {} in registry. Only one custom instance is supported. Will use DefaultParameterMappingStrategy.",
+                    set.size(), ParameterMappingStrategy.class.getName());
+            answer = DefaultParameterMappingStrategy.INSTANCE;
+        } else {
             // no then use the default one
             answer = DefaultParameterMappingStrategy.INSTANCE;
         }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Collections;
+
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Ownership;
 import net.bytebuddy.description.modifier.SyntheticState;
@@ -65,9 +67,8 @@ public class BeanInfoTest {
         lenient().when(context.getComponent("bean", BeanComponent.class)).thenReturn(beanComponent);
         lenient().when(context.getRegistry()).thenReturn(registry);
         lenient()
-                .when(registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY,
-                        ParameterMappingStrategy.class))
-                .thenReturn(null);
+                .when(registry.findByType(ParameterMappingStrategy.class))
+                .thenReturn(Collections.EMPTY_SET);
     }
 
     @Test
