@@ -41,15 +41,14 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer;
         try {
-            answer = applicationContext.getBean(name, type);
+            if (applicationContext.containsBean(name)) {
+                answer = applicationContext.getBean(name, type);
+            } else {
+                return null;
+            }
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         } catch (BeanNotOfRequiredTypeException e) {
-            return null;
-        }
-
-        // just to be safe
-        if (answer == null) {
             return null;
         }
 
@@ -65,7 +64,11 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     @Override
     public Object lookupByName(String name) {
         try {
-            return applicationContext.getBean(name);
+            if (applicationContext.containsBean(name)) {
+                return applicationContext.getBean(name);
+            } else {
+                return null;
+            }
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         }
