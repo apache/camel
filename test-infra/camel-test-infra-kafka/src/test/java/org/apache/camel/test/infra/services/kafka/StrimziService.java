@@ -24,8 +24,11 @@ import org.testcontainers.containers.Network;
 
 public class StrimziService implements KafkaService {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziService.class);
+
     private static ZookeeperContainer zookeeperContainer;
     private static StrimziContainer strimziContainer;
+    private static String zookeeperInstanceName;
+    private static String strimziInstanceName;
 
     public StrimziService() {
 
@@ -34,11 +37,13 @@ public class StrimziService implements KafkaService {
             Network network = Network.newNetwork();
 
             if (zookeeperContainer == null) {
-                zookeeperContainer = new ZookeeperContainer(network, "zookeeper");
+                zookeeperInstanceName = "zookeeper-" + TestUtils.randomWithRange(1, 100);
+                zookeeperContainer = new ZookeeperContainer(network, zookeeperInstanceName);
             }
 
             if (strimziContainer == null) {
-                strimziContainer = new StrimziContainer(network, "strimzi");
+                strimziInstanceName = "strimzi-" + TestUtils.randomWithRange(1, 100);
+                strimziContainer = new StrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
             }
         }
     }
@@ -55,10 +60,18 @@ public class StrimziService implements KafkaService {
     @Override
     public void initialize() {
         if (!zookeeperContainer.isRunning()) {
+            /*
+             When running multiple tests at once, this throttles the startup to give
+             time for docker to fully shutdown previously running instances (which
+             happens asynchronously). This prevents problems with false positive errors
+             such as docker complaining of multiple containers with the same name or
+             trying to reuse port numbers too quickly.
+             */
+            throttle();
             zookeeperContainer.start();
         }
 
-        String zookeeperConnect = "zookeeper:" + zookeeperContainer.getZookeeperPort();
+        String zookeeperConnect = zookeeperInstanceName + ":" + zookeeperContainer.getZookeeperPort();
         LOG.info("Apache Zookeeper running at address {}", zookeeperConnect);
 
         if (!strimziContainer.isRunning()) {
@@ -66,6 +79,15 @@ public class StrimziService implements KafkaService {
         }
 
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
+    }
+
+    private void throttle() {
+        try {
+            String throttleDelay = System.getProperty("itest.strimzi.throttle.delay", "10000");
+            Thread.sleep(Integer.parseInt(throttleDelay));
+        } catch (InterruptedException e) {
+            LOG.warn("Strimzi startup interrupted");
+        }
     }
 
     private boolean stopped() {
@@ -77,11 +99,11 @@ public class StrimziService implements KafkaService {
         try {
             LOG.info("Stopping Kafka container");
             strimziContainer.stop();
-
-            TestUtils.waitFor(this::stopped);
         } finally {
             LOG.info("Stopping Zookeeper container");
             zookeeperContainer.stop();
+
+            TestUtils.waitFor(this::stopped);
         }
     }
 }
