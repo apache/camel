@@ -1,0 +1,84 @@
+[
+  {
+    "address_components": [
+      {
+        "long_name": "Calle Marie Curie",
+        "short_name": "Calle Marie Curie",
+        "types": [
+          "route"
+        ]
+      },
+      {
+        "long_name": "Sevilla",
+        "short_name": "Sevilla",
+        "types": [
+          "locality",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Sevilla",
+        "short_name": "Sevilla",
+        "types": [
+          "administrative_area_level_2",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Andalucía",
+        "short_name": "AL",
+        "types": [
+          "administrative_area_level_1",
+          "political"
+        ]
+      },
+      {
+        "long_name": "Espagne",
+        "short_name": "ES",
+        "types": [
+          "country",
+          "political"
+        ]
+      },
+      {
+        "long_name": "41092",
+        "short_name": "41092",
+        "types": [
+          "postal_code"
+        ]
+      }
+    ],
+    "formatted_address": "Calle Marie Curie, 41092 Sevilla, Espagne",
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 37.4077055,
+          "lng": -6.003089699999999
+        },
+        "southwest": {
+          "lat": 37.4051458,
+          "lng": -6.010363099999999
+        }
+      },
+      "location": {
+        "lat": 37.4064065,
+        "lng": -6.0067087
+      },
+      "location_type": "GEOMETRIC_CENTER",
+      "viewport": {
+        "northeast": {
+          "lat": 37.4077746302915,
+          "lng": -6.003089699999999
+        },
+        "southwest": {
+          "lat": 37.4050766697085,
+          "lng": -6.010363099999999
+        }
+      }
+    },
+    "place_id": "ChIJPUx3fYtrEg0Rn5UTvgpQ4ps",
+    "types": [
+      "route"
+    ]
+  }
+]

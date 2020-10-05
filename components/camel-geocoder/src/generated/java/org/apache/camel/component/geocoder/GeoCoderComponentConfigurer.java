@@ -18,6 +18,7 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("geocoderRequestWrapper", org.apache.camel.component.geocoder.GeocoderRequestWrapper.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
         ALL_OPTIONS = map;
@@ -29,6 +30,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "geocoderrequestwrapper":
+        case "geocoderRequestWrapper": target.setGeocoderRequestWrapper(property(camelContext, org.apache.camel.component.geocoder.GeocoderRequestWrapper.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -46,6 +49,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "geocoderrequestwrapper":
+        case "geocoderRequestWrapper": return target.getGeocoderRequestWrapper();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;

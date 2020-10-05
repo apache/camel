@@ -20,7 +20,9 @@ import java.util.Locale;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
+import com.google.maps.GeocodingApiRequest;
 import com.google.maps.GeolocationApi;
+import com.google.maps.PendingResult;
 import com.google.maps.errors.InvalidRequestException;
 import com.google.maps.errors.OverDailyLimitException;
 import com.google.maps.errors.OverQueryLimitException;
@@ -46,6 +48,7 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
 
     private GeoCoderEndpoint endpoint;
     private GeoApiContext context;
+    private GeocoderRequestWrapper geocoderRequestWrapper;
 
     public GeoCoderGoogleProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
@@ -72,8 +75,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
 
                 LOG.debug("Geocode for lat/lng {}", latlng);
-                GeocodingResult[] results = GeocodingApi.reverseGeocode(context, latLng).await();
-
+                GeocodingApiRequest request = GeocodingApi.reverseGeocode(context, latLng);
+                GeocodingResult[] results = geocoderRequestWrapper.geocodingRequest(request);
                 LOG.debug("Geocode response {}", results);
 
                 if (results != null) {
@@ -88,7 +91,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
                 } else {
 
                     LOG.debug("Geocode for address {}", address);
-                    GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
+                    GeocodingApiRequest request = GeocodingApi.geocode(context, address);
+                    GeocodingResult[] results = geocoderRequestWrapper.geocodingRequest(request);
                     LOG.debug("Geocode response {}", results);
 
                     if (results != null) {
@@ -116,7 +120,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
         LOG.debug("Geolocation for current location");
         GeolocationPayload payload = new GeolocationPayload();
         payload.considerIp = true;
-        GeolocationResult result = GeolocationApi.geolocate(context, payload).await();
+        PendingResult<GeolocationResult> geoLocationRequest = GeolocationApi.geolocate(context, payload);
+        GeolocationResult result = geocoderRequestWrapper.geolocationRequest(geoLocationRequest);
 
         LOG.debug("Geolocation response {}", result);
         // status
@@ -128,7 +133,8 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
 
         // address - reverse geocode
         LOG.debug("Geocode - reverse geocode for location {}", resLatlng);
-        GeocodingResult[] results = GeocodingApi.reverseGeocode(context, result.location).await();
+        GeocodingApiRequest geoCodingRequest = GeocodingApi.reverseGeocode(context, result.location);
+        GeocodingResult[] results = geocoderRequestWrapper.geocodingRequest(geoCodingRequest);
 
         LOG.debug("Geocode response {}", results);
 
@@ -222,5 +228,6 @@ public class GeoCoderGoogleProducer extends DefaultProducer {
     @Override
     protected void doStart() {
         context = endpoint.createGeoApiContext();
+        geocoderRequestWrapper = endpoint.createGeocoderRequestWrapper();
     }
 }

@@ -71,6 +71,8 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     @UriParam(displayName = "GeoCoding Type", description = "Type of GeoCoding server. Supported Nominatim and Google.")
     private GeoCoderType type;
 
+    private GeoCoderComponent component;
+
     public GeoCoderEndpoint() {
     }
 
@@ -293,6 +295,11 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
         return builder.build();
     }
 
+    protected GeocoderRequestWrapper createGeocoderRequestWrapper() {
+        return geoCoderComponent().getGeocoderRequestWrapper() != null
+                ? geoCoderComponent().getGeocoderRequestWrapper() : new GeocoderRequestWrapper();
+    }
+
     private GeoApiContext.Builder configureProxyAuth(GeoApiContext.Builder builder) {
         AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, proxyAuthMethod);
         if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
@@ -313,5 +320,12 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
 
     private boolean isProxyAuthDefined() {
         return proxyAuthMethod != null;
+    }
+
+    protected GeoCoderComponent geoCoderComponent() {
+        if (component == null) {
+            component = (GeoCoderComponent) getComponent();
+        }
+        return component;
     }
 }

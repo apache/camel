@@ -51,6 +51,20 @@ public interface GeocoderComponentBuilderFactory {
             extends
                 ComponentBuilder<GeoCoderComponent> {
         /**
+         * Advanced : a wrapper that can be used to mock requests to API for
+         * tests.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.geocoder.GeocoderRequestWrapper</code> type.
+         * 
+         * Group: producer
+         */
+        default GeocoderComponentBuilder geocoderRequestWrapper(
+                org.apache.camel.component.geocoder.GeocoderRequestWrapper geocoderRequestWrapper) {
+            doSetProperty("geocoderRequestWrapper", geocoderRequestWrapper);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -103,6 +117,7 @@ public interface GeocoderComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "geocoderRequestWrapper": ((GeoCoderComponent) component).setGeocoderRequestWrapper((org.apache.camel.component.geocoder.GeocoderRequestWrapper) value); return true;
             case "lazyStartProducer": ((GeoCoderComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GeoCoderComponent) component).setBasicPropertyBinding((boolean) value); return true;
             default: return false;

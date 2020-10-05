@@ -19,6 +19,7 @@ package org.apache.camel.component.geocoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -28,7 +29,16 @@ import org.apache.camel.support.DefaultComponent;
 @Component("geocoder")
 public class GeoCoderComponent extends DefaultComponent {
 
+    @Metadata
+    private GeocoderRequestWrapper geocoderRequestWrapper;
+
     public GeoCoderComponent() {
+    }
+
+    public static GeoCoderComponent withGeocodingApiWrapper(GeocoderRequestWrapper googleRequestWrapper) {
+        GeoCoderComponent answer = new GeoCoderComponent();
+        answer.setGeocoderRequestWrapper(googleRequestWrapper);
+        return answer;
     }
 
     @Override
@@ -48,5 +58,18 @@ public class GeoCoderComponent extends DefaultComponent {
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public GeocoderRequestWrapper getGeocoderRequestWrapper() {
+        return geocoderRequestWrapper;
+    }
+
+    /**
+     * Advanced : a wrapper that can be used to mock requests to API for tests
+     *
+     * @param geocoderRequestWrapper
+     */
+    public void setGeocoderRequestWrapper(GeocoderRequestWrapper geocoderRequestWrapper) {
+        this.geocoderRequestWrapper = geocoderRequestWrapper;
     }
 }

@@ -1,0 +1,1026 @@
+[
+  {
+    "addressComponents": [
+      {
+        "longName": "277",
+        "shortName": "277",
+        "types": [
+          "STREET_NUMBER"
+        ]
+      },
+      {
+        "longName": "Bedford Avenue",
+        "shortName": "Bedford Ave",
+        "types": [
+          "ROUTE"
+        ]
+      },
+      {
+        "longName": "Williamsburg",
+        "shortName": "Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "11211",
+        "shortName": "11211",
+        "types": [
+          "POSTAL_CODE"
+        ]
+      }
+    ],
+    "formattedAddress": "277 Bedford Ave, Brooklyn, NY 11211, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": null,
+      "location": {
+        "lat": 40.7142205,
+        "lng": -73.9612903
+      },
+      "locationType": "ROOFTOP",
+      "viewport": {
+        "northeast": {
+          "lat": 40.71556948029149,
+          "lng": -73.95994131970849
+        },
+        "southwest": {
+          "lat": 40.7128715197085,
+          "lng": -73.9626392802915
+        }
+      }
+    },
+    "types": [
+      "STREET_ADDRESS"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJd8BlQ2BZwokRAFUEcm_qrcA",
+    "plusCode": {
+      "globalCode": "87G8P27Q+MF",
+      "compoundCode": "P27Q+MF Brooklyn, NY, USA"
+    }
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "279",
+        "shortName": "279",
+        "types": [
+          "STREET_NUMBER"
+        ]
+      },
+      {
+        "longName": "Bedford Avenue",
+        "shortName": "Bedford Ave",
+        "types": [
+          "ROUTE"
+        ]
+      },
+      {
+        "longName": "Williamsburg",
+        "shortName": "Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "11211",
+        "shortName": "11211",
+        "types": [
+          "POSTAL_CODE"
+        ]
+      },
+      {
+        "longName": "4203",
+        "shortName": "4203",
+        "types": [
+          "POSTAL_CODE_SUFFIX"
+        ]
+      }
+    ],
+    "formattedAddress": "279 Bedford Ave, Brooklyn, NY 11211, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.7142628,
+          "lng": -73.9612131
+        },
+        "southwest": {
+          "lat": 40.7141534,
+          "lng": -73.9613792
+        }
+      },
+      "location": {
+        "lat": 40.7142015,
+        "lng": -73.96130769999999
+      },
+      "locationType": "ROOFTOP",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7155570802915,
+          "lng": -73.95994716970849
+        },
+        "southwest": {
+          "lat": 40.7128591197085,
+          "lng": -73.96264513029149
+        }
+      }
+    },
+    "types": [
+      "PREMISE"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJRYYERGBZwokRAM4n1GlcYX4",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "279",
+        "shortName": "279",
+        "types": [
+          "STREET_NUMBER"
+        ]
+      },
+      {
+        "longName": "Bedford Avenue",
+        "shortName": "Bedford Ave",
+        "types": [
+          "ROUTE"
+        ]
+      },
+      {
+        "longName": "Williamsburg",
+        "shortName": "Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "11211",
+        "shortName": "11211",
+        "types": [
+          "POSTAL_CODE"
+        ]
+      }
+    ],
+    "formattedAddress": "279 Bedford Ave, Brooklyn, NY 11211, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": null,
+      "location": {
+        "lat": 40.7142077,
+        "lng": -73.9613115
+      },
+      "locationType": "ROOFTOP",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7155566802915,
+          "lng": -73.9599625197085
+        },
+        "southwest": {
+          "lat": 40.7128587197085,
+          "lng": -73.9626604802915
+        }
+      }
+    },
+    "types": [
+      "BAKERY",
+      "CAFE",
+      "ESTABLISHMENT",
+      "FOOD",
+      "POINT_OF_INTEREST",
+      "STORE"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJT2x8Q2BZwokRpBu2jUzX3dE",
+    "plusCode": {
+      "globalCode": "87G8P27Q+MF",
+      "compoundCode": "P27Q+MF New York, NY, USA"
+    }
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "291-275",
+        "shortName": "291-275",
+        "types": [
+          "STREET_NUMBER"
+        ]
+      },
+      {
+        "longName": "Bedford Avenue",
+        "shortName": "Bedford Ave",
+        "types": [
+          "ROUTE"
+        ]
+      },
+      {
+        "longName": "Williamsburg",
+        "shortName": "Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "11211",
+        "shortName": "11211",
+        "types": [
+          "POSTAL_CODE"
+        ]
+      }
+    ],
+    "formattedAddress": "291-275 Bedford Ave, Brooklyn, NY 11211, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.7145065,
+          "lng": -73.9612923
+        },
+        "southwest": {
+          "lat": 40.7139055,
+          "lng": -73.96168349999999
+        }
+      },
+      "location": {
+        "lat": 40.7142045,
+        "lng": -73.9614845
+      },
+      "locationType": "GEOMETRIC_CENTER",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7155549802915,
+          "lng": -73.96013891970848
+        },
+        "southwest": {
+          "lat": 40.7128570197085,
+          "lng": -73.96283688029149
+        }
+      }
+    },
+    "types": [
+      "ROUTE"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJ8ThWRGBZwokR3E1zUisk3LU",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "South Williamsburg",
+        "shortName": "South Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "South Williamsburg, Brooklyn, NY, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.7167119,
+          "lng": -73.9420904
+        },
+        "southwest": {
+          "lat": 40.6984866,
+          "lng": -73.9699432
+        }
+      },
+      "location": {
+        "lat": 40.7043921,
+        "lng": -73.9565551
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7167119,
+          "lng": -73.9420904
+        },
+        "southwest": {
+          "lat": 40.6984866,
+          "lng": -73.9699432
+        }
+      }
+    },
+    "types": [
+      "NEIGHBORHOOD",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJR3_ODdlbwokRYtN19kNtcuk",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "11211",
+        "shortName": "11211",
+        "types": [
+          "POSTAL_CODE"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "New York",
+        "types": [
+          "LOCALITY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "Brooklyn, NY 11211, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.7280089,
+          "lng": -73.9207299
+        },
+        "southwest": {
+          "lat": 40.7008331,
+          "lng": -73.9644697
+        }
+      },
+      "location": {
+        "lat": 40.7093358,
+        "lng": -73.9565551
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7280089,
+          "lng": -73.9207299
+        },
+        "southwest": {
+          "lat": 40.7008331,
+          "lng": -73.9644697
+        }
+      }
+    },
+    "types": [
+      "POSTAL_CODE"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJvbEjlVdZwokR4KapM3WCFRw",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "Williamsburg",
+        "shortName": "Williamsburg",
+        "types": [
+          "NEIGHBORHOOD",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "Williamsburg, Brooklyn, NY, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.7251773,
+          "lng": -73.936498
+        },
+        "southwest": {
+          "lat": 40.6979329,
+          "lng": -73.96984499999999
+        }
+      },
+      "location": {
+        "lat": 40.7081156,
+        "lng": -73.9570696
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.7251773,
+          "lng": -73.936498
+        },
+        "southwest": {
+          "lat": 40.6979329,
+          "lng": -73.96984499999999
+        }
+      }
+    },
+    "types": [
+      "NEIGHBORHOOD",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJQSrBBv1bwokRbNfFHCnyeYI",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "Brooklyn, NY, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.739446,
+          "lng": -73.8333651
+        },
+        "southwest": {
+          "lat": 40.551042,
+          "lng": -74.05663
+        }
+      },
+      "location": {
+        "lat": 40.6781784,
+        "lng": -73.9441579
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.739446,
+          "lng": -73.8333651
+        },
+        "southwest": {
+          "lat": 40.551042,
+          "lng": -74.05663
+        }
+      }
+    },
+    "types": [
+      "POLITICAL",
+      "SUBLOCALITY",
+      "SUBLOCALITY_LEVEL_1"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJCSF8lBZEwokRhngABHRcdoI",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "Kings County",
+        "shortName": "Kings County",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_2",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "Brooklyn",
+        "shortName": "Brooklyn",
+        "types": [
+          "POLITICAL",
+          "SUBLOCALITY",
+          "SUBLOCALITY_LEVEL_1"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "Kings County, Brooklyn, NY, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.739446,
+          "lng": -73.8333651
+        },
+        "southwest": {
+          "lat": 40.551042,
+          "lng": -74.05663
+        }
+      },
+      "location": {
+        "lat": 40.6528762,
+        "lng": -73.95949399999999
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.739446,
+          "lng": -73.8333651
+        },
+        "southwest": {
+          "lat": 40.551042,
+          "lng": -74.05663
+        }
+      }
+    },
+    "types": [
+      "ADMINISTRATIVE_AREA_LEVEL_2",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJOwE7_GTtwokRs75rhW4_I6M",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "New York",
+        "shortName": "New York",
+        "types": [
+          "LOCALITY",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "New York, NY, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 40.9175771,
+          "lng": -73.70027209999999
+        },
+        "southwest": {
+          "lat": 40.4773991,
+          "lng": -74.25908989999999
+        }
+      },
+      "location": {
+        "lat": 40.7127753,
+        "lng": -74.0059728
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 40.9175771,
+          "lng": -73.70027209999999
+        },
+        "southwest": {
+          "lat": 40.4773991,
+          "lng": -74.25908989999999
+        }
+      }
+    },
+    "types": [
+      "LOCALITY",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJOwg_06VPwokRYv534QaPC8g",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "Long Island",
+        "shortName": "Long Island",
+        "types": [
+          "ESTABLISHMENT",
+          "NATURAL_FEATURE"
+        ]
+      },
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "Long Island, New York, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 41.1612401,
+          "lng": -71.85620109999999
+        },
+        "southwest": {
+          "lat": 40.5429789,
+          "lng": -74.0419497
+        }
+      },
+      "location": {
+        "lat": 40.789142,
+        "lng": -73.13496099999999
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 41.1612401,
+          "lng": -71.85620109999999
+        },
+        "southwest": {
+          "lat": 40.5429789,
+          "lng": -74.0419497
+        }
+      }
+    },
+    "types": [
+      "ESTABLISHMENT",
+      "NATURAL_FEATURE"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJy6Xu4VRE6IkRGA2UhmH59x0",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "New York",
+        "shortName": "NY",
+        "types": [
+          "ADMINISTRATIVE_AREA_LEVEL_1",
+          "POLITICAL"
+        ]
+      },
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "New York, USA",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 45.015861,
+          "lng": -71.777491
+        },
+        "southwest": {
+          "lat": 40.4773991,
+          "lng": -79.7625901
+        }
+      },
+      "location": {
+        "lat": 43.2994285,
+        "lng": -74.21793260000001
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 45.015861,
+          "lng": -71.777491
+        },
+        "southwest": {
+          "lat": 40.4773991,
+          "lng": -79.7625901
+        }
+      }
+    },
+    "types": [
+      "ADMINISTRATIVE_AREA_LEVEL_1",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJqaUj8fBLzEwRZ5UY3sHGz90",
+    "plusCode": null
+  },
+  {
+    "addressComponents": [
+      {
+        "longName": "United States",
+        "shortName": "US",
+        "types": [
+          "COUNTRY",
+          "POLITICAL"
+        ]
+      }
+    ],
+    "formattedAddress": "United States",
+    "postcodeLocalities": null,
+    "geometry": {
+      "bounds": {
+        "northeast": {
+          "lat": 71.5388001,
+          "lng": -66.885417
+        },
+        "southwest": {
+          "lat": 18.7763,
+          "lng": 170.5957
+        }
+      },
+      "location": {
+        "lat": 37.09024,
+        "lng": -95.712891
+      },
+      "locationType": "APPROXIMATE",
+      "viewport": {
+        "northeast": {
+          "lat": 71.5388001,
+          "lng": -66.885417
+        },
+        "southwest": {
+          "lat": 18.7763,
+          "lng": 170.5957
+        }
+      }
+    },
+    "types": [
+      "COUNTRY",
+      "POLITICAL"
+    ],
+    "partialMatch": false,
+    "placeId": "ChIJCzYy5IS16lQRQrfeQ5K5Oxw",
+    "plusCode": null
+  }
+]

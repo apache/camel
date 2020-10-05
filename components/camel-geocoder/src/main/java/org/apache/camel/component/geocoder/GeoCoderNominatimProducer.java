@@ -29,11 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StringHelper;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +40,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GeoCoderNominatimProducer.class);
 
     private GeoCoderEndpoint endpoint;
+    private GeocoderRequestWrapper geocoderRequestWrapper;
 
     public GeoCoderNominatimProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
@@ -114,11 +111,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
             builder.addParameter(entry.getKey(), entry.getValue());
         }
 
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            try (CloseableHttpResponse resp = httpClient.execute(builder.build())) {
-                return EntityUtils.toString(resp.getEntity());
-            }
-        }
+        return geocoderRequestWrapper.nominationRequest(builder.build());
     }
 
     protected void extractResult(String place, Exchange exchange) {
@@ -186,5 +179,10 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
 
     private String formatLatOrLon(String value) {
         return String.format(Locale.ENGLISH, "%.8f", Double.parseDouble(value));
+    }
+
+    @Override
+    protected void doStart() {
+        geocoderRequestWrapper = endpoint.createGeocoderRequestWrapper();
     }
 }

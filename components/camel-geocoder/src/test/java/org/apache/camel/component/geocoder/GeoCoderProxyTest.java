@@ -23,6 +23,7 @@ import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,4 +59,9 @@ public class GeoCoderProxyTest extends GeoCoderApiKeyTestBase {
         LOG.info("Response {}", results);
     }
 
+    @Override
+    protected GeoCoderComponent createComponent() throws Exception {
+        final GeocoderRequestWrapper geocodingApiWrapper = Mockito.mock(GeocoderRequestWrapper.class);
+        return GeoCoderComponent.withGeocodingApiWrapper(geocodingApiWrapper);
+    }
 }

@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.geocoder;
 
+import com.google.maps.model.GeocodingResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
 
 public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
 
@@ -43,5 +47,13 @@ public class GeoCoderEmptyAddressTest extends GeoCoderApiKeyTestBase {
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    protected GeoCoderComponent createComponent() throws Exception {
+        final GeocoderRequestWrapper geocodingApiWrapper = Mockito.mock(GeocoderRequestWrapper.class);
+        GeocodingResult[] results = geocodeResult("/result/geocode-empty.json");
+        Mockito.when(geocodingApiWrapper.geocodingRequest(any())).thenReturn(results);
+        return GeoCoderComponent.withGeocodingApiWrapper(geocodingApiWrapper);
     }
 }
