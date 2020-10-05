@@ -15,8 +15,11 @@ package net.revelc.code.formatter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -55,12 +58,42 @@ public class ValidateMojo extends FormatterMojo {
         super.doFormatFile(file, rc, hashCache, basedirPath, true);
 
         if (rc.successCount != 0) {
-            throw new MojoFailureException("File '" + file
-                    + "' has not been previously formatted.  Please format file and commit before running validation!");
+            final String message = String.format(
+                    "File '%s' has not been previously formatted. Please format file and commit before running validation!%n%s",
+                    file, diffToString(rc.diff));
+            throw new MojoFailureException(message);
         }
         if (rc.failCount != 0) {
             throw new MojoExecutionException("Error formating '" + file + "' ");
         }
     }
 
+    private static String diffToString(List<Patch<String>> diff) {
+        final String NL = System.lineSeparator();
+        StringBuilder sb = new StringBuilder();
+
+        for (Patch<String> patch : diff) {
+            for (AbstractDelta<String> delta : patch.getDeltas()) {
+                sb.append("Type:\t").append(delta.getType()).append(NL);
+                if (delta.getSource() != null) {
+                    sb.append("Line:\t").append(delta.getSource().getPosition()).append(NL);
+                    if (delta.getSource().getLines().size() > 0) {
+                        sb.append("Source:").append(NL);
+                        for (String line : delta.getSource().getLines()) {
+                            sb.append(line).append(NL);
+                        }
+                    }
+                }
+
+                if (delta.getTarget() != null && delta.getTarget().getLines().size() > 0) {
+                    sb.append("Target:").append(NL);
+                    for (String line : delta.getTarget().getLines()) {
+                        sb.append(line).append(NL);
+                    }
+                }
+                sb.append("===============").append(NL);
+            }
+        }
+        return sb.toString();
+    }
 }
