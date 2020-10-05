@@ -32,6 +32,8 @@ import java.util.Properties;
 
 import org.xml.sax.SAXException;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.Patch;
 import com.google.common.base.Strings;
 import com.google.common.hash.Hashing;
 import net.revelc.code.formatter.css.CssFormatter;
@@ -609,6 +611,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
             rc.skippedCount++;
         } else if (Result.SUCCESS.equals(result)) {
             rc.successCount++;
+            rc.diff.add(DiffUtils.diff(originalCode, formattedCode, null));
         } else if (Result.FAIL.equals(result)) {
             rc.failCount++;
             return;
@@ -824,7 +827,7 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         return map;
     }
 
-    class ResultCollector {
+    static class ResultCollector {
 
         int successCount;
 
@@ -833,6 +836,8 @@ public class FormatterMojo extends AbstractMojo implements ConfigurationSource {
         int skippedCount;
 
         int readOnlyCount;
+
+        List<Patch<String>> diff = new ArrayList<>();
     }
 
     @Override

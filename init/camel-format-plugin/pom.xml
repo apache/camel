@@ -41,6 +41,12 @@
             <version>${formatter-maven-plugin.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.java-diff-utils</groupId>
+            <artifactId>java-diff-utils</artifactId>
+            <version>${java-diff-utils-version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
