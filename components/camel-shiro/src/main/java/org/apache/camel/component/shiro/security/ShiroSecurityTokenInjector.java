@@ -93,5 +93,4 @@ public class ShiroSecurityTokenInjector implements Processor {
     public void setBase64(boolean base64) {
         this.base64 = base64;
     }
-
 }
