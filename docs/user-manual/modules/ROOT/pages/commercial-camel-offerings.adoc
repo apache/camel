@@ -78,7 +78,7 @@ consulting services.
 [[CommercialCamelOfferings-OpenLogic]]
 == http://www.openlogic.com/[OpenLogic]
 
-http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts ready to help you. We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training. In addition to Camel, OpenLogic’s enterprise architects have expertise in over 400 open source packages. OpenLogic is the only vendor that can provide comprehensive support, consultative guidance, and training for your entire open source infrastructure stack.   https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support.].
+http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts ready to help you. We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training. https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
 
 [[CommercialCamelOfferings-RedHat]]
 == https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat]
