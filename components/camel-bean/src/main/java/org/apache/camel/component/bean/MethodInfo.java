@@ -18,16 +18,16 @@ package org.apache.camel.component.bean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
 
@@ -39,6 +39,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.InOnly;
+import org.apache.camel.InOut;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
@@ -118,10 +120,11 @@ public class MethodInfo {
         this.parametersExpression = createParametersExpression();
 
         Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
-        // TODO: Optimize to make this find via above
-        Pattern oneway = findOneWayAnnotation(method);
-        if (oneway != null) {
-            pattern = oneway.value();
+
+        // configure MEP if there was an annotation with @Pattern/@InOnly/@InOut
+        ExchangePattern aep = findExchangePatternAnnotation(collectedMethodAnnotation);
+        if (aep != null) {
+            pattern = aep;
         }
 
         org.apache.camel.RoutingSlip routingSlipAnnotation
@@ -164,30 +167,70 @@ public class MethodInfo {
         }
     }
 
+    /**
+     * Finds the oneway annotation in priority order; look for method level annotations first, then the class level
+     * annotations, then super class annotations then interface annotations
+     */
     private Map<Class<?>, Annotation> collectMethodAnnotations(Class<?> c, Method method) {
         Map<Class<?>, Annotation> annotations = new HashMap<>();
-        collectMethodAnnotations(c, method, annotations);
+
+        Set<Class<?>> search = new LinkedHashSet<>();
+        // first look for the top class itself and its super classes
+        addTypeAndSuperTypes(c, search);
+        // and interfaces for all the classes as last
+        Set<Class<?>> searchInterfaces = new LinkedHashSet<>();
+        for (Class<?> aClazz : search) {
+            Class<?>[] interfaces = aClazz.getInterfaces();
+            for (Class<?> anInterface : interfaces) {
+                addTypeAndSuperTypes(anInterface, searchInterfaces);
+            }
+        }
+        search.addAll(searchInterfaces);
+        collectMethodAnnotations(search.iterator(), method.getName(), annotations);
         return annotations;
     }
 
-    private void collectMethodAnnotations(Class<?> targetClazz, Method targetMethod, Map<Class<?>, Annotation> annotations) {
-        Class<?> searchType = targetClazz;
-        String name = targetMethod.getName();
+    /**
+     * Adds the current class and all of its base classes (apart from {@link Object} to the given list
+     */
+    private static void addTypeAndSuperTypes(Class<?> type, Set<Class<?>> result) {
+        for (Class<?> t = type; t != null && t != Object.class; t = t.getSuperclass()) {
+            result.add(t);
+        }
+    }
+
+    private void collectMethodAnnotations(
+            Iterator<?> it, String targetMethodName, Map<Class<?>, Annotation> annotations) {
         Class<?>[] paramTypes = method.getParameterTypes();
-        while (searchType != null) {
+        boolean aep = false;
+        while (it.hasNext()) {
+            Class<?> searchType = (Class<?>) it.next();
             Method[] methods = searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods();
             for (Method method : methods) {
-                if (name.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
+                if (targetMethodName.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
                     for (Annotation a : method.getAnnotations()) {
                         // favour existing annotation so only add if not exists
                         Class<?> at = a.annotationType();
                         if (!annotations.containsKey(at)) {
                             annotations.put(at, a);
                         }
+                        aep |= at == Pattern.class || at == InOnly.class || at == InOut.class;
                     }
                 }
             }
-            searchType = searchType.getSuperclass();
+            // special for @Pattern/@InOut/@InOnly
+            if (!aep) {
+                // look for this on class level
+                for (Annotation a : searchType.getAnnotations()) {
+                    // favour existing annotation so only add if not exists
+                    Class<?> at = a.annotationType();
+                    boolean valid = at == Pattern.class || at == InOnly.class || at == InOut.class;
+                    if (valid && !annotations.containsKey(at)) {
+                        aep = true;
+                        annotations.put(at, a);
+                    }
+                }
+            }
         }
     }
 
@@ -454,119 +497,15 @@ public class MethodInfo {
         return new ParameterExpression(createParameterExpressions());
     }
 
-    /**
-     * Finds the oneway annotation in priority order; look for method level annotations first, then the class level
-     * annotations, then super class annotations then interface annotations
-     *
-     * @param  method the method on which to search
-     * @return        the first matching annotation or none if it is not available
-     */
-    protected Pattern findOneWayAnnotation(Method method) {
-        Pattern answer = getPatternAnnotation(method);
-        if (answer == null) {
-            Class<?> type = method.getDeclaringClass();
-
-            // create the search order of types to scan
-            List<Class<?>> typesToSearch = new ArrayList<>();
-            addTypeAndSuperTypes(type, typesToSearch);
-            Class<?>[] interfaces = type.getInterfaces();
-            for (Class<?> anInterface : interfaces) {
-                addTypeAndSuperTypes(anInterface, typesToSearch);
-            }
-
-            // now let's scan for a type which the current declared class overloads
-            answer = findOneWayAnnotationOnMethod(typesToSearch, method);
-            if (answer == null) {
-                answer = findOneWayAnnotation(typesToSearch);
-            }
+    protected ExchangePattern findExchangePatternAnnotation(Map<Class<?>, Annotation> collectedMethodAnnotation) {
+        if (collectedMethodAnnotation.get(InOnly.class) != null) {
+            return ExchangePattern.InOnly;
+        } else if (collectedMethodAnnotation.get(InOut.class) != null) {
+            return ExchangePattern.InOut;
+        } else {
+            Pattern pattern = (Pattern) collectedMethodAnnotation.get(Pattern.class);
+            return pattern != null ? pattern.value() : null;
         }
-        return answer;
-    }
-
-    /**
-     * Returns the pattern annotation on the given annotated element; either as a direct annotation or on an annotation
-     * which is also annotated
-     *
-     * @param  annotatedElement the element to look for the annotation
-     * @return                  the first matching annotation or null if none could be found
-     */
-    protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement) {
-        return getPatternAnnotation(annotatedElement, 2);
-    }
-
-    /**
-     * Returns the pattern annotation on the given annotated element; either as a direct annotation or on an annotation
-     * which is also annotated
-     *
-     * @param  annotatedElement the element to look for the annotation
-     * @param  depth            the current depth
-     * @return                  the first matching annotation or null if none could be found
-     */
-    protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement, int depth) {
-        Pattern answer = annotatedElement.getAnnotation(Pattern.class);
-        int nextDepth = depth - 1;
-
-        if (nextDepth > 0) {
-            // look at all the annotations to see if any of those are annotated
-            Annotation[] annotations = annotatedElement.getAnnotations();
-            for (Annotation annotation : annotations) {
-                Class<? extends Annotation> annotationType = annotation.annotationType();
-                if (annotation instanceof Pattern || annotationType.equals(annotatedElement)) {
-                    continue;
-                } else {
-                    Pattern another = getPatternAnnotation(annotationType, nextDepth);
-                    if (pattern != null) {
-                        if (answer == null) {
-                            answer = another;
-                        } else {
-                            LOG.warn("Duplicate pattern annotation: {} found on annotation: {} which will be ignored", another,
-                                    annotation);
-                        }
-                    }
-                }
-            }
-        }
-        return answer;
-    }
-
-    /**
-     * Adds the current class and all of its base classes (apart from {@link Object} to the given list
-     */
-    protected void addTypeAndSuperTypes(Class<?> type, List<Class<?>> result) {
-        for (Class<?> t = type; t != null && t != Object.class; t = t.getSuperclass()) {
-            result.add(t);
-        }
-    }
-
-    /**
-     * Finds the first annotation on the base methods defined in the list of classes
-     */
-    protected Pattern findOneWayAnnotationOnMethod(List<Class<?>> classes, Method method) {
-        for (Class<?> type : classes) {
-            try {
-                Method definedMethod = type.getMethod(method.getName(), method.getParameterTypes());
-                Pattern answer = getPatternAnnotation(definedMethod);
-                if (answer != null) {
-                    return answer;
-                }
-            } catch (NoSuchMethodException e) {
-                // ignore
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Finds the first annotation on the given list of classes
-     */
-    protected Pattern findOneWayAnnotation(List<Class<?>> classes) {
-        for (Class<?> type : classes) {
-            Pattern answer = getPatternAnnotation(type);
-            if (answer != null) {
-                return answer;
-            }
-        }
-        return null;
     }
 
     protected boolean hasExceptionParameter() {
