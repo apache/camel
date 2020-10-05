@@ -32,8 +32,8 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     private final BeanInfo beanInfo;
     private Map<String, Object> options;
 
-    public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
-        this(type, new BeanInfo(context, type));
+    public ConstantTypeBeanHolder(Class<?> type, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
+        this(type, new BeanInfo(context, type, parameterMappingStrategy));
     }
 
     public ConstantTypeBeanHolder(Class<?> type, BeanInfo beanInfo) {

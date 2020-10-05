@@ -23,6 +23,8 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
@@ -33,6 +35,8 @@ import org.apache.camel.util.PropertiesHelper;
  */
 @org.apache.camel.spi.annotations.Component("class")
 public class ClassComponent extends BeanComponent {
+
+    private ParameterMappingStrategy parameterMappingStrategy;
 
     public ClassComponent() {
     }
@@ -60,10 +64,10 @@ public class ClassComponent extends BeanComponent {
             // now set additional properties on it
             setProperties(bean, options);
 
-            holder = new ConstantBeanHolder(bean, getCamelContext());
+            holder = new ConstantBeanHolder(bean, getCamelContext(), parameterMappingStrategy);
         } else {
             // otherwise refer to the type
-            holder = new ConstantTypeBeanHolder(clazz, getCamelContext());
+            holder = new ConstantTypeBeanHolder(clazz, getCamelContext(), parameterMappingStrategy);
         }
 
         validateParameters(uri, options, null);
@@ -74,4 +78,8 @@ public class ClassComponent extends BeanComponent {
         return endpoint;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+    }
 }

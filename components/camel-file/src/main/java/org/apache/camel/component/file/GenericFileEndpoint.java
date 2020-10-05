@@ -40,7 +40,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.support.service.ServiceHelper;
@@ -1723,6 +1722,29 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
         if (antFilter != null) {
             antFilter.setCaseSensitive(antFilterCaseSensitive);
+        }
+
+        // initialize expressions
+        if (fileName != null) {
+            fileName.init(getCamelContext());
+        }
+        if (tempFileName != null) {
+            tempFileName.init(getCamelContext());
+        }
+        if (move != null) {
+            move.init(getCamelContext());
+        }
+        if (moveFailed != null) {
+            moveFailed.init(getCamelContext());
+        }
+        if (preMove != null) {
+            preMove.init(getCamelContext());
+        }
+        if (moveExisting != null) {
+            moveExisting.init(getCamelContext());
+        }
+        if (idempotentKey != null) {
+            idempotentKey.init(getCamelContext());
         }
     }
 
