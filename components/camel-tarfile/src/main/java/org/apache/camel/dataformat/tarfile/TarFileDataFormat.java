@@ -48,7 +48,7 @@ public class TarFileDataFormat extends ServiceSupport implements DataFormat, Dat
     /**
      * The default maximum decompressed size (in bytes), which corresponds to 1G.
      */
-    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824L;
+    private static final long DEFAULT_MAXIMUM_DECOMPRESSED_SIZE = 1073741824;
     private boolean usingIterator;
     private boolean allowEmptyDirectory;
     private boolean preservePathElements;
