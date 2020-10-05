@@ -41,7 +41,7 @@ public class TarFileDataFormat extends DataFormatDefinition {
     @Metadata(javaType = "java.lang.Boolean")
     private String preservePathElements;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Long", defaultValue = "1073741824L")
+    @Metadata(javaType = "java.lang.Long", defaultValue = "1073741824")
     private String maxDecompressedSize;
 
     public TarFileDataFormat() {
