@@ -54,29 +54,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
         if (answer == null) {
             answer = createSimpleExpression(camelContext, function, true);
-            if (cacheExpression != null && answer != null) {
-                cacheExpression.put(function, answer);
+            if (answer != null) {
+                answer.init(camelContext);
             }
-        }
-        return answer;
-    }
-
-    /**
-     * Creates a Camel {@link Expression} based on this model.
-     *
-     * @param  expression                                                   not in use
-     * @param  strict                                                       whether to throw exception if the expression
-     *                                                                      was not a function, otherwise <tt>null</tt>
-     *                                                                      is returned
-     * @return                                                              the created {@link Expression}
-     * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
-     */
-    public Expression createExpression(CamelContext camelContext, String expression, boolean strict) {
-        String function = text.toString();
-
-        Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
-        if (answer == null) {
-            answer = createSimpleExpression(camelContext, function, strict);
             if (cacheExpression != null && answer != null) {
                 cacheExpression.put(function, answer);
             }
@@ -214,7 +194,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // properties: prefix
         remainder = ifStartsWithReturnRemainder("properties:", function);
         if (remainder != null) {
-            String[] parts = remainder.split(":");
+            String[] parts = remainder.split(":", 2);
             if (parts.length > 2) {
                 throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
             }
@@ -236,6 +216,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("type:", function);
         if (remainder != null) {
             Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
+            exp.init(camelContext);
             // we want to cache this expression so we wont re-evaluate it as the type/constant wont change
             return SimpleExpressionBuilder.cacheExpression(exp);
         }
@@ -457,7 +438,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
             }
             if (values.contains(",")) {
-                String[] tokens = values.split(",", -1);
+                String[] tokens = values.split(",", 3);
                 if (tokens.length > 2) {
                     throw new SimpleParserException(
                             "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
@@ -500,7 +481,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (values == null || ObjectHelper.isEmpty(values)) {
                 detailed = true;
             } else {
-                detailed = Boolean.valueOf(values);
+                detailed = Boolean.parseBoolean(values);
             }
             return SimpleExpressionBuilder.messageHistoryExpression(detailed);
         } else if (ObjectHelper.equal(function, "messageHistory")) {
