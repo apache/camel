@@ -19,6 +19,11 @@ package org.apache.camel;
 /**
  * An <a href="http://camel.apache.org/expression.html">expression</a> provides a plugin strategy for evaluating
  * expressions on a message exchange.
+ *
+ * An expression should be thread-safe and be able to evaluate concurrently by different threads with different exchanges.
+ *
+ * Any initialization logic should be done by the {@link #init(CamelContext)} method which allows to prepare the expressions
+ * such as wiring in resources, pre-parsing and what else.
  */
 public interface Expression {
 
@@ -33,6 +38,8 @@ public interface Expression {
 
     /**
      * Initialize the expression with the given camel context
+     *
+     * @param context  the camel context
      */
     default void init(CamelContext context) {
     }

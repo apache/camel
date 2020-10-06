@@ -18,6 +18,11 @@ package org.apache.camel;
 
 /**
  * Evaluates a binary <a href="http://camel.apache.org/predicate.html">predicate</a> on the message exchange.
+ *
+ * A predicate should be thread-safe and be able to evaluate concurrently by different threads with different exchanges.
+ *
+ * Any initialization logic should be done by the {@link #init(CamelContext)} method which allows to prepare the predicate
+ * such as wiring in resources, pre-parsing and what else.
  */
 public interface Predicate {
 
@@ -31,6 +36,8 @@ public interface Predicate {
 
     /**
      * Initialize the predicate with the given camel context
+     *
+     * @param context  the camel context
      */
     default void init(CamelContext context) {
     }

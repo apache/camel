@@ -46,22 +46,27 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     private int group;
     private Namespaces namespaces;
 
+    @Deprecated
     public static Expression tokenize(String path) {
         return tokenize(null, path, 'i');
     }
 
+    @Deprecated
     public static Expression tokenize(String path, char mode) {
         return tokenize(null, path, mode);
     }
 
+    @Deprecated
     public static Expression tokenize(String headerName, String path) {
         return tokenize(headerName, path, 'i');
     }
 
+    @Deprecated
     public static Expression tokenize(String headerName, String path, char mode) {
         return tokenize(headerName, path, mode, 1, null);
     }
 
+    @Deprecated
     public static Expression tokenize(String headerName, String path, char mode, int group, Namespaces namespaces) {
         XMLTokenizeLanguage language = new XMLTokenizeLanguage();
         language.setHeaderName(headerName);

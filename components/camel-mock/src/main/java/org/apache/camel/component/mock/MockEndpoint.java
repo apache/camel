@@ -350,9 +350,18 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @param expression which is use to set the message body
      */
     public void returnReplyBody(Expression expression) {
-        this.defaultProcessor = exchange -> {
-            Object exp = expression.evaluate(exchange, Object.class);
-            exchange.getMessage().setBody(exp);
+        this.defaultProcessor = new Processor() {
+            private boolean initDone;
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                if (!initDone) {
+                    expression.init(exchange.getContext());
+                    initDone = true;
+                }
+                Object exp = expression.evaluate(exchange, Object.class);
+                exchange.getMessage().setBody(exp);
+            }
         };
     }
 
@@ -363,9 +372,18 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @param expression which is use to set the message header
      */
     public void returnReplyHeader(String headerName, Expression expression) {
-        this.defaultProcessor = exchange -> {
-            Object exp = expression.evaluate(exchange, Object.class);
-            exchange.getMessage().setHeader(headerName, exp);
+        this.defaultProcessor = new Processor() {
+            private boolean initDone;
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                if (!initDone) {
+                    expression.init(exchange.getContext());
+                    initDone = true;
+                }
+                Object exp = expression.evaluate(exchange, Object.class);
+                exchange.getMessage().setHeader(headerName, exp);
+            }
         };
     }
 
@@ -952,12 +970,22 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void expectsAscending(final Expression expression) {
         expects(new AssertionTask() {
+            private boolean initDone;
+
             @Override
             public void assertOnIndex(int index) {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 assertMessagesSorted(expression, true, index);
             }
 
             public void run() {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 assertMessagesAscending(expression);
             }
         });
@@ -988,12 +1016,22 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void expectsDescending(final Expression expression) {
         expects(new AssertionTask() {
+            private boolean initDone;
+
             @Override
             public void assertOnIndex(int index) {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 assertMessagesSorted(expression, false, index);
             }
 
             public void run() {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 assertMessagesDescending(expression);
             }
         });
@@ -1028,10 +1066,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void expectsNoDuplicates(final Expression expression) {
         expects(new AssertionTask() {
+            private boolean initDone;
             private Map<Object, Exchange> map = new HashMap<>();
 
             @Override
             public void assertOnIndex(int index) {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 List<Exchange> list = getReceivedExchanges();
                 Exchange e2 = list.get(index);
                 Object key = expression.evaluate(e2, Object.class);
@@ -1045,6 +1088,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             }
 
             public void run() {
+                if (!initDone) {
+                    expression.init(getCamelContext());
+                    initDone = true;
+                }
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
                     assertOnIndex(i);
                 }
@@ -1092,6 +1139,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have ascending values of the given expression
      */
     public void assertMessagesAscending(Expression expression) {
+        expression.init(getCamelContext());
         assertMessagesSorted(expression, true);
     }
 
@@ -1099,6 +1147,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Asserts that the messages have descending values of the given expression
      */
     public void assertMessagesDescending(Expression expression) {
+        expression.init(getCamelContext());
         assertMessagesSorted(expression, false);
     }
 
@@ -1143,6 +1192,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @param expression the expression to use for duplication check
      */
     public void assertNoDuplicates(Expression expression) {
+        expression.init(getCamelContext());
         Map<Object, Exchange> map = new HashMap<>();
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {

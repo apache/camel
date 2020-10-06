@@ -198,6 +198,7 @@ public class XPathLanguage extends LanguageSupport {
                 builder.setObjectModelUri(objectModelUri);
             }
         }
+        builder.init(getCamelContext());
     }
 
 }

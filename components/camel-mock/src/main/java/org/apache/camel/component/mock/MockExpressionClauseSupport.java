@@ -32,6 +32,7 @@ public class MockExpressionClauseSupport<T> {
     private T result;
     private Expression expressionValue;
     private ExpressionFactory expressionType;
+    private volatile boolean initDone;
 
     public MockExpressionClauseSupport(T result) {
         this.result = result;
@@ -296,12 +297,18 @@ public class MockExpressionClauseSupport<T> {
     protected Expression createExpression(CamelContext camelContext) {
         if (getExpressionValue() == null) {
             if (getExpressionType() != null) {
-                setExpressionValue(getExpressionType().createExpression(camelContext));
+                Expression exp = getExpressionType().createExpression(camelContext);
+                setExpressionValue(exp);
             } else {
                 throw new IllegalStateException("No expression value configured");
             }
         }
-        return getExpressionValue();
+        Expression exp = getExpressionValue();
+        if (!initDone) {
+            exp.init(camelContext);
+            initDone = true;
+        }
+        return exp;
     }
 
     protected void configureExpression(CamelContext camelContext, Expression expression) {

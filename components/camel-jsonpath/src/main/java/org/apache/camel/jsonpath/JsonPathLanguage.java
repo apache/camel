@@ -111,7 +111,7 @@ public class JsonPathLanguage extends LanguageSupport {
         answer.setWriteAsString(writeAsString);
         answer.setHeaderName(headerName);
         answer.setOptions(options);
-        answer.afterPropertiesConfigured(getCamelContext());
+        answer.init(getCamelContext());
         return answer;
     }
 
@@ -139,7 +139,7 @@ public class JsonPathLanguage extends LanguageSupport {
             }
             answer.setOptions(list.toArray(new Option[list.size()]));
         }
-        answer.afterPropertiesConfigured(getCamelContext());
+        answer.init(getCamelContext());
         return answer;
     }
 
