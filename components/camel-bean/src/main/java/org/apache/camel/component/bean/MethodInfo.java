@@ -242,6 +242,9 @@ public class MethodInfo {
     public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {
         final Object[] arguments;
         if (hasParameters) {
+            if (parametersExpression != null) {
+                parametersExpression.init(camelContext);
+            }
             arguments = parametersExpression.evaluate(exchange, Object[].class);
         } else {
             arguments = null;
@@ -280,6 +283,7 @@ public class MethodInfo {
                     }
                     // use a expression which invokes the method to be used by dynamic router
                     Expression expression = new DynamicRouterExpression(pojo);
+                    expression.init(camelContext);
                     exchange.setProperty(Exchange.EVALUATE_EXPRESSION_RESULT, expression);
                     return dynamicRouter.process(exchange, callback);
                 }
@@ -525,6 +529,17 @@ public class MethodInfo {
 
         ParameterExpression(Expression[] expressions) {
             this.expressions = expressions;
+        }
+
+        @Override
+        public void init(CamelContext context) {
+            if (expressions != null) {
+                for (Expression exp : expressions) {
+                    if (exp != null) {
+                        exp.init(context);
+                    }
+                }
+            }
         }
 
         @Override

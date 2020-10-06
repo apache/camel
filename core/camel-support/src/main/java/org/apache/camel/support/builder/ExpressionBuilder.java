@@ -38,8 +38,11 @@ import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
@@ -139,12 +142,13 @@ public class ExpressionBuilder {
      */
     public static Expression headerExpression(final Expression headerName, final Expression typeName) {
         return new ExpressionAdapter() {
+            private ClassResolver classResolver;
             @Override
             public Object evaluate(Exchange exchange) {
                 Class<?> type;
                 try {
                     String text = typeName.evaluate(exchange, String.class);
-                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                    type = classResolver.resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
@@ -161,6 +165,7 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 headerName.init(context);
                 typeName.init(context);
+                classResolver = context.getClassResolver();
             }
 
             @Override
@@ -264,8 +269,14 @@ public class ExpressionBuilder {
      */
     public static Expression typeConverterExpression() {
         return new ExpressionAdapter() {
+            private TypeConverter typeConverter;
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getTypeConverter();
+                return typeConverter;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                typeConverter = context.getTypeConverter();
             }
 
             @Override
@@ -282,8 +293,14 @@ public class ExpressionBuilder {
      */
     public static Expression registryExpression() {
         return new ExpressionAdapter() {
+            private Registry registry;
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getRegistry();
+                return registry;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                registry = context.getRegistry();
             }
 
             @Override
@@ -313,15 +330,17 @@ public class ExpressionBuilder {
      */
     public static Expression refExpression(final Expression ref) {
         return new ExpressionAdapter() {
+            private Registry registry;
             @Override
             public Object evaluate(Exchange exchange) {
                 String text = ref.evaluate(exchange, String.class);
-                return exchange.getContext().getRegistry().lookupByName(text);
+                return registry.lookupByName(text);
             }
 
             @Override
             public void init(CamelContext context) {
                 ref.init(context);
+                registry = context.getRegistry();
             }
 
             @Override
@@ -678,8 +697,16 @@ public class ExpressionBuilder {
      */
     public static Expression languageExpression(final String languageName, final Language language, final String expression) {
         return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = language.createExpression(expression);
+                exp.init(context);
+            }
+
             public Object evaluate(Exchange exchange) {
-                return language.createExpression(expression).evaluate(exchange, Object.class);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
@@ -697,37 +724,28 @@ public class ExpressionBuilder {
      */
     public static Expression languageExpression(final String language, final String expression) {
         return new ExpressionAdapter() {
-            private volatile Expression expr;
-            private volatile Predicate pred;
+            private Expression expr;
+            private Predicate pred;
 
             public Object evaluate(Exchange exchange) {
-                init(exchange.getContext());
                 return expr.evaluate(exchange, Object.class);
             }
 
             @Override
             public boolean matches(Exchange exchange) {
-                init(exchange.getContext());
                 return pred.matches(exchange);
             }
 
             @Override
             public void init(CamelContext context) {
-                if (expr == null) {
-                    synchronized (this) {
-                        if (expr == null) {
-                            Language lan = context.resolveLanguage(language);
-                            if (lan != null) {
-                                pred = lan.createPredicate(expression);
-                                pred.init(context);
-                                Expression newExpression = lan.createExpression(expression);
-                                newExpression.init(context);
-                                expr = newExpression;
-                            } else {
-                                throw new NoSuchLanguageException(language);
-                            }
-                        }
-                    }
+                Language lan = context.resolveLanguage(language);
+                if (lan != null) {
+                    pred = lan.createPredicate(expression);
+                    pred.init(context);
+                    expr = lan.createExpression(expression);
+                    expr.init(context);
+                } else {
+                    throw new NoSuchLanguageException(language);
                 }
             }
 
@@ -859,12 +877,13 @@ public class ExpressionBuilder {
      */
     public static Expression bodyExpression(final Expression name) {
         return new ExpressionAdapter() {
+            private ClassResolver classResolver;
             @Override
             public Object evaluate(Exchange exchange) {
                 Class<?> type;
                 try {
                     String text = name.evaluate(exchange, String.class);
-                    type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
+                    type = classResolver.resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
@@ -874,6 +893,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 name.init(context);
+                classResolver = context.getClassResolver();
             }
 
             @Override
@@ -1172,10 +1192,11 @@ public class ExpressionBuilder {
      */
     public static Expression skipFirstExpression(final Expression expression) {
         return new ExpressionAdapter() {
+            private TypeConverter typeConverter;
             @Override
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Iterator it = exchange.getContext().getTypeConverter().tryConvertTo(Iterator.class, exchange, value);
+                Iterator it = typeConverter.tryConvertTo(Iterator.class, exchange, value);
                 if (it != null) {
                     // skip first
                     it.next();
@@ -1188,6 +1209,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 expression.init(context);
+                typeConverter = context.getTypeConverter();
             }
 
             @Override
@@ -1225,6 +1247,7 @@ public class ExpressionBuilder {
 
     public static Expression groupXmlIteratorExpression(final Expression expression, final String group) {
         return new ExpressionAdapter() {
+            private Expression groupExp;
             @Override
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
@@ -1232,7 +1255,7 @@ public class ExpressionBuilder {
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
                 // must use GroupTokenIterator in xml mode as we want to concat the xml parts into a single message
                 // the group can be a simple expression so evaluate it as a number
-                Integer parts = exchange.getContext().resolveLanguage("simple").createExpression(group).evaluate(exchange, Integer.class);
+                Integer parts = groupExp.evaluate(exchange, Integer.class);
                 if (parts == null) {
                     throw new RuntimeExchangeException("Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group, exchange);
                 } else if (parts <= 0) {
@@ -1244,6 +1267,8 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 expression.init(context);
+                groupExp = context.resolveLanguage("simple").createExpression(group);
+                groupExp.init(context);
             }
 
             @Override
@@ -1255,12 +1280,13 @@ public class ExpressionBuilder {
 
     public static Expression groupIteratorExpression(final Expression expression, final String token, final String group, final boolean skipFirst) {
         return new ExpressionAdapter() {
+            private Expression groupExp;
             public Object evaluate(Exchange exchange) {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
                 // the group can be a simple expression so evaluate it as a number
-                Integer parts = exchange.getContext().resolveLanguage("simple").createExpression(group).evaluate(exchange, Integer.class);
+                Integer parts = groupExp.evaluate(exchange, Integer.class);
                 if (parts == null) {
                     throw new RuntimeExchangeException("Group evaluated as null, must be evaluated as a positive Integer value from expression: " + group, exchange);
                 } else if (parts <= 0) {
@@ -1276,6 +1302,8 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 expression.init(context);
+                groupExp = context.resolveLanguage("simple").createExpression(group);
+                groupExp.init(context);
             }
 
             @Override
@@ -1516,19 +1544,24 @@ public class ExpressionBuilder {
     public static Expression simpleExpression(final String expression) {
         if (LanguageSupport.hasSimpleFunction(expression)) {
             return new ExpressionAdapter() {
+                private Expression exp;
                 private Language language;
 
                 public Object evaluate(Exchange exchange) {
                     // must call evaluate to return the nested language evaluate when evaluating
                     // stacked expressions
                     init(exchange.getContext());
-                    return language.createExpression(expression).evaluate(exchange, Object.class);
+                    return exp.evaluate(exchange, Object.class);
                 }
 
                 @Override
                 public void init(CamelContext context) {
                     if (this.language == null) {
                         this.language = context.resolveLanguage("simple");
+                    }
+                    if (this.exp == null) {
+                        this.exp = language.createExpression(expression);
+                        this.exp.init(context);
                     }
                 }
 
@@ -1544,6 +1577,7 @@ public class ExpressionBuilder {
 
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
+            private Expression exp;
             private Language language;
 
             public Object evaluate(Exchange exchange) {
@@ -1552,13 +1586,17 @@ public class ExpressionBuilder {
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 init(exchange.getContext());
-                return language.createExpression(expression).evaluate(exchange, Object.class);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
             public void init(CamelContext context) {
                 if (this.language == null) {
                     this.language = context.resolveLanguage("bean");
+                }
+                if (this.exp == null) {
+                    this.exp = language.createExpression(expression);
+                    this.exp.init(context);
                 }
             }
 
@@ -1572,19 +1610,24 @@ public class ExpressionBuilder {
     public static Expression beanExpression(final Object bean, final String method) {
         return new ExpressionAdapter() {
             private Language language;
+            private Expression exp;
 
             public Object evaluate(Exchange exchange) {
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", bean);
-                properties.put("method", method);
                 init(exchange.getContext());
-                return language.createExpression(null, properties).evaluate(exchange, Object.class);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
             public void init(CamelContext context) {
                 if (this.language == null) {
                     this.language = context.resolveLanguage("bean");
+                }
+                if (this.exp == null) {
+                    Map<String, Object> properties = new HashMap<>(2);
+                    properties.put("bean", bean);
+                    properties.put("method", method);
+                    this.exp = language.createExpression(null, properties);
+                    this.exp.init(context);
                 }
             }
 
@@ -1606,10 +1649,12 @@ public class ExpressionBuilder {
 
     public static Expression propertiesComponentExpression(final String key, final String defaultValue) {
         return new ExpressionAdapter() {
+            private Expression exp;
+            private PropertiesComponent pc;
+
             public Object evaluate(Exchange exchange) {
-                String text = simpleExpression(key).evaluate(exchange, String.class);
+                String text = exp.evaluate(exchange, String.class);
                 try {
-                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent();
                     // enclose key with {{ }} to force parsing as key can be a nested expression too
                     return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + text + PropertiesComponent.SUFFIX_TOKEN);
                 } catch (Exception e) {
@@ -1619,6 +1664,12 @@ public class ExpressionBuilder {
                     }
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                exp = simpleExpression(key);
+                pc = context.getPropertiesComponent();
             }
 
             @Override
@@ -1659,24 +1710,29 @@ public class ExpressionBuilder {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
             private Language language;
+            private Expression exp;
 
             public Object evaluate(Exchange exchange) {
-                Map<String, Object> map = new HashMap<>(4);
-                map.put("mode", mode);
-                map.put("group", group);
-                if (headerName != null) {
-                    map.put("headerName", headerName);
-                }
-                if (namespaces != null) {
-                    map.put("namespaces", namespaces);
-                }
-                return language.createExpression(path, map).evaluate(exchange, Object.class);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
             public void init(CamelContext context) {
                 if (this.language == null) {
                     this.language = context.resolveLanguage("xtokenize");
+                }
+                if (this.exp == null) {
+                    Map<String, Object> map = new HashMap<>(4);
+                    map.put("mode", mode);
+                    map.put("group", group);
+                    if (headerName != null) {
+                        map.put("headerName", headerName);
+                    }
+                    if (namespaces != null) {
+                        map.put("namespaces", namespaces);
+                    }
+                    this.exp = language.createExpression(path, map);
+                    this.exp.init(context);
                 }
             }
 

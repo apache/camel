@@ -91,6 +91,7 @@ public class XQueryLanguage extends LanguageSupport {
         if (headerName != null) {
             builder.setHeaderName(headerName);
         }
+        builder.init(getCamelContext());
     }
 
 }

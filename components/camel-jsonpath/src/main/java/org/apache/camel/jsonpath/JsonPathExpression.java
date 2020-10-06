@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.jayway.jsonpath.Option;
-import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
@@ -30,7 +29,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JsonPathExpression extends ExpressionAdapter implements AfterPropertiesConfigured {
+public class JsonPathExpression extends ExpressionAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonPathExpression.class);
 
@@ -162,11 +161,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     @Override
-    public void afterPropertiesConfigured(CamelContext camelContext) {
-        init();
-    }
-
-    public void init() {
+    public void init(CamelContext context) {
         String exp = expression;
 
         if (predicate && isAllowEasyPredicate()) {

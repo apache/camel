@@ -137,12 +137,15 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
+                // first use simple then create the group expression
                 exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, "" + group, false);
                 exp.init(context);
             }
 
             public Object evaluate(Exchange exchange) {
-                return ExpressionBuilder.groupIteratorExpression(exp, null, "" + group, false).evaluate(exchange, Object.class);
+                return exp.evaluate(exchange, Object.class);
             }
 
             @Override
@@ -861,8 +864,9 @@ public final class SimpleExpressionBuilder {
         public void init(CamelContext context) {
             ognlExpression = ExpressionBuilder.simpleExpression(ognl);
             ognlExpression.init(context);
-            keyExpression = ExpressionBuilder.simpleExpression(key);
-            keyExpression.init(context);
+            // key must be lazy eval as it only used in special situations
+            // keyExpression = ExpressionBuilder.simpleExpression(key);
+            // keyExpression.init(context);
         }
 
         @Override
@@ -871,6 +875,12 @@ public final class SimpleExpressionBuilder {
             Object property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, ognlExpression);
             if (property != null) {
                 return property;
+            }
+
+            // key must be lazy eval as it only used in special situations
+            if (keyExpression == null) {
+                keyExpression = ExpressionBuilder.simpleExpression(key);
+                keyExpression.init(exchange.getContext());
             }
 
             property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, keyExpression);

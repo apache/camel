@@ -47,6 +47,13 @@ All the out of the box supported languages (simple, bean, groovy, jsonpath, xpat
 which improves performance for concurrent processing that uses those languages that would be resolved on each use.
 Now the languages are resolved once during startup or first usage.
 
+=== Expressions
+
+Expressions built via `ExpressionBuilder` and similar now often requires to be initialized by calling `init` before use.
+This is part of an effort to optimize Camel to eager initialize its expression and languages.
+This only impacts Camel end users whom may use the `ExpressionBuilder` directly.
+Normal usage of Camel should not be impacted by this change.
+
 === Customizers
 
 Customizers, which are objects used to configure some of the Camel services such as component, language and data formats, that were previously limited to Camel Spring Boot, are now consistently used across runtimes.

@@ -48,7 +48,7 @@ public class JsonPathAnnotationExpressionFactory extends DefaultAnnotationExpres
             answer.setOptions(options);
         }
 
-        answer.init();
+        answer.init(camelContext);
         return answer;
     }
 

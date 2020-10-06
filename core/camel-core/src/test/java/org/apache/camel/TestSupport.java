@@ -221,6 +221,8 @@ public abstract class TestSupport {
      * Asserts that the given expression when evaluated returns the given answer
      */
     public static Object assertExpression(Expression expression, Exchange exchange, Object expected) {
+        expression.init(exchange.getContext());
+
         Object value;
         if (expected != null) {
             value = expression.evaluate(exchange, expected.getClass());
@@ -245,6 +247,7 @@ public abstract class TestSupport {
      * Asserts that the predicate returns the expected value on the exchange
      */
     public static void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
+        predicate.init(exchange.getContext());
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
@@ -257,6 +260,8 @@ public abstract class TestSupport {
      * Asserts that the predicate returns the expected value on the exchange
      */
     public static boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expected) {
+        predicate.init(exchange.getContext());
+
         if (expected) {
             PredicateAssertHelper.assertMatches(predicate, "Predicate failed: ", exchange);
         }

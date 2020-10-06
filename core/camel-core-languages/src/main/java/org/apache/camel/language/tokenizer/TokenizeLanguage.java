@@ -51,10 +51,12 @@ public class TokenizeLanguage extends LanguageSupport {
     private String groupDelimiter;
     private boolean skipFirst;
 
+    @Deprecated
     public static Expression tokenize(String token) {
         return tokenize(token, false);
     }
 
+    @Deprecated
     public static Expression tokenize(String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
@@ -62,10 +64,12 @@ public class TokenizeLanguage extends LanguageSupport {
         return language.createExpression((String) null);
     }
 
+    @Deprecated
     public static Expression tokenize(String headerName, String token) {
         return tokenize(headerName, token, false);
     }
 
+    @Deprecated
     public static Expression tokenize(String headerName, String token, boolean regex) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setHeaderName(headerName);
@@ -74,6 +78,7 @@ public class TokenizeLanguage extends LanguageSupport {
         return language.createExpression((String) null);
     }
 
+    @Deprecated
     public static Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(startToken);
@@ -82,6 +87,7 @@ public class TokenizeLanguage extends LanguageSupport {
         return language.createExpression((String) null);
     }
 
+    @Deprecated
     public static Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(tagName);
@@ -141,6 +147,9 @@ public class TokenizeLanguage extends LanguageSupport {
             }
         }
 
+        if (getCamelContext() != null) {
+            answer.init(getCamelContext());
+        }
         return answer;
     }
 
