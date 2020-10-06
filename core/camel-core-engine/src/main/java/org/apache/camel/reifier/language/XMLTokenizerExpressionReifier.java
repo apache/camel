@@ -24,7 +24,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XMLTokenizerExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenizerExpression> {
 
@@ -33,17 +35,29 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        configureNamespaceAware(expression);
-        super.configureExpression(expression);
+    public Predicate createPredicate() {
+        Expression exp = createExpression();
+        return ExpressionToPredicateAdapter.toPredicate(exp);
+    }
+
+    @Override
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(exp, createProperties());
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(exp, createProperties());
     }
 
     @Override
     protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
         configureNamespaceAware(predicate);
-        super.configurePredicate(predicate);
+    }
+
+    @Override
+    protected void configureExpression(Expression expression) {
+        configureNamespaceAware(expression);
     }
 
     protected void configureNamespaceAware(Object builder) {
@@ -53,12 +67,13 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
         }
     }
 
-    protected void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("headerName", definition.getHeaderName());
-        properties.put("mode", definition.getMode());
-        properties.put("group", definition.getGroup());
-        setProperties(target, properties);
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(4);
+        properties.put("headerName", parseString(definition.getHeaderName()));
+        properties.put("mode", parseString(definition.getMode()));
+        properties.put("group", parseInt(definition.getGroup()));
+        properties.put("namespaces", definition.getNamespaces());
+        return properties;
     }
 
 }

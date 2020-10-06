@@ -49,7 +49,7 @@ public class SpelLanguage extends LanguageSupport implements Service {
     }
 
     @Override
-    public void start() {
+    public void init() {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
         if (getCamelContext() instanceof SpringCamelContext) {
@@ -58,6 +58,11 @@ public class SpelLanguage extends LanguageSupport implements Service {
         } else {
             beanResolver = new RegistryBeanResolver(getCamelContext().getRegistry());
         }
+    }
+
+    @Override
+    public void start() {
+        // noop
     }
 
     @Override

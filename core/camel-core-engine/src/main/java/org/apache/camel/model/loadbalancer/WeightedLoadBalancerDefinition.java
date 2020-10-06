@@ -77,7 +77,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     /**
      * Delimiter used to specify the distribution ratio.
      * <p/>
-     * The default value is ,
+     * The default value is , (comma)
      */
     public void setDistributionRatioDelimiter(String distributionRatioDelimiter) {
         this.distributionRatioDelimiter = distributionRatioDelimiter;

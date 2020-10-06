@@ -16,9 +16,18 @@
  */
 package org.apache.camel.component.platform.http.vertx;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
+import javax.activation.DataHandler;
+
+import io.vertx.core.VertxOptions;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.apache.camel.CamelContext;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -34,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class VertxPlatformHttpEngineTest {
     public static SSLContextParameters serverSSLParameters;
@@ -76,6 +86,28 @@ public class VertxPlatformHttpEngineTest {
     }
 
     @Test
+    public void testEngineSetup() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.start();
+
+            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
+            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
+                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
+            });
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
     public void testEngine() throws Exception {
         final int port = AvailablePortFinder.getNextAvailable();
         final CamelContext context = new DefaultCamelContext();
@@ -99,11 +131,6 @@ public class VertxPlatformHttpEngineTest {
 
             context.start();
 
-            assertThat(VertxPlatformHttpRouter.lookup(context)).isNotNull();
-            assertThat(context.getComponent("platform-http")).isInstanceOfSatisfying(PlatformHttpComponent.class, component -> {
-                assertThat(component.getEngine()).isInstanceOf(VertxPlatformHttpEngine.class);
-            });
-
             given()
                     .port(conf.getBindPort())
                     .when()
@@ -120,6 +147,82 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo("POST"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testSlowConsumer() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.getRegistry().bind(
+                    "vertx-options",
+                    new VertxOptions()
+                            .setMaxEventLoopExecuteTime(2)
+                            .setMaxEventLoopExecuteTimeUnit(TimeUnit.SECONDS));
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/get")
+                            .routeId("get")
+                            .process(e -> Thread.sleep(TimeUnit.SECONDS.toMillis(3)))
+                            .setBody().constant("get");
+                }
+            });
+
+            context.start();
+
+            given()
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("get"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testFailingConsumer() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/get")
+                            .routeId("get")
+                            .process(exchange -> {
+                                throw new RuntimeException();
+                            });
+                }
+            });
+
+            context.start();
+
+            given()
+                    .port(conf.getBindPort())
+                    .when()
+                    .get("/get")
+                    .then()
+                    .statusCode(500);
 
         } finally {
             context.stop();
@@ -276,6 +379,52 @@ public class VertxPlatformHttpEngineTest {
                     .then()
                     .statusCode(200)
                     .body(equalTo(greeting));
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testFileUpload() throws Exception {
+        final int port = AvailablePortFinder.getNextAvailable();
+        final String fileContent = "Test multipart upload content";
+        final File tempFile = File.createTempFile("platform-http", ".txt");
+        final CamelContext context = new DefaultCamelContext();
+
+        try {
+            VertxPlatformHttpServerConfiguration conf = new VertxPlatformHttpServerConfiguration();
+            conf.setBindPort(port);
+
+            VertxPlatformHttpServerConfiguration.BodyHandler bodyHandler
+                    = new VertxPlatformHttpServerConfiguration.BodyHandler();
+            bodyHandler.setUploadsDirectory(tempFile.getParent());
+            conf.setBodyHandler(bodyHandler);
+
+            Files.write(tempFile.toPath(), fileContent.getBytes(StandardCharsets.UTF_8));
+
+            context.addService(new VertxPlatformHttpServer(conf));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("platform-http:/upload")
+                            .process(exchange -> {
+                                AttachmentMessage message = exchange.getMessage(AttachmentMessage.class);
+                                DataHandler attachment = message.getAttachment(tempFile.getName());
+                                message.setBody(attachment.getContent());
+                            });
+                }
+            });
+
+            context.start();
+
+            given()
+                    .port(conf.getBindPort())
+                    .multiPart(tempFile)
+                    .when()
+                    .post("/upload")
+                    .then()
+                    .statusCode(200)
+                    .body(is(fileContent));
         } finally {
             context.stop();
         }

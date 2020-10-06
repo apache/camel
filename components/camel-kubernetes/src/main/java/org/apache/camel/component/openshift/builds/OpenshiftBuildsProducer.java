@@ -19,7 +19,6 @@ package org.apache.camel.component.openshift.builds;
 import java.util.Map;
 
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
@@ -98,7 +97,7 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
             }
             buildList = builds.list();
         } else {
-            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch, Watcher<Build>> builds
+            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch> builds
                     = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
                             .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {

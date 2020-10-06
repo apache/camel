@@ -2120,6 +2120,7 @@ public class ModelParser extends BaseParser {
         return doParse(new TarFileDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -2317,6 +2318,7 @@ public class ModelParser extends BaseParser {
         return doParse(new ZipFileDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyDirectory": def.setAllowEmptyDirectory(val); break;
+                case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
                 default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
@@ -2350,6 +2352,7 @@ public class ModelParser extends BaseParser {
                 case "allowEasyPredicate": def.setAllowEasyPredicate(val); break;
                 case "allowSimple": def.setAllowSimple(val); break;
                 case "headerName": def.setHeaderName(val); break;
+                case "option": def.setOption(val); break;
                 case "resultType": def.setResultTypeName(val); break;
                 case "suppressExceptions": def.setSuppressExceptions(val); break;
                 case "writeAsString": def.setWriteAsString(val); break;

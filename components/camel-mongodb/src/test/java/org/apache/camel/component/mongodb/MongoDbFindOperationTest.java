@@ -70,6 +70,27 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
     }
 
     @Test
+    public void testFindAllAllowDiskUse() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.countDocuments());
+        pumpDataIntoTestCollection();
+
+        Object result
+                = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, true);
+        assertTrue(result instanceof List, "Result (allowDiskUse=true) is not of type List");
+        assertListSize("Result (allowDiskUse=true) does not contain all entries in collection", (List<Document>) result, 1000);
+
+        result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, false);
+        assertTrue(result instanceof List, "Result (allowDiskUse=false) is not of type List");
+        assertListSize("Result (allowDiskUse=false) does not contain all entries in collection", (List<Document>) result,
+                1000);
+
+        result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, null);
+        assertTrue(result instanceof List, "Result (allowDiskUse=null) is not of type List");
+        assertListSize("Result (allowDiskUse=null) does not contain all entries in collection", (List<Document>) result, 1000);
+    }
+
+    @Test
     public void testFindAllWithQueryAndNoFIlter() throws Exception {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.countDocuments());

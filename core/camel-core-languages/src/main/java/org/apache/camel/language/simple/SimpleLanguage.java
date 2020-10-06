@@ -72,7 +72,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void start() {
-        // noop
+        if (getCamelContext() != null) {
+            SIMPLE.setCamelContext(getCamelContext());
+        }
     }
 
     @Override
@@ -104,7 +106,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             expression = loadResource(expression);
 
-            SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
+            SimplePredicateParser parser
+                    = new SimplePredicateParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parsePredicate();
 
             if (cachePredicate != null && answer != null) {
@@ -124,7 +127,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             expression = loadResource(expression);
 
-            SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
+            SimpleExpressionParser parser
+                    = new SimpleExpressionParser(getCamelContext(), expression, allowEscape, cacheExpression);
             answer = parser.parseExpression();
 
             if (cacheExpression != null && answer != null) {
@@ -135,12 +139,23 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
+    @Override
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return createPredicate(expression);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        return createExpression(expression);
+    }
+
     /**
      * Creates a new {@link Expression}.
      * <p/>
      * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
      * {@link #predicate(String)} instead.
      */
+    @Deprecated
     public static Expression simple(String expression) {
         return expression(expression);
     }
@@ -149,6 +164,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * Creates a new {@link Expression} (or {@link Predicate} if the resultType is a <tt>Boolean</tt>, or
      * <tt>boolean</tt> type).
      */
+    @Deprecated
     public static Expression simple(String expression, Class<?> resultType) {
         return new SimpleLanguage().createExpression(expression, resultType);
     }
@@ -173,6 +189,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
      * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
      * {@link #predicate(String)} instead.
      */
+    @Deprecated
     public static Expression expression(String expression) {
         return SIMPLE.createExpression(expression);
     }
@@ -180,6 +197,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     /**
      * Creates a new {@link Predicate}.
      */
+    @Deprecated
     public static Predicate predicate(String predicate) {
         return SIMPLE.createPredicate(predicate);
     }

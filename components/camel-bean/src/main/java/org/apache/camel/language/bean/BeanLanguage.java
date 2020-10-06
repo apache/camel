@@ -16,13 +16,16 @@
  */
 package org.apache.camel.language.bean;
 
-import org.apache.camel.CamelContext;
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StaticService;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -37,7 +40,9 @@ import org.apache.camel.util.StringHelper;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements GeneratedPropertyConfigurer {
+public class BeanLanguage extends LanguageSupport implements StaticService {
+
+    private volatile ParameterMappingStrategy parameterMappingStrategy;
 
     private Object bean;
     private Class<?> beanType;
@@ -45,30 +50,6 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
     private String method;
 
     public BeanLanguage() {
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "bean":
-                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value));
-                return true;
-            case "beantype":
-            case "beanType":
-                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
-                return true;
-            case "ref":
-                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "method":
-                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            default:
-                return false;
-        }
     }
 
     public Object getBean() {
@@ -109,46 +90,94 @@ public class BeanLanguage extends LanguageSupport implements GeneratedPropertyCo
     }
 
     @Override
-    public Expression createExpression(String expression) {
-        // favour using the configured options
-        if (bean != null) {
-            return new BeanExpression(bean, method);
-        } else if (beanType != null) {
-            return new BeanExpression(beanType, method);
-        } else if (ref != null) {
-            return new BeanExpression(ref, method);
-        }
-
-        String beanName = expression;
-        String method = null;
-
-        // we support both the .method name and the ?method= syntax
-        // as the ?method= syntax is very common for the bean component
-        if (expression.contains("?method=")) {
-            beanName = StringHelper.before(expression, "?");
-            method = StringHelper.after(expression, "?method=");
-        } else {
-            //first check case :: because of my.own.Bean::method
-            int doubleColonIndex = expression.indexOf("::");
-            //need to check that not inside params
-            int beginOfParameterDeclaration = expression.indexOf('(');
-            if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
-                beanName = expression.substring(0, doubleColonIndex);
-                method = expression.substring(doubleColonIndex + 2);
-            } else {
-                int idx = expression.indexOf('.');
-                if (idx > 0) {
-                    beanName = expression.substring(0, idx);
-                    method = expression.substring(idx + 1);
-                }
-            }
-        }
-
-        return new BeanExpression(beanName, method);
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public boolean isSingleton() {
-        return false;
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        Object bean = properties.get("bean");
+        Class<?> beanType = (Class<?>) properties.get("beanType");
+        String ref = (String) properties.get("ref");
+        String method = (String) properties.get("method");
+
+        BeanExpression answer;
+        if (bean != null) {
+            answer = new BeanExpression(bean, method);
+        } else if (beanType != null) {
+            answer = new BeanExpression(beanType, method);
+        } else if (ref != null) {
+            answer = new BeanExpression(ref, method);
+        } else {
+            throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
+        }
+
+        answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.init(getCamelContext());
+        return answer;
+    }
+
+    @Override
+    public Expression createExpression(String expression) {
+        BeanExpression answer;
+
+        // favour using the configured options
+        if (bean != null) {
+            answer = new BeanExpression(bean, method);
+        } else if (beanType != null) {
+            answer = new BeanExpression(beanType, method);
+        } else if (ref != null) {
+            answer = new BeanExpression(ref, method);
+        } else {
+            String beanName = expression;
+            String method = null;
+
+            // we support both the .method name and the ?method= syntax
+            // as the ?method= syntax is very common for the bean component
+            if (expression.contains("?method=")) {
+                beanName = StringHelper.before(expression, "?");
+                method = StringHelper.after(expression, "?method=");
+            } else {
+                //first check case :: because of my.own.Bean::method
+                int doubleColonIndex = expression.indexOf("::");
+                //need to check that not inside params
+                int beginOfParameterDeclaration = expression.indexOf('(');
+                if (doubleColonIndex > 0 && (!expression.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                    beanName = expression.substring(0, doubleColonIndex);
+                    method = expression.substring(doubleColonIndex + 2);
+                } else {
+                    int idx = expression.indexOf('.');
+                    if (idx > 0) {
+                        beanName = expression.substring(0, idx);
+                        method = expression.substring(idx + 1);
+                    }
+                }
+            }
+
+            if (beanName.startsWith("type:")) {
+                try {
+                    Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(beanName.substring(5));
+                    answer = new BeanExpression(clazz, method);
+                } catch (ClassNotFoundException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            } else {
+                answer = new BeanExpression(beanName, method);
+            }
+        }
+
+        answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.init(getCamelContext());
+        return answer;
+    }
+
+    @Override
+    public void start() {
+        parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+    }
+
+    @Override
+    public void stop() {
+        // noop
     }
 }

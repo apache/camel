@@ -44,22 +44,25 @@ public final class CamelXmlTreeParserHelper {
         // now parse the route node and build the correct model/tree structure of the EIPs
         // re-create factory as we rebuild the tree
         nodeFactory = CamelNodeDetailsFactory.newInstance();
-        CamelNodeDetails parent = route.getOutputs().get(0);
+        List<CamelNodeDetails> outputs = route.getOutputs();
+        if (outputs != null && !outputs.isEmpty()) {
+            CamelNodeDetails parent = outputs.get(0);
 
-        // we dont want the route element and only start with from
-        for (int i = 0; i < route.getOutputs().size(); i++) {
-            CamelNodeDetails node = route.getOutputs().get(i);
-            String name = node.getName();
+            // we dont want the route element and only start with from
+            for (int i = 0; i < outputs.size(); i++) {
+                CamelNodeDetails node = outputs.get(i);
+                String name = node.getName();
 
-            if ("from".equals(name)) {
-                CamelNodeDetails from = nodeFactory.copyNode(null, "from", node);
-                from.setFileName(fullyQualifiedFileName);
-                answer.add(from);
-                parent = from;
-            } else {
-                // add straight to parent
-                parent.addOutput(node);
-                node.setFileName(fullyQualifiedFileName);
+                if ("from".equals(name)) {
+                    CamelNodeDetails from = nodeFactory.copyNode(null, "from", node);
+                    from.setFileName(fullyQualifiedFileName);
+                    answer.add(from);
+                    parent = from;
+                } else {
+                    // add straight to parent
+                    parent.addOutput(node);
+                    node.setFileName(fullyQualifiedFileName);
+                }
             }
         }
 

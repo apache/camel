@@ -149,6 +149,14 @@ public final class IOHelper {
 
     public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite)
             throws IOException {
+        return copy(input, output, bufferSize, flushOnEachWrite, -1);
+    }
+
+    public static int copy(
+            final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
+            long maxSize)
+            throws IOException {
+
         if (input instanceof ByteArrayInputStream) {
             // optimized for byte array as we only need the max size it can be
             input.mark(0);
@@ -191,6 +199,9 @@ public final class IOHelper {
                     output.flush();
                 }
                 total += n;
+                if (maxSize > 0 && total > maxSize) {
+                    throw new IOException("The InputStream entry being copied exceeds the maximum allowed size");
+                }
                 n = input.read(buffer);
             }
         }

@@ -51,8 +51,9 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         this(pojo, new BeanInfo(camelContext, pojo.getClass(), parameterMappingStrategy));
     }
 
+    @Deprecated
     public AbstractBeanProcessor(Object pojo, CamelContext camelContext) {
-        this(pojo, camelContext, BeanInfo.createParameterMappingStrategy(camelContext));
+        this(pojo, camelContext, ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext));
     }
 
     public AbstractBeanProcessor(BeanHolder beanHolder) {

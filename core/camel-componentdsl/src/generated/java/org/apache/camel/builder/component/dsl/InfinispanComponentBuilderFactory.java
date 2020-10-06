@@ -87,6 +87,18 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Define if we are connecting to a secured Infinispan instance.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default InfinispanComponentBuilder secure(boolean secure) {
+            doSetProperty("secure", secure);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -176,6 +188,29 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Set a specific default value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder defaultValue(
+                java.lang.Object defaultValue) {
+            doSetProperty("defaultValue", defaultValue);
+            return this;
+        }
+        /**
+         * Set a specific key for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder key(java.lang.Object key) {
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -197,6 +232,17 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
+         * Set a specific old value for some producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder oldValue(java.lang.Object oldValue) {
+            doSetProperty("oldValue", oldValue);
+            return this;
+        }
+        /**
          * The operation to perform.
          * 
          * The option is a:
@@ -208,6 +254,75 @@ public interface InfinispanComponentBuilderFactory {
         default InfinispanComponentBuilder operation(
                 org.apache.camel.component.infinispan.InfinispanOperation operation) {
             doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * Set a specific value for producer operations.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
+         */
+        default InfinispanComponentBuilder value(java.lang.Object value) {
+            doSetProperty("value", value);
+            return this;
+        }
+        /**
+         * Define the password to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder password(java.lang.String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Define the SASL Mechanism to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder saslMechanism(
+                java.lang.String saslMechanism) {
+            doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Define the security realm to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder securityRealm(
+                java.lang.String securityRealm) {
+            doSetProperty("securityRealm", securityRealm);
+            return this;
+        }
+        /**
+         * Define the security server name to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder securityServerName(
+                java.lang.String securityServerName) {
+            doSetProperty("securityServerName", securityServerName);
+            return this;
+        }
+        /**
+         * Define the username to access the infinispan instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group:  security
+         */
+        default InfinispanComponentBuilder username(java.lang.String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -349,14 +464,24 @@ public interface InfinispanComponentBuilderFactory {
             case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
             case "hosts": getOrCreateConfiguration((InfinispanComponent) component).setHosts((java.lang.String) value); return true;
             case "queryBuilder": getOrCreateConfiguration((InfinispanComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
+            case "secure": getOrCreateConfiguration((InfinispanComponent) component).setSecure((boolean) value); return true;
             case "bridgeErrorHandler": ((InfinispanComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "clusteredListener": getOrCreateConfiguration((InfinispanComponent) component).setClusteredListener((boolean) value); return true;
             case "command": getOrCreateConfiguration((InfinispanComponent) component).setCommand((java.lang.String) value); return true;
             case "customListener": getOrCreateConfiguration((InfinispanComponent) component).setCustomListener((org.apache.camel.component.infinispan.InfinispanCustomListener) value); return true;
             case "eventTypes": getOrCreateConfiguration((InfinispanComponent) component).setEventTypes((java.lang.String) value); return true;
             case "sync": getOrCreateConfiguration((InfinispanComponent) component).setSync((boolean) value); return true;
+            case "defaultValue": getOrCreateConfiguration((InfinispanComponent) component).setDefaultValue((java.lang.Object) value); return true;
+            case "key": getOrCreateConfiguration((InfinispanComponent) component).setKey((java.lang.Object) value); return true;
             case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "oldValue": getOrCreateConfiguration((InfinispanComponent) component).setOldValue((java.lang.Object) value); return true;
             case "operation": getOrCreateConfiguration((InfinispanComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
+            case "value": getOrCreateConfiguration((InfinispanComponent) component).setValue((java.lang.Object) value); return true;
+            case "password": getOrCreateConfiguration((InfinispanComponent) component).setPassword((java.lang.String) value); return true;
+            case "saslMechanism": getOrCreateConfiguration((InfinispanComponent) component).setSaslMechanism((java.lang.String) value); return true;
+            case "securityRealm": getOrCreateConfiguration((InfinispanComponent) component).setSecurityRealm((java.lang.String) value); return true;
+            case "securityServerName": getOrCreateConfiguration((InfinispanComponent) component).setSecurityServerName((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
             case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
             case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainerConfiguration((java.lang.Object) value); return true;

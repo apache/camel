@@ -71,7 +71,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     // stateful information
     private final AtomicInteger failures = new AtomicInteger();
     private final AtomicInteger state = new AtomicInteger(STATE_CLOSED);
-    private final AtomicBoolean keepOpen = new AtomicBoolean(false);
+    private final AtomicBoolean keepOpen = new AtomicBoolean();
     private volatile Timer halfOpenTimer;
     private volatile long lastFailure;
     private volatile long openedAt;

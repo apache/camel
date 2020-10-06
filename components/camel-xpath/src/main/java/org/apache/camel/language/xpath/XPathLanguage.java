@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.xpath;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
@@ -29,7 +31,9 @@ import org.apache.camel.support.LanguageSupport;
  */
 @Language("xpath")
 public class XPathLanguage extends LanguageSupport {
-    private QName resultType;
+    private Class<?> resultType;
+    private QName resultQName;
+    private Class<?> documentType;
     private XPathFactory xpathFactory;
     private Boolean useSaxon;
     private String objectModelUri;
@@ -55,12 +59,61 @@ public class XPathLanguage extends LanguageSupport {
         return builder;
     }
 
-    public QName getResultType() {
+    @Override
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        return (Predicate) createExpression(expression, properties);
+    }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        expression = loadResource(expression);
+
+        Class<?> clazz = property(Class.class, properties, "documentType", null);
+        if (clazz != null) {
+            setDocumentType(clazz);
+        }
+        clazz = property(Class.class, properties, "resultType", null);
+        if (clazz != null) {
+            setResultType(clazz);
+        }
+        QName qname = property(QName.class, properties, "resultQName", null);
+        if (qname != null) {
+            setResultQName(qname);
+        }
+        setUseSaxon(property(Boolean.class, properties, "useSaxon", useSaxon));
+        setObjectModelUri(property(String.class, properties, "objectModelUri", objectModelUri));
+        setThreadSafety(property(Boolean.class, properties, "threadSafety", threadSafety));
+        setLogNamespaces(property(Boolean.class, properties, "logNamespaces", logNamespaces));
+        setHeaderName(property(String.class, properties, "headerName", headerName));
+        setXpathFactory(property(XPathFactory.class, properties, "xpathFactory", xpathFactory));
+
+        XPathBuilder builder = XPathBuilder.xpath(expression);
+        configureBuilder(builder);
+        return builder;
+    }
+
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(QName resultType) {
+    public void setResultQName(QName qName) {
+        this.resultQName = qName;
+    }
+
+    public QName getResultQName() {
+        return resultQName;
+    }
+
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public Class<?> getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(Class<?> documentType) {
+        this.documentType = documentType;
     }
 
     public XPathFactory getXpathFactory() {
@@ -119,14 +172,20 @@ public class XPathLanguage extends LanguageSupport {
         if (threadSafety != null) {
             builder.setThreadSafety(threadSafety);
         }
+        if (resultQName != null) {
+            builder.setResultQName(resultQName);
+        }
         if (resultType != null) {
-            builder.setResultQName(resultType);
+            builder.setResultType(resultType);
         }
         if (logNamespaces != null) {
             builder.setLogNamespaces(logNamespaces);
         }
         if (headerName != null) {
             builder.setHeaderName(headerName);
+        }
+        if (documentType != null) {
+            builder.setDocumentType(documentType);
         }
 
         if (isUseSaxon()) {
@@ -141,8 +200,4 @@ public class XPathLanguage extends LanguageSupport {
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
 }

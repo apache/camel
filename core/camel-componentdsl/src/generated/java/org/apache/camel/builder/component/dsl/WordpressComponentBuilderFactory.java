@@ -61,6 +61,19 @@ public interface WordpressComponentBuilderFactory {
             return this;
         }
         /**
+         * Wordpress configuration.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.wordpress.WordpressConfiguration</code> type.
+         * 
+         * Group: common
+         */
+        default WordpressComponentBuilder configuration(
+                org.apache.camel.component.wordpress.WordpressConfiguration configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
          * The criteria to use with complex searches.
          * 
          * The option is a: <code>java.util.Map<java.lang.String,
@@ -199,19 +212,6 @@ public interface WordpressComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
-        /**
-         * Wordpress component configuration.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.wordpress.WordpressComponentConfiguration</code> type.
-         * 
-         * Group: advanced
-         */
-        default WordpressComponentBuilder configuration(
-                org.apache.camel.component.wordpress.WordpressComponentConfiguration configuration) {
-            doSetProperty("configuration", configuration);
-            return this;
-        }
     }
 
     class WordpressComponentBuilderImpl
@@ -223,10 +223,10 @@ public interface WordpressComponentBuilderFactory {
         protected WordpressComponent buildConcreteComponent() {
             return new WordpressComponent();
         }
-        private org.apache.camel.component.wordpress.WordpressComponentConfiguration getOrCreateConfiguration(
+        private org.apache.camel.component.wordpress.WordpressConfiguration getOrCreateConfiguration(
                 org.apache.camel.component.wordpress.WordpressComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.wordpress.WordpressComponentConfiguration());
+                component.setConfiguration(new org.apache.camel.component.wordpress.WordpressConfiguration());
             }
             return component.getConfiguration();
         }
@@ -237,6 +237,7 @@ public interface WordpressComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "apiVersion": getOrCreateConfiguration((WordpressComponent) component).setApiVersion((java.lang.String) value); return true;
+            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressConfiguration) value); return true;
             case "criteria": getOrCreateConfiguration((WordpressComponent) component).setCriteria((java.util.Map) value); return true;
             case "force": getOrCreateConfiguration((WordpressComponent) component).setForce((boolean) value); return true;
             case "id": getOrCreateConfiguration((WordpressComponent) component).setId((java.lang.Integer) value); return true;
@@ -247,7 +248,6 @@ public interface WordpressComponentBuilderFactory {
             case "bridgeErrorHandler": ((WordpressComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WordpressComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((WordpressComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "configuration": ((WordpressComponent) component).setConfiguration((org.apache.camel.component.wordpress.WordpressComponentConfiguration) value); return true;
             default: return false;
             }
         }

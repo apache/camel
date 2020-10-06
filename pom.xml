@@ -113,16 +113,21 @@
 
         <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>3.0.0-M4</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <formatter-maven-plugin.version>2.12.1</formatter-maven-plugin.version>
         <impsort-maven-plugin.version>1.3.2</impsort-maven-plugin.version>
+        <java-diff-utils-version>4.7</java-diff-utils-version>
         <maven-bundle-plugin-version>4.2.1</maven-bundle-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
-        <jaxb-version>2.3.0</jaxb-version>
+        <jaxb-api-version>2.3.1</jaxb-api-version>
+        <jaxb-core-version>2.3.0</jaxb-core-version>
+        <jaxb-impl-version>2.3.3</jaxb-impl-version>
+        <jaxb-osgi-version>2.3.3</jaxb-osgi-version>
+        <jaxb-xjc-version>2.3.3</jaxb-xjc-version>
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.10.1</gmavenplus-plugin-version>
@@ -596,17 +601,17 @@
                                 <dependency>
                                     <groupId>com.sun.xml.bind</groupId>
                                     <artifactId>jaxb-core</artifactId>
-                                    <version>${jaxb-version}</version>
+                                    <version>${jaxb-core-version}</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>com.sun.xml.bind</groupId>
                                     <artifactId>jaxb-impl</artifactId>
-                                    <version>${jaxb-version}</version>
+                                    <version>${jaxb-impl-version}</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>com.sun.xml.bind</groupId>
                                     <artifactId>jaxb-jxc</artifactId>
-                                    <version>${jaxb-version}</version>
+                                    <version>${jaxb-xjc-version}</version>
                                 </dependency>
                                 <dependency>
                                     <groupId>xerces</groupId>

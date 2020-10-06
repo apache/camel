@@ -18,10 +18,12 @@ package org.apache.camel.language.simple.ast;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -46,12 +48,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
      * @param expression not in use
      */
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         String function = text.toString();
 
         Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
         if (answer == null) {
-            answer = createSimpleExpression(function, true);
+            answer = createSimpleExpression(camelContext, function, true);
             if (cacheExpression != null && answer != null) {
                 cacheExpression.put(function, answer);
             }
@@ -69,12 +71,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
      * @return                                                              the created {@link Expression}
      * @throws org.apache.camel.language.simple.types.SimpleParserException should be thrown if error parsing the model
      */
-    public Expression createExpression(String expression, boolean strict) {
+    public Expression createExpression(CamelContext camelContext, String expression, boolean strict) {
         String function = text.toString();
 
         Expression answer = cacheExpression != null ? cacheExpression.get(function) : null;
         if (answer == null) {
-            answer = createSimpleExpression(function, strict);
+            answer = createSimpleExpression(camelContext, function, strict);
             if (cacheExpression != null && answer != null) {
                 cacheExpression.put(function, answer);
             }
@@ -82,7 +84,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return answer;
     }
 
-    private Expression createSimpleExpression(String function, boolean strict) {
+    private Expression createSimpleExpression(CamelContext camelContext, String function, boolean strict) {
         // return the function directly if we can create function without analyzing the prefix
         Expression answer = createSimpleExpressionDirectly(function);
         if (answer != null) {
@@ -205,7 +207,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // bean: prefix
         remainder = ifStartsWithReturnRemainder("bean:", function);
         if (remainder != null) {
-            return ExpressionBuilder.beanExpression(remainder);
+            Language bean = camelContext.resolveLanguage("bean");
+            return bean.createExpression(remainder);
         }
 
         // properties: prefix

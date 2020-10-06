@@ -39,15 +39,12 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.jaxp.StaxConverter;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -57,7 +54,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An {@link org.apache.camel.language.xtokenizer.XMLTokenizeLanguage} based iterator.
  */
-public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware, GeneratedPropertyConfigurer {
+public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
     protected char mode;
     protected int group;
@@ -73,28 +70,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.headerName = headerName;
         this.path = path;
         this.mode = mode;
-        this.group = group > 1 ? group : 1;
-    }
-
-    @Override
-    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
-        if (target != this) {
-            throw new IllegalStateException("Can only configure our own instance !");
-        }
-        switch (ignoreCase ? name.toLowerCase() : name) {
-            case "headername":
-            case "headerName":
-                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "mode":
-                setMode(PropertyConfigurerSupport.property(camelContext, String.class, value));
-                return true;
-            case "group":
-                setGroup(PropertyConfigurerSupport.property(camelContext, Integer.class, value));
-                return true;
-            default:
-                return false;
-        }
+        this.group = Math.max(group, 1);
     }
 
     @Override
@@ -173,17 +149,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 reader = new InputStreamReader(in, charset);
             }
             return createIterator(reader);
-        } catch (InvalidPayloadException e) {
-            exchange.setException(e);
-            // must close input stream
-            IOHelper.close(reader);
-            return null;
-        } catch (XMLStreamException e) {
-            exchange.setException(e);
-            // must close input stream
-            IOHelper.close(reader);
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (InvalidPayloadException | XMLStreamException | UnsupportedEncodingException e) {
             exchange.setException(e);
             // must close input stream
             IOHelper.close(reader);

@@ -477,7 +477,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
         AtomicInteger number = (AtomicInteger) quartzContext.get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
         if (number == null) {
-            number = new AtomicInteger(0);
+            number = new AtomicInteger();
             quartzContext.put(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, number);
         }
     }

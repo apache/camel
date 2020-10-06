@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Collections;
+
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Ownership;
 import net.bytebuddy.description.modifier.SyntheticState;
@@ -65,14 +67,15 @@ public class BeanInfoTest {
         lenient().when(context.getComponent("bean", BeanComponent.class)).thenReturn(beanComponent);
         lenient().when(context.getRegistry()).thenReturn(registry);
         lenient()
-                .when(registry.lookupByNameAndType(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY,
-                        ParameterMappingStrategy.class))
-                .thenReturn(null);
+                .when(registry.findByType(ParameterMappingStrategy.class))
+                .thenReturn(Collections.EMPTY_SET);
     }
 
     @Test
     public void testHandlerClass() throws Exception {
-        BeanInfo info = new BeanInfo(context, MyClass.class.getMethod("myMethod"));
+        BeanInfo info = new BeanInfo(
+                context, MyClass.class.getMethod("myMethod"),
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
@@ -93,13 +96,17 @@ public class BeanInfoTest {
                 .getLoaded()
                 .getDeclaredConstructor()
                 .newInstance();
-        BeanInfo info = new BeanInfo(context, proxy.getClass().getMethod("myMethod"));
+        BeanInfo info = new BeanInfo(
+                context, proxy.getClass().getMethod("myMethod"),
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
     @Test
     public void testHandlerOnDerived() throws Exception {
-        BeanInfo info = new BeanInfo(context, MyDerivedClass.class.getMethod("myMethod"));
+        BeanInfo info = new BeanInfo(
+                context, MyDerivedClass.class.getMethod("myMethod"),
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
         assertFalse(info.hasAnyMethodHandlerAnnotation());
     }
 

@@ -37,7 +37,7 @@ public class TokenizerTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testTokenizeHeaderWithStringContructor() throws Exception {
+    public void testTokenizeHeaderWithStringConstructor() throws Exception {
         TokenizerExpression definition = new TokenizerExpression(",");
         definition.setHeaderName("names");
 
@@ -119,7 +119,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals("names", lan.getHeaderName());
         assertEquals(",", lan.getToken());
         assertEquals(false, lan.isRegex());
-        assertEquals(false, lan.isSingleton());
+        assertEquals(true, lan.isSingleton());
     }
 
     @Test

@@ -98,6 +98,26 @@ public class InfinispanManager extends ServiceSupport {
                     builder.classLoader(Thread.currentThread().getContextClassLoader());
                 }
 
+                if (configuration.isSecure()) {
+                    if (ObjectHelper.isNotEmpty(configuration.getUsername())
+                            && ObjectHelper.isNotEmpty(configuration.getPassword())) {
+                        builder.security().authentication().username(configuration.getUsername())
+                                .password(configuration.getPassword());
+                    } else {
+                        throw new IllegalArgumentException(
+                                "If the Infinispan instance is secured, username and password are needed");
+                    }
+                    if (ObjectHelper.isNotEmpty(configuration.getSaslMechanism())) {
+                        builder.security().authentication().saslMechanism(configuration.getSaslMechanism());
+                    }
+                    if (ObjectHelper.isNotEmpty(configuration.getSecurityRealm())) {
+                        builder.security().authentication().realm(configuration.getSecurityRealm());
+                    }
+                    if (ObjectHelper.isNotEmpty(configuration.getSecurityServerName())) {
+                        builder.security().authentication().serverName(configuration.getSecurityServerName());
+                    }
+                }
+
                 Properties properties = new Properties();
 
                 // Properties can be set either via a properties file or via

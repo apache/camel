@@ -61,7 +61,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
 
     static {
         Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
-                = new LinkedHashMap<>();
+                = new LinkedHashMap<>(18);
         map.put(ConstantExpression.class, ExpressionReifier::new);
         map.put(ExchangePropertyExpression.class, ExpressionReifier::new);
         map.put(ExpressionDefinition.class, ExpressionReifier::new);
@@ -132,7 +132,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
                 configureLanguage(language);
-                expression = language.createExpression(exp);
+                expression = createExpression(language, exp);
                 configureExpression(expression);
             }
         }
@@ -168,7 +168,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
                 // the classpath/file etc
                 exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
                 configureLanguage(language);
-                predicate = language.createPredicate(exp);
+                predicate = createPredicate(language, exp);
                 configurePredicate(predicate);
             }
         }
@@ -178,6 +178,14 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         }
         predicate.init(camelContext);
         return predicate;
+    }
+
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(exp);
+    }
+
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(exp);
     }
 
     protected void configureLanguage(Language language) {
@@ -201,6 +209,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         }
     }
 
+    @Deprecated
     protected void setProperties(Object target, Map<String, Object> properties) {
         properties.entrySet().removeIf(e -> e.getValue() == null);
 

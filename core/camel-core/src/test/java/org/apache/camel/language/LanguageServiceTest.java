@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
@@ -61,24 +63,6 @@ public class LanguageServiceTest extends ContextTestSupport {
         assertTrue(context.getLanguageNames().isEmpty());
     }
 
-    @Test
-    public void testNonSingletonLanguage() throws Exception {
-        Language tol = context.resolveLanguage("tokenize");
-        assertNotNull(tol);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        // resolve again, should find another instance
-        Language tol2 = context.resolveLanguage("tokenize");
-        assertNotNull(tol2);
-        assertNotSame(tol, tol2);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        context.stop();
-        assertTrue(context.getLanguageNames().isEmpty());
-    }
-
     public class MyLanguage extends ServiceSupport implements Language, IsSingleton {
 
         private String state;
@@ -92,6 +76,16 @@ public class LanguageServiceTest extends ContextTestSupport {
         @Override
         public Expression createExpression(String expression) {
             return ExpressionBuilder.constantExpression(expression);
+        }
+
+        @Override
+        public Predicate createPredicate(String expression, Map<String, Object> properties) {
+            return createPredicate(expression);
+        }
+
+        @Override
+        public Expression createExpression(String expression, Map<String, Object> properties) {
+            return createExpression(expression);
         }
 
         public String getState() {

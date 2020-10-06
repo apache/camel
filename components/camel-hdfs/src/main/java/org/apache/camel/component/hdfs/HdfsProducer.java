@@ -40,7 +40,7 @@ public class HdfsProducer extends DefaultProducer {
 
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
-    private final AtomicBoolean idle = new AtomicBoolean(false);
+    private final AtomicBoolean idle = new AtomicBoolean();
     private volatile ScheduledExecutorService scheduler;
     private volatile HdfsOutputStream oStream;
 

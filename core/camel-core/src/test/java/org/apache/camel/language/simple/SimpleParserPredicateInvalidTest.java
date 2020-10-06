@@ -33,7 +33,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == abc", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${header.high} == abc", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -47,7 +47,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} = true", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${header.high} = true", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -60,7 +60,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleUnevenSingleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == 'foo", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -73,7 +73,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleUnevenDoubleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == \"foo", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == \"foo", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -86,7 +86,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleTwoAnd() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' && && ${header} == 123", true, null);
+        SimplePredicateParser parser
+                = new SimplePredicateParser(context, "${body} == 'foo' && && ${header} == 123", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -99,7 +100,8 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleTwoOr() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' || || ${header} == 123", true, null);
+        SimplePredicateParser parser
+                = new SimplePredicateParser(context, "${body} == 'foo' || || ${header} == 123", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -112,7 +114,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
     public void testSimpleTwoEq() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == == 'foo'", true, null);
+        SimplePredicateParser parser = new SimplePredicateParser(context, "${body} == == 'foo'", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");

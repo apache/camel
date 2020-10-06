@@ -16,6 +16,10 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -27,6 +31,10 @@ public class JsonPathLanguage extends LanguageSupport {
 
     private Class<?> resultType;
     private boolean suppressExceptions;
+    private boolean allowSimple = true;
+    private boolean allowEasyPredicate = true;
+    private boolean writeAsString;
+    private String headerName;
     private Option[] options;
 
     public Class<?> getResultType() {
@@ -45,43 +53,94 @@ public class JsonPathLanguage extends LanguageSupport {
         this.suppressExceptions = suppressExceptions;
     }
 
+    public boolean isAllowSimple() {
+        return allowSimple;
+    }
+
+    public void setAllowSimple(boolean allowSimple) {
+        this.allowSimple = allowSimple;
+    }
+
+    public boolean isAllowEasyPredicate() {
+        return allowEasyPredicate;
+    }
+
+    public void setAllowEasyPredicate(boolean allowEasyPredicate) {
+        this.allowEasyPredicate = allowEasyPredicate;
+    }
+
+    public boolean isWriteAsString() {
+        return writeAsString;
+    }
+
+    public void setWriteAsString(boolean writeAsString) {
+        this.writeAsString = writeAsString;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     public Option[] getOptions() {
         return options;
     }
 
-    public void setOption(Option option) {
-        this.options = new Option[] { option };
-    }
-
-    public void setOptions(Option[] options) {
+    public void setOptions(Option... options) {
         this.options = options;
     }
 
     @Override
-    public Predicate createPredicate(final String predicate) {
-        JsonPathExpression answer = new JsonPathExpression(predicate);
+    public Predicate createPredicate(String expression) {
+        JsonPathExpression answer = (JsonPathExpression) createExpression(expression);
         answer.setPredicate(true);
-        answer.setResultType(resultType);
-        answer.setSuppressExceptions(suppressExceptions);
-        answer.setOptions(options);
-        answer.afterPropertiesConfigured(getCamelContext());
         return answer;
     }
 
     @Override
-    public Expression createExpression(final String expression) {
+    public Expression createExpression(String expression) {
         JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setPredicate(false);
         answer.setResultType(resultType);
         answer.setSuppressExceptions(suppressExceptions);
+        answer.setAllowSimple(allowSimple);
+        answer.setAllowEasyPredicate(allowEasyPredicate);
+        answer.setHeaderName(headerName);
+        answer.setWriteAsString(writeAsString);
+        answer.setHeaderName(headerName);
         answer.setOptions(options);
         answer.afterPropertiesConfigured(getCamelContext());
         return answer;
     }
 
     @Override
-    public boolean isSingleton() {
-        // cannot be singleton due options
-        return false;
+    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+        JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
+        json.setPredicate(true);
+        return json;
     }
+
+    @Override
+    public Expression createExpression(String expression, Map<String, Object> properties) {
+        JsonPathExpression answer = new JsonPathExpression(expression);
+        answer.setResultType(property(Class.class, properties, "resultType", resultType));
+        answer.setSuppressExceptions(property(boolean.class, properties, "suppressExceptions", suppressExceptions));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, "allowEasyPredicate", allowEasyPredicate));
+        answer.setAllowSimple(property(boolean.class, properties, "allowSimple", allowSimple));
+        answer.setWriteAsString(property(boolean.class, properties, "writeAsString", writeAsString));
+        answer.setHeaderName(property(String.class, properties, "headerName", headerName));
+        String option = (String) properties.get("option");
+        if (option != null) {
+            List<Option> list = new ArrayList<>();
+            for (String s : option.split(",")) {
+                list.add(getCamelContext().getTypeConverter().convertTo(Option.class, s));
+            }
+            answer.setOptions(list.toArray(new Option[list.size()]));
+        }
+        answer.afterPropertiesConfigured(getCamelContext());
+        return answer;
+    }
+
 }

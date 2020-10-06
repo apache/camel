@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -60,12 +61,12 @@ public class LogicalExpression extends BaseSimpleNode {
     }
 
     @Override
-    public Expression createExpression(String expression) {
+    public Expression createExpression(CamelContext camelContext, String expression) {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 
-        final Expression leftExp = left.createExpression(expression);
-        final Expression rightExp = right.createExpression(expression);
+        final Expression leftExp = left.createExpression(camelContext, expression);
+        final Expression rightExp = right.createExpression(camelContext, expression);
 
         if (operator == LogicalOperatorType.AND) {
             return createAndExpression(leftExp, rightExp);

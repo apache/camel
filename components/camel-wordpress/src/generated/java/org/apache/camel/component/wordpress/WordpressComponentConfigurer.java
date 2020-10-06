@@ -19,6 +19,7 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("apiVersion", java.lang.String.class);
+        map.put("configuration", org.apache.camel.component.wordpress.WordpressConfiguration.class);
         map.put("criteria", java.util.Map.class);
         map.put("force", boolean.class);
         map.put("id", java.lang.Integer.class);
@@ -29,13 +30,12 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.wordpress.WordpressComponentConfiguration.class);
         ALL_OPTIONS = map;
     }
 
-    private org.apache.camel.component.wordpress.WordpressComponentConfiguration getOrCreateConfiguration(WordpressComponent target) {
+    private org.apache.camel.component.wordpress.WordpressConfiguration getOrCreateConfiguration(WordpressComponent target) {
         if (target.getConfiguration() == null) {
-            target.setConfiguration(new org.apache.camel.component.wordpress.WordpressComponentConfiguration());
+            target.setConfiguration(new org.apache.camel.component.wordpress.WordpressConfiguration());
         }
         return target.getConfiguration();
     }
@@ -50,7 +50,7 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.wordpress.WordpressComponentConfiguration.class, value)); return true;
+        case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.wordpress.WordpressConfiguration.class, value)); return true;
         case "criteria": getOrCreateConfiguration(target).setCriteria(property(camelContext, java.util.Map.class, value)); return true;
         case "force": getOrCreateConfiguration(target).setForce(property(camelContext, boolean.class, value)); return true;
         case "id": getOrCreateConfiguration(target).setId(property(camelContext, java.lang.Integer.class, value)); return true;

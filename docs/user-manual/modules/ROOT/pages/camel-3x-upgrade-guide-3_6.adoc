@@ -41,6 +41,12 @@ The components affected are:
 - camel-twilio
 - camel-zendesk
 
+=== Languages
+
+All the out of the box supported languages (simple, bean, groovy, jsonpath, xpath etc.) have been optmized to be _singleton_
+which improves performance for concurrent processing that uses those languages that would be resolved on each use.
+Now the languages are resolved once during startup or first usage.
+
 === Customizers
 
 Customizers, which are objects used to configure some of the Camel services such as component, language and data formats, that were previously limited to Camel Spring Boot, are now consistently used across runtimes.
@@ -159,8 +165,33 @@ Should eb replaced by:
 
 The following features has been removed due they become not compatible with OSGi: `camel-atmosphere-websocket`.
 
+=== CamelFileDataSource
+
+Class `CamelFileDataSource` has moved from `camel-http-common` in package `org.apache.camel.http.common` to `camel-attachments` package `org.apache.camel.attachment.CamelFileDataSource`.
+
+If your code directly depends on this class, you will need to update the package reference to the new location.
+
+=== Message History
+
+When message history is enabled then there is a slight performance overhead as the history data is now stored
+in a `java.util.concurrent.CopyOnWriteArrayList` due to the need of being thread safe.
+
+=== Default limit set on decompressed file size
+
+From Apache Camel 3.6.0, a default limit is enforced on the maximum size of a decompressed file, to prevent possible denial of service attacks.
+This applies to the camel-zipfile and camel-tarfile data formats. This can be configured as follows:
+
+[source,java]
+----
+ZipFileDataFormat maxDecompressedSizeZip = new ZipFileDataFormat();
+maxDecompressedSizeZip.setMaxDecompressedSize(100000000000L);
+.unmarshal(maxDecompressedSizeZip)
+----
+
+The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount.
+Set to -1 to disable setting a maximum decompressed size.
+
 === Camel RabbitMQ
 
 The `camel-rabbitmq` server component properties have been changed.
 Properties prefix `rabbitmq.` are replaced by `CamelRabbitmq`.
-

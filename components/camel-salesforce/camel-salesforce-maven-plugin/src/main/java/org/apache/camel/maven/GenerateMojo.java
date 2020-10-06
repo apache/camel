@@ -284,7 +284,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
             AtomicInteger counter = varNames.get(base);
             if (counter == null) {
-                counter = new AtomicInteger(0);
+                counter = new AtomicInteger();
                 varNames.put(base, counter);
             }
 

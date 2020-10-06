@@ -42,7 +42,6 @@ import static org.apache.camel.util.CollectionHelper.propertiesOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -351,15 +350,16 @@ public class CustomizersTest {
                 "tokenize-customizer",
                 LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
 
+        // singleton language so its customized once
         Language l1 = context.resolveLanguage("tokenize");
         assertTrue(l1 instanceof TokenizeLanguage);
         assertEquals("1", ((TokenizeLanguage) l1).getGroup());
 
         Language l2 = context.resolveLanguage("tokenize");
         assertTrue(l2 instanceof TokenizeLanguage);
-        assertEquals("2", ((TokenizeLanguage) l2).getGroup());
+        assertEquals("1", ((TokenizeLanguage) l2).getGroup());
 
-        assertNotSame(l1, l2);
+        assertSame(l1, l2);
     }
 
     @Test
@@ -374,6 +374,7 @@ public class CustomizersTest {
                 "tokenize-customizer",
                 LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
 
+        // singleton language so its customized once
         Language l1 = context.resolveLanguage("tokenize");
         assertTrue(l1 instanceof TokenizeLanguage);
         assertNull(((TokenizeLanguage) l1).getGroup());
@@ -382,7 +383,7 @@ public class CustomizersTest {
         assertTrue(l2 instanceof TokenizeLanguage);
         assertNull(((TokenizeLanguage) l2).getGroup());
 
-        assertNotSame(l1, l2);
+        assertSame(l1, l2);
     }
 
     @ParameterizedTest

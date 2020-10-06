@@ -47,7 +47,7 @@ public class EtcdWatchServiceDiscovery
         super(configuration);
 
         this.serversRef = new AtomicReference<>();
-        this.index = new AtomicLong(0);
+        this.index = new AtomicLong();
         this.servicePath = ObjectHelper.notNull(configuration.getServicePath(), "servicePath");
     }
 

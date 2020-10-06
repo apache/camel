@@ -372,11 +372,11 @@ public class CMTest {
     private String generateRandomLengthMessageByChar(String ch) {
         // random Length
         int msgLength = (int) (Math.random() * 2000);
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < msgLength; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
-        return message.toString();
+        return sb.toString();
     }
 
     //

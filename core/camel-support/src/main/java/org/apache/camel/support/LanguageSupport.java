@@ -17,13 +17,17 @@
 package org.apache.camel.support;
 
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Base language for {@link Language} implementations.
@@ -89,6 +93,78 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             return expression.contains(SIMPLE_FUNCTION_START[0]) || expression.contains(SIMPLE_FUNCTION_START[1]);
         }
         return false;
+    }
+
+    /**
+     * Converts the property to the expected type
+     *
+     * @param  type         the expected type
+     * @param  properties   the options
+     * @param  key          name of the property
+     * @param  defaultValue optional default value
+     * @return              the value converted to the expected type
+     */
+    protected <T> T property(Class<T> type, Map<String, Object> properties, String key, Object defaultValue) {
+        Object value = properties.get(key);
+        if (value == null) {
+            value = defaultValue;
+        }
+
+        if (value instanceof String) {
+            value = getCamelContext().resolvePropertyPlaceholders(value.toString());
+        }
+
+        // if the type is not string based and the value is a bean reference, then we need to lookup
+        // the bean from the registry
+        if (value instanceof String && String.class != type) {
+            String text = value.toString();
+
+            if (EndpointHelper.isReferenceParameter(text)) {
+                Object obj;
+                // special for a list where we refer to beans which can be either a list or a single element
+                // so use Object.class as type
+                if (type == List.class) {
+                    obj = EndpointHelper.resolveReferenceListParameter(camelContext, text, Object.class);
+                } else {
+                    obj = EndpointHelper.resolveReferenceParameter(camelContext, text, type);
+                }
+                if (obj == null) {
+                    // no bean found so throw an exception
+                    throw new NoSuchBeanException(text, type.getName());
+                }
+                value = obj;
+            } else if (type == long.class || type == Long.class || type == int.class || type == Integer.class) {
+                Object obj = null;
+                // string to long/int then it may be a duration where we can convert the value to milli seconds
+                // it may be a time pattern, such as 5s for 5 seconds = 5000
+                try {
+                    long num = TimeUtils.toMilliSeconds(text);
+                    if (type == int.class || type == Integer.class) {
+                        // need to cast to int
+                        obj = (int) num;
+                    } else {
+                        obj = num;
+                    }
+                } catch (IllegalArgumentException e) {
+                    // ignore
+                }
+                if (obj != null) {
+                    value = obj;
+                }
+            }
+        }
+
+        // special for boolean values with string values as we only want to accept "true" or "false"
+        if ((type == Boolean.class || type == boolean.class) && value instanceof String) {
+            String text = (String) value;
+            if (!text.equalsIgnoreCase("true") && !text.equalsIgnoreCase("false")) {
+                throw new IllegalArgumentException(
+                        "Cannot convert the String value: " + value + " to type: " + type
+                                                   + " as the value is not true or false");
+            }
+        }
+
+        return camelContext.getTypeConverter().convertTo(type, value);
     }
 
 }

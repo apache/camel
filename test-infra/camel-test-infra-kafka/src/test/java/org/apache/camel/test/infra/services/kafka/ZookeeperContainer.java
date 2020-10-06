@@ -17,8 +17,6 @@
 
 package org.apache.camel.test.infra.services.kafka;
 
-import java.util.function.Consumer;
-
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -34,19 +32,18 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
         withEnv("LOG_DIR", "/tmp/logs");
         withExposedPorts(ZOOKEEPER_PORT);
         withNetwork(network);
-        withCreateContainerCmdModifier(
-                new Consumer<CreateContainerCmd>() {
-                    @Override
-                    public void accept(CreateContainerCmd createContainerCmd) {
-                        createContainerCmd.withHostName(name);
-                        createContainerCmd.withName(name);
-                    }
-                });
+
+        withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd));
 
         withCommand("sh", "-c",
                 "bin/zookeeper-server-start.sh config/zookeeper.properties");
 
         waitingFor(Wait.forListeningPort());
+    }
+
+    private void setupContainer(String name, CreateContainerCmd createContainerCmd) {
+        createContainerCmd.withHostName(name);
+        createContainerCmd.withName(name);
     }
 
     public int getZookeeperPort() {

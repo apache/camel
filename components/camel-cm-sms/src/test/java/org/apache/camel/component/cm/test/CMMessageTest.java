@@ -53,12 +53,12 @@ public class CMMessageTest {
 
         // 0338 and less than 160 char -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
@@ -69,12 +69,12 @@ public class CMMessageTest {
     public void testGSM338AndEQMAXGSMMESSAGELENGTH() throws Exception {
         // 0338 and length is exactly 160 -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
@@ -86,12 +86,12 @@ public class CMMessageTest {
 
         // 0338 and length is exactly 161 -> 2 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_GSM_MESSAGE_LENGTH + 1; index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -101,12 +101,12 @@ public class CMMessageTest {
     @Test
     public void testGSM338AndLT2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART - 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -116,12 +116,12 @@ public class CMMessageTest {
     @Test
     public void testGSM338AndEQ2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -131,12 +131,12 @@ public class CMMessageTest {
     @Test
     public void testGSM338AndGT2MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
@@ -146,12 +146,12 @@ public class CMMessageTest {
     @Test
     public void testGSM338AndEQ8MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
@@ -161,12 +161,12 @@ public class CMMessageTest {
     @Test
     public void testGSM338AndGT8MAXGSMMESSAGELENGTH() throws Exception {
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append("a");
+            sb.append("a");
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
@@ -184,12 +184,12 @@ public class CMMessageTest {
 
         // 0338 and less than 160 char -> 1 part
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
@@ -202,12 +202,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 1, "Call to getMultiparts() should have returned 1");
@@ -221,12 +221,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < CMConstants.MAX_UNICODE_MESSAGE_LENGTH + 1; index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -238,12 +238,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART - 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -255,12 +255,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 2, "Call to getMultiparts() should have returned 2");
@@ -272,12 +272,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (2 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 3, "Call to getMultiparts() should have returned 3");
@@ -289,12 +289,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_UNICODE_MESSAGE_LENGTH_PER_PART_IF_MULTIPART); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");
@@ -306,12 +306,12 @@ public class CMMessageTest {
 
         String ch = "\uF400";
 
-        StringBuffer message = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int index = 0; index < (8 * CMConstants.MAX_GSM_MESSAGE_LENGTH_PER_PART_IF_MULTIPART + 1); index++) {
-            message.append(ch);
+            sb.append(ch);
         }
 
-        final CMMessage cmMessage = new CMMessage(validNumber, message.toString());
+        final CMMessage cmMessage = new CMMessage(validNumber, sb.toString());
         cmMessage.setUnicodeAndMultipart(CMConstants.DEFAULT_MULTIPARTS);
 
         Assert.isTrue(cmMessage.getMultiparts() == 8, "Call to getMultiparts() should have returned 8");

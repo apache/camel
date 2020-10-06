@@ -200,7 +200,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     private final class TemporaryReplyQueueDestinationResolver implements DestinationResolver {
         private TemporaryQueue queue;
-        private final AtomicBoolean refreshWanted = new AtomicBoolean(false);
+        private final AtomicBoolean refreshWanted = new AtomicBoolean();
 
         @Override
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain)

@@ -52,7 +52,7 @@ Which will construct a String message at runtime using the Simple language. The 
 ====
 *Logging message body with streamed messages:*
 
-If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this FAQ. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
+If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this https://camel.apache.org/manual/latest/faq/why-is-my-message-body-empty.html[FAQ]. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
 ====
 
 The log DSL have overloaded methods to set the logging level and/or name as well.

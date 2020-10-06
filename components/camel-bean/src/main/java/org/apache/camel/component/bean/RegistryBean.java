@@ -38,13 +38,16 @@ public class RegistryBean implements BeanHolder {
     private ParameterMappingStrategy parameterMappingStrategy;
     private Map<String, Object> options;
 
+    @Deprecated
     public RegistryBean(CamelContext context, String name) {
-        this(context.getRegistry(), context, name);
+        this(context.getRegistry(), context, name, null);
     }
 
-    public RegistryBean(Registry registry, CamelContext context, String name) {
+    public RegistryBean(Registry registry, CamelContext context, String name,
+                        ParameterMappingStrategy parameterMappingStrategy) {
         this.registry = registry;
         this.context = context;
+        this.parameterMappingStrategy = parameterMappingStrategy;
         if (name != null) {
             // for ref it may have "ref:" or "bean:" as prefix by mistake
             if (name.startsWith("ref:")) {
@@ -178,7 +181,7 @@ public class RegistryBean implements BeanHolder {
     }
 
     protected ParameterMappingStrategy createParameterMappingStrategy() {
-        return BeanInfo.createParameterMappingStrategy(context);
+        return ParameterMappingStrategyHelper.createParameterMappingStrategy(context);
     }
 
     protected Object lookupBean() {

@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -234,13 +233,13 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @SuppressWarnings("unchecked")
         public long getElapsed() {
             // this can only be calculate if message history is enabled
-            LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null || list.isEmpty()) {
                 return 0;
             }
 
             // get latest entry
-            MessageHistory history = list.getLast();
+            MessageHistory history = list.get(list.size() - 1);
             if (history != null) {
                 long elapsed = history.getElapsed();
                 if (elapsed == 0 && history.getTime() > 0) {

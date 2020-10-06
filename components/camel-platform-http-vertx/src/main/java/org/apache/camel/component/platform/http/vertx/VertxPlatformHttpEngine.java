@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.PlatformHttpConstants;
 import org.apache.camel.component.platform.http.PlatformHttpEndpoint;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
-import org.apache.camel.component.platform.http.spi.UploadAttacher;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -39,7 +38,6 @@ import org.apache.camel.support.service.ServiceSupport;
 @JdkService(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY)
 public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformHttpEngine {
     private List<Handler<RoutingContext>> handlers;
-    private UploadAttacher uploadAttacher;
 
     public VertxPlatformHttpEngine() {
         this.handlers = Collections.emptyList();
@@ -53,14 +51,6 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         if (handlers != null) {
             this.handlers = new ArrayList<>(handlers);
         }
-    }
-
-    public UploadAttacher getUploadAttacher() {
-        return uploadAttacher;
-    }
-
-    public void setUploadAttacher(UploadAttacher uploadAttacher) {
-        this.uploadAttacher = uploadAttacher;
     }
 
     @Override
@@ -78,7 +68,6 @@ public class VertxPlatformHttpEngine extends ServiceSupport implements PlatformH
         return new VertxPlatformHttpConsumer(
                 endpoint,
                 processor,
-                handlers,
-                uploadAttacher);
+                handlers);
     }
 }

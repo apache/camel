@@ -182,8 +182,9 @@ public final class CamelJavaTreeParserHelper {
             rootMethodName = ((MethodInvocation) sub).getName().getIdentifier();
         } else if (sub instanceof SimpleName) {
             rootMethodName = ((SimpleName) sub).getIdentifier();
+        } else if (sub == null && exp instanceof MethodInvocation) {
+            rootMethodName = ((MethodInvocation) exp).getName().getIdentifier();
         }
-
         // a route starts either via from or route
         return "from".equals(rootMethodName) || "route".equals(rootMethodName);
     }

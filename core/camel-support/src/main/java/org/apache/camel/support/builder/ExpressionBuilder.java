@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchLanguageException;
@@ -299,7 +299,11 @@ public class ExpressionBuilder {
      * @return an expression object which will return the bean
      */
     public static Expression refExpression(final String ref) {
-        return refExpression(simpleExpression(ref));
+        if (LanguageSupport.hasSimpleFunction(ref)) {
+            return refExpression(simpleExpression(ref));
+        } else {
+            return refExpression(constantExpression(ref));
+        }
     }
 
     /**
@@ -543,8 +547,8 @@ public class ExpressionBuilder {
     public static Expression systemPropertyExpression(final String propertyName,
                                                       final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
-        Expression exprDeflt = simpleExpression(defaultValue);
-        return systemPropertyExpression(exprName, exprDeflt);
+        Expression exprDefault = simpleExpression(defaultValue);
+        return systemPropertyExpression(exprName, exprDefault);
     }
 
     /**
@@ -597,8 +601,8 @@ public class ExpressionBuilder {
     public static Expression systemEnvironmentExpression(final String propertyName,
                                                          final String defaultValue) {
         Expression exprName = simpleExpression(propertyName);
-        Expression expDeflt = simpleExpression(defaultValue);
-        return systemEnvironmentExpression(exprName, expDeflt);
+        Expression expDefault = simpleExpression(defaultValue);
+        return systemEnvironmentExpression(exprName, expDefault);
     }
 
     /**
@@ -660,6 +664,27 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "" + value;
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for evaluating the expression/predicate using the given language
+     *
+     * @param languageName  the language name
+     * @param language      the language
+     * @param expression    the expression or predicate
+     * @return an expression object which will evaluate the expression/predicate using the given language
+     */
+    public static Expression languageExpression(final String languageName, final Language language, final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return language.createExpression(expression).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return languageName + "(" + expression + ")";
             }
         };
     }
@@ -1434,7 +1459,7 @@ public class ExpressionBuilder {
                 if (description != null) {
                     return description;
                 } else {
-                    return "concat" + expressions;
+                    return "concat(" + expressions + ")";
                 }
             }
         };
@@ -1478,8 +1503,7 @@ public class ExpressionBuilder {
     public static Expression routeIdExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String answer = ExchangeHelper.getRouteId(exchange);
-                return answer;
+                return ExchangeHelper.getRouteId(exchange);
             }
 
             @Override
@@ -1492,12 +1516,20 @@ public class ExpressionBuilder {
     public static Expression simpleExpression(final String expression) {
         if (LanguageSupport.hasSimpleFunction(expression)) {
             return new ExpressionAdapter() {
+                private Language language;
+
                 public Object evaluate(Exchange exchange) {
-                    // resolve language using context to have a clear separation of packages
                     // must call evaluate to return the nested language evaluate when evaluating
                     // stacked expressions
-                    Language language = exchange.getContext().resolveLanguage("simple");
+                    init(exchange.getContext());
                     return language.createExpression(expression).evaluate(exchange, Object.class);
+                }
+
+                @Override
+                public void init(CamelContext context) {
+                    if (this.language == null) {
+                        this.language = context.resolveLanguage("simple");
+                    }
                 }
 
                 @Override
@@ -1512,14 +1544,22 @@ public class ExpressionBuilder {
 
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
+            private Language language;
+
             public Object evaluate(Exchange exchange) {
                 // bean is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate expression as a string
-                // resolve language using context to have a clear separation of packages
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
-                Language language = exchange.getContext().resolveLanguage("bean");
+                init(exchange.getContext());
                 return language.createExpression(expression).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("bean");
+                }
             }
 
             @Override
@@ -1529,17 +1569,27 @@ public class ExpressionBuilder {
         };
     }
 
-    public static Expression beanExpression(final Object bean, final String expression) {
+    public static Expression beanExpression(final Object bean, final String method) {
         return new ExpressionAdapter() {
+            private Language language;
+
             public Object evaluate(Exchange exchange) {
-                Language language = exchange.getContext().resolveLanguage("bean");
-                setProperty(exchange.getContext(), language, "bean", bean);
-                setProperty(exchange.getContext(), language, "method", expression);
-                return language.createExpression(null).evaluate(exchange, Object.class);
+                Map<String, Object> properties = new HashMap<>(2);
+                properties.put("bean", bean);
+                properties.put("method", method);
+                init(exchange.getContext());
+                return language.createExpression(null, properties).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("bean");
+                }
             }
 
             public String toString() {
-                return "bean(" + bean + ", " + expression + ")";
+                return "bean(" + bean + ", " + method + ")";
             }
         };
     }
@@ -1608,22 +1658,26 @@ public class ExpressionBuilder {
     public static Expression tokenizeXMLAwareExpression(String headerName, String path, char mode, int group, Namespaces namespaces) {
         StringHelper.notEmpty(path, "path");
         return new ExpressionAdapter() {
+            private Language language;
+
             public Object evaluate(Exchange exchange) {
-                Language language = exchange.getContext().resolveLanguage("xtokenize");
+                Map<String, Object> map = new HashMap<>(4);
+                map.put("mode", mode);
+                map.put("group", group);
                 if (headerName != null) {
-                    setProperty(exchange.getContext(), language, "headerName", headerName);
-                }
-                if (mode != 'i') {
-                    setProperty(exchange.getContext(), language, "mode", mode);
-                }
-                if (group > 1) {
-                    setProperty(exchange.getContext(), language, "group", group);
+                    map.put("headerName", headerName);
                 }
                 if (namespaces != null) {
-                    setProperty(exchange.getContext(), language, "namespaces", namespaces);
+                    map.put("namespaces", namespaces);
                 }
-                setProperty(exchange.getContext(), language, "path", path);
-                return language.createExpression(null).evaluate(exchange, Object.class);
+                return language.createExpression(path, map).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if (this.language == null) {
+                    this.language = context.resolveLanguage("xtokenize");
+                }
             }
 
             @Override
@@ -1652,14 +1706,6 @@ public class ExpressionBuilder {
                 return "bodyOneLine()";
             }
         };
-    }
-
-    protected static void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
-        try {
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
-        }
     }
 
 }

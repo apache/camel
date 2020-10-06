@@ -22,8 +22,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.XQueryExpression;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 
 public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression> {
@@ -33,17 +35,23 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
     }
 
     @Override
-    protected void configureExpression(Expression expression) {
-        bindProperties(expression);
-        configureNamespaceAware(expression);
-        super.configureExpression(expression);
+    protected Expression createExpression(Language language, String exp) {
+        return language.createExpression(exp, createProperties());
+    }
+
+    @Override
+    protected Predicate createPredicate(Language language, String exp) {
+        return language.createPredicate(exp, createProperties());
     }
 
     @Override
     protected void configurePredicate(Predicate predicate) {
-        bindProperties(predicate);
         configureNamespaceAware(predicate);
-        super.configurePredicate(predicate);
+    }
+
+    @Override
+    protected void configureExpression(Expression expression) {
+        configureNamespaceAware(expression);
     }
 
     protected void configureNamespaceAware(Object builder) {
@@ -53,11 +61,23 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
         }
     }
 
-    protected void bindProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("resultType", or(definition.getResultType(), definition.getType()));
-        properties.put("headerName", definition.getHeaderName());
-        setProperties(target, properties);
+    protected Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<>(2);
+        properties.put("resultType", definition.getResultType());
+        properties.put("headerName", parseString(definition.getHeaderName()));
+        return properties;
+    }
+
+    @Override
+    protected void configureLanguage(Language language) {
+        if (definition.getResultType() == null && definition.getType() != null) {
+            try {
+                Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(definition.getType());
+                definition.setResultType(clazz);
+            } catch (ClassNotFoundException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
     }
 
 }

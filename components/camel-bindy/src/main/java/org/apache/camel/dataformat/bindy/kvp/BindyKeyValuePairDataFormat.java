@@ -108,7 +108,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
             org.apache.camel.util.ObjectHelper.notNull(factory.getPairSeparator(),
                     "The pair separator property of the annotation @Message");
             String separator = factory.getPairSeparator();
-            AtomicInteger count = new AtomicInteger(0);
+            AtomicInteger count = new AtomicInteger();
 
             try {
                 lines.forEachOrdered(line -> {

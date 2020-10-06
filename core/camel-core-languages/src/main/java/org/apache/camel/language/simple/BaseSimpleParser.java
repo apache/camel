@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.language.simple.ast.Block;
 import org.apache.camel.language.simple.ast.BlockEnd;
 import org.apache.camel.language.simple.ast.BlockStart;
@@ -40,6 +41,7 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public abstract class BaseSimpleParser {
 
+    protected CamelContext camelContext;
     protected final String expression;
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
@@ -48,7 +50,8 @@ public abstract class BaseSimpleParser {
     protected int index;
     protected boolean allowEscape;
 
-    protected BaseSimpleParser(String expression, boolean allowEscape) {
+    protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
+        this.camelContext = camelContext;
         this.expression = expression;
         this.allowEscape = allowEscape;
     }
