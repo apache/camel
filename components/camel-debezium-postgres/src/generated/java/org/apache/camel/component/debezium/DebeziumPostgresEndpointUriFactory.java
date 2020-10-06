@@ -18,7 +18,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(77);
+        Set<String> set = new HashSet<>(87);
         set.add("name");
         set.add("additionalProperties");
         set.add("bridgeErrorHandler");
@@ -38,6 +38,9 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         set.add("synchronous");
         set.add("binaryHandlingMode");
         set.add("columnBlacklist");
+        set.add("columnExcludeList");
+        set.add("columnIncludeList");
+        set.add("columnPropagateSourceType");
         set.add("columnWhitelist");
         set.add("converters");
         set.add("databaseDbname");
@@ -55,6 +58,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         set.add("databaseSslrootcert");
         set.add("databaseTcpkeepalive");
         set.add("databaseUser");
+        set.add("datatypePropagateSourceType");
         set.add("decimalHandlingMode");
         set.add("eventProcessingFailureHandlingMode");
         set.add("heartbeatActionQuery");
@@ -71,8 +75,12 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         set.add("provideTransactionMetadata");
         set.add("publicationAutocreateMode");
         set.add("publicationName");
+        set.add("queryFetchSize");
+        set.add("retriableRestartConnectorWaitMs");
         set.add("sanitizeFieldNames");
         set.add("schemaBlacklist");
+        set.add("schemaExcludeList");
+        set.add("schemaIncludeList");
         set.add("schemaRefreshMode");
         set.add("schemaWhitelist");
         set.add("skippedOperations");
@@ -90,7 +98,9 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         set.add("sourceStructVersion");
         set.add("statusUpdateIntervalMs");
         set.add("tableBlacklist");
+        set.add("tableExcludeList");
         set.add("tableIgnoreBuiltin");
+        set.add("tableIncludeList");
         set.add("tableWhitelist");
         set.add("timePrecisionMode");
         set.add("toastedValuePlaceholder");

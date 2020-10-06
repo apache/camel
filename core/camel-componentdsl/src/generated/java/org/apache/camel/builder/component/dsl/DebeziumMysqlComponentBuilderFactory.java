@@ -306,7 +306,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -315,6 +316,30 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder columnBlacklist(
                 java.lang.String columnBlacklist) {
             doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to exclude from change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder columnExcludeList(
+                java.lang.String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder columnIncludeList(
+                java.lang.String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
             return this;
         }
         /**
@@ -360,16 +385,16 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'database.blacklist' description.
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mysql
          */
-        default DebeziumMysqlComponentBuilder databaseBlacklist(
-                java.lang.String databaseBlacklist) {
-            doSetProperty("databaseBlacklist", databaseBlacklist);
+        default DebeziumMysqlComponentBuilder databaseExcludeList(
+                java.lang.String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
             return this;
         }
         /**
@@ -500,6 +525,18 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder databaseHostname(
                 java.lang.String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder databaseIncludeList(
+                java.lang.String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -695,18 +732,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder databaseUser(
                 java.lang.String databaseUser) {
             doSetProperty("databaseUser", databaseUser);
-            return this;
-        }
-        /**
-         * The databases for which changes are to be captured.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: mysql
-         */
-        default DebeziumMysqlComponentBuilder databaseWhitelist(
-                java.lang.String databaseWhitelist) {
-            doSetProperty("databaseWhitelist", databaseWhitelist);
             return this;
         }
         /**
@@ -1137,8 +1162,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1147,6 +1173,19 @@ public interface DebeziumMysqlComponentBuilderFactory {
         default DebeziumMysqlComponentBuilder tableBlacklist(
                 java.lang.String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder tableExcludeList(
+                java.lang.String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
             return this;
         }
         /**
@@ -1164,6 +1203,19 @@ public interface DebeziumMysqlComponentBuilderFactory {
         }
         /**
          * The tables for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMysqlComponentBuilder tableIncludeList(
+                java.lang.String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1252,10 +1304,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "binlogBufferSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setBinlogBufferSize((int) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnBlacklist((java.lang.String) value); return true;
+            case "columnExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnExcludeList((java.lang.String) value); return true;
+            case "columnIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "connectKeepAlive": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAlive((boolean) value); return true;
             case "connectKeepAliveIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectKeepAliveIntervalMs((long) value); return true;
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
-            case "databaseBlacklist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseBlacklist((java.lang.String) value); return true;
+            case "databaseExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHistory": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistory((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
             case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
@@ -1265,6 +1319,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistorySkipUnparseableDdl((boolean) value); return true;
             case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHistoryStoreOnlyMonitoredTablesDdl((boolean) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHostname((java.lang.String) value); return true;
+            case "databaseIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "databaseInitialStatements": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseInitialStatements((java.lang.String) value); return true;
             case "databaseJdbcDriver": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseJdbcDriver((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabasePassword((java.lang.String) value); return true;
@@ -1278,7 +1333,6 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "databaseSslTruststore": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslTruststore((java.lang.String) value); return true;
             case "databaseSslTruststorePassword": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseSslTruststorePassword((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseUser((java.lang.String) value); return true;
-            case "databaseWhitelist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseWhitelist((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "enableTimeAdjuster": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEnableTimeAdjuster((boolean) value); return true;
             case "eventDeserializationFailureHandlingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setEventDeserializationFailureHandlingMode((java.lang.String) value); return true;
@@ -1305,7 +1359,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "tableBlacklist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableBlacklist((java.lang.String) value); return true;
+            case "tableExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
+            case "tableIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "tableWhitelist": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMySqlComponent) component).setTombstonesOnDelete((boolean) value); return true;

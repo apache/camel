@@ -18,7 +18,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(78);
+        Set<String> set = new HashSet<>(82);
         set.add("name");
         set.add("additionalProperties");
         set.add("bridgeErrorHandler");
@@ -40,10 +40,12 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         set.add("binaryHandlingMode");
         set.add("binlogBufferSize");
         set.add("columnBlacklist");
+        set.add("columnExcludeList");
+        set.add("columnIncludeList");
         set.add("connectKeepAlive");
         set.add("connectKeepAliveIntervalMs");
         set.add("connectTimeoutMs");
-        set.add("databaseBlacklist");
+        set.add("databaseExcludeList");
         set.add("databaseHistory");
         set.add("databaseHistoryFileFilename");
         set.add("databaseHistoryKafkaBootstrapServers");
@@ -53,6 +55,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         set.add("databaseHistorySkipUnparseableDdl");
         set.add("databaseHistoryStoreOnlyMonitoredTablesDdl");
         set.add("databaseHostname");
+        set.add("databaseIncludeList");
         set.add("databaseInitialStatements");
         set.add("databaseJdbcDriver");
         set.add("databasePassword");
@@ -66,7 +69,6 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         set.add("databaseSslTruststore");
         set.add("databaseSslTruststorePassword");
         set.add("databaseUser");
-        set.add("databaseWhitelist");
         set.add("decimalHandlingMode");
         set.add("enableTimeAdjuster");
         set.add("eventDeserializationFailureHandlingMode");
@@ -93,7 +95,9 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         set.add("snapshotSelectStatementOverrides");
         set.add("sourceStructVersion");
         set.add("tableBlacklist");
+        set.add("tableExcludeList");
         set.add("tableIgnoreBuiltin");
+        set.add("tableIncludeList");
         set.add("tableWhitelist");
         set.add("timePrecisionMode");
         set.add("tombstonesOnDelete");

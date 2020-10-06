@@ -54,7 +54,7 @@ debezium-mysql:name[?options]
 
 
 // component options: START
-The Debezium MySQL Connector component supports 75 options, which are listed below.
+The Debezium MySQL Connector component supports 79 options, which are listed below.
 
 
 
@@ -78,11 +78,13 @@ The Debezium MySQL Connector component supports 75 options, which are listed bel
 | *bigintUnsignedHandlingMode* (mysql) | Specify how BIGINT UNSIGNED columns should be represented in change events, including:'precise' uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'long' (the default) represents values using Java's 'long', which may not offer the precision but will be far easier to use in consumers. | long | String
 | *binaryHandlingMode* (mysql) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
 | *binlogBufferSize* (mysql) | The size of a look-ahead buffer used by the binlog reader to decide whether the transaction in progress is going to be committed or rolled back. Use 0 to disable look-ahead buffering. Defaults to 0 (i.e. buffering is disabled). | 0 | int
-| *columnBlacklist* (mysql) | Regular expressions matching columns to exclude from change events |  | String
+| *columnBlacklist* (mysql) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
+| *columnExcludeList* (mysql) | Regular expressions matching columns to exclude from change events |  | String
+| *columnIncludeList* (mysql) | Regular expressions matching columns to include in change events |  | String
 | *connectKeepAlive* (mysql) | Whether a separate thread should be used to ensure the connection is kept alive. | true | boolean
 | *connectKeepAliveIntervalMs* (mysql) | Interval in milliseconds to wait for connection checking if keep alive thread is used. | 1m | long
 | *connectTimeoutMs* (mysql) | Maximum time in milliseconds to wait after trying to connect to the database before timing out. | 30s | int
-| *databaseBlacklist* (mysql) | Description is not available here, please check Debezium website for corresponding key 'database.blacklist' description. |  | String
+| *databaseExcludeList* (mysql) | A comma-separated list of regular expressions that match database names to be excluded from monitoring |  | String
 | *databaseHistory* (mysql) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
 | *databaseHistoryFileFilename* (mysql) | The path to the file that will be used to record the database history |  | String
 | *databaseHistoryKafkaBootstrap{zwsp}Servers* (mysql) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
@@ -92,6 +94,7 @@ The Debezium MySQL Connector component supports 75 options, which are listed bel
 | *databaseHistorySkipUnparseable{zwsp}Ddl* (mysql) | Controls the action Debezium will take when it meets a DDL statement in binlog, that it cannot parse.By default the connector will stop operating but by changing the setting it can ignore the statements which it cannot parse. If skipping is enabled then Debezium can miss metadata changes. | false | boolean
 | *databaseHistoryStoreOnly{zwsp}MonitoredTablesDdl* (mysql) | Controls what DDL will Debezium store in database history.By default (false) Debezium will store all incoming DDL statements. If set to truethen only DDL that manipulates a monitored table will be stored. | false | boolean
 | *databaseHostname* (mysql) | Resolvable hostname or IP address of the MySQL database server. |  | String
+| *databaseIncludeList* (mysql) | The databases for which changes are to be captured |  | String
 | *databaseInitialStatements* (mysql) | A semicolon separated list of SQL statements to be executed when a JDBC connection (not binlog reading connection) to the database is established. Note that the connector may establish JDBC connections at its own discretion, so this should typically be used for configuration of session parameters only,but not for executing DML statements. Use doubled semicolon (';;') to use a semicolon as a character and not as a delimiter. |  | String
 | *databaseJdbcDriver* (mysql) | JDBC Driver class name used to connect to the MySQL database server. | class com.mysql.cj.jdbc.Driver | String
 | *databasePassword* (mysql) | *Required* Password of the MySQL database user to be used when connecting to the database. |  | String
@@ -105,7 +108,6 @@ The Debezium MySQL Connector component supports 75 options, which are listed bel
 | *databaseSslTruststore* (mysql) | Location of the Java truststore file containing the collection of CA certificates trusted by this application process (trust store). |  | String
 | *databaseSslTruststorePassword* (mysql) | Password to unlock the keystore file (store password) specified by 'ssl.trustore' configuration property or the 'javax.net.ssl.trustStore' system or JVM property. |  | String
 | *databaseUser* (mysql) | Name of the MySQL database user to be used when connecting to the database. |  | String
-| *databaseWhitelist* (mysql) | The databases for which changes are to be captured |  | String
 | *decimalHandlingMode* (mysql) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
 | *enableTimeAdjuster* (mysql) | MySQL allows user to insert year value as either 2-digit or 4-digit. In case of two digit the value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion to the databasetrue - (the default) Debezium makes the conversion | true | boolean
 | *eventDeserializationFailure{zwsp}HandlingMode* (mysql) | Specify how failures during deserialization of binlog events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its binlog position is raised, causing the connector to be stopped; 'warn' the problematic event and its binlog position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
@@ -131,9 +133,11 @@ The Debezium MySQL Connector component supports 75 options, which are listed bel
 | *snapshotNewTables* (mysql) | BETA FEATURE: On connector restart, the connector will check if there have been any new tables added to the configuration, and snapshot them. There is presently only two options:'off': Default behavior. Do not snapshot new tables.'parallel': The snapshot of the new tables will occur in parallel to the continued binlog reading of the old tables. When the snapshot completes, an independent binlog reader will begin reading the events for the new tables until it catches up to present time. At this point, both old and new binlog readers will be momentarily halted and new binlog reader will start that will read the binlog for all configured tables. The parallel binlog reader will have a configured server id of 10000 the primary binlog reader's server id. | off | String
 | *snapshotSelectStatement{zwsp}Overrides* (mysql) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors . Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
 | *sourceStructVersion* (mysql) | A version of the format of the publicly visible source part in the message | v2 | String
-| *tableBlacklist* (mysql) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableBlacklist* (mysql) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring (deprecated, use table.exclude.list instead) |  | String
+| *tableExcludeList* (mysql) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring |  | String
 | *tableIgnoreBuiltin* (mysql) | Flag specifying whether built-in tables should be ignored. | true | boolean
-| *tableWhitelist* (mysql) | The tables for which changes are to be captured |  | String
+| *tableIncludeList* (mysql) | The tables for which changes are to be captured |  | String
+| *tableWhitelist* (mysql) | The tables for which changes are to be captured (deprecated, use table.include.list instead) |  | String
 | *timePrecisionMode* (mysql) | Time, date and timestamps can be represented with different kinds of precisions, including:'adaptive_time_microseconds': the precision of date and timestamp values is based the database column's precision; but time fields always use microseconds precision;'connect': always represents time, date and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision. | adaptive_time_microseconds | String
 | *tombstonesOnDelete* (mysql) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
 |===
@@ -159,7 +163,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (77 parameters):
+=== Query Parameters (81 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -184,11 +188,13 @@ with the following path and query parameters:
 | *bigintUnsignedHandlingMode* (mysql) | Specify how BIGINT UNSIGNED columns should be represented in change events, including:'precise' uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'long' (the default) represents values using Java's 'long', which may not offer the precision but will be far easier to use in consumers. | long | String
 | *binaryHandlingMode* (mysql) | Specify how binary (blob, binary, etc.) columns should be represented in change events, including:'bytes' represents binary data as byte array (default)'base64' represents binary data as base64-encoded string'hex' represents binary data as hex-encoded (base16) string | bytes | String
 | *binlogBufferSize* (mysql) | The size of a look-ahead buffer used by the binlog reader to decide whether the transaction in progress is going to be committed or rolled back. Use 0 to disable look-ahead buffering. Defaults to 0 (i.e. buffering is disabled). | 0 | int
-| *columnBlacklist* (mysql) | Regular expressions matching columns to exclude from change events |  | String
+| *columnBlacklist* (mysql) | Regular expressions matching columns to exclude from change events (deprecated, use column.exclude.list instead) |  | String
+| *columnExcludeList* (mysql) | Regular expressions matching columns to exclude from change events |  | String
+| *columnIncludeList* (mysql) | Regular expressions matching columns to include in change events |  | String
 | *connectKeepAlive* (mysql) | Whether a separate thread should be used to ensure the connection is kept alive. | true | boolean
 | *connectKeepAliveIntervalMs* (mysql) | Interval in milliseconds to wait for connection checking if keep alive thread is used. | 1m | long
 | *connectTimeoutMs* (mysql) | Maximum time in milliseconds to wait after trying to connect to the database before timing out. | 30s | int
-| *databaseBlacklist* (mysql) | Description is not available here, please check Debezium website for corresponding key 'database.blacklist' description. |  | String
+| *databaseExcludeList* (mysql) | A comma-separated list of regular expressions that match database names to be excluded from monitoring |  | String
 | *databaseHistory* (mysql) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
 | *databaseHistoryFileFilename* (mysql) | The path to the file that will be used to record the database history |  | String
 | *databaseHistoryKafkaBootstrap{zwsp}Servers* (mysql) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
@@ -198,6 +204,7 @@ with the following path and query parameters:
 | *databaseHistorySkipUnparseable{zwsp}Ddl* (mysql) | Controls the action Debezium will take when it meets a DDL statement in binlog, that it cannot parse.By default the connector will stop operating but by changing the setting it can ignore the statements which it cannot parse. If skipping is enabled then Debezium can miss metadata changes. | false | boolean
 | *databaseHistoryStoreOnly{zwsp}MonitoredTablesDdl* (mysql) | Controls what DDL will Debezium store in database history.By default (false) Debezium will store all incoming DDL statements. If set to truethen only DDL that manipulates a monitored table will be stored. | false | boolean
 | *databaseHostname* (mysql) | Resolvable hostname or IP address of the MySQL database server. |  | String
+| *databaseIncludeList* (mysql) | The databases for which changes are to be captured |  | String
 | *databaseInitialStatements* (mysql) | A semicolon separated list of SQL statements to be executed when a JDBC connection (not binlog reading connection) to the database is established. Note that the connector may establish JDBC connections at its own discretion, so this should typically be used for configuration of session parameters only,but not for executing DML statements. Use doubled semicolon (';;') to use a semicolon as a character and not as a delimiter. |  | String
 | *databaseJdbcDriver* (mysql) | JDBC Driver class name used to connect to the MySQL database server. | class com.mysql.cj.jdbc.Driver | String
 | *databasePassword* (mysql) | *Required* Password of the MySQL database user to be used when connecting to the database. |  | String
@@ -211,7 +218,6 @@ with the following path and query parameters:
 | *databaseSslTruststore* (mysql) | Location of the Java truststore file containing the collection of CA certificates trusted by this application process (trust store). |  | String
 | *databaseSslTruststorePassword* (mysql) | Password to unlock the keystore file (store password) specified by 'ssl.trustore' configuration property or the 'javax.net.ssl.trustStore' system or JVM property. |  | String
 | *databaseUser* (mysql) | Name of the MySQL database user to be used when connecting to the database. |  | String
-| *databaseWhitelist* (mysql) | The databases for which changes are to be captured |  | String
 | *decimalHandlingMode* (mysql) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
 | *enableTimeAdjuster* (mysql) | MySQL allows user to insert year value as either 2-digit or 4-digit. In case of two digit the value is automatically mapped into 1970 - 2069.false - delegates the implicit conversion to the databasetrue - (the default) Debezium makes the conversion | true | boolean
 | *eventDeserializationFailure{zwsp}HandlingMode* (mysql) | Specify how failures during deserialization of binlog events (i.e. when encountering a corrupted event) should be handled, including:'fail' (the default) an exception indicating the problematic event and its binlog position is raised, causing the connector to be stopped; 'warn' the problematic event and its binlog position will be logged and the event will be skipped;'ignore' the problematic event will be skipped. | fail | String
@@ -237,9 +243,11 @@ with the following path and query parameters:
 | *snapshotNewTables* (mysql) | BETA FEATURE: On connector restart, the connector will check if there have been any new tables added to the configuration, and snapshot them. There is presently only two options:'off': Default behavior. Do not snapshot new tables.'parallel': The snapshot of the new tables will occur in parallel to the continued binlog reading of the old tables. When the snapshot completes, an independent binlog reader will begin reading the events for the new tables until it catches up to present time. At this point, both old and new binlog readers will be momentarily halted and new binlog reader will start that will read the binlog for all configured tables. The parallel binlog reader will have a configured server id of 10000 the primary binlog reader's server id. | off | String
 | *snapshotSelectStatement{zwsp}Overrides* (mysql) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors . Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
 | *sourceStructVersion* (mysql) | A version of the format of the publicly visible source part in the message | v2 | String
-| *tableBlacklist* (mysql) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableBlacklist* (mysql) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring (deprecated, use table.exclude.list instead) |  | String
+| *tableExcludeList* (mysql) | A comma-separated list of regular expressions that match the fully-qualified names of tables to be excluded from monitoring |  | String
 | *tableIgnoreBuiltin* (mysql) | Flag specifying whether built-in tables should be ignored. | true | boolean
-| *tableWhitelist* (mysql) | The tables for which changes are to be captured |  | String
+| *tableIncludeList* (mysql) | The tables for which changes are to be captured |  | String
+| *tableWhitelist* (mysql) | The tables for which changes are to be captured (deprecated, use table.include.list instead) |  | String
 | *timePrecisionMode* (mysql) | Time, date and timestamps can be represented with different kinds of precisions, including:'adaptive_time_microseconds': the precision of date and timestamp values is based the database column's precision; but time fields always use microseconds precision;'connect': always represents time, date and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision. | adaptive_time_microseconds | String
 | *tombstonesOnDelete* (mysql) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
 |===

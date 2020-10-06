@@ -18,7 +18,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(58);
+        Set<String> set = new HashSet<>(67);
         set.add("name");
         set.add("additionalProperties");
         set.add("bridgeErrorHandler");
@@ -37,6 +37,9 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         set.add("basicPropertyBinding");
         set.add("synchronous");
         set.add("columnBlacklist");
+        set.add("columnExcludeList");
+        set.add("columnIncludeList");
+        set.add("columnPropagateSourceType");
         set.add("columnWhitelist");
         set.add("converters");
         set.add("databaseDbname");
@@ -47,11 +50,13 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         set.add("databaseHistoryKafkaRecoveryPollIntervalMs");
         set.add("databaseHistoryKafkaTopic");
         set.add("databaseHostname");
+        set.add("databaseInstance");
         set.add("databasePassword");
         set.add("databasePort");
         set.add("databaseServerName");
         set.add("databaseServerTimezone");
         set.add("databaseUser");
+        set.add("datatypePropagateSourceType");
         set.add("decimalHandlingMode");
         set.add("eventProcessingFailureHandlingMode");
         set.add("heartbeatIntervalMs");
@@ -62,6 +67,8 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         set.add("messageKeyColumns");
         set.add("pollIntervalMs");
         set.add("provideTransactionMetadata");
+        set.add("queryFetchSize");
+        set.add("retriableRestartConnectorWaitMs");
         set.add("sanitizeFieldNames");
         set.add("skippedOperations");
         set.add("snapshotDelayMs");
@@ -73,7 +80,9 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         set.add("sourceStructVersion");
         set.add("sourceTimestampMode");
         set.add("tableBlacklist");
+        set.add("tableExcludeList");
         set.add("tableIgnoreBuiltin");
+        set.add("tableIncludeList");
         set.add("tableWhitelist");
         set.add("timePrecisionMode");
         set.add("tombstonesOnDelete");

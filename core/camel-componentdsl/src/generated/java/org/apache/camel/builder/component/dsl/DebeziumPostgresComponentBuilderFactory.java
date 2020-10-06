@@ -271,7 +271,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -283,7 +284,47 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * Regular expressions matching columns to exclude from change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder columnExcludeList(
+                java.lang.String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder columnIncludeList(
+                java.lang.String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching
+         * fully-qualified names of columns that adds the columns original type
+         * and original length as parameters to the corresponding field schemas
+         * in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder columnPropagateSourceType(
+                java.lang.String columnPropagateSourceType) {
+            doSetProperty("columnPropagateSourceType", columnPropagateSourceType);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events
+         * (deprecated, use column.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -517,6 +558,21 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of regular expressions matching the
+         * database-specific data type names that adds the data type's original
+         * type and original length as parameters to the corresponding field
+         * schemas in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder datatypePropagateSourceType(
+                java.lang.String datatypePropagateSourceType) {
+            doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
+            return this;
+        }
+        /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
          * change events, including:'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
@@ -555,7 +611,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The query executed with every heartbeat. Defaults to an empty string.
+         * The query executed with every heartbeat.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -743,7 +799,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
          * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
          * exists, the connector will create a new publication for all those
          * tables matchingthe current filter configuration (see table/database
-         * whitelist/blacklist properties). If the publication already exists,
+         * include/exclude list properties). If the publication already exists,
          * it will be used. i.e CREATE PUBLICATION FOR TABLE.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -771,6 +827,34 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
          * The option is a: <code>boolean</code> type.
@@ -784,7 +868,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events must not be captured.
+         * The schemas for which events must not be captured (deprecated, use
+         * schema.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -793,6 +878,30 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder schemaBlacklist(
                 java.lang.String schemaBlacklist) {
             doSetProperty("schemaBlacklist", schemaBlacklist);
+            return this;
+        }
+        /**
+         * The schemas for which events must not be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder schemaExcludeList(
+                java.lang.String schemaExcludeList) {
+            doSetProperty("schemaExcludeList", schemaExcludeList);
+            return this;
+        }
+        /**
+         * The schemas for which events should be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder schemaIncludeList(
+                java.lang.String schemaIncludeList) {
+            doSetProperty("schemaIncludeList", schemaIncludeList);
             return this;
         }
         /**
@@ -820,7 +929,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events should be captured.
+         * The schemas for which events should be captured (deprecated, use
+         * schema.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1050,8 +1160,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1060,6 +1171,19 @@ public interface DebeziumPostgresComponentBuilderFactory {
         default DebeziumPostgresComponentBuilder tableBlacklist(
                 java.lang.String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder tableExcludeList(
+                java.lang.String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
             return this;
         }
         /**
@@ -1077,6 +1201,19 @@ public interface DebeziumPostgresComponentBuilderFactory {
         }
         /**
          * The tables for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresComponentBuilder tableIncludeList(
+                java.lang.String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1110,8 +1247,8 @@ public interface DebeziumPostgresComponentBuilderFactory {
         /**
          * Specify the constant that will be provided by Debezium to indicate
          * that the original value is a toasted value not provided by the
-         * database.If starts with 'hex:' prefix it is expected that the rest of
-         * the string repesents hexadecimally encoded octets.
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string repesents hexadecimally encoded octets.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1200,6 +1337,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "basicPropertyBinding": ((DebeziumPostgresComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "binaryHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnBlacklist((java.lang.String) value); return true;
+            case "columnExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnExcludeList((java.lang.String) value); return true;
+            case "columnIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnIncludeList((java.lang.String) value); return true;
+            case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "columnWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setColumnWhitelist((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumPostgresComponent) component).setConverters((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseDbname((java.lang.String) value); return true;
@@ -1217,6 +1357,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "databaseSslrootcert": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseSslrootcert((java.lang.String) value); return true;
             case "databaseTcpkeepalive": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseTcpkeepalive((boolean) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseUser((java.lang.String) value); return true;
+            case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
@@ -1233,8 +1374,12 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumPostgresComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "publicationAutocreateMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationAutocreateMode((java.lang.String) value); return true;
             case "publicationName": getOrCreateConfiguration((DebeziumPostgresComponent) component).setPublicationName((java.lang.String) value); return true;
+            case "queryFetchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setQueryFetchSize((int) value); return true;
+            case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSanitizeFieldNames((boolean) value); return true;
             case "schemaBlacklist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaBlacklist((java.lang.String) value); return true;
+            case "schemaExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaExcludeList((java.lang.String) value); return true;
+            case "schemaIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaIncludeList((java.lang.String) value); return true;
             case "schemaRefreshMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaRefreshMode((java.lang.String) value); return true;
             case "schemaWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSchemaWhitelist((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSkippedOperations((java.lang.String) value); return true;
@@ -1252,7 +1397,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumPostgresComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "statusUpdateIntervalMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setStatusUpdateIntervalMs((int) value); return true;
             case "tableBlacklist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableBlacklist((java.lang.String) value); return true;
+            case "tableExcludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
+            case "tableIncludeList": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "tableWhitelist": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "toastedValuePlaceholder": getOrCreateConfiguration((DebeziumPostgresComponent) component).setToastedValuePlaceholder((java.lang.String) value); return true;
