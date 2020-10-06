@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.shiro.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExchangeException;
@@ -29,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -122,24 +115,7 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
         ByteSource decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream) {
-            @Override
-            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                if (!(desc.getName().equals(ShiroSecurityToken.class.getName())
-                        || "java.lang.String".equals(desc.getName()))) {
-                    throw new InvalidClassException("Unauthorized deserialization attempt", desc.getName());
-                }
-                return super.resolveClass(desc);
-            }
-
-        };
-        ShiroSecurityToken securityToken;
-        try {
-            securityToken = (ShiroSecurityToken) objectInputStream.readObject();
-        } finally {
-            IOHelper.close(objectInputStream, byteArrayInputStream);
-        }
+        ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getBytes());
 
         Subject currentUser = SecurityUtils.getSubject();
 
