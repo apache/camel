@@ -19,8 +19,10 @@ package org.apache.camel.language.simple;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
@@ -36,6 +38,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
@@ -835,8 +838,10 @@ public final class SimpleExpressionBuilder {
         private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
         private String key;
         private String keySuffix;
+        private String method;
         private Expression keyExpression;
         private Expression ognlExpression;
+        private Language beanLanguage;
 
         KeyedOgnlExpressionAdapter(String ognl, String toStringValue,
                                    KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
@@ -858,15 +863,16 @@ public final class SimpleExpressionBuilder {
             }
             // remove any OGNL operators so we got the pure key name
             key = OgnlHelper.removeOperators(key);
+            // and this may be the last remainder method to try as OGNL if there are no exchange properties with those key names
+            method = StringHelper.after(ognl, key + keySuffix);
         }
 
         @Override
         public void init(CamelContext context) {
+            beanLanguage = context.resolveLanguage("bean");
             ognlExpression = ExpressionBuilder.simpleExpression(ognl);
             ognlExpression.init(context);
             // key must be lazy eval as it only used in special situations
-            // keyExpression = ExpressionBuilder.simpleExpression(key);
-            // keyExpression.init(context);
         }
 
         @Override
@@ -887,9 +893,17 @@ public final class SimpleExpressionBuilder {
             if (property == null) {
                 return null;
             }
-            // the remainder is the rest of the ognl without the key
-            String remainder = StringHelper.after(ognl, key + keySuffix);
-            return ExpressionBuilder.beanExpression(property, remainder).evaluate(exchange, Object.class);
+            if (method != null) {
+                // okay we have a property value, the remainder is OGNL method call on it
+                Map<String, Object> properties = new HashMap<>(2);
+                properties.put("bean", property);
+                properties.put("method", method);
+                Expression exp = beanLanguage.createExpression(null, properties);
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            } else {
+                return property;
+            }
         }
 
         @Override

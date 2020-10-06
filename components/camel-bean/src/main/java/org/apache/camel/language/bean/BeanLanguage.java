@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
@@ -43,6 +44,7 @@ import org.apache.camel.util.StringHelper;
 public class BeanLanguage extends LanguageSupport implements StaticService {
 
     private volatile ParameterMappingStrategy parameterMappingStrategy;
+    private volatile Language simple;
 
     private Object bean;
     private Class<?> beanType;
@@ -113,6 +115,7 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
         }
 
         answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.setSimple(simple);
         answer.init(getCamelContext());
         return answer;
     }
@@ -167,6 +170,7 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
         }
 
         answer.setParameterMappingStrategy(parameterMappingStrategy);
+        answer.setSimple(simple);
         answer.init(getCamelContext());
         return answer;
     }
@@ -174,6 +178,7 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
     @Override
     public void start() {
         parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+        simple = getCamelContext().resolveLanguage("simple");
     }
 
     @Override
