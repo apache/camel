@@ -64,6 +64,9 @@ public class XPathExpression extends NamespaceAwareExpression {
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String threadSafety;
+    @XmlAttribute
+    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String preCompile;
 
     public XPathExpression() {
     }
@@ -211,6 +214,22 @@ public class XPathExpression extends NamespaceAwareExpression {
      */
     public void setThreadSafety(String threadSafety) {
         this.threadSafety = threadSafety;
+    }
+
+    public String getPreCompile() {
+        return preCompile;
+    }
+
+    /**
+     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
+     * default.
+     *
+     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
+     * as if the application is pre-built with graalvm which would then load the xpath factory of the built operating
+     * system, and not a JVM runtime.
+     */
+    public void setPreCompile(String preCompile) {
+        this.preCompile = preCompile;
     }
 
     private void resolveXPathFactory(CamelContext camelContext) {

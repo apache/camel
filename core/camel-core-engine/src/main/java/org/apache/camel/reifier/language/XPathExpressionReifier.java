@@ -66,7 +66,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
     }
 
     protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(9);
+        Map<String, Object> properties = new HashMap<>(10);
         properties.put("documentType", definition.getDocumentType());
         // resultType can either point to a QName or it can be a regular class that influence the qname
         // so we need this special logic to set resultQName and resultType accordingly
@@ -81,6 +81,7 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         properties.put("xpathFactory", definition.getXPathFactory());
         properties.put("objectModelUri", parseString(definition.getObjectModel()));
         properties.put("threadSafety", parseBoolean(definition.getThreadSafety()));
+        properties.put("preCompile", parseBoolean(definition.getPreCompile()));
         properties.put("logNamespaces", parseBoolean(definition.getLogNamespaces()));
         properties.put("headerName", parseString(definition.getHeaderName()));
         return properties;
