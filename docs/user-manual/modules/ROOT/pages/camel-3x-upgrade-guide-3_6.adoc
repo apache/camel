@@ -190,3 +190,7 @@ maxDecompressedSizeZip.setMaxDecompressedSize(100000000000L);
 
 The default value if not specified corresponds to 1 gigabyte. An IOException will be thrown if the decompressed size exceeds this amount.
 Set to -1 to disable setting a maximum decompressed size.
+
+=== Camel RabbitMQ
+
+The `camel-rabbitmq` server component properties have been changed. Properties prefix `rabbitmq.` are replaced by `CamelRabbitmq`.
