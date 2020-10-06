@@ -34,7 +34,7 @@
 
     <properties>
         <camel.osgi.import.additional>
-            net.sf.saxon.*;version="[9.9.0,11)"
+            net.sf.saxon.*;version="[10,11)"
         </camel.osgi.import.additional>
     </properties>
 
