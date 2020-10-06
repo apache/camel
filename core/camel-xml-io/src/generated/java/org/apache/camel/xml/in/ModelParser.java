@@ -2443,6 +2443,7 @@ public class ModelParser extends BaseParser {
                 case "headerName": def.setHeaderName(val); break;
                 case "logNamespaces": def.setLogNamespaces(val); break;
                 case "objectModel": def.setObjectModel(val); break;
+                case "preCompile": def.setPreCompile(val); break;
                 case "resultType": def.setResultTypeName(val); break;
                 case "saxon": def.setSaxon(val); break;
                 case "threadSafety": def.setThreadSafety(val); break;

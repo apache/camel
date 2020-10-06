@@ -71,11 +71,7 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.support.builder.Namespaces.DEFAULT_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.FUNCTION_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.IN_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.OUT_NAMESPACE;
-import static org.apache.camel.support.builder.Namespaces.isMatchingNamespaceOrEmptyNamespace;
+import static org.apache.camel.support.builder.Namespaces.*;
 
 /**
  * Creates an XPath expression builder which creates a nodeset result by default. If you want to evaluate a String
@@ -109,6 +105,7 @@ public class XPathBuilder extends ServiceSupport
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
     private final Map<String, String> namespaces = new ConcurrentHashMap<>();
+    private boolean preCompile = true;
     private boolean threadSafety;
     private volatile XPathFactory xpathFactory;
     private volatile Class<?> documentType = Document.class;
@@ -166,6 +163,15 @@ public class XPathBuilder extends ServiceSupport
 
     @Override
     public void init(CamelContext context) {
+        if (preCompile) {
+            LOG.trace("PreCompiling new XPathExpression and adding to pool during initialization");
+            try {
+                XPathExpression xpathExpression = createXPathExpression();
+                pool.add(xpathExpression);
+            } catch (XPathExpressionException e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -496,6 +502,21 @@ public class XPathBuilder extends ServiceSupport
         return this;
     }
 
+    /**
+     * Whether to enable pre-compiling the xpath expression during initialization phase. pre-compile is enabled by
+     * default.
+     *
+     * This can be used to turn off, for example in cases the compilation phase is desired at the starting phase, such
+     * as if the application is pre-built with graalvm which would then load the xpath factory of the built operating
+     * system, and not a JVM runtime.
+     *
+     * @return the current builder.
+     */
+    public XPathBuilder preCompile(boolean preCompile) {
+        setPreCompile(preCompile);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -549,6 +570,14 @@ public class XPathBuilder extends ServiceSupport
 
     public void setThreadSafety(boolean threadSafety) {
         this.threadSafety = threadSafety;
+    }
+
+    public boolean isPreCompile() {
+        return preCompile;
+    }
+
+    public void setPreCompile(boolean preCompile) {
+        this.preCompile = preCompile;
     }
 
     /**
@@ -1078,7 +1107,7 @@ public class XPathBuilder extends ServiceSupport
      * started prior to being used.
      */
     protected synchronized XPathExpression createXPathExpression()
-            throws XPathExpressionException, XPathFactoryConfigurationException {
+            throws XPathExpressionException {
         // ensure we are started
         try {
             start();
@@ -1106,7 +1135,7 @@ public class XPathBuilder extends ServiceSupport
     }
 
     protected synchronized XPathExpression createTraceNamespaceExpression()
-            throws XPathFactoryConfigurationException, XPathExpressionException {
+            throws XPathExpressionException {
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
         return xPath.compile(OBTAIN_ALL_NS_XPATH);

@@ -40,6 +40,7 @@ public class XPathLanguage extends LanguageSupport {
     private Boolean threadSafety;
     private Boolean logNamespaces;
     private String headerName;
+    private Boolean preCompile;
 
     @Override
     public Predicate createPredicate(String expression) {
@@ -81,6 +82,7 @@ public class XPathLanguage extends LanguageSupport {
             setResultQName(qname);
         }
         setUseSaxon(property(Boolean.class, properties, "useSaxon", useSaxon));
+        setPreCompile(property(Boolean.class, properties, "preCompile", preCompile));
         setObjectModelUri(property(String.class, properties, "objectModelUri", objectModelUri));
         setThreadSafety(property(Boolean.class, properties, "threadSafety", threadSafety));
         setLogNamespaces(property(Boolean.class, properties, "logNamespaces", logNamespaces));
@@ -168,7 +170,22 @@ public class XPathLanguage extends LanguageSupport {
         return useSaxon != null && useSaxon;
     }
 
+    public Boolean getPreCompile() {
+        return preCompile;
+    }
+
+    public void setPreCompile(Boolean preCompile) {
+        this.preCompile = preCompile;
+    }
+
+    private boolean isPreCompile() {
+        return preCompile != null && preCompile;
+    }
+
     protected void configureBuilder(XPathBuilder builder) {
+        if (preCompile != null) {
+            builder.setPreCompile(preCompile);
+        }
         if (threadSafety != null) {
             builder.setThreadSafety(threadSafety);
         }
