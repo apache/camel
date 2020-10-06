@@ -35,17 +35,17 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
-        map.put("collectionBlacklist", java.lang.String.class);
-        map.put("collectionWhitelist", java.lang.String.class);
+        map.put("collectionExcludeList", java.lang.String.class);
+        map.put("collectionIncludeList", java.lang.String.class);
         map.put("connectBackoffInitialDelayMs", long.class);
         map.put("connectBackoffMaxDelayMs", long.class);
         map.put("connectMaxAttempts", int.class);
         map.put("converters", java.lang.String.class);
-        map.put("databaseBlacklist", java.lang.String.class);
+        map.put("databaseExcludeList", java.lang.String.class);
         map.put("databaseHistoryFileFilename", java.lang.String.class);
-        map.put("databaseWhitelist", java.lang.String.class);
+        map.put("databaseIncludeList", java.lang.String.class);
         map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        map.put("fieldBlacklist", java.lang.String.class);
+        map.put("fieldExcludeList", java.lang.String.class);
         map.put("fieldRenames", java.lang.String.class);
         map.put("heartbeatIntervalMs", int.class);
         map.put("heartbeatTopicsPrefix", java.lang.String.class);
@@ -53,16 +53,21 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         map.put("maxBatchSize", int.class);
         map.put("maxQueueSize", int.class);
         map.put("mongodbAuthsource", java.lang.String.class);
+        map.put("mongodbConnectTimeoutMs", int.class);
         map.put("mongodbHosts", java.lang.String.class);
         map.put("mongodbMembersAutoDiscover", boolean.class);
         map.put("mongodbName", java.lang.String.class);
         map.put("mongodbPassword", java.lang.String.class);
-        map.put("mongodbPollIntervalSec", int.class);
+        map.put("mongodbPollIntervalMs", long.class);
+        map.put("mongodbServerSelectionTimeoutMs", int.class);
+        map.put("mongodbSocketTimeoutMs", int.class);
         map.put("mongodbSslEnabled", boolean.class);
         map.put("mongodbSslInvalidHostnameAllowed", boolean.class);
         map.put("mongodbUser", java.lang.String.class);
         map.put("pollIntervalMs", long.class);
         map.put("provideTransactionMetadata", boolean.class);
+        map.put("queryFetchSize", int.class);
+        map.put("retriableRestartConnectorWaitMs", long.class);
         map.put("sanitizeFieldNames", boolean.class);
         map.put("skippedOperations", java.lang.String.class);
         map.put("snapshotDelayMs", long.class);
@@ -83,10 +88,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "collectionblacklist":
-        case "collectionBlacklist": target.getConfiguration().setCollectionBlacklist(property(camelContext, java.lang.String.class, value)); return true;
-        case "collectionwhitelist":
-        case "collectionWhitelist": target.getConfiguration().setCollectionWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectionexcludelist":
+        case "collectionExcludeList": target.getConfiguration().setCollectionExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "collectionincludelist":
+        case "collectionIncludeList": target.getConfiguration().setCollectionIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "connectbackoffinitialdelayms":
         case "connectBackoffInitialDelayMs": target.getConfiguration().setConnectBackoffInitialDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectbackoffmaxdelayms":
@@ -94,20 +99,20 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "connectmaxattempts":
         case "connectMaxAttempts": target.getConfiguration().setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
-        case "databaseblacklist":
-        case "databaseBlacklist": target.getConfiguration().setDatabaseBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseexcludelist":
+        case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistoryfilefilename":
         case "databaseHistoryFileFilename": target.getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasewhitelist":
-        case "databaseWhitelist": target.getConfiguration().setDatabaseWhitelist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseincludelist":
+        case "databaseIncludeList": target.getConfiguration().setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
-        case "fieldblacklist":
-        case "fieldBlacklist": target.getConfiguration().setFieldBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "fieldexcludelist":
+        case "fieldExcludeList": target.getConfiguration().setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
         case "fieldRenames": target.getConfiguration().setFieldRenames(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -126,6 +131,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "maxQueueSize": target.getConfiguration().setMaxQueueSize(property(camelContext, int.class, value)); return true;
         case "mongodbauthsource":
         case "mongodbAuthsource": target.getConfiguration().setMongodbAuthsource(property(camelContext, java.lang.String.class, value)); return true;
+        case "mongodbconnecttimeoutms":
+        case "mongodbConnectTimeoutMs": target.getConfiguration().setMongodbConnectTimeoutMs(property(camelContext, int.class, value)); return true;
         case "mongodbhosts":
         case "mongodbHosts": target.getConfiguration().setMongodbHosts(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbmembersautodiscover":
@@ -134,8 +141,12 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbName": target.getConfiguration().setMongodbName(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbpassword":
         case "mongodbPassword": target.getConfiguration().setMongodbPassword(property(camelContext, java.lang.String.class, value)); return true;
-        case "mongodbpollintervalsec":
-        case "mongodbPollIntervalSec": target.getConfiguration().setMongodbPollIntervalSec(property(camelContext, int.class, value)); return true;
+        case "mongodbpollintervalms":
+        case "mongodbPollIntervalMs": target.getConfiguration().setMongodbPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "mongodbserverselectiontimeoutms":
+        case "mongodbServerSelectionTimeoutMs": target.getConfiguration().setMongodbServerSelectionTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "mongodbsockettimeoutms":
+        case "mongodbSocketTimeoutMs": target.getConfiguration().setMongodbSocketTimeoutMs(property(camelContext, int.class, value)); return true;
         case "mongodbsslenabled":
         case "mongodbSslEnabled": target.getConfiguration().setMongodbSslEnabled(property(camelContext, boolean.class, value)); return true;
         case "mongodbsslinvalidhostnameallowed":
@@ -162,6 +173,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
@@ -196,10 +211,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "collectionblacklist":
-        case "collectionBlacklist": return target.getConfiguration().getCollectionBlacklist();
-        case "collectionwhitelist":
-        case "collectionWhitelist": return target.getConfiguration().getCollectionWhitelist();
+        case "collectionexcludelist":
+        case "collectionExcludeList": return target.getConfiguration().getCollectionExcludeList();
+        case "collectionincludelist":
+        case "collectionIncludeList": return target.getConfiguration().getCollectionIncludeList();
         case "connectbackoffinitialdelayms":
         case "connectBackoffInitialDelayMs": return target.getConfiguration().getConnectBackoffInitialDelayMs();
         case "connectbackoffmaxdelayms":
@@ -207,20 +222,20 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "connectmaxattempts":
         case "connectMaxAttempts": return target.getConfiguration().getConnectMaxAttempts();
         case "converters": return target.getConfiguration().getConverters();
-        case "databaseblacklist":
-        case "databaseBlacklist": return target.getConfiguration().getDatabaseBlacklist();
+        case "databaseexcludelist":
+        case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehistoryfilefilename":
         case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
-        case "databasewhitelist":
-        case "databaseWhitelist": return target.getConfiguration().getDatabaseWhitelist();
+        case "databaseincludelist":
+        case "databaseIncludeList": return target.getConfiguration().getDatabaseIncludeList();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
-        case "fieldblacklist":
-        case "fieldBlacklist": return target.getConfiguration().getFieldBlacklist();
+        case "fieldexcludelist":
+        case "fieldExcludeList": return target.getConfiguration().getFieldExcludeList();
         case "fieldrenames":
         case "fieldRenames": return target.getConfiguration().getFieldRenames();
         case "heartbeatintervalms":
@@ -239,6 +254,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "maxQueueSize": return target.getConfiguration().getMaxQueueSize();
         case "mongodbauthsource":
         case "mongodbAuthsource": return target.getConfiguration().getMongodbAuthsource();
+        case "mongodbconnecttimeoutms":
+        case "mongodbConnectTimeoutMs": return target.getConfiguration().getMongodbConnectTimeoutMs();
         case "mongodbhosts":
         case "mongodbHosts": return target.getConfiguration().getMongodbHosts();
         case "mongodbmembersautodiscover":
@@ -247,8 +264,12 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbName": return target.getConfiguration().getMongodbName();
         case "mongodbpassword":
         case "mongodbPassword": return target.getConfiguration().getMongodbPassword();
-        case "mongodbpollintervalsec":
-        case "mongodbPollIntervalSec": return target.getConfiguration().getMongodbPollIntervalSec();
+        case "mongodbpollintervalms":
+        case "mongodbPollIntervalMs": return target.getConfiguration().getMongodbPollIntervalMs();
+        case "mongodbserverselectiontimeoutms":
+        case "mongodbServerSelectionTimeoutMs": return target.getConfiguration().getMongodbServerSelectionTimeoutMs();
+        case "mongodbsockettimeoutms":
+        case "mongodbSocketTimeoutMs": return target.getConfiguration().getMongodbSocketTimeoutMs();
         case "mongodbsslenabled":
         case "mongodbSslEnabled": return target.getConfiguration().isMongodbSslEnabled();
         case "mongodbsslinvalidhostnameallowed":
@@ -275,6 +296,10 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
         case "skippedoperations":

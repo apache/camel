@@ -36,10 +36,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         map.put("binaryHandlingMode", java.lang.String.class);
         map.put("binlogBufferSize", int.class);
         map.put("columnBlacklist", java.lang.String.class);
+        map.put("columnExcludeList", java.lang.String.class);
+        map.put("columnIncludeList", java.lang.String.class);
         map.put("connectKeepAlive", boolean.class);
         map.put("connectKeepAliveIntervalMs", long.class);
         map.put("connectTimeoutMs", int.class);
-        map.put("databaseBlacklist", java.lang.String.class);
+        map.put("databaseExcludeList", java.lang.String.class);
         map.put("databaseHistory", java.lang.String.class);
         map.put("databaseHistoryFileFilename", java.lang.String.class);
         map.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
@@ -49,6 +51,7 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         map.put("databaseHistorySkipUnparseableDdl", boolean.class);
         map.put("databaseHistoryStoreOnlyMonitoredTablesDdl", boolean.class);
         map.put("databaseHostname", java.lang.String.class);
+        map.put("databaseIncludeList", java.lang.String.class);
         map.put("databaseInitialStatements", java.lang.String.class);
         map.put("databaseJdbcDriver", java.lang.String.class);
         map.put("databasePassword", java.lang.String.class);
@@ -62,7 +65,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         map.put("databaseSslTruststore", java.lang.String.class);
         map.put("databaseSslTruststorePassword", java.lang.String.class);
         map.put("databaseUser", java.lang.String.class);
-        map.put("databaseWhitelist", java.lang.String.class);
         map.put("decimalHandlingMode", java.lang.String.class);
         map.put("enableTimeAdjuster", boolean.class);
         map.put("eventDeserializationFailureHandlingMode", java.lang.String.class);
@@ -89,7 +91,9 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         map.put("snapshotSelectStatementOverrides", java.lang.String.class);
         map.put("sourceStructVersion", java.lang.String.class);
         map.put("tableBlacklist", java.lang.String.class);
+        map.put("tableExcludeList", java.lang.String.class);
         map.put("tableIgnoreBuiltin", boolean.class);
+        map.put("tableIncludeList", java.lang.String.class);
         map.put("tableWhitelist", java.lang.String.class);
         map.put("timePrecisionMode", java.lang.String.class);
         map.put("tombstonesOnDelete", boolean.class);
@@ -121,6 +125,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnexcludelist":
+        case "columnExcludeList": getOrCreateConfiguration(target).setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnincludelist":
+        case "columnIncludeList": getOrCreateConfiguration(target).setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "connectkeepalive":
         case "connectKeepAlive": getOrCreateConfiguration(target).setConnectKeepAlive(property(camelContext, boolean.class, value)); return true;
@@ -128,8 +136,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAliveIntervalMs": getOrCreateConfiguration(target).setConnectKeepAliveIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connecttimeoutms":
         case "connectTimeoutMs": getOrCreateConfiguration(target).setConnectTimeoutMs(property(camelContext, int.class, value)); return true;
-        case "databaseblacklist":
-        case "databaseBlacklist": getOrCreateConfiguration(target).setDatabaseBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseexcludelist":
+        case "databaseExcludeList": getOrCreateConfiguration(target).setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistory":
         case "databaseHistory": getOrCreateConfiguration(target).setDatabaseHistory(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehistoryfilefilename":
@@ -148,6 +156,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration(target).setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseincludelist":
+        case "databaseIncludeList": getOrCreateConfiguration(target).setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinitialstatements":
         case "databaseInitialStatements": getOrCreateConfiguration(target).setDatabaseInitialStatements(property(camelContext, java.lang.String.class, value)); return true;
         case "databasejdbcdriver":
@@ -174,8 +184,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseSslTruststorePassword": getOrCreateConfiguration(target).setDatabaseSslTruststorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": getOrCreateConfiguration(target).setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasewhitelist":
-        case "databaseWhitelist": getOrCreateConfiguration(target).setDatabaseWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "enabletimeadjuster":
@@ -248,8 +256,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "sourceStructVersion": getOrCreateConfiguration(target).setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": getOrCreateConfiguration(target).setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableexcludelist":
+        case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": getOrCreateConfiguration(target).setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
+        case "tableincludelist":
+        case "tableIncludeList": getOrCreateConfiguration(target).setTableIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tablewhitelist":
         case "tableWhitelist": getOrCreateConfiguration(target).setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
@@ -283,6 +295,10 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
         case "columnBlacklist": return getOrCreateConfiguration(target).getColumnBlacklist();
+        case "columnexcludelist":
+        case "columnExcludeList": return getOrCreateConfiguration(target).getColumnExcludeList();
+        case "columnincludelist":
+        case "columnIncludeList": return getOrCreateConfiguration(target).getColumnIncludeList();
         case "configuration": return target.getConfiguration();
         case "connectkeepalive":
         case "connectKeepAlive": return getOrCreateConfiguration(target).isConnectKeepAlive();
@@ -290,8 +306,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "connectKeepAliveIntervalMs": return getOrCreateConfiguration(target).getConnectKeepAliveIntervalMs();
         case "connecttimeoutms":
         case "connectTimeoutMs": return getOrCreateConfiguration(target).getConnectTimeoutMs();
-        case "databaseblacklist":
-        case "databaseBlacklist": return getOrCreateConfiguration(target).getDatabaseBlacklist();
+        case "databaseexcludelist":
+        case "databaseExcludeList": return getOrCreateConfiguration(target).getDatabaseExcludeList();
         case "databasehistory":
         case "databaseHistory": return getOrCreateConfiguration(target).getDatabaseHistory();
         case "databasehistoryfilefilename":
@@ -310,6 +326,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseHistoryStoreOnlyMonitoredTablesDdl": return getOrCreateConfiguration(target).isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
+        case "databaseincludelist":
+        case "databaseIncludeList": return getOrCreateConfiguration(target).getDatabaseIncludeList();
         case "databaseinitialstatements":
         case "databaseInitialStatements": return getOrCreateConfiguration(target).getDatabaseInitialStatements();
         case "databasejdbcdriver":
@@ -336,8 +354,6 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "databaseSslTruststorePassword": return getOrCreateConfiguration(target).getDatabaseSslTruststorePassword();
         case "databaseuser":
         case "databaseUser": return getOrCreateConfiguration(target).getDatabaseUser();
-        case "databasewhitelist":
-        case "databaseWhitelist": return getOrCreateConfiguration(target).getDatabaseWhitelist();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "enabletimeadjuster":
@@ -410,8 +426,12 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         case "sourceStructVersion": return getOrCreateConfiguration(target).getSourceStructVersion();
         case "tableblacklist":
         case "tableBlacklist": return getOrCreateConfiguration(target).getTableBlacklist();
+        case "tableexcludelist":
+        case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return getOrCreateConfiguration(target).isTableIgnoreBuiltin();
+        case "tableincludelist":
+        case "tableIncludeList": return getOrCreateConfiguration(target).getTableIncludeList();
         case "tablewhitelist":
         case "tableWhitelist": return getOrCreateConfiguration(target).getTableWhitelist();
         case "timeprecisionmode":

@@ -385,7 +385,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -394,6 +395,30 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder columnBlacklist(
                 String columnBlacklist) {
             doSetProperty("columnBlacklist", columnBlacklist);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to exclude from change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder columnExcludeList(
+                String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder columnIncludeList(
+                String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
             return this;
         }
         /**
@@ -481,16 +506,16 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'database.blacklist' description.
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mysql
          */
-        default DebeziumMySqlEndpointBuilder databaseBlacklist(
-                String databaseBlacklist) {
-            doSetProperty("databaseBlacklist", databaseBlacklist);
+        default DebeziumMySqlEndpointBuilder databaseExcludeList(
+                String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
             return this;
         }
         /**
@@ -683,6 +708,18 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder databaseHostname(
                 String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder databaseIncludeList(
+                String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -923,18 +960,6 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder databaseUser(String databaseUser) {
             doSetProperty("databaseUser", databaseUser);
-            return this;
-        }
-        /**
-         * The databases for which changes are to be captured.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: mysql
-         */
-        default DebeziumMySqlEndpointBuilder databaseWhitelist(
-                String databaseWhitelist) {
-            doSetProperty("databaseWhitelist", databaseWhitelist);
             return this;
         }
         /**
@@ -1513,8 +1538,9 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1523,6 +1549,19 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         default DebeziumMySqlEndpointBuilder tableBlacklist(
                 String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder tableExcludeList(
+                String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
             return this;
         }
         /**
@@ -1553,6 +1592,19 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * The tables for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         */
+        default DebeziumMySqlEndpointBuilder tableIncludeList(
+                String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

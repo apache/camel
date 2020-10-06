@@ -18,7 +18,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(52);
+        Set<String> set = new HashSet<>(57);
         set.add("name");
         set.add("additionalProperties");
         set.add("bridgeErrorHandler");
@@ -36,17 +36,17 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         set.add("exchangePattern");
         set.add("basicPropertyBinding");
         set.add("synchronous");
-        set.add("collectionBlacklist");
-        set.add("collectionWhitelist");
+        set.add("collectionExcludeList");
+        set.add("collectionIncludeList");
         set.add("connectBackoffInitialDelayMs");
         set.add("connectBackoffMaxDelayMs");
         set.add("connectMaxAttempts");
         set.add("converters");
-        set.add("databaseBlacklist");
+        set.add("databaseExcludeList");
         set.add("databaseHistoryFileFilename");
-        set.add("databaseWhitelist");
+        set.add("databaseIncludeList");
         set.add("eventProcessingFailureHandlingMode");
-        set.add("fieldBlacklist");
+        set.add("fieldExcludeList");
         set.add("fieldRenames");
         set.add("heartbeatIntervalMs");
         set.add("heartbeatTopicsPrefix");
@@ -54,16 +54,21 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         set.add("maxBatchSize");
         set.add("maxQueueSize");
         set.add("mongodbAuthsource");
+        set.add("mongodbConnectTimeoutMs");
         set.add("mongodbHosts");
         set.add("mongodbMembersAutoDiscover");
         set.add("mongodbName");
         set.add("mongodbPassword");
-        set.add("mongodbPollIntervalSec");
+        set.add("mongodbPollIntervalMs");
+        set.add("mongodbServerSelectionTimeoutMs");
+        set.add("mongodbSocketTimeoutMs");
         set.add("mongodbSslEnabled");
         set.add("mongodbSslInvalidHostnameAllowed");
         set.add("mongodbUser");
         set.add("pollIntervalMs");
         set.add("provideTransactionMetadata");
+        set.add("queryFetchSize");
+        set.add("retriableRestartConnectorWaitMs");
         set.add("sanitizeFieldNames");
         set.add("skippedOperations");
         set.add("snapshotDelayMs");

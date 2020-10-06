@@ -36,6 +36,9 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         map.put("columnBlacklist", java.lang.String.class);
+        map.put("columnExcludeList", java.lang.String.class);
+        map.put("columnIncludeList", java.lang.String.class);
+        map.put("columnPropagateSourceType", java.lang.String.class);
         map.put("columnWhitelist", java.lang.String.class);
         map.put("converters", java.lang.String.class);
         map.put("databaseDbname", java.lang.String.class);
@@ -46,11 +49,13 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
         map.put("databaseHistoryKafkaTopic", java.lang.String.class);
         map.put("databaseHostname", java.lang.String.class);
+        map.put("databaseInstance", java.lang.String.class);
         map.put("databasePassword", java.lang.String.class);
         map.put("databasePort", int.class);
         map.put("databaseServerName", java.lang.String.class);
         map.put("databaseServerTimezone", java.lang.String.class);
         map.put("databaseUser", java.lang.String.class);
+        map.put("datatypePropagateSourceType", java.lang.String.class);
         map.put("decimalHandlingMode", java.lang.String.class);
         map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
         map.put("heartbeatIntervalMs", int.class);
@@ -61,6 +66,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("messageKeyColumns", java.lang.String.class);
         map.put("pollIntervalMs", long.class);
         map.put("provideTransactionMetadata", boolean.class);
+        map.put("queryFetchSize", int.class);
+        map.put("retriableRestartConnectorWaitMs", long.class);
         map.put("sanitizeFieldNames", boolean.class);
         map.put("skippedOperations", java.lang.String.class);
         map.put("snapshotDelayMs", long.class);
@@ -72,7 +79,9 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         map.put("sourceStructVersion", java.lang.String.class);
         map.put("sourceTimestampMode", java.lang.String.class);
         map.put("tableBlacklist", java.lang.String.class);
+        map.put("tableExcludeList", java.lang.String.class);
         map.put("tableIgnoreBuiltin", boolean.class);
+        map.put("tableIncludeList", java.lang.String.class);
         map.put("tableWhitelist", java.lang.String.class);
         map.put("timePrecisionMode", java.lang.String.class);
         map.put("tombstonesOnDelete", boolean.class);
@@ -91,6 +100,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
         case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnexcludelist":
+        case "columnExcludeList": target.getConfiguration().setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnincludelist":
+        case "columnIncludeList": target.getConfiguration().setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": target.getConfiguration().setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "columnwhitelist":
         case "columnWhitelist": target.getConfiguration().setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
@@ -110,6 +125,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHistoryKafkaTopic": target.getConfiguration().setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseinstance":
+        case "databaseInstance": target.getConfiguration().setDatabaseInstance(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
@@ -120,6 +137,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseServerTimezone": target.getConfiguration().setDatabaseServerTimezone(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": target.getConfiguration().setDatatypePropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
         case "decimalhandlingmode":
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
@@ -164,6 +183,10 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "pollIntervalMs": target.getConfiguration().setPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "providetransactionmetadata":
         case "provideTransactionMetadata": target.getConfiguration().setProvideTransactionMetadata(property(camelContext, boolean.class, value)); return true;
+        case "queryfetchsize":
+        case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
@@ -187,8 +210,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "tableblacklist":
         case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
+        case "tableexcludelist":
+        case "tableExcludeList": target.getConfiguration().setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": target.getConfiguration().setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
+        case "tableincludelist":
+        case "tableIncludeList": target.getConfiguration().setTableIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tablewhitelist":
         case "tableWhitelist": target.getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
@@ -216,6 +243,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":
         case "columnBlacklist": return target.getConfiguration().getColumnBlacklist();
+        case "columnexcludelist":
+        case "columnExcludeList": return target.getConfiguration().getColumnExcludeList();
+        case "columnincludelist":
+        case "columnIncludeList": return target.getConfiguration().getColumnIncludeList();
+        case "columnpropagatesourcetype":
+        case "columnPropagateSourceType": return target.getConfiguration().getColumnPropagateSourceType();
         case "columnwhitelist":
         case "columnWhitelist": return target.getConfiguration().getColumnWhitelist();
         case "converters": return target.getConfiguration().getConverters();
@@ -235,6 +268,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseHistoryKafkaTopic": return target.getConfiguration().getDatabaseHistoryKafkaTopic();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
+        case "databaseinstance":
+        case "databaseInstance": return target.getConfiguration().getDatabaseInstance();
         case "databasepassword":
         case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databaseport":
@@ -245,6 +280,8 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "databaseServerTimezone": return target.getConfiguration().getDatabaseServerTimezone();
         case "databaseuser":
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
+        case "datatypepropagatesourcetype":
+        case "datatypePropagateSourceType": return target.getConfiguration().getDatatypePropagateSourceType();
         case "decimalhandlingmode":
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "eventprocessingfailurehandlingmode":
@@ -289,6 +326,10 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "pollIntervalMs": return target.getConfiguration().getPollIntervalMs();
         case "providetransactionmetadata":
         case "provideTransactionMetadata": return target.getConfiguration().isProvideTransactionMetadata();
+        case "queryfetchsize":
+        case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
+        case "retriablerestartconnectorwaitms":
+        case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
         case "skippedoperations":
@@ -312,8 +353,12 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         case "synchronous": return target.isSynchronous();
         case "tableblacklist":
         case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
+        case "tableexcludelist":
+        case "tableExcludeList": return target.getConfiguration().getTableExcludeList();
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return target.getConfiguration().isTableIgnoreBuiltin();
+        case "tableincludelist":
+        case "tableIncludeList": return target.getConfiguration().getTableIncludeList();
         case "tablewhitelist":
         case "tableWhitelist": return target.getConfiguration().getTableWhitelist();
         case "timeprecisionmode":

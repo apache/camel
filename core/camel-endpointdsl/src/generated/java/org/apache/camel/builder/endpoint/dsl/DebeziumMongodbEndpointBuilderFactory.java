@@ -319,28 +319,29 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'collection.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be excluded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder collectionBlacklist(
-                String collectionBlacklist) {
-            doSetProperty("collectionBlacklist", collectionBlacklist);
+        default DebeziumMongodbEndpointBuilder collectionExcludeList(
+                String collectionExcludeList) {
+            doSetProperty("collectionExcludeList", collectionExcludeList);
             return this;
         }
         /**
-         * The collections for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be captured.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder collectionWhitelist(
-                String collectionWhitelist) {
-            doSetProperty("collectionWhitelist", collectionWhitelist);
+        default DebeziumMongodbEndpointBuilder collectionIncludeList(
+                String collectionIncludeList) {
+            doSetProperty("collectionIncludeList", collectionIncludeList);
             return this;
         }
         /**
@@ -451,15 +452,16 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The databases for which changes are to be excluded.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be excluded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder databaseBlacklist(
-                String databaseBlacklist) {
-            doSetProperty("databaseBlacklist", databaseBlacklist);
+        default DebeziumMongodbEndpointBuilder databaseExcludeList(
+                String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
             return this;
         }
         /**
@@ -476,15 +478,16 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * The databases for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be captured.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder databaseWhitelist(
-                String databaseWhitelist) {
-            doSetProperty("databaseWhitelist", databaseWhitelist);
+        default DebeziumMongodbEndpointBuilder databaseIncludeList(
+                String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -506,16 +509,16 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'field.blacklist' description.
+         * A comma-separated list of the fully-qualified names of fields that
+         * should be excluded from change event message values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder fieldBlacklist(
-                String fieldBlacklist) {
-            doSetProperty("fieldBlacklist", fieldBlacklist);
+        default DebeziumMongodbEndpointBuilder fieldExcludeList(
+                String fieldExcludeList) {
+            doSetProperty("fieldExcludeList", fieldExcludeList);
             return this;
         }
         /**
@@ -668,6 +671,32 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbConnectTimeoutMs(
+                int mongodbConnectTimeoutMs) {
+            doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbConnectTimeoutMs(
+                String mongodbConnectTimeoutMs) {
+            doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
          * The hostname and port pairs (in the form 'host' or 'host:port') of
          * the MongoDB server(s) in the replica set.
          * 
@@ -740,31 +769,83 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Frequency in seconds to look for new, removed, or changed replica
-         * sets. Defaults to 30 seconds.
+         * Frequency in milliseconds to look for new, removed, or changed
+         * replica sets. Defaults to 30000 milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: 30
+         * Default: 30s
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
-                int mongodbPollIntervalSec) {
-            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalMs(
+                long mongodbPollIntervalMs) {
+            doSetProperty("mongodbPollIntervalMs", mongodbPollIntervalMs);
             return this;
         }
         /**
-         * Frequency in seconds to look for new, removed, or changed replica
-         * sets. Defaults to 30 seconds.
+         * Frequency in milliseconds to look for new, removed, or changed
+         * replica sets. Defaults to 30000 milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbPollIntervalMs(
+                String mongodbPollIntervalMs) {
+            doSetProperty("mongodbPollIntervalMs", mongodbPollIntervalMs);
+            return this;
+        }
+        /**
+         * The server selection timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 30s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbServerSelectionTimeoutMs(
+                int mongodbServerSelectionTimeoutMs) {
+            doSetProperty("mongodbServerSelectionTimeoutMs", mongodbServerSelectionTimeoutMs);
+            return this;
+        }
+        /**
+         * The server selection timeout in milliseconds.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 30
+         * Default: 30s
          * Group: mongodb
          */
-        default DebeziumMongodbEndpointBuilder mongodbPollIntervalSec(
-                String mongodbPollIntervalSec) {
-            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+        default DebeziumMongodbEndpointBuilder mongodbServerSelectionTimeoutMs(
+                String mongodbServerSelectionTimeoutMs) {
+            doSetProperty("mongodbServerSelectionTimeoutMs", mongodbServerSelectionTimeoutMs);
+            return this;
+        }
+        /**
+         * The socket timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbSocketTimeoutMs(
+                int mongodbSocketTimeoutMs) {
+            doSetProperty("mongodbSocketTimeoutMs", mongodbSocketTimeoutMs);
+            return this;
+        }
+        /**
+         * The socket timeout in milliseconds.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder mongodbSocketTimeoutMs(
+                String mongodbSocketTimeoutMs) {
+            doSetProperty("mongodbSocketTimeoutMs", mongodbSocketTimeoutMs);
             return this;
         }
         /**
@@ -884,6 +965,61 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder provideTransactionMetadata(
                 String provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder queryFetchSize(int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder queryFetchSize(
+                String queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbEndpointBuilder retriableRestartConnectorWaitMs(
+                String retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
             return this;
         }
         /**
