@@ -335,7 +335,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -347,7 +348,47 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Regular expressions matching columns to exclude from change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder columnExcludeList(
+                String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder columnIncludeList(
+                String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching
+         * fully-qualified names of columns that adds the columns original type
+         * and original length as parameters to the corresponding field schemas
+         * in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder columnPropagateSourceType(
+                String columnPropagateSourceType) {
+            doSetProperty("columnPropagateSourceType", columnPropagateSourceType);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events
+         * (deprecated, use column.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -607,6 +648,21 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of regular expressions matching the
+         * database-specific data type names that adds the data type's original
+         * type and original length as parameters to the corresponding field
+         * schemas in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder datatypePropagateSourceType(
+                String datatypePropagateSourceType) {
+            doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
+            return this;
+        }
+        /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
          * change events, including:'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
@@ -645,7 +701,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The query executed with every heartbeat. Defaults to an empty string.
+         * The query executed with every heartbeat.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -916,7 +972,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * CREATE PUBLICATION FOR ALL TABLES;FILTERED - If no publication
          * exists, the connector will create a new publication for all those
          * tables matchingthe current filter configuration (see table/database
-         * whitelist/blacklist properties). If the publication already exists,
+         * include/exclude list properties). If the publication already exists,
          * it will be used. i.e CREATE PUBLICATION FOR TABLE.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -941,6 +997,62 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder publicationName(
                 String publicationName) {
             doSetProperty("publicationName", publicationName);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder queryFetchSize(
+                String queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder retriableRestartConnectorWaitMs(
+                String retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
             return this;
         }
         /**
@@ -970,7 +1082,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events must not be captured.
+         * The schemas for which events must not be captured (deprecated, use
+         * schema.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -979,6 +1092,30 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder schemaBlacklist(
                 String schemaBlacklist) {
             doSetProperty("schemaBlacklist", schemaBlacklist);
+            return this;
+        }
+        /**
+         * The schemas for which events must not be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder schemaExcludeList(
+                String schemaExcludeList) {
+            doSetProperty("schemaExcludeList", schemaExcludeList);
+            return this;
+        }
+        /**
+         * The schemas for which events should be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder schemaIncludeList(
+                String schemaIncludeList) {
+            doSetProperty("schemaIncludeList", schemaIncludeList);
             return this;
         }
         /**
@@ -1006,7 +1143,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events should be captured.
+         * The schemas for which events should be captured (deprecated, use
+         * schema.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1332,8 +1470,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1342,6 +1481,19 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder tableBlacklist(
                 String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
+        default DebeziumPostgresEndpointBuilder tableExcludeList(
+                String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
             return this;
         }
         /**
@@ -1377,6 +1529,19 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * Group: postgres
          */
+        default DebeziumPostgresEndpointBuilder tableIncludeList(
+                String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         */
         default DebeziumPostgresEndpointBuilder tableWhitelist(
                 String tableWhitelist) {
             doSetProperty("tableWhitelist", tableWhitelist);
@@ -1405,8 +1570,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * Specify the constant that will be provided by Debezium to indicate
          * that the original value is a toasted value not provided by the
-         * database.If starts with 'hex:' prefix it is expected that the rest of
-         * the string repesents hexadecimally encoded octets.
+         * database. If starts with 'hex:' prefix it is expected that the rest
+         * of the string repesents hexadecimally encoded octets.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

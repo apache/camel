@@ -255,7 +255,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to exclude from change events.
+         * Regular expressions matching columns to exclude from change events
+         * (deprecated, use column.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -267,7 +268,47 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * Regular expressions matching columns to exclude from change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder columnExcludeList(
+                java.lang.String columnExcludeList) {
+            doSetProperty("columnExcludeList", columnExcludeList);
+            return this;
+        }
+        /**
          * Regular expressions matching columns to include in change events.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder columnIncludeList(
+                java.lang.String columnIncludeList) {
+            doSetProperty("columnIncludeList", columnIncludeList);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching
+         * fully-qualified names of columns that adds the columns original type
+         * and original length as parameters to the corresponding field schemas
+         * in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder columnPropagateSourceType(
+                java.lang.String columnPropagateSourceType) {
+            doSetProperty("columnPropagateSourceType", columnPropagateSourceType);
+            return this;
+        }
+        /**
+         * Regular expressions matching columns to include in change events
+         * (deprecated, use column.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -404,6 +445,18 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
+         * The SQL Server instance name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder databaseInstance(
+                java.lang.String databaseInstance) {
+            doSetProperty("databaseInstance", databaseInstance);
+            return this;
+        }
+        /**
          * Password of the SQL Server database user to be used when connecting
          * to the database.
          * 
@@ -468,6 +521,21 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder databaseUser(
                 java.lang.String databaseUser) {
             doSetProperty("databaseUser", databaseUser);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions matching the
+         * database-specific data type names that adds the data type's original
+         * type and original length as parameters to the corresponding field
+         * schemas in the emitted change records.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder datatypePropagateSourceType(
+                java.lang.String datatypePropagateSourceType) {
+            doSetProperty("datatypePropagateSourceType", datatypePropagateSourceType);
             return this;
         }
         /**
@@ -626,6 +694,34 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
             return this;
         }
         /**
@@ -797,8 +893,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'table.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring
+         * (deprecated, use table.exclude.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -807,6 +904,19 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder tableBlacklist(
                 java.lang.String tableBlacklist) {
             doSetProperty("tableBlacklist", tableBlacklist);
+            return this;
+        }
+        /**
+         * A comma-separated list of regular expressions that match the
+         * fully-qualified names of tables to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tableExcludeList(
+                java.lang.String tableExcludeList) {
+            doSetProperty("tableExcludeList", tableExcludeList);
             return this;
         }
         /**
@@ -824,6 +934,19 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * The tables for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sqlserver
+         */
+        default DebeziumSqlserverComponentBuilder tableIncludeList(
+                java.lang.String tableIncludeList) {
+            doSetProperty("tableIncludeList", tableIncludeList);
+            return this;
+        }
+        /**
+         * The tables for which changes are to be captured (deprecated, use
+         * table.include.list instead).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -910,6 +1033,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "basicPropertyBinding": ((DebeziumSqlserverComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "columnBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnBlacklist((java.lang.String) value); return true;
+            case "columnExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnExcludeList((java.lang.String) value); return true;
+            case "columnIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnIncludeList((java.lang.String) value); return true;
+            case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
             case "columnWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnWhitelist((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseDbname((java.lang.String) value); return true;
@@ -920,11 +1046,13 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
             case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
+            case "databaseInstance": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseInstance((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePort((int) value); return true;
             case "databaseServerName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerName((java.lang.String) value); return true;
             case "databaseServerTimezone": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerTimezone((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseUser((java.lang.String) value); return true;
+            case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatIntervalMs((int) value); return true;
@@ -935,6 +1063,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;
+            case "queryFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setQueryFetchSize((int) value); return true;
+            case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSanitizeFieldNames((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotDelayMs((long) value); return true;
@@ -946,7 +1076,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "sourceStructVersion": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "sourceTimestampMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceTimestampMode((java.lang.String) value); return true;
             case "tableBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableBlacklist((java.lang.String) value); return true;
+            case "tableExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
+            case "tableIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIncludeList((java.lang.String) value); return true;
             case "tableWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTombstonesOnDelete((boolean) value); return true;

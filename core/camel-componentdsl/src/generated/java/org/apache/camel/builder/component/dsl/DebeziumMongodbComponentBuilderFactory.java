@@ -255,28 +255,29 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'collection.blacklist' description.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be excluded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder collectionBlacklist(
-                java.lang.String collectionBlacklist) {
-            doSetProperty("collectionBlacklist", collectionBlacklist);
+        default DebeziumMongodbComponentBuilder collectionExcludeList(
+                java.lang.String collectionExcludeList) {
+            doSetProperty("collectionExcludeList", collectionExcludeList);
             return this;
         }
         /**
-         * The collections for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the
+         * collection names for which changes are to be captured.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder collectionWhitelist(
-                java.lang.String collectionWhitelist) {
-            doSetProperty("collectionWhitelist", collectionWhitelist);
+        default DebeziumMongodbComponentBuilder collectionIncludeList(
+                java.lang.String collectionIncludeList) {
+            doSetProperty("collectionIncludeList", collectionIncludeList);
             return this;
         }
         /**
@@ -341,15 +342,16 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The databases for which changes are to be excluded.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be excluded.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder databaseBlacklist(
-                java.lang.String databaseBlacklist) {
-            doSetProperty("databaseBlacklist", databaseBlacklist);
+        default DebeziumMongodbComponentBuilder databaseExcludeList(
+                java.lang.String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
             return this;
         }
         /**
@@ -366,15 +368,16 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The databases for which changes are to be captured.
+         * A comma-separated list of regular expressions that match the database
+         * names for which changes are to be captured.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder databaseWhitelist(
-                java.lang.String databaseWhitelist) {
-            doSetProperty("databaseWhitelist", databaseWhitelist);
+        default DebeziumMongodbComponentBuilder databaseIncludeList(
+                java.lang.String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -396,16 +399,16 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Description is not available here, please check Debezium website for
-         * corresponding key 'field.blacklist' description.
+         * A comma-separated list of the fully-qualified names of fields that
+         * should be excluded from change event message values.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder fieldBlacklist(
-                java.lang.String fieldBlacklist) {
-            doSetProperty("fieldBlacklist", fieldBlacklist);
+        default DebeziumMongodbComponentBuilder fieldExcludeList(
+                java.lang.String fieldExcludeList) {
+            doSetProperty("fieldExcludeList", fieldExcludeList);
             return this;
         }
         /**
@@ -504,6 +507,19 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The connection timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder mongodbConnectTimeoutMs(
+                int mongodbConnectTimeoutMs) {
+            doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
          * The hostname and port pairs (in the form 'host' or 'host:port') of
          * the MongoDB server(s) in the replica set.
          * 
@@ -560,17 +576,43 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Frequency in seconds to look for new, removed, or changed replica
-         * sets. Defaults to 30 seconds.
+         * Frequency in milliseconds to look for new, removed, or changed
+         * replica sets. Defaults to 30000 milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30s
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder mongodbPollIntervalMs(
+                long mongodbPollIntervalMs) {
+            doSetProperty("mongodbPollIntervalMs", mongodbPollIntervalMs);
+            return this;
+        }
+        /**
+         * The server selection timeout in milliseconds.
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 30
+         * Default: 30s
          * Group: mongodb
          */
-        default DebeziumMongodbComponentBuilder mongodbPollIntervalSec(
-                int mongodbPollIntervalSec) {
-            doSetProperty("mongodbPollIntervalSec", mongodbPollIntervalSec);
+        default DebeziumMongodbComponentBuilder mongodbServerSelectionTimeoutMs(
+                int mongodbServerSelectionTimeoutMs) {
+            doSetProperty("mongodbServerSelectionTimeoutMs", mongodbServerSelectionTimeoutMs);
+            return this;
+        }
+        /**
+         * The socket timeout in milliseconds.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0ms
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder mongodbSocketTimeoutMs(
+                int mongodbSocketTimeoutMs) {
+            doSetProperty("mongodbSocketTimeoutMs", mongodbSocketTimeoutMs);
             return this;
         }
         /**
@@ -637,6 +679,34 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of 0 uses the default JDBC fetch size.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder queryFetchSize(
+                int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
+            return this;
+        }
+        /**
+         * Time to wait before restarting connector after retriable exception
+         * occurs. Defaults to 10000ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         */
+        default DebeziumMongodbComponentBuilder retriableRestartConnectorWaitMs(
+                long retriableRestartConnectorWaitMs) {
+            doSetProperty("retriableRestartConnectorWaitMs", retriableRestartConnectorWaitMs);
             return this;
         }
         /**
@@ -777,17 +847,17 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "basicPropertyBinding": ((DebeziumMongodbComponent) component).setBasicPropertyBinding((boolean) value); return true;
-            case "collectionBlacklist": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionBlacklist((java.lang.String) value); return true;
-            case "collectionWhitelist": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionWhitelist((java.lang.String) value); return true;
+            case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
+            case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
             case "connectBackoffInitialDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffInitialDelayMs((long) value); return true;
             case "connectBackoffMaxDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffMaxDelayMs((long) value); return true;
             case "connectMaxAttempts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectMaxAttempts((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
-            case "databaseBlacklist": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseBlacklist((java.lang.String) value); return true;
+            case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
-            case "databaseWhitelist": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseWhitelist((java.lang.String) value); return true;
+            case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
-            case "fieldBlacklist": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldBlacklist((java.lang.String) value); return true;
+            case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
@@ -795,16 +865,21 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "mongodbAuthsource": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbAuthsource((java.lang.String) value); return true;
+            case "mongodbConnectTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectTimeoutMs((int) value); return true;
             case "mongodbHosts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHosts((java.lang.String) value); return true;
             case "mongodbMembersAutoDiscover": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbMembersAutoDiscover((boolean) value); return true;
             case "mongodbName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbName((java.lang.String) value); return true;
             case "mongodbPassword": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPassword((java.lang.String) value); return true;
-            case "mongodbPollIntervalSec": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPollIntervalSec((int) value); return true;
+            case "mongodbPollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPollIntervalMs((long) value); return true;
+            case "mongodbServerSelectionTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbServerSelectionTimeoutMs((int) value); return true;
+            case "mongodbSocketTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbSocketTimeoutMs((int) value); return true;
             case "mongodbSslEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbSslEnabled((boolean) value); return true;
             case "mongodbSslInvalidHostnameAllowed": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbSslInvalidHostnameAllowed((boolean) value); return true;
             case "mongodbUser": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbUser((java.lang.String) value); return true;
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setPollIntervalMs((long) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMongodbComponent) component).setProvideTransactionMetadata((boolean) value); return true;
+            case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
+            case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotDelayMs((long) value); return true;
