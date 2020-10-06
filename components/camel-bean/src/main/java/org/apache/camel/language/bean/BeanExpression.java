@@ -27,6 +27,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
@@ -53,13 +54,13 @@ import static org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructo
 public class BeanExpression implements Expression, Predicate {
 
     private ParameterMappingStrategy parameterMappingStrategy;
+    private Language simple;
 
     private Object bean;
     private String beanName;
     private Class<?> type;
     private String method;
     private BeanHolder beanHolder;
-    private Language simple;
     private boolean ognlMethod;
 
     public BeanExpression(Object bean, String method) {
@@ -107,6 +108,14 @@ public class BeanExpression implements Expression, Predicate {
         this.parameterMappingStrategy = parameterMappingStrategy;
     }
 
+    public Language getSimple() {
+        return simple;
+    }
+
+    public void setSimple(Language simple) {
+        this.simple = simple;
+    }
+
     @Override
     public void init(CamelContext context) {
         if (parameterMappingStrategy == null) {
@@ -139,12 +148,6 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         ognlMethod = OgnlHelper.isValidOgnlExpression(method);
-        if (ognlMethod) {
-            // ognl may use simple language
-            if (simple == null) {
-                simple = context.resolveLanguage("simple");
-            }
-        }
     }
 
     @Override
@@ -238,12 +241,12 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         if (bean != null) {
-            BeanInfo info = new BeanInfo(context, bean.getClass());
+            BeanInfo info = new BeanInfo(context, bean.getClass(), parameterMappingStrategy);
             if (!info.hasMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
             }
         } else {
-            BeanInfo info = new BeanInfo(context, type);
+            BeanInfo info = new BeanInfo(context, type, parameterMappingStrategy);
             // must be a static method as we do not have a bean instance to invoke
             if (!info.hasStaticMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
@@ -307,7 +310,7 @@ public class BeanExpression implements Expression, Predicate {
             if (resultExchange.hasProperties()) {
                 exchange.getProperties().putAll(resultExchange.getProperties());
             }
-            if (resultExchange.getOut().hasHeaders()) {
+            if (resultExchange.hasOut() && resultExchange.getOut().hasHeaders()) {
                 exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
             }
 
@@ -415,7 +418,9 @@ public class BeanExpression implements Expression, Predicate {
             if (key != null) {
                 // if key is a nested simple expression then re-evaluate that again
                 if (LanguageSupport.hasSimpleFunction(key)) {
-                    key = simple.createExpression(key).evaluate(exchange, String.class);
+                    Expression exp = simple.createExpression(key);
+                    exp.init(exchange.getContext());
+                    key = exp.evaluate(exchange, String.class);
                 }
                 if (key != null) {
                     result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
@@ -439,6 +444,8 @@ public class BeanExpression implements Expression, Predicate {
             Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
         StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
 
+        final TypeConverter typeConverter = exchange.getContext().getTypeConverter();
+
         // trim key
         key = key.trim();
 
@@ -446,17 +453,17 @@ public class BeanExpression implements Expression, Predicate {
         key = StringHelper.removeLeadingAndEndingQuotes(key);
 
         // try map first
-        Map<?, ?> map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
+        Map<?, ?> map = typeConverter.convertTo(Map.class, result);
         if (map != null) {
             return map.get(key);
         }
 
         // special for list is last keyword
-        Integer num = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+        Integer num = typeConverter.tryConvertTo(Integer.class, key);
         boolean checkList = key.startsWith("last") || num != null;
 
         if (checkList) {
-            List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
+            List<?> list = typeConverter.convertTo(List.class, result);
             if (list != null) {
                 if (key.startsWith("last")) {
                     num = list.size() - 1;
@@ -464,7 +471,7 @@ public class BeanExpression implements Expression, Predicate {
                     // maybe its an expression to subtract a number after last
                     String after = StringHelper.after(key, "-");
                     if (after != null) {
-                        Integer redux = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                        Integer redux = typeConverter.tryConvertTo(Integer.class, after.trim());
                         if (redux != null) {
                             num -= redux;
                         } else {
