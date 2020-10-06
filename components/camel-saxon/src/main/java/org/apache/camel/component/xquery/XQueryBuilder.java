@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -68,6 +67,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.MessageHelper;
@@ -95,7 +95,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class<?> resultType;
-    private final AtomicBoolean initialized = new AtomicBoolean();
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
     private boolean allowStAX;
@@ -117,6 +116,44 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     @Override
     public void init(CamelContext context) {
+        // must use synchronized for concurrency issues and only let it initialize once
+        LOG.debug("Initializing XQueryBuilder {}", this);
+        if (configuration == null) {
+            configuration = new Configuration();
+            configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace()
+                    ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
+            LOG.debug("Created new Configuration {}", configuration);
+        } else {
+            LOG.debug("Using existing Configuration {}", configuration);
+        }
+
+        if (configurationProperties != null && !configurationProperties.isEmpty()) {
+            for (Map.Entry<String, Object> entry : configurationProperties.entrySet()) {
+                configuration.setConfigurationProperty(entry.getKey(), entry.getValue());
+            }
+        }
+        staticQueryContext = getConfiguration().newStaticQueryContext();
+        if (moduleURIResolver != null) {
+            staticQueryContext.setModuleURIResolver(moduleURIResolver);
+        }
+
+        Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+            String prefix = entry.getKey();
+            String uri = entry.getValue();
+            // skip invalid prefix or uri according to XQuery spec
+            boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
+            if (!invalid) {
+                LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
+                staticQueryContext.declareNamespace(prefix, uri);
+                staticQueryContext.setInheritNamespaces(true);
+            }
+        }
+        try {
+            expression = createQueryExpression(staticQueryContext);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
+        }
     }
 
     @Override
@@ -162,14 +199,12 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public List<?> evaluateAsList(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsList: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         return getExpression().evaluate(createDynamicContext(exchange));
     }
 
     public Object evaluateAsStringSource(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsString: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         String text = evaluateAsString(exchange);
         return new StringSource(text);
@@ -177,7 +212,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public Object evaluateAsBytesSource(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsBytesSource: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         byte[] bytes = evaluateAsBytes(exchange);
         return new BytesSource(bytes);
@@ -185,7 +219,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public Node evaluateAsDOM(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsDOM: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
@@ -196,7 +229,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public byte[] evaluateAsBytes(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsBytes: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
@@ -209,7 +241,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public String evaluateAsString(Exchange exchange) throws Exception {
         LOG.debug("evaluateAsString: {} for exchange: {}", expression, exchange);
-        initialize(exchange);
 
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
@@ -250,6 +281,12 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     // Static helper methods
     //-------------------------------------------------------------------------
+
+    /**
+     * Creates a new {@link XQueryBuilder} to evaluate against the expression from the string.
+     *
+     * Important: The builder must be initialized before use.
+     */
     public static XQueryBuilder xquery(final String queryText) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
@@ -259,6 +296,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         };
     }
 
+    /**
+     * Creates a new {@link XQueryBuilder} to evaluate against the expression loaded from the reader.
+     *
+     * Important: The builder must be initialized before use.
+     */
     public static XQueryBuilder xquery(final Reader reader) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
@@ -272,6 +314,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         };
     }
 
+    /**
+     * Creates a new {@link XQueryBuilder} to evaluate against the expression loaded from the input stream.
+     *
+     * Important: The builder must be initialized before use.
+     */
     public static XQueryBuilder xquery(final InputStream in, final String characterSet) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
@@ -285,6 +332,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         };
     }
 
+    /**
+     * Creates a new {@link XQueryBuilder} to evaluate against the expression loaded from the input stream.
+     *
+     * Important: The builder must be initialized before use.
+     */
     public static XQueryBuilder xquery(final InputStream in) {
         return new XQueryBuilder() {
             protected XQueryExpression createQueryExpression(StaticQueryContext staticQueryContext)
@@ -307,8 +359,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public XQueryBuilder namespace(String prefix, String uri) {
         namespacePrefixes.put(prefix, uri);
-        // more namespace, we must re initialize
-        initialized.set(false);
         return this;
     }
 
@@ -381,8 +431,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     @Override
     public void setNamespaces(Map<String, String> namespaces) {
         namespacePrefixes.putAll(namespaces);
-        // more namespace, we must re initialize
-        initialized.set(false);
     }
 
     @Override
@@ -400,8 +448,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
-        // change configuration, we must re initialize
-        initialized.set(false);
     }
 
     public Map<String, Object> getConfigurationProperties() {
@@ -410,8 +456,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setConfigurationProperties(Map<String, Object> configurationProperties) {
         this.configurationProperties = Collections.unmodifiableMap(new HashMap<>(configurationProperties));
-        // change configuration, we must re initialize
-        initialized.set(false);
     }
 
     public StaticQueryContext getStaticQueryContext() {
@@ -420,8 +464,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public void setStaticQueryContext(StaticQueryContext staticQueryContext) {
         this.staticQueryContext = staticQueryContext;
-        // change context, we must re initialize
-        initialized.set(false);
     }
 
     public Map<String, Object> getParameters() {
@@ -683,54 +725,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     protected boolean matches(Exchange exchange, List<?> results) {
         return ObjectHelper.matches(results);
-    }
-
-    /**
-     * Initializes this builder - <b>Must be invoked before evaluation</b>.
-     */
-    protected synchronized void initialize(Exchange exchange) throws XPathException, IOException {
-        // must use synchronized for concurrency issues and only let it initialize once
-        if (!initialized.get()) {
-            LOG.debug("Initializing XQueryBuilder {}", this);
-            if (configuration == null) {
-                configuration = new Configuration();
-                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace()
-                        ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
-                LOG.debug("Created new Configuration {}", configuration);
-            } else {
-                LOG.debug("Using existing Configuration {}", configuration);
-            }
-
-            if (configurationProperties != null && !configurationProperties.isEmpty()) {
-                for (Map.Entry<String, Object> entry : configurationProperties.entrySet()) {
-                    configuration.setConfigurationProperty(entry.getKey(), entry.getValue());
-                }
-            }
-            staticQueryContext = getConfiguration().newStaticQueryContext();
-            if (moduleURIResolver != null) {
-                staticQueryContext.setModuleURIResolver(moduleURIResolver);
-            }
-
-            Set<Map.Entry<String, String>> entries = namespacePrefixes.entrySet();
-            for (Map.Entry<String, String> entry : entries) {
-                String prefix = entry.getKey();
-                String uri = entry.getValue();
-                // skip invalid prefix or uri according to XQuery spec
-                boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
-                if (!invalid) {
-                    LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
-                    staticQueryContext.declareNamespace(prefix, uri);
-                    staticQueryContext.setInheritNamespaces(true);
-                }
-            }
-            expression = createQueryExpression(staticQueryContext);
-
-            initialized.set(true);
-        }
-
-        // let the configuration be accessible on the exchange as its shared for this evaluation
-        // and can be needed by 3rd party type converters or other situations (camel-artixds)
-        exchange.setProperty("CamelSaxonConfiguration", configuration);
     }
 
 }

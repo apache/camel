@@ -223,9 +223,23 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (ResourceHelper.isClasspathUri(resourceUri)) {
+            doInitXQuery();
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (!ResourceHelper.isClasspathUri(resourceUri)) {
+            doInitXQuery();
+        }
+        ServiceHelper.startService(xquery);
+    }
 
+    protected void doInitXQuery() throws Exception {
         LOG.debug("{} using schema resource: {}", this, resourceUri);
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
 
@@ -242,10 +256,9 @@ public class XQueryEndpoint extends ProcessorEndpoint {
         this.xquery.setAllowStAX(isAllowStAX());
         this.xquery.setHeaderName(getHeaderName());
         this.xquery.setModuleURIResolver(getModuleURIResolver());
+        this.xquery.init(getCamelContext());
 
         setProcessor(xquery);
-
-        ServiceHelper.startService(xquery);
     }
 
     @Override
