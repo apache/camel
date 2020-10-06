@@ -29,11 +29,15 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncProcessorAwaitManagerInterruptWithRedeliveryTest.class);
+
     private CountDownLatch latch;
     private MyBean bean;
 
@@ -82,7 +86,7 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
             try {
                 latch.await(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("The test execution was interrupted", e);
             }
 
             // Get our blocked thread
