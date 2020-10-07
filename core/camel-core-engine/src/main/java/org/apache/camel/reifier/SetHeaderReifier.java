@@ -36,6 +36,7 @@ public class SetHeaderReifier extends ExpressionReifier<SetHeaderDefinition> {
         ObjectHelper.notNull(definition.getName(), "headerName");
         Expression expr = createExpression(definition.getExpression());
         Expression nameExpr = ExpressionBuilder.simpleExpression(parseString(definition.getName()));
+        nameExpr.init(camelContext);
         return new SetHeaderProcessor(nameExpr, expr);
     }
 }
