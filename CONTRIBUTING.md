@@ -17,20 +17,19 @@ There are many ways you can help make Camel a better piece of software - please 
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
 - [Verify Karaf features](#verify-karaf-features)
-- [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
+- [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the-asf-git-repo)
 - [Creating patches](#creating-patches)
 - [Pull request at Github](#pull-request-at-github)
 - [Manual patch files](#manual-patch-files)
 - [Submitting patches](#submitting-patches)
 - [Using the issue tracker](#using-the-issue-tracker)
 - [Becoming a committer](#becoming-a-committer)
-- [More resources](#more-resources)
 
 
 ## Getting in touch
 
 There are various ways of communicating with the Camel community.
-- Join us on the [Discussion Forums](https://camel.465427.n5.nabble.com) and take part in any conversations
+- Join us on the [Discussion Forums](http://camel.465427.n5.nabble.com) and take part in any conversations
 - Pop by on [Zulip](https://camel.zulipchat.com) and say hi
 
 
@@ -54,7 +53,7 @@ For more information see [How does the website work](https://camel.apache.org/ma
 
 Please raise a new issue in our [issue tracker](https://issues.apache.org/jira/browse/CAMEL)
 If you can create a JUnit test case then your issue is more likely to be resolved quicker.
-e.g. take a look at some of the existing [unit tests cases](https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/)
+e.g. take a look at some of the existing [unit tests cases](https://github.com/apache/camel/tree/master/core/camel-core/src/test/java/org/apache/camel)
 
 
 ## Working on the code
@@ -69,6 +68,8 @@ Build the project (fast build).
     mvn clean install -Pfastinstall
 
 If you intend to work on the code and provide patches and other work you want to submit to the Apache Camel project, then you can fork the project on github and work on your own fork. The custom work you do should be done on branches you create, which can then be committed and pushed upstream, and then submitted to Apache Camel as PRs (pull requests). You can find many resources online how to work on github projects and how to submit work to these projects.
+
+Please avoid unnecessary changes, like reordering methods and fields. This will make your PR easier to review.
 
 
 ## Running checkstyle
@@ -122,7 +123,7 @@ We recommend you create patches as github PRs which is much easier for us to acc
 
 ## Pull request at Github
 
-There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase. After the code has been included into the ASF codebase, you need to close the pull request because we can't do that...
+There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase.
 
 When providing code patches then please include the Camel JIRA ticket number in the commit messages.
 We favor using the syntax:
@@ -134,7 +135,7 @@ We gladly accept patches if you can find ways to improve, tune or fix Camel in s
 
 We recommend using github PRs instead of manual patch files. Especially for bigger patches.
 
-Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our https://issues.apache.org/jira/browse/CAMEL[JIRA issue tracker].
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team -> Create Patch. Then just save the patch as a file and attach it to the corresponding issue on our [JIRA issue tracker](https://issues.apache.org/jira/browse/CAMEL).
 If you're a command line person try the following to create the patch
 
     diff -u Main.java.orig Main.java >> patchfile.txt
@@ -160,6 +161,6 @@ Before you can raise an issue in the [issue tracker](https://issues.apache.org/j
 
 ## Becoming a committer
 
-Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](http://camel.apache.org/how-do-i-become-a-committer.html) for more details.
+Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html) for more details.
 
 The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html)
