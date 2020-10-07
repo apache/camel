@@ -123,8 +123,8 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         }
 
         if (endpoint.getProperties().isFilterOld()) {
-            for (int i = 0; i < tweets.size(); i++) {
-                setLastIdIfGreater(tweets.get(i).getId());
+            for (Status status : tweets) {
+                setLastIdIfGreater(status.getId());
             }
         }
 

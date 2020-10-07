@@ -51,8 +51,8 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
         super.doStart();
         if (endpoint.getEndpointType().equals(EndpointType.DIRECT)) {
             List<Exchange> exchanges = handler.directConsume();
-            for (int i = 0; i < exchanges.size(); i++) {
-                getProcessor().process(exchanges.get(i));
+            for (Exchange exchange : exchanges) {
+                getProcessor().process(exchange);
             }
         }
     }
