@@ -41,7 +41,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
@@ -101,7 +100,6 @@ public abstract class BaseMainSupport extends BaseService {
             = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     protected volatile CamelContext camelContext;
-    protected volatile ProducerTemplate camelTemplate;
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected final MainConfigurationProperties mainConfigurationProperties = new MainConfigurationProperties();
@@ -297,7 +295,7 @@ public abstract class BaseMainSupport extends BaseService {
      * {@link org.apache.camel.BindToRegistry} annotation style.
      * <p/>
      * This option is default enabled.
-     * 
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -395,15 +393,6 @@ public abstract class BaseMainSupport extends BaseService {
         }
         return answer;
     }
-
-    public ProducerTemplate getCamelTemplate() throws Exception {
-        if (camelTemplate == null) {
-            camelTemplate = findOrCreateCamelTemplate();
-        }
-        return camelTemplate;
-    }
-
-    protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
     protected abstract CamelContext createCamelContext();
 
