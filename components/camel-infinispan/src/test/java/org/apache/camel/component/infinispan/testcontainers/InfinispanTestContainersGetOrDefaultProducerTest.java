@@ -78,7 +78,6 @@ public class InfinispanTestContainersGetOrDefaultProducerTest extends Infinispan
                         .to("infinispan:mycache?hosts=" + getInfispanUrl()
                             + "&operation=GETORDEFAULT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan")
                         .to("mock:result");
-                ;
             }
         };
     }
