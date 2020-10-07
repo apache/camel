@@ -100,20 +100,27 @@ public class ExpressionBuilderTest extends TestSupport {
     public void testCamelContextPropertiesExpression() throws Exception {
         camelContext.getGlobalOptions().put("CamelTestKey", "CamelTestValue");
         Expression expression = camelContextPropertyExpression("CamelTestKey");
+        expression.init(camelContext);
         assertExpression(expression, exchange, "CamelTestValue");
         expression = camelContextPropertiesExpression();
+        expression.init(camelContext);
         Map<?, ?> properties = expression.evaluate(exchange, Map.class);
         assertEquals(properties.size(), 1, "Get a wrong properties size");
     }
 
     @Test
     public void testParseSimpleOrFallbackToConstantExpression() throws Exception {
-        assertEquals("world",
-                parseSimpleOrFallbackToConstantExpression("world", camelContext).evaluate(exchange, String.class));
-        assertEquals("Hello there!",
-                parseSimpleOrFallbackToConstantExpression("${body}", camelContext).evaluate(exchange, String.class));
-        assertEquals("Hello there!",
-                parseSimpleOrFallbackToConstantExpression("$simple{body}", camelContext).evaluate(exchange, String.class));
+        Expression exp = simpleExpression("world");
+        exp.init(camelContext);
+        assertEquals("world", exp.evaluate(exchange, String.class));
+
+        exp = simpleExpression("${body}");
+        exp.init(camelContext);
+        assertEquals("Hello there!", exp.evaluate(exchange, String.class));
+
+        exp = simpleExpression("$simple{body}");
+        exp.init(camelContext);
+        assertEquals("Hello there!", exp.evaluate(exchange, String.class));
     }
 
     @Test
