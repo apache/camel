@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class BlobConfigurationOptionsProxyTest extends CamelTestSupport {
 
     @Test
-    public void testIfCorrectOptionsReturnedCorrectly() {
+    void testIfCorrectOptionsReturnedCorrectly() {
         final BlobConfiguration configuration = new BlobConfiguration();
 
         // first case: when exchange is set

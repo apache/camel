@@ -100,7 +100,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testGetBlob(@TempDir Path testDir) throws IOException {
+    void testGetBlob(@TempDir Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -131,7 +131,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testDownloadToFile(@TempDir Path testDir) throws IOException {
+    void testDownloadToFile(@TempDir Path testDir) throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -153,7 +153,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testDownloadLink() {
+    void testDownloadLink() {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -165,7 +165,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testUploadBlockBlob() throws Exception {
+    void testUploadBlockBlob() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -213,7 +213,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCommitAndStageBlockBlob() throws Exception {
+    void testCommitAndStageBlockBlob() throws Exception {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -241,7 +241,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testGetBlobBlockList() {
+    void testGetBlobBlockList() {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -253,7 +253,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndUpdateAppendBlob() throws IOException {
+    void testCreateAndUpdateAppendBlob() throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -281,7 +281,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndUploadPageBlob() throws IOException {
+    void testCreateAndUploadPageBlob() throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -312,7 +312,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testResizePageBlob() throws IOException {
+    void testResizePageBlob() throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -348,7 +348,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testClearPages() throws IOException {
+    void testClearPages() throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 
@@ -377,7 +377,7 @@ class BlobOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testGetPageBlobRanges() throws IOException {
+    void testGetPageBlobRanges() throws IOException {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("upload_test_file");
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
 

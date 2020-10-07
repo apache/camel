@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BlobContainerOperationsIT extends CamelTestSupport {
+class BlobContainerOperationsIT extends CamelTestSupport {
 
     private BlobConfiguration configuration;
     private BlobServiceClientWrapper blobServiceClientWrapper;
@@ -58,7 +58,7 @@ public class BlobContainerOperationsIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndDeleteContainer() {
+    void testCreateAndDeleteContainer() {
         final BlobContainerClientWrapper containerClientWrapper
                 = blobServiceClientWrapper.getBlobContainerClientWrapper("testcontainer1");
         final BlobContainerOperations blobContainerOperations

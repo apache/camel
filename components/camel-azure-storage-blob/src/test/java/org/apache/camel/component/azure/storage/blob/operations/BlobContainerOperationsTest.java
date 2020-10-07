@@ -54,7 +54,7 @@ class BlobContainerOperationsTest {
     }
 
     @Test
-    public void testCreateContainer() {
+    void testCreateContainer() {
         when(client.createContainer(any(), any(), any())).thenReturn(createContainerMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
@@ -66,7 +66,7 @@ class BlobContainerOperationsTest {
     }
 
     @Test
-    public void testDeleteContainer() {
+    void testDeleteContainer() {
         when(client.deleteContainer(any(), any())).thenReturn(deleteContainerMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
@@ -78,7 +78,7 @@ class BlobContainerOperationsTest {
     }
 
     @Test
-    public void testListBlob() {
+    void testListBlob() {
         when(client.listBlobs(any(), any())).thenReturn(listBlobsMock());
 
         final BlobContainerOperations blobContainerOperations = new BlobContainerOperations(configuration, client);
@@ -87,8 +87,8 @@ class BlobContainerOperationsTest {
         assertNotNull(response);
 
         @SuppressWarnings("unchecked")
-        final List<String> items
-                = ((List<BlobItem>) response.getBody()).stream().map(BlobItem::getName).collect(Collectors.toList());
+        final List<BlobItem> body = (List<BlobItem>) response.getBody();
+        final List<String> items = body.stream().map(BlobItem::getName).collect(Collectors.toList());
 
         assertTrue(items.contains("item-1"));
         assertTrue(items.contains("item-2"));
