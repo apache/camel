@@ -43,7 +43,20 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    parameters {
+        booleanParam(name: 'CLEAN', defaultValue: false, description: 'Perform the build in clean workspace')
+    }
+
     stages {
+
+        stage('Clean workspace') {
+             when {
+                 expression { params.CLEAN }
+             }
+             steps {
+                 sh 'git clean -fdx'
+           }
+        }
 
         stage('Build & Deploy') {
             when {
