@@ -87,7 +87,6 @@ public class InfinispanTestContainersRemoveProducerTest extends InfinispanTestCo
                         .to("infinispan:mycache?hosts=" + getInfispanUrl()
                             + "&operation=GET&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan")
                         .to("mock:result");
-                ;
             }
         };
     }
