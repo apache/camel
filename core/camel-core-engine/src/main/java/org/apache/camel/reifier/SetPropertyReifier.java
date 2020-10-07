@@ -35,8 +35,7 @@ public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition>
     public Processor createProcessor() throws Exception {
         ObjectHelper.notNull(definition.getName(), "propertyName", this);
         Expression expr = createExpression(definition.getExpression());
-        Expression nameExpr
-                = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(parseString(definition.getName()), camelContext);
+        Expression nameExpr = ExpressionBuilder.simpleExpression(parseString(definition.getName()));
         return new SetPropertyProcessor(nameExpr, expr);
     }
 }
