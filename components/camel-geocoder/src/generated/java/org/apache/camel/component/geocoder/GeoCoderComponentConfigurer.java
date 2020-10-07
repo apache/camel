@@ -20,6 +20,7 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("lazyStartProducer", boolean.class);
         map.put("basicPropertyBinding", boolean.class);
+        map.put("geoApiContext", com.google.maps.GeoApiContext.class);
         ALL_OPTIONS = map;
     }
 
@@ -29,6 +30,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "geoapicontext":
+        case "geoApiContext": target.setGeoApiContext(property(camelContext, com.google.maps.GeoApiContext.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -46,6 +49,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "geoapicontext":
+        case "geoApiContext": return target.getGeoApiContext();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
