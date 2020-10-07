@@ -110,6 +110,7 @@ public class BeanInfo {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
+        // TODO: optimize this
         this.component = camelContext.getComponent("bean", BeanComponent.class);
 
         final BeanInfoCacheKey key = new BeanInfoCacheKey(type, explicitMethod);

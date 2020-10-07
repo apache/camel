@@ -140,14 +140,16 @@ public class BeanExpression implements Expression, Predicate {
                 target = CamelContextHelper.mandatoryLookup(context, beanName);
             }
         }
-        validateHasMethod(context, target, type, method);
+        if (method != null) {
+            validateHasMethod(context, target, type, method);
 
-        // validate OGNL if its invalid syntax
-        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
-            throw new ExpressionIllegalSyntaxException(method);
+            // validate OGNL if its invalid syntax
+            if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+                throw new ExpressionIllegalSyntaxException(method);
+            }
+
+            ognlMethod = OgnlHelper.isValidOgnlExpression(method);
         }
-
-        ognlMethod = OgnlHelper.isValidOgnlExpression(method);
     }
 
     @Override
@@ -224,13 +226,13 @@ public class BeanExpression implements Expression, Predicate {
             throw new IllegalArgumentException("Either bean or type should be provided on " + this);
         }
 
-        if (bean == null && hasDefaultPublicNoArgConstructor(type)) {
-            bean = context.getInjector().newInstance(type);
-        }
-
         // do not try to validate ognl methods
         if (OgnlHelper.isValidOgnlExpression(method)) {
             return;
+        }
+
+        if (bean == null && hasDefaultPublicNoArgConstructor(type)) {
+            bean = context.getInjector().newInstance(type);
         }
 
         // if invalid OGNL then fail
