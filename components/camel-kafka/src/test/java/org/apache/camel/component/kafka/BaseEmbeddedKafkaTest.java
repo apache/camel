@@ -19,8 +19,8 @@ package org.apache.camel.component.kafka;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.services.kafka.KafkaService;
-import org.apache.camel.test.infra.services.kafka.KafkaServiceFactory;
+import org.apache.camel.test.infra.kafka.services.KafkaService;
+import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.KafkaAdminClient;

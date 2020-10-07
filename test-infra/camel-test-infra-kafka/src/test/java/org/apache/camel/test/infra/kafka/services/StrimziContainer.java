@@ -15,28 +15,34 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.services.kafka;
+package org.apache.camel.test.infra.kafka.services;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
-    private static final String ZOOKEEPER_CONTAINER = System.getProperty("itest.zookeeper.container.image");
-    private static final int ZOOKEEPER_PORT = 2181;
+public class StrimziContainer extends GenericContainer<StrimziContainer> {
+    private static final String STRIMZI_CONTAINER = System.getProperty("itest.strimzi.container.image");
+    private static final int KAFKA_PORT = 9092;
 
-    public ZookeeperContainer(Network network, String name) {
-        super(ZOOKEEPER_CONTAINER);
+    public StrimziContainer(Network network, String name, String zookeeperInstanceName) {
+        super(STRIMZI_CONTAINER);
 
         withEnv("LOG_DIR", "/tmp/logs");
-        withExposedPorts(ZOOKEEPER_PORT);
+        withExposedPorts(KAFKA_PORT);
+        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getContainerIpAddress()));
+        withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092");
+        withEnv("KAFKA_ZOOKEEPER_CONNECT", zookeeperInstanceName + ":2181");
         withNetwork(network);
 
         withCreateContainerCmdModifier(createContainerCmd -> setupContainer(name, createContainerCmd));
 
         withCommand("sh", "-c",
-                "bin/zookeeper-server-start.sh config/zookeeper.properties");
+                "bin/kafka-server-start.sh config/server.properties "
+                                + "--override listeners=${KAFKA_LISTENERS} "
+                                + "--override advertised.listeners=${KAFKA_ADVERTISED_LISTENERS} "
+                                + "--override zookeeper.connect=${KAFKA_ZOOKEEPER_CONNECT}");
 
         waitingFor(Wait.forListeningPort());
     }
@@ -46,8 +52,13 @@ public class ZookeeperContainer extends GenericContainer<ZookeeperContainer> {
         createContainerCmd.withName(name);
     }
 
-    public int getZookeeperPort() {
-        return getMappedPort(ZOOKEEPER_PORT);
+    public int getKafkaPort() {
+        return getMappedPort(KAFKA_PORT);
     }
 
+    @Override
+    public void start() {
+        addFixedExposedPort(KAFKA_PORT, KAFKA_PORT);
+        super.start();
+    }
 }
