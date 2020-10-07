@@ -207,9 +207,9 @@ public class RabbitMQComponent extends DefaultComponent {
         TrustManager trustManager
                 = resolveAndRemoveReferenceParameter(params, "trustManager", TrustManager.class, getTrustManager());
         Map<String, Object> additionalHeaders
-                = resolveAndRemoveReferenceParameter(params, "additionalHeaders", SimpleDataHolderBean.class).getMapData();
+                = resolveAndRemoveReferenceParameter(params, "additionalHeaders", Map.class);
         Map<String, Object> additionalProperties
-                = resolveAndRemoveReferenceParameter(params, "additionalProperties", SimpleDataHolderBean.class).getMapData();
+                = resolveAndRemoveReferenceParameter(params, "additionalProperties", Map.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Additional headers: {}", additionalHeaders);
             LOG.debug("Additional properties: {}", additionalProperties);
