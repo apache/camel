@@ -18,7 +18,7 @@ package org.apache.camel.itest.jmh;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;

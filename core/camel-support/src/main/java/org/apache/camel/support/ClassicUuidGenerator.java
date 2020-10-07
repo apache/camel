@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.engine;
+package org.apache.camel.support;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -25,11 +25,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link UuidGenerator} optimized for Camel usage.
+ * The classic (Camel 2.x) {@link UuidGenerator} optimized for Camel usage.
  */
-public class DefaultUuidGenerator implements UuidGenerator {
+public class ClassicUuidGenerator implements UuidGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultUuidGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClassicUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -77,7 +77,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
         UNIQUE_STUB = stub;
     }
 
-    public DefaultUuidGenerator(String prefix) {
+    public ClassicUuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
             // let the ID be friendly for URL and file systems
@@ -86,7 +86,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
         }
     }
 
-    public DefaultUuidGenerator() {
+    public ClassicUuidGenerator() {
         this("ID-" + hostName);
     }
 
