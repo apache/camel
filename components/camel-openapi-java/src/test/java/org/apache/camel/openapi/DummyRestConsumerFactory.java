@@ -22,9 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.support.ClassicUuidGenerator;
 
 public class DummyRestConsumerFactory implements RestConsumerFactory {
 
@@ -36,9 +36,9 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
         // just use a seda endpoint for testing purpose
         String id;
         if (uriTemplate != null) {
-            id = DefaultUuidGenerator.generateSanitizedId(basePath + uriTemplate);
+            id = ClassicUuidGenerator.generateSanitizedId(basePath + uriTemplate);
         } else {
-            id = DefaultUuidGenerator.generateSanitizedId(basePath);
+            id = ClassicUuidGenerator.generateSanitizedId(basePath);
         }
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
