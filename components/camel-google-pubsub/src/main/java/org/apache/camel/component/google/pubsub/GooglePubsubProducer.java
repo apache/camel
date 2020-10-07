@@ -32,6 +32,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.google.pubsub.GooglePubsubConstants.RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX;
+
 /**
  * Generic PubSub Producer
  */
@@ -97,10 +99,13 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
-
         Map<String, String> attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES, Map.class);
         if (attributes != null) {
-            messageBuilder.putAllAttributes(attributes).build();
+            for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+                if (!attribute.getKey().startsWith(RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX)) {
+                    messageBuilder.putAttributes(attribute.getKey(), attribute.getValue());
+                }
+            }
         }
         PubsubMessage message = messageBuilder.build();
 
