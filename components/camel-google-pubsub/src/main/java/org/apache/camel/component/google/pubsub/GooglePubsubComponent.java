@@ -112,6 +112,7 @@ public class GooglePubsubComponent extends DefaultComponent {
     @Override
     protected void doShutdown() throws Exception {
         cachedPublishers.cleanUp();
+        cachedPublishers.invalidateAll();
         super.doShutdown();
     }
 
