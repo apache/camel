@@ -546,7 +546,8 @@ mail from java code:
 ---------------------------------------------------------------------------------
 public void process(Exchange exchange) throws Exception {
     // the API is a bit clunky so we need to loop
-    Map<String, DataHandler> attachments = exchange.getIn().getAttachments();
+    AttachmentMessage attachmentMessage = exchange.getMessage(AttachmentMessage.class);
+    Map<String, DataHandler> attachments = attachmentMessage.getAttachments();
     if (attachments.size() > 0) {
         for (String name : attachments.keySet()) {
             DataHandler dh = attachments.get(name);
