@@ -36,6 +36,7 @@ import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 

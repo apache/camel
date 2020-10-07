@@ -6,6 +6,18 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.5 to 3.6
 
+=== UUID Generator
+
+The default UUID Generator in Camel has switched to a faster algorithm based on UUID that were used by Camel Quarkus and Camel K.
+This generator does not use the hostname as part of the ID generation and avoids any network IO calls during initialization.
+
+The old generator has been renamed and moved into a new package at `org.apache.camel.support.ClassicUuidGenerator`.
+The new default generator is now also located in camel-support as `org.apache.camel.support.DefaultUuidGenerator`
+where all the out of the box generators reside.
+
+Users that want to use the old UUID generator can configure Camel to use `org.apache.camel.support.ClassicUuidGenerator`
+as the generator.
+
 === Simple language
 
 The simple language have been optimized to handle numeric and boolean values more naturally.

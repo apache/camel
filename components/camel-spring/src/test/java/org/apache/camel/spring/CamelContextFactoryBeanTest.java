@@ -20,9 +20,9 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +31,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
+
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
