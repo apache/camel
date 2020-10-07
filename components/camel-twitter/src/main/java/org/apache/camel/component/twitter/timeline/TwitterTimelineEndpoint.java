@@ -30,6 +30,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+import static org.apache.camel.component.twitter.data.TimelineType.USER;
+
 /**
  * Send tweets and receive tweets from user's timeline.
  */
@@ -64,14 +66,13 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        switch (timelineType) {
-            case USER:
-                return new UserProducer(this);
-            default:
-                throw new IllegalArgumentException(
-                        "Cannot create any producer with uri " + getEndpointUri()
-                                                   + ". A producer type was not provided (or an incorrect pairing was used).");
+        if (timelineType != USER) {
+            throw new IllegalArgumentException(
+                    "Cannot create any producer with uri " + getEndpointUri() +
+                                               ". A producer type was not provided (or an incorrect pairing was used).");
         }
+
+        return new UserProducer(this);
     }
 
     @Override

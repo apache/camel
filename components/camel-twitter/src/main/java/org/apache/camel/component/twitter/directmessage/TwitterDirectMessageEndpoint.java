@@ -52,8 +52,7 @@ public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer answer = TwitterHelper.createConsumer(processor, this, new DirectMessageConsumerHandler(this));
-        return answer;
+        return TwitterHelper.createConsumer(processor, this, new DirectMessageConsumerHandler(this));
     }
 
 }

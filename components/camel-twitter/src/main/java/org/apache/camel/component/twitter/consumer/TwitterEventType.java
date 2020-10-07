@@ -68,8 +68,8 @@ public enum TwitterEventType {
 
         if (bodyList != null && !bodyList.isEmpty()) {
             exchanges = new ArrayList<>(bodyList.size());
-            for (int i = 0; i < bodyList.size(); i++) {
-                exchanges.add(createExchange(endpoint, bodyList.get(i)));
+            for (T t : bodyList) {
+                exchanges.add(createExchange(endpoint, t));
             }
         }
 

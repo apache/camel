@@ -25,8 +25,7 @@ import org.apache.camel.component.twitter.timeline.TwitterTimelineEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UriConfigurationTest {
 
@@ -39,10 +38,10 @@ public class UriConfigurationTest {
         assertTrue(endpoint instanceof TwitterSearchEndpoint, "Endpoint not a TwitterSearchEndpoint: " + endpoint);
         TwitterSearchEndpoint twitterEndpoint = (TwitterSearchEndpoint) endpoint;
 
-        assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
-        assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
-        assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
-        assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
+        assertFalse(twitterEndpoint.getProperties().getConsumerKey().isEmpty());
+        assertFalse(twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
+        assertFalse(twitterEndpoint.getProperties().getAccessToken().isEmpty());
+        assertFalse(twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
     }
 
     @Test
