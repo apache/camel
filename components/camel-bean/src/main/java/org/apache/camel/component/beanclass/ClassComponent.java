@@ -37,6 +37,7 @@ import org.apache.camel.util.PropertiesHelper;
 public class ClassComponent extends BeanComponent {
 
     private ParameterMappingStrategy parameterMappingStrategy;
+    private BeanComponent beanComponent;
 
     public ClassComponent() {
     }
@@ -64,10 +65,10 @@ public class ClassComponent extends BeanComponent {
             // now set additional properties on it
             setProperties(bean, options);
 
-            holder = new ConstantBeanHolder(bean, getCamelContext(), parameterMappingStrategy);
+            holder = new ConstantBeanHolder(bean, getCamelContext(), parameterMappingStrategy, beanComponent);
         } else {
             // otherwise refer to the type
-            holder = new ConstantTypeBeanHolder(clazz, getCamelContext(), parameterMappingStrategy);
+            holder = new ConstantTypeBeanHolder(clazz, getCamelContext(), parameterMappingStrategy, beanComponent);
         }
 
         validateParameters(uri, options, null);
@@ -81,5 +82,6 @@ public class ClassComponent extends BeanComponent {
     @Override
     protected void doInit() throws Exception {
         parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(getCamelContext());
+        beanComponent = getCamelContext().getComponent("bean", BeanComponent.class);
     }
 }

@@ -82,20 +82,22 @@ public class BeanInfo {
     private boolean publicConstructors;
     private boolean publicNoArgConstructors;
 
-    @Deprecated
     public BeanInfo(CamelContext camelContext, Class<?> type) {
-        this(camelContext, type, createParameterMappingStrategy(camelContext));
+        this(camelContext, type, createParameterMappingStrategy(camelContext),
+             camelContext.getComponent("bean", BeanComponent.class));
     }
 
-    public BeanInfo(CamelContext camelContext, Method explicitMethod, ParameterMappingStrategy parameterMappingStrategy) {
-        this(camelContext, explicitMethod.getDeclaringClass(), explicitMethod, parameterMappingStrategy);
+    public BeanInfo(CamelContext camelContext, Method explicitMethod, ParameterMappingStrategy parameterMappingStrategy,
+                    BeanComponent beanComponent) {
+        this(camelContext, explicitMethod.getDeclaringClass(), explicitMethod, parameterMappingStrategy, beanComponent);
     }
 
-    public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy) {
-        this(camelContext, type, null, strategy);
+    public BeanInfo(CamelContext camelContext, Class<?> type, ParameterMappingStrategy strategy, BeanComponent beanComponent) {
+        this(camelContext, type, null, strategy, beanComponent);
     }
 
-    public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy) {
+    public BeanInfo(CamelContext camelContext, Class<?> type, Method explicitMethod, ParameterMappingStrategy strategy,
+                    BeanComponent beanComponent) {
         while (type.isSynthetic()) {
             type = type.getSuperclass();
             if (explicitMethod != null) {
@@ -110,8 +112,7 @@ public class BeanInfo {
         this.camelContext = camelContext;
         this.type = type;
         this.strategy = strategy;
-        // TODO: optimize this
-        this.component = camelContext.getComponent("bean", BeanComponent.class);
+        this.component = beanComponent;
 
         final BeanInfoCacheKey key = new BeanInfoCacheKey(type, explicitMethod);
 
@@ -395,7 +396,7 @@ public class BeanInfo {
             if (type != Object.class) {
                 Class<?> superclass = type.getSuperclass();
                 if (superclass != null && superclass != Object.class) {
-                    BeanInfo superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
+                    BeanInfo superBeanInfo = new BeanInfo(camelContext, superclass, strategy, component);
                     return superBeanInfo.getMethodInfo(method);
                 }
             }

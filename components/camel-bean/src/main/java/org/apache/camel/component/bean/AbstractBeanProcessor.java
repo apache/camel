@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.BeanScope;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
@@ -45,15 +44,6 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     public AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
-    }
-
-    public AbstractBeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-        this(pojo, new BeanInfo(camelContext, pojo.getClass(), parameterMappingStrategy));
-    }
-
-    @Deprecated
-    public AbstractBeanProcessor(Object pojo, CamelContext camelContext) {
-        this(pojo, camelContext, ParameterMappingStrategyHelper.createParameterMappingStrategy(camelContext));
     }
 
     public AbstractBeanProcessor(BeanHolder beanHolder) {

@@ -26,8 +26,9 @@ import org.apache.camel.Exchange;
 public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
 
     public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context,
-                                        ParameterMappingStrategy parameterMappingStrategy) {
-        super(type, context, parameterMappingStrategy);
+                                        ParameterMappingStrategy parameterMappingStrategy,
+                                        BeanComponent beanComponent) {
+        super(type, context, parameterMappingStrategy, beanComponent);
     }
 
     @Override

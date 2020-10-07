@@ -75,7 +75,8 @@ public class BeanInfoTest {
     public void testHandlerClass() throws Exception {
         BeanInfo info = new BeanInfo(
                 context, MyClass.class.getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
+                context.getComponent("bean", BeanComponent.class));
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
@@ -98,7 +99,8 @@ public class BeanInfoTest {
                 .newInstance();
         BeanInfo info = new BeanInfo(
                 context, proxy.getClass().getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
+                context.getComponent("bean", BeanComponent.class));
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
@@ -106,7 +108,8 @@ public class BeanInfoTest {
     public void testHandlerOnDerived() throws Exception {
         BeanInfo info = new BeanInfo(
                 context, MyDerivedClass.class.getMethod("myMethod"),
-                ParameterMappingStrategyHelper.createParameterMappingStrategy(context));
+                ParameterMappingStrategyHelper.createParameterMappingStrategy(context),
+                context.getComponent("bean", BeanComponent.class));
         assertFalse(info.hasAnyMethodHandlerAnnotation());
     }
 
