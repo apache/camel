@@ -93,16 +93,11 @@ public class RabbitMQMessageConverter {
     }
 
     public AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
-        Message msg;
-        if (exchange.hasOut()) {
-            msg = exchange.getOut();
-        } else {
-            msg = exchange.getIn();
-        }
+        Message msg = exchange.getMessage();
 
         AMQP.BasicProperties.Builder properties = buildBasicAmqpProperties(exchange.getProperties(), msg);
 
-        final Map<String, Object> headers = msg.getHeaders();
+        final Map<String, Object> headers = properties.build().getHeaders();
         // Add additional headers (if any)
         if (additionalHeaders != null) {
             headers.putAll(additionalHeaders);
@@ -149,67 +144,68 @@ public class RabbitMQMessageConverter {
             Map<String, Object> exchangeProperties, Message msg) {
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
 
-        final Object contentType = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.CONTENT_TYPE);
+        final Map<String, Object> headers = new HashMap<>(msg.getHeaders()); // We don't want to mutate the message headers
+        final Object contentType = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CONTENT_TYPE);
         if (contentType != null) {
             properties.contentType(contentType.toString());
         }
 
-        final Object priority = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.PRIORITY);
+        final Object priority = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.PRIORITY);
         if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
         }
 
-        final Object messageId = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.MESSAGE_ID);
+        final Object messageId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.MESSAGE_ID);
         if (messageId != null) {
             properties.messageId(messageId.toString());
         }
 
-        final Object clusterId = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.CLUSTERID);
+        final Object clusterId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CLUSTERID);
         if (clusterId != null) {
             properties.clusterId(clusterId.toString());
         }
 
-        final Object replyTo = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.REPLY_TO);
+        final Object replyTo = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.REPLY_TO);
         if (replyTo != null) {
             properties.replyTo(replyTo.toString());
         }
 
-        final Object correlationId = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.CORRELATIONID);
+        final Object correlationId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CORRELATIONID);
         if (correlationId != null) {
             properties.correlationId(correlationId.toString());
         }
 
-        final Object deliveryMode = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.DELIVERY_MODE);
+        final Object deliveryMode = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.DELIVERY_MODE);
         if (deliveryMode != null) {
             properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
         }
 
-        final Object userId = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.USERID);
+        final Object userId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.USERID);
         if (userId != null) {
             properties.userId(userId.toString());
         }
 
-        final Object type = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.TYPE);
+        final Object type = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.TYPE);
         if (type != null) {
             properties.type(type.toString());
         }
 
-        final Object contentEncoding = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.CONTENT_ENCODING);
+        final Object contentEncoding = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.CONTENT_ENCODING);
         if (contentEncoding != null) {
             properties.contentEncoding(contentEncoding.toString());
         }
 
-        final Object expiration = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.EXPIRATION);
+        final Object expiration = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.EXPIRATION);
         if (expiration != null) {
             properties.expiration(expiration.toString());
         }
 
-        final Object appId = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.APP_ID);
+        final Object appId = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.APP_ID);
         if (appId != null) {
             properties.appId(appId.toString());
         }
 
-        final Object timestamp = getBasicAmqpProperty(exchangeProperties, msg, RabbitMQConstants.TIMESTAMP);
+        final Object timestamp = getBasicAmqpProperty(exchangeProperties, headers, RabbitMQConstants.TIMESTAMP);
         if (timestamp != null) {
             properties.timestamp(convertTimestamp(timestamp));
         }
@@ -222,15 +218,17 @@ public class RabbitMQMessageConverter {
             LOG.debug("Ignoring non-AMQP basic properties: {}", ignoredProperties);
         }
 
+        properties.headers(headers);
+
         return properties;
     }
 
     private Object getBasicAmqpProperty(
-            Map<String, Object> exchangeProperties, Message msg,
+            Map<String, Object> exchangeProperties, Map<String, Object> headers,
             String propertyKey) {
         boolean hasAdditionalProps = additionalProperties != null && !additionalProperties
                 .isEmpty();
-        Object object = msg.removeHeader(propertyKey);
+        Object object = headers.remove(propertyKey);
 
         if (exchangeProperties.containsKey(propertyKey)) {
             object = exchangeProperties.get(propertyKey);

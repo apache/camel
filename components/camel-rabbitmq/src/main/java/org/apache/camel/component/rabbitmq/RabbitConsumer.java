@@ -73,7 +73,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         // setup the basicQos
         if (consumer.getEndpoint().isPrefetchEnabled()) {
             channel.basicQos(consumer.getEndpoint().getPrefetchSize(), consumer.getEndpoint().getPrefetchCount(),
-                consumer.getEndpoint().isPrefetchGlobal());
+                    consumer.getEndpoint().isPrefetchGlobal());
         }
 
         // This really only needs to be called on the first consumer or on
@@ -90,8 +90,8 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
             throw new IOException("The RabbitMQ channel is not open");
         }
         tag = channel.basicConsume(consumer.getEndpoint().getQueue(), consumer.getEndpoint().isAutoAck(),
-            consumer.getEndpoint().getConsumerTag(), false,
-            consumer.getEndpoint().isExclusiveConsumer(), null, this);
+                consumer.getEndpoint().getConsumerTag(), false,
+                consumer.getEndpoint().isExclusiveConsumer(), null, this);
     }
 
     @Override
@@ -179,14 +179,14 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                     connected = true;
                 } catch (Exception e) {
                     LOG.warn(
-                        "Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.",
-                        e.getMessage());
+                            "Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.",
+                            e.getMessage());
                     // include stacktrace in DEBUG logging
                     LOG.debug(e.getMessage(), e);
 
                     Integer networkRecoveryInterval = consumer.getEndpoint().getNetworkRecoveryInterval();
                     final long connectionRetryInterval
-                        = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
+                            = networkRecoveryInterval != null && networkRecoveryInterval > 0 ? networkRecoveryInterval : 100L;
                     try {
                         Thread.sleep(connectionRetryInterval);
                     } catch (InterruptedException e1) {
@@ -208,7 +208,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-        throws IOException {
+            throws IOException {
         try {
             if (!consumer.getEndpoint().isAutoAck()) {
                 lock.acquire();
@@ -237,7 +237,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     }
 
     public void doHandleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-        throws IOException {
+            throws IOException {
         Exchange exchange = consumer.getEndpoint().createRabbitExchange(envelope, properties, body);
         consumer.getEndpoint().getMessageConverter().mergeAmqpProperties(exchange, properties);
 
@@ -273,15 +273,19 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 try {
                     consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
                 } catch (AlreadyClosedException alreadyClosedException) {
-                    LOG.warn("Connection or channel closed during reply to exchange {} for correlationId {}. Will reconnect and try again.", exchange.getExchangeId(), properties.getCorrelationId());
+                    LOG.warn(
+                            "Connection or channel closed during reply to exchange {} for correlationId {}. Will reconnect and try again.",
+                            exchange.getExchangeId(), properties.getCorrelationId());
                     // RPC call could not be responded because channel (or connection has been closed during the processing ...
                     // will try to reconnect
                     try {
                         reconnect();
-                        LOG.debug("Sending again the reply to exchange {} for correlationId {}", exchange.getExchangeId(), properties.getCorrelationId());
+                        LOG.debug("Sending again the reply to exchange {} for correlationId {}", exchange.getExchangeId(),
+                                properties.getCorrelationId());
                         consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
                     } catch (Exception e) {
-                        LOG.error("Couldn't sending again the reply to exchange {} for correlationId {}", exchange.getExchangeId(), properties.getCorrelationId());
+                        LOG.error("Couldn't sending again the reply to exchange {} for correlationId {}",
+                                exchange.getExchangeId(), properties.getCorrelationId());
                         exchange.setException(e);
                         consumer.getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
@@ -305,7 +309,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                 msg.setBody(exchange.getException());
                 exchange.setOut(msg);
                 exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID,
-                    exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID));
+                        exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID));
                 try {
                     consumer.getEndpoint().publishExchangeToChannel(exchange, channel, properties.getReplyTo());
                 } catch (RuntimeCamelException e) {
@@ -369,7 +373,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
 
     private boolean isAutomaticRecoveryEnabled() {
         return this.consumer.getEndpoint().getAutomaticRecoveryEnabled() != null
-            && this.consumer.getEndpoint().getAutomaticRecoveryEnabled();
+                && this.consumer.getEndpoint().getAutomaticRecoveryEnabled();
     }
 
     /**
