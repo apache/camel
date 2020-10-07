@@ -28,6 +28,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
@@ -54,6 +55,7 @@ import static org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructo
 public class BeanExpression implements Expression, Predicate {
 
     private ParameterMappingStrategy parameterMappingStrategy;
+    private BeanComponent beanComponent;
     private Language simple;
 
     private Object bean;
@@ -108,6 +110,14 @@ public class BeanExpression implements Expression, Predicate {
         this.parameterMappingStrategy = parameterMappingStrategy;
     }
 
+    public BeanComponent getBeanComponent() {
+        return beanComponent;
+    }
+
+    public void setBeanComponent(BeanComponent beanComponent) {
+        this.beanComponent = beanComponent;
+    }
+
     public Language getSimple() {
         return simple;
     }
@@ -121,8 +131,11 @@ public class BeanExpression implements Expression, Predicate {
         if (parameterMappingStrategy == null) {
             parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(context);
         }
+        if (beanComponent == null) {
+            beanComponent = context.getComponent("bean", BeanComponent.class);
+        }
         if (beanHolder == null) {
-            beanHolder = createBeanHolder(context, parameterMappingStrategy);
+            beanHolder = createBeanHolder(context, parameterMappingStrategy, beanComponent);
         }
         // lets see if we can do additional validation that the bean has valid method during creation of the expression
         Object target = bean;
@@ -243,12 +256,12 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         if (bean != null) {
-            BeanInfo info = new BeanInfo(context, bean.getClass(), parameterMappingStrategy);
+            BeanInfo info = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
             if (!info.hasMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
             }
         } else {
-            BeanInfo info = new BeanInfo(context, type, parameterMappingStrategy);
+            BeanInfo info = new BeanInfo(context, type, parameterMappingStrategy, beanComponent);
             // must be a static method as we do not have a bean instance to invoke
             if (!info.hasStaticMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
@@ -256,15 +269,16 @@ public class BeanExpression implements Expression, Predicate {
         }
     }
 
-    private BeanHolder createBeanHolder(CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
+    private BeanHolder createBeanHolder(
+            CamelContext context, ParameterMappingStrategy parameterMappingStrategy, BeanComponent beanComponent) {
         // either use registry lookup or a constant bean
         BeanHolder holder;
         if (bean != null) {
-            holder = new ConstantBeanHolder(bean, context, parameterMappingStrategy);
+            holder = new ConstantBeanHolder(bean, context, parameterMappingStrategy, beanComponent);
         } else if (beanName != null) {
-            holder = new RegistryBean(context.getRegistry(), context, beanName, parameterMappingStrategy);
+            holder = new RegistryBean(context, beanName, parameterMappingStrategy, beanComponent);
         } else if (type != null) {
-            holder = new ConstantTypeBeanHolder(type, context, parameterMappingStrategy);
+            holder = new ConstantTypeBeanHolder(type, context, parameterMappingStrategy, beanComponent);
         } else {
             throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
         }
@@ -373,9 +387,9 @@ public class BeanExpression implements Expression, Predicate {
         for (String methodName : methods) {
             BeanHolder holder;
             if (beanToCall != null) {
-                holder = new ConstantBeanHolder(beanToCall, exchange.getContext(), parameterMappingStrategy);
+                holder = new ConstantBeanHolder(beanToCall, exchange.getContext(), parameterMappingStrategy, beanComponent);
             } else if (beanType != null) {
-                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext(), parameterMappingStrategy);
+                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext(), parameterMappingStrategy, beanComponent);
             } else {
                 holder = null;
             }
