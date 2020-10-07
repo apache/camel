@@ -326,9 +326,13 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
         } else if (channel == null || !isAutomaticRecoveryEnabled()) {
             LOG.info("Attempting to open a new rabbitMQ channel");
             Connection conn = consumer.getConnection();
-            channel = openChannel(conn);
-            // Register the channel to the tag
-            start();
+            try {
+                stop();
+            } finally {
+                channel = openChannel(conn);
+                // Register the channel to the tag
+                start();
+            }
         }
     }
 
