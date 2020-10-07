@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -55,6 +56,25 @@ public class MainPropertyPlaceholderTest {
             main.setDefaultPropertyPlaceholderLocation("classpath:default.properties");
             main.start();
             assertEquals("default", main.getCamelContext().resolvePropertyPlaceholders("{{hello}}"));
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    public void testPropertiesWithMap() {
+        Main main = new Main();
+        try {
+            main.setInitialProperties(
+                    mapOf("1", "val-init", "2", "val-init"));
+            main.setOverrideProperties(
+                    mapOf("1", "val-override", "3", "val-override"));
+
+            main.start();
+
+            assertEquals("val-override", main.getCamelContext().resolvePropertyPlaceholders("{{1}}"));
+            assertEquals("val-init", main.getCamelContext().resolvePropertyPlaceholders("{{2}}"));
+            assertEquals("val-override", main.getCamelContext().resolvePropertyPlaceholders("{{3}}"));
         } finally {
             main.stop();
         }

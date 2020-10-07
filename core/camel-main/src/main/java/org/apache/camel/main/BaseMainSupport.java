@@ -315,6 +315,14 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     /**
+     * Sets initial properties for the properties component, which will be used before any locations are resolved.
+     */
+    public void setInitialProperties(Map<String, Object> initialProperties) {
+        this.initialProperties = new OrderedProperties();
+        this.initialProperties.putAll(initialProperties);
+    }
+
+    /**
      * Adds a property (initial) for the properties component, which will be used before any locations are resolved.
      *
      * @param key   the property key
@@ -349,6 +357,14 @@ public abstract class BaseMainSupport extends BaseService {
      */
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Sets a special list of override properties that take precedence and will use first, if a property exist.
+     */
+    public void setOverrideProperties(Map<String, Object> initialProperties) {
+        this.overrideProperties = new OrderedProperties();
+        this.overrideProperties.putAll(initialProperties);
     }
 
     /**
