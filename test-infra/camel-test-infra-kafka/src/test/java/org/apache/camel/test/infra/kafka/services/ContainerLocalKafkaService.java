@@ -15,26 +15,29 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.services.kafka;
+package org.apache.camel.test.infra.kafka.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.KafkaContainer;
 
-public class RemoteKafkaService implements KafkaService {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteKafkaService.class);
+public class ContainerLocalKafkaService implements KafkaService {
+    private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaService.class);
+    private KafkaContainer kafka = new KafkaContainer().withEmbeddedZookeeper();
 
-    @Override
     public String getBootstrapServers() {
-        return System.getProperty("kafka.bootstrap.servers");
+        return kafka.getBootstrapServers();
     }
 
     @Override
     public void initialize() {
-        LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
+        kafka.start();
+
+        LOG.info("Kafka bootstrap server running at address {}", kafka.getBootstrapServers());
     }
 
     @Override
     public void shutdown() {
-        // NO-OP
+        kafka.stop();
     }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.services.kafka;
+package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.TestUtils;
 import org.slf4j.Logger;
