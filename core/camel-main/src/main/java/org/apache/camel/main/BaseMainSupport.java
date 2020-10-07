@@ -34,14 +34,12 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
-import org.apache.camel.PropertyBindingException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
@@ -60,8 +58,6 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
@@ -69,7 +65,6 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.BaseService;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -79,8 +74,12 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.main.MainHelper.computeProperties;
 import static org.apache.camel.main.MainHelper.loadEnvironmentVariablesAsProperties;
 import static org.apache.camel.main.MainHelper.lookupPropertyFromSysOrEnv;
+import static org.apache.camel.main.MainHelper.optionKey;
+import static org.apache.camel.main.MainHelper.setPropertiesOnTarget;
+import static org.apache.camel.main.MainHelper.validateOptionAndValue;
 import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ReflectionHelper.findMethod;
 import static org.apache.camel.util.StringHelper.matches;
@@ -115,129 +114,6 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected BaseMainSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    protected static String optionKey(String key) {
-        // as we ignore case for property names we should use keys in same case and without dashes
-        key = StringHelper.dashToCamelCase(key);
-        return key;
-    }
-
-    protected static boolean setPropertiesOnTarget(CamelContext context, Object target, Object source) throws Exception {
-        ObjectHelper.notNull(context, "context");
-        ObjectHelper.notNull(target, "target");
-
-        boolean rc = false;
-
-        PropertyConfigurer targetConfigurer = null;
-        if (target instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(target);
-            targetConfigurer = ((Component) target).getComponentPropertyConfigurer();
-        }
-        if (targetConfigurer == null) {
-            String name = target.getClass().getName();
-            // see if there is a configurer for it
-            targetConfigurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
-        }
-
-        PropertyConfigurer sourceConfigurer = null;
-        if (source instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(source);
-            sourceConfigurer = ((Component) source).getComponentPropertyConfigurer();
-        }
-        if (sourceConfigurer == null) {
-            String name = source.getClass().getName();
-            // see if there is a configurer for it
-            sourceConfigurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
-        }
-
-        if (targetConfigurer != null && sourceConfigurer instanceof PropertyConfigurerGetter) {
-            PropertyConfigurerGetter getter = (PropertyConfigurerGetter) sourceConfigurer;
-            for (String key : getter.getAllOptions(source).keySet()) {
-                Object value = getter.getOptionValue(source, key, true);
-                if (value != null) {
-                    rc |= targetConfigurer.configure(context, target, key, value, true);
-                }
-            }
-        }
-        return rc;
-    }
-
-    protected static boolean setPropertiesOnTarget(
-            CamelContext context, Object target, Map<String, Object> properties,
-            String optionPrefix, boolean failIfNotSet, boolean ignoreCase,
-            Map<String, String> autoConfiguredProperties)
-            throws Exception {
-        ObjectHelper.notNull(context, "context");
-        ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(properties, "properties");
-
-        boolean rc = false;
-        PropertyConfigurer configurer = null;
-        if (target instanceof Component) {
-            // the component needs to be initialized to have the configurer ready
-            ServiceHelper.initService(target);
-            configurer = ((Component) target).getComponentPropertyConfigurer();
-        }
-
-        if (configurer == null) {
-            String name = target.getClass().getName();
-            // see if there is a configurer for it
-            configurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
-        }
-
-        try {
-            // keep a reference of the original keys
-            Map<String, Object> backup = new LinkedHashMap<>(properties);
-
-            rc = PropertyBindingSupport.build()
-                    .withMandatory(failIfNotSet)
-                    .withRemoveParameters(true)
-                    .withConfigurer(configurer)
-                    .withIgnoreCase(ignoreCase)
-                    .bind(context, target, properties);
-
-            for (Map.Entry<String, Object> entry : backup.entrySet()) {
-                if (entry.getValue() != null && !properties.containsKey(entry.getKey())) {
-                    String prefix = optionPrefix;
-                    if (prefix != null && !prefix.endsWith(".")) {
-                        prefix = "." + prefix;
-                    }
-
-                    LOG.debug("Configured property: {}{}={} on bean: {}", prefix, entry.getKey(), entry.getValue(), target);
-                    autoConfiguredProperties.put(prefix + entry.getKey(), entry.getValue().toString());
-                }
-            }
-        } catch (PropertyBindingException e) {
-            String key = e.getOptionKey();
-            if (key == null) {
-                String prefix = e.getOptionPrefix();
-                if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
-                }
-
-                key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
-                        : e.getPropertyName();
-            }
-
-            if (failIfNotSet) {
-                // enrich the error with more precise details with option prefix and key
-                throw new PropertyBindingException(
-                        e.getTarget(), e.getPropertyName(), e.getValue(), optionPrefix, key, e.getCause());
-            } else {
-                LOG.debug("Error configuring property (" + key + ") with name: " + e.getPropertyName() + ") on bean: " + target
-                          + " with value: " + e.getValue() + ". This exception is ignored as failIfNotSet=false.",
-                        e);
-            }
-        }
-
-        return rc;
     }
 
     /**
@@ -1502,117 +1378,4 @@ public abstract class BaseMainSupport extends BaseService {
         }
     }
 
-    protected static void validateOptionAndValue(String key, String option, String value) {
-        if (ObjectHelper.isEmpty(option)) {
-            throw new IllegalArgumentException("Error configuring property: " + key + " because option is empty");
-        }
-        if (ObjectHelper.isEmpty(value)) {
-            throw new IllegalArgumentException("Error configuring property: " + key + " because value is empty");
-        }
-    }
-
-    private static final class PropertyOptionKey {
-        private final Object instance;
-        private final String optionPrefix;
-
-        private PropertyOptionKey(Object instance, String optionPrefix) {
-            this.instance = ObjectHelper.notNull(instance, "instance");
-            this.optionPrefix = ObjectHelper.notNull(optionPrefix, "optionPrefix");
-        }
-
-        public Object getInstance() {
-            return instance;
-        }
-
-        public String getOptionPrefix() {
-            return optionPrefix;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof PropertyOptionKey)) {
-                return false;
-            }
-            PropertyOptionKey key = (PropertyOptionKey) o;
-            return Objects.equals(instance, key.instance)
-                    && Objects.equals(optionPrefix, key.optionPrefix);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(instance, optionPrefix);
-        }
-    }
-
-    protected static void computeProperties(
-            String keyPrefix, String key, Properties prop, Map<PropertyOptionKey, Map<String, Object>> properties,
-            Function<String, Iterable<Object>> supplier) {
-        if (key.startsWith(keyPrefix)) {
-            // grab name
-            final int dot = key.indexOf('.', keyPrefix.length());
-            final String name = dot == -1 ? key.substring(keyPrefix.length()) : key.substring(keyPrefix.length(), dot);
-
-            // enabled is a virtual property
-            if ("enabled".equals(name)) {
-                return;
-            }
-            // skip properties as its already keyPrefix earlier
-            if ("properties".equals(name)) {
-                return;
-            }
-
-            // determine if the service is enabled or not by taking into account two options:
-            //
-            //   1. ${keyPrefix}.enabled = true|false
-            //   2. ${keyPrefix}.${name}.enabled = true|false
-            //
-            // The option [2] has the higher priority so as example:
-            //
-            //   camel.component.enabled = false
-            //   camel.component.seda.enabled = true
-            //
-            // enables auto configuration of the seda component only
-            if (!isServiceEnabled(keyPrefix, name, prop)) {
-                return;
-            }
-
-            String prefix = dot == -1 ? "" : key.substring(0, dot + 1);
-            String option = dot == -1 ? "" : key.substring(dot + 1);
-            String value = prop.getProperty(key, "");
-
-            // enabled is a virtual property
-            if ("enabled".equalsIgnoreCase(option)) {
-                return;
-            }
-
-            validateOptionAndValue(key, option, value);
-
-            Iterable<Object> targets = supplier.apply(name);
-            for (Object target : targets) {
-                PropertyOptionKey pok = new PropertyOptionKey(target, prefix);
-                Map<String, Object> values = properties.computeIfAbsent(pok, k -> new LinkedHashMap<>());
-
-                // we ignore case for property keys (so we should store them in canonical style
-                values.put(optionKey(option), value);
-            }
-        }
-    }
-
-    protected static boolean isServiceEnabled(String prefix, String name, Properties properties) {
-        ObjectHelper.notNull(prefix, "prefix");
-        ObjectHelper.notNull(name, "name");
-        ObjectHelper.notNull(properties, "properties");
-
-        if (!prefix.endsWith(".")) {
-            prefix = prefix + ".";
-        }
-
-        final String group = properties.getProperty(prefix + "enabled", "true");
-        final String item = properties.getProperty(prefix + name + ".enabled", group);
-
-        return Boolean.parseBoolean(item);
-    }
 }
