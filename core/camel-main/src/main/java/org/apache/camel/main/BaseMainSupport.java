@@ -110,6 +110,13 @@ public abstract class BaseMainSupport extends BaseService {
     protected Properties initialProperties;
     protected Properties overrideProperties;
 
+    protected BaseMainSupport() {
+    }
+
+    protected BaseMainSupport(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     protected static String optionKey(String key) {
         // as we ignore case for property names we should use keys in same case and without dashes
         key = StringHelper.dashToCamelCase(key);
@@ -408,16 +415,6 @@ public abstract class BaseMainSupport extends BaseService {
             answer.addAll(camelContext.getExtension(Model.class).getRouteDefinitions());
         }
         return answer;
-    }
-
-    protected abstract CamelContext createCamelContext();
-
-    protected void initCamelContext() throws Exception {
-        camelContext = createCamelContext();
-        if (camelContext == null) {
-            throw new IllegalStateException("Created CamelContext is null");
-        }
-        postProcessCamelContext(camelContext);
     }
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {

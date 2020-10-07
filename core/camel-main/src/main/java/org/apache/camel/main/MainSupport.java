@@ -301,6 +301,10 @@ public abstract class MainSupport extends BaseMainSupport {
         }
     }
 
+    protected abstract ProducerTemplate findOrCreateCamelTemplate();
+
+    protected abstract CamelContext createCamelContext();
+
     public ProducerTemplate getCamelTemplate() throws Exception {
         if (camelTemplate == null) {
             camelTemplate = findOrCreateCamelTemplate();
@@ -308,5 +312,11 @@ public abstract class MainSupport extends BaseMainSupport {
         return camelTemplate;
     }
 
-    protected abstract ProducerTemplate findOrCreateCamelTemplate();
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        if (camelContext == null) {
+            throw new IllegalStateException("Created CamelContext is null");
+        }
+        postProcessCamelContext(camelContext);
+    }
 }
