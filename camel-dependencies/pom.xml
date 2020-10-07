@@ -438,7 +438,7 @@
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.6</mustache-java-version>
     <mvel-version>2.4.10.Final</mvel-version>
-    <mybatis-version>3.5.5</mybatis-version>
+    <mybatis-version>3.5.6</mybatis-version>
     <narayana-version>5.10.6.Final</narayana-version>
     <neoscada-version>0.4.0</neoscada-version>
     <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
