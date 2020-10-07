@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
 
@@ -47,11 +48,21 @@ public class PropertiesComponentPropertiesSourceTest {
         context.getRegistry().bind("my-ps-2",
                 new PropertiesPropertiesSource(Ordered.LOWEST, "ps2", "shared", "v2", "my-key-2", "my-val-2"));
 
-        Properties properties = context.getPropertiesComponent().loadProperties();
+        {
+            Properties properties = context.getPropertiesComponent().loadProperties();
 
-        assertThat(properties.get("my-key-1")).isEqualTo("my-val-1");
-        assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
-        assertThat(properties.get("shared")).isEqualTo("v1");
+            assertThat(properties.get("my-key-1")).isEqualTo("my-val-1");
+            assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+            assertThat(properties.get("shared")).isEqualTo("v1");
+        }
+
+        {
+            Map<String, Object> properties = context.getPropertiesComponent().loadPropertiesAsMap();
+
+            assertThat(properties.get("my-key-1")).isEqualTo("my-val-1");
+            assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+            assertThat(properties.get("shared")).isEqualTo("v1");
+        }
     }
 
     @Test
@@ -67,11 +78,21 @@ public class PropertiesComponentPropertiesSourceTest {
 
         context.getPropertiesComponent().setInitialProperties(initial);
 
-        Properties properties = context.getPropertiesComponent().loadProperties(k -> k.endsWith("-2"));
+        {
+            Properties properties = context.getPropertiesComponent().loadProperties(k -> k.endsWith("-2"));
 
-        assertThat(properties).hasSize(2);
-        assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
-        assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+            assertThat(properties).hasSize(2);
+            assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
+            assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+        }
+
+        {
+            Map<String, Object> properties = context.getPropertiesComponent().loadPropertiesAsMap(k -> k.endsWith("-2"));
+
+            assertThat(properties).hasSize(2);
+            assertThat(properties.get("initial-2")).isEqualTo("initial-val-2");
+            assertThat(properties.get("my-key-2")).isEqualTo("my-val-2");
+        }
     }
 
     @Test
