@@ -30,12 +30,12 @@ public final class KafkaServiceFactory {
     public static KafkaService createService() {
         String kafkaInstanceType = System.getProperty("kafka.instance.type");
 
-        if (kafkaInstanceType.equals("local-strimzi-container")) {
-            return new StrimziService();
+        if (kafkaInstanceType == null || kafkaInstanceType.isEmpty() || kafkaInstanceType.equals("local-kafka-container")) {
+            return new ContainerLocalKafkaService();
         }
 
-        if (kafkaInstanceType.equals("local-kafka-container")) {
-            return new ContainerLocalKafkaService();
+        if (kafkaInstanceType.equals("local-strimzi-container")) {
+            return new StrimziService();
         }
 
         if (kafkaInstanceType.equals("remote")) {
