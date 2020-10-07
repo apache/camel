@@ -98,19 +98,22 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression, Map<String, Object> properties) {
-        Object bean = properties.get("bean");
-        Class<?> beanType = (Class<?>) properties.get("beanType");
-        String ref = (String) properties.get("ref");
-        String method = (String) properties.get("method");
+        BeanExpression answer = null;
 
-        BeanExpression answer;
+        String method = (String) properties.get("method");
+        Object bean = properties.get("bean");
         if (bean != null) {
             answer = new BeanExpression(bean, method);
-        } else if (beanType != null) {
+        }
+        Class<?> beanType = (Class<?>) properties.get("beanType");
+        if (beanType != null) {
             answer = new BeanExpression(beanType, method);
-        } else if (ref != null) {
+        }
+        String ref = (String) properties.get("ref");
+        if (ref != null) {
             answer = new BeanExpression(ref, method);
-        } else {
+        }
+        if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
 

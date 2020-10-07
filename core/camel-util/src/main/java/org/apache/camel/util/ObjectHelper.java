@@ -181,7 +181,17 @@ public final class ObjectHelper {
      * @return       true if empty
      */
     public static boolean isEmpty(Object value) {
-        return !isNotEmpty(value);
+        if (value == null) {
+            return true;
+        } else if (value instanceof String) {
+            return ((String) value).trim().isEmpty();
+        } else if (value instanceof Collection) {
+            return ((Collection<?>) value).isEmpty();
+        } else if (value instanceof Map) {
+            return ((Map<?, ?>) value).isEmpty();
+        } else {
+            return false;
+        }
     }
 
     /**
