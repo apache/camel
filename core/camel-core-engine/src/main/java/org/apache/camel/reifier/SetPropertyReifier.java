@@ -36,6 +36,7 @@ public class SetPropertyReifier extends ExpressionReifier<SetPropertyDefinition>
         ObjectHelper.notNull(definition.getName(), "propertyName", this);
         Expression expr = createExpression(definition.getExpression());
         Expression nameExpr = ExpressionBuilder.simpleExpression(parseString(definition.getName()));
+        nameExpr.init(camelContext);
         return new SetPropertyProcessor(nameExpr, expr);
     }
 }
