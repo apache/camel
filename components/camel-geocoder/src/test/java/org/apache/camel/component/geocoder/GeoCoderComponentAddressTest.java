@@ -19,7 +19,9 @@ package org.apache.camel.component.geocoder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+@EnabledIfEnvironmentVariable(named = "CAMEL_GEOCODER_APIKEY", matches = ".+")
 public class GeoCoderComponentAddressTest extends GeoCoderApiKeyTestBase {
 
     @Test

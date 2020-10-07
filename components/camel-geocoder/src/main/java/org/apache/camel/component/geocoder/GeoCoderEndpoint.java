@@ -76,6 +76,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
 
     public GeoCoderEndpoint(String uri, GeoCoderComponent component) {
         super(uri, component);
+
     }
 
     @Override
@@ -274,10 +275,14 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
 
     /**
      * Specific Google required
-     * 
+     *
      * @return
      */
     protected GeoApiContext createGeoApiContext() {
+        GeoCoderComponent geoCoderComponent = (GeoCoderComponent) this.getComponent();
+        if (geoCoderComponent.getGeoApiContext() != null) {
+            return geoCoderComponent.getGeoApiContext();
+        }
         GeoApiContext.Builder builder = new GeoApiContext.Builder();
         if (clientId != null) {
             builder = builder.enterpriseCredentials(clientId, clientKey);

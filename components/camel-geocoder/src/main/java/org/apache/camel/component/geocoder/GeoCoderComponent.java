@@ -18,7 +18,9 @@ package org.apache.camel.component.geocoder;
 
 import java.util.Map;
 
+import com.google.maps.GeoApiContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -27,6 +29,9 @@ import org.apache.camel.support.DefaultComponent;
  */
 @Component("geocoder")
 public class GeoCoderComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced")
+    private GeoApiContext geoApiContext;
 
     public GeoCoderComponent() {
     }
@@ -48,5 +53,18 @@ public class GeoCoderComponent extends DefaultComponent {
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public GeoApiContext getGeoApiContext() {
+        return geoApiContext;
+    }
+
+    /**
+     * Configuration for Google maps API
+     *
+     * @param geoApiContext
+     */
+    public void setGeoApiContext(GeoApiContext geoApiContext) {
+        this.geoApiContext = geoApiContext;
     }
 }

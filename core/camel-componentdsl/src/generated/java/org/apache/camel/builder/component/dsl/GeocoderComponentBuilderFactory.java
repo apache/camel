@@ -86,6 +86,18 @@ public interface GeocoderComponentBuilderFactory {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
+        /**
+         * Configuration for Google maps API.
+         * 
+         * The option is a: <code>com.google.maps.GeoApiContext</code> type.
+         * 
+         * Group: advanced
+         */
+        default GeocoderComponentBuilder geoApiContext(
+                com.google.maps.GeoApiContext geoApiContext) {
+            doSetProperty("geoApiContext", geoApiContext);
+            return this;
+        }
     }
 
     class GeocoderComponentBuilderImpl
@@ -105,6 +117,7 @@ public interface GeocoderComponentBuilderFactory {
             switch (name) {
             case "lazyStartProducer": ((GeoCoderComponent) component).setLazyStartProducer((boolean) value); return true;
             case "basicPropertyBinding": ((GeoCoderComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "geoApiContext": ((GeoCoderComponent) component).setGeoApiContext((com.google.maps.GeoApiContext) value); return true;
             default: return false;
             }
         }
