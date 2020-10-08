@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public abstract class MainSupport extends BaseMainSupport {
 
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected MainShutdownStrategy shutdownStrategy;
+
+    protected volatile ProducerTemplate camelTemplate;
 
     protected MainSupport(Class<?>... configurationClasses) {
         this();
@@ -152,7 +155,7 @@ public abstract class MainSupport extends BaseMainSupport {
     /**
      * Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <=
      * 0 will run forever.
-     * 
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -169,7 +172,7 @@ public abstract class MainSupport extends BaseMainSupport {
      * Sets the maximum idle duration (in seconds) when running the application, and if there has been no message
      * processed after being idle for more than this duration then the application should be terminated. Defaults to -1.
      * Any value <= 0 will run forever.
-     * 
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -185,7 +188,7 @@ public abstract class MainSupport extends BaseMainSupport {
     /**
      * Sets the duration to run the application to process at most max messages until it should be terminated. Defaults
      * to -1. Any value <= 0 will run forever.
-     * 
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -195,7 +198,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Sets the exit code for the application if duration was hit
-     * 
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -227,7 +230,7 @@ public abstract class MainSupport extends BaseMainSupport {
     /**
      * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a
      * {@link DefaultMainShutdownStrategy} will be used.
-     * 
+     *
      * @param shutdownStrategy the shutdown strategy
      */
     public void setShutdownStrategy(MainShutdownStrategy shutdownStrategy) {
@@ -296,5 +299,24 @@ public abstract class MainSupport extends BaseMainSupport {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    protected abstract ProducerTemplate findOrCreateCamelTemplate();
+
+    protected abstract CamelContext createCamelContext();
+
+    public ProducerTemplate getCamelTemplate() throws Exception {
+        if (camelTemplate == null) {
+            camelTemplate = findOrCreateCamelTemplate();
+        }
+        return camelTemplate;
+    }
+
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        if (camelContext == null) {
+            throw new IllegalStateException("Created CamelContext is null");
+        }
+        postProcessCamelContext(camelContext);
     }
 }
