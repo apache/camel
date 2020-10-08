@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1642,10 +1641,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 this.language = context.resolveLanguage("bean");
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", bean);
-                properties.put("method", method);
-                this.exp = language.createExpression(null, properties);
+                this.exp = language.createExpression(null, new Object[]{bean, method});
                 this.exp.init(context);
             }
 
@@ -1728,16 +1724,7 @@ public class ExpressionBuilder {
             @Override
             public void init(CamelContext context) {
                 this.language = context.resolveLanguage("xtokenize");
-                Map<String, Object> map = new HashMap<>(4);
-                map.put("mode", mode);
-                map.put("group", group);
-                if (headerName != null) {
-                    map.put("headerName", headerName);
-                }
-                if (namespaces != null) {
-                    map.put("namespaces", namespaces);
-                }
-                this.exp = language.createExpression(path, map);
+                this.exp = language.createExpression(path, new Object[]{headerName, mode, group, namespaces});
                 this.exp.init(context);
             }
 

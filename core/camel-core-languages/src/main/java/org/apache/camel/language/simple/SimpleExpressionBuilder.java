@@ -19,10 +19,8 @@ package org.apache.camel.language.simple;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
@@ -580,10 +578,7 @@ public final class SimpleExpressionBuilder {
                 } catch (InvalidPayloadException e) {
                     throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", body);
-                properties.put("method", ognl);
-                Expression ognlExp = bean.createExpression(null, properties);
+                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -662,10 +657,7 @@ public final class SimpleExpressionBuilder {
                 if (body != null) {
                     // ognl is able to evaluate method name if it contains nested functions
                     // so we should not eager evaluate ognl as a string
-                    Map<String, Object> properties = new HashMap<>(2);
-                    properties.put("bean", body);
-                    properties.put("method", ognl);
-                    Expression ognlExp = bean.createExpression(null, properties);
+                    Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
                     ognlExp.init(exchange.getContext());
                     return ognlExp.evaluate(exchange, Object.class);
                 } else {
@@ -700,10 +692,7 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", exchange);
-                properties.put("method", ognl);
-                Expression ognlExp = bean.createExpression(null, properties);
+                Expression ognlExp = bean.createExpression(null, new Object[] { exchange, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -762,12 +751,7 @@ public final class SimpleExpressionBuilder {
                 if (body == null) {
                     return null;
                 }
-                // ognl is able to evaluate method name if it contains nested functions
-                // so we should not eager evaluate ognl as a string
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", body);
-                properties.put("method", ognl);
-                Expression ognlExp = bean.createExpression(null, properties);
+                Expression ognlExp = bean.createExpression(null, new Object[] { body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -894,10 +878,7 @@ public final class SimpleExpressionBuilder {
 
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", exception);
-                properties.put("method", ognl);
-                Expression ognlExp = bean.createExpression(null, properties);
+                Expression ognlExp = bean.createExpression(null, new Object[] { exception, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
             }
@@ -979,11 +960,7 @@ public final class SimpleExpressionBuilder {
                 return null;
             }
             if (method != null) {
-                // okay we have a property value, the remainder is OGNL method call on it
-                Map<String, Object> properties = new HashMap<>(2);
-                properties.put("bean", property);
-                properties.put("method", method);
-                Expression exp = beanLanguage.createExpression(null, properties);
+                Expression exp = beanLanguage.createExpression(null, new Object[] { property, method });
                 exp.init(exchange.getContext());
                 return exp.evaluate(exchange, Object.class);
             } else {

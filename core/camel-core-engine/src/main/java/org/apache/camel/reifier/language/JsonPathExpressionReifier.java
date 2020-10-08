@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -45,15 +42,15 @@ public class JsonPathExpressionReifier extends ExpressionReifier<JsonPathExpress
         }
     }
 
-    private Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(7);
-        properties.put("resultType", definition.getResultType());
-        properties.put("suppressExceptions", parseBoolean(definition.getSuppressExceptions()));
-        properties.put("allowSimple", parseBoolean(definition.getAllowSimple()));
-        properties.put("allowEasyPredicate", parseBoolean(definition.getAllowEasyPredicate()));
-        properties.put("writeAsString", parseBoolean(definition.getWriteAsString()));
-        properties.put("headerName", parseString(definition.getHeaderName()));
-        properties.put("option", parseString(definition.getOption()));
+    private Object[] createProperties() {
+        Object[] properties = new Object[7];
+        properties[0] = definition.getResultType();
+        properties[1] = parseBoolean(definition.getSuppressExceptions());
+        properties[2] = parseBoolean(definition.getAllowSimple());
+        properties[3] = parseBoolean(definition.getAllowEasyPredicate());
+        properties[4] = parseBoolean(definition.getWriteAsString());
+        properties[5] = parseString(definition.getHeaderName());
+        properties[6] = parseString(definition.getOption());
         return properties;
     }
 

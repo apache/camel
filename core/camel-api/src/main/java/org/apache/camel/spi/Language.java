@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
@@ -49,10 +47,10 @@ public interface Language {
      * xpath/xquery/tokenizer languages that have several options.
      *
      * @param  expression the expression
-     * @param  properties configuration properties
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
      * @return            the created predicate
      */
-    default Predicate createPredicate(String expression, Map<String, Object> properties) {
+    default Predicate createPredicate(String expression, Object[] properties) {
         return createPredicate(expression);
     }
 
@@ -63,10 +61,10 @@ public interface Language {
      * xpath/xquery/tokenizer languages that have several options.
      *
      * @param  expression the expression
-     * @param  properties configuration properties
+     * @param  properties configuration properties (optimized as object array with hardcoded positions for properties)
      * @return            the created expression
      */
-    default Expression createExpression(String expression, Map<String, Object> properties) {
+    default Expression createExpression(String expression, Object[] properties) {
         return createExpression(expression);
     }
 }

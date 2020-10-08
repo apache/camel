@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -61,10 +58,10 @@ public class XQueryExpressionReifier extends ExpressionReifier<XQueryExpression>
         }
     }
 
-    protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(2);
-        properties.put("resultType", definition.getResultType());
-        properties.put("headerName", parseString(definition.getHeaderName()));
+    protected Object[] createProperties() {
+        Object[] properties = new Object[2];
+        properties[0] = definition.getResultType();
+        properties[1] = parseString(definition.getHeaderName());
         return properties;
     }
 

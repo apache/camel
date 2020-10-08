@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.xquery;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
@@ -65,19 +63,19 @@ public class XQueryLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         return (Predicate) createExpression(expression, properties);
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         expression = loadResource(expression);
 
-        Class<?> clazz = property(Class.class, properties, "resultType", null);
+        Class<?> clazz = property(Class.class, properties, 0, null);
         if (clazz != null) {
             setResultType(clazz);
         }
-        setHeaderName(property(String.class, properties, "headerName", headerName));
+        setHeaderName(property(String.class, properties, 1, headerName));
 
         XQueryBuilder builder = XQueryBuilder.xquery(expression);
         configureBuilder(builder);

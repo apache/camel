@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.bean;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -94,26 +92,30 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         BeanExpression answer = null;
 
-        String method = (String) properties.get("method");
-        Object bean = properties.get("bean");
+        String method = (String) properties[1];
+        Object bean = properties[0];
         if (bean != null) {
             answer = new BeanExpression(bean, method);
         }
-        Class<?> beanType = (Class<?>) properties.get("beanType");
-        if (beanType != null) {
-            answer = new BeanExpression(beanType, method);
+        if (answer == null) {
+            Class<?> beanType = (Class<?>) properties[2];
+            if (beanType != null) {
+                answer = new BeanExpression(beanType, method);
+            }
         }
-        String ref = (String) properties.get("ref");
-        if (ref != null) {
-            answer = new BeanExpression(ref, method);
+        if (answer == null) {
+            String ref = (String) properties[3];
+            if (ref != null) {
+                answer = new BeanExpression(ref, method);
+            }
         }
         if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
