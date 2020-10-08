@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2EventbridgeBaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.5";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.6";
     public static final String CONTAINER_NAME = "eventbridge";
 
     @Override
