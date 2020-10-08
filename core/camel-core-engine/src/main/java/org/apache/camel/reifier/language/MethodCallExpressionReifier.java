@@ -31,11 +31,12 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
     }
 
     protected Object[] createProperties() {
-        Object[] properties = new Object[4];
+        Object[] properties = new Object[5];
         properties[0] = definition.getInstance();
         properties[1] = parseString(definition.getMethod());
         properties[2] = definition.getBeanType();
         properties[3] = parseString(definition.getRef());
+        properties[4] = parseString(definition.getScope());
         return properties;
     }
 

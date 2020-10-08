@@ -16,10 +16,12 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -28,6 +30,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Represents one of built-in functions of the <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -188,7 +191,55 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("bean:", function);
         if (remainder != null) {
             Language bean = camelContext.resolveLanguage("bean");
-            return bean.createExpression(remainder);
+            String ref = remainder;
+            Object method = null;
+            Object scope = null;
+
+            // we support different syntax for bean function
+            if (remainder.contains("?method=") || remainder.contains("?scope=")) {
+                ref = StringHelper.before(remainder, "?");
+                String query = StringHelper.after(remainder, "?");
+                try {
+                    Map<String, Object> map = URISupport.parseQuery(query);
+                    method = map.get("method");
+                    scope = map.get("scope");
+                } catch (URISyntaxException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            } else {
+                //first check case :: because of my.own.Bean::method
+                int doubleColonIndex = remainder.indexOf("::");
+                //need to check that not inside params
+                int beginOfParameterDeclaration = remainder.indexOf('(');
+                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                    ref = remainder.substring(0, doubleColonIndex);
+                    method = remainder.substring(doubleColonIndex + 2);
+                } else {
+                    int idx = remainder.indexOf('.');
+                    if (idx > 0) {
+                        ref = remainder.substring(0, idx);
+                        method = remainder.substring(idx + 1);
+                    }
+                }
+            }
+
+            Class<?> type = null;
+            if (ref != null && ref.startsWith("type:")) {
+                try {
+                    type = camelContext.getClassResolver().resolveMandatoryClass(ref.substring(5));
+                    ref = null;
+                } catch (ClassNotFoundException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
+
+            // there are parameters then map them into properties
+            Object[] properties = new Object[5];
+            properties[2] = type;
+            properties[3] = ref;
+            properties[1] = method;
+            properties[4] = scope;
+            return bean.createExpression(null, properties);
         }
 
         // properties: prefix
