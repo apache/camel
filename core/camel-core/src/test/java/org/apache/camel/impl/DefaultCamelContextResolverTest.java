@@ -218,16 +218,6 @@ public class DefaultCamelContextResolverTest {
             throw new UnsupportedOperationException("Should not be called");
         }
 
-        @Override
-        public Predicate createPredicate(String expression, Map<String, Object> properties) {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
-        @Override
-        public Expression createExpression(String expression, Map<String, Object> properties) {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
         public boolean isFallback() {
             return fallback;
         }

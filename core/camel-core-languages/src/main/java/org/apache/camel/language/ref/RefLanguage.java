@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.ref;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -78,16 +76,6 @@ public class RefLanguage extends LanguageSupport {
 
         answer.init(getCamelContext());
         return answer;
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
-        return createPredicate(expression);
-    }
-
-    @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
-        return createExpression(expression);
     }
 
 }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
@@ -73,16 +71,6 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
 
         @Override
         public Expression createExpression(String expression) {
-            return null;
-        }
-
-        @Override
-        public Predicate createPredicate(String expression, Map<String, Object> properties) {
-            return null;
-        }
-
-        @Override
-        public Expression createExpression(String expression, Map<String, Object> properties) {
             return null;
         }
 
