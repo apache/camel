@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2LambdaBaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.5";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.11.6";
     public static final String CONTAINER_NAME = "lambda";
 
     @Override
