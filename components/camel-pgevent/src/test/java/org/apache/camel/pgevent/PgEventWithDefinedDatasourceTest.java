@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pgevent.integration;
+package org.apache.camel.pgevent;
 
+import com.impossibl.postgres.jdbc.PGDataSource;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -23,12 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class PgEventPubSubIntegrationTest extends AbstractPgEventIntegrationTest {
+public class PgEventWithDefinedDatasourceTest extends PgEventTestSupport {
 
-    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{databaseUser}}&pass={{password}}")
+    @EndpointInject("pgevent:///postgres/testchannel?datasource=#pgDataSource")
     private Endpoint subscribeEndpoint;
 
-    @EndpointInject("pgevent://{{host}}:{{port}}/{{database}}/testchannel?user={{databaseUser}}&pass={{password}}")
+    @EndpointInject("pgevent:///postgres/testchannel?datasource=#pgDataSource")
     private Endpoint notifyEndpoint;
 
     @EndpointInject("timer://test?repeatCount=1&period=1")
@@ -37,8 +39,20 @@ public class PgEventPubSubIntegrationTest extends AbstractPgEventIntegrationTest
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
 
+    @BindToRegistry("pgDataSource")
+    public PGDataSource loadDataSource() throws Exception {
+        PGDataSource dataSource = new PGDataSource();
+        dataSource.setHost(getHost());
+        dataSource.setPort(getMappedPort());
+        dataSource.setDatabaseName(POSTGRES_DB);
+        dataSource.setUser(POSTGRES_USER);
+        dataSource.setPassword(POSTGRES_PASSWORD);
+
+        return dataSource;
+    }
+
     @Test
-    public void testPgEventPublishSubscribe() throws Exception {
+    public void testPgEventPublishSubscribeWithDefinedDatasource() throws Exception {
         mockEndpoint.expectedBodiesReceived(TEST_MESSAGE_BODY);
         mockEndpoint.assertIsSatisfied(5000);
     }
