@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.BeanScope;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -28,8 +29,10 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -45,7 +48,7 @@ import org.apache.camel.util.URISupport;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by its classname or the bean itself.
  */
 @org.apache.camel.spi.annotations.Language("bean")
-public class BeanLanguage extends LanguageSupport implements StaticService {
+public class BeanLanguage extends LanguageSupport implements PropertyConfigurer, StaticService {
 
     private volatile BeanComponent beanComponent;
     private volatile ParameterMappingStrategy parameterMappingStrategy;
@@ -98,6 +101,33 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
 
     public void setScope(BeanScope scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "bean":
+                setBean(PropertyConfigurerSupport.property(camelContext, Object.class, value));
+                return true;
+            case "beantype":
+            case "beanType":
+                setBeanType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "ref":
+                setRef(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "method":
+                setMethod(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "scope":
+                setScope(PropertyConfigurerSupport.property(camelContext, BeanScope.class, value));
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

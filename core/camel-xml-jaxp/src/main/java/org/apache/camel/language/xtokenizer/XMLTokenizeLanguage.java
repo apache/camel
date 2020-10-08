@@ -18,12 +18,15 @@ package org.apache.camel.language.xtokenizer;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.builder.Namespaces;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * </ul>
  */
 @Language("xtokenize")
-public class XMLTokenizeLanguage extends LanguageSupport {
+public class XMLTokenizeLanguage extends LanguageSupport implements PropertyConfigurer {
 
     private String headerName;
     private String path;
@@ -160,4 +163,27 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         this.namespaces = namespaces;
     }
 
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "mode":
+                setMode(PropertyConfigurerSupport.property(camelContext, char.class, value));
+                return true;
+            case "group":
+                setGroup(PropertyConfigurerSupport.property(camelContext, int.class, value));
+                return true;
+            case "namespaces":
+                setNamespaces(PropertyConfigurerSupport.property(camelContext, Namespaces.class, value));
+                return true;
+            default:
+                return false;
+        }
+    }
 }
