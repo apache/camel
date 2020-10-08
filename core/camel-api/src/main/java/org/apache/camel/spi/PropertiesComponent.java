@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
@@ -69,9 +70,19 @@ public interface PropertiesComponent extends StaticService {
     Properties loadProperties();
 
     /**
+     * Loads the properties from the default locations and sources.
+     *
+     * @return a {@link Map} representing the properties loaded.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> loadPropertiesAsMap() {
+        return (Map) loadProperties();
+    }
+
+    /**
      * Loads the properties from the default locations and sources filtering them out according to a predicate.
      * </p>
-     * 
+     *
      * <pre>
      * {
      *     &#64;code
@@ -84,6 +95,26 @@ public interface PropertiesComponent extends StaticService {
      * @return        the properties loaded.
      */
     Properties loadProperties(Predicate<String> filter);
+
+    /**
+     * Loads the properties from the default locations and sources filtering them out according to a predicate.
+     * </p>
+     *
+     * <pre>
+     * {
+     *     &#64;code
+     *     PropertiesComponent pc = getPropertiesComponent();
+     *     Map<String, Object> props = pc.loadPropertiesAsMap(key -> key.startsWith("camel.component.seda"));
+     * }
+     * </pre>
+     *
+     * @param  filter the predicate used to filter out properties based on the key.
+     * @return        a {@link Map} representing the properties loaded.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> loadPropertiesAsMap(Predicate<String> filter) {
+        return (Map) loadProperties(filter);
+    }
 
     /**
      * Gets the configured properties locations. This may be empty if the properties component has only been configured
@@ -138,6 +169,16 @@ public interface PropertiesComponent extends StaticService {
      * Gets a list of properties that are local for the current thread only (ie thread local)
      */
     Properties getLocalProperties();
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     *
+     * @return a {@link Map} representing the local properties.
+     */
+    @SuppressWarnings("unchecked")
+    default Map<String, Object> getLocalPropertiesAsMap() {
+        return (Map) getLocalProperties();
+    }
 
     /**
      * Encoding to use when loading properties file from the file system or classpath.
