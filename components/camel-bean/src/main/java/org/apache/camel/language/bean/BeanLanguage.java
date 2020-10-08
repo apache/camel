@@ -16,6 +16,10 @@
  */
 package org.apache.camel.language.bean;
 
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import org.apache.camel.BeanScope;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
@@ -27,6 +31,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * A <a href="http://camel.apache.org/bean-language.html">bean language</a> which uses a simple text notation to invoke
@@ -50,6 +55,7 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
     private Class<?> beanType;
     private String ref;
     private String method;
+    private BeanScope scope = BeanScope.Singleton;
 
     public BeanLanguage() {
     }
@@ -86,6 +92,14 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
         this.method = method;
     }
 
+    public BeanScope getScope() {
+        return scope;
+    }
+
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
+    }
+
     @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
@@ -120,7 +134,9 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
         if (answer == null) {
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
-
+        if (properties.length == 5) {
+            answer.setScope(property(BeanScope.class, properties, 4, scope));
+        }
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);
@@ -131,6 +147,7 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
     @Override
     public Expression createExpression(String expression) {
         BeanExpression answer;
+        String beanScope = null;
 
         // favour using the configured options
         if (bean != null) {
@@ -140,14 +157,19 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
         } else if (ref != null) {
             answer = new BeanExpression(ref, method);
         } else {
+            // we support different syntax for bean function
             String beanName = expression;
             String method = null;
-
-            // we support both the .method name and the ?method= syntax
-            // as the ?method= syntax is very common for the bean component
-            if (expression.contains("?method=")) {
+            if (expression.contains("?method=") || expression.contains("?scope=")) {
                 beanName = StringHelper.before(expression, "?");
-                method = StringHelper.after(expression, "?method=");
+                String query = StringHelper.after(expression, "?");
+                try {
+                    Map<String, Object> map = URISupport.parseQuery(query);
+                    method = (String) map.get("method");
+                    beanScope = (String) map.get("scope");
+                } catch (URISyntaxException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
             } else {
                 //first check case :: because of my.own.Bean::method
                 int doubleColonIndex = expression.indexOf("::");
@@ -177,6 +199,11 @@ public class BeanLanguage extends LanguageSupport implements StaticService {
             }
         }
 
+        if (beanScope != null) {
+            answer.setScope(getCamelContext().getTypeConverter().tryConvertTo(BeanScope.class, beanScope));
+        } else {
+            answer.setScope(scope);
+        }
         answer.setBeanComponent(beanComponent);
         answer.setParameterMappingStrategy(parameterMappingStrategy);
         answer.setSimple(simple);

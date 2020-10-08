@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.Map;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
@@ -204,6 +205,35 @@ public class ExpressionClauseSupport<T> {
      */
     public T method(String bean, String method) {
         return expression(new MethodCallExpression(bean, method));
+    }
+
+    /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  bean   the name of the bean looked up the registry
+     * @param  scope  the scope of the bean
+     * @return        the builder to continue processing the DSL
+     */
+    public T method(String bean, BeanScope scope) {
+        MethodCallExpression exp = new MethodCallExpression(bean);
+        exp.setScope(scope.name());
+        return expression(exp);
+    }
+
+    /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  bean   the name of the bean looked up the registry
+     * @param  method the name of the method to invoke on the bean
+     * @param  scope  the scope of the bean
+     * @return        the builder to continue processing the DSL
+     */
+    public T method(String bean, String method, BeanScope scope) {
+        MethodCallExpression exp = new MethodCallExpression(bean, method);
+        exp.setScope(scope.name());
+        return expression(exp);
     }
 
     /**

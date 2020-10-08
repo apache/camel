@@ -47,6 +47,9 @@ public class RequestBeanHolder implements BeanHolder {
 
     @Override
     public Object getBean(Exchange exchange) throws NoSuchBeanException {
+        if (exchange == null) {
+            return holder.getBean(null);
+        }
         Object bean = exchange.getProperty(key);
         if (bean == null) {
             bean = holder.getBean(exchange);

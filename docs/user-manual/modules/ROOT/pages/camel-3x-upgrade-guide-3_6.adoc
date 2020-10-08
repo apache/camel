@@ -28,6 +28,16 @@ The `contains` and `not contains` operator now handles numerics naturally. For e
 would return `false` if the numbers header has the value `-123`, as the operator now compares numerically. Previously it
 would compare with String based values.
 
+=== Bean component
+
+We have now implemented bean scope (singleton, request, and prototype) for all kinds of using the bean component, whether
+it's the bean endpoint, bean language (method call), bean EIP, or the bean function in the simple language (eg `${bean:foo}`).
+
+The default scope is now singleton. Previously the bean function in simple language would be prototype scope (always lookup the bean on each use).
+With singleton scope we improve the performance by avoiding the repetitive lookup of the same bean on each usage.
+
+You can use the old behaviour by setting the scope to prototype.
+
 === API components upgrade
 
 The `camel-braintree`, `camel-twilio` and `camel-zendesk` has updated to newer versions and regenerated their API

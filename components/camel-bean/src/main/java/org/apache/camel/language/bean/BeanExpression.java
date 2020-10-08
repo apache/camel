@@ -19,6 +19,7 @@ package org.apache.camel.language.bean;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,8 +39,8 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.component.bean.RequestBeanHolder;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
@@ -64,6 +65,7 @@ public class BeanExpression implements Expression, Predicate {
     private String method;
     private BeanHolder beanHolder;
     private boolean ognlMethod;
+    private BeanScope scope = BeanScope.Singleton;
 
     public BeanExpression(Object bean, String method) {
         this.bean = bean;
@@ -102,6 +104,14 @@ public class BeanExpression implements Expression, Predicate {
         return method;
     }
 
+    public BeanScope getScope() {
+        return scope;
+    }
+
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
+    }
+
     public ParameterMappingStrategy getParameterMappingStrategy() {
         return parameterMappingStrategy;
     }
@@ -134,25 +144,22 @@ public class BeanExpression implements Expression, Predicate {
         if (beanComponent == null) {
             beanComponent = context.getComponent("bean", BeanComponent.class);
         }
+        if (beanName != null && beanName.startsWith("type:")) {
+            // its a reference to a fqn class so load the class and use type instead
+            String fqn = beanName.substring(5);
+            try {
+                type = context.getClassResolver().resolveMandatoryClass(fqn);
+                beanName = null;
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchBeanException(beanName, e);
+            }
+        }
         if (beanHolder == null) {
             beanHolder = createBeanHolder(context, parameterMappingStrategy, beanComponent);
         }
+
         // lets see if we can do additional validation that the bean has valid method during creation of the expression
-        Object target = bean;
-        if (bean == null && type == null && beanName != null) {
-            if (beanName.startsWith("type:")) {
-                // its a reference to a fqn class so load the class and use type instead
-                String fqn = beanName.substring(5);
-                try {
-                    type = context.getClassResolver().resolveMandatoryClass(fqn);
-                    beanName = null;
-                } catch (ClassNotFoundException e) {
-                    throw new NoSuchBeanException(beanName, e);
-                }
-            } else {
-                target = CamelContextHelper.mandatoryLookup(context, beanName);
-            }
-        }
+        Object target = beanHolder.getBean(null);
         if (method != null) {
             validateHasMethod(context, target, type, method);
 
@@ -272,13 +279,32 @@ public class BeanExpression implements Expression, Predicate {
     private BeanHolder createBeanHolder(
             CamelContext context, ParameterMappingStrategy parameterMappingStrategy, BeanComponent beanComponent) {
         // either use registry lookup or a constant bean
-        BeanHolder holder;
+        BeanHolder holder = null;
         if (bean != null) {
             holder = new ConstantBeanHolder(bean, context, parameterMappingStrategy, beanComponent);
         } else if (beanName != null) {
-            holder = new RegistryBean(context, beanName, parameterMappingStrategy, beanComponent);
+            RegistryBean rb = new RegistryBean(context, beanName, parameterMappingStrategy, beanComponent);
+            if (scope == BeanScope.Singleton) {
+                // cache holder as its singleton
+                holder = rb.createCacheHolder();
+            } else if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(rb);
+            } else {
+                // prototype scope will lookup bean on each access
+                holder = rb;
+            }
         } else if (type != null) {
-            holder = new ConstantTypeBeanHolder(type, context, parameterMappingStrategy, beanComponent);
+            ConstantTypeBeanHolder th = new ConstantTypeBeanHolder(type, context, parameterMappingStrategy, beanComponent);
+            if (scope == BeanScope.Singleton && ObjectHelper.hasDefaultPublicNoArgConstructor(type)) {
+                // we can only cache if we can create an instance of the bean, and for that we need a public constructor
+                holder = th.createCacheHolder();
+            } else if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(th);
+            } else {
+                holder = th;
+            }
         } else {
             throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
         }

@@ -60,7 +60,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
      *
      * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
      */
-    public ConstantBeanHolder createCacheHolder() throws Exception {
+    public ConstantBeanHolder createCacheHolder() {
         Object bean = getBean(null);
         return new ConstantBeanHolder(bean, beanInfo);
     }

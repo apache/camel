@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -242,6 +243,31 @@ public class ExpressionClause<T> implements Expression, Predicate {
      */
     public T method(String bean, String method) {
         return delegate.method(bean, method);
+    }
+
+    /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  bean   the name of the bean looked up the registry
+     * @param  scope  the scope of the bean
+     * @return        the builder to continue processing the DSL
+     */
+    public T method(String bean, BeanScope scope) {
+        return delegate.method(bean, scope);
+    }
+
+    /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  bean   the name of the bean looked up the registry
+     * @param  method the name of the method to invoke on the bean
+     * @param  scope  the scope of the bean
+     * @return        the builder to continue processing the DSL
+     */
+    public T method(String bean, String method, BeanScope scope) {
+        return delegate.method(bean, method, scope);
     }
 
     /**
