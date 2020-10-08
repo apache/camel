@@ -44,7 +44,7 @@ pipeline {
     }
 
     parameters {
-        booleanParam(name: 'CLEAN', defaultValue: false, description: 'Perform the build in clean workspace')
+        booleanParam(name: 'CLEAN', defaultValue: true, description: 'Perform the build in clean workspace')
     }
 
     stages {
