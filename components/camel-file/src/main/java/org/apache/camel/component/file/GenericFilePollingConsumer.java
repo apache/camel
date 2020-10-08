@@ -33,7 +33,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
     public GenericFilePollingConsumer(GenericFileEndpoint endpoint) throws Exception {
         super(endpoint);
-        this.delay = endpoint.getDefaultDelay();
+        this.delay = endpoint.getDelay() > 0 ? endpoint.getDelay() : endpoint.getDefaultDelay();
     }
 
     @Override
