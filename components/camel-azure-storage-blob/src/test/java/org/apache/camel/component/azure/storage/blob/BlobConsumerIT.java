@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BlobConsumerIT extends CamelTestSupport {
+class BlobConsumerIT extends CamelTestSupport {
 
     @TempDir
     static Path testDir;
@@ -80,7 +80,7 @@ public class BlobConsumerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testPollingToFile() throws IOException, InterruptedException {
+    void testPollingToFile() throws IOException, InterruptedException {
         templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);
@@ -97,7 +97,7 @@ public class BlobConsumerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testPollingToInputStream() throws InterruptedException, IOException {
+    void testPollingToInputStream() throws InterruptedException, IOException {
         templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);

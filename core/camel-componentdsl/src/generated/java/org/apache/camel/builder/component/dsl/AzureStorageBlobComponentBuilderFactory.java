@@ -220,9 +220,9 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * may also be used to construct URLs to blobs and containers. This
          * client contains operations on a service account. Operations on a
          * container are available on BlobContainerClient through
-         * getBlobContainerClient(String), and operations on a blob are
-         * available on BlobClient through
-         * getBlobContainerClient(String).getBlobClient(String).
+         * BlobServiceClient#getBlobContainerClient(String), and operations on a
+         * blob are available on BlobClient through
+         * BlobContainerClient#getBlobClient(String).
          * 
          * The option is a:
          * <code>com.azure.storage.blob.BlobServiceClient</code> type.

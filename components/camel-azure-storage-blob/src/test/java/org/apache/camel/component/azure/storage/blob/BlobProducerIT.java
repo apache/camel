@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BlobProducerIT extends CamelTestSupport {
+class BlobProducerIT extends CamelTestSupport {
 
     @EndpointInject
     private ProducerTemplate template;
@@ -76,7 +76,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testUploadBlockBlob() throws InterruptedException {
+    void testUploadBlockBlob() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         result.expectedMessageCount(1);
@@ -90,7 +90,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCommitAndStageBlockBlob() throws InterruptedException, IOException {
+    void testCommitAndStageBlockBlob() throws InterruptedException, IOException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         result.expectedMessageCount(1);
@@ -115,7 +115,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCommitAppendBlobWithError() throws InterruptedException {
+    void testCommitAppendBlobWithError() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         template.send("direct:commitAppendBlobWithError", ExchangePattern.InOnly, exchange -> {
@@ -135,7 +135,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndUpdateAppendBlob() throws InterruptedException {
+    void testCreateAndUpdateAppendBlob() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         result.expectedMessageCount(1);
@@ -158,7 +158,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateAndUploadPageBlob() throws InterruptedException {
+    void testCreateAndUploadPageBlob() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
         result.expectedMessageCount(1);
@@ -183,7 +183,7 @@ public class BlobProducerIT extends CamelTestSupport {
     }
 
     @Test
-    public void testUploadBlockBlobWithConfigUri() throws InterruptedException {
+    void testUploadBlockBlobWithConfigUri() throws InterruptedException {
         result.expectedMessageCount(1);
 
         template.send("direct:uploadBlockBlobWithConfigUri", ExchangePattern.InOnly,
