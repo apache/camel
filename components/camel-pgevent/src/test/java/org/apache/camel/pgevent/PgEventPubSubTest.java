@@ -14,12 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.pgevent.integration;
+package org.apache.camel.pgevent;
 
-import java.util.Properties;
-
-import com.impossibl.postgres.jdbc.PGDataSource;
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -27,13 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEventIntegrationTest {
-
-    @EndpointInject("pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
-    private Endpoint subscribeEndpoint;
-
-    @EndpointInject("pgevent:///{{database}}/testchannel?datasource=#pgDataSource")
-    private Endpoint notifyEndpoint;
+public class PgEventPubSubTest extends PgEventTestSupport {
 
     @EndpointInject("timer://test?repeatCount=1&period=1")
     private Endpoint timerEndpoint;
@@ -41,23 +31,8 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
 
-    @BindToRegistry("pgDataSource")
-    public PGDataSource loadDataSource() throws Exception {
-        Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/test-options.properties"));
-
-        PGDataSource dataSource = new PGDataSource();
-        dataSource.setHost(properties.getProperty("host"));
-        dataSource.setPort(Integer.parseInt(properties.getProperty("port")));
-        dataSource.setDatabaseName(properties.getProperty("database"));
-        dataSource.setUser(properties.getProperty("databaseUser"));
-        dataSource.setPassword(properties.getProperty("password"));
-
-        return dataSource;
-    }
-
     @Test
-    public void testPgEventPublishSubscribeWithDefinedDatasource() throws Exception {
+    public void testPgEventPublishSubscribe() throws Exception {
         mockEndpoint.expectedBodiesReceived(TEST_MESSAGE_BODY);
         mockEndpoint.assertIsSatisfied(5000);
     }
@@ -69,10 +44,13 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
             public void configure() throws Exception {
                 from(timerEndpoint)
                         .setBody(constant(TEST_MESSAGE_BODY))
-                        .to(notifyEndpoint);
+                        .to(String.format(
+                                "pgevent://%s:%s/%s/testchannel?user=%s&pass=%s", getHost(), getMappedPort(), POSTGRES_DB,
+                                POSTGRES_USER, POSTGRES_PASSWORD));
 
-                from(subscribeEndpoint)
-                        .to(mockEndpoint);
+                from(String.format("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
+                        getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD))
+                                .to(mockEndpoint);
             }
         };
     }
