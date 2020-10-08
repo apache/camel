@@ -27,11 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import software.amazon.awssdk.services.eventbridge.model.RemoveTargetsResponse;
 import software.amazon.awssdk.services.eventbridge.model.Target;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class EventbridgeRemoveTargetsLocalstackTest extends Aws2EventbridgeBaseTest {
 
@@ -78,7 +76,6 @@ public class EventbridgeRemoveTargetsLocalstackTest extends Aws2EventbridgeBaseT
         });
         assertMockEndpointsSatisfied();
         assertEquals(1, result.getExchanges().size());
-        assertFalse(result.getExchanges().get(0).getIn().getBody(RemoveTargetsResponse.class).hasFailedEntries());
     }
 
     @Override
