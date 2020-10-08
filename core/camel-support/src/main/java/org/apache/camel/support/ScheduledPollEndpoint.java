@@ -210,6 +210,10 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
+    public long getDefaultDelay() {
+        return (getDelay() == -1) ? DEFAULT_DELAY : getDelay();
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
