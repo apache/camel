@@ -184,7 +184,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private ExceptionHandler connectionFactoryExceptionHandler;
     @UriParam(label = "allowMessageBodySerialization", defaultValue = "false")
     private boolean allowMessageBodySerialization;
-
+    @UriParam(label = "consumer")
+    private boolean reQueue;
     // camel-jms supports this setting but it is not currently configurable in
     // camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
@@ -1037,5 +1038,20 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setConnectionFactoryExceptionHandler(ExceptionHandler connectionFactoryExceptionHandler) {
         this.connectionFactoryExceptionHandler = connectionFactoryExceptionHandler;
+    }
+
+    /**
+     * This is used by the consumer to control rejection of the message. When the consumer is complete processing the
+     * exchange, and if the exchange failed, then the consumer is going to reject the message from the RabbitMQ broker.
+     * If the header CamelRabbitmqRequeue is present then the value of the header will be used, otherwise this endpoint
+     * value is used as fallback. If the value is false (by default) then the message is discarded/dead-lettered. If the
+     * value is true, then the message is re-queued.
+     */
+    public boolean isReQueue() {
+        return reQueue;
+    }
+
+    public void setReQueue(boolean reQueue) {
+        this.reQueue = reQueue;
     }
 }

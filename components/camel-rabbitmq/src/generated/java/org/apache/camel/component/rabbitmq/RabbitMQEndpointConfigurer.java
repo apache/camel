@@ -50,6 +50,7 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("prefetchEnabled", boolean.class);
         map.put("prefetchGlobal", boolean.class);
         map.put("prefetchSize", int.class);
+        map.put("reQueue", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("threadPoolSize", int.class);
@@ -177,6 +178,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "publisheracknowledgementstimeout":
         case "publisherAcknowledgementsTimeout": target.setPublisherAcknowledgementsTimeout(property(camelContext, long.class, value)); return true;
         case "queue": target.setQueue(property(camelContext, java.lang.String.class, value)); return true;
+        case "requeue":
+        case "reQueue": target.setReQueue(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
         case "requesttimeoutcheckerinterval":
@@ -308,6 +311,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "publisheracknowledgementstimeout":
         case "publisherAcknowledgementsTimeout": return target.getPublisherAcknowledgementsTimeout();
         case "queue": return target.getQueue();
+        case "requeue":
+        case "reQueue": return target.isReQueue();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
         case "requesttimeoutcheckerinterval":
