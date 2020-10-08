@@ -191,10 +191,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         }
     }
 
-    public long getDefaultDelay() {
-        return (getDelay() == -1) ? DEFAULT_DELAY : getDelay();
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -242,6 +238,13 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
      */
     public void setDelay(long delay) {
         this.delay = delay;
+    }
+
+    /**
+     * Gets the default delay.
+     */
+    public long getDefaultDelay() {
+        return DEFAULT_DELAY;
     }
 
     public TimeUnit getTimeUnit() {
