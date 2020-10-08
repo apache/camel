@@ -18,7 +18,7 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
 
     private static final Set<String> PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(67);
+        Set<String> set = new HashSet<>(68);
         set.add("exchangeName");
         set.add("addresses");
         set.add("autoDelete");
@@ -51,6 +51,7 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
         set.add("prefetchEnabled");
         set.add("prefetchGlobal");
         set.add("prefetchSize");
+        set.add("reQueue");
         set.add("exceptionHandler");
         set.add("exchangePattern");
         set.add("threadPoolSize");

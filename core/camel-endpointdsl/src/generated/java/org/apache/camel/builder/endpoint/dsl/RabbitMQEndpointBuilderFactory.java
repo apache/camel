@@ -743,6 +743,44 @@ public interface RabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * This is used by the consumer to control rejection of the message.
+         * When the consumer is complete processing the exchange, and if the
+         * exchange failed, then the consumer is going to reject the message
+         * from the RabbitMQ broker. If the header CamelRabbitmqRequeue is
+         * present then the value of the header will be used, otherwise this
+         * endpoint value is used as fallback. If the value is false (by
+         * default) then the message is discarded/dead-lettered. If the value is
+         * true, then the message is re-queued.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default RabbitMQEndpointConsumerBuilder reQueue(boolean reQueue) {
+            doSetProperty("reQueue", reQueue);
+            return this;
+        }
+        /**
+         * This is used by the consumer to control rejection of the message.
+         * When the consumer is complete processing the exchange, and if the
+         * exchange failed, then the consumer is going to reject the message
+         * from the RabbitMQ broker. If the header CamelRabbitmqRequeue is
+         * present then the value of the header will be used, otherwise this
+         * endpoint value is used as fallback. If the value is false (by
+         * default) then the message is discarded/dead-lettered. If the value is
+         * true, then the message is re-queued.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default RabbitMQEndpointConsumerBuilder reQueue(String reQueue) {
+            doSetProperty("reQueue", reQueue);
+            return this;
+        }
+        /**
          * Whether to allow Java serialization of the message body or not. If
          * this value is true, the message body will be serialized on the
          * producer side using Java serialization, if no type converter can

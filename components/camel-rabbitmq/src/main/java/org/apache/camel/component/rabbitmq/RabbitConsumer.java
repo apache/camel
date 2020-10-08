@@ -42,7 +42,6 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
     private final RabbitMQConsumer consumer;
     private Channel channel;
     private String tag;
-    /** Consumer tag for this consumer. */
     private volatile String consumerTag;
     private volatile boolean stopping;
 
@@ -177,9 +176,11 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                     channel.basicAck(deliveryTag, false);
                 }
             } else {
-                boolean isRequeueHeaderSet = false;
+                boolean isRequeueHeaderSet = consumer.getEndpoint().isReQueue();
                 try {
-                    isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, false, boolean.class);
+                    isRequeueHeaderSet = msg.getHeader(RabbitMQConstants.REQUEUE, isRequeueHeaderSet, boolean.class);
+                    LOG.trace("Consumer requeue property is overridden using the message header requeue property as: {}",
+                            isRequeueHeaderSet);
                 } catch (Exception e) {
                     // ignore as its an invalid header
                 }
