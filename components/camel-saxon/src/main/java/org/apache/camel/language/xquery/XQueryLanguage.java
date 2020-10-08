@@ -16,14 +16,17 @@
  */
 package org.apache.camel.language.xquery;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("xquery")
-public class XQueryLanguage extends LanguageSupport {
+public class XQueryLanguage extends LanguageSupport implements PropertyConfigurer {
 
     private Class<?> resultType;
     private String headerName;
@@ -88,6 +91,25 @@ public class XQueryLanguage extends LanguageSupport {
         }
         if (headerName != null) {
             builder.setHeaderName(headerName);
+        }
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            default:
+                return false;
         }
     }
 

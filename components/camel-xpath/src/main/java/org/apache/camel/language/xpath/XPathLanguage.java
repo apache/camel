@@ -19,16 +19,19 @@ package org.apache.camel.language.xpath;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 /**
  * XPath language.
  */
 @Language("xpath")
-public class XPathLanguage extends LanguageSupport {
+public class XPathLanguage extends LanguageSupport implements PropertyConfigurer {
     private Class<?> resultType;
     private QName resultQName;
     private Class<?> documentType;
@@ -212,6 +215,57 @@ public class XPathLanguage extends LanguageSupport {
             if (objectModelUri != null) {
                 builder.setObjectModelUri(objectModelUri);
             }
+        }
+    }
+
+    @Override
+    public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+        if (target != this) {
+            throw new IllegalStateException("Can only configure our own instance !");
+        }
+        switch (ignoreCase ? name.toLowerCase() : name) {
+            case "resulttype":
+            case "resultType":
+                setResultType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "resultqname":
+            case "resultQName":
+                setResultQName(PropertyConfigurerSupport.property(camelContext, QName.class, value));
+                return true;
+            case "documenttype":
+            case "documentType":
+                setDocumentType(PropertyConfigurerSupport.property(camelContext, Class.class, value));
+                return true;
+            case "xpathfactory":
+            case "xpathFactory":
+                setXpathFactory(PropertyConfigurerSupport.property(camelContext, XPathFactory.class, value));
+                return true;
+            case "usesaxon":
+            case "useSaxon":
+                setUseSaxon(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "objectmodeluri":
+            case "objectModelUri":
+                setObjectModelUri(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "threadsafety":
+            case "threadSafety":
+                setThreadSafety(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "lognamespaces":
+            case "logNamespaces":
+                setLogNamespaces(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            case "headername":
+            case "headerName":
+                setHeaderName(PropertyConfigurerSupport.property(camelContext, String.class, value));
+                return true;
+            case "preCompile":
+            case "precompile":
+                setPreCompile(PropertyConfigurerSupport.property(camelContext, Boolean.class, value));
+                return true;
+            default:
+                return false;
         }
     }
 

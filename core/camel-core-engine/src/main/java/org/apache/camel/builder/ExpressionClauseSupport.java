@@ -211,9 +211,9 @@ public class ExpressionClauseSupport<T> {
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html>bean language</a> which
      * basically means the bean is invoked to determine the expression value.
      *
-     * @param  bean   the name of the bean looked up the registry
-     * @param  scope  the scope of the bean
-     * @return        the builder to continue processing the DSL
+     * @param  bean  the name of the bean looked up the registry
+     * @param  scope the scope of the bean
+     * @return       the builder to continue processing the DSL
      */
     public T method(String bean, BeanScope scope) {
         MethodCallExpression exp = new MethodCallExpression(bean);
