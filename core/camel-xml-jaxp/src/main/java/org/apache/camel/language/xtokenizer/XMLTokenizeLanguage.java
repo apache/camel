@@ -96,17 +96,17 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         XMLTokenizeLanguage answer = new XMLTokenizeLanguage();
-        answer.setHeaderName(property(String.class, properties, "headerName", headerName));
-        answer.setMode(property(Character.class, properties, "mode", "i"));
-        answer.setGroup(property(Integer.class, properties, "group", group));
-        Object obj = properties.get("namespaces");
+        answer.setHeaderName(property(String.class, properties, 0, headerName));
+        answer.setMode(property(Character.class, properties, 1, "i"));
+        answer.setGroup(property(Integer.class, properties, 2, group));
+        Object obj = properties[3];
         if (obj instanceof Namespaces) {
             answer.setNamespaces((Namespaces) obj);
         } else if (obj instanceof Map) {

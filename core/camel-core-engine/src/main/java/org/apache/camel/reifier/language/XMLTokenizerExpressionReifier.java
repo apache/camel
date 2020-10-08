@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -67,12 +64,12 @@ public class XMLTokenizerExpressionReifier extends ExpressionReifier<XMLTokenize
         }
     }
 
-    protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(4);
-        properties.put("headerName", parseString(definition.getHeaderName()));
-        properties.put("mode", parseString(definition.getMode()));
-        properties.put("group", parseInt(definition.getGroup()));
-        properties.put("namespaces", definition.getNamespaces());
+    protected Object[] createProperties() {
+        Object[] properties = new Object[4];
+        properties[0] = parseString(definition.getHeaderName());
+        properties[1] = parseString(definition.getMode());
+        properties[2] = parseInt(definition.getGroup());
+        properties[3] = definition.getNamespaces();
         return properties;
     }
 

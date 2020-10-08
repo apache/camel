@@ -18,7 +18,6 @@ package org.apache.camel.jsonpath;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Expression;
@@ -116,22 +115,22 @@ public class JsonPathLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         JsonPathExpression json = (JsonPathExpression) createExpression(expression, properties);
         json.setPredicate(true);
         return json;
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         JsonPathExpression answer = new JsonPathExpression(expression);
-        answer.setResultType(property(Class.class, properties, "resultType", resultType));
-        answer.setSuppressExceptions(property(boolean.class, properties, "suppressExceptions", suppressExceptions));
-        answer.setAllowEasyPredicate(property(boolean.class, properties, "allowEasyPredicate", allowEasyPredicate));
-        answer.setAllowSimple(property(boolean.class, properties, "allowSimple", allowSimple));
-        answer.setWriteAsString(property(boolean.class, properties, "writeAsString", writeAsString));
-        answer.setHeaderName(property(String.class, properties, "headerName", headerName));
-        String option = (String) properties.get("option");
+        answer.setResultType(property(Class.class, properties, 0, resultType));
+        answer.setSuppressExceptions(property(boolean.class, properties, 1, suppressExceptions));
+        answer.setAllowSimple(property(boolean.class, properties, 2, allowSimple));
+        answer.setAllowEasyPredicate(property(boolean.class, properties, 3, allowEasyPredicate));
+        answer.setWriteAsString(property(boolean.class, properties, 4, writeAsString));
+        answer.setHeaderName(property(String.class, properties, 5, headerName));
+        String option = (String) properties[6];
         if (option != null) {
             List<Option> list = new ArrayList<>();
             for (String s : option.split(",")) {

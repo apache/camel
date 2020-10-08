@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.tokenizer;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
@@ -162,24 +160,24 @@ public class TokenizeLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression, properties));
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         TokenizeLanguage answer = new TokenizeLanguage();
+        answer.setToken(property(String.class, properties, 0, token));
+        answer.setEndToken(property(String.class, properties, 1, endToken));
         answer.setInheritNamespaceTagName(
-                property(String.class, properties, "inheritNamespaceTagName", inheritNamespaceTagName));
-        answer.setToken(property(String.class, properties, "token", token));
-        answer.setEndToken(property(String.class, properties, "endToken", endToken));
-        answer.setHeaderName(property(String.class, properties, "headerName", headerName));
-        answer.setRegex(property(boolean.class, properties, "regex", regex));
-        answer.setXml(property(boolean.class, properties, "xml", xml));
-        answer.setIncludeTokens(property(boolean.class, properties, "includeTokens", includeTokens));
-        answer.setGroup(property(String.class, properties, "group", group));
-        answer.setGroupDelimiter(property(String.class, properties, "groupDelimiter", groupDelimiter));
-        answer.setSkipFirst(property(boolean.class, properties, "skipFirst", skipFirst));
+                property(String.class, properties, 2, inheritNamespaceTagName));
+        answer.setHeaderName(property(String.class, properties, 3, headerName));
+        answer.setGroupDelimiter(property(String.class, properties, 4, groupDelimiter));
+        answer.setRegex(property(boolean.class, properties, 5, regex));
+        answer.setXml(property(boolean.class, properties, 6, xml));
+        answer.setIncludeTokens(property(boolean.class, properties, 7, includeTokens));
+        answer.setGroup(property(String.class, properties, 8, group));
+        answer.setSkipFirst(property(boolean.class, properties, 9, skipFirst));
         return answer.createExpression(expression);
     }
 

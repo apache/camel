@@ -18,7 +18,6 @@ package org.apache.camel.support;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -99,13 +98,13 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
      * Converts the property to the expected type
      *
      * @param  type         the expected type
-     * @param  properties   the options
-     * @param  key          name of the property
+     * @param  properties   the options (optimized as object array with hardcoded positions for properties)
+     * @param  index        index of the property
      * @param  defaultValue optional default value
      * @return              the value converted to the expected type
      */
-    protected <T> T property(Class<T> type, Map<String, Object> properties, String key, Object defaultValue) {
-        Object value = properties.get(key);
+    protected <T> T property(Class<T> type, Object[] properties, int index, Object defaultValue) {
+        Object value = properties[index];
         if (value == null) {
             value = defaultValue;
         }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.xpath;
 
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathFactory;
 
@@ -61,33 +59,33 @@ public class XPathLanguage extends LanguageSupport {
     }
 
     @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
+    public Predicate createPredicate(String expression, Object[] properties) {
         return (Predicate) createExpression(expression, properties);
     }
 
     @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
+    public Expression createExpression(String expression, Object[] properties) {
         expression = loadResource(expression);
 
-        Class<?> clazz = property(Class.class, properties, "documentType", null);
+        Class<?> clazz = property(Class.class, properties, 0, null);
         if (clazz != null) {
             setDocumentType(clazz);
         }
-        clazz = property(Class.class, properties, "resultType", null);
-        if (clazz != null) {
-            setResultType(clazz);
-        }
-        QName qname = property(QName.class, properties, "resultQName", null);
+        QName qname = property(QName.class, properties, 1, null);
         if (qname != null) {
             setResultQName(qname);
         }
-        setUseSaxon(property(Boolean.class, properties, "useSaxon", useSaxon));
-        setPreCompile(property(Boolean.class, properties, "preCompile", preCompile));
-        setObjectModelUri(property(String.class, properties, "objectModelUri", objectModelUri));
-        setThreadSafety(property(Boolean.class, properties, "threadSafety", threadSafety));
-        setLogNamespaces(property(Boolean.class, properties, "logNamespaces", logNamespaces));
-        setHeaderName(property(String.class, properties, "headerName", headerName));
-        setXpathFactory(property(XPathFactory.class, properties, "xpathFactory", xpathFactory));
+        clazz = property(Class.class, properties, 2, null);
+        if (clazz != null) {
+            setResultType(clazz);
+        }
+        setUseSaxon(property(Boolean.class, properties, 3, useSaxon));
+        setXpathFactory(property(XPathFactory.class, properties, 4, xpathFactory));
+        setObjectModelUri(property(String.class, properties, 5, objectModelUri));
+        setThreadSafety(property(Boolean.class, properties, 6, threadSafety));
+        setPreCompile(property(Boolean.class, properties, 7, preCompile));
+        setLogNamespaces(property(Boolean.class, properties, 8, logNamespaces));
+        setHeaderName(property(String.class, properties, 9, headerName));
 
         XPathBuilder builder = XPathBuilder.xpath(expression);
         configureBuilder(builder);

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
@@ -65,25 +62,25 @@ public class XPathExpressionReifier extends ExpressionReifier<XPathExpression> {
         }
     }
 
-    protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(10);
-        properties.put("documentType", definition.getDocumentType());
+    protected Object[] createProperties() {
+        Object[] properties = new Object[10];
+        properties[0] = definition.getDocumentType();
         // resultType can either point to a QName or it can be a regular class that influence the qname
         // so we need this special logic to set resultQName and resultType accordingly
         Object qname = asQName(definition.getResultTypeName());
-        properties.put("resultQName", qname);
+        properties[1] = qname;
         if (definition.getResultType() == null && qname == null && definition.getResultTypeName() != null) {
-            properties.put("resultType", definition.getResultTypeName());
+            properties[2] = definition.getResultTypeName();
         } else {
-            properties.put("resultType", definition.getResultType());
+            properties[2] = definition.getResultType();
         }
-        properties.put("useSaxon", parseBoolean(definition.getSaxon()));
-        properties.put("xpathFactory", definition.getXPathFactory());
-        properties.put("objectModelUri", parseString(definition.getObjectModel()));
-        properties.put("threadSafety", parseBoolean(definition.getThreadSafety()));
-        properties.put("preCompile", parseBoolean(definition.getPreCompile()));
-        properties.put("logNamespaces", parseBoolean(definition.getLogNamespaces()));
-        properties.put("headerName", parseString(definition.getHeaderName()));
+        properties[3] = parseBoolean(definition.getSaxon());
+        properties[4] = definition.getXPathFactory();
+        properties[5] = parseString(definition.getObjectModel());
+        properties[6] = parseBoolean(definition.getThreadSafety());
+        properties[7] = parseBoolean(definition.getPreCompile());
+        properties[8] = parseBoolean(definition.getLogNamespaces());
+        properties[9] = parseString(definition.getHeaderName());
         return properties;
     }
 

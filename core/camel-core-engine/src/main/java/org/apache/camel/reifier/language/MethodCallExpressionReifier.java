@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -33,12 +30,12 @@ public class MethodCallExpressionReifier extends ExpressionReifier<MethodCallExp
         super(camelContext, (MethodCallExpression) definition);
     }
 
-    protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(4);
-        properties.put("bean", definition.getInstance());
-        properties.put("beanType", definition.getBeanType());
-        properties.put("ref", parseString(definition.getRef()));
-        properties.put("method", parseString(definition.getMethod()));
+    protected Object[] createProperties() {
+        Object[] properties = new Object[4];
+        properties[0] = definition.getInstance();
+        properties[1] = parseString(definition.getMethod());
+        properties[2] = definition.getBeanType();
+        properties[3] = parseString(definition.getRef());
         return properties;
     }
 

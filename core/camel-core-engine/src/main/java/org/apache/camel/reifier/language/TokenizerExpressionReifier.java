@@ -16,9 +16,6 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -33,24 +30,24 @@ public class TokenizerExpressionReifier extends ExpressionReifier<TokenizerExpre
         super(camelContext, (TokenizerExpression) definition);
     }
 
-    protected Map<String, Object> createProperties() {
-        Map<String, Object> properties = new HashMap<>(10);
+    protected Object[] createProperties() {
+        Object[] properties = new Object[10];
         // special for new line tokens, if defined from XML then its 2
         // characters, so we replace that back to a single char
         String token = definition.getToken();
         if (token.startsWith("\\n")) {
             token = '\n' + token.substring(2);
         }
-        properties.put("token", parseString(token));
-        properties.put("endToken", parseString(definition.getEndToken()));
-        properties.put("inheritNamespaceTagName", parseString(definition.getInheritNamespaceTagName()));
-        properties.put("headerName", parseString(definition.getHeaderName()));
-        properties.put("groupDelimiter", parseString(definition.getGroupDelimiter()));
-        properties.put("regex", parseBoolean(definition.getRegex()));
-        properties.put("xml", parseBoolean(definition.getXml()));
-        properties.put("includeTokens", parseBoolean(definition.getIncludeTokens()));
-        properties.put("group", parseString(definition.getGroup()));
-        properties.put("skipFirst", parseBoolean(definition.getSkipFirst()));
+        properties[0] = parseString(token);
+        properties[1] = parseString(definition.getEndToken());
+        properties[2] = parseString(definition.getInheritNamespaceTagName());
+        properties[3] = parseString(definition.getHeaderName());
+        properties[4] = parseString(definition.getGroupDelimiter());
+        properties[5] = parseBoolean(definition.getRegex());
+        properties[6] = parseBoolean(definition.getXml());
+        properties[7] = parseBoolean(definition.getIncludeTokens());
+        properties[8] = parseString(definition.getGroup());
+        properties[9] = parseBoolean(definition.getSkipFirst());
         return properties;
     }
 
