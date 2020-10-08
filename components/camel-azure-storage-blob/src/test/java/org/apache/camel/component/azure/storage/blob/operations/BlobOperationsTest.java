@@ -59,7 +59,7 @@ import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class BlobOperationsTest extends CamelTestSupport {
+class BlobOperationsTest extends CamelTestSupport {
 
     private BlobConfiguration configuration;
 
@@ -74,7 +74,7 @@ public class BlobOperationsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testGetBlob() throws IOException {
+    void testGetBlob() throws IOException {
         // mocking
         final Map<String, Object> mockedResults = new HashMap<>();
         mockedResults.put("inputStream", new ByteArrayInputStream("testInput".getBytes(Charset.defaultCharset())));
@@ -104,7 +104,7 @@ public class BlobOperationsTest extends CamelTestSupport {
         assertNotNull(response2.getHeaders());
         assertNotNull(response2.getHeaders().get(BlobConstants.CREATION_TIME));
 
-        //third: test with exchange provided but with outputstream set
+        // third: test with exchange provided but with outputstream set
         // mocking
         final ResponseBase<BlobDownloadHeaders, Void> mockedResults2 = new ResponseBase<>(
                 null, 200, new HttpHeaders().put("x-test-header", "123"), null, new BlobDownloadHeaders().setETag("tag1"));
@@ -116,11 +116,11 @@ public class BlobOperationsTest extends CamelTestSupport {
         assertNotNull(response3);
         assertNotNull(response3.getBody());
         assertNotNull(response3.getHeaders());
-        assertEquals(response3.getHeaders().get(BlobConstants.E_TAG), "tag1");
+        assertEquals("tag1", response3.getHeaders().get(BlobConstants.E_TAG));
     }
 
     @Test
-    public void testUploadBlockBlob() throws Exception {
+    void testUploadBlockBlob() throws Exception {
         // mocking
         final BlockBlobItem blockBlobItem = new BlockBlobItem("testTag", OffsetDateTime.now(), null, false, null);
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
@@ -145,7 +145,7 @@ public class BlobOperationsTest extends CamelTestSupport {
     }
 
     @Test
-    public void testStageBlockBlobList() throws Exception {
+    void testStageBlockBlobList() throws Exception {
         final HttpHeaders httpHeaders = new HttpHeaders().put("x-test-header", "123");
         when(client.stageBlockBlob(anyString(), any(), anyLong(), any(), any(), any())).thenReturn(httpHeaders);
 

@@ -126,8 +126,8 @@ public class BlobConfiguration implements Cloneable {
      * to construct URLs to blobs and containers.
      *
      * This client contains operations on a service account. Operations on a container are available on
-     * {@link BlobContainerClient} through {@link #getBlobContainerClient(String)}, and operations on a blob are
-     * available on {@link BlobClient} through {@link #getBlobContainerClient(String).getBlobClient(String)}.
+     * {@link BlobContainerClient} through {@link BlobServiceClient#getBlobContainerClient(String)}, and operations on a
+     * blob are available on {@link BlobClient} through {@link BlobContainerClient#getBlobClient(String)}.
      */
     public BlobServiceClient getServiceClient() {
         return serviceClient;

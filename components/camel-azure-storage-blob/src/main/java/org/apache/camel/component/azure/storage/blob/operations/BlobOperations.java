@@ -177,7 +177,7 @@ public class BlobOperations {
 
     public BlobOperationResponse downloadLink(final Exchange exchange) {
         final OffsetDateTime offsetDateTime = OffsetDateTime.now();
-        final long defaultExpirationTime = 60 * 60; // 1 hour
+        final long defaultExpirationTime = 60L * 60L; // 1 hour
         final BlobSasPermission sasPermission = new BlobSasPermission().setReadPermission(true); // only read access
 
         if (exchange == null) {
@@ -235,7 +235,7 @@ public class BlobOperations {
 
         List<BlobBlock> blobBlocks = null;
         if (object instanceof List) {
-            //noinspection unchecked
+            // noinspection unchecked
             blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
             blobBlocks = Collections.singletonList((BlobBlock) object);
@@ -252,9 +252,12 @@ public class BlobOperations {
 
         blobBlocks.forEach(blobBlock -> {
             blockEntries.add(blobBlock.getBlockEntry());
-            client.stageBlockBlob(blobBlock.getBlockEntry().getName(), blobBlock.getBlockStream(),
-                    blobBlock.getBlockEntry().getSize(),
-                    commonRequestOptions.getContentMD5(), commonRequestOptions.leaseId(), commonRequestOptions.getTimeout());
+            client.stageBlockBlob(blobBlock.getBlockEntry().getName(),
+                    blobBlock.getBlockStream(),
+                    blobBlock.getBlockEntry().getSizeLong(),
+                    commonRequestOptions.getContentMD5(),
+                    commonRequestOptions.leaseId(),
+                    commonRequestOptions.getTimeout());
         });
 
         final boolean commitBlockListLater = configurationProxy.isCommitBlockListLater(exchange);
