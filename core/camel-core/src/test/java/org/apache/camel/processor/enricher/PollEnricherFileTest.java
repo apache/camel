@@ -43,9 +43,9 @@ public class PollEnricherFileTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:hello?repeatCount=1&delay=10")
-                    .to("log:1", "mock:1")
-                    .pollEnrich("file:target/temp?noop=true&fileName=doesnotexist.csv", 1000)
-                    .to("log:2", "mock:2");
+                        .to("log:1", "mock:1")
+                        .pollEnrich("file:target/temp?noop=true&fileName=doesnotexist.csv", 1000)
+                        .to("log:2", "mock:2");
             }
         };
     }
