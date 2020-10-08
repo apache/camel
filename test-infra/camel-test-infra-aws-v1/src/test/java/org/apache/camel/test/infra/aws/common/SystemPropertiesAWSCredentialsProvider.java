@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.test.infra.aws.common;
 
-public final class AWSConfigs {
-    public static final String ACCESS_KEY = "aws.access.key";
-    public static final String SECRET_KEY = "aws.secret.key";
-    public static final String REGION = "aws.region";
-    public static final String AMAZON_AWS_HOST = "aws.host";
-    public static final String PROTOCOL = "aws.protocol";
+public class SystemPropertiesAWSCredentialsProvider extends TestAWSCredentialsProvider {
 
-    private AWSConfigs() {
+    public SystemPropertiesAWSCredentialsProvider() {
+        super(System.getProperty(AWSConfigs.ACCESS_KEY), System.getProperty(AWSConfigs.SECRET_KEY));
     }
+
 }

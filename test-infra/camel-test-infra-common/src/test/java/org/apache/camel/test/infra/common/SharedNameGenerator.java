@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.infra.aws.common;
 
-public final class AWSConfigs {
-    public static final String ACCESS_KEY = "aws.access.key";
-    public static final String SECRET_KEY = "aws.secret.key";
-    public static final String REGION = "aws.region";
-    public static final String AMAZON_AWS_HOST = "aws.host";
-    public static final String PROTOCOL = "aws.protocol";
+package org.apache.camel.test.infra.common;
 
-    private AWSConfigs() {
-    }
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+
+public interface SharedNameGenerator extends BeforeAllCallback, BeforeEachCallback {
+    String getName();
 }
