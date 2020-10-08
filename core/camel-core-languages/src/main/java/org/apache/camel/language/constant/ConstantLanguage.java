@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.constant;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
@@ -43,16 +41,6 @@ public class ConstantLanguage implements Language, IsSingleton {
     @Override
     public Expression createExpression(String expression) {
         return ConstantLanguage.constant(expression);
-    }
-
-    @Override
-    public Predicate createPredicate(String expression, Map<String, Object> properties) {
-        return createPredicate(expression);
-    }
-
-    @Override
-    public Expression createExpression(String expression, Map<String, Object> properties) {
-        return createExpression(expression);
     }
 
     @Override

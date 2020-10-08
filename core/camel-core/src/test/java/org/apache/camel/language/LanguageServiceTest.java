@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import java.util.Map;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
@@ -76,16 +74,6 @@ public class LanguageServiceTest extends ContextTestSupport {
         @Override
         public Expression createExpression(String expression) {
             return ExpressionBuilder.constantExpression(expression);
-        }
-
-        @Override
-        public Predicate createPredicate(String expression, Map<String, Object> properties) {
-            return createPredicate(expression);
-        }
-
-        @Override
-        public Expression createExpression(String expression, Map<String, Object> properties) {
-            return createExpression(expression);
         }
 
         public String getState() {
