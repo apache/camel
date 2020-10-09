@@ -295,6 +295,31 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  beanType the Class of the bean which we want to invoke
+     * @param  scope    the scope of the bean
+     * @return          the builder to continue processing the DSL
+     */
+    public T method(Class<?> beanType, BeanScope scope) {
+        return delegate.method(beanType, scope);
+    }
+
+    /**
+     * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
+     * basically means the bean is invoked to determine the expression value.
+     *
+     * @param  beanType the Class of the bean which we want to invoke
+     * @param  method   the name of the method to invoke on the bean
+     * @param  scope    the scope of the bean
+     * @return          the builder to continue processing the DSL
+     */
+    public T method(Class<?> beanType, String method, BeanScope scope) {
+        return delegate.method(beanType, method, scope);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy expression</a>
      *
      * @param  text the expression to be evaluated
