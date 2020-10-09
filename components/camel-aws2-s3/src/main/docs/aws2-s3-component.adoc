@@ -345,6 +345,10 @@ Camel-AWS2-S3 component provides the following operation on the producer side:
 - getObject (this will return an S3Object instance)
 - getObjectRange (this will return an S3Object instance)
 
+If you don't specify an operation explicitly the producer will do:
+- a single file upload 
+- a multipart upload if multiPartUpload option is enabled
+
 === Advanced AmazonS3 configuration
 
 If your Camel Application is running behind a firewall or if you need to
@@ -381,6 +385,24 @@ using IAM credentials on AWS environments takes away the need to refresh on remo
 policies are updated). This is the AWS recommended way to manage credentials and therefore should be used as often as possible.
 
 === S3 Producer Operation examples
+
+- Single Upload: This operation will upload a file to S3 based on the body content
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camel.txt");
+          exchange.getIn().setBody("Camel rocks!");
+      }
+  })
+  .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will upload the file camel.txt with the content "Camel rocks!" in the mycamelbucket bucket
 
 - CopyObject: this operation copy an object from one bucket to a different one
 

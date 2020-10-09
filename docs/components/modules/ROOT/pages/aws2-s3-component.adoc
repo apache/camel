@@ -347,6 +347,10 @@ Camel-AWS2-S3 component provides the following operation on the producer side:
 - getObject (this will return an S3Object instance)
 - getObjectRange (this will return an S3Object instance)
 
+If you don't specify an operation explicitly the producer will do:
+- a single file upload 
+- a multipart upload if multiPartUpload option is enabled
+
 === Advanced AmazonS3 configuration
 
 If your Camel Application is running behind a firewall or if you need to
