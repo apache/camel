@@ -47,7 +47,7 @@
         <aether-version>1.0.2.v20150114</aether-version>
         <ahc-version>2.12.1</ahc-version>
         <android-annotations-version>4.1.1.4</android-annotations-version>
-        <apacheds-version>2.0.0.AM25</apacheds-version>
+        <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.18.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
@@ -78,7 +78,7 @@
         <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
         <awaitility-version>4.0.3</awaitility-version>
         <aws-java-sdk-version>1.11.714</aws-java-sdk-version>
-        <aws-java-sdk2-version>2.14.21</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.14.22</aws-java-sdk2-version>
         <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>

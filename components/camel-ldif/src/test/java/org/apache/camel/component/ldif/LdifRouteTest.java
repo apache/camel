@@ -82,7 +82,9 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
 
     @AfterEach
     public void tearDown() throws Exception {
-        camel.stop();
+        if (camel != null) {
+            camel.stop();
+        }
     }
 
     @Test

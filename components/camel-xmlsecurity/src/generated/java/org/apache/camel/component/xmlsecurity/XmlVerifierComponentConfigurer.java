@@ -15,7 +15,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration getOrCreateConfiguration(XmlVerifierComponent target) {
+    private org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration getOrCreateVerifierConfiguration(XmlVerifierComponent target) {
         if (target.getVerifierConfiguration() == null) {
             target.setVerifierConfiguration(new org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration());
         }
@@ -27,43 +27,43 @@ public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport im
         XmlVerifierComponent target = (XmlVerifierComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
-        case "baseUri": getOrCreateConfiguration(target).setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "baseUri": getOrCreateVerifierConfiguration(target).setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clearheaders":
-        case "clearHeaders": getOrCreateConfiguration(target).setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "clearHeaders": getOrCreateVerifierConfiguration(target).setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "cryptocontextproperties":
-        case "cryptoContextProperties": getOrCreateConfiguration(target).setCryptoContextProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "cryptoContextProperties": getOrCreateVerifierConfiguration(target).setCryptoContextProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "disallowdoctypedecl":
-        case "disallowDoctypeDecl": getOrCreateConfiguration(target).setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "disallowDoctypeDecl": getOrCreateVerifierConfiguration(target).setDisallowDoctypeDecl(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "keyselector":
-        case "keySelector": getOrCreateConfiguration(target).setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
+        case "keySelector": getOrCreateVerifierConfiguration(target).setKeySelector(property(camelContext, javax.xml.crypto.KeySelector.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "omitxmldeclaration":
-        case "omitXmlDeclaration": getOrCreateConfiguration(target).setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "omitXmlDeclaration": getOrCreateVerifierConfiguration(target).setOmitXmlDeclaration(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "outputnodesearch":
-        case "outputNodeSearch": getOrCreateConfiguration(target).setOutputNodeSearch(property(camelContext, java.lang.Object.class, value)); return true;
+        case "outputNodeSearch": getOrCreateVerifierConfiguration(target).setOutputNodeSearch(property(camelContext, java.lang.Object.class, value)); return true;
         case "outputnodesearchtype":
-        case "outputNodeSearchType": getOrCreateConfiguration(target).setOutputNodeSearchType(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputNodeSearchType": getOrCreateVerifierConfiguration(target).setOutputNodeSearchType(property(camelContext, java.lang.String.class, value)); return true;
         case "outputxmlencoding":
-        case "outputXmlEncoding": getOrCreateConfiguration(target).setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "outputXmlEncoding": getOrCreateVerifierConfiguration(target).setOutputXmlEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "removesignatureelements":
-        case "removeSignatureElements": getOrCreateConfiguration(target).setRemoveSignatureElements(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "removeSignatureElements": getOrCreateVerifierConfiguration(target).setRemoveSignatureElements(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "schemaresourceuri":
-        case "schemaResourceUri": getOrCreateConfiguration(target).setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemaResourceUri": getOrCreateVerifierConfiguration(target).setSchemaResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "securevalidation":
-        case "secureValidation": getOrCreateConfiguration(target).setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "secureValidation": getOrCreateVerifierConfiguration(target).setSecureValidation(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "uridereferencer":
-        case "uriDereferencer": getOrCreateConfiguration(target).setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
+        case "uriDereferencer": getOrCreateVerifierConfiguration(target).setUriDereferencer(property(camelContext, javax.xml.crypto.URIDereferencer.class, value)); return true;
         case "validationfailedhandler":
-        case "validationFailedHandler": getOrCreateConfiguration(target).setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
+        case "validationFailedHandler": getOrCreateVerifierConfiguration(target).setValidationFailedHandler(property(camelContext, org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class, value)); return true;
         case "verifierconfiguration":
         case "verifierConfiguration": target.setVerifierConfiguration(property(camelContext, org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration.class, value)); return true;
         case "xmlsignature2message":
-        case "xmlSignature2Message": getOrCreateConfiguration(target).setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
+        case "xmlSignature2Message": getOrCreateVerifierConfiguration(target).setXmlSignature2Message(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class, value)); return true;
         case "xmlsignaturechecker":
-        case "xmlSignatureChecker": getOrCreateConfiguration(target).setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
+        case "xmlSignatureChecker": getOrCreateVerifierConfiguration(target).setXmlSignatureChecker(property(camelContext, org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class, value)); return true;
         default: return false;
         }
     }
@@ -98,43 +98,43 @@ public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport im
         XmlVerifierComponent target = (XmlVerifierComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
-        case "baseUri": return getOrCreateConfiguration(target).getBaseUri();
+        case "baseUri": return getOrCreateVerifierConfiguration(target).getBaseUri();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clearheaders":
-        case "clearHeaders": return getOrCreateConfiguration(target).getClearHeaders();
+        case "clearHeaders": return getOrCreateVerifierConfiguration(target).getClearHeaders();
         case "cryptocontextproperties":
-        case "cryptoContextProperties": return getOrCreateConfiguration(target).getCryptoContextProperties();
+        case "cryptoContextProperties": return getOrCreateVerifierConfiguration(target).getCryptoContextProperties();
         case "disallowdoctypedecl":
-        case "disallowDoctypeDecl": return getOrCreateConfiguration(target).getDisallowDoctypeDecl();
+        case "disallowDoctypeDecl": return getOrCreateVerifierConfiguration(target).getDisallowDoctypeDecl();
         case "keyselector":
-        case "keySelector": return getOrCreateConfiguration(target).getKeySelector();
+        case "keySelector": return getOrCreateVerifierConfiguration(target).getKeySelector();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "omitxmldeclaration":
-        case "omitXmlDeclaration": return getOrCreateConfiguration(target).getOmitXmlDeclaration();
+        case "omitXmlDeclaration": return getOrCreateVerifierConfiguration(target).getOmitXmlDeclaration();
         case "outputnodesearch":
-        case "outputNodeSearch": return getOrCreateConfiguration(target).getOutputNodeSearch();
+        case "outputNodeSearch": return getOrCreateVerifierConfiguration(target).getOutputNodeSearch();
         case "outputnodesearchtype":
-        case "outputNodeSearchType": return getOrCreateConfiguration(target).getOutputNodeSearchType();
+        case "outputNodeSearchType": return getOrCreateVerifierConfiguration(target).getOutputNodeSearchType();
         case "outputxmlencoding":
-        case "outputXmlEncoding": return getOrCreateConfiguration(target).getOutputXmlEncoding();
+        case "outputXmlEncoding": return getOrCreateVerifierConfiguration(target).getOutputXmlEncoding();
         case "removesignatureelements":
-        case "removeSignatureElements": return getOrCreateConfiguration(target).getRemoveSignatureElements();
+        case "removeSignatureElements": return getOrCreateVerifierConfiguration(target).getRemoveSignatureElements();
         case "schemaresourceuri":
-        case "schemaResourceUri": return getOrCreateConfiguration(target).getSchemaResourceUri();
+        case "schemaResourceUri": return getOrCreateVerifierConfiguration(target).getSchemaResourceUri();
         case "securevalidation":
-        case "secureValidation": return getOrCreateConfiguration(target).getSecureValidation();
+        case "secureValidation": return getOrCreateVerifierConfiguration(target).getSecureValidation();
         case "uridereferencer":
-        case "uriDereferencer": return getOrCreateConfiguration(target).getUriDereferencer();
+        case "uriDereferencer": return getOrCreateVerifierConfiguration(target).getUriDereferencer();
         case "validationfailedhandler":
-        case "validationFailedHandler": return getOrCreateConfiguration(target).getValidationFailedHandler();
+        case "validationFailedHandler": return getOrCreateVerifierConfiguration(target).getValidationFailedHandler();
         case "verifierconfiguration":
         case "verifierConfiguration": return target.getVerifierConfiguration();
         case "xmlsignature2message":
-        case "xmlSignature2Message": return getOrCreateConfiguration(target).getXmlSignature2Message();
+        case "xmlSignature2Message": return getOrCreateVerifierConfiguration(target).getXmlSignature2Message();
         case "xmlsignaturechecker":
-        case "xmlSignatureChecker": return getOrCreateConfiguration(target).getXmlSignatureChecker();
+        case "xmlSignatureChecker": return getOrCreateVerifierConfiguration(target).getXmlSignatureChecker();
         default: return null;
         }
     }

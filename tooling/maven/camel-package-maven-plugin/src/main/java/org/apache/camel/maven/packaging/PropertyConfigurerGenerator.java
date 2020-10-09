@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Optional;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -62,10 +63,9 @@ public final class PropertyConfigurerGenerator {
             if (component) {
                 // if its a component configurer then configuration classes are optional and we need
                 // to generate a method that can lazy create a new configuration if it was null
-                Optional<? extends BaseOptionModel> configurationOption = findConfiguration(options);
-                if (configurationOption.isPresent()) {
-                    w.write(createGetOrCreateConfiguration(en, configurationOption.get().getConfigurationClass(),
-                            configurationOption.get().getConfigurationField()));
+                for (BaseOptionModel bo : findConfigurations(options)) {
+                    w.write(createGetOrCreateConfiguration(en, bo.getConfigurationClass(),
+                            bo.getConfigurationField()));
                     w.write("\n");
                 }
             }
@@ -177,8 +177,17 @@ public final class PropertyConfigurerGenerator {
         w.write("\n");
     }
 
-    private static Optional<? extends BaseOptionModel> findConfiguration(Collection<? extends BaseOptionModel> options) {
-        return options.stream().filter(o -> o.getConfigurationField() != null).findFirst();
+    private static Set<BaseOptionModel> findConfigurations(Collection<? extends BaseOptionModel> options) {
+        final Set<String> found = new LinkedHashSet<>();
+        final Set<BaseOptionModel> answer = new LinkedHashSet<>();
+        for (BaseOptionModel bo : options.stream().filter(o -> o.getConfigurationField() != null)
+                .collect(Collectors.toList())) {
+            if (!found.contains(bo.getConfigurationClass())) {
+                found.add(bo.getConfigurationClass());
+                answer.add(bo);
+            }
+        }
+        return answer;
     }
 
     private static String setterLambda(
@@ -191,7 +200,9 @@ public final class PropertyConfigurerGenerator {
         type = type.replace('$', '.');
         if (configurationField != null) {
             if (component) {
-                getOrSet = "getOrCreateConfiguration(target).set" + getOrSet;
+                String methodName
+                        = "getOrCreate" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
+                getOrSet = methodName + "(target).set" + getOrSet;
             } else {
                 getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
                            + "().set" + getOrSet;
@@ -222,7 +233,9 @@ public final class PropertyConfigurerGenerator {
         }
         if (configurationField != null) {
             if (component) {
-                getOrSet = "getOrCreateConfiguration(target)." + prefix + getOrSet;
+                String methodName
+                        = "getOrCreate" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
+                getOrSet = methodName + "(target)." + prefix + getOrSet;
             } else {
                 getOrSet = "target.get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1)
                            + "()." + prefix + getOrSet;
@@ -238,9 +251,11 @@ public final class PropertyConfigurerGenerator {
             String targetClass, String configurationClass, String configurationField) {
         String getter = "get" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
         String setter = "set" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
+        String methodName
+                = "getOrCreate" + Character.toUpperCase(configurationField.charAt(0)) + configurationField.substring(1);
 
         StringBuilder sb = new StringBuilder();
-        String line1 = String.format("    private %s getOrCreateConfiguration(%s target) {\n", configurationClass, targetClass);
+        String line1 = String.format("    private %s %s(%s target) {\n", configurationClass, methodName, targetClass);
         String line2 = String.format("        if (target.%s() == null) {\n", getter);
         String line3 = String.format("            target.%s(new %s());\n", setter, configurationClass);
         String line4 = String.format("        }\n");
