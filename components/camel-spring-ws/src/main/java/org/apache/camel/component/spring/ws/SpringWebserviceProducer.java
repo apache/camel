@@ -317,10 +317,12 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
             if (wsAddressingAction != null) {
                 ActionCallback actionCallback = new ActionCallback(wsAddressingAction);
+                if (configuration.getMessageIdStrategy() != null) {
+                    actionCallback.setMessageIdStrategy(configuration.getMessageIdStrategy());
+                }
                 if (wsReplyTo != null) {
                     actionCallback.setReplyTo(new EndpointReference(wsReplyTo));
                 }
-
                 if (wsFaultTo != null) {
                     actionCallback.setFaultTo(new EndpointReference(wsFaultTo));
                 }

@@ -23,10 +23,10 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         map.put("webServiceEndpointUri", java.lang.String.class);
         map.put("expression", java.lang.String.class);
         map.put("messageFilter", org.apache.camel.component.spring.ws.filter.MessageFilter.class);
+        map.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("endpointDispatcher", org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher.class);
         map.put("endpointMapping", org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpointMapping.class);
-        map.put("messageIdStrategy", org.springframework.ws.soap.addressing.messageid.MessageIdStrategy.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("allowResponseAttachmentOverride", boolean.class);

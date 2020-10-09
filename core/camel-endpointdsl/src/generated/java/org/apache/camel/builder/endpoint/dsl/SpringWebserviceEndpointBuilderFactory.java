@@ -71,6 +71,34 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
+                Object messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
+                String messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -176,34 +204,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
         default SpringWebserviceEndpointConsumerBuilder endpointMapping(
                 String endpointMapping) {
             doSetProperty("endpointMapping", endpointMapping);
-            return this;
-        }
-        /**
-         * Option to provide a custom MessageIdStrategy to control generation of
-         * WS-Addressing unique message ids.
-         * 
-         * The option is a:
-         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
-                Object messageIdStrategy) {
-            doSetProperty("messageIdStrategy", messageIdStrategy);
-            return this;
-        }
-        /**
-         * Option to provide a custom MessageIdStrategy to control generation of
-         * WS-Addressing unique message ids.
-         * 
-         * The option will be converted to a
-         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder messageIdStrategy(
-                String messageIdStrategy) {
-            doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
         /**
@@ -394,6 +394,34 @@ public interface SpringWebserviceEndpointBuilderFactory {
         default SpringWebserviceEndpointProducerBuilder messageFilter(
                 String messageFilter) {
             doSetProperty("messageFilter", messageFilter);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
+                Object messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointProducerBuilder messageIdStrategy(
+                String messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
         /**
@@ -931,6 +959,34 @@ public interface SpringWebserviceEndpointBuilderFactory {
         default SpringWebserviceEndpointBuilder messageFilter(
                 String messageFilter) {
             doSetProperty("messageFilter", messageFilter);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option is a:
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointBuilder messageIdStrategy(
+                Object messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
+            return this;
+        }
+        /**
+         * Option to provide a custom MessageIdStrategy to control generation of
+         * WS-Addressing unique message ids.
+         * 
+         * The option will be converted to a
+         * <code>org.springframework.ws.soap.addressing.messageid.MessageIdStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default SpringWebserviceEndpointBuilder messageIdStrategy(
+                String messageIdStrategy) {
+            doSetProperty("messageIdStrategy", messageIdStrategy);
             return this;
         }
         /**
