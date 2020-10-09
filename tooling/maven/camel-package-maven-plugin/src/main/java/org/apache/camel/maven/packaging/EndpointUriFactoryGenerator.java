@@ -18,9 +18,9 @@ package org.apache.camel.maven.packaging;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.TreeSet;
 
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -39,6 +39,7 @@ public final class EndpointUriFactoryGenerator {
         w.write("package " + pn + ";\n");
         w.write("\n");
         w.write("import java.net.URISyntaxException;\n");
+        w.write("import java.util.Collections;\n");
         w.write("import java.util.HashMap;\n");
         w.write("import java.util.HashSet;\n");
         w.write("import java.util.Map;\n");
@@ -59,7 +60,11 @@ public final class EndpointUriFactoryGenerator {
         }
         w.write("\n");
         w.write("    private static final Set<String> PROPERTY_NAMES;\n");
+        w.write("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
+        w.write("    static {\n");
         w.write(generatePropertyNames(model));
+        w.write(generateSecretPropertyNames(model));
+        w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
         w.write("    public boolean isEnabled(String scheme) {\n");
@@ -96,6 +101,11 @@ public final class EndpointUriFactoryGenerator {
         w.write("    }\n");
         w.write("\n");
         w.write("    @Override\n");
+        w.write("    public Set<String> secretPropertyNames() {\n");
+        w.write("        return SECRET_PROPERTY_NAMES;\n");
+        w.write("    }\n");
+        w.write("\n");
+        w.write("    @Override\n");
         w.write("    public boolean isLenientProperties() {\n");
         w.write("        return " + model.isLenientProperties() + ";\n");
         w.write("    }\n");
@@ -104,25 +114,58 @@ public final class EndpointUriFactoryGenerator {
     }
 
     private static String generatePropertyNames(ComponentModel model) {
-        int size = model.getEndpointOptions().size();
-        // use sorted set so the code is always generated the same way
-        Set<String> apis = new TreeSet<>();
-        if (model.isApi()) {
-            // gather all the option names from the api (they can be duplicated as the same name can be used by multiple methods)
-            model.getApiOptions().forEach(a -> a.getMethods().forEach(m -> m.getOptions().forEach(o -> apis.add(o.getName()))));
-            size += apis.size();
+        Set<String> properties = new HashSet<>();
+        model.getEndpointOptions().stream()
+                .map(ComponentModel.EndpointOptionModel::getName)
+                .forEach(properties::add);
+
+        // gather all the option names from the api (they can be duplicated as the same name
+        // can be used by multiple methods)
+        model.getApiOptions().stream()
+                .flatMap(a -> a.getMethods().stream())
+                .flatMap(m -> m.getOptions().stream())
+                .map(ComponentModel.ApiOptionModel::getName)
+                .forEach(properties::add);
+
+        if (properties.isEmpty()) {
+            return "        PROPERTY_NAMES = Collections.emptySet();\n";
         }
+
         StringBuilder sb = new StringBuilder();
-        sb.append("    static {\n");
-        sb.append("        Set<String> set = new HashSet<>(").append(size).append(");\n");
-        for (ComponentModel.EndpointOptionModel option : model.getEndpointOptions()) {
-            sb.append("        set.add(\"").append(option.getName()).append("\");\n");
+        sb.append("        Set<String> props = new HashSet<>(").append(properties.size()).append(");\n");
+        for (String property : properties) {
+            sb.append("        props.add(\"").append(property).append("\");\n");
         }
-        for (String name : apis) {
-            sb.append("        set.add(\"").append(name).append("\");\n");
+        sb.append("        PROPERTY_NAMES = Collections.unmodifiableSet(props);\n");
+        return sb.toString();
+    }
+
+    private static String generateSecretPropertyNames(ComponentModel model) {
+        Set<String> properties = new HashSet<>();
+        model.getEndpointOptions().stream()
+                .filter(ComponentModel.EndpointOptionModel::isSecret)
+                .map(ComponentModel.EndpointOptionModel::getName)
+                .forEach(properties::add);
+
+        // gather all the option names from the api (they can be duplicated as the same name
+        // can be used by multiple methods)
+        model.getApiOptions().stream()
+                .flatMap(a -> a.getMethods().stream())
+                .flatMap(m -> m.getOptions().stream())
+                .filter(ComponentModel.ApiOptionModel::isSecret)
+                .map(ComponentModel.ApiOptionModel::getName)
+                .forEach(properties::add);
+
+        if (properties.isEmpty()) {
+            return "        SECRET_PROPERTY_NAMES = Collections.emptySet();\n";
         }
-        sb.append("        PROPERTY_NAMES = set;\n");
-        sb.append("    }\n");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("        Set<String> secretProps = new HashSet<>(").append(properties.size()).append(");\n");
+        for (String property : properties) {
+            sb.append("        secretProps.add(\"").append(property).append("\");\n");
+        }
+        sb.append("        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);\n");
         return sb.toString();
     }
 
