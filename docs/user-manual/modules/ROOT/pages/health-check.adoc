@@ -37,7 +37,7 @@ you would need to turn off readiness, by overriding the `isReadiness` method and
 [source,java]
 ----
     @Override
-    public boolean isLiveness() {
+    public boolean isReadiness() {
         return false;
     }
 ----
