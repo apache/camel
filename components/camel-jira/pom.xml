@@ -72,6 +72,14 @@
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.jettison</groupId>
+                    <artifactId>jettison</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -79,7 +87,17 @@
             <artifactId>fugue</artifactId>
             <version>${atlassian-fugue-version}</version>
         </dependency>
-
+        <!-- Aligning versions with versions defined in parent pom  -->
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>${jettison-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient4-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
