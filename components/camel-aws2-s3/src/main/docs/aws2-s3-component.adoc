@@ -404,6 +404,24 @@ policies are updated). This is the AWS recommended way to manage credentials and
 
 This operation will upload the file camel.txt with the content "Camel rocks!" in the mycamelbucket bucket
 
+- Multipart Upload: This operation will perform a multipart upload of a file to S3 based on the body content
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(AWS2S3Constants.KEY, "empty.txt");
+          exchange.getIn().setBody(new File("src/empty.txt"));
+      }
+  })
+  .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&multiPartUpload=true&autoCreateBucket=true&partSize=1048576")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will perform a multipart upload of the file empty.txt with based on the content the file src/empty.txt in the mycamelbucket bucket
+
 - CopyObject: this operation copy an object from one bucket to a different one
 
 [source,java]
