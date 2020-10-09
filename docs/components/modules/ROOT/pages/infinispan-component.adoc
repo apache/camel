@@ -814,7 +814,11 @@ Custom filters and converters must be registered with the server.
 In order to listen for remote HotRod events the cacheManager must be of type [class]``RemoteCacheManager`` and instantiated. 
 ====
 
-
+[NOTE]
+====
+With the release of Infinispan 11, it is required to set the encoding configuration on any cache created. This is critical for consuming events too.
+For more information have a look at https://infinispan.org/docs/stable/titles/developing/developing.html#data_encoding[Data Encoding and MediaTypes] in the official Infinispan documentation.
+====
 
 == Using the Infinispan based idempotent repository
 
