@@ -28,8 +28,8 @@ import org.w3c.dom.NodeList;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DOMNodeList;
 import net.sf.saxon.dom.NodeOverNodeInfo;
+import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import org.apache.camel.Converter;
@@ -51,10 +51,9 @@ public final class SaxonConverter {
                 return (Document) NodeOverNodeInfo.wrap(node);
             case Type.ELEMENT:
                 // ELEMENT nodes need to build a new DocumentInfo before wrapping
-                //https://www.saxonica.com/documentation/#!javadoc/net.sf.saxon/Configuration@buildDocumentTree
                 Configuration config = node.getConfiguration();
-                TreeInfo treeInfo = config.buildDocumentTree(node);
-                return (Document) NodeOverNodeInfo.wrap(treeInfo.getRootNode());
+                DocumentInfo documentInfo = config.buildDocument(node);
+                return (Document) NodeOverNodeInfo.wrap(documentInfo);
             default:
                 return null;
         }
