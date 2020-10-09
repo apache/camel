@@ -74,7 +74,7 @@ pipeline {
             }
 
             steps {
-                build job: 'Camel.website/master', wait: false
+                build job: 'Camel/Camel.website/master', wait: false
             }
         }
 
