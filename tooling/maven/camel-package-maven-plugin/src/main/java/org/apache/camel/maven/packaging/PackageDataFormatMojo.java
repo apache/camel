@@ -515,7 +515,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     private Optional<JavaClassSource> doParseJavaClassSource(String className) {
         try {
             Path srcDir = project.getBasedir().toPath().resolve("src/main/java");
-            Path file = srcDir.resolve(className.replace('.', '/') + ".java");
+            // Remove <.*> from className, as the string may contain generic types
+            Path file = srcDir.resolve(className.replaceAll("<.*>", "").replace('.', '/') + ".java");
             if (!Files.isRegularFile(file)) {
                 return Optional.empty();
             }
