@@ -67,6 +67,17 @@ public class AbstractHttpSpanDecoratorTest {
     }
 
     @Test
+    public void testGetMethodFromMethodHeaderEnum() {
+        Exchange exchange = Mockito.mock(Exchange.class);
+        Message message = Mockito.mock(Message.class);
+
+        Mockito.when(exchange.getIn()).thenReturn(message);
+        Mockito.when(message.getHeader(Exchange.HTTP_METHOD)).thenReturn(HttpMethods.GET);
+
+        assertEquals("GET", AbstractHttpSpanDecorator.getHttpMethod(exchange, null));
+    }
+
+    @Test
     public void testGetMethodQueryStringHeader() {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
