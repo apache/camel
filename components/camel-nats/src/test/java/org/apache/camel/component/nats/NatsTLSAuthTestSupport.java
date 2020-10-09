@@ -26,7 +26,7 @@ import org.testcontainers.containers.GenericContainer;
  *https://github.com/nats-io/jnats/tree/master/src/test/resources */
 public class NatsTLSAuthTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.4";
+    public static final String CONTAINER_IMAGE = "nats:2.1.8";
     public static final String CONTAINER_NAME = "nats-tls";
 
     @Override
