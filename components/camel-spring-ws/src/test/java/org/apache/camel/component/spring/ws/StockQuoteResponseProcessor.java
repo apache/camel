@@ -38,7 +38,7 @@ public class StockQuoteResponseProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         LOG.info("Crafting standard response in StockQuoteResponseProcessor");
-        InputStream is = getClass().getResourceAsStream("/stockquote-response.xml");
+        InputStream is = getClass().getResourceAsStream("/stockquote-response.txt");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(is);

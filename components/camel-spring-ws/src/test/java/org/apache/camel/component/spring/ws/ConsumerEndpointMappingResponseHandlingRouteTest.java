@@ -53,7 +53,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
         expectedResponse = context.getTypeConverter().convertTo(String.class,
-                getClass().getResourceAsStream("/stockquote-response.xml"));
+                getClass().getResourceAsStream("/stockquote-response.txt"));
     }
 
     @Test
