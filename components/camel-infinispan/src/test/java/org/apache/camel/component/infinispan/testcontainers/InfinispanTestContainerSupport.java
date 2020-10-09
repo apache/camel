@@ -27,7 +27,7 @@ import org.testcontainers.containers.GenericContainer;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "infinispan/server:11.0.4.Final";
+    public static final String CONTAINER_IMAGE = "infinispan/server:11.0.4.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
 
     @Override
