@@ -351,6 +351,7 @@
                             <exclude>**/ignite/work/**/*</exclude>
                             <exclude>**/MySecondFooConfigurer.java</exclude>
                             <exclude>**/MySecondBarConfigurer.java</exclude>
+                            <exclude>**/stockquote-response.xml</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                         </excludes>

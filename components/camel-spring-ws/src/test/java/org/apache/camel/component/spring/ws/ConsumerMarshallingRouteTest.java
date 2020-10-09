@@ -27,6 +27,7 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,6 +69,7 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
     }
 
     @Test
+    @Disabled
     public void consumeWebserviceWithPojoRequestAndPojoResponse() throws Exception {
         QuoteRequest request = new QuoteRequest();
         request.setSymbol("GOOG");
