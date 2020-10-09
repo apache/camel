@@ -24,10 +24,10 @@ public class SpringWebserviceEndpointUriFactory extends org.apache.camel.support
         set.add("webServiceEndpointUri");
         set.add("expression");
         set.add("messageFilter");
+        set.add("messageIdStrategy");
         set.add("bridgeErrorHandler");
         set.add("endpointDispatcher");
         set.add("endpointMapping");
-        set.add("messageIdStrategy");
         set.add("exceptionHandler");
         set.add("exchangePattern");
         set.add("allowResponseAttachmentOverride");

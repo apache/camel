@@ -71,7 +71,6 @@ public class ProducerParamsBasicTest extends CamelSpringTestSupport {
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(anonymousUri);
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(anonymousUri);
-
     }
 
     @Test
@@ -86,7 +85,6 @@ public class ProducerParamsBasicTest extends CamelSpringTestSupport {
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(anonymousUri);
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(anonymousUri);
-
     }
 
     @Test
@@ -102,7 +100,22 @@ public class ProducerParamsBasicTest extends CamelSpringTestSupport {
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(new URI("mailto://replyTo@chocolatejar.eu"));
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://fault.to"));
+    }
 
+    @Test
+    public void testReplyToCustomMessageId() throws Exception {
+        template.requestBody("direct:replyTo-customMessageIdStrategy", xmlBody);
+
+        assertNotNull(sender.getMessageContext());
+
+        // check default actions
+        Assertions.assertThat(sender.getMessageContext()).isNotNull();
+        MessageAddressingProperties wsaProperties
+                = TestUtil.getWSAProperties((SoapMessage) sender.getMessageContext().getRequest());
+        Assertions.assertThat(wsaProperties).isNotNull();
+        Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(new URI("mailto://replyTo@chocolatejar.eu"));
+        Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://fault.to"));
+        Assertions.assertThat(wsaProperties.getMessageId()).isEqualTo(new URI("staticTestId"));
     }
 
     @Test
