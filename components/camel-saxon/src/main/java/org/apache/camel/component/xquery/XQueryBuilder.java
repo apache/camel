@@ -223,7 +223,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
         XQueryExpression expression = getExpression();
-        expression.run(context, result, properties);
+        expression.pull(context, result, properties);
         return result.getNode();
     }
 
@@ -232,7 +232,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
-        getExpression().run(createDynamicContext(exchange), result, properties);
+        getExpression().pull(createDynamicContext(exchange), result, properties);
 
         byte[] answer = buffer.toByteArray();
         buffer.close();

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.xslt;
 
-import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.UncheckedXPathException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -39,10 +39,9 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
             template.sendBody("direct:start1", message);
             fail("expect an exception here");
         } catch (Exception ex) {
-
-            assertTrue(ex instanceof CamelExecutionException);
-            assertTrue(ex.getCause() instanceof XPathException);
-
+            // expect an exception here
+            assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
+            assertTrue(ex.getCause() instanceof UncheckedXPathException, "Get a wrong exception cause");
         }
 
     }
