@@ -17,7 +17,10 @@
 package org.apache.camel.catalog;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -211,7 +214,22 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
         Assertions.assertEquals("jms2:foo?deliveryPersistent=true", uri);
     }
 
-    private class MyAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
+    @Test
+    public void testJmsSecrets() throws Exception {
+        EndpointUriFactory assembler = new MyJmsxAssembler();
+        assembler.setCamelContext(context);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("destinationName", "foo");
+        params.put("deliveryPersistent", true);
+        params.put("username", "usr");
+        params.put("password", "pwd");
+
+        String uri = assembler.buildUri("jmsx", params);
+        Assertions.assertEquals("jmsx:foo?deliveryPersistent=true&password=RAW(pwd)&username=RAW(usr)", uri);
+    }
+
+    private static class MyAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
 
         private static final String SYNTAX = "acme:name:port";
 
@@ -237,7 +255,12 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         @Override
         public Set<String> propertyNames() {
-            return null;
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
         }
 
         @Override
@@ -247,7 +270,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
     }
 
-    private class MySecondAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
+    private static class MySecondAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
 
         private static final String SYNTAX = "acme2:name/path:port";
 
@@ -274,7 +297,12 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         @Override
         public Set<String> propertyNames() {
-            return null;
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
         }
 
         @Override
@@ -284,7 +312,7 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
     }
 
-    private class MyJmsAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
+    private static class MyJmsAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
 
         private static final String SYNTAX = "jms2:destinationType:destinationName";
 
@@ -307,7 +335,47 @@ public class CustomEndpointUriFactoryTest extends ContextTestSupport {
 
         @Override
         public Set<String> propertyNames() {
-            return null;
+            return Collections.emptySet();
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public boolean isLenientProperties() {
+            return false;
+        }
+
+    }
+
+    private static class MyJmsxAssembler extends EndpointUriFactorySupport implements EndpointUriFactory {
+        private static final String SYNTAX = "jmsx:destinationType:destinationName";
+
+        @Override
+        public boolean isEnabled(String scheme) {
+            return "jmsx".equals(scheme);
+        }
+
+        @Override
+        public String buildUri(String scheme, Map<String, Object> properties) throws URISyntaxException {
+            String uri = SYNTAX;
+            uri = buildPathParameter(SYNTAX, uri, "destinationType", "queue", false, properties);
+            uri = buildPathParameter(SYNTAX, uri, "destinationName", null, true, properties);
+            uri = buildQueryParameters(uri, properties);
+
+            return uri;
+        }
+
+        @Override
+        public Set<String> propertyNames() {
+            return new HashSet<>(Arrays.asList("destinationType", "destinationName", "username", "password"));
+        }
+
+        @Override
+        public Set<String> secretPropertyNames() {
+            return new HashSet<>(Arrays.asList("username", "password"));
         }
 
         @Override

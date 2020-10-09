@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -799,6 +800,7 @@ public abstract class AbstractCamelCatalog {
 
         // build at first according to syntax (use a tree map as we want the uri options sorted)
         Map<String, String> copy = new TreeMap<>(properties);
+
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
         while (syntaxMatcher.find()) {
             syntax += syntaxMatcher.group(1);
@@ -821,6 +823,23 @@ public abstract class AbstractCamelCatalog {
             sb.append(syntax);
 
             if (!copy.isEmpty()) {
+                // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
+                copy.replaceAll((key, val) -> {
+                    if (val == null) {
+                        return val;
+                    }
+                    BaseOptionModel option = rows.get(key);
+                    if (option == null) {
+                        return val;
+                    }
+
+                    if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
+                        return "RAW(" + val + ")";
+                    }
+
+                    return val;
+                });
+
                 boolean hasQuestionMark = sb.toString().contains("?");
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionMark ? ampersand : '?');
@@ -905,8 +924,28 @@ public abstract class AbstractCamelCatalog {
                 range++;
             }
 
-
             if (!copy.isEmpty()) {
+                // wrap secret values with RAW to avoid breaking URI encoding in case of encoded values
+                copy.replaceAll(new BiFunction<String, String, String>() {
+                    @Override
+                    public String apply(String key, String val) {
+
+                        if (val == null) {
+                            return val;
+                        }
+                        BaseOptionModel option = rows.get(key);
+                        if (option == null) {
+                            return val;
+                        }
+
+                        if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
+                            return "RAW(" + val + ")";
+                        }
+
+                        return val;
+                    }
+                });
+
                 // the last option may already contain a ? char, if so we should use & instead of ?
                 sb.append(hasQuestionmark ? ampersand : '?');
                 String query = URISupport.createQueryString(copy, ampersand, encode);
