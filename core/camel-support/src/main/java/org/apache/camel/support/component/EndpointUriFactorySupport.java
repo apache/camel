@@ -78,6 +78,16 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             throws URISyntaxException {
         // we want sorted parameters
         Map<String, Object> map = new TreeMap<>(parameters);
+        for (String secretParameter : secretPropertyNames()) {
+            Object val = map.get(secretParameter);
+            if (val instanceof String) {
+                String answer = (String) val;
+                if (!answer.startsWith("#") && !answer.startsWith("RAW(")) {
+                    map.put(secretParameter, "RAW(" + val + ")");
+                }
+            }
+        }
+
         String query = URISupport.createQueryString(map);
         if (ObjectHelper.isNotEmpty(query)) {
             // there may be a ? sign in the context path then use & instead
