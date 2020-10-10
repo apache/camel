@@ -2,6 +2,7 @@
 package org.apache.camel.component.microprofile.metrics;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class MicroProfileMetricsEndpointUriFactory extends org.apache.camel.supp
     private static final String BASE = ":metricType:metricName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("metricType");
-        set.add("metricName");
-        set.add("action");
-        set.add("counterIncrement");
-        set.add("description");
-        set.add("displayName");
-        set.add("gaugeDecrement");
-        set.add("gaugeIncrement");
-        set.add("gaugeValue");
-        set.add("lazyStartProducer");
-        set.add("mark");
-        set.add("metricUnit");
-        set.add("tags");
-        set.add("value");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("metricName");
+        props.add("displayName");
+        props.add("synchronous");
+        props.add("description");
+        props.add("counterIncrement");
+        props.add("metricUnit");
+        props.add("tags");
+        props.add("metricType");
+        props.add("gaugeValue");
+        props.add("lazyStartProducer");
+        props.add("action");
+        props.add("gaugeDecrement");
+        props.add("value");
+        props.add("gaugeIncrement");
+        props.add("mark");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -59,6 +62,11 @@ public class MicroProfileMetricsEndpointUriFactory extends org.apache.camel.supp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

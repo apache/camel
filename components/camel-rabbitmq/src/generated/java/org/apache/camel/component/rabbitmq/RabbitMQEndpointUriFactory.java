@@ -2,6 +2,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,77 +18,82 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":exchangeName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(68);
-        set.add("exchangeName");
-        set.add("addresses");
-        set.add("autoDelete");
-        set.add("automaticRecoveryEnabled");
-        set.add("connectionFactory");
-        set.add("deadLetterExchange");
-        set.add("deadLetterExchangeType");
-        set.add("deadLetterQueue");
-        set.add("deadLetterRoutingKey");
-        set.add("declare");
-        set.add("durable");
-        set.add("exchangeType");
-        set.add("exclusive");
-        set.add("hostname");
-        set.add("passive");
-        set.add("portNumber");
-        set.add("queue");
-        set.add("routingKey");
-        set.add("skipDlqDeclare");
-        set.add("skipExchangeDeclare");
-        set.add("skipQueueBind");
-        set.add("skipQueueDeclare");
-        set.add("vhost");
-        set.add("autoAck");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("consumerTag");
-        set.add("exclusiveConsumer");
-        set.add("prefetchCount");
-        set.add("prefetchEnabled");
-        set.add("prefetchGlobal");
-        set.add("prefetchSize");
-        set.add("reQueue");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("threadPoolSize");
-        set.add("additionalHeaders");
-        set.add("additionalProperties");
-        set.add("allowCustomHeaders");
-        set.add("allowNullHeaders");
-        set.add("bridgeEndpoint");
-        set.add("channelPoolMaxSize");
-        set.add("channelPoolMaxWait");
-        set.add("guaranteedDeliveries");
-        set.add("immediate");
-        set.add("lazyStartProducer");
-        set.add("mandatory");
-        set.add("publisherAcknowledgements");
-        set.add("publisherAcknowledgementsTimeout");
-        set.add("args");
-        set.add("basicPropertyBinding");
-        set.add("clientProperties");
-        set.add("connectionFactoryExceptionHandler");
-        set.add("connectionTimeout");
-        set.add("networkRecoveryInterval");
-        set.add("requestedChannelMax");
-        set.add("requestedFrameMax");
-        set.add("requestedHeartbeat");
-        set.add("requestTimeout");
-        set.add("requestTimeoutCheckerInterval");
-        set.add("synchronous");
-        set.add("topologyRecoveryEnabled");
-        set.add("transferException");
-        set.add("allowMessageBodySerialization");
-        set.add("password");
-        set.add("sslProtocol");
-        set.add("trustManager");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(68);
+        props.add("prefetchCount");
+        props.add("publisherAcknowledgementsTimeout");
+        props.add("addresses");
+        props.add("declare");
+        props.add("requestTimeoutCheckerInterval");
+        props.add("prefetchGlobal");
+        props.add("synchronous");
+        props.add("portNumber");
+        props.add("consumerTag");
+        props.add("hostname");
+        props.add("reQueue");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("deadLetterRoutingKey");
+        props.add("transferException");
+        props.add("exclusive");
+        props.add("trustManager");
+        props.add("skipDlqDeclare");
+        props.add("exclusiveConsumer");
+        props.add("networkRecoveryInterval");
+        props.add("bridgeEndpoint");
+        props.add("automaticRecoveryEnabled");
+        props.add("autoAck");
+        props.add("requestedChannelMax");
+        props.add("channelPoolMaxSize");
+        props.add("connectionFactoryExceptionHandler");
+        props.add("concurrentConsumers");
+        props.add("guaranteedDeliveries");
+        props.add("vhost");
+        props.add("lazyStartProducer");
+        props.add("threadPoolSize");
+        props.add("deadLetterQueue");
+        props.add("immediate");
+        props.add("sslProtocol");
+        props.add("publisherAcknowledgements");
+        props.add("additionalProperties");
+        props.add("prefetchEnabled");
+        props.add("exceptionHandler");
+        props.add("routingKey");
+        props.add("basicPropertyBinding");
+        props.add("skipQueueDeclare");
+        props.add("exchangeType");
+        props.add("mandatory");
+        props.add("requestedFrameMax");
+        props.add("prefetchSize");
+        props.add("durable");
+        props.add("channelPoolMaxWait");
+        props.add("additionalHeaders");
+        props.add("allowMessageBodySerialization");
+        props.add("connectionTimeout");
+        props.add("requestTimeout");
+        props.add("skipExchangeDeclare");
+        props.add("deadLetterExchange");
+        props.add("clientProperties");
+        props.add("exchangePattern");
+        props.add("skipQueueBind");
+        props.add("deadLetterExchangeType");
+        props.add("allowCustomHeaders");
+        props.add("passive");
+        props.add("args");
+        props.add("allowNullHeaders");
+        props.add("connectionFactory");
+        props.add("autoDelete");
+        props.add("requestedHeartbeat");
+        props.add("exchangeName");
+        props.add("topologyRecoveryEnabled");
+        props.add("queue");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -110,6 +116,11 @@ public class RabbitMQEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

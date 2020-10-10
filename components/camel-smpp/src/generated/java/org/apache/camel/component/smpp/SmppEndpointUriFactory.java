@@ -2,6 +2,7 @@
 package org.apache.camel.component.smpp;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,51 +19,56 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String[] SCHEMES = new String[]{"smpp", "smpps"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(42);
-        set.add("host");
-        set.add("port");
-        set.add("initialReconnectDelay");
-        set.add("maxReconnect");
-        set.add("reconnectDelay");
-        set.add("splittingPolicy");
-        set.add("systemType");
-        set.add("addressRange");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("destAddr");
-        set.add("destAddrNpi");
-        set.add("destAddrTon");
-        set.add("lazySessionCreation");
-        set.add("lazyStartProducer");
-        set.add("numberingPlanIndicator");
-        set.add("priorityFlag");
-        set.add("protocolId");
-        set.add("registeredDelivery");
-        set.add("replaceIfPresentFlag");
-        set.add("serviceType");
-        set.add("sourceAddr");
-        set.add("sourceAddrNpi");
-        set.add("sourceAddrTon");
-        set.add("typeOfNumber");
-        set.add("basicPropertyBinding");
-        set.add("enquireLinkTimer");
-        set.add("sessionStateListener");
-        set.add("synchronous");
-        set.add("transactionTimer");
-        set.add("alphabet");
-        set.add("dataCoding");
-        set.add("encoding");
-        set.add("httpProxyHost");
-        set.add("httpProxyPassword");
-        set.add("httpProxyPort");
-        set.add("httpProxyUsername");
-        set.add("proxyHeaders");
-        set.add("password");
-        set.add("systemId");
-        set.add("usingSSL");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(42);
+        props.add("serviceType");
+        props.add("basicPropertyBinding");
+        props.add("lazySessionCreation");
+        props.add("initialReconnectDelay");
+        props.add("destAddrTon");
+        props.add("synchronous");
+        props.add("httpProxyHost");
+        props.add("numberingPlanIndicator");
+        props.add("alphabet");
+        props.add("destAddrNpi");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("host");
+        props.add("systemType");
+        props.add("sourceAddr");
+        props.add("sourceAddrNpi");
+        props.add("systemId");
+        props.add("addressRange");
+        props.add("exchangePattern");
+        props.add("sessionStateListener");
+        props.add("usingSSL");
+        props.add("registeredDelivery");
+        props.add("httpProxyPort");
+        props.add("reconnectDelay");
+        props.add("encoding");
+        props.add("httpProxyPassword");
+        props.add("transactionTimer");
+        props.add("splittingPolicy");
+        props.add("lazyStartProducer");
+        props.add("protocolId");
+        props.add("proxyHeaders");
+        props.add("httpProxyUsername");
+        props.add("typeOfNumber");
+        props.add("port");
+        props.add("dataCoding");
+        props.add("enquireLinkTimer");
+        props.add("destAddr");
+        props.add("replaceIfPresentFlag");
+        props.add("priorityFlag");
+        props.add("maxReconnect");
+        props.add("exceptionHandler");
+        props.add("sourceAddrTon");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("systemId");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -91,6 +97,11 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

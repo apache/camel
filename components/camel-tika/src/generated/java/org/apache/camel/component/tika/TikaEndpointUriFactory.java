@@ -2,6 +2,7 @@
 package org.apache.camel.component.tika;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,17 +18,19 @@ public class TikaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":operation";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(8);
-        set.add("operation");
-        set.add("lazyStartProducer");
-        set.add("tikaConfig");
-        set.add("tikaConfigUri");
-        set.add("tikaParseOutputEncoding");
-        set.add("tikaParseOutputFormat");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(8);
+        props.add("basicPropertyBinding");
+        props.add("tikaParseOutputFormat");
+        props.add("lazyStartProducer");
+        props.add("synchronous");
+        props.add("tikaConfig");
+        props.add("tikaConfigUri");
+        props.add("operation");
+        props.add("tikaParseOutputEncoding");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -50,6 +53,11 @@ public class TikaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

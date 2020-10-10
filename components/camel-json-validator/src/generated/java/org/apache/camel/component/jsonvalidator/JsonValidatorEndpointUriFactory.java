@@ -2,6 +2,7 @@
 package org.apache.camel.component.jsonvalidator;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,22 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("resourceUri");
-        set.add("allowContextMapAll");
-        set.add("contentCache");
-        set.add("failOnNullBody");
-        set.add("failOnNullHeader");
-        set.add("headerName");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("errorHandler");
-        set.add("schemaLoader");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("headerName");
+        props.add("failOnNullHeader");
+        props.add("synchronous");
+        props.add("contentCache");
+        props.add("allowContextMapAll");
+        props.add("failOnNullBody");
+        props.add("errorHandler");
+        props.add("resourceUri");
+        props.add("schemaLoader");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -53,6 +56,11 @@ public class JsonValidatorEndpointUriFactory extends org.apache.camel.support.co
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

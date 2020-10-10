@@ -2,6 +2,7 @@
 package org.apache.camel.component.splunkhec;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,22 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":splunkURL/token";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("splunkURL");
-        set.add("token");
-        set.add("host");
-        set.add("index");
-        set.add("lazyStartProducer");
-        set.add("source");
-        set.add("sourceType");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("https");
-        set.add("skipTlsVerify");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("splunkURL");
+        props.add("sourceType");
+        props.add("skipTlsVerify");
+        props.add("synchronous");
+        props.add("host");
+        props.add("index");
+        props.add("source");
+        props.add("https");
+        props.add("token");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class SplunkHECEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

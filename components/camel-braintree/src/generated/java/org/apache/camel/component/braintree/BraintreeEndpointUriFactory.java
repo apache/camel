@@ -2,6 +2,7 @@
 package org.apache.camel.component.braintree;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,55 +18,61 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":apiName/methodName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(46);
-        set.add("apiName");
-        set.add("methodName");
-        set.add("environment");
-        set.add("inBody");
-        set.add("lazyStartProducer");
-        set.add("merchantId");
-        set.add("basicPropertyBinding");
-        set.add("httpReadTimeout");
-        set.add("synchronous");
-        set.add("httpLogLevel");
-        set.add("httpLogName");
-        set.add("logHandlerEnabled");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("accessToken");
-        set.add("privateKey");
-        set.add("publicKey");
-        set.add("amount");
-        set.add("associationFilterId");
-        set.add("challenge");
-        set.add("cloneRequest");
-        set.add("content");
-        set.add("currencyRequest");
-        set.add("customerId");
-        set.add("deleteRequest");
-        set.add("disputeId");
-        set.add("documentId");
-        set.add("evidenceId");
-        set.add("fileEvidenceRequest");
-        set.add("grantRequest");
-        set.add("groupByCustomField");
-        set.add("id");
-        set.add("page");
-        set.add("payload");
-        set.add("paymentMethodNonce");
-        set.add("paymentMethodToken");
-        set.add("query");
-        set.add("refundRequest");
-        set.add("request");
-        set.add("searchRequest");
-        set.add("settlementDate");
-        set.add("signature");
-        set.add("submitForSettlement");
-        set.add("subscriptionId");
-        set.add("textEvidenceRequest");
-        set.add("token");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(46);
+        props.add("basicPropertyBinding");
+        props.add("request");
+        props.add("searchRequest");
+        props.add("apiName");
+        props.add("httpReadTimeout");
+        props.add("signature");
+        props.add("synchronous");
+        props.add("groupByCustomField");
+        props.add("publicKey");
+        props.add("httpLogName");
+        props.add("content");
+        props.add("grantRequest");
+        props.add("logHandlerEnabled");
+        props.add("proxyPort");
+        props.add("textEvidenceRequest");
+        props.add("fileEvidenceRequest");
+        props.add("associationFilterId");
+        props.add("paymentMethodToken");
+        props.add("merchantId");
+        props.add("payload");
+        props.add("customerId");
+        props.add("httpLogLevel");
+        props.add("id");
+        props.add("submitForSettlement");
+        props.add("currencyRequest");
+        props.add("amount");
+        props.add("query");
+        props.add("methodName");
+        props.add("settlementDate");
+        props.add("accessToken");
+        props.add("proxyHost");
+        props.add("token");
+        props.add("privateKey");
+        props.add("environment");
+        props.add("lazyStartProducer");
+        props.add("refundRequest");
+        props.add("disputeId");
+        props.add("evidenceId");
+        props.add("paymentMethodNonce");
+        props.add("challenge");
+        props.add("documentId");
+        props.add("page");
+        props.add("subscriptionId");
+        props.add("inBody");
+        props.add("deleteRequest");
+        props.add("cloneRequest");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("privateKey");
+        secretProps.add("publicKey");
+        secretProps.add("accessToken");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -89,6 +96,11 @@ public class BraintreeEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

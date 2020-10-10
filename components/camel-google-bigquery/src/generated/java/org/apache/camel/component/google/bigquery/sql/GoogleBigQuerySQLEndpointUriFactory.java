@@ -2,6 +2,7 @@
 package org.apache.camel.component.google.bigquery.sql;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,15 +18,17 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
     private static final String BASE = ":projectId:query";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(6);
-        set.add("query");
-        set.add("projectId");
-        set.add("connectionFactory");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(6);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("connectionFactory");
+        props.add("synchronous");
+        props.add("query");
+        props.add("projectId");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -49,6 +52,11 @@ public class GoogleBigQuerySQLEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

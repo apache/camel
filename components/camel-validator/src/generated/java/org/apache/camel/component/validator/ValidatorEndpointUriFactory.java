@@ -2,6 +2,7 @@
 package org.apache.camel.component.validator;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,22 +18,24 @@ public class ValidatorEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(13);
-        set.add("resourceUri");
-        set.add("failOnNullBody");
-        set.add("failOnNullHeader");
-        set.add("headerName");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("errorHandler");
-        set.add("resourceResolver");
-        set.add("resourceResolverFactory");
-        set.add("schemaFactory");
-        set.add("schemaLanguage");
-        set.add("synchronous");
-        set.add("useSharedSchema");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(13);
+        props.add("basicPropertyBinding");
+        props.add("headerName");
+        props.add("schemaFactory");
+        props.add("failOnNullHeader");
+        props.add("synchronous");
+        props.add("resourceUri");
+        props.add("schemaLanguage");
+        props.add("resourceResolverFactory");
+        props.add("lazyStartProducer");
+        props.add("resourceResolver");
+        props.add("useSharedSchema");
+        props.add("failOnNullBody");
+        props.add("errorHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -55,6 +58,11 @@ public class ValidatorEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

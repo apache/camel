@@ -2,6 +2,7 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,34 +18,36 @@ public class SjmsBatchEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":destinationName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(25);
-        set.add("destinationName");
-        set.add("aggregationStrategy");
-        set.add("allowNullBody");
-        set.add("bridgeErrorHandler");
-        set.add("completionInterval");
-        set.add("completionPredicate");
-        set.add("completionSize");
-        set.add("completionTimeout");
-        set.add("consumerCount");
-        set.add("eagerCheckCompletion");
-        set.add("includeAllJMSXProperties");
-        set.add("mapJmsMessage");
-        set.add("pollDuration");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("asyncStartListener");
-        set.add("basicPropertyBinding");
-        set.add("headerFilterStrategy");
-        set.add("jmsKeyFormatStrategy");
-        set.add("keepAliveDelay");
-        set.add("messageCreatedStrategy");
-        set.add("recoveryInterval");
-        set.add("synchronous");
-        set.add("timeoutCheckerExecutorService");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(25);
+        props.add("basicPropertyBinding");
+        props.add("aggregationStrategy");
+        props.add("mapJmsMessage");
+        props.add("synchronous");
+        props.add("includeAllJMSXProperties");
+        props.add("eagerCheckCompletion");
+        props.add("timeoutCheckerExecutorService");
+        props.add("bridgeErrorHandler");
+        props.add("jmsKeyFormatStrategy");
+        props.add("keepAliveDelay");
+        props.add("completionInterval");
+        props.add("headerFilterStrategy");
+        props.add("destinationName");
+        props.add("messageCreatedStrategy");
+        props.add("asyncStartListener");
+        props.add("completionPredicate");
+        props.add("allowNullBody");
+        props.add("consumerCount");
+        props.add("recoveryInterval");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("pollDuration");
+        props.add("exchangePattern");
+        props.add("completionSize");
+        props.add("completionTimeout");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -67,6 +70,11 @@ public class SjmsBatchEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

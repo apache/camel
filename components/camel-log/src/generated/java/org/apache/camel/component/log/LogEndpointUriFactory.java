@@ -2,6 +2,7 @@
 package org.apache.camel.component.log;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,38 +18,40 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":loggerName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(29);
-        set.add("loggerName");
-        set.add("groupActiveOnly");
-        set.add("groupDelay");
-        set.add("groupInterval");
-        set.add("groupSize");
-        set.add("lazyStartProducer");
-        set.add("level");
-        set.add("logMask");
-        set.add("marker");
-        set.add("basicPropertyBinding");
-        set.add("exchangeFormatter");
-        set.add("synchronous");
-        set.add("maxChars");
-        set.add("multiline");
-        set.add("showAll");
-        set.add("showBody");
-        set.add("showBodyType");
-        set.add("showCaughtException");
-        set.add("showException");
-        set.add("showExchangeId");
-        set.add("showExchangePattern");
-        set.add("showFiles");
-        set.add("showFuture");
-        set.add("showHeaders");
-        set.add("showProperties");
-        set.add("showStackTrace");
-        set.add("showStreams");
-        set.add("skipBodyLineSeparator");
-        set.add("style");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(29);
+        props.add("basicPropertyBinding");
+        props.add("showProperties");
+        props.add("showStreams");
+        props.add("showHeaders");
+        props.add("showException");
+        props.add("synchronous");
+        props.add("showExchangeId");
+        props.add("logMask");
+        props.add("groupActiveOnly");
+        props.add("showFiles");
+        props.add("showAll");
+        props.add("exchangeFormatter");
+        props.add("maxChars");
+        props.add("loggerName");
+        props.add("level");
+        props.add("groupDelay");
+        props.add("showExchangePattern");
+        props.add("showBodyType");
+        props.add("showFuture");
+        props.add("showCaughtException");
+        props.add("showStackTrace");
+        props.add("skipBodyLineSeparator");
+        props.add("lazyStartProducer");
+        props.add("marker");
+        props.add("multiline");
+        props.add("groupSize");
+        props.add("showBody");
+        props.add("style");
+        props.add("groupInterval");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +74,11 @@ public class LogEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

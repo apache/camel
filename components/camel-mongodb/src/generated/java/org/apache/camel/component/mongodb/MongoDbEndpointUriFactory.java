@@ -2,6 +2,7 @@
 package org.apache.camel.component.mongodb;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,36 +18,38 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":connectionBean";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(27);
-        set.add("connectionBean");
-        set.add("collection");
-        set.add("collectionIndex");
-        set.add("createCollection");
-        set.add("database");
-        set.add("mongoConnection");
-        set.add("operation");
-        set.add("outputType");
-        set.add("bridgeErrorHandler");
-        set.add("consumerType");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("cursorRegenerationDelay");
-        set.add("dynamicity");
-        set.add("readPreference");
-        set.add("synchronous");
-        set.add("writeConcern");
-        set.add("writeResultAsHeader");
-        set.add("streamFilter");
-        set.add("persistentId");
-        set.add("persistentTailTracking");
-        set.add("tailTrackCollection");
-        set.add("tailTrackDb");
-        set.add("tailTrackField");
-        set.add("tailTrackIncreasingField");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(27);
+        props.add("basicPropertyBinding");
+        props.add("connectionBean");
+        props.add("synchronous");
+        props.add("outputType");
+        props.add("writeConcern");
+        props.add("database");
+        props.add("bridgeErrorHandler");
+        props.add("tailTrackField");
+        props.add("cursorRegenerationDelay");
+        props.add("writeResultAsHeader");
+        props.add("tailTrackDb");
+        props.add("collectionIndex");
+        props.add("exchangePattern");
+        props.add("persistentTailTracking");
+        props.add("collection");
+        props.add("mongoConnection");
+        props.add("persistentId");
+        props.add("tailTrackCollection");
+        props.add("consumerType");
+        props.add("streamFilter");
+        props.add("lazyStartProducer");
+        props.add("dynamicity");
+        props.add("tailTrackIncreasingField");
+        props.add("readPreference");
+        props.add("operation");
+        props.add("exceptionHandler");
+        props.add("createCollection");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -69,6 +72,11 @@ public class MongoDbEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

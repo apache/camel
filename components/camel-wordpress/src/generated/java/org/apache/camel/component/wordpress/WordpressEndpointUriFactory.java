@@ -2,6 +2,7 @@
 package org.apache.camel.component.wordpress;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":operation";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("operation");
-        set.add("operationDetail");
-        set.add("apiVersion");
-        set.add("criteria");
-        set.add("force");
-        set.add("id");
-        set.add("password");
-        set.add("searchCriteria");
-        set.add("url");
-        set.add("user");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("searchCriteria");
+        props.add("criteria");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("url");
+        props.add("operationDetail");
+        props.add("password");
+        props.add("lazyStartProducer");
+        props.add("apiVersion");
+        props.add("bridgeErrorHandler");
+        props.add("force");
+        props.add("id");
+        props.add("operation");
+        props.add("user");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -59,6 +62,11 @@ public class WordpressEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

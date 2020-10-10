@@ -2,6 +2,7 @@
 package org.apache.camel.component.debezium;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,76 +18,78 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(67);
-        set.add("name");
-        set.add("additionalProperties");
-        set.add("bridgeErrorHandler");
-        set.add("internalKeyConverter");
-        set.add("internalValueConverter");
-        set.add("offsetCommitPolicy");
-        set.add("offsetCommitTimeoutMs");
-        set.add("offsetFlushIntervalMs");
-        set.add("offsetStorage");
-        set.add("offsetStorageFileName");
-        set.add("offsetStoragePartitions");
-        set.add("offsetStorageReplicationFactor");
-        set.add("offsetStorageTopic");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("columnBlacklist");
-        set.add("columnExcludeList");
-        set.add("columnIncludeList");
-        set.add("columnPropagateSourceType");
-        set.add("columnWhitelist");
-        set.add("converters");
-        set.add("databaseDbname");
-        set.add("databaseHistory");
-        set.add("databaseHistoryFileFilename");
-        set.add("databaseHistoryKafkaBootstrapServers");
-        set.add("databaseHistoryKafkaRecoveryAttempts");
-        set.add("databaseHistoryKafkaRecoveryPollIntervalMs");
-        set.add("databaseHistoryKafkaTopic");
-        set.add("databaseHostname");
-        set.add("databaseInstance");
-        set.add("databasePassword");
-        set.add("databasePort");
-        set.add("databaseServerName");
-        set.add("databaseServerTimezone");
-        set.add("databaseUser");
-        set.add("datatypePropagateSourceType");
-        set.add("decimalHandlingMode");
-        set.add("eventProcessingFailureHandlingMode");
-        set.add("heartbeatIntervalMs");
-        set.add("heartbeatTopicsPrefix");
-        set.add("includeSchemaChanges");
-        set.add("maxBatchSize");
-        set.add("maxQueueSize");
-        set.add("messageKeyColumns");
-        set.add("pollIntervalMs");
-        set.add("provideTransactionMetadata");
-        set.add("queryFetchSize");
-        set.add("retriableRestartConnectorWaitMs");
-        set.add("sanitizeFieldNames");
-        set.add("skippedOperations");
-        set.add("snapshotDelayMs");
-        set.add("snapshotFetchSize");
-        set.add("snapshotIsolationMode");
-        set.add("snapshotLockTimeoutMs");
-        set.add("snapshotMode");
-        set.add("snapshotSelectStatementOverrides");
-        set.add("sourceStructVersion");
-        set.add("sourceTimestampMode");
-        set.add("tableBlacklist");
-        set.add("tableExcludeList");
-        set.add("tableIgnoreBuiltin");
-        set.add("tableIncludeList");
-        set.add("tableWhitelist");
-        set.add("timePrecisionMode");
-        set.add("tombstonesOnDelete");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(67);
+        props.add("maxBatchSize");
+        props.add("internalKeyConverter");
+        props.add("synchronous");
+        props.add("snapshotDelayMs");
+        props.add("snapshotIsolationMode");
+        props.add("offsetStorageTopic");
+        props.add("bridgeErrorHandler");
+        props.add("datatypePropagateSourceType");
+        props.add("provideTransactionMetadata");
+        props.add("converters");
+        props.add("tombstonesOnDelete");
+        props.add("databaseHistoryKafkaBootstrapServers");
+        props.add("heartbeatIntervalMs");
+        props.add("heartbeatTopicsPrefix");
+        props.add("databaseHistoryKafkaRecoveryPollIntervalMs");
+        props.add("decimalHandlingMode");
+        props.add("skippedOperations");
+        props.add("sourceStructVersion");
+        props.add("databaseServerTimezone");
+        props.add("databaseHostname");
+        props.add("eventProcessingFailureHandlingMode");
+        props.add("offsetCommitTimeoutMs");
+        props.add("snapshotSelectStatementOverrides");
+        props.add("offsetFlushIntervalMs");
+        props.add("offsetStorageFileName");
+        props.add("columnBlacklist");
+        props.add("name");
+        props.add("snapshotFetchSize");
+        props.add("offsetStoragePartitions");
+        props.add("additionalProperties");
+        props.add("offsetStorageReplicationFactor");
+        props.add("exceptionHandler");
+        props.add("sourceTimestampMode");
+        props.add("databasePort");
+        props.add("basicPropertyBinding");
+        props.add("databaseUser");
+        props.add("databaseHistoryFileFilename");
+        props.add("databaseHistory");
+        props.add("columnPropagateSourceType");
+        props.add("offsetStorage");
+        props.add("includeSchemaChanges");
+        props.add("internalValueConverter");
+        props.add("retriableRestartConnectorWaitMs");
+        props.add("maxQueueSize");
+        props.add("messageKeyColumns");
+        props.add("timePrecisionMode");
+        props.add("columnWhitelist");
+        props.add("pollIntervalMs");
+        props.add("sanitizeFieldNames");
+        props.add("databaseHistoryKafkaTopic");
+        props.add("tableWhitelist");
+        props.add("tableIgnoreBuiltin");
+        props.add("exchangePattern");
+        props.add("databaseInstance");
+        props.add("databaseServerName");
+        props.add("tableBlacklist");
+        props.add("queryFetchSize");
+        props.add("snapshotMode");
+        props.add("snapshotLockTimeoutMs");
+        props.add("tableExcludeList");
+        props.add("offsetCommitPolicy");
+        props.add("tableIncludeList");
+        props.add("columnExcludeList");
+        props.add("columnIncludeList");
+        props.add("databasePassword");
+        props.add("databaseDbname");
+        props.add("databaseHistoryKafkaRecoveryAttempts");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -109,6 +112,11 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

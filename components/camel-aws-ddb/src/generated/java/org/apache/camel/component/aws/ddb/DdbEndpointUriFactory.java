@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws.ddb;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,27 +18,32 @@ public class DdbEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":tableName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("tableName");
-        set.add("amazonDDBClient");
-        set.add("autoDiscoverClient");
-        set.add("consistentRead");
-        set.add("keyAttributeName");
-        set.add("keyAttributeType");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("proxyProtocol");
-        set.add("readCapacity");
-        set.add("region");
-        set.add("writeCapacity");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("accessKey");
-        set.add("secretKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("amazonDDBClient");
+        props.add("basicPropertyBinding");
+        props.add("autoDiscoverClient");
+        props.add("proxyProtocol");
+        props.add("readCapacity");
+        props.add("secretKey");
+        props.add("synchronous");
+        props.add("keyAttributeType");
+        props.add("proxyHost");
+        props.add("tableName");
+        props.add("proxyPort");
+        props.add("keyAttributeName");
+        props.add("lazyStartProducer");
+        props.add("accessKey");
+        props.add("consistentRead");
+        props.add("region");
+        props.add("operation");
+        props.add("writeCapacity");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -60,6 +66,11 @@ public class DdbEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.xquery;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,44 +18,46 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(35);
-        set.add("resourceUri");
-        set.add("allowStAX");
-        set.add("headerName");
-        set.add("namespacePrefixes");
-        set.add("resultsFormat");
-        set.add("resultType");
-        set.add("stripsAllWhiteSpace");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("configuration");
-        set.add("configurationProperties");
-        set.add("moduleURIResolver");
-        set.add("parameters");
-        set.add("properties");
-        set.add("staticQueryContext");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(35);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("configuration");
+        props.add("synchronous");
+        props.add("initialDelay");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("resultsFormat");
+        props.add("greedy");
+        props.add("configurationProperties");
+        props.add("scheduledExecutorService");
+        props.add("resultType");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("headerName");
+        props.add("namespacePrefixes");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("resourceUri");
+        props.add("allowStAX");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("staticQueryContext");
+        props.add("startScheduler");
+        props.add("moduleURIResolver");
+        props.add("stripsAllWhiteSpace");
+        props.add("exceptionHandler");
+        props.add("parameters");
+        props.add("properties");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -77,6 +80,11 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

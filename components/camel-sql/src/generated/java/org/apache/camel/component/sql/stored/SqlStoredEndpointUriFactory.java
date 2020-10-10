@@ -2,6 +2,7 @@
 package org.apache.camel.component.sql.stored;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,19 +18,21 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":template";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(10);
-        set.add("template");
-        set.add("batch");
-        set.add("dataSource");
-        set.add("function");
-        set.add("lazyStartProducer");
-        set.add("noop");
-        set.add("outputHeader");
-        set.add("useMessageBodyForTemplate");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(10);
+        props.add("template");
+        props.add("basicPropertyBinding");
+        props.add("noop");
+        props.add("lazyStartProducer");
+        props.add("useMessageBodyForTemplate");
+        props.add("outputHeader");
+        props.add("synchronous");
+        props.add("function");
+        props.add("batch");
+        props.add("dataSource");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -52,6 +55,11 @@ public class SqlStoredEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

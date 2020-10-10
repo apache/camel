@@ -2,6 +2,7 @@
 package org.apache.camel.component.debezium;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,66 +18,68 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(57);
-        set.add("name");
-        set.add("additionalProperties");
-        set.add("bridgeErrorHandler");
-        set.add("internalKeyConverter");
-        set.add("internalValueConverter");
-        set.add("offsetCommitPolicy");
-        set.add("offsetCommitTimeoutMs");
-        set.add("offsetFlushIntervalMs");
-        set.add("offsetStorage");
-        set.add("offsetStorageFileName");
-        set.add("offsetStoragePartitions");
-        set.add("offsetStorageReplicationFactor");
-        set.add("offsetStorageTopic");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("collectionExcludeList");
-        set.add("collectionIncludeList");
-        set.add("connectBackoffInitialDelayMs");
-        set.add("connectBackoffMaxDelayMs");
-        set.add("connectMaxAttempts");
-        set.add("converters");
-        set.add("databaseExcludeList");
-        set.add("databaseHistoryFileFilename");
-        set.add("databaseIncludeList");
-        set.add("eventProcessingFailureHandlingMode");
-        set.add("fieldExcludeList");
-        set.add("fieldRenames");
-        set.add("heartbeatIntervalMs");
-        set.add("heartbeatTopicsPrefix");
-        set.add("initialSyncMaxThreads");
-        set.add("maxBatchSize");
-        set.add("maxQueueSize");
-        set.add("mongodbAuthsource");
-        set.add("mongodbConnectTimeoutMs");
-        set.add("mongodbHosts");
-        set.add("mongodbMembersAutoDiscover");
-        set.add("mongodbName");
-        set.add("mongodbPassword");
-        set.add("mongodbPollIntervalMs");
-        set.add("mongodbServerSelectionTimeoutMs");
-        set.add("mongodbSocketTimeoutMs");
-        set.add("mongodbSslEnabled");
-        set.add("mongodbSslInvalidHostnameAllowed");
-        set.add("mongodbUser");
-        set.add("pollIntervalMs");
-        set.add("provideTransactionMetadata");
-        set.add("queryFetchSize");
-        set.add("retriableRestartConnectorWaitMs");
-        set.add("sanitizeFieldNames");
-        set.add("skippedOperations");
-        set.add("snapshotDelayMs");
-        set.add("snapshotFetchSize");
-        set.add("snapshotMode");
-        set.add("sourceStructVersion");
-        set.add("tombstonesOnDelete");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(57);
+        props.add("mongodbServerSelectionTimeoutMs");
+        props.add("maxBatchSize");
+        props.add("internalKeyConverter");
+        props.add("synchronous");
+        props.add("snapshotDelayMs");
+        props.add("mongodbSslEnabled");
+        props.add("offsetStorageTopic");
+        props.add("bridgeErrorHandler");
+        props.add("connectMaxAttempts");
+        props.add("provideTransactionMetadata");
+        props.add("converters");
+        props.add("tombstonesOnDelete");
+        props.add("heartbeatIntervalMs");
+        props.add("heartbeatTopicsPrefix");
+        props.add("skippedOperations");
+        props.add("mongodbHosts");
+        props.add("sourceStructVersion");
+        props.add("mongodbName");
+        props.add("connectBackoffInitialDelayMs");
+        props.add("connectBackoffMaxDelayMs");
+        props.add("fieldRenames");
+        props.add("eventProcessingFailureHandlingMode");
+        props.add("offsetCommitTimeoutMs");
+        props.add("mongodbPollIntervalMs");
+        props.add("mongodbAuthsource");
+        props.add("databaseIncludeList");
+        props.add("offsetFlushIntervalMs");
+        props.add("mongodbMembersAutoDiscover");
+        props.add("offsetStorageFileName");
+        props.add("name");
+        props.add("snapshotFetchSize");
+        props.add("offsetStoragePartitions");
+        props.add("databaseExcludeList");
+        props.add("additionalProperties");
+        props.add("offsetStorageReplicationFactor");
+        props.add("exceptionHandler");
+        props.add("mongodbConnectTimeoutMs");
+        props.add("basicPropertyBinding");
+        props.add("databaseHistoryFileFilename");
+        props.add("offsetStorage");
+        props.add("internalValueConverter");
+        props.add("retriableRestartConnectorWaitMs");
+        props.add("maxQueueSize");
+        props.add("collectionExcludeList");
+        props.add("mongodbSslInvalidHostnameAllowed");
+        props.add("pollIntervalMs");
+        props.add("sanitizeFieldNames");
+        props.add("fieldExcludeList");
+        props.add("mongodbPassword");
+        props.add("mongodbUser");
+        props.add("exchangePattern");
+        props.add("initialSyncMaxThreads");
+        props.add("mongodbSocketTimeoutMs");
+        props.add("collectionIncludeList");
+        props.add("queryFetchSize");
+        props.add("snapshotMode");
+        props.add("offsetCommitPolicy");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -99,6 +102,11 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

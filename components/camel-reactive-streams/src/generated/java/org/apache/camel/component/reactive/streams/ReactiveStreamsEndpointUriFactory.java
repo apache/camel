@@ -2,6 +2,7 @@
 package org.apache.camel.component.reactive.streams;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,22 +18,24 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
     private static final String BASE = ":stream";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(13);
-        set.add("stream");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("exchangesRefillLowWatermark");
-        set.add("forwardOnComplete");
-        set.add("forwardOnError");
-        set.add("maxInflightExchanges");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("backpressureStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(13);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("exchangesRefillLowWatermark");
+        props.add("exchangePattern");
+        props.add("concurrentConsumers");
+        props.add("maxInflightExchanges");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("stream");
+        props.add("forwardOnError");
+        props.add("exceptionHandler");
+        props.add("forwardOnComplete");
+        props.add("backpressureStrategy");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -55,6 +58,11 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

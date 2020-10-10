@@ -2,6 +2,7 @@
 package org.apache.camel.component.soroushbot.component;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,32 +18,36 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
     private static final String BASE = ":action";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(23);
-        set.add("action");
-        set.add("connectionTimeout");
-        set.add("maxConnectionRetry");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("queueCapacityPerThread");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("autoDownload");
-        set.add("autoUploadFile");
-        set.add("downloadThumbnail");
-        set.add("forceDownload");
-        set.add("forceUpload");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backOffStrategy");
-        set.add("maxRetryWaitingTime");
-        set.add("reconnectIdleConnectionTimeout");
-        set.add("retryExponentialCoefficient");
-        set.add("retryLinearIncrement");
-        set.add("retryWaitingTime");
-        set.add("authorizationToken");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(23);
+        props.add("basicPropertyBinding");
+        props.add("retryWaitingTime");
+        props.add("queueCapacityPerThread");
+        props.add("backOffStrategy");
+        props.add("retryExponentialCoefficient");
+        props.add("synchronous");
+        props.add("maxConnectionRetry");
+        props.add("exchangePattern");
+        props.add("autoDownload");
+        props.add("reconnectIdleConnectionTimeout");
+        props.add("retryLinearIncrement");
+        props.add("concurrentConsumers");
+        props.add("autoUploadFile");
+        props.add("downloadThumbnail");
+        props.add("forceUpload");
+        props.add("authorizationToken");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("action");
+        props.add("connectionTimeout");
+        props.add("exceptionHandler");
+        props.add("forceDownload");
+        props.add("maxRetryWaitingTime");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("authorizationToken");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -65,6 +70,11 @@ public class SoroushBotEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

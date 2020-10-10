@@ -2,6 +2,7 @@
 package org.apache.camel.component.cxf;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,47 +18,52 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":beanId:address";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(38);
-        set.add("beanId");
-        set.add("address");
-        set.add("dataFormat");
-        set.add("wrappedStyle");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("cookieHandler");
-        set.add("defaultOperationName");
-        set.add("defaultOperationNamespace");
-        set.add("hostnameVerifier");
-        set.add("lazyStartProducer");
-        set.add("sslContextParameters");
-        set.add("wrapped");
-        set.add("allowStreaming");
-        set.add("basicPropertyBinding");
-        set.add("bus");
-        set.add("continuationTimeout");
-        set.add("cxfBinding");
-        set.add("cxfConfigurer");
-        set.add("defaultBus");
-        set.add("headerFilterStrategy");
-        set.add("mergeProtocolHeaders");
-        set.add("mtomEnabled");
-        set.add("properties");
-        set.add("skipPayloadMessagePartCheck");
-        set.add("synchronous");
-        set.add("loggingFeatureEnabled");
-        set.add("loggingSizeLimit");
-        set.add("skipFaultLogging");
-        set.add("password");
-        set.add("username");
-        set.add("bindingId");
-        set.add("portName");
-        set.add("publishedEndpointUrl");
-        set.add("serviceClass");
-        set.add("serviceName");
-        set.add("wsdlURL");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(38);
+        props.add("basicPropertyBinding");
+        props.add("bus");
+        props.add("cxfBinding");
+        props.add("synchronous");
+        props.add("mtomEnabled");
+        props.add("hostnameVerifier");
+        props.add("sslContextParameters");
+        props.add("portName");
+        props.add("defaultBus");
+        props.add("mergeProtocolHeaders");
+        props.add("defaultOperationName");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("headerFilterStrategy");
+        props.add("loggingSizeLimit");
+        props.add("wrappedStyle");
+        props.add("bindingId");
+        props.add("beanId");
+        props.add("wrapped");
+        props.add("wsdlURL");
+        props.add("defaultOperationNamespace");
+        props.add("address");
+        props.add("skipFaultLogging");
+        props.add("serviceClass");
+        props.add("dataFormat");
+        props.add("continuationTimeout");
+        props.add("exchangePattern");
+        props.add("allowStreaming");
+        props.add("serviceName");
+        props.add("loggingFeatureEnabled");
+        props.add("lazyStartProducer");
+        props.add("publishedEndpointUrl");
+        props.add("skipPayloadMessagePartCheck");
+        props.add("cookieHandler");
+        props.add("cxfConfigurer");
+        props.add("exceptionHandler");
+        props.add("properties");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -81,6 +87,11 @@ public class CxfEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

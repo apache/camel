@@ -2,6 +2,7 @@
 package org.apache.camel.coap;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,26 +19,28 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String[] SCHEMES = new String[]{"coap", "coaps", "coap+tcp", "coaps+tcp"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(17);
-        set.add("uri");
-        set.add("alias");
-        set.add("cipherSuites");
-        set.add("clientAuthentication");
-        set.add("privateKey");
-        set.add("pskStore");
-        set.add("publicKey");
-        set.add("recommendedCipherSuitesOnly");
-        set.add("sslContextParameters");
-        set.add("trustedRpkStore");
-        set.add("bridgeErrorHandler");
-        set.add("coapMethodRestrict");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(17);
+        props.add("basicPropertyBinding");
+        props.add("recommendedCipherSuitesOnly");
+        props.add("trustedRpkStore");
+        props.add("synchronous");
+        props.add("sslContextParameters");
+        props.add("exchangePattern");
+        props.add("publicKey");
+        props.add("uri");
+        props.add("privateKey");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("cipherSuites");
+        props.add("pskStore");
+        props.add("alias");
+        props.add("clientAuthentication");
+        props.add("coapMethodRestrict");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -65,6 +68,11 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

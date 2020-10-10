@@ -2,6 +2,7 @@
 package org.apache.camel.component.stomp;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,29 @@ public class StompEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":destination";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("destination");
-        set.add("brokerURL");
-        set.add("customHeaders");
-        set.add("host");
-        set.add("version");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("headerFilterStrategy");
-        set.add("synchronous");
-        set.add("login");
-        set.add("passcode");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("destination");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("login");
+        props.add("version");
+        props.add("brokerURL");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("headerFilterStrategy");
+        props.add("host");
+        props.add("exceptionHandler");
+        props.add("customHeaders");
+        props.add("passcode");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("login");
+        secretProps.add("passcode");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -57,6 +63,11 @@ public class StompEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

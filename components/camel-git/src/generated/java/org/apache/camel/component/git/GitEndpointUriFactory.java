@@ -2,6 +2,7 @@
 package org.apache.camel.component.git;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":localPath";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("localPath");
-        set.add("branchName");
-        set.add("password");
-        set.add("remoteName");
-        set.add("remotePath");
-        set.add("tagName");
-        set.add("username");
-        set.add("bridgeErrorHandler");
-        set.add("type");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("allowEmpty");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("remotePath");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("branchName");
+        props.add("tagName");
+        props.add("type");
+        props.add("allowEmpty");
+        props.add("password");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("localPath");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("remoteName");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -58,6 +61,11 @@ public class GitEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

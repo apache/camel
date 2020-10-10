@@ -2,6 +2,7 @@
 package org.apache.camel.component.twitter.timeline;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,55 +18,62 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
     private static final String BASE = ":timelineType";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(46);
-        set.add("timelineType");
-        set.add("user");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("type");
-        set.add("distanceMetric");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("extendedMode");
-        set.add("latitude");
-        set.add("locations");
-        set.add("longitude");
-        set.add("pollStrategy");
-        set.add("radius");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("count");
-        set.add("filterOld");
-        set.add("lang");
-        set.add("numberOfPages");
-        set.add("sinceId");
-        set.add("userIds");
-        set.add("httpProxyHost");
-        set.add("httpProxyPassword");
-        set.add("httpProxyPort");
-        set.add("httpProxyUser");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("accessToken");
-        set.add("accessTokenSecret");
-        set.add("consumerKey");
-        set.add("consumerSecret");
-        set.add("sortById");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(46);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("synchronous");
+        props.add("latitude");
+        props.add("httpProxyHost");
+        props.add("initialDelay");
+        props.add("type");
+        props.add("scheduler");
+        props.add("consumerSecret");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("numberOfPages");
+        props.add("runLoggingLevel");
+        props.add("sortById");
+        props.add("backoffErrorThreshold");
+        props.add("userIds");
+        props.add("greedy");
+        props.add("distanceMetric");
+        props.add("radius");
+        props.add("lang");
+        props.add("scheduledExecutorService");
+        props.add("consumerKey");
+        props.add("longitude");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("sinceId");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("count");
+        props.add("httpProxyPort");
+        props.add("accessToken");
+        props.add("httpProxyPassword");
+        props.add("backoffIdleThreshold");
+        props.add("accessTokenSecret");
+        props.add("timelineType");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("startScheduler");
+        props.add("filterOld");
+        props.add("locations");
+        props.add("extendedMode");
+        props.add("user");
+        props.add("exceptionHandler");
+        props.add("httpProxyUser");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(4);
+        secretProps.add("consumerSecret");
+        secretProps.add("accessToken");
+        secretProps.add("consumerKey");
+        secretProps.add("accessTokenSecret");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -88,6 +96,11 @@ public class TwitterTimelineEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

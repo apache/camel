@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.s3;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,72 +18,77 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = "://bucketNameOrArn";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(63);
-        set.add("bucketNameOrArn");
-        set.add("amazonS3Client");
-        set.add("autoCreateBucket");
-        set.add("autoDiscoverClient");
-        set.add("overrideEndpoint");
-        set.add("pojoRequest");
-        set.add("policy");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("proxyProtocol");
-        set.add("region");
-        set.add("trustAllCertificates");
-        set.add("uriEndpointOverride");
-        set.add("useIAMCredentials");
-        set.add("customerAlgorithm");
-        set.add("customerKeyId");
-        set.add("customerKeyMD5");
-        set.add("bridgeErrorHandler");
-        set.add("deleteAfterRead");
-        set.add("delimiter");
-        set.add("destinationBucket");
-        set.add("destinationBucketPrefix");
-        set.add("destinationBucketSuffix");
-        set.add("fileName");
-        set.add("includeBody");
-        set.add("includeFolders");
-        set.add("maxConnections");
-        set.add("maxMessagesPerPoll");
-        set.add("moveAfterRead");
-        set.add("prefix");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("autocloseBody");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("deleteAfterWrite");
-        set.add("keyName");
-        set.add("lazyStartProducer");
-        set.add("multiPartUpload");
-        set.add("operation");
-        set.add("partSize");
-        set.add("storageClass");
-        set.add("awsKMSKeyId");
-        set.add("useAwsKMS");
-        set.add("useCustomerKey");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("accessKey");
-        set.add("secretKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(63);
+        props.add("useIAMCredentials");
+        props.add("customerAlgorithm");
+        props.add("fileName");
+        props.add("useCustomerKey");
+        props.add("bucketNameOrArn");
+        props.add("customerKeyId");
+        props.add("prefix");
+        props.add("synchronous");
+        props.add("useAwsKMS");
+        props.add("initialDelay");
+        props.add("pojoRequest");
+        props.add("customerKeyMD5");
+        props.add("proxyPort");
+        props.add("bridgeErrorHandler");
+        props.add("awsKMSKeyId");
+        props.add("delimiter");
+        props.add("amazonS3Client");
+        props.add("greedy");
+        props.add("maxMessagesPerPoll");
+        props.add("scheduledExecutorService");
+        props.add("repeatCount");
+        props.add("moveAfterRead");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("proxyHost");
+        props.add("backoffIdleThreshold");
+        props.add("trustAllCertificates");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("includeBody");
+        props.add("startScheduler");
+        props.add("accessKey");
+        props.add("deleteAfterWrite");
+        props.add("region");
+        props.add("exceptionHandler");
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("destinationBucket");
+        props.add("partSize");
+        props.add("scheduler");
+        props.add("multiPartUpload");
+        props.add("storageClass");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("policy");
+        props.add("maxConnections");
+        props.add("timeUnit");
+        props.add("autoDiscoverClient");
+        props.add("autoCreateBucket");
+        props.add("destinationBucketSuffix");
+        props.add("proxyProtocol");
+        props.add("secretKey");
+        props.add("uriEndpointOverride");
+        props.add("exchangePattern");
+        props.add("keyName");
+        props.add("includeFolders");
+        props.add("destinationBucketPrefix");
+        props.add("autocloseBody");
+        props.add("pollStrategy");
+        props.add("overrideEndpoint");
+        props.add("deleteAfterRead");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -105,6 +111,11 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

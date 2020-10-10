@@ -2,6 +2,7 @@
 package org.apache.camel.component.websocket;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,32 +18,34 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":host:port/resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(23);
-        set.add("host");
-        set.add("port");
-        set.add("resourceUri");
-        set.add("maxBinaryMessageSize");
-        set.add("bridgeErrorHandler");
-        set.add("sessionSupport");
-        set.add("staticResources");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("sendTimeout");
-        set.add("sendToAll");
-        set.add("basicPropertyBinding");
-        set.add("bufferSize");
-        set.add("maxIdleTime");
-        set.add("maxTextMessageSize");
-        set.add("minVersion");
-        set.add("synchronous");
-        set.add("allowedOrigins");
-        set.add("crossOriginFilterOn");
-        set.add("filterPath");
-        set.add("enableJmx");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(23);
+        props.add("basicPropertyBinding");
+        props.add("sendTimeout");
+        props.add("minVersion");
+        props.add("synchronous");
+        props.add("sendToAll");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("maxIdleTime");
+        props.add("resourceUri");
+        props.add("enableJmx");
+        props.add("sessionSupport");
+        props.add("staticResources");
+        props.add("filterPath");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("allowedOrigins");
+        props.add("crossOriginFilterOn");
+        props.add("port");
+        props.add("maxTextMessageSize");
+        props.add("host");
+        props.add("maxBinaryMessageSize");
+        props.add("exceptionHandler");
+        props.add("bufferSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -67,6 +70,11 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

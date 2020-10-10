@@ -2,6 +2,7 @@
 package org.apache.camel.component.pgevent;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,22 +18,27 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":host:port/database/channel";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(13);
-        set.add("host");
-        set.add("port");
-        set.add("database");
-        set.add("channel");
-        set.add("datasource");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("pass");
-        set.add("user");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(13);
+        props.add("basicPropertyBinding");
+        props.add("pass");
+        props.add("synchronous");
+        props.add("channel");
+        props.add("exchangePattern");
+        props.add("database");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("port");
+        props.add("datasource");
+        props.add("host");
+        props.add("exceptionHandler");
+        props.add("user");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("pass");
+        secretProps.add("user");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -58,6 +64,11 @@ public class PgEventEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

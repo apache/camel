@@ -2,6 +2,7 @@
 package org.apache.camel.component.jcache;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,34 +18,36 @@ public class JCacheEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":cacheName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(25);
-        set.add("cacheName");
-        set.add("cacheConfiguration");
-        set.add("cacheConfigurationProperties");
-        set.add("cachingProvider");
-        set.add("configurationUri");
-        set.add("managementEnabled");
-        set.add("readThrough");
-        set.add("statisticsEnabled");
-        set.add("storeByValue");
-        set.add("writeThrough");
-        set.add("bridgeErrorHandler");
-        set.add("filteredEvents");
-        set.add("oldValueRequired");
-        set.add("synchronous");
-        set.add("eventFilters");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("action");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("cacheLoaderFactory");
-        set.add("cacheWriterFactory");
-        set.add("createCacheIfNotExists");
-        set.add("expiryPolicyFactory");
-        set.add("lookupProviders");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(25);
+        props.add("basicPropertyBinding");
+        props.add("cacheWriterFactory");
+        props.add("writeThrough");
+        props.add("filteredEvents");
+        props.add("synchronous");
+        props.add("lookupProviders");
+        props.add("cachingProvider");
+        props.add("configurationUri");
+        props.add("cacheConfigurationProperties");
+        props.add("cacheName");
+        props.add("bridgeErrorHandler");
+        props.add("cacheLoaderFactory");
+        props.add("action");
+        props.add("expiryPolicyFactory");
+        props.add("statisticsEnabled");
+        props.add("exchangePattern");
+        props.add("storeByValue");
+        props.add("cacheConfiguration");
+        props.add("eventFilters");
+        props.add("lazyStartProducer");
+        props.add("managementEnabled");
+        props.add("oldValueRequired");
+        props.add("createCacheIfNotExists");
+        props.add("readThrough");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -67,6 +70,11 @@ public class JCacheEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

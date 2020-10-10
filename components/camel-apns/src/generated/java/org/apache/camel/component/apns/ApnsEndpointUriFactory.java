@@ -2,6 +2,7 @@
 package org.apache.camel.component.apns;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,33 +18,35 @@ public class ApnsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(24);
-        set.add("name");
-        set.add("tokens");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(24);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("synchronous");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("initialDelay");
+        props.add("backoffIdleThreshold");
+        props.add("scheduler");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("delay");
+        props.add("useFixedDelay");
+        props.add("pollStrategy");
+        props.add("runLoggingLevel");
+        props.add("startScheduler");
+        props.add("backoffErrorThreshold");
+        props.add("name");
+        props.add("greedy");
+        props.add("tokens");
+        props.add("scheduledExecutorService");
+        props.add("exceptionHandler");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -66,6 +69,11 @@ public class ApnsEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

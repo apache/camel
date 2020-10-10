@@ -2,6 +2,7 @@
 package org.apache.camel.component.cmis;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,30 @@ public class CMISEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":cmsUrl";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("cmsUrl");
-        set.add("pageSize");
-        set.add("readContent");
-        set.add("readCount");
-        set.add("repositoryId");
-        set.add("bridgeErrorHandler");
-        set.add("query");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("queryMode");
-        set.add("basicPropertyBinding");
-        set.add("sessionFacadeFactory");
-        set.add("synchronous");
-        set.add("password");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("queryMode");
+        props.add("cmsUrl");
+        props.add("synchronous");
+        props.add("readContent");
+        props.add("query");
+        props.add("exchangePattern");
+        props.add("pageSize");
+        props.add("readCount");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("repositoryId");
+        props.add("exceptionHandler");
+        props.add("sessionFacadeFactory");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -58,6 +64,11 @@ public class CMISEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

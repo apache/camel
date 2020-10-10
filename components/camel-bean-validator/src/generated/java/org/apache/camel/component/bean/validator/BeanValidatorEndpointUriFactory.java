@@ -2,6 +2,7 @@
 package org.apache.camel.component.bean.validator;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,22 @@ public class BeanValidatorEndpointUriFactory extends org.apache.camel.support.co
     private static final String BASE = ":label";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("label");
-        set.add("group");
-        set.add("ignoreXmlConfiguration");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("constraintValidatorFactory");
-        set.add("messageInterpolator");
-        set.add("synchronous");
-        set.add("traversableResolver");
-        set.add("validationProviderResolver");
-        set.add("validatorFactory");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("messageInterpolator");
+        props.add("validationProviderResolver");
+        props.add("synchronous");
+        props.add("constraintValidatorFactory");
+        props.add("label");
+        props.add("traversableResolver");
+        props.add("group");
+        props.add("ignoreXmlConfiguration");
+        props.add("validatorFactory");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -53,6 +56,11 @@ public class BeanValidatorEndpointUriFactory extends org.apache.camel.support.co
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

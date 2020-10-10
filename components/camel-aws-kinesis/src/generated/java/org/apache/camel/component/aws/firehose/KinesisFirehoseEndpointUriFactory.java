@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws.firehose;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,26 @@ public class KinesisFirehoseEndpointUriFactory extends org.apache.camel.support.
     private static final String BASE = ":streamName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("streamName");
-        set.add("amazonKinesisFirehoseClient");
-        set.add("autoDiscoverClient");
-        set.add("lazyStartProducer");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("proxyProtocol");
-        set.add("region");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("accessKey");
-        set.add("secretKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("basicPropertyBinding");
+        props.add("autoDiscoverClient");
+        props.add("proxyPort");
+        props.add("lazyStartProducer");
+        props.add("amazonKinesisFirehoseClient");
+        props.add("proxyProtocol");
+        props.add("secretKey");
+        props.add("accessKey");
+        props.add("synchronous");
+        props.add("region");
+        props.add("streamName");
+        props.add("proxyHost");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -54,6 +60,11 @@ public class KinesisFirehoseEndpointUriFactory extends org.apache.camel.support.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

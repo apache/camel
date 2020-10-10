@@ -2,6 +2,7 @@
 package org.apache.camel.component.platform.http;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,22 +18,24 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final String BASE = ":path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(13);
-        set.add("path");
-        set.add("bridgeErrorHandler");
-        set.add("consumes");
-        set.add("httpMethodRestrict");
-        set.add("matchOnUriPrefix");
-        set.add("produces");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("fileNameExtWhitelist");
-        set.add("basicPropertyBinding");
-        set.add("headerFilterStrategy");
-        set.add("platformHttpEngine");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(13);
+        props.add("basicPropertyBinding");
+        props.add("httpMethodRestrict");
+        props.add("synchronous");
+        props.add("matchOnUriPrefix");
+        props.add("exchangePattern");
+        props.add("fileNameExtWhitelist");
+        props.add("path");
+        props.add("bridgeErrorHandler");
+        props.add("headerFilterStrategy");
+        props.add("produces");
+        props.add("exceptionHandler");
+        props.add("platformHttpEngine");
+        props.add("consumes");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -55,6 +58,11 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

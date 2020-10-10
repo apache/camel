@@ -2,6 +2,7 @@
 package org.apache.camel.component.sip;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,56 +19,58 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String[] SCHEMES = new String[]{"sip", "sips"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(47);
-        set.add("uri");
-        set.add("cacheConnections");
-        set.add("contentSubType");
-        set.add("contentType");
-        set.add("eventHeaderName");
-        set.add("eventId");
-        set.add("fromHost");
-        set.add("fromPort");
-        set.add("fromUser");
-        set.add("msgExpiration");
-        set.add("receiveTimeoutMillis");
-        set.add("stackName");
-        set.add("toHost");
-        set.add("toPort");
-        set.add("toUser");
-        set.add("transport");
-        set.add("bridgeErrorHandler");
-        set.add("consumer");
-        set.add("presenceAgent");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("addressFactory");
-        set.add("basicPropertyBinding");
-        set.add("callIdHeader");
-        set.add("contactHeader");
-        set.add("contentTypeHeader");
-        set.add("eventHeader");
-        set.add("expiresHeader");
-        set.add("extensionHeader");
-        set.add("fromHeader");
-        set.add("headerFactory");
-        set.add("listeningPoint");
-        set.add("maxForwardsHeader");
-        set.add("maxMessageSize");
-        set.add("messageFactory");
-        set.add("sipFactory");
-        set.add("sipStack");
-        set.add("sipUri");
-        set.add("synchronous");
-        set.add("toHeader");
-        set.add("viaHeaders");
-        set.add("implementationDebugLogFile");
-        set.add("implementationServerLogFile");
-        set.add("implementationTraceLevel");
-        set.add("maxForwards");
-        set.add("useRouterForAllUris");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(47);
+        props.add("addressFactory");
+        props.add("basicPropertyBinding");
+        props.add("messageFactory");
+        props.add("contentTypeHeader");
+        props.add("presenceAgent");
+        props.add("fromPort");
+        props.add("fromUser");
+        props.add("eventHeader");
+        props.add("viaHeaders");
+        props.add("synchronous");
+        props.add("stackName");
+        props.add("receiveTimeoutMillis");
+        props.add("sipUri");
+        props.add("implementationServerLogFile");
+        props.add("toUser");
+        props.add("listeningPoint");
+        props.add("msgExpiration");
+        props.add("eventHeaderName");
+        props.add("bridgeErrorHandler");
+        props.add("extensionHeader");
+        props.add("expiresHeader");
+        props.add("maxMessageSize");
+        props.add("useRouterForAllUris");
+        props.add("contentType");
+        props.add("toHeader");
+        props.add("consumer");
+        props.add("contactHeader");
+        props.add("implementationDebugLogFile");
+        props.add("eventId");
+        props.add("maxForwards");
+        props.add("maxForwardsHeader");
+        props.add("cacheConnections");
+        props.add("sipFactory");
+        props.add("toPort");
+        props.add("exchangePattern");
+        props.add("fromHeader");
+        props.add("transport");
+        props.add("contentSubType");
+        props.add("uri");
+        props.add("headerFactory");
+        props.add("lazyStartProducer");
+        props.add("sipStack");
+        props.add("toHost");
+        props.add("implementationTraceLevel");
+        props.add("callIdHeader");
+        props.add("fromHost");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -95,6 +98,11 @@ public class SipEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

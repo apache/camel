@@ -2,6 +2,7 @@
 package org.apache.camel.component.optaplanner;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,23 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
     private static final String BASE = ":configFile";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("configFile");
-        set.add("problemId");
-        set.add("solverId");
-        set.add("useSolverManager");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("async");
-        set.add("lazyStartProducer");
-        set.add("threadPoolSize");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("basicPropertyBinding");
+        props.add("async");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("threadPoolSize");
+        props.add("synchronous");
+        props.add("configFile");
+        props.add("exchangePattern");
+        props.add("useSolverManager");
+        props.add("solverId");
+        props.add("problemId");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class OptaPlannerEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.metrics;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,22 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":metricsType:metricsName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("metricsType");
-        set.add("metricsName");
-        set.add("action");
-        set.add("decrement");
-        set.add("increment");
-        set.add("lazyStartProducer");
-        set.add("mark");
-        set.add("subject");
-        set.add("value");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("basicPropertyBinding");
+        props.add("metricsType");
+        props.add("lazyStartProducer");
+        props.add("decrement");
+        props.add("subject");
+        props.add("synchronous");
+        props.add("metricsName");
+        props.add("action");
+        props.add("increment");
+        props.add("value");
+        props.add("mark");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class MetricsEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.mina;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,41 +18,43 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":protocol:host:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(32);
-        set.add("protocol");
-        set.add("host");
-        set.add("port");
-        set.add("disconnect");
-        set.add("minaLogger");
-        set.add("sync");
-        set.add("timeout");
-        set.add("writeTimeout");
-        set.add("bridgeErrorHandler");
-        set.add("clientMode");
-        set.add("disconnectOnNoReply");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("noReplyLogLevel");
-        set.add("lazyStartProducer");
-        set.add("cachedAddress");
-        set.add("lazySessionCreation");
-        set.add("basicPropertyBinding");
-        set.add("maximumPoolSize");
-        set.add("orderedThreadPoolExecutor");
-        set.add("synchronous");
-        set.add("transferExchange");
-        set.add("allowDefaultCodec");
-        set.add("codec");
-        set.add("decoderMaxLineLength");
-        set.add("encoderMaxLineLength");
-        set.add("encoding");
-        set.add("filters");
-        set.add("textline");
-        set.add("textlineDelimiter");
-        set.add("autoStartTls");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(32);
+        props.add("basicPropertyBinding");
+        props.add("disconnect");
+        props.add("lazySessionCreation");
+        props.add("synchronous");
+        props.add("disconnectOnNoReply");
+        props.add("encoderMaxLineLength");
+        props.add("sslContextParameters");
+        props.add("writeTimeout");
+        props.add("timeout");
+        props.add("protocol");
+        props.add("bridgeErrorHandler");
+        props.add("autoStartTls");
+        props.add("host");
+        props.add("noReplyLogLevel");
+        props.add("transferExchange");
+        props.add("textline");
+        props.add("textlineDelimiter");
+        props.add("exchangePattern");
+        props.add("orderedThreadPoolExecutor");
+        props.add("filters");
+        props.add("encoding");
+        props.add("sync");
+        props.add("minaLogger");
+        props.add("codec");
+        props.add("lazyStartProducer");
+        props.add("port");
+        props.add("cachedAddress");
+        props.add("allowDefaultCodec");
+        props.add("maximumPoolSize");
+        props.add("clientMode");
+        props.add("decoderMaxLineLength");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -76,6 +79,11 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

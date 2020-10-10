@@ -2,6 +2,7 @@
 package org.apache.camel.component.ironmq;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,43 +18,45 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":queueName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(34);
-        set.add("queueName");
-        set.add("client");
-        set.add("ironMQCloud");
-        set.add("preserveHeaders");
-        set.add("projectId");
-        set.add("token");
-        set.add("batchDelete");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("maxMessagesPerPoll");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("timeout");
-        set.add("wait");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("visibilityDelay");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(34);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("wait");
+        props.add("synchronous");
+        props.add("initialDelay");
+        props.add("timeout");
+        props.add("batchDelete");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("client");
+        props.add("greedy");
+        props.add("maxMessagesPerPoll");
+        props.add("scheduledExecutorService");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("ironMQCloud");
+        props.add("visibilityDelay");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("preserveHeaders");
+        props.add("concurrentConsumers");
+        props.add("backoffIdleThreshold");
+        props.add("token");
+        props.add("lazyStartProducer");
+        props.add("queueName");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("startScheduler");
+        props.add("projectId");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -76,6 +79,11 @@ public class IronMQEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

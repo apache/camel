@@ -2,6 +2,7 @@
 package org.apache.camel.component.jetty9;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,44 +18,46 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
     private static final String BASE = ":httpUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(35);
-        set.add("httpUri");
-        set.add("disableStreamCache");
-        set.add("headerFilterStrategy");
-        set.add("httpBinding");
-        set.add("async");
-        set.add("bridgeErrorHandler");
-        set.add("chunked");
-        set.add("continuationTimeout");
-        set.add("enableCORS");
-        set.add("enableJmx");
-        set.add("enableMultipartFilter");
-        set.add("httpMethodRestrict");
-        set.add("matchOnUriPrefix");
-        set.add("muteException");
-        set.add("responseBufferSize");
-        set.add("sendDateHeader");
-        set.add("sendServerVersion");
-        set.add("sessionSupport");
-        set.add("transferException");
-        set.add("useContinuation");
-        set.add("eagerCheckContentAvailable");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("filterInitParameters");
-        set.add("filters");
-        set.add("handlers");
-        set.add("multipartFilter");
-        set.add("optionsEnabled");
-        set.add("traceEnabled");
-        set.add("basicPropertyBinding");
-        set.add("mapHttpMessageBody");
-        set.add("mapHttpMessageFormUrlEncodedBody");
-        set.add("mapHttpMessageHeaders");
-        set.add("synchronous");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(35);
+        props.add("basicPropertyBinding");
+        props.add("enableMultipartFilter");
+        props.add("synchronous");
+        props.add("sslContextParameters");
+        props.add("enableJmx");
+        props.add("mapHttpMessageBody");
+        props.add("sessionSupport");
+        props.add("useContinuation");
+        props.add("sendServerVersion");
+        props.add("bridgeErrorHandler");
+        props.add("httpUri");
+        props.add("headerFilterStrategy");
+        props.add("transferException");
+        props.add("enableCORS");
+        props.add("muteException");
+        props.add("filterInitParameters");
+        props.add("httpMethodRestrict");
+        props.add("eagerCheckContentAvailable");
+        props.add("httpBinding");
+        props.add("sendDateHeader");
+        props.add("continuationTimeout");
+        props.add("matchOnUriPrefix");
+        props.add("exchangePattern");
+        props.add("chunked");
+        props.add("filters");
+        props.add("mapHttpMessageFormUrlEncodedBody");
+        props.add("async");
+        props.add("responseBufferSize");
+        props.add("disableStreamCache");
+        props.add("handlers");
+        props.add("multipartFilter");
+        props.add("optionsEnabled");
+        props.add("mapHttpMessageHeaders");
+        props.add("traceEnabled");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -77,6 +80,11 @@ public class JettyHttp9EndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override
