@@ -2,6 +2,7 @@
 package org.apache.camel.component.robotframework;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,80 +18,82 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(71);
-        set.add("resourceUri");
-        set.add("allowContextMapAll");
-        set.add("allowTemplateFromHeader");
-        set.add("argumentFile");
-        set.add("combinedTagStats");
-        set.add("contentCache");
-        set.add("criticalTags");
-        set.add("debugFile");
-        set.add("document");
-        set.add("dryrun");
-        set.add("excludes");
-        set.add("exitOnFailure");
-        set.add("includes");
-        set.add("listener");
-        set.add("listeners");
-        set.add("log");
-        set.add("logLevel");
-        set.add("logTitle");
-        set.add("metadata");
-        set.add("monitorColors");
-        set.add("monitorWidth");
-        set.add("name");
-        set.add("nonCriticalTags");
-        set.add("noStatusReturnCode");
-        set.add("output");
-        set.add("outputDirectory");
-        set.add("randomize");
-        set.add("report");
-        set.add("reportBackground");
-        set.add("reportTitle");
-        set.add("runEmptySuite");
-        set.add("runFailed");
-        set.add("runMode");
-        set.add("skipTeardownOnExit");
-        set.add("splitOutputs");
-        set.add("suites");
-        set.add("suiteStatLevel");
-        set.add("summaryTitle");
-        set.add("tagDocs");
-        set.add("tags");
-        set.add("tagStatExcludes");
-        set.add("tagStatIncludes");
-        set.add("tagStatLinks");
-        set.add("tests");
-        set.add("timestampOutputs");
-        set.add("variableFiles");
-        set.add("variables");
-        set.add("warnOnSkippedFiles");
-        set.add("xunitFile");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(71);
+        props.add("tagStatIncludes");
+        props.add("metadata");
+        props.add("excludes");
+        props.add("xunitFile");
+        props.add("reportBackground");
+        props.add("synchronous");
+        props.add("contentCache");
+        props.add("listener");
+        props.add("variableFiles");
+        props.add("allowContextMapAll");
+        props.add("initialDelay");
+        props.add("summaryTitle");
+        props.add("output");
+        props.add("logTitle");
+        props.add("bridgeErrorHandler");
+        props.add("greedy");
+        props.add("outputDirectory");
+        props.add("scheduledExecutorService");
+        props.add("randomize");
+        props.add("repeatCount");
+        props.add("dryrun");
+        props.add("splitOutputs");
+        props.add("suites");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("reportTitle");
+        props.add("includes");
+        props.add("runMode");
+        props.add("backoffIdleThreshold");
+        props.add("tags");
+        props.add("argumentFile");
+        props.add("tagStatLinks");
+        props.add("lazyStartProducer");
+        props.add("tests");
+        props.add("delay");
+        props.add("startScheduler");
+        props.add("name");
+        props.add("suiteStatLevel");
+        props.add("warnOnSkippedFiles");
+        props.add("exceptionHandler");
+        props.add("monitorWidth");
+        props.add("runEmptySuite");
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("allowTemplateFromHeader");
+        props.add("log");
+        props.add("debugFile");
+        props.add("document");
+        props.add("skipTeardownOnExit");
+        props.add("noStatusReturnCode");
+        props.add("scheduler");
+        props.add("tagDocs");
+        props.add("useFixedDelay");
+        props.add("logLevel");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("timeUnit");
+        props.add("variables");
+        props.add("runFailed");
+        props.add("listeners");
+        props.add("criticalTags");
+        props.add("exchangePattern");
+        props.add("combinedTagStats");
+        props.add("monitorColors");
+        props.add("resourceUri");
+        props.add("exitOnFailure");
+        props.add("pollStrategy");
+        props.add("tagStatExcludes");
+        props.add("timestampOutputs");
+        props.add("report");
+        props.add("nonCriticalTags");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -113,6 +116,11 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

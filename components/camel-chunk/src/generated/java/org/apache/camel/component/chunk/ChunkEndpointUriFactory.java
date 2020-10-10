@@ -2,6 +2,7 @@
 package org.apache.camel.component.chunk;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,23 @@ public class ChunkEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("resourceUri");
-        set.add("allowContextMapAll");
-        set.add("allowTemplateFromHeader");
-        set.add("contentCache");
-        set.add("encoding");
-        set.add("extension");
-        set.add("lazyStartProducer");
-        set.add("themeFolder");
-        set.add("themeLayer");
-        set.add("themeSubfolder");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("themeLayer");
+        props.add("basicPropertyBinding");
+        props.add("allowTemplateFromHeader");
+        props.add("extension");
+        props.add("lazyStartProducer");
+        props.add("themeSubfolder");
+        props.add("synchronous");
+        props.add("contentCache");
+        props.add("allowContextMapAll");
+        props.add("themeFolder");
+        props.add("resourceUri");
+        props.add("encoding");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class ChunkEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

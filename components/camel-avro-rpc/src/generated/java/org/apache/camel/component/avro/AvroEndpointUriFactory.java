@@ -2,6 +2,7 @@
 package org.apache.camel.component.avro;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class AvroEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":transport:host:port/messageName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("transport");
-        set.add("port");
-        set.add("host");
-        set.add("messageName");
-        set.add("protocol");
-        set.add("protocolClassName");
-        set.add("protocolLocation");
-        set.add("reflectionProtocol");
-        set.add("singleParameter");
-        set.add("uriAuthority");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("messageName");
+        props.add("protocolClassName");
+        props.add("basicPropertyBinding");
+        props.add("reflectionProtocol");
+        props.add("protocolLocation");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("transport");
+        props.add("protocol");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("port");
+        props.add("singleParameter");
+        props.add("host");
+        props.add("uriAuthority");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +64,11 @@ public class AvroEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

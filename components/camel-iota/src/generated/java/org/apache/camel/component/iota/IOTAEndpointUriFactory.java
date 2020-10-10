@@ -2,6 +2,7 @@
 package org.apache.camel.component.iota;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,19 +18,21 @@ public class IOTAEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(10);
-        set.add("name");
-        set.add("depth");
-        set.add("lazyStartProducer");
-        set.add("minWeightMagnitude");
-        set.add("operation");
-        set.add("tag");
-        set.add("url");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("securityLevel");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(10);
+        props.add("basicPropertyBinding");
+        props.add("securityLevel");
+        props.add("lazyStartProducer");
+        props.add("depth");
+        props.add("synchronous");
+        props.add("name");
+        props.add("tag");
+        props.add("minWeightMagnitude");
+        props.add("operation");
+        props.add("url");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -52,6 +55,11 @@ public class IOTAEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

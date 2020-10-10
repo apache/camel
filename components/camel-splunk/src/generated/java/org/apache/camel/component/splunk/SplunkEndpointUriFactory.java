@@ -2,6 +2,7 @@
 package org.apache.camel.component.splunk;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,55 +18,60 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(46);
-        set.add("name");
-        set.add("app");
-        set.add("connectionTimeout");
-        set.add("host");
-        set.add("owner");
-        set.add("port");
-        set.add("scheme");
-        set.add("bridgeErrorHandler");
-        set.add("count");
-        set.add("earliestTime");
-        set.add("initEarliestTime");
-        set.add("latestTime");
-        set.add("savedSearch");
-        set.add("search");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("streaming");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("eventHost");
-        set.add("index");
-        set.add("lazyStartProducer");
-        set.add("raw");
-        set.add("source");
-        set.add("sourceType");
-        set.add("tcpReceiverPort");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("password");
-        set.add("sslProtocol");
-        set.add("username");
-        set.add("useSunHttpsHandler");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(46);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("scheme");
+        props.add("synchronous");
+        props.add("earliestTime");
+        props.add("source");
+        props.add("initialDelay");
+        props.add("useSunHttpsHandler");
+        props.add("savedSearch");
+        props.add("scheduler");
+        props.add("search");
+        props.add("streaming");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("host");
+        props.add("greedy");
+        props.add("scheduledExecutorService");
+        props.add("connectionTimeout");
+        props.add("tcpReceiverPort");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("app");
+        props.add("owner");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("count");
+        props.add("exchangePattern");
+        props.add("index");
+        props.add("raw");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("port");
+        props.add("sourceType");
+        props.add("startScheduler");
+        props.add("initEarliestTime");
+        props.add("name");
+        props.add("sslProtocol");
+        props.add("latestTime");
+        props.add("eventHost");
+        props.add("exceptionHandler");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -88,6 +94,11 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.hbase;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,30 @@ public class HBaseEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":tableName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("tableName");
-        set.add("cellMappingStrategyFactory");
-        set.add("filters");
-        set.add("mappingStrategyClassName");
-        set.add("mappingStrategyName");
-        set.add("rowMapping");
-        set.add("rowModel");
-        set.add("userGroupInformation");
-        set.add("bridgeErrorHandler");
-        set.add("maxMessagesPerPoll");
-        set.add("operation");
-        set.add("remove");
-        set.add("removeHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("maxResults");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("rowMapping");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("filters");
+        props.add("removeHandler");
+        props.add("mappingStrategyName");
+        props.add("remove");
+        props.add("tableName");
+        props.add("cellMappingStrategyFactory");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("rowModel");
+        props.add("maxResults");
+        props.add("userGroupInformation");
+        props.add("maxMessagesPerPoll");
+        props.add("mappingStrategyClassName");
+        props.add("operation");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +64,11 @@ public class HBaseEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

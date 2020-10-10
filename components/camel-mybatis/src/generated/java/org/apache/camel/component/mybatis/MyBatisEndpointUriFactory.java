@@ -2,6 +2,7 @@
 package org.apache.camel.component.mybatis;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,42 +18,44 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":statement";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(33);
-        set.add("statement");
-        set.add("bridgeErrorHandler");
-        set.add("maxMessagesPerPoll");
-        set.add("onConsume");
-        set.add("routeEmptyResultSet");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("transacted");
-        set.add("useIterator");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("processingStrategy");
-        set.add("executorType");
-        set.add("inputHeader");
-        set.add("lazyStartProducer");
-        set.add("outputHeader");
-        set.add("statementType");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(33);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("onConsume");
+        props.add("synchronous");
+        props.add("transacted");
+        props.add("initialDelay");
+        props.add("useIterator");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("inputHeader");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("statement");
+        props.add("greedy");
+        props.add("maxMessagesPerPoll");
+        props.add("scheduledExecutorService");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("executorType");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("routeEmptyResultSet");
+        props.add("backoffIdleThreshold");
+        props.add("processingStrategy");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("outputHeader");
+        props.add("startScheduler");
+        props.add("statementType");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -75,6 +78,11 @@ public class MyBatisEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

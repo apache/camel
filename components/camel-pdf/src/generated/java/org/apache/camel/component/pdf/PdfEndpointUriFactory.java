@@ -2,6 +2,7 @@
 package org.apache.camel.component.pdf;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,23 @@ public class PdfEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":operation";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("operation");
-        set.add("font");
-        set.add("fontSize");
-        set.add("lazyStartProducer");
-        set.add("marginBottom");
-        set.add("marginLeft");
-        set.add("marginRight");
-        set.add("marginTop");
-        set.add("pageSize");
-        set.add("textProcessingFactory");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("marginRight");
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("synchronous");
+        props.add("textProcessingFactory");
+        props.add("pageSize");
+        props.add("fontSize");
+        props.add("marginBottom");
+        props.add("operation");
+        props.add("marginTop");
+        props.add("font");
+        props.add("marginLeft");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class PdfEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

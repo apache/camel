@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,69 +18,75 @@ public class SqsEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":queueNameOrArn";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(60);
-        set.add("queueNameOrArn");
-        set.add("amazonAWSHost");
-        set.add("amazonSQSClient");
-        set.add("autoCreateQueue");
-        set.add("autoDiscoverClient");
-        set.add("headerFilterStrategy");
-        set.add("protocol");
-        set.add("proxyProtocol");
-        set.add("queueOwnerAWSAccountId");
-        set.add("region");
-        set.add("attributeNames");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("defaultVisibilityTimeout");
-        set.add("deleteAfterRead");
-        set.add("deleteIfFiltered");
-        set.add("extendMessageVisibility");
-        set.add("kmsDataKeyReusePeriodSeconds");
-        set.add("kmsMasterKeyId");
-        set.add("maxMessagesPerPoll");
-        set.add("messageAttributeNames");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("serverSideEncryptionEnabled");
-        set.add("visibilityTimeout");
-        set.add("waitTimeSeconds");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("delaySeconds");
-        set.add("lazyStartProducer");
-        set.add("messageDeduplicationIdStrategy");
-        set.add("messageGroupIdStrategy");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("delayQueue");
-        set.add("queueUrl");
-        set.add("synchronous");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("maximumMessageSize");
-        set.add("messageRetentionPeriod");
-        set.add("policy");
-        set.add("receiveMessageWaitTimeSeconds");
-        set.add("redrivePolicy");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("accessKey");
-        set.add("secretKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(60);
+        props.add("synchronous");
+        props.add("queueUrl");
+        props.add("initialDelay");
+        props.add("proxyPort");
+        props.add("protocol");
+        props.add("attributeNames");
+        props.add("bridgeErrorHandler");
+        props.add("greedy");
+        props.add("maxMessagesPerPoll");
+        props.add("scheduledExecutorService");
+        props.add("messageRetentionPeriod");
+        props.add("repeatCount");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("extendMessageVisibility");
+        props.add("queueOwnerAWSAccountId");
+        props.add("concurrentConsumers");
+        props.add("proxyHost");
+        props.add("receiveMessageWaitTimeSeconds");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("waitTimeSeconds");
+        props.add("delay");
+        props.add("redrivePolicy");
+        props.add("startScheduler");
+        props.add("accessKey");
+        props.add("region");
+        props.add("exceptionHandler");
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("maximumMessageSize");
+        props.add("deleteIfFiltered");
+        props.add("messageDeduplicationIdStrategy");
+        props.add("kmsDataKeyReusePeriodSeconds");
+        props.add("visibilityTimeout");
+        props.add("scheduler");
+        props.add("useFixedDelay");
+        props.add("headerFilterStrategy");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("autoCreateQueue");
+        props.add("kmsMasterKeyId");
+        props.add("amazonAWSHost");
+        props.add("delayQueue");
+        props.add("policy");
+        props.add("timeUnit");
+        props.add("delaySeconds");
+        props.add("autoDiscoverClient");
+        props.add("messageAttributeNames");
+        props.add("serverSideEncryptionEnabled");
+        props.add("proxyProtocol");
+        props.add("secretKey");
+        props.add("queueNameOrArn");
+        props.add("exchangePattern");
+        props.add("defaultVisibilityTimeout");
+        props.add("messageGroupIdStrategy");
+        props.add("pollStrategy");
+        props.add("amazonSQSClient");
+        props.add("deleteAfterRead");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        secretProps.add("queueOwnerAWSAccountId");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -102,6 +109,11 @@ public class SqsEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

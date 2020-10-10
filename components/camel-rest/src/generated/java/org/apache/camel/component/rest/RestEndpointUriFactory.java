@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,30 +18,32 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":method:path:uriTemplate";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(21);
-        set.add("method");
-        set.add("path");
-        set.add("uriTemplate");
-        set.add("consumes");
-        set.add("inType");
-        set.add("outType");
-        set.add("produces");
-        set.add("routeId");
-        set.add("bridgeErrorHandler");
-        set.add("consumerComponentName");
-        set.add("description");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("apiDoc");
-        set.add("bindingMode");
-        set.add("host");
-        set.add("lazyStartProducer");
-        set.add("producerComponentName");
-        set.add("queryParameters");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(21);
+        props.add("basicPropertyBinding");
+        props.add("method");
+        props.add("consumerComponentName");
+        props.add("uriTemplate");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("description");
+        props.add("outType");
+        props.add("path");
+        props.add("lazyStartProducer");
+        props.add("routeId");
+        props.add("bridgeErrorHandler");
+        props.add("bindingMode");
+        props.add("queryParameters");
+        props.add("produces");
+        props.add("host");
+        props.add("producerComponentName");
+        props.add("inType");
+        props.add("exceptionHandler");
+        props.add("consumes");
+        props.add("apiDoc");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -65,6 +68,11 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

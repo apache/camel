@@ -2,6 +2,7 @@
 package org.apache.camel.component.beanclass;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,17 +18,19 @@ public class ClassEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":beanName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(8);
-        set.add("beanName");
-        set.add("cache");
-        set.add("method");
-        set.add("scope");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("parameters");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(8);
+        props.add("basicPropertyBinding");
+        props.add("cache");
+        props.add("lazyStartProducer");
+        props.add("method");
+        props.add("synchronous");
+        props.add("scope");
+        props.add("beanName");
+        props.add("parameters");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -50,6 +53,11 @@ public class ClassEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

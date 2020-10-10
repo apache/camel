@@ -2,6 +2,7 @@
 package org.apache.camel.component.stream;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,31 +18,33 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":kind";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(22);
-        set.add("kind");
-        set.add("encoding");
-        set.add("fileName");
-        set.add("bridgeErrorHandler");
-        set.add("fileWatcher");
-        set.add("groupLines");
-        set.add("groupStrategy");
-        set.add("initialPromptDelay");
-        set.add("promptDelay");
-        set.add("promptMessage");
-        set.add("retry");
-        set.add("scanStream");
-        set.add("scanStreamDelay");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("autoCloseCount");
-        set.add("closeOnDone");
-        set.add("delay");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("readTimeout");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(22);
+        props.add("groupLines");
+        props.add("basicPropertyBinding");
+        props.add("fileName");
+        props.add("kind");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("fileWatcher");
+        props.add("closeOnDone");
+        props.add("encoding");
+        props.add("initialPromptDelay");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("scanStream");
+        props.add("delay");
+        props.add("promptDelay");
+        props.add("readTimeout");
+        props.add("groupStrategy");
+        props.add("promptMessage");
+        props.add("exceptionHandler");
+        props.add("retry");
+        props.add("scanStreamDelay");
+        props.add("autoCloseCount");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -64,6 +67,11 @@ public class StreamEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

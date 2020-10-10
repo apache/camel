@@ -2,6 +2,7 @@
 package org.apache.camel.component.irc;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,40 +18,46 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":hostname:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
-        set.add("hostname");
-        set.add("port");
-        set.add("autoRejoin");
-        set.add("channels");
-        set.add("commandTimeout");
-        set.add("keys");
-        set.add("namesOnJoin");
-        set.add("nickname");
-        set.add("persistent");
-        set.add("realname");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("colors");
-        set.add("synchronous");
-        set.add("onJoin");
-        set.add("onKick");
-        set.add("onMode");
-        set.add("onNick");
-        set.add("onPart");
-        set.add("onPrivmsg");
-        set.add("onQuit");
-        set.add("onReply");
-        set.add("onTopic");
-        set.add("nickPassword");
-        set.add("password");
-        set.add("sslContextParameters");
-        set.add("trustManager");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(31);
+        props.add("basicPropertyBinding");
+        props.add("keys");
+        props.add("synchronous");
+        props.add("sslContextParameters");
+        props.add("autoRejoin");
+        props.add("onTopic");
+        props.add("colors");
+        props.add("onQuit");
+        props.add("hostname");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("nickname");
+        props.add("nickPassword");
+        props.add("trustManager");
+        props.add("persistent");
+        props.add("onKick");
+        props.add("commandTimeout");
+        props.add("exchangePattern");
+        props.add("namesOnJoin");
+        props.add("realname");
+        props.add("onPart");
+        props.add("onReply");
+        props.add("lazyStartProducer");
+        props.add("onJoin");
+        props.add("channels");
+        props.add("onPrivmsg");
+        props.add("port");
+        props.add("exceptionHandler");
+        props.add("onMode");
+        props.add("onNick");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("password");
+        secretProps.add("nickPassword");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -74,6 +81,11 @@ public class IrcEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

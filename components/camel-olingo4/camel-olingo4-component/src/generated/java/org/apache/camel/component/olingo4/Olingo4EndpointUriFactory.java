@@ -2,6 +2,7 @@
 package org.apache.camel.component.olingo4;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,51 +18,53 @@ public class Olingo4EndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":apiName/methodName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(42);
-        set.add("apiName");
-        set.add("methodName");
-        set.add("connectTimeout");
-        set.add("contentType");
-        set.add("filterAlreadySeen");
-        set.add("httpHeaders");
-        set.add("inBody");
-        set.add("proxy");
-        set.add("serviceUri");
-        set.add("socketTimeout");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("splitResult");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("httpAsyncClientBuilder");
-        set.add("httpClientBuilder");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("sslContextParameters");
-        set.add("data");
-        set.add("edm");
-        set.add("endpointHttpHeaders");
-        set.add("queryParams");
-        set.add("resourcePath");
-        set.add("responseHandler");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(42);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("apiName");
+        props.add("data");
+        props.add("serviceUri");
+        props.add("queryParams");
+        props.add("synchronous");
+        props.add("resourcePath");
+        props.add("sslContextParameters");
+        props.add("splitResult");
+        props.add("httpHeaders");
+        props.add("initialDelay");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("responseHandler");
+        props.add("runLoggingLevel");
+        props.add("httpAsyncClientBuilder");
+        props.add("backoffErrorThreshold");
+        props.add("httpClientBuilder");
+        props.add("connectTimeout");
+        props.add("socketTimeout");
+        props.add("greedy");
+        props.add("scheduledExecutorService");
+        props.add("contentType");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("methodName");
+        props.add("backoffIdleThreshold");
+        props.add("edm");
+        props.add("endpointHttpHeaders");
+        props.add("proxy");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("filterAlreadySeen");
+        props.add("startScheduler");
+        props.add("inBody");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -85,6 +88,11 @@ public class Olingo4EndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

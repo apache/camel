@@ -2,6 +2,7 @@
 package org.apache.camel.component.grpc;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,39 +18,44 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":host:port/service";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(30);
-        set.add("host");
-        set.add("port");
-        set.add("service");
-        set.add("flowControlWindow");
-        set.add("maxMessageSize");
-        set.add("bridgeErrorHandler");
-        set.add("consumerStrategy");
-        set.add("forwardOnCompleted");
-        set.add("forwardOnError");
-        set.add("maxConcurrentCallsPerConnection");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("method");
-        set.add("producerStrategy");
-        set.add("streamRepliesTo");
-        set.add("userAgent");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("authenticationType");
-        set.add("jwtAlgorithm");
-        set.add("jwtIssuer");
-        set.add("jwtSecret");
-        set.add("jwtSubject");
-        set.add("keyCertChainResource");
-        set.add("keyPassword");
-        set.add("keyResource");
-        set.add("negotiationType");
-        set.add("serviceAccountResource");
-        set.add("trustCertCollectionResource");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(30);
+        props.add("basicPropertyBinding");
+        props.add("serviceAccountResource");
+        props.add("synchronous");
+        props.add("jwtSubject");
+        props.add("trustCertCollectionResource");
+        props.add("forwardOnCompleted");
+        props.add("jwtIssuer");
+        props.add("bridgeErrorHandler");
+        props.add("keyPassword");
+        props.add("host");
+        props.add("maxMessageSize");
+        props.add("flowControlWindow");
+        props.add("jwtSecret");
+        props.add("keyResource");
+        props.add("method");
+        props.add("exchangePattern");
+        props.add("streamRepliesTo");
+        props.add("userAgent");
+        props.add("consumerStrategy");
+        props.add("jwtAlgorithm");
+        props.add("negotiationType");
+        props.add("lazyStartProducer");
+        props.add("port");
+        props.add("service");
+        props.add("maxConcurrentCallsPerConnection");
+        props.add("forwardOnError");
+        props.add("producerStrategy");
+        props.add("authenticationType");
+        props.add("exceptionHandler");
+        props.add("keyCertChainResource");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("jwtSecret");
+        secretProps.add("keyPassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -74,6 +80,11 @@ public class GrpcEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

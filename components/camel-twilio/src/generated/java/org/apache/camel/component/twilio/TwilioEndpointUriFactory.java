@@ -2,6 +2,7 @@
 package org.apache.camel.component.twilio;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,78 +18,80 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":apiName/methodName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(69);
-        set.add("apiName");
-        set.add("methodName");
-        set.add("inBody");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("applicationSid");
-        set.add("areaCode");
-        set.add("body");
-        set.add("callbackUrl");
-        set.add("city");
-        set.add("credentialListSid");
-        set.add("customerName");
-        set.add("domainName");
-        set.add("endDate");
-        set.add("friendlyName");
-        set.add("from");
-        set.add("ipAccessControlListSid");
-        set.add("ipAddress");
-        set.add("isoCountry");
-        set.add("mediaUrl");
-        set.add("messagingServiceSid");
-        set.add("password");
-        set.add("pathAccountSid");
-        set.add("pathAddOnResultSid");
-        set.add("pathAddressSid");
-        set.add("pathCallSid");
-        set.add("pathConferenceSid");
-        set.add("pathCountryCode");
-        set.add("pathCredentialListSid");
-        set.add("pathDomainSid");
-        set.add("pathIpAccessControlListSid");
-        set.add("pathMessageSid");
-        set.add("pathQueueSid");
-        set.add("pathRecordingSid");
-        set.add("pathReferenceSid");
-        set.add("pathSid");
-        set.add("phoneNumber");
-        set.add("postalCode");
-        set.add("qualityScore");
-        set.add("region");
-        set.add("startDate");
-        set.add("status");
-        set.add("street");
-        set.add("to");
-        set.add("triggerValue");
-        set.add("twiml");
-        set.add("url");
-        set.add("usageCategory");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(69);
+        props.add("apiName");
+        props.add("endDate");
+        props.add("pathConferenceSid");
+        props.add("synchronous");
+        props.add("postalCode");
+        props.add("initialDelay");
+        props.add("body");
+        props.add("pathIpAccessControlListSid");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("messagingServiceSid");
+        props.add("pathAddOnResultSid");
+        props.add("greedy");
+        props.add("applicationSid");
+        props.add("from");
+        props.add("callbackUrl");
+        props.add("scheduledExecutorService");
+        props.add("isoCountry");
+        props.add("repeatCount");
+        props.add("mediaUrl");
+        props.add("pathQueueSid");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("ipAddress");
+        props.add("backoffIdleThreshold");
+        props.add("customerName");
+        props.add("lazyStartProducer");
+        props.add("areaCode");
+        props.add("delay");
+        props.add("phoneNumber");
+        props.add("pathDomainSid");
+        props.add("startScheduler");
+        props.add("domainName");
+        props.add("pathSid");
+        props.add("region");
+        props.add("inBody");
+        props.add("exceptionHandler");
+        props.add("startDate");
+        props.add("status");
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("city");
+        props.add("triggerValue");
+        props.add("pathCredentialListSid");
+        props.add("pathReferenceSid");
+        props.add("pathCountryCode");
+        props.add("scheduler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("street");
+        props.add("qualityScore");
+        props.add("friendlyName");
+        props.add("timeUnit");
+        props.add("pathRecordingSid");
+        props.add("pathCallSid");
+        props.add("pathAccountSid");
+        props.add("credentialListSid");
+        props.add("exchangePattern");
+        props.add("methodName");
+        props.add("pathAddressSid");
+        props.add("pathMessageSid");
+        props.add("url");
+        props.add("pollStrategy");
+        props.add("ipAccessControlListSid");
+        props.add("to");
+        props.add("twiml");
+        props.add("username");
+        props.add("usageCategory");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -112,6 +115,11 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

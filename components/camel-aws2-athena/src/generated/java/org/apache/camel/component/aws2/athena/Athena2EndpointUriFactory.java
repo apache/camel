@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws2.athena;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,40 +18,45 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":label";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
-        set.add("label");
-        set.add("autoDiscoverClient");
-        set.add("accessKey");
-        set.add("amazonAthenaClient");
-        set.add("database");
-        set.add("delay");
-        set.add("encryptionOption");
-        set.add("includeTrace");
-        set.add("initialDelay");
-        set.add("kmsKey");
-        set.add("lazyStartProducer");
-        set.add("maxAttempts");
-        set.add("maxResults");
-        set.add("nextToken");
-        set.add("operation");
-        set.add("outputLocation");
-        set.add("outputType");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("proxyProtocol");
-        set.add("queryExecutionId");
-        set.add("queryString");
-        set.add("region");
-        set.add("resetWaitTimeoutOnRetry");
-        set.add("retry");
-        set.add("secretKey");
-        set.add("waitTimeout");
-        set.add("workGroup");
-        set.add("basicPropertyBinding");
-        set.add("clientRequestToken");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(31);
+        props.add("outputLocation");
+        props.add("basicPropertyBinding");
+        props.add("workGroup");
+        props.add("kmsKey");
+        props.add("synchronous");
+        props.add("waitTimeout");
+        props.add("outputType");
+        props.add("initialDelay");
+        props.add("proxyPort");
+        props.add("database");
+        props.add("includeTrace");
+        props.add("clientRequestToken");
+        props.add("maxResults");
+        props.add("encryptionOption");
+        props.add("amazonAthenaClient");
+        props.add("retry");
+        props.add("autoDiscoverClient");
+        props.add("proxyProtocol");
+        props.add("secretKey");
+        props.add("resetWaitTimeoutOnRetry");
+        props.add("label");
+        props.add("queryExecutionId");
+        props.add("queryString");
+        props.add("proxyHost");
+        props.add("maxAttempts");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("accessKey");
+        props.add("nextToken");
+        props.add("region");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -73,6 +79,11 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

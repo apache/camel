@@ -2,6 +2,7 @@
 package org.apache.camel.component.http;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,63 +19,70 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String[] SCHEMES = new String[]{"http", "https"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(54);
-        set.add("httpUri");
-        set.add("disableStreamCache");
-        set.add("headerFilterStrategy");
-        set.add("httpBinding");
-        set.add("bridgeEndpoint");
-        set.add("chunked");
-        set.add("clearExpiredCookies");
-        set.add("connectionClose");
-        set.add("copyHeaders");
-        set.add("customHostHeader");
-        set.add("httpMethod");
-        set.add("ignoreResponseBody");
-        set.add("lazyStartProducer");
-        set.add("preserveHostHeader");
-        set.add("throwExceptionOnFailure");
-        set.add("transferException");
-        set.add("cookieHandler");
-        set.add("cookieStore");
-        set.add("deleteWithBody");
-        set.add("getWithBody");
-        set.add("okStatusCodeRange");
-        set.add("basicPropertyBinding");
-        set.add("clientBuilder");
-        set.add("clientConnectionManager");
-        set.add("connectionsPerRoute");
-        set.add("httpClient");
-        set.add("httpClientConfigurer");
-        set.add("httpClientOptions");
-        set.add("httpContext");
-        set.add("mapHttpMessageBody");
-        set.add("mapHttpMessageFormUrlEncodedBody");
-        set.add("mapHttpMessageHeaders");
-        set.add("maxTotalConnections");
-        set.add("synchronous");
-        set.add("useSystemProperties");
-        set.add("proxyAuthDomain");
-        set.add("proxyAuthHost");
-        set.add("proxyAuthMethod");
-        set.add("proxyAuthNtHost");
-        set.add("proxyAuthPassword");
-        set.add("proxyAuthPort");
-        set.add("proxyAuthScheme");
-        set.add("proxyAuthUsername");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("authDomain");
-        set.add("authenticationPreemptive");
-        set.add("authHost");
-        set.add("authMethod");
-        set.add("authMethodPriority");
-        set.add("authPassword");
-        set.add("authUsername");
-        set.add("sslContextParameters");
-        set.add("x509HostnameVerifier");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(54);
+        props.add("clientBuilder");
+        props.add("authMethodPriority");
+        props.add("synchronous");
+        props.add("ignoreResponseBody");
+        props.add("authDomain");
+        props.add("proxyPort");
+        props.add("transferException");
+        props.add("copyHeaders");
+        props.add("proxyAuthPassword");
+        props.add("bridgeEndpoint");
+        props.add("clearExpiredCookies");
+        props.add("proxyAuthMethod");
+        props.add("httpContext");
+        props.add("authenticationPreemptive");
+        props.add("throwExceptionOnFailure");
+        props.add("httpBinding");
+        props.add("authHost");
+        props.add("proxyAuthUsername");
+        props.add("connectionClose");
+        props.add("mapHttpMessageFormUrlEncodedBody");
+        props.add("proxyHost");
+        props.add("authPassword");
+        props.add("lazyStartProducer");
+        props.add("preserveHostHeader");
+        props.add("httpClientConfigurer");
+        props.add("disableStreamCache");
+        props.add("clientConnectionManager");
+        props.add("cookieHandler");
+        props.add("basicPropertyBinding");
+        props.add("getWithBody");
+        props.add("proxyAuthPort");
+        props.add("maxTotalConnections");
+        props.add("proxyAuthScheme");
+        props.add("sslContextParameters");
+        props.add("mapHttpMessageBody");
+        props.add("httpMethod");
+        props.add("deleteWithBody");
+        props.add("httpUri");
+        props.add("headerFilterStrategy");
+        props.add("customHostHeader");
+        props.add("proxyAuthDomain");
+        props.add("httpClient");
+        props.add("proxyAuthNtHost");
+        props.add("chunked");
+        props.add("httpClientOptions");
+        props.add("connectionsPerRoute");
+        props.add("useSystemProperties");
+        props.add("okStatusCodeRange");
+        props.add("proxyAuthHost");
+        props.add("authUsername");
+        props.add("x509HostnameVerifier");
+        props.add("mapHttpMessageHeaders");
+        props.add("authMethod");
+        props.add("cookieStore");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(4);
+        secretProps.add("authUsername");
+        secretProps.add("proxyAuthPassword");
+        secretProps.add("proxyAuthUsername");
+        secretProps.add("authPassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -102,6 +110,11 @@ public class HttpEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

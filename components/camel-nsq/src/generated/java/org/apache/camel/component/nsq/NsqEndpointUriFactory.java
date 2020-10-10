@@ -2,6 +2,7 @@
 package org.apache.camel.component.nsq;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,29 +18,31 @@ public class NsqEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":topic";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(20);
-        set.add("topic");
-        set.add("servers");
-        set.add("userAgent");
-        set.add("autoFinish");
-        set.add("bridgeErrorHandler");
-        set.add("channel");
-        set.add("customNSQLookup");
-        set.add("lookupInterval");
-        set.add("lookupServerPort");
-        set.add("messageTimeout");
-        set.add("poolSize");
-        set.add("requeueInterval");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("port");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("secure");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(20);
+        props.add("customNSQLookup");
+        props.add("basicPropertyBinding");
+        props.add("requeueInterval");
+        props.add("lookupInterval");
+        props.add("synchronous");
+        props.add("autoFinish");
+        props.add("poolSize");
+        props.add("channel");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("userAgent");
+        props.add("lookupServerPort");
+        props.add("secure");
+        props.add("lazyStartProducer");
+        props.add("servers");
+        props.add("bridgeErrorHandler");
+        props.add("port");
+        props.add("topic");
+        props.add("exceptionHandler");
+        props.add("messageTimeout");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -62,6 +65,11 @@ public class NsqEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

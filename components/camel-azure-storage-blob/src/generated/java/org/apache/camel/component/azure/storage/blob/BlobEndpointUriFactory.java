@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.storage.blob;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,41 +18,45 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":accountName/containerName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(32);
-        set.add("accountName");
-        set.add("containerName");
-        set.add("autoDiscoverClient");
-        set.add("blobName");
-        set.add("blobOffset");
-        set.add("blobServiceClient");
-        set.add("blobType");
-        set.add("closeStreamAfterRead");
-        set.add("credentials");
-        set.add("dataCount");
-        set.add("fileDir");
-        set.add("maxResultsPerPage");
-        set.add("maxRetryRequests");
-        set.add("prefix");
-        set.add("serviceClient");
-        set.add("timeout");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("blobSequenceNumber");
-        set.add("blockListType");
-        set.add("closeStreamAfterWrite");
-        set.add("commitBlockListLater");
-        set.add("createAppendBlob");
-        set.add("createPageBlob");
-        set.add("downloadLinkExpiration");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("pageBlobSize");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("accessKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(32);
+        props.add("blobName");
+        props.add("basicPropertyBinding");
+        props.add("accountName");
+        props.add("credentials");
+        props.add("prefix");
+        props.add("synchronous");
+        props.add("createPageBlob");
+        props.add("blobOffset");
+        props.add("timeout");
+        props.add("dataCount");
+        props.add("blobServiceClient");
+        props.add("maxRetryRequests");
+        props.add("bridgeErrorHandler");
+        props.add("containerName");
+        props.add("closeStreamAfterRead");
+        props.add("closeStreamAfterWrite");
+        props.add("autoDiscoverClient");
+        props.add("maxResultsPerPage");
+        props.add("downloadLinkExpiration");
+        props.add("exchangePattern");
+        props.add("blockListType");
+        props.add("createAppendBlob");
+        props.add("lazyStartProducer");
+        props.add("blobSequenceNumber");
+        props.add("accessKey");
+        props.add("commitBlockListLater");
+        props.add("serviceClient");
+        props.add("fileDir");
+        props.add("blobType");
+        props.add("pageBlobSize");
+        props.add("exceptionHandler");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -75,6 +80,11 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

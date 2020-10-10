@@ -2,6 +2,7 @@
 package org.apache.camel.component.xchange;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,17 +18,19 @@ public class XChangeEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(8);
-        set.add("name");
-        set.add("currency");
-        set.add("currencyPair");
-        set.add("lazyStartProducer");
-        set.add("method");
-        set.add("service");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(8);
+        props.add("basicPropertyBinding");
+        props.add("currencyPair");
+        props.add("lazyStartProducer");
+        props.add("method");
+        props.add("service");
+        props.add("synchronous");
+        props.add("name");
+        props.add("currency");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -50,6 +53,11 @@ public class XChangeEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

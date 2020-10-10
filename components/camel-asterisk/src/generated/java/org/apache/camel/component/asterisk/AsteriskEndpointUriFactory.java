@@ -2,6 +2,7 @@
 package org.apache.camel.component.asterisk;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,25 @@ public class AsteriskEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("name");
-        set.add("hostname");
-        set.add("password");
-        set.add("username");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("action");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("basicPropertyBinding");
+        props.add("hostname");
+        props.add("password");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("synchronous");
+        props.add("name");
+        props.add("exchangePattern");
+        props.add("action");
+        props.add("exceptionHandler");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -53,6 +59,11 @@ public class AsteriskEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

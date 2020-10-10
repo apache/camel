@@ -2,6 +2,7 @@
 package org.apache.camel.component.cometd;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,30 +19,32 @@ public class CometdEndpointUriFactory extends org.apache.camel.support.component
     private static final String[] SCHEMES = new String[]{"cometd", "cometds"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(21);
-        set.add("host");
-        set.add("port");
-        set.add("channelName");
-        set.add("allowedOrigins");
-        set.add("baseResource");
-        set.add("crossOriginFilterOn");
-        set.add("filterPath");
-        set.add("interval");
-        set.add("jsonCommented");
-        set.add("logLevel");
-        set.add("maxInterval");
-        set.add("multiFrameInterval");
-        set.add("timeout");
-        set.add("bridgeErrorHandler");
-        set.add("sessionHeadersEnabled");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("disconnectLocalSession");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(21);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("jsonCommented");
+        props.add("maxInterval");
+        props.add("timeout");
+        props.add("filterPath");
+        props.add("lazyStartProducer");
+        props.add("baseResource");
+        props.add("bridgeErrorHandler");
+        props.add("disconnectLocalSession");
+        props.add("allowedOrigins");
+        props.add("crossOriginFilterOn");
+        props.add("logLevel");
+        props.add("port");
+        props.add("host");
+        props.add("channelName");
+        props.add("interval");
+        props.add("multiFrameInterval");
+        props.add("exceptionHandler");
+        props.add("sessionHeadersEnabled");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +74,11 @@ public class CometdEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

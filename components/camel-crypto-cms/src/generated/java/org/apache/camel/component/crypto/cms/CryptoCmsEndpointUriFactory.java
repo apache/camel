@@ -2,6 +2,7 @@
 package org.apache.camel.component.crypto.cms;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,30 @@ public class CryptoCmsEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":cryptoOperation:name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("cryptoOperation");
-        set.add("name");
-        set.add("keyStore");
-        set.add("keyStoreParameters");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("password");
-        set.add("fromBase64");
-        set.add("contentEncryptionAlgorithm");
-        set.add("originatorInformationProvider");
-        set.add("recipient");
-        set.add("secretKeyLength");
-        set.add("unprotectedAttributesGeneratorProvider");
-        set.add("toBase64");
-        set.add("includeContent");
-        set.add("signer");
-        set.add("signedDataHeaderBase64");
-        set.add("verifySignaturesOfAllSigners");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("toBase64");
+        props.add("synchronous");
+        props.add("fromBase64");
+        props.add("cryptoOperation");
+        props.add("keyStoreParameters");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("originatorInformationProvider");
+        props.add("contentEncryptionAlgorithm");
+        props.add("includeContent");
+        props.add("keyStore");
+        props.add("secretKeyLength");
+        props.add("name");
+        props.add("recipient");
+        props.add("unprotectedAttributesGeneratorProvider");
+        props.add("verifySignaturesOfAllSigners");
+        props.add("signedDataHeaderBase64");
+        props.add("signer");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -62,6 +65,11 @@ public class CryptoCmsEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

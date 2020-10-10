@@ -2,6 +2,7 @@
 package org.apache.camel.component.spark;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,18 +18,20 @@ public class SparkEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":endpointType";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(9);
-        set.add("endpointType");
-        set.add("collect");
-        set.add("dataFrame");
-        set.add("dataFrameCallback");
-        set.add("lazyStartProducer");
-        set.add("rdd");
-        set.add("rddCallback");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(9);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("endpointType");
+        props.add("rdd");
+        props.add("dataFrame");
+        props.add("synchronous");
+        props.add("collect");
+        props.add("rddCallback");
+        props.add("dataFrameCallback");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -51,6 +54,11 @@ public class SparkEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

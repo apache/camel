@@ -2,6 +2,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,43 +18,45 @@ public class CxfRsEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":beanId:address";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(34);
-        set.add("beanId");
-        set.add("address");
-        set.add("features");
-        set.add("loggingFeatureEnabled");
-        set.add("loggingSizeLimit");
-        set.add("modelRef");
-        set.add("providers");
-        set.add("resourceClasses");
-        set.add("schemaLocations");
-        set.add("skipFaultLogging");
-        set.add("bindingStyle");
-        set.add("bridgeErrorHandler");
-        set.add("publishedEndpointUrl");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("serviceBeans");
-        set.add("cookieHandler");
-        set.add("hostnameVerifier");
-        set.add("lazyStartProducer");
-        set.add("sslContextParameters");
-        set.add("throwExceptionOnFailure");
-        set.add("httpClientAPI");
-        set.add("ignoreDeleteMethodMessageBody");
-        set.add("maxClientCacheSize");
-        set.add("basicPropertyBinding");
-        set.add("binding");
-        set.add("bus");
-        set.add("continuationTimeout");
-        set.add("cxfRsConfigurer");
-        set.add("defaultBus");
-        set.add("headerFilterStrategy");
-        set.add("performInvocation");
-        set.add("propagateContexts");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(34);
+        props.add("bindingStyle");
+        props.add("basicPropertyBinding");
+        props.add("bus");
+        props.add("resourceClasses");
+        props.add("synchronous");
+        props.add("cxfRsConfigurer");
+        props.add("hostnameVerifier");
+        props.add("sslContextParameters");
+        props.add("httpClientAPI");
+        props.add("binding");
+        props.add("schemaLocations");
+        props.add("defaultBus");
+        props.add("features");
+        props.add("bridgeErrorHandler");
+        props.add("headerFilterStrategy");
+        props.add("loggingSizeLimit");
+        props.add("serviceBeans");
+        props.add("beanId");
+        props.add("ignoreDeleteMethodMessageBody");
+        props.add("performInvocation");
+        props.add("address");
+        props.add("skipFaultLogging");
+        props.add("throwExceptionOnFailure");
+        props.add("propagateContexts");
+        props.add("continuationTimeout");
+        props.add("exchangePattern");
+        props.add("loggingFeatureEnabled");
+        props.add("modelRef");
+        props.add("lazyStartProducer");
+        props.add("publishedEndpointUrl");
+        props.add("cookieHandler");
+        props.add("exceptionHandler");
+        props.add("providers");
+        props.add("maxClientCacheSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -77,6 +80,11 @@ public class CxfRsEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

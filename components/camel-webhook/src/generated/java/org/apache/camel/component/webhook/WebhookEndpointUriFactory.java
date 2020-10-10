@@ -2,6 +2,7 @@
 package org.apache.camel.component.webhook;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,20 +18,22 @@ public class WebhookEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":endpointUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(11);
-        set.add("endpointUri");
-        set.add("bridgeErrorHandler");
-        set.add("webhookAutoRegister");
-        set.add("webhookBasePath");
-        set.add("webhookComponentName");
-        set.add("webhookExternalUrl");
-        set.add("webhookPath");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(11);
+        props.add("webhookPath");
+        props.add("basicPropertyBinding");
+        props.add("bridgeErrorHandler");
+        props.add("webhookComponentName");
+        props.add("webhookExternalUrl");
+        props.add("webhookBasePath");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("endpointUri");
+        props.add("exceptionHandler");
+        props.add("webhookAutoRegister");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -53,6 +56,11 @@ public class WebhookEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

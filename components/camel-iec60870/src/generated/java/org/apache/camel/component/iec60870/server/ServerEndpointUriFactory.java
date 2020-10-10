@@ -2,6 +2,7 @@
 package org.apache.camel.component.iec60870.server;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,33 +18,35 @@ public class ServerEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":uriPath";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(24);
-        set.add("uriPath");
-        set.add("dataModuleOptions");
-        set.add("filterNonExecute");
-        set.add("protocolOptions");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("acknowledgeWindow");
-        set.add("adsuAddressType");
-        set.add("causeOfTransmissionType");
-        set.add("informationObjectAddressType");
-        set.add("maxUnacknowledged");
-        set.add("timeout1");
-        set.add("timeout2");
-        set.add("timeout3");
-        set.add("causeSourceAddress");
-        set.add("connectionTimeout");
-        set.add("ignoreBackgroundScan");
-        set.add("ignoreDaylightSavingTime");
-        set.add("timeZone");
-        set.add("connectionId");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(24);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("dataModuleOptions");
+        props.add("exchangePattern");
+        props.add("timeout3");
+        props.add("timeZone");
+        props.add("maxUnacknowledged");
+        props.add("timeout1");
+        props.add("timeout2");
+        props.add("causeSourceAddress");
+        props.add("protocolOptions");
+        props.add("adsuAddressType");
+        props.add("informationObjectAddressType");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("ignoreDaylightSavingTime");
+        props.add("acknowledgeWindow");
+        props.add("causeOfTransmissionType");
+        props.add("connectionId");
+        props.add("filterNonExecute");
+        props.add("ignoreBackgroundScan");
+        props.add("exceptionHandler");
+        props.add("connectionTimeout");
+        props.add("uriPath");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -66,6 +69,11 @@ public class ServerEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

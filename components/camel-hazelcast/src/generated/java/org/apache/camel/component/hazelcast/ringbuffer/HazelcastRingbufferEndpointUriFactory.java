@@ -2,6 +2,7 @@
 package org.apache.camel.component.hazelcast.ringbuffer;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,16 +18,18 @@ public class HazelcastRingbufferEndpointUriFactory extends org.apache.camel.supp
     private static final String BASE = ":cacheName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(7);
-        set.add("cacheName");
-        set.add("defaultOperation");
-        set.add("hazelcastInstance");
-        set.add("hazelcastInstanceName");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(7);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("cacheName");
+        props.add("hazelcastInstance");
+        props.add("synchronous");
+        props.add("defaultOperation");
+        props.add("hazelcastInstanceName");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -49,6 +52,11 @@ public class HazelcastRingbufferEndpointUriFactory extends org.apache.camel.supp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

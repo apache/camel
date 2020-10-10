@@ -2,6 +2,7 @@
 package org.apache.camel.component.sjms2;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,52 +18,54 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":destinationType:destinationName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(43);
-        set.add("destinationType");
-        set.add("destinationName");
-        set.add("acknowledgementMode");
-        set.add("bridgeErrorHandler");
-        set.add("consumerCount");
-        set.add("durable");
-        set.add("durableSubscriptionId");
-        set.add("reconnectBackOff");
-        set.add("reconnectOnError");
-        set.add("shared");
-        set.add("subscriptionId");
-        set.add("synchronous");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("messageSelector");
-        set.add("lazyStartProducer");
-        set.add("namedReplyTo");
-        set.add("persistent");
-        set.add("producerCount");
-        set.add("ttl");
-        set.add("allowNullBody");
-        set.add("prefillPool");
-        set.add("responseTimeOut");
-        set.add("asyncStartListener");
-        set.add("asyncStopListener");
-        set.add("basicPropertyBinding");
-        set.add("connectionCount");
-        set.add("connectionFactory");
-        set.add("connectionResource");
-        set.add("destinationCreationStrategy");
-        set.add("exceptionListener");
-        set.add("headerFilterStrategy");
-        set.add("includeAllJMSXProperties");
-        set.add("jmsKeyFormatStrategy");
-        set.add("mapJmsMessage");
-        set.add("messageCreatedStrategy");
-        set.add("errorHandlerLoggingLevel");
-        set.add("errorHandlerLogStackTrace");
-        set.add("transacted");
-        set.add("transactionBatchCount");
-        set.add("transactionBatchTimeout");
-        set.add("transactionCommitStrategy");
-        set.add("sharedJMSSession");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(43);
+        props.add("basicPropertyBinding");
+        props.add("shared");
+        props.add("reconnectBackOff");
+        props.add("connectionCount");
+        props.add("mapJmsMessage");
+        props.add("synchronous");
+        props.add("connectionResource");
+        props.add("includeAllJMSXProperties");
+        props.add("transacted");
+        props.add("errorHandlerLogStackTrace");
+        props.add("durable");
+        props.add("bridgeErrorHandler");
+        props.add("transactionBatchCount");
+        props.add("jmsKeyFormatStrategy");
+        props.add("headerFilterStrategy");
+        props.add("exceptionListener");
+        props.add("destinationName");
+        props.add("messageCreatedStrategy");
+        props.add("asyncStopListener");
+        props.add("destinationType");
+        props.add("asyncStartListener");
+        props.add("persistent");
+        props.add("allowNullBody");
+        props.add("namedReplyTo");
+        props.add("reconnectOnError");
+        props.add("consumerCount");
+        props.add("destinationCreationStrategy");
+        props.add("exchangePattern");
+        props.add("prefillPool");
+        props.add("messageSelector");
+        props.add("ttl");
+        props.add("acknowledgementMode");
+        props.add("transactionBatchTimeout");
+        props.add("lazyStartProducer");
+        props.add("transactionCommitStrategy");
+        props.add("connectionFactory");
+        props.add("producerCount");
+        props.add("errorHandlerLoggingLevel");
+        props.add("sharedJMSSession");
+        props.add("durableSubscriptionId");
+        props.add("subscriptionId");
+        props.add("exceptionHandler");
+        props.add("responseTimeOut");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -86,6 +89,11 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

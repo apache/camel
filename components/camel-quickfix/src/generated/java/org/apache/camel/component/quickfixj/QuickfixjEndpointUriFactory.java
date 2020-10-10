@@ -2,6 +2,7 @@
 package org.apache.camel.component.quickfixj;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,18 +18,20 @@ public class QuickfixjEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":configurationName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(9);
-        set.add("configurationName");
-        set.add("lazyCreateEngine");
-        set.add("sessionID");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(9);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("synchronous");
+        props.add("lazyCreateEngine");
+        props.add("exchangePattern");
+        props.add("configurationName");
+        props.add("sessionID");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -51,6 +54,11 @@ public class QuickfixjEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.corda;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,26 +18,31 @@ public class CordaEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":node";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(17);
-        set.add("node");
-        set.add("bridgeErrorHandler");
-        set.add("pageSpecification");
-        set.add("processSnapshot");
-        set.add("sort");
-        set.add("contractStateClass");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("flowLogicArguments");
-        set.add("flowLogicClass");
-        set.add("queryCriteria");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("password");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(17);
+        props.add("basicPropertyBinding");
+        props.add("contractStateClass");
+        props.add("processSnapshot");
+        props.add("queryCriteria");
+        props.add("flowLogicClass");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("sort");
+        props.add("node");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("pageSpecification");
+        props.add("exceptionHandler");
+        props.add("flowLogicArguments");
+        props.add("operation");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -59,6 +65,11 @@ public class CordaEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

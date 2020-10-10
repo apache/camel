@@ -2,6 +2,7 @@
 package org.apache.camel.component.dataset;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,32 +18,34 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(23);
-        set.add("name");
-        set.add("dataSetIndex");
-        set.add("bridgeErrorHandler");
-        set.add("initialDelay");
-        set.add("minRate");
-        set.add("preloadSize");
-        set.add("produceDelay");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("assertPeriod");
-        set.add("consumeDelay");
-        set.add("expectedCount");
-        set.add("failFast");
-        set.add("lazyStartProducer");
-        set.add("reportGroup");
-        set.add("resultMinimumWaitTime");
-        set.add("resultWaitTime");
-        set.add("retainFirst");
-        set.add("retainLast");
-        set.add("sleepForEmptyTest");
-        set.add("copyOnExchange");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(23);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("consumeDelay");
+        props.add("exchangePattern");
+        props.add("preloadSize");
+        props.add("initialDelay");
+        props.add("expectedCount");
+        props.add("retainLast");
+        props.add("assertPeriod");
+        props.add("failFast");
+        props.add("resultMinimumWaitTime");
+        props.add("reportGroup");
+        props.add("sleepForEmptyTest");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("name");
+        props.add("dataSetIndex");
+        props.add("minRate");
+        props.add("copyOnExchange");
+        props.add("exceptionHandler");
+        props.add("produceDelay");
+        props.add("resultWaitTime");
+        props.add("retainFirst");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -65,6 +68,11 @@ public class DataSetEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

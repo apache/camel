@@ -2,6 +2,7 @@
 package org.apache.camel.component.disruptor.vm;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,24 +19,26 @@ public class DisruptorVmEndpointUriFactory extends org.apache.camel.support.comp
     private static final String[] SCHEMES = new String[]{"disruptor", "disruptor-vm"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("name");
-        set.add("size");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("multipleConsumers");
-        set.add("waitStrategy");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("blockWhenFull");
-        set.add("lazyStartProducer");
-        set.add("producerType");
-        set.add("timeout");
-        set.add("waitForTaskToComplete");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("waitForTaskToComplete");
+        props.add("blockWhenFull");
+        props.add("concurrentConsumers");
+        props.add("timeout");
+        props.add("waitStrategy");
+        props.add("producerType");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("size");
+        props.add("name");
+        props.add("exceptionHandler");
+        props.add("multipleConsumers");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -63,6 +66,11 @@ public class DisruptorVmEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

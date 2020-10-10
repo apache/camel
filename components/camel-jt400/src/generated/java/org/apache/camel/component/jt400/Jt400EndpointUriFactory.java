@@ -2,6 +2,7 @@
 package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,48 +18,53 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":userID:password/systemName/objectPath.type";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(39);
-        set.add("userID");
-        set.add("password");
-        set.add("systemName");
-        set.add("objectPath");
-        set.add("type");
-        set.add("ccsid");
-        set.add("format");
-        set.add("guiAvailable");
-        set.add("keyed");
-        set.add("searchKey");
-        set.add("bridgeErrorHandler");
-        set.add("messageAction");
-        set.add("readTimeout");
-        set.add("searchType");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("outputFieldsIdxArray");
-        set.add("outputFieldsLengthArray");
-        set.add("procedureName");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("secured");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(39);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("synchronous");
+        props.add("initialDelay");
+        props.add("type");
+        props.add("userID");
+        props.add("ccsid");
+        props.add("objectPath");
+        props.add("scheduler");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("systemName");
+        props.add("runLoggingLevel");
+        props.add("messageAction");
+        props.add("backoffErrorThreshold");
+        props.add("outputFieldsLengthArray");
+        props.add("procedureName");
+        props.add("greedy");
+        props.add("guiAvailable");
+        props.add("scheduledExecutorService");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("searchType");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("format");
+        props.add("exchangePattern");
+        props.add("searchKey");
+        props.add("keyed");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("outputFieldsIdxArray");
+        props.add("startScheduler");
+        props.add("readTimeout");
+        props.add("exceptionHandler");
+        props.add("secured");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("userID");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -85,6 +91,11 @@ public class Jt400EndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

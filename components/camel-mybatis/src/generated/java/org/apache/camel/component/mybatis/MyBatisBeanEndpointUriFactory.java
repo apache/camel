@@ -2,6 +2,7 @@
 package org.apache.camel.component.mybatis;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,17 +18,19 @@ public class MyBatisBeanEndpointUriFactory extends org.apache.camel.support.comp
     private static final String BASE = ":beanName:methodName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(8);
-        set.add("beanName");
-        set.add("methodName");
-        set.add("executorType");
-        set.add("inputHeader");
-        set.add("lazyStartProducer");
-        set.add("outputHeader");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(8);
+        props.add("basicPropertyBinding");
+        props.add("executorType");
+        props.add("lazyStartProducer");
+        props.add("outputHeader");
+        props.add("inputHeader");
+        props.add("synchronous");
+        props.add("methodName");
+        props.add("beanName");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -51,6 +54,11 @@ public class MyBatisBeanEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

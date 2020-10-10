@@ -2,6 +2,7 @@
 package org.apache.camel.component.jmx;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,41 +18,46 @@ public class JMXEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":serverURL";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(32);
-        set.add("serverURL");
-        set.add("bridgeErrorHandler");
-        set.add("format");
-        set.add("granularityPeriod");
-        set.add("monitorType");
-        set.add("objectDomain");
-        set.add("objectName");
-        set.add("observedAttribute");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("executorService");
-        set.add("handback");
-        set.add("notificationFilter");
-        set.add("objectProperties");
-        set.add("reconnectDelay");
-        set.add("reconnectOnConnectionFailure");
-        set.add("synchronous");
-        set.add("testConnectionOnStartup");
-        set.add("initThreshold");
-        set.add("modulus");
-        set.add("offset");
-        set.add("differenceMode");
-        set.add("notifyHigh");
-        set.add("notifyLow");
-        set.add("thresholdHigh");
-        set.add("thresholdLow");
-        set.add("password");
-        set.add("user");
-        set.add("notifyDiffer");
-        set.add("notifyMatch");
-        set.add("stringToCompare");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(32);
+        props.add("basicPropertyBinding");
+        props.add("initThreshold");
+        props.add("notifyHigh");
+        props.add("executorService");
+        props.add("synchronous");
+        props.add("handback");
+        props.add("reconnectOnConnectionFailure");
+        props.add("granularityPeriod");
+        props.add("monitorType");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("notifyLow");
+        props.add("stringToCompare");
+        props.add("serverURL");
+        props.add("objectDomain");
+        props.add("observedAttribute");
+        props.add("modulus");
+        props.add("differenceMode");
+        props.add("offset");
+        props.add("notifyMatch");
+        props.add("format");
+        props.add("exchangePattern");
+        props.add("objectProperties");
+        props.add("reconnectDelay");
+        props.add("testConnectionOnStartup");
+        props.add("objectName");
+        props.add("notificationFilter");
+        props.add("notifyDiffer");
+        props.add("thresholdHigh");
+        props.add("thresholdLow");
+        props.add("exceptionHandler");
+        props.add("user");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("user");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -74,6 +80,11 @@ public class JMXEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

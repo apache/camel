@@ -2,6 +2,7 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,41 +18,43 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":httpURI";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(32);
-        set.add("httpURI");
-        set.add("useStreaming");
-        set.add("accessLog");
-        set.add("bridgeErrorHandler");
-        set.add("httpMethodRestrict");
-        set.add("matchOnUriPrefix");
-        set.add("muteException");
-        set.add("optionsEnabled");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("handlers");
-        set.add("cookieHandler");
-        set.add("keepAlive");
-        set.add("lazyStartProducer");
-        set.add("options");
-        set.add("preserveHostHeader");
-        set.add("reuseAddresses");
-        set.add("tcpNoDelay");
-        set.add("throwExceptionOnFailure");
-        set.add("transferException");
-        set.add("accessLogReceiver");
-        set.add("basicPropertyBinding");
-        set.add("headerFilterStrategy");
-        set.add("synchronous");
-        set.add("undertowHttpBinding");
-        set.add("allowedRoles");
-        set.add("securityConfiguration");
-        set.add("securityProvider");
-        set.add("sslContextParameters");
-        set.add("fireWebSocketChannelEvents");
-        set.add("sendTimeout");
-        set.add("sendToAll");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(32);
+        props.add("basicPropertyBinding");
+        props.add("sendTimeout");
+        props.add("synchronous");
+        props.add("sendToAll");
+        props.add("sslContextParameters");
+        props.add("undertowHttpBinding");
+        props.add("useStreaming");
+        props.add("bridgeErrorHandler");
+        props.add("securityProvider");
+        props.add("httpURI");
+        props.add("transferException");
+        props.add("headerFilterStrategy");
+        props.add("options");
+        props.add("tcpNoDelay");
+        props.add("muteException");
+        props.add("reuseAddresses");
+        props.add("keepAlive");
+        props.add("throwExceptionOnFailure");
+        props.add("httpMethodRestrict");
+        props.add("allowedRoles");
+        props.add("matchOnUriPrefix");
+        props.add("exchangePattern");
+        props.add("accessLog");
+        props.add("lazyStartProducer");
+        props.add("preserveHostHeader");
+        props.add("fireWebSocketChannelEvents");
+        props.add("handlers");
+        props.add("accessLogReceiver");
+        props.add("optionsEnabled");
+        props.add("cookieHandler");
+        props.add("exceptionHandler");
+        props.add("securityConfiguration");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -74,6 +77,11 @@ public class UndertowEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

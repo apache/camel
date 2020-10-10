@@ -2,6 +2,7 @@
 package org.apache.camel.component.ahc.ws;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,30 +19,32 @@ public class WsEndpointUriFactory extends org.apache.camel.support.component.End
     private static final String[] SCHEMES = new String[]{"ahc-ws", "ahc-wss"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(21);
-        set.add("httpUri");
-        set.add("bridgeEndpoint");
-        set.add("bufferSize");
-        set.add("headerFilterStrategy");
-        set.add("throwExceptionOnFailure");
-        set.add("transferException");
-        set.add("bridgeErrorHandler");
-        set.add("sendMessageOnError");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("connectionClose");
-        set.add("cookieHandler");
-        set.add("lazyStartProducer");
-        set.add("useStreaming");
-        set.add("basicPropertyBinding");
-        set.add("binding");
-        set.add("clientConfig");
-        set.add("clientConfigOptions");
-        set.add("synchronous");
-        set.add("clientConfigRealmOptions");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(21);
+        props.add("basicPropertyBinding");
+        props.add("clientConfigOptions");
+        props.add("throwExceptionOnFailure");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("binding");
+        props.add("connectionClose");
+        props.add("clientConfig");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("useStreaming");
+        props.add("httpUri");
+        props.add("headerFilterStrategy");
+        props.add("transferException");
+        props.add("clientConfigRealmOptions");
+        props.add("cookieHandler");
+        props.add("sendMessageOnError");
+        props.add("exceptionHandler");
+        props.add("bridgeEndpoint");
+        props.add("bufferSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -69,6 +72,11 @@ public class WsEndpointUriFactory extends org.apache.camel.support.component.End
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.directvm;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,23 @@ public class DirectVmEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("name");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("block");
-        set.add("failIfNoConsumers");
-        set.add("lazyStartProducer");
-        set.add("timeout");
-        set.add("headerFilterStrategy");
-        set.add("basicPropertyBinding");
-        set.add("propagateProperties");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("headerFilterStrategy");
+        props.add("synchronous");
+        props.add("name");
+        props.add("exchangePattern");
+        props.add("failIfNoConsumers");
+        props.add("block");
+        props.add("propagateProperties");
+        props.add("exceptionHandler");
+        props.add("timeout");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -54,6 +57,11 @@ public class DirectVmEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override
