@@ -2,6 +2,7 @@
 package org.apache.camel.component.snmp;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,49 +18,56 @@ public class SnmpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":host:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(40);
-        set.add("host");
-        set.add("port");
-        set.add("oids");
-        set.add("protocol");
-        set.add("retries");
-        set.add("snmpCommunity");
-        set.add("snmpContextEngineId");
-        set.add("snmpContextName");
-        set.add("snmpVersion");
-        set.add("timeout");
-        set.add("type");
-        set.add("bridgeErrorHandler");
-        set.add("delay");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("treeList");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("authenticationPassphrase");
-        set.add("authenticationProtocol");
-        set.add("privacyPassphrase");
-        set.add("privacyProtocol");
-        set.add("securityLevel");
-        set.add("securityName");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(40);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("privacyPassphrase");
+        props.add("securityName");
+        props.add("synchronous");
+        props.add("treeList");
+        props.add("authenticationPassphrase");
+        props.add("initialDelay");
+        props.add("type");
+        props.add("timeout");
+        props.add("scheduler");
+        props.add("securityLevel");
+        props.add("protocol");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("host");
+        props.add("snmpContextName");
+        props.add("greedy");
+        props.add("scheduledExecutorService");
+        props.add("oids");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("snmpCommunity");
+        props.add("snmpVersion");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("snmpContextEngineId");
+        props.add("backoffIdleThreshold");
+        props.add("authenticationProtocol");
+        props.add("privacyProtocol");
+        props.add("retries");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("port");
+        props.add("startScheduler");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(4);
+        secretProps.add("privacyPassphrase");
+        secretProps.add("securityName");
+        secretProps.add("authenticationPassphrase");
+        secretProps.add("privacyProtocol");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -83,6 +91,11 @@ public class SnmpEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

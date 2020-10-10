@@ -2,6 +2,7 @@
 package org.apache.camel.component.etcd;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,29 @@ public class EtcdWatchEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("path");
-        set.add("bridgeErrorHandler");
-        set.add("recursive");
-        set.add("servicePath");
-        set.add("uris");
-        set.add("sendEmptyExchangeOnTimeout");
-        set.add("timeout");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("fromIndex");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("password");
-        set.add("sslContextParameters");
-        set.add("userName");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("sendEmptyExchangeOnTimeout");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("userName");
+        props.add("recursive");
+        props.add("timeout");
+        props.add("path");
+        props.add("uris");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("servicePath");
+        props.add("exceptionHandler");
+        props.add("fromIndex");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("userName");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -57,6 +63,11 @@ public class EtcdWatchEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

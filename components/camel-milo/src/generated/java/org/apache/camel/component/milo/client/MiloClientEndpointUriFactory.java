@@ -2,6 +2,7 @@
 package org.apache.camel.component.milo.client;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,40 +18,45 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     private static final String BASE = ":endpointUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
-        set.add("endpointUri");
-        set.add("clientId");
-        set.add("defaultAwaitWrites");
-        set.add("discoveryEndpointSuffix");
-        set.add("discoveryEndpointUri");
-        set.add("method");
-        set.add("node");
-        set.add("samplingInterval");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("allowedSecurityPolicies");
-        set.add("applicationName");
-        set.add("applicationUri");
-        set.add("channelLifetime");
-        set.add("keyAlias");
-        set.add("keyPassword");
-        set.add("keyStorePassword");
-        set.add("keyStoreType");
-        set.add("keyStoreUrl");
-        set.add("maxPendingPublishRequests");
-        set.add("maxResponseMessageSize");
-        set.add("overrideHost");
-        set.add("productUri");
-        set.add("requestedPublishingInterval");
-        set.add("requestTimeout");
-        set.add("sessionName");
-        set.add("sessionTimeout");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(31);
+        props.add("basicPropertyBinding");
+        props.add("productUri");
+        props.add("keyAlias");
+        props.add("synchronous");
+        props.add("channelLifetime");
+        props.add("discoveryEndpointSuffix");
+        props.add("defaultAwaitWrites");
+        props.add("samplingInterval");
+        props.add("keyStoreUrl");
+        props.add("maxPendingPublishRequests");
+        props.add("bridgeErrorHandler");
+        props.add("keyPassword");
+        props.add("endpointUri");
+        props.add("applicationName");
+        props.add("requestTimeout");
+        props.add("keyStoreType");
+        props.add("maxResponseMessageSize");
+        props.add("clientId");
+        props.add("method");
+        props.add("keyStorePassword");
+        props.add("sessionName");
+        props.add("exchangePattern");
+        props.add("node");
+        props.add("lazyStartProducer");
+        props.add("overrideHost");
+        props.add("sessionTimeout");
+        props.add("discoveryEndpointUri");
+        props.add("applicationUri");
+        props.add("allowedSecurityPolicies");
+        props.add("exceptionHandler");
+        props.add("requestedPublishingInterval");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("keyStorePassword");
+        secretProps.add("keyPassword");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -73,6 +79,11 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

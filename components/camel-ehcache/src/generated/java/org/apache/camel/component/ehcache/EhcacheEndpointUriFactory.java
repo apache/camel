@@ -2,6 +2,7 @@
 package org.apache.camel.component.ehcache;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,29 +18,31 @@ public class EhcacheEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":cacheName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(20);
-        set.add("cacheName");
-        set.add("cacheManager");
-        set.add("cacheManagerConfiguration");
-        set.add("configurationUri");
-        set.add("createCacheIfNotExist");
-        set.add("bridgeErrorHandler");
-        set.add("eventFiring");
-        set.add("eventOrdering");
-        set.add("eventTypes");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("action");
-        set.add("key");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("configuration");
-        set.add("configurations");
-        set.add("keyType");
-        set.add("synchronous");
-        set.add("valueType");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(20);
+        props.add("basicPropertyBinding");
+        props.add("eventOrdering");
+        props.add("configuration");
+        props.add("configurations");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("cacheManagerConfiguration");
+        props.add("eventTypes");
+        props.add("cacheManager");
+        props.add("configurationUri");
+        props.add("lazyStartProducer");
+        props.add("cacheName");
+        props.add("bridgeErrorHandler");
+        props.add("eventFiring");
+        props.add("valueType");
+        props.add("createCacheIfNotExist");
+        props.add("action");
+        props.add("keyType");
+        props.add("exceptionHandler");
+        props.add("key");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -62,6 +65,11 @@ public class EhcacheEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

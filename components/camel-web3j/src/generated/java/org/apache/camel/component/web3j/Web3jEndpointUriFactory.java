@@ -2,6 +2,7 @@
 package org.apache.camel.component.web3j;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,50 +18,52 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":nodeAddress";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(41);
-        set.add("nodeAddress");
-        set.add("addresses");
-        set.add("fromAddress");
-        set.add("fromBlock");
-        set.add("fullTransactionObjects");
-        set.add("gasLimit");
-        set.add("privateFor");
-        set.add("quorumAPI");
-        set.add("toAddress");
-        set.add("toBlock");
-        set.add("topics");
-        set.add("web3j");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("address");
-        set.add("atBlock");
-        set.add("blockHash");
-        set.add("clientId");
-        set.add("data");
-        set.add("databaseName");
-        set.add("filterId");
-        set.add("gasPrice");
-        set.add("hashrate");
-        set.add("headerPowHash");
-        set.add("index");
-        set.add("keyName");
-        set.add("lazyStartProducer");
-        set.add("mixDigest");
-        set.add("nonce");
-        set.add("operation");
-        set.add("position");
-        set.add("priority");
-        set.add("sha3HashOfDataToSign");
-        set.add("signedTransactionData");
-        set.add("sourceCode");
-        set.add("transactionHash");
-        set.add("ttl");
-        set.add("value");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(41);
+        props.add("basicPropertyBinding");
+        props.add("blockHash");
+        props.add("addresses");
+        props.add("toBlock");
+        props.add("headerPowHash");
+        props.add("data");
+        props.add("databaseName");
+        props.add("synchronous");
+        props.add("signedTransactionData");
+        props.add("hashrate");
+        props.add("toAddress");
+        props.add("transactionHash");
+        props.add("gasLimit");
+        props.add("sourceCode");
+        props.add("bridgeErrorHandler");
+        props.add("web3j");
+        props.add("fullTransactionObjects");
+        props.add("atBlock");
+        props.add("fromAddress");
+        props.add("value");
+        props.add("gasPrice");
+        props.add("sha3HashOfDataToSign");
+        props.add("address");
+        props.add("clientId");
+        props.add("quorumAPI");
+        props.add("topics");
+        props.add("exchangePattern");
+        props.add("keyName");
+        props.add("index");
+        props.add("privateFor");
+        props.add("mixDigest");
+        props.add("priority");
+        props.add("nodeAddress");
+        props.add("nonce");
+        props.add("ttl");
+        props.add("filterId");
+        props.add("fromBlock");
+        props.add("lazyStartProducer");
+        props.add("position");
+        props.add("exceptionHandler");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -83,6 +86,11 @@ public class Web3jEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

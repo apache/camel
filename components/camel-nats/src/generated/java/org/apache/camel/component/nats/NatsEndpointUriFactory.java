@@ -2,6 +2,7 @@
 package org.apache.camel.component.nats;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,38 +18,40 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":topic";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(29);
-        set.add("topic");
-        set.add("connectionTimeout");
-        set.add("flushConnection");
-        set.add("flushTimeout");
-        set.add("maxPingsOut");
-        set.add("maxReconnectAttempts");
-        set.add("noEcho");
-        set.add("noRandomizeServers");
-        set.add("pedantic");
-        set.add("pingInterval");
-        set.add("reconnect");
-        set.add("reconnectTimeWait");
-        set.add("requestCleanupInterval");
-        set.add("servers");
-        set.add("verbose");
-        set.add("bridgeErrorHandler");
-        set.add("maxMessages");
-        set.add("poolSize");
-        set.add("queueName");
-        set.add("replyToDisabled");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("replySubject");
-        set.add("basicPropertyBinding");
-        set.add("connection");
-        set.add("synchronous");
-        set.add("secure");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(29);
+        props.add("basicPropertyBinding");
+        props.add("replySubject");
+        props.add("synchronous");
+        props.add("maxMessages");
+        props.add("sslContextParameters");
+        props.add("secure");
+        props.add("flushTimeout");
+        props.add("reconnect");
+        props.add("servers");
+        props.add("bridgeErrorHandler");
+        props.add("pedantic");
+        props.add("connection");
+        props.add("connectionTimeout");
+        props.add("reconnectTimeWait");
+        props.add("pingInterval");
+        props.add("noRandomizeServers");
+        props.add("poolSize");
+        props.add("exchangePattern");
+        props.add("flushConnection");
+        props.add("verbose");
+        props.add("lazyStartProducer");
+        props.add("requestCleanupInterval");
+        props.add("queueName");
+        props.add("noEcho");
+        props.add("maxReconnectAttempts");
+        props.add("topic");
+        props.add("replyToDisabled");
+        props.add("maxPingsOut");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -71,6 +74,11 @@ public class NatsEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

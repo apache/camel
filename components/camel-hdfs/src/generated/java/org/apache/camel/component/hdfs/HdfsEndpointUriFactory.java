@@ -2,6 +2,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,59 +18,61 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":hostName:port/path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(50);
-        set.add("hostName");
-        set.add("port");
-        set.add("path");
-        set.add("connectOnStartup");
-        set.add("fileSystemType");
-        set.add("fileType");
-        set.add("keyType");
-        set.add("namedNodes");
-        set.add("owner");
-        set.add("valueType");
-        set.add("bridgeErrorHandler");
-        set.add("pattern");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("streamDownload");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("append");
-        set.add("lazyStartProducer");
-        set.add("overwrite");
-        set.add("basicPropertyBinding");
-        set.add("blockSize");
-        set.add("bufferSize");
-        set.add("checkIdleInterval");
-        set.add("chunkSize");
-        set.add("compressionCodec");
-        set.add("compressionType");
-        set.add("openedSuffix");
-        set.add("readSuffix");
-        set.add("replication");
-        set.add("splitStrategy");
-        set.add("synchronous");
-        set.add("maxMessagesPerPoll");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("kerberosConfigFileLocation");
-        set.add("kerberosKeytabLocation");
-        set.add("kerberosUsername");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(50);
+        props.add("checkIdleInterval");
+        props.add("synchronous");
+        props.add("compressionType");
+        props.add("initialDelay");
+        props.add("path");
+        props.add("bridgeErrorHandler");
+        props.add("valueType");
+        props.add("greedy");
+        props.add("kerberosKeytabLocation");
+        props.add("maxMessagesPerPoll");
+        props.add("scheduledExecutorService");
+        props.add("overwrite");
+        props.add("repeatCount");
+        props.add("kerberosConfigFileLocation");
+        props.add("connectOnStartup");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("namedNodes");
+        props.add("kerberosUsername");
+        props.add("blockSize");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("port");
+        props.add("startScheduler");
+        props.add("splitStrategy");
+        props.add("exceptionHandler");
+        props.add("readSuffix");
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("hostName");
+        props.add("pattern");
+        props.add("fileSystemType");
+        props.add("scheduler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("keyType");
+        props.add("timeUnit");
+        props.add("owner");
+        props.add("replication");
+        props.add("chunkSize");
+        props.add("openedSuffix");
+        props.add("exchangePattern");
+        props.add("streamDownload");
+        props.add("pollStrategy");
+        props.add("compressionCodec");
+        props.add("fileType");
+        props.add("append");
+        props.add("bufferSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -94,6 +97,11 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

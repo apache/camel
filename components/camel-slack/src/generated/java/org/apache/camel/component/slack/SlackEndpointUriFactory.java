@@ -2,6 +2,7 @@
 package org.apache.camel.component.slack;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,39 +18,44 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":channel";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(30);
-        set.add("channel");
-        set.add("bridgeErrorHandler");
-        set.add("maxResults");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("serverUrl");
-        set.add("token");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("iconEmoji");
-        set.add("iconUrl");
-        set.add("lazyStartProducer");
-        set.add("username");
-        set.add("webhookUrl");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(30);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("synchronous");
+        props.add("channel");
+        props.add("initialDelay");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("maxResults");
+        props.add("backoffErrorThreshold");
+        props.add("serverUrl");
+        props.add("greedy");
+        props.add("iconUrl");
+        props.add("scheduledExecutorService");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("iconEmoji");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("webhookUrl");
+        props.add("backoffIdleThreshold");
+        props.add("token");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("startScheduler");
+        props.add("exceptionHandler");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("token");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -72,6 +78,11 @@ public class SlackEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

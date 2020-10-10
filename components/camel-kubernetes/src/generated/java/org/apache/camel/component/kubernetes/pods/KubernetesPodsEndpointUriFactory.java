@@ -2,6 +2,7 @@
 package org.apache.camel.component.kubernetes.pods;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,40 +18,55 @@ public class KubernetesPodsEndpointUriFactory extends org.apache.camel.support.c
     private static final String BASE = ":masterUrl";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(31);
-        set.add("masterUrl");
-        set.add("apiVersion");
-        set.add("dnsDomain");
-        set.add("kubernetesClient");
-        set.add("portName");
-        set.add("portProtocol");
-        set.add("bridgeErrorHandler");
-        set.add("labelKey");
-        set.add("labelValue");
-        set.add("namespace");
-        set.add("poolSize");
-        set.add("resourceName");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("connectionTimeout");
-        set.add("synchronous");
-        set.add("caCertData");
-        set.add("caCertFile");
-        set.add("clientCertData");
-        set.add("clientCertFile");
-        set.add("clientKeyAlgo");
-        set.add("clientKeyData");
-        set.add("clientKeyFile");
-        set.add("clientKeyPassphrase");
-        set.add("oauthToken");
-        set.add("password");
-        set.add("trustCerts");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(31);
+        props.add("basicPropertyBinding");
+        props.add("portProtocol");
+        props.add("synchronous");
+        props.add("caCertData");
+        props.add("portName");
+        props.add("dnsDomain");
+        props.add("password");
+        props.add("apiVersion");
+        props.add("bridgeErrorHandler");
+        props.add("clientCertData");
+        props.add("caCertFile");
+        props.add("clientKeyFile");
+        props.add("connectionTimeout");
+        props.add("kubernetesClient");
+        props.add("poolSize");
+        props.add("exchangePattern");
+        props.add("resourceName");
+        props.add("oauthToken");
+        props.add("clientKeyAlgo");
+        props.add("clientCertFile");
+        props.add("lazyStartProducer");
+        props.add("clientKeyData");
+        props.add("masterUrl");
+        props.add("namespace");
+        props.add("labelValue");
+        props.add("labelKey");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("clientKeyPassphrase");
+        props.add("trustCerts");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(12);
+        secretProps.add("password");
+        secretProps.add("clientKeyData");
+        secretProps.add("caCertData");
+        secretProps.add("clientCertData");
+        secretProps.add("caCertFile");
+        secretProps.add("clientKeyFile");
+        secretProps.add("oauthToken");
+        secretProps.add("clientKeyPassphrase");
+        secretProps.add("clientKeyAlgo");
+        secretProps.add("clientCertFile");
+        secretProps.add("trustCerts");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -73,6 +89,11 @@ public class KubernetesPodsEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

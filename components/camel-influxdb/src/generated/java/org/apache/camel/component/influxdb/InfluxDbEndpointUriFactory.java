@@ -2,6 +2,7 @@
 package org.apache.camel.component.influxdb;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,18 +18,20 @@ public class InfluxDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":connectionBean";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(9);
-        set.add("connectionBean");
-        set.add("batch");
-        set.add("databaseName");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("query");
-        set.add("retentionPolicy");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(9);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("connectionBean");
+        props.add("databaseName");
+        props.add("synchronous");
+        props.add("query");
+        props.add("batch");
+        props.add("retentionPolicy");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -51,6 +54,11 @@ public class InfluxDbEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.xmpp;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,33 +18,39 @@ public class XmppEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":host:port/participant";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(24);
-        set.add("host");
-        set.add("port");
-        set.add("participant");
-        set.add("login");
-        set.add("nickname");
-        set.add("pubsub");
-        set.add("room");
-        set.add("serviceName");
-        set.add("testConnectionOnStartup");
-        set.add("createAccount");
-        set.add("resource");
-        set.add("bridgeErrorHandler");
-        set.add("connectionPollDelay");
-        set.add("doc");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("connectionConfig");
-        set.add("synchronous");
-        set.add("headerFilterStrategy");
-        set.add("password");
-        set.add("roomPassword");
-        set.add("user");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(24);
+        props.add("basicPropertyBinding");
+        props.add("resource");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("createAccount");
+        props.add("login");
+        props.add("serviceName");
+        props.add("participant");
+        props.add("room");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("roomPassword");
+        props.add("bridgeErrorHandler");
+        props.add("port");
+        props.add("headerFilterStrategy");
+        props.add("testConnectionOnStartup");
+        props.add("host");
+        props.add("nickname");
+        props.add("doc");
+        props.add("connectionConfig");
+        props.add("exceptionHandler");
+        props.add("user");
+        props.add("pubsub");
+        props.add("connectionPollDelay");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("password");
+        secretProps.add("roomPassword");
+        secretProps.add("user");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -68,6 +75,11 @@ public class XmppEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

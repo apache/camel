@@ -2,6 +2,7 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class AhcEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":httpUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("httpUri");
-        set.add("bridgeEndpoint");
-        set.add("bufferSize");
-        set.add("connectionClose");
-        set.add("cookieHandler");
-        set.add("headerFilterStrategy");
-        set.add("lazyStartProducer");
-        set.add("throwExceptionOnFailure");
-        set.add("transferException");
-        set.add("basicPropertyBinding");
-        set.add("binding");
-        set.add("clientConfig");
-        set.add("clientConfigOptions");
-        set.add("synchronous");
-        set.add("clientConfigRealmOptions");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("clientConfigOptions");
+        props.add("throwExceptionOnFailure");
+        props.add("synchronous");
+        props.add("sslContextParameters");
+        props.add("binding");
+        props.add("connectionClose");
+        props.add("clientConfig");
+        props.add("lazyStartProducer");
+        props.add("httpUri");
+        props.add("headerFilterStrategy");
+        props.add("transferException");
+        props.add("clientConfigRealmOptions");
+        props.add("cookieHandler");
+        props.add("bridgeEndpoint");
+        props.add("bufferSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -58,6 +61,11 @@ public class AhcEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

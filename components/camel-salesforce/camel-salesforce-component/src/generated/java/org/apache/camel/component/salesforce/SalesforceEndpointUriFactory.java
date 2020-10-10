@@ -2,6 +2,7 @@
 package org.apache.camel.component.salesforce;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,56 +18,58 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final String BASE = ":operationName:topicName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(47);
-        set.add("operationName");
-        set.add("topicName");
-        set.add("apexMethod");
-        set.add("apexQueryParams");
-        set.add("apexUrl");
-        set.add("apiVersion");
-        set.add("backoffIncrement");
-        set.add("batchId");
-        set.add("contentType");
-        set.add("defaultReplayId");
-        set.add("format");
-        set.add("httpClient");
-        set.add("includeDetails");
-        set.add("initialReplayIdMap");
-        set.add("instanceId");
-        set.add("jobId");
-        set.add("limit");
-        set.add("maxBackoff");
-        set.add("notFoundBehaviour");
-        set.add("notifyForFields");
-        set.add("notifyForOperationCreate");
-        set.add("notifyForOperationDelete");
-        set.add("notifyForOperations");
-        set.add("notifyForOperationUndelete");
-        set.add("notifyForOperationUpdate");
-        set.add("objectMapper");
-        set.add("rawPayload");
-        set.add("reportId");
-        set.add("reportMetadata");
-        set.add("resultId");
-        set.add("sObjectBlobFieldName");
-        set.add("sObjectClass");
-        set.add("sObjectFields");
-        set.add("sObjectId");
-        set.add("sObjectIdName");
-        set.add("sObjectIdValue");
-        set.add("sObjectName");
-        set.add("sObjectQuery");
-        set.add("sObjectSearch");
-        set.add("updateTopic");
-        set.add("bridgeErrorHandler");
-        set.add("replayId");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(47);
+        props.add("initialReplayIdMap");
+        props.add("basicPropertyBinding");
+        props.add("notifyForOperations");
+        props.add("synchronous");
+        props.add("sObjectQuery");
+        props.add("notifyForOperationCreate");
+        props.add("batchId");
+        props.add("notifyForOperationUndelete");
+        props.add("sObjectClass");
+        props.add("apexUrl");
+        props.add("apexMethod");
+        props.add("updateTopic");
+        props.add("apiVersion");
+        props.add("instanceId");
+        props.add("bridgeErrorHandler");
+        props.add("notifyForFields");
+        props.add("sObjectIdValue");
+        props.add("reportMetadata");
+        props.add("limit");
+        props.add("apexQueryParams");
+        props.add("contentType");
+        props.add("includeDetails");
+        props.add("sObjectFields");
+        props.add("sObjectName");
+        props.add("httpClient");
+        props.add("sObjectBlobFieldName");
+        props.add("backoffIncrement");
+        props.add("maxBackoff");
+        props.add("rawPayload");
+        props.add("reportId");
+        props.add("resultId");
+        props.add("format");
+        props.add("exchangePattern");
+        props.add("operationName");
+        props.add("sObjectId");
+        props.add("defaultReplayId");
+        props.add("jobId");
+        props.add("notFoundBehaviour");
+        props.add("lazyStartProducer");
+        props.add("objectMapper");
+        props.add("sObjectSearch");
+        props.add("notifyForOperationUpdate");
+        props.add("topicName");
+        props.add("sObjectIdName");
+        props.add("replayId");
+        props.add("exceptionHandler");
+        props.add("notifyForOperationDelete");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -90,6 +93,11 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

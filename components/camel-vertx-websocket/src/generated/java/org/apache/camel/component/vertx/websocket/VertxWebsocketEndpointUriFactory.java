@@ -2,6 +2,7 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,26 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final String BASE = ":host:port/path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("host");
-        set.add("port");
-        set.add("path");
-        set.add("allowedOriginPattern");
-        set.add("bridgeErrorHandler");
-        set.add("router");
-        set.add("serverOptions");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("clientOptions");
-        set.add("lazyStartProducer");
-        set.add("sendToAll");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("sslContextParameters");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("clientOptions");
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("sendToAll");
+        props.add("exchangePattern");
+        props.add("sslContextParameters");
+        props.add("path");
+        props.add("allowedOriginPattern");
+        props.add("router");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("serverOptions");
+        props.add("port");
+        props.add("host");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -59,6 +62,11 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

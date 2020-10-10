@@ -2,6 +2,7 @@
 package org.apache.camel.component.pubnub;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,26 +18,34 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":channel";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(17);
-        set.add("channel");
-        set.add("uuid");
-        set.add("bridgeErrorHandler");
-        set.add("withPresence");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("pubnub");
-        set.add("synchronous");
-        set.add("authKey");
-        set.add("cipherKey");
-        set.add("publishKey");
-        set.add("secretKey");
-        set.add("secure");
-        set.add("subscribeKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(17);
+        props.add("basicPropertyBinding");
+        props.add("authKey");
+        props.add("pubnub");
+        props.add("secretKey");
+        props.add("synchronous");
+        props.add("channel");
+        props.add("exchangePattern");
+        props.add("secure");
+        props.add("uuid");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("withPresence");
+        props.add("cipherKey");
+        props.add("subscribeKey");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("publishKey");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(5);
+        secretProps.add("authKey");
+        secretProps.add("secretKey");
+        secretProps.add("cipherKey");
+        secretProps.add("subscribeKey");
+        secretProps.add("publishKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -59,6 +68,11 @@ public class PubNubEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

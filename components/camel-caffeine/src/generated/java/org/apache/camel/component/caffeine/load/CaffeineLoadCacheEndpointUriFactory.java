@@ -2,6 +2,7 @@
 package org.apache.camel.component.caffeine.load;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,27 +18,29 @@ public class CaffeineLoadCacheEndpointUriFactory extends org.apache.camel.suppor
     private static final String BASE = ":cacheName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("cacheName");
-        set.add("action");
-        set.add("cacheLoader");
-        set.add("createCacheIfNotExist");
-        set.add("evictionType");
-        set.add("expireAfterAccessTime");
-        set.add("expireAfterWriteTime");
-        set.add("initialCapacity");
-        set.add("key");
-        set.add("lazyStartProducer");
-        set.add("maximumSize");
-        set.add("removalListener");
-        set.add("statsCounter");
-        set.add("statsEnabled");
-        set.add("basicPropertyBinding");
-        set.add("keyType");
-        set.add("synchronous");
-        set.add("valueType");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("basicPropertyBinding");
+        props.add("expireAfterWriteTime");
+        props.add("expireAfterAccessTime");
+        props.add("statsCounter");
+        props.add("synchronous");
+        props.add("initialCapacity");
+        props.add("cacheLoader");
+        props.add("statsEnabled");
+        props.add("lazyStartProducer");
+        props.add("cacheName");
+        props.add("evictionType");
+        props.add("valueType");
+        props.add("createCacheIfNotExist");
+        props.add("action");
+        props.add("maximumSize");
+        props.add("removalListener");
+        props.add("keyType");
+        props.add("key");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -60,6 +63,11 @@ public class CaffeineLoadCacheEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.xslt;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":resourceUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("resourceUri");
-        set.add("contentCache");
-        set.add("deleteOutputFile");
-        set.add("failOnNullBody");
-        set.add("lazyStartProducer");
-        set.add("output");
-        set.add("transformerCacheSize");
-        set.add("basicPropertyBinding");
-        set.add("entityResolver");
-        set.add("errorListener");
-        set.add("resultHandlerFactory");
-        set.add("synchronous");
-        set.add("transformerFactory");
-        set.add("transformerFactoryClass");
-        set.add("transformerFactoryConfigurationStrategy");
-        set.add("uriResolver");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("contentCache");
+        props.add("resourceUri");
+        props.add("deleteOutputFile");
+        props.add("output");
+        props.add("errorListener");
+        props.add("lazyStartProducer");
+        props.add("entityResolver");
+        props.add("transformerFactoryConfigurationStrategy");
+        props.add("failOnNullBody");
+        props.add("transformerCacheSize");
+        props.add("resultHandlerFactory");
+        props.add("transformerFactoryClass");
+        props.add("transformerFactory");
+        props.add("uriResolver");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -58,6 +61,11 @@ public class XsltEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

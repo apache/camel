@@ -2,6 +2,7 @@
 package org.apache.camel.component.hazelcast.seda;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,26 @@ public class HazelcastSedaEndpointUriFactory extends org.apache.camel.support.co
     private static final String BASE = ":cacheName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("cacheName");
-        set.add("defaultOperation");
-        set.add("hazelcastInstance");
-        set.add("hazelcastInstanceName");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("concurrentConsumers");
-        set.add("onErrorDelay");
-        set.add("pollTimeout");
-        set.add("transacted");
-        set.add("transferExchange");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("defaultOperation");
+        props.add("pollTimeout");
+        props.add("transacted");
+        props.add("concurrentConsumers");
+        props.add("lazyStartProducer");
+        props.add("cacheName");
+        props.add("bridgeErrorHandler");
+        props.add("hazelcastInstance");
+        props.add("transferExchange");
+        props.add("hazelcastInstanceName");
+        props.add("onErrorDelay");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +60,11 @@ public class HazelcastSedaEndpointUriFactory extends org.apache.camel.support.co
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

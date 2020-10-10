@@ -2,6 +2,7 @@
 package org.apache.camel.component.jclouds;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,30 @@ public class JcloudsEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":command:providerId";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("command");
-        set.add("providerId");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("blobName");
-        set.add("container");
-        set.add("directory");
-        set.add("group");
-        set.add("hardwareId");
-        set.add("imageId");
-        set.add("locationId");
-        set.add("nodeId");
-        set.add("nodeState");
-        set.add("operation");
-        set.add("user");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("blobName");
+        props.add("container");
+        props.add("imageId");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("directory");
+        props.add("command");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("hardwareId");
+        props.add("nodeState");
+        props.add("providerId");
+        props.add("locationId");
+        props.add("exceptionHandler");
+        props.add("nodeId");
+        props.add("operation");
+        props.add("user");
+        props.add("group");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -62,6 +65,11 @@ public class JcloudsEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

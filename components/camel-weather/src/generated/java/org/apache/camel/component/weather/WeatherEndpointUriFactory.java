@@ -2,6 +2,7 @@
 package org.apache.camel.component.weather;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,52 +18,54 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(43);
-        set.add("name");
-        set.add("appid");
-        set.add("headerName");
-        set.add("language");
-        set.add("mode");
-        set.add("period");
-        set.add("units");
-        set.add("weatherApi");
-        set.add("bridgeErrorHandler");
-        set.add("sendEmptyMessageWhenIdle");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("pollStrategy");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("geoLocationProvider");
-        set.add("httpClient");
-        set.add("synchronous");
-        set.add("cnt");
-        set.add("ids");
-        set.add("lat");
-        set.add("location");
-        set.add("lon");
-        set.add("rightLon");
-        set.add("topLat");
-        set.add("zip");
-        set.add("zoom");
-        set.add("backoffErrorThreshold");
-        set.add("backoffIdleThreshold");
-        set.add("backoffMultiplier");
-        set.add("delay");
-        set.add("greedy");
-        set.add("initialDelay");
-        set.add("repeatCount");
-        set.add("runLoggingLevel");
-        set.add("scheduledExecutorService");
-        set.add("scheduler");
-        set.add("schedulerProperties");
-        set.add("startScheduler");
-        set.add("timeUnit");
-        set.add("useFixedDelay");
-        set.add("geolocationAccessKey");
-        set.add("geolocationRequestHostIP");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(43);
+        props.add("basicPropertyBinding");
+        props.add("backoffMultiplier");
+        props.add("weatherApi");
+        props.add("geolocationAccessKey");
+        props.add("synchronous");
+        props.add("topLat");
+        props.add("language");
+        props.add("lon");
+        props.add("units");
+        props.add("initialDelay");
+        props.add("mode");
+        props.add("scheduler");
+        props.add("bridgeErrorHandler");
+        props.add("useFixedDelay");
+        props.add("runLoggingLevel");
+        props.add("backoffErrorThreshold");
+        props.add("greedy");
+        props.add("geolocationRequestHostIP");
+        props.add("scheduledExecutorService");
+        props.add("lat");
+        props.add("geoLocationProvider");
+        props.add("repeatCount");
+        props.add("timeUnit");
+        props.add("zip");
+        props.add("httpClient");
+        props.add("period");
+        props.add("headerName");
+        props.add("sendEmptyMessageWhenIdle");
+        props.add("schedulerProperties");
+        props.add("exchangePattern");
+        props.add("cnt");
+        props.add("rightLon");
+        props.add("zoom");
+        props.add("backoffIdleThreshold");
+        props.add("lazyStartProducer");
+        props.add("delay");
+        props.add("pollStrategy");
+        props.add("startScheduler");
+        props.add("appid");
+        props.add("name");
+        props.add("ids");
+        props.add("location");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -85,6 +88,11 @@ public class WeatherEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

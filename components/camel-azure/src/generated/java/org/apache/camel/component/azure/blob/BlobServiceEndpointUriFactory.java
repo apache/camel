@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.blob;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,34 +18,39 @@ public class BlobServiceEndpointUriFactory extends org.apache.camel.support.comp
     private static final String BASE = ":containerOrBlobUri";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(25);
-        set.add("containerOrBlobUri");
-        set.add("azureBlobClient");
-        set.add("blobOffset");
-        set.add("blobType");
-        set.add("closeStreamAfterRead");
-        set.add("credentials");
-        set.add("dataLength");
-        set.add("fileDir");
-        set.add("publicForRead");
-        set.add("streamReadSize");
-        set.add("validateClientURI");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("blobMetadata");
-        set.add("blobPrefix");
-        set.add("closeStreamAfterWrite");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("streamWriteSize");
-        set.add("useFlatListing");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("credentialsAccountKey");
-        set.add("credentialsAccountName");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(25);
+        props.add("basicPropertyBinding");
+        props.add("credentials");
+        props.add("synchronous");
+        props.add("credentialsAccountKey");
+        props.add("blobOffset");
+        props.add("validateClientURI");
+        props.add("bridgeErrorHandler");
+        props.add("closeStreamAfterRead");
+        props.add("closeStreamAfterWrite");
+        props.add("useFlatListing");
+        props.add("containerOrBlobUri");
+        props.add("blobMetadata");
+        props.add("streamReadSize");
+        props.add("dataLength");
+        props.add("exchangePattern");
+        props.add("publicForRead");
+        props.add("streamWriteSize");
+        props.add("azureBlobClient");
+        props.add("lazyStartProducer");
+        props.add("blobPrefix");
+        props.add("fileDir");
+        props.add("blobType");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("credentialsAccountName");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("credentialsAccountKey");
+        secretProps.add("credentialsAccountName");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -67,6 +73,11 @@ public class BlobServiceEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

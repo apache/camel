@@ -2,6 +2,7 @@
 package org.apache.camel.component.timer;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,26 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":timerName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("timerName");
-        set.add("bridgeErrorHandler");
-        set.add("delay");
-        set.add("fixedRate");
-        set.add("includeMetadata");
-        set.add("period");
-        set.add("repeatCount");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("daemon");
-        set.add("pattern");
-        set.add("synchronous");
-        set.add("time");
-        set.add("timer");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("period");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("pattern");
+        props.add("daemon");
+        props.add("includeMetadata");
+        props.add("timer");
+        props.add("bridgeErrorHandler");
+        props.add("delay");
+        props.add("fixedRate");
+        props.add("timerName");
+        props.add("time");
+        props.add("exceptionHandler");
+        props.add("repeatCount");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +60,11 @@ public class TimerEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

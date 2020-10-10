@@ -2,6 +2,7 @@
 package org.apache.camel.component.jdbc;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,27 @@ public class JdbcEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":dataSourceName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("dataSourceName");
-        set.add("allowNamedParameters");
-        set.add("lazyStartProducer");
-        set.add("outputClass");
-        set.add("outputType");
-        set.add("parameters");
-        set.add("readSize");
-        set.add("resetAutoCommit");
-        set.add("transacted");
-        set.add("useGetBytesForBlob");
-        set.add("useHeadersAsParameters");
-        set.add("useJDBC4ColumnNameAndLabelSemantics");
-        set.add("basicPropertyBinding");
-        set.add("beanRowMapper");
-        set.add("prepareStatementStrategy");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("resetAutoCommit");
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("outputType");
+        props.add("transacted");
+        props.add("useHeadersAsParameters");
+        props.add("allowNamedParameters");
+        props.add("dataSourceName");
+        props.add("useJDBC4ColumnNameAndLabelSemantics");
+        props.add("prepareStatementStrategy");
+        props.add("lazyStartProducer");
+        props.add("beanRowMapper");
+        props.add("useGetBytesForBlob");
+        props.add("outputClass");
+        props.add("parameters");
+        props.add("readSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -58,6 +61,11 @@ public class JdbcEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

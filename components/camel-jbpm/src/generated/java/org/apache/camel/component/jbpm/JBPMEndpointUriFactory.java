@@ -2,6 +2,7 @@
 package org.apache.camel.component.jbpm;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,43 +18,48 @@ public class JBPMEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":connectionURL";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(34);
-        set.add("connectionURL");
-        set.add("eventListenerType");
-        set.add("attachmentId");
-        set.add("contentId");
-        set.add("deploymentId");
-        set.add("emitterSendItems");
-        set.add("event");
-        set.add("eventType");
-        set.add("identifier");
-        set.add("maxNumber");
-        set.add("page");
-        set.add("pageSize");
-        set.add("processId");
-        set.add("processInstanceId");
-        set.add("targetUserId");
-        set.add("task");
-        set.add("taskId");
-        set.add("timeout");
-        set.add("userId");
-        set.add("value");
-        set.add("workItemId");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("entities");
-        set.add("extraJaxbClasses");
-        set.add("parameters");
-        set.add("synchronous");
-        set.add("statuses");
-        set.add("password");
-        set.add("userName");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(34);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("contentId");
+        props.add("pageSize");
+        props.add("workItemId");
+        props.add("extraJaxbClasses");
+        props.add("timeout");
+        props.add("password");
+        props.add("maxNumber");
+        props.add("bridgeErrorHandler");
+        props.add("processId");
+        props.add("deploymentId");
+        props.add("connectionURL");
+        props.add("emitterSendItems");
+        props.add("eventListenerType");
+        props.add("attachmentId");
+        props.add("event");
+        props.add("value");
+        props.add("identifier");
+        props.add("processInstanceId");
+        props.add("exchangePattern");
+        props.add("targetUserId");
+        props.add("eventType");
+        props.add("userName");
+        props.add("userId");
+        props.add("lazyStartProducer");
+        props.add("task");
+        props.add("entities");
+        props.add("statuses");
+        props.add("page");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("parameters");
+        props.add("taskId");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("userName");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -77,6 +83,11 @@ public class JBPMEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

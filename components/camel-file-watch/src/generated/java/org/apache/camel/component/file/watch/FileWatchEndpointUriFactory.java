@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.watch;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,24 +18,26 @@ public class FileWatchEndpointUriFactory extends org.apache.camel.support.compon
     private static final String BASE = ":path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(15);
-        set.add("path");
-        set.add("antInclude");
-        set.add("autoCreate");
-        set.add("bridgeErrorHandler");
-        set.add("concurrentConsumers");
-        set.add("events");
-        set.add("fileHasher");
-        set.add("pollThreads");
-        set.add("queueSize");
-        set.add("recursive");
-        set.add("useFileHashing");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(15);
+        props.add("basicPropertyBinding");
+        props.add("queueSize");
+        props.add("antInclude");
+        props.add("fileHasher");
+        props.add("synchronous");
+        props.add("useFileHashing");
+        props.add("exchangePattern");
+        props.add("autoCreate");
+        props.add("concurrentConsumers");
+        props.add("recursive");
+        props.add("path");
+        props.add("bridgeErrorHandler");
+        props.add("pollThreads");
+        props.add("exceptionHandler");
+        props.add("events");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -57,6 +60,11 @@ public class FileWatchEndpointUriFactory extends org.apache.camel.support.compon
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.workday;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,21 +18,27 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":entity:path";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(12);
-        set.add("entity");
-        set.add("path");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("httpConnectionManager");
-        set.add("synchronous");
-        set.add("reportFormat");
-        set.add("host");
-        set.add("clientId");
-        set.add("clientSecret");
-        set.add("tokenRefresh");
-        set.add("tenant");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(12);
+        props.add("basicPropertyBinding");
+        props.add("path");
+        props.add("lazyStartProducer");
+        props.add("clientId");
+        props.add("tokenRefresh");
+        props.add("synchronous");
+        props.add("host");
+        props.add("reportFormat");
+        props.add("clientSecret");
+        props.add("httpConnectionManager");
+        props.add("entity");
+        props.add("tenant");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("clientId");
+        secretProps.add("tokenRefresh");
+        secretProps.add("clientSecret");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -55,6 +62,11 @@ public class WorkdayEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

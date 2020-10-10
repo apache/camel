@@ -2,6 +2,7 @@
 package org.apache.camel.component.quartz;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,31 +18,33 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":groupName/triggerName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(22);
-        set.add("groupName");
-        set.add("triggerName");
-        set.add("bridgeErrorHandler");
-        set.add("cron");
-        set.add("deleteJob");
-        set.add("durableJob");
-        set.add("pauseJob");
-        set.add("recoverableJob");
-        set.add("stateful");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("basicPropertyBinding");
-        set.add("customCalendar");
-        set.add("jobParameters");
-        set.add("prefixJobNameWithEndpointId");
-        set.add("synchronous");
-        set.add("triggerParameters");
-        set.add("usingFixedCamelContextName");
-        set.add("autoStartScheduler");
-        set.add("fireNow");
-        set.add("startDelayedSeconds");
-        set.add("triggerStartDelay");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(22);
+        props.add("cron");
+        props.add("basicPropertyBinding");
+        props.add("triggerName");
+        props.add("customCalendar");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("deleteJob");
+        props.add("pauseJob");
+        props.add("triggerStartDelay");
+        props.add("autoStartScheduler");
+        props.add("groupName");
+        props.add("bridgeErrorHandler");
+        props.add("prefixJobNameWithEndpointId");
+        props.add("recoverableJob");
+        props.add("triggerParameters");
+        props.add("durableJob");
+        props.add("startDelayedSeconds");
+        props.add("jobParameters");
+        props.add("exceptionHandler");
+        props.add("usingFixedCamelContextName");
+        props.add("stateful");
+        props.add("fireNow");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -65,6 +68,11 @@ public class QuartzEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

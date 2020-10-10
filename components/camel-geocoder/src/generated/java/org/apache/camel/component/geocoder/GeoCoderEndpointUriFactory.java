@@ -2,6 +2,7 @@
 package org.apache.camel.component.geocoder;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,34 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
     private static final String BASE = ":address:latlng";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("address");
-        set.add("latlng");
-        set.add("headersOnly");
-        set.add("language");
-        set.add("lazyStartProducer");
-        set.add("serverUrl");
-        set.add("type");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("proxyAuthDomain");
-        set.add("proxyAuthHost");
-        set.add("proxyAuthMethod");
-        set.add("proxyAuthPassword");
-        set.add("proxyAuthUsername");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("apiKey");
-        set.add("clientId");
-        set.add("clientKey");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("proxyAuthMethod");
+        props.add("address");
+        props.add("clientId");
+        props.add("apiKey");
+        props.add("synchronous");
+        props.add("language");
+        props.add("proxyAuthUsername");
+        props.add("type");
+        props.add("proxyHost");
+        props.add("headersOnly");
+        props.add("proxyAuthHost");
+        props.add("proxyPort");
+        props.add("lazyStartProducer");
+        props.add("clientKey");
+        props.add("serverUrl");
+        props.add("proxyAuthPassword");
+        props.add("latlng");
+        props.add("proxyAuthDomain");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(3);
+        secretProps.add("clientId");
+        secretProps.add("apiKey");
+        secretProps.add("clientKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -62,6 +69,11 @@ public class GeoCoderEndpointUriFactory extends org.apache.camel.support.compone
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

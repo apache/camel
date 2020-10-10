@@ -2,6 +2,7 @@
 package org.apache.camel.component.nagios;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,19 +18,23 @@ public class NagiosEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":host:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(10);
-        set.add("host");
-        set.add("port");
-        set.add("connectionTimeout");
-        set.add("lazyStartProducer");
-        set.add("sendSync");
-        set.add("timeout");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("encryption");
-        set.add("password");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(10);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("encryption");
+        props.add("port");
+        props.add("synchronous");
+        props.add("host");
+        props.add("sendSync");
+        props.add("connectionTimeout");
+        props.add("timeout");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("password");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -53,6 +58,11 @@ public class NagiosEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

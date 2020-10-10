@@ -2,6 +2,7 @@
 package org.apache.camel.component.dataset;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,27 +18,29 @@ public class DataSetTestEndpointUriFactory extends org.apache.camel.support.comp
     private static final String BASE = ":name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("name");
-        set.add("anyOrder");
-        set.add("assertPeriod");
-        set.add("delimiter");
-        set.add("expectedCount");
-        set.add("failFast");
-        set.add("lazyStartProducer");
-        set.add("reportGroup");
-        set.add("resultMinimumWaitTime");
-        set.add("resultWaitTime");
-        set.add("retainFirst");
-        set.add("retainLast");
-        set.add("sleepForEmptyTest");
-        set.add("split");
-        set.add("timeout");
-        set.add("copyOnExchange");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("anyOrder");
+        props.add("expectedCount");
+        props.add("retainLast");
+        props.add("assertPeriod");
+        props.add("failFast");
+        props.add("resultMinimumWaitTime");
+        props.add("timeout");
+        props.add("reportGroup");
+        props.add("sleepForEmptyTest");
+        props.add("lazyStartProducer");
+        props.add("split");
+        props.add("delimiter");
+        props.add("name");
+        props.add("copyOnExchange");
+        props.add("resultWaitTime");
+        props.add("retainFirst");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -60,6 +63,11 @@ public class DataSetTestEndpointUriFactory extends org.apache.camel.support.comp
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

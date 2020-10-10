@@ -2,6 +2,7 @@
 package org.apache.camel.component.atmos;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,25 +18,30 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":name/operation";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(16);
-        set.add("name");
-        set.add("operation");
-        set.add("localPath");
-        set.add("newRemotePath");
-        set.add("query");
-        set.add("remotePath");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("uri");
-        set.add("fullTokenId");
-        set.add("secretKey");
-        set.add("sslValidation");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(16);
+        props.add("basicPropertyBinding");
+        props.add("remotePath");
+        props.add("secretKey");
+        props.add("synchronous");
+        props.add("query");
+        props.add("exchangePattern");
+        props.add("uri");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("fullTokenId");
+        props.add("name");
+        props.add("localPath");
+        props.add("newRemotePath");
+        props.add("sslValidation");
+        props.add("operation");
+        props.add("exceptionHandler");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("fullTokenId");
+        secretProps.add("secretKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -59,6 +65,11 @@ public class AtmosEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

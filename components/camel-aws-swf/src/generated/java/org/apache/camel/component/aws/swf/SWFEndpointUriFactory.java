@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws.swf;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,42 +18,47 @@ public class SWFEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":type";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(33);
-        set.add("type");
-        set.add("amazonSWClient");
-        set.add("dataConverter");
-        set.add("domainName");
-        set.add("eventName");
-        set.add("region");
-        set.add("version");
-        set.add("bridgeErrorHandler");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("activityList");
-        set.add("activitySchedulingOptions");
-        set.add("activityThreadPoolSize");
-        set.add("activityTypeExecutionOptions");
-        set.add("activityTypeRegistrationOptions");
-        set.add("basicPropertyBinding");
-        set.add("clientConfigurationParameters");
-        set.add("startWorkflowOptionsParameters");
-        set.add("sWClientParameters");
-        set.add("synchronous");
-        set.add("accessKey");
-        set.add("secretKey");
-        set.add("childPolicy");
-        set.add("executionStartToCloseTimeout");
-        set.add("operation");
-        set.add("signalName");
-        set.add("stateResultType");
-        set.add("taskStartToCloseTimeout");
-        set.add("terminationDetails");
-        set.add("terminationReason");
-        set.add("workflowList");
-        set.add("workflowTypeRegistrationOptions");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(33);
+        props.add("basicPropertyBinding");
+        props.add("activityTypeRegistrationOptions");
+        props.add("clientConfigurationParameters");
+        props.add("stateResultType");
+        props.add("amazonSWClient");
+        props.add("activitySchedulingOptions");
+        props.add("synchronous");
+        props.add("activityThreadPoolSize");
+        props.add("type");
+        props.add("terminationDetails");
+        props.add("bridgeErrorHandler");
+        props.add("workflowTypeRegistrationOptions");
+        props.add("activityTypeExecutionOptions");
+        props.add("startWorkflowOptionsParameters");
+        props.add("eventName");
+        props.add("dataConverter");
+        props.add("taskStartToCloseTimeout");
+        props.add("activityList");
+        props.add("terminationReason");
+        props.add("signalName");
+        props.add("secretKey");
+        props.add("exchangePattern");
+        props.add("version");
+        props.add("executionStartToCloseTimeout");
+        props.add("sWClientParameters");
+        props.add("lazyStartProducer");
+        props.add("accessKey");
+        props.add("domainName");
+        props.add("childPolicy");
+        props.add("region");
+        props.add("exceptionHandler");
+        props.add("operation");
+        props.add("workflowList");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("secretKey");
+        secretProps.add("accessKey");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -75,6 +81,11 @@ public class SWFEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.ganglia;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,26 +18,28 @@ public class GangliaEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":host:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(17);
-        set.add("host");
-        set.add("port");
-        set.add("dmax");
-        set.add("groupName");
-        set.add("lazyStartProducer");
-        set.add("metricName");
-        set.add("mode");
-        set.add("prefix");
-        set.add("slope");
-        set.add("spoofHostname");
-        set.add("tmax");
-        set.add("ttl");
-        set.add("type");
-        set.add("units");
-        set.add("wireFormat31x");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(17);
+        props.add("basicPropertyBinding");
+        props.add("metricName");
+        props.add("prefix");
+        props.add("tmax");
+        props.add("synchronous");
+        props.add("spoofHostname");
+        props.add("units");
+        props.add("slope");
+        props.add("type");
+        props.add("ttl");
+        props.add("dmax");
+        props.add("mode");
+        props.add("groupName");
+        props.add("lazyStartProducer");
+        props.add("port");
+        props.add("host");
+        props.add("wireFormat31x");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -60,6 +63,11 @@ public class GangliaEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

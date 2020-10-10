@@ -2,6 +2,7 @@
 package org.apache.camel.component.aws.sdb;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,23 +18,25 @@ public class SdbEndpointUriFactory extends org.apache.camel.support.component.En
     private static final String BASE = ":domainName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(14);
-        set.add("domainName");
-        set.add("accessKey");
-        set.add("amazonSDBClient");
-        set.add("consistentRead");
-        set.add("lazyStartProducer");
-        set.add("maxNumberOfDomains");
-        set.add("operation");
-        set.add("proxyHost");
-        set.add("proxyPort");
-        set.add("proxyProtocol");
-        set.add("region");
-        set.add("secretKey");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(14);
+        props.add("basicPropertyBinding");
+        props.add("proxyProtocol");
+        props.add("secretKey");
+        props.add("synchronous");
+        props.add("maxNumberOfDomains");
+        props.add("proxyHost");
+        props.add("proxyPort");
+        props.add("lazyStartProducer");
+        props.add("amazonSDBClient");
+        props.add("accessKey");
+        props.add("domainName");
+        props.add("consistentRead");
+        props.add("region");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -56,6 +59,11 @@ public class SdbEndpointUriFactory extends org.apache.camel.support.component.En
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

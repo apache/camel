@@ -2,6 +2,7 @@
 package org.apache.camel.component.spring.integration;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,19 +18,21 @@ public class SpringIntegrationEndpointUriFactory extends org.apache.camel.suppor
     private static final String BASE = ":defaultChannel";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(10);
-        set.add("defaultChannel");
-        set.add("inOut");
-        set.add("bridgeErrorHandler");
-        set.add("inputChannel");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("outputChannel");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(10);
+        props.add("basicPropertyBinding");
+        props.add("lazyStartProducer");
+        props.add("inOut");
+        props.add("bridgeErrorHandler");
+        props.add("outputChannel");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("defaultChannel");
+        props.add("exceptionHandler");
+        props.add("inputChannel");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -52,6 +55,11 @@ public class SpringIntegrationEndpointUriFactory extends org.apache.camel.suppor
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

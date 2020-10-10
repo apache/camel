@@ -2,6 +2,7 @@
 package org.apache.camel.component.solr;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,27 +19,32 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String[] SCHEMES = new String[]{"solr", "solrs", "solrCloud"};
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("url");
-        set.add("allowCompression");
-        set.add("connectionTimeout");
-        set.add("defaultMaxConnectionsPerHost");
-        set.add("followRedirects");
-        set.add("lazyStartProducer");
-        set.add("maxRetries");
-        set.add("maxTotalConnections");
-        set.add("requestHandler");
-        set.add("soTimeout");
-        set.add("streamingQueueSize");
-        set.add("streamingThreadCount");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("password");
-        set.add("username");
-        set.add("collection");
-        set.add("zkHost");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("basicPropertyBinding");
+        props.add("defaultMaxConnectionsPerHost");
+        props.add("synchronous");
+        props.add("maxTotalConnections");
+        props.add("streamingThreadCount");
+        props.add("collection");
+        props.add("zkHost");
+        props.add("soTimeout");
+        props.add("url");
+        props.add("lazyStartProducer");
+        props.add("maxRetries");
+        props.add("password");
+        props.add("allowCompression");
+        props.add("requestHandler");
+        props.add("followRedirects");
+        props.add("streamingQueueSize");
+        props.add("connectionTimeout");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -66,6 +72,11 @@ public class SolrEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

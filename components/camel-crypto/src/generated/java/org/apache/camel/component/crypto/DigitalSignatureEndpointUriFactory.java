@@ -2,6 +2,7 @@
 package org.apache.camel.component.crypto;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,32 +18,39 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
     private static final String BASE = ":cryptoOperation:name";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(23);
-        set.add("cryptoOperation");
-        set.add("name");
-        set.add("algorithm");
-        set.add("alias");
-        set.add("certificateName");
-        set.add("keystore");
-        set.add("keystoreName");
-        set.add("lazyStartProducer");
-        set.add("privateKey");
-        set.add("privateKeyName");
-        set.add("provider");
-        set.add("publicKeyName");
-        set.add("secureRandomName");
-        set.add("signatureHeaderName");
-        set.add("basicPropertyBinding");
-        set.add("bufferSize");
-        set.add("certificate");
-        set.add("clearHeaders");
-        set.add("keyStoreParameters");
-        set.add("publicKey");
-        set.add("secureRandom");
-        set.add("synchronous");
-        set.add("password");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(23);
+        props.add("basicPropertyBinding");
+        props.add("clearHeaders");
+        props.add("synchronous");
+        props.add("certificate");
+        props.add("certificateName");
+        props.add("keystoreName");
+        props.add("publicKey");
+        props.add("cryptoOperation");
+        props.add("publicKeyName");
+        props.add("secureRandomName");
+        props.add("keyStoreParameters");
+        props.add("privateKey");
+        props.add("lazyStartProducer");
+        props.add("secureRandom");
+        props.add("password");
+        props.add("provider");
+        props.add("privateKeyName");
+        props.add("name");
+        props.add("alias");
+        props.add("keystore");
+        props.add("signatureHeaderName");
+        props.add("algorithm");
+        props.add("bufferSize");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(4);
+        secretProps.add("privateKey");
+        secretProps.add("secureRandom");
+        secretProps.add("password");
+        secretProps.add("privateKeyName");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -66,6 +74,11 @@ public class DigitalSignatureEndpointUriFactory extends org.apache.camel.support
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

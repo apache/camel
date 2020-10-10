@@ -2,6 +2,7 @@
 package org.apache.camel.component.couchdb;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,27 +18,32 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
     private static final String BASE = ":protocol:hostname:port/database";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("protocol");
-        set.add("hostname");
-        set.add("port");
-        set.add("database");
-        set.add("createDatabase");
-        set.add("bridgeErrorHandler");
-        set.add("deletes");
-        set.add("heartbeat");
-        set.add("since");
-        set.add("style");
-        set.add("updates");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("password");
-        set.add("username");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("basicPropertyBinding");
+        props.add("deletes");
+        props.add("heartbeat");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("updates");
+        props.add("createDatabase");
+        props.add("protocol");
+        props.add("hostname");
+        props.add("database");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("bridgeErrorHandler");
+        props.add("port");
+        props.add("style");
+        props.add("exceptionHandler");
+        props.add("since");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(2);
+        secretProps.add("password");
+        secretProps.add("username");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -63,6 +69,11 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

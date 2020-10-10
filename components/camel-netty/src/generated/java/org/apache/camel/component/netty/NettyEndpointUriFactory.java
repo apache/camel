@@ -2,6 +2,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,83 +18,87 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     private static final String BASE = ":protocol:host:port";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(74);
-        set.add("protocol");
-        set.add("host");
-        set.add("port");
-        set.add("disconnect");
-        set.add("keepAlive");
-        set.add("reuseAddress");
-        set.add("reuseChannel");
-        set.add("sync");
-        set.add("tcpNoDelay");
-        set.add("bridgeErrorHandler");
-        set.add("broadcast");
-        set.add("clientMode");
-        set.add("reconnect");
-        set.add("reconnectInterval");
-        set.add("backlog");
-        set.add("bossCount");
-        set.add("bossGroup");
-        set.add("disconnectOnNoReply");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("nettyServerBootstrapFactory");
-        set.add("networkInterface");
-        set.add("noReplyLogLevel");
-        set.add("serverClosedChannelExceptionCaughtLogLevel");
-        set.add("serverExceptionCaughtLogLevel");
-        set.add("serverInitializerFactory");
-        set.add("usingExecutorService");
-        set.add("connectTimeout");
-        set.add("lazyStartProducer");
-        set.add("requestTimeout");
-        set.add("clientInitializerFactory");
-        set.add("correlationManager");
-        set.add("lazyChannelCreation");
-        set.add("producerPoolEnabled");
-        set.add("producerPoolMaxActive");
-        set.add("producerPoolMaxIdle");
-        set.add("producerPoolMinEvictableIdle");
-        set.add("producerPoolMinIdle");
-        set.add("udpConnectionlessSending");
-        set.add("useByteBuf");
-        set.add("allowSerializedHeaders");
-        set.add("basicPropertyBinding");
-        set.add("channelGroup");
-        set.add("nativeTransport");
-        set.add("options");
-        set.add("receiveBufferSize");
-        set.add("receiveBufferSizePredictor");
-        set.add("sendBufferSize");
-        set.add("synchronous");
-        set.add("transferExchange");
-        set.add("udpByteArrayCodec");
-        set.add("workerCount");
-        set.add("workerGroup");
-        set.add("allowDefaultCodec");
-        set.add("autoAppendDelimiter");
-        set.add("decoderMaxLineLength");
-        set.add("decoders");
-        set.add("delimiter");
-        set.add("encoders");
-        set.add("encoding");
-        set.add("textline");
-        set.add("enabledProtocols");
-        set.add("keyStoreFile");
-        set.add("keyStoreFormat");
-        set.add("keyStoreResource");
-        set.add("needClientAuth");
-        set.add("passphrase");
-        set.add("securityProvider");
-        set.add("ssl");
-        set.add("sslClientCertHeaders");
-        set.add("sslContextParameters");
-        set.add("sslHandler");
-        set.add("trustStoreFile");
-        set.add("trustStoreResource");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(74);
+        props.add("usingExecutorService");
+        props.add("disconnect");
+        props.add("enabledProtocols");
+        props.add("synchronous");
+        props.add("keyStoreFormat");
+        props.add("producerPoolMinIdle");
+        props.add("ssl");
+        props.add("bossGroup");
+        props.add("protocol");
+        props.add("bridgeErrorHandler");
+        props.add("securityProvider");
+        props.add("delimiter");
+        props.add("host");
+        props.add("connectTimeout");
+        props.add("options");
+        props.add("textline");
+        props.add("workerGroup");
+        props.add("producerPoolMinEvictableIdle");
+        props.add("tcpNoDelay");
+        props.add("udpConnectionlessSending");
+        props.add("needClientAuth");
+        props.add("sslHandler");
+        props.add("encoders");
+        props.add("keyStoreFile");
+        props.add("decoders");
+        props.add("reuseAddress");
+        props.add("encoding");
+        props.add("sync");
+        props.add("workerCount");
+        props.add("lazyStartProducer");
+        props.add("backlog");
+        props.add("port");
+        props.add("networkInterface");
+        props.add("allowDefaultCodec");
+        props.add("passphrase");
+        props.add("clientMode");
+        props.add("nettyServerBootstrapFactory");
+        props.add("decoderMaxLineLength");
+        props.add("exceptionHandler");
+        props.add("broadcast");
+        props.add("basicPropertyBinding");
+        props.add("trustStoreResource");
+        props.add("bossCount");
+        props.add("serverInitializerFactory");
+        props.add("sslClientCertHeaders");
+        props.add("disconnectOnNoReply");
+        props.add("useByteBuf");
+        props.add("sslContextParameters");
+        props.add("correlationManager");
+        props.add("keyStoreResource");
+        props.add("autoAppendDelimiter");
+        props.add("reuseChannel");
+        props.add("producerPoolMaxIdle");
+        props.add("reconnect");
+        props.add("producerPoolEnabled");
+        props.add("trustStoreFile");
+        props.add("noReplyLogLevel");
+        props.add("transferExchange");
+        props.add("requestTimeout");
+        props.add("receiveBufferSizePredictor");
+        props.add("keepAlive");
+        props.add("producerPoolMaxActive");
+        props.add("clientInitializerFactory");
+        props.add("sendBufferSize");
+        props.add("exchangePattern");
+        props.add("reconnectInterval");
+        props.add("lazyChannelCreation");
+        props.add("allowSerializedHeaders");
+        props.add("channelGroup");
+        props.add("receiveBufferSize");
+        props.add("serverClosedChannelExceptionCaughtLogLevel");
+        props.add("nativeTransport");
+        props.add("udpByteArrayCodec");
+        props.add("serverExceptionCaughtLogLevel");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("passphrase");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -118,6 +123,11 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

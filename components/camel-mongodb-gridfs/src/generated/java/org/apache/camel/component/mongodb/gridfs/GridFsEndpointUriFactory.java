@@ -2,6 +2,7 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,30 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
     private static final String BASE = ":connectionBean";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("connectionBean");
-        set.add("bucket");
-        set.add("database");
-        set.add("readPreference");
-        set.add("writeConcern");
-        set.add("bridgeErrorHandler");
-        set.add("delay");
-        set.add("fileAttributeName");
-        set.add("initialDelay");
-        set.add("persistentTSCollection");
-        set.add("persistentTSObject");
-        set.add("query");
-        set.add("queryStrategy");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("operation");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("connectionBean");
+        props.add("synchronous");
+        props.add("query");
+        props.add("exchangePattern");
+        props.add("writeConcern");
+        props.add("initialDelay");
+        props.add("queryStrategy");
+        props.add("bucket");
+        props.add("database");
+        props.add("lazyStartProducer");
+        props.add("bridgeErrorHandler");
+        props.add("delay");
+        props.add("persistentTSCollection");
+        props.add("readPreference");
+        props.add("fileAttributeName");
+        props.add("persistentTSObject");
+        props.add("exceptionHandler");
+        props.add("operation");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -61,6 +64,11 @@ public class GridFsEndpointUriFactory extends org.apache.camel.support.component
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

@@ -2,6 +2,7 @@
 package org.apache.camel.component.jira;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,28 +18,37 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":type";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(19);
-        set.add("type");
-        set.add("delay");
-        set.add("jiraUrl");
-        set.add("bridgeErrorHandler");
-        set.add("jql");
-        set.add("maxResults");
-        set.add("sendOnlyUpdatedField");
-        set.add("watchedFields");
-        set.add("exceptionHandler");
-        set.add("exchangePattern");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("accessToken");
-        set.add("consumerKey");
-        set.add("password");
-        set.add("privateKey");
-        set.add("username");
-        set.add("verificationCode");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(19);
+        props.add("basicPropertyBinding");
+        props.add("jql");
+        props.add("sendOnlyUpdatedField");
+        props.add("synchronous");
+        props.add("exchangePattern");
+        props.add("type");
+        props.add("accessToken");
+        props.add("verificationCode");
+        props.add("privateKey");
+        props.add("lazyStartProducer");
+        props.add("password");
+        props.add("delay");
+        props.add("bridgeErrorHandler");
+        props.add("jiraUrl");
+        props.add("maxResults");
+        props.add("watchedFields");
+        props.add("consumerKey");
+        props.add("exceptionHandler");
+        props.add("username");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        Set<String> secretProps = new HashSet<>(6);
+        secretProps.add("privateKey");
+        secretProps.add("password");
+        secretProps.add("accessToken");
+        secretProps.add("consumerKey");
+        secretProps.add("username");
+        secretProps.add("verificationCode");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override
@@ -61,6 +71,11 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

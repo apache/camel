@@ -2,6 +2,7 @@
 package org.apache.camel.component.weka;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,22 +18,24 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final String BASE = ":command";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(13);
-        set.add("command");
-        set.add("lazyStartProducer");
-        set.add("basicPropertyBinding");
-        set.add("synchronous");
-        set.add("apply");
-        set.add("build");
-        set.add("dsname");
-        set.add("folds");
-        set.add("loadFrom");
-        set.add("saveTo");
-        set.add("seed");
-        set.add("xval");
-        set.add("path");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(13);
+        props.add("basicPropertyBinding");
+        props.add("folds");
+        props.add("seed");
+        props.add("apply");
+        props.add("synchronous");
+        props.add("loadFrom");
+        props.add("command");
+        props.add("xval");
+        props.add("path");
+        props.add("lazyStartProducer");
+        props.add("saveTo");
+        props.add("build");
+        props.add("dsname");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -55,6 +58,11 @@ public class WekaEndpointUriFactory extends org.apache.camel.support.component.E
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override

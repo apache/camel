@@ -2,6 +2,7 @@
 package org.apache.camel.component.atomix.client.multimap;
 
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,27 +18,29 @@ public class AtomixMultiMapEndpointUriFactory extends org.apache.camel.support.c
     private static final String BASE = ":resourceName";
 
     private static final Set<String> PROPERTY_NAMES;
+    private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> set = new HashSet<>(18);
-        set.add("resourceName");
-        set.add("atomix");
-        set.add("configurationUri");
-        set.add("defaultAction");
-        set.add("key");
-        set.add("lazyStartProducer");
-        set.add("nodes");
-        set.add("resultHeader");
-        set.add("transportClassName");
-        set.add("ttl");
-        set.add("basicPropertyBinding");
-        set.add("defaultResourceConfig");
-        set.add("defaultResourceOptions");
-        set.add("ephemeral");
-        set.add("readConsistency");
-        set.add("resourceConfigs");
-        set.add("resourceOptions");
-        set.add("synchronous");
-        PROPERTY_NAMES = set;
+        Set<String> props = new HashSet<>(18);
+        props.add("basicPropertyBinding");
+        props.add("synchronous");
+        props.add("ephemeral");
+        props.add("resourceName");
+        props.add("resourceConfigs");
+        props.add("resultHeader");
+        props.add("ttl");
+        props.add("configurationUri");
+        props.add("defaultResourceOptions");
+        props.add("resourceOptions");
+        props.add("lazyStartProducer");
+        props.add("defaultAction");
+        props.add("nodes");
+        props.add("defaultResourceConfig");
+        props.add("transportClassName");
+        props.add("atomix");
+        props.add("readConsistency");
+        props.add("key");
+        PROPERTY_NAMES = Collections.unmodifiableSet(props);
+        SECRET_PROPERTY_NAMES = Collections.emptySet();
     }
 
     @Override
@@ -60,6 +63,11 @@ public class AtomixMultiMapEndpointUriFactory extends org.apache.camel.support.c
     @Override
     public Set<String> propertyNames() {
         return PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> secretPropertyNames() {
+        return SECRET_PROPERTY_NAMES;
     }
 
     @Override
