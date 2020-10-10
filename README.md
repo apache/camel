@@ -34,7 +34,7 @@ unit test your routes.
 
 ## Components
 
-Apache Camel comes with a lot of artifacts with components, data formats, languages, and various other kinds.
+Apache Camel comes with a lot of artefacts with components, data formats, languages, and various other kinds.
 The up to date list is available online at the Camel website:
 
 * Components: <https://camel.apache.org/components/latest/>
