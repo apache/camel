@@ -232,10 +232,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will
-     * be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody
-     * option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close
-     * the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
+     * If it is true, the S3Object exchange will be consumed and put into the body and closed. 
+     * If false the S3Object stream will be put raw into the body and the headers will be set with the S3 object metadata. This option is strongly related to autocloseBody option. 
+     * In case of setting includeBody to true because the S3Object stream will be consumed then it will also be closed in case of includeBody false then it will be up to the caller to close the S3Object stream. 
+     * However setting autocloseBody to true when includeBody is false it will schedule to close the S3Object stream automatically on exchange completion.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -390,10 +390,10 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange
-     * completion. This option is strongly related to includeBody option. In case of setting includeBody to true and
-     * autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true,
-     * will close the S3Object stream automatically.
+     * If this option is true and includeBody is false, then the S3Object.close() method will be called on exchange completion. 
+     * This option is strongly related to includeBody option. 
+     * In case of setting includeBody to false and autocloseBody to false, it will be up to the caller to close the S3Object stream. 
+     * Setting autocloseBody to true, will close the S3Object stream automatically.
      */
     public void setAutocloseBody(boolean autocloseBody) {
         this.autocloseBody = autocloseBody;
