@@ -201,7 +201,8 @@ public class S3ConsumerIntegrationTest extends CamelTestSupport {
                 String includeBodyFalseAutoCloseFalse = String.format(template, false, false);
                 String includeBodyFalseAutoCloseTrue = String.format(template, false, true);
                 from("direct:includeBodyTrueAutoCloseTrue").pollEnrich(includeBodyTrueAutoCloseTrue, 5000).to("mock:result");
-                from("direct:includeBodyFalseAutoCloseFalse").pollEnrich(includeBodyFalseAutoCloseFalse, 5000).to("mock:result");
+                from("direct:includeBodyFalseAutoCloseFalse").pollEnrich(includeBodyFalseAutoCloseFalse, 5000)
+                        .to("mock:result");
                 from("direct:includeBodyFalseAutoCloseTrue").pollEnrich(includeBodyFalseAutoCloseTrue, 5000).to("mock:result");
 
                 String awsEndpoint = "aws2-s3://mycamel?autoCreateBucket=false";
