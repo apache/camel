@@ -551,7 +551,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws IllegalArgumentException if referenced object was not found in registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
-        if (parameters.containsKey(key) && type.isInstance(parameters.get(key).getClass())) {
+        if (parameters.get(key) != null && type.isInstance(parameters.get(key).getClass())) {
             return type.cast(parameters.remove(key));
         }
         String value = getAndRemoveParameter(parameters, key, String.class);
