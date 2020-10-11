@@ -198,7 +198,6 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint {
          * was consumed already. If includeBody != true, the caller is responsible for
          * closing the stream once the body has been fully consumed or use the autoCloseBody
          * configuration to automatically schedule the body closing at the end of exchange.
-         * TODO REVIEW THIS STATEMENT As of 2.17, the consumer does not close the stream or object on commit.
          */
         if (configuration.isIncludeBody()) {
             IOHelper.close(s3Object);
