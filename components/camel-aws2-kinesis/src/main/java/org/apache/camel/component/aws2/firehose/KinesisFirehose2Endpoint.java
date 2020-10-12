@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.firehose;
 
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
+
 import java.net.URI;
 
 import org.apache.camel.Category;
@@ -70,6 +72,9 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (!configuration.isCborEnabled()) {
+            System.setProperty(CBOR_ENABLED.property(), "false");
+        }
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
                 ? configuration.getAmazonKinesisFirehoseClient() : createKinesisFirehoseClient();
 
@@ -81,6 +86,9 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
             if (kinesisFirehoseClient != null) {
                 kinesisFirehoseClient.close();
             }
+        }
+        if (!configuration.isCborEnabled()) {
+            System.clearProperty(CBOR_ENABLED.property());
         }
         super.doStop();
     }
