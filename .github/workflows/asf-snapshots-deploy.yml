@@ -20,6 +20,7 @@ on:
   schedule:
     # Run at 2 during night
     - cron:  '0 2 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
