@@ -146,6 +146,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String useBreadcrumb;
     @XmlAttribute
+    @Metadata(defaultValue = "true")
+    private String beanPostProcessorEnabled;
+    @XmlAttribute
     private String allowUseOriginalMessage;
     @XmlAttribute
     private String caseInsensitiveHeaders;
@@ -945,6 +948,28 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    @Override
+    public String getBeanPostProcessorEnabled() {
+        return beanPostProcessorEnabled;
+    }
+
+    /**
+     * Can be used to turn off bean post processing.
+     *
+     * Be careful to turn this off, as this means that beans that use Camel annotations such as
+     * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.ProducerTemplate},
+     * {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume} etc will not be injected and in use.
+     *
+     * Turning this off should only be done if you are sure you do not use any of these Camel features.
+     *
+     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     *
+     * The default value is true (enabled).
+     */
+    public void setBeanPostProcessorEnabled(String beanPostProcessorEnabled) {
+        this.beanPostProcessorEnabled = beanPostProcessorEnabled;
     }
 
     @Override

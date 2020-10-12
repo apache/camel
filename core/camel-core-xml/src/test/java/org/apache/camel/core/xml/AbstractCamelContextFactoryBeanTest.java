@@ -33,6 +33,7 @@ import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
@@ -92,7 +93,7 @@ public class AbstractCamelContextFactoryBeanTest {
                     "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
                     "{{getCaseInsensitiveHeaders}}",
                     "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}",
-                    "{{getAllowUseOriginalMessage}}",
+                    "{{getBeanPostProcessorEnabled}}", "{{getAllowUseOriginalMessage}}",
                     "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}",
                     "{{getInflightRepositoryBrowseEnabled}}"));
 
@@ -135,6 +136,7 @@ public class AbstractCamelContextFactoryBeanTest {
         when(context.getManagementNameStrategy()).thenReturn(mock(ManagementNameStrategy.class));
         when(context.getExecutorServiceManager()).thenReturn(mock(ExecutorServiceManager.class));
         when(context.getInflightRepository()).thenReturn(mock(InflightRepository.class));
+        when(context.getBeanPostProcessor()).thenReturn(mock(CamelBeanPostProcessor.class));
 
         @SuppressWarnings("unchecked")
         final AbstractCamelContextFactoryBean<ModelCamelContext> factory = mock(AbstractCamelContextFactoryBean.class);

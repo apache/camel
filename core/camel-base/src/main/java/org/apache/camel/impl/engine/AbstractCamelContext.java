@@ -2699,6 +2699,10 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartCamel() throws Exception {
+        if (!adapt(ExtendedCamelContext.class).getBeanPostProcessor().isEnabled()) {
+            LOG.info(
+                    "BeanPostProcessor is disabled. This means features such as dependency injection of Camel annotations in beans is not supported.");
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug(
                     "Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}",

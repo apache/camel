@@ -91,6 +91,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.reifier.transformer.TransformerReifier;
 import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
@@ -910,6 +911,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getUseBreadcrumb();
 
+    public abstract String getBeanPostProcessorEnabled();
+
     public abstract String getAllowUseOriginalMessage();
 
     public abstract String getCaseInsensitiveHeaders();
@@ -994,6 +997,12 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * @throws Exception is thrown if error occurred
      */
     protected void initCamelContext(T context) throws Exception {
+        if (getBeanPostProcessorEnabled() != null) {
+            CamelBeanPostProcessor cbpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+            if (cbpp != null) {
+                cbpp.setEnabled(CamelContextHelper.parseBoolean(context, getBeanPostProcessorEnabled()));
+            }
+        }
         if (getStreamCache() != null) {
             context.setStreamCaching(CamelContextHelper.parseBoolean(context, getStreamCache()));
         }
