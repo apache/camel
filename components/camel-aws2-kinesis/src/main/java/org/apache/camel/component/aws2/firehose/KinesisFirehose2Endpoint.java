@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.firehose;
 
-import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
-
 import java.net.URI;
 
 import org.apache.camel.Category;
@@ -38,6 +36,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
+
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
 
 /**
  * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.

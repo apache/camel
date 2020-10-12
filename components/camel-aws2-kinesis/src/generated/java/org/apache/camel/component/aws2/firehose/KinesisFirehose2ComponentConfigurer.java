@@ -20,6 +20,7 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("amazonKinesisFirehoseClient", software.amazon.awssdk.services.firehose.FirehoseClient.class);
         map.put("autoDiscoverClient", boolean.class);
+        map.put("cborEnabled", boolean.class);
         map.put("configuration", org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("operation", org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations.class);
@@ -53,6 +54,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "basicpropertybinding":
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "cborenabled":
+        case "cborEnabled": getOrCreateConfiguration(target).setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -89,6 +92,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "basicpropertybinding":
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "cborenabled":
+        case "cborEnabled": return getOrCreateConfiguration(target).isCborEnabled();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

@@ -100,6 +100,30 @@ public interface KinesisFirehose2EndpointBuilderFactory {
             return this;
         }
         /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default KinesisFirehose2EndpointBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default KinesisFirehose2EndpointBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
