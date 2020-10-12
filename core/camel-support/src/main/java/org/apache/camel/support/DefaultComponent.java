@@ -514,13 +514,27 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public <T> T getAndRemoveOrResolveReferenceParameter(
             Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
-        String value = getAndRemoveParameter(parameters, key, String.class);
-        if (value == null) {
+        // the parameter may be the the type already (such as from endpoint-dsl)
+        Object value = parameters.remove(key);
+        if (type.isInstance(value)) {
+            // special for string references
+            if (String.class == type) {
+                String str = value.toString();
+                if (EndpointHelper.isReferenceParameter(str)) {
+                    value = EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
+                }
+            }
+            return type.cast(value);
+        } else if (value == null) {
             return defaultValue;
-        } else if (EndpointHelper.isReferenceParameter(value)) {
-            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
         } else {
-            return getCamelContext().getTypeConverter().convertTo(type, value);
+            // okay so it may be a reference so value should be string
+            String str = getCamelContext().getTypeConverter().tryConvertTo(String.class, value);
+            if (EndpointHelper.isReferenceParameter(str)) {
+                return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
+            } else {
+                return getCamelContext().getTypeConverter().convertTo(type, value);
+            }
         }
     }
 
@@ -551,14 +565,16 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws IllegalArgumentException if referenced object was not found in registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
-        if (parameters.containsKey(key) && type.isInstance(parameters.get(key).getClass())) {
-            return type.cast(parameters.remove(key));
-        }
-        String value = getAndRemoveParameter(parameters, key, String.class);
-        if (value == null) {
+        // the parameter may be the the type already (such as from endpoint-dsl)
+        Object value = parameters.remove(key);
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        } else if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
+            // okay so it may be a reference so value should be string
+            String str = getCamelContext().getTypeConverter().tryConvertTo(String.class, value);
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), str, type);
         }
     }
 
@@ -589,14 +605,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @throws IllegalArgumentException if any of the referenced objects was not found in registry.
      * @see                             EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
+    @SuppressWarnings("unchecked")
     public <T> List<T> resolveAndRemoveReferenceListParameter(
             Map<String, Object> parameters, String key, Class<T> elementType, List<T> defaultValue) {
-        String value = getAndRemoveParameter(parameters, key, String.class);
-
+        // the value may already be a list such as when using endpoint-dsl
+        Object value = getAndRemoveParameter(parameters, key, Object.class);
+        if (value instanceof List) {
+            return (List<T>) value;
+        }
         if (value == null) {
             return defaultValue;
         } else {
-            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value, elementType);
+            // okay so it may be a reference so value should be string
+            String str = getCamelContext().getTypeConverter().tryConvertTo(String.class, value);
+            return EndpointHelper.resolveReferenceListParameter(getCamelContext(), str, elementType);
         }
     }
 
