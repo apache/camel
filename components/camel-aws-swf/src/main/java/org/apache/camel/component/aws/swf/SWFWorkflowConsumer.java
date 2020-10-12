@@ -43,7 +43,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public Object processWorkflow(Object[] parameters, long startTime, boolean replaying) throws Exception {
-        LOGGER.debug("Processing workflow task: " + Arrays.toString(parameters));
+        LOGGER.debug("Processing workflow task: {}", Arrays.toString(parameters));
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_START_TIME, startTime);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_REPLAYING, replaying);
@@ -53,7 +53,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public void signalReceived(Object[] parameters) throws Exception {
-        LOGGER.debug("signalReceived: " + Arrays.toString(parameters));
+        LOGGER.debug("signalReceived: {}", Arrays.toString(parameters));
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.SIGNAL_RECEIVED_ACTION);
         exchange.setPattern(InOnly);
@@ -61,7 +61,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public Object getWorkflowState(Object parameters) throws Exception {
-        LOGGER.debug("getWorkflowState: " + parameters);
+        LOGGER.debug("getWorkflowState: {}", parameters);
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.GET_STATE_ACTION);
         getProcessor().process(exchange);

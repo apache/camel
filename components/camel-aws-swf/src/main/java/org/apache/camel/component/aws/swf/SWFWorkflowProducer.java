@@ -43,7 +43,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        LOG.debug("processing workflow task " + exchange);
+        LOG.debug("processing workflow task {}", exchange);
 
         try {
 

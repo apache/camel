@@ -198,8 +198,8 @@ public class BoxGroupsManager {
      */
     public BoxGroupMembership addGroupMembership(String groupId, String userId, BoxGroupMembership.Role role) {
         try {
-            LOG.debug("Adding user(id=" + userId + ") as member to group(id=" + groupId
-                      + (role == null ? ")" : ") with role=" + role.name()));
+            LOG.debug("Adding user(id={}) as member to group(id={} {})",
+                    userId, groupId, role == null ? "" : "with role=" + role.name());
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
