@@ -65,7 +65,7 @@ public class MainIoCBeanPostProcessorDisabledTest {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("tiger")
-        public String String = "tony";
+        private String foo = "tony";
 
         @Override
         public void configure() throws Exception {
