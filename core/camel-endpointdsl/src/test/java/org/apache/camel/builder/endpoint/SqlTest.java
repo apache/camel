@@ -126,5 +126,4 @@ public class SqlTest extends ContextTestSupport {
         context.stop();
     }
 
-
 }
