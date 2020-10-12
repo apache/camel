@@ -43,7 +43,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 Kinesis component supports 18 options, which are listed below.
+The AWS 2 Kinesis component supports 19 options, which are listed below.
 
 
 
@@ -52,6 +52,7 @@ The AWS 2 Kinesis component supports 18 options, which are listed below.
 | Name | Description | Default | Type
 | *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | KinesisClient
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
+| *cborEnabled* (common) | This option will set the CBOR_ENABLED property during the execution | true | boolean
 | *configuration* (common) | Component configuration |  | Kinesis2Configuration
 | *proxyHost* (common) | To define a proxy host when instantiating the Kinesis client |  | String
 | *proxyPort* (common) | To define a proxy port when instantiating the Kinesis client |  | Integer
@@ -96,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (36 parameters):
+=== Query Parameters (37 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,6 +105,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | KinesisClient
 | *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
+| *cborEnabled* (common) | This option will set the CBOR_ENABLED property during the execution | true | boolean
 | *proxyHost* (common) | To define a proxy host when instantiating the Kinesis client |  | String
 | *proxyPort* (common) | To define a proxy port when instantiating the Kinesis client |  | Integer
 | *proxyProtocol* (common) | To define a proxy protocol when instantiating the Kinesis client. There are 2 enums and the value can be one of: HTTP, HTTPS | HTTPS | Protocol
