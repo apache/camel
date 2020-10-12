@@ -44,7 +44,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/camel-3.4.x'
+    if: github.ref == 'refs/heads/master'
     env:
       NEXUS_DEPLOY_USERNAME: ${{ secrets.NEXUS_USER }}
       NEXUS_DEPLOY_PASSWORD: ${{ secrets.NEXUS_PW }}
