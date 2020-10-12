@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -251,22 +253,44 @@ public final class EndpointHelper {
     /**
      * Resolves a reference parameter by making a lookup in the registry.
      *
-     * @param  <T>                      type of object to lookup.
-     * @param  context                  Camel context to use for lookup.
-     * @param  value                    reference parameter value.
-     * @param  type                     type of object to lookup.
-     * @return                          lookup result (or <code>null</code> only if <code>mandatory</code> is
-     *                                  <code>false</code>).
-     * @throws IllegalArgumentException if object was not found in registry and <code>mandatory</code> is
-     *                                  <code>true</code>.
+     * @param  <T>                 type of object to lookup.
+     * @param  context             Camel context to use for lookup.
+     * @param  value               reference parameter value.
+     * @param  type                type of object to lookup.
+     * @return                     lookup result (or <code>null</code> only if <code>mandatory</code> is
+     *                             <code>false</code>).
+     * @throws NoSuchBeanException if object was not found in registry and <code>mandatory</code> is <code>true</code>.
      */
     public static <T> T resolveReferenceParameter(CamelContext context, String value, Class<T> type, boolean mandatory) {
-        String valueNoHash = StringHelper.replaceAll(value, "#bean:", "");
-        valueNoHash = StringHelper.replaceAll(valueNoHash, "#", "");
-        if (mandatory) {
-            return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
+        // it may refer to a type
+        if (value.startsWith("#type:")) {
+            try {
+                Object answer = null;
+
+                String valueNoHash = value.substring(6);
+                Class<?> clazz = context.getClassResolver().resolveMandatoryClass(valueNoHash);
+                Set<T> set = context.getRegistry().findByType(type);
+                if (set.size() == 1) {
+                    answer = set.iterator().next();
+                } else if (set.size() > 1) {
+                    throw new NoSuchBeanException(
+                            value, "Found " + set.size() + " beans of type: " + clazz + ". Only 1 bean instance is supported.");
+                }
+                if (mandatory && answer == null) {
+                    throw new NoSuchBeanException(value);
+                }
+                return type.cast(answer);
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchBeanException(value, e);
+            }
         } else {
-            return CamelContextHelper.lookupAndConvert(context, valueNoHash, type);
+            String valueNoHash = StringHelper.replaceAll(value, "#bean:", "");
+            valueNoHash = StringHelper.replaceAll(valueNoHash, "#", "");
+            if (mandatory) {
+                return CamelContextHelper.mandatoryLookupAndConvert(context, valueNoHash, type);
+            } else {
+                return CamelContextHelper.lookupAndConvert(context, valueNoHash, type);
+            }
         }
     }
 
