@@ -70,6 +70,9 @@ public class Kinesis2Configuration implements Cloneable {
               description = "Setting the autoDiscoverClient mechanism, if true, the component will "
                             + " look for a client instance in the registry automatically otherwise it will skip that checking")
     private boolean autoDiscoverClient = true;
+    @UriParam(label = "common", defaultValue = "true", 
+    		description = "This option will set the CBOR_ENABLED property during the execution")
+    private boolean cborEnabled = true;
 
     public KinesisClient getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -190,12 +193,19 @@ public class Kinesis2Configuration implements Cloneable {
     public void setAutoDiscoverClient(boolean autoDiscoverClient) {
         this.autoDiscoverClient = autoDiscoverClient;
     }
+    
+    public boolean isCborEnabled() {
+		return cborEnabled;
+	}
+
+	public void setCborEnabled(boolean cborEnabled) {
+		this.cborEnabled = cborEnabled;
+	}
 
     // *************************************************
     //
     // *************************************************
-
-    public Kinesis2Configuration copy() {
+	public Kinesis2Configuration copy() {
         try {
             return (Kinesis2Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
