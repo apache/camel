@@ -31,6 +31,7 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         map.put("BacklogTracing", boolean.class);
         map.put("BeanIntrospectionExtendedStatistics", boolean.class);
         map.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
+        map.put("BeanPostProcessorEnabled", boolean.class);
         map.put("CaseInsensitiveHeaders", boolean.class);
         map.put("ConfigurationClasses", java.lang.String.class);
         map.put("Configurations", java.util.List.class);
@@ -134,6 +135,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionExtendedStatistics": target.setBeanIntrospectionExtendedStatistics(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionlogginglevel":
         case "BeanIntrospectionLoggingLevel": target.setBeanIntrospectionLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "beanpostprocessorenabled":
+        case "BeanPostProcessorEnabled": target.setBeanPostProcessorEnabled(property(camelContext, boolean.class, value)); return true;
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": target.setCaseInsensitiveHeaders(property(camelContext, boolean.class, value)); return true;
         case "configurationclasses":
@@ -313,6 +316,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "BeanIntrospectionExtendedStatistics": return target.isBeanIntrospectionExtendedStatistics();
         case "beanintrospectionlogginglevel":
         case "BeanIntrospectionLoggingLevel": return target.getBeanIntrospectionLoggingLevel();
+        case "beanpostprocessorenabled":
+        case "BeanPostProcessorEnabled": return target.isBeanPostProcessorEnabled();
         case "caseinsensitiveheaders":
         case "CaseInsensitiveHeaders": return target.isCaseInsensitiveHeaders();
         case "configurationclasses":

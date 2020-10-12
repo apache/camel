@@ -386,9 +386,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
             Object value = parseUsingJaxb(element, parserContext, binder);
 
+            CamelContextFactoryBean factoryBean = null;
             if (value instanceof CamelContextFactoryBean) {
                 // set the property value with the JAXB parsed value
-                CamelContextFactoryBean factoryBean = (CamelContextFactoryBean) value;
+                factoryBean = (CamelContextFactoryBean) value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("implicitId", implicitId);
                 builder.addPropertyValue("restConfiguration", factoryBean.getRestConfiguration());
@@ -468,7 +469,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // inject bean post processor so we can support @Produce etc.
             // no bean processor element so lets create it by our self
-            injectBeanPostProcessor(element, parserContext, contextId, builder);
+            injectBeanPostProcessor(element, parserContext, contextId, builder, factoryBean);
         }
     }
 
@@ -536,7 +537,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     protected void injectBeanPostProcessor(
-            Element element, ParserContext parserContext, String contextId, BeanDefinitionBuilder builder) {
+            Element element, ParserContext parserContext, String contextId, BeanDefinitionBuilder builder,
+            CamelContextFactoryBean factoryBean) {
         Element childElement = element.getOwnerDocument().createElement("beanPostProcessor");
         element.appendChild(childElement);
 
@@ -547,6 +549,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // otherwise we get a circular reference in spring and it will not allow custom bean post processing
         // see more at CAMEL-1663
         definition.getPropertyValues().addPropertyValue("camelId", contextId);
+        if (factoryBean != null && factoryBean.getBeanPostProcessorEnabled() != null) {
+            // configure early whether bean post processor is enabled or not
+            definition.getPropertyValues().addPropertyValue("enabled", factoryBean.getBeanPostProcessorEnabled());
+        }
         builder.addPropertyReference("beanPostProcessor", beanPostProcessorId);
     }
 

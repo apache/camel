@@ -68,6 +68,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
+    private boolean beanPostProcessorEnabled = true;
     @Metadata(defaultValue = "Default")
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
@@ -640,6 +641,27 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setUseBreadcrumb(boolean useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public boolean isBeanPostProcessorEnabled() {
+        return beanPostProcessorEnabled;
+    }
+
+    /**
+     * Can be used to turn off bean post processing.
+     *
+     * Be careful to turn this off, as this means that beans that use Camel annotations such as
+     * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.ProducerTemplate},
+     * {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume} etc will not be injected and in use.
+     *
+     * Turning this off should only be done if you are sure you do not use any of these Camel features.
+     *
+     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     *
+     * The default value is true (enabled).
+     */
+    public void setBeanPostProcessorEnabled(boolean beanPostProcessorEnabled) {
+        this.beanPostProcessorEnabled = beanPostProcessorEnabled;
     }
 
     public ManagementStatisticsLevel getJmxManagementStatisticsLevel() {
@@ -1479,6 +1501,24 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withUseBreadcrumb(boolean useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+        return (T) this;
+    }
+
+    /**
+     * Can be used to turn off bean post processing.
+     *
+     * Be careful to turn this off, as this means that beans that use Camel annotations such as
+     * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.ProducerTemplate},
+     * {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume} etc will not be injected and in use.
+     *
+     * Turning this off should only be done if you are sure you do not use any of these Camel features.
+     *
+     * Not all runtimes allow turning this off (such as camel-blueprint or camel-cdi with XML).
+     *
+     * The default value is true (enabled).
+     */
+    public T withBeanPostProcessorEnabled(boolean beanPostProcessorEnabled) {
+        this.beanPostProcessorEnabled = beanPostProcessorEnabled;
         return (T) this;
     }
 

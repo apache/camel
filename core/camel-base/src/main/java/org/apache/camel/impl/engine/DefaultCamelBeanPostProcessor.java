@@ -68,12 +68,23 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
     protected CamelPostProcessorHelper camelPostProcessorHelper;
     protected CamelContext camelContext;
+    protected boolean enabled = true;
 
     public DefaultCamelBeanPostProcessor() {
     }
 
     public DefaultCamelBeanPostProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -85,10 +96,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             return bean;
         }
 
-        // do bean binding on simple types first, and then afterwards on complex types
-        injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
-        injectSecondPass(bean, beanName, type -> isComplexUserType(type));
-
+        // always do injection of camel context
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware) bean;
             DeferredContextBinding deferredBinding = bean.getClass().getAnnotation(DeferredContextBinding.class);
@@ -99,6 +107,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             } else if (context != null) {
                 contextAware.setCamelContext(context);
             }
+        }
+
+        if (enabled) {
+            // do bean binding on simple types first, and then afterwards on complex types
+            injectFirstPass(bean, beanName, type -> !isComplexUserType(type));
+            injectSecondPass(bean, beanName, type -> isComplexUserType(type));
         }
 
         return bean;
@@ -117,6 +131,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             DefaultEndpoint defaultEndpoint = (DefaultEndpoint) bean;
             defaultEndpoint.setEndpointUriIfNotSpecified(beanName);
         }
+
+        // there is no complex processing so we dont have to check for enabled or disabled
 
         return bean;
     }

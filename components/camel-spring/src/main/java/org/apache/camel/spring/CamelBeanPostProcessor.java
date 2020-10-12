@@ -227,4 +227,14 @@ public class CamelBeanPostProcessor
     public void setBindToRegistrySupported(boolean bindToRegistrySupported) {
         this.bindToRegistrySupported = bindToRegistrySupported;
     }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        delegate.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return delegate.isEnabled();
+    }
 }
