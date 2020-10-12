@@ -108,7 +108,7 @@ public class BoxUsersManager {
      */
     public BoxUser createEnterpriseUser(String login, String name, CreateUserParams params) {
         try {
-            LOG.debug("Creating enterprise user with login=" + login + " name=" + name);
+            LOG.debug("Creating enterprise user with login={} name={}", login, name);
             if (login == null) {
                 throw new IllegalArgumentException("Parameter 'login' can not be null");
             }
@@ -209,7 +209,7 @@ public class BoxUsersManager {
      */
     public void deleteUser(String userId, boolean notifyUser, boolean force) {
         try {
-            LOG.debug("Deleting user(id=" + userId + ") notifyUser=" + notifyUser + " force=" + force);
+            LOG.debug("Deleting user(id={}) notifyUser={} force={}", userId, notifyUser, force);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -231,7 +231,7 @@ public class BoxUsersManager {
      */
     public EmailAlias addUserEmailAlias(String userId, String email) {
         try {
-            LOG.debug("Adding email alias '" + email + "' to user(id=" + userId + ")");
+            LOG.debug("Adding email alias '{}' to user(id={})", email, userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }
@@ -278,7 +278,7 @@ public class BoxUsersManager {
      */
     public void deleteUserEmailAlias(String userId, String emailAliasId) {
         try {
-            LOG.debug("Deleting email_alias(" + emailAliasId + ") for user(id=" + userId + ")");
+            LOG.debug("Deleting email_alias({}) for user(id={})", emailAliasId, userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }
@@ -303,7 +303,7 @@ public class BoxUsersManager {
      */
     public BoxFolder.Info moveFolderToUser(String userId, String sourceUserId) {
         try {
-            LOG.debug("Moving root folder for user(id=" + sourceUserId + ") to user(id=" + userId + ")");
+            LOG.debug("Moving root folder for user(id={}) to user(id={})", sourceUserId, userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }

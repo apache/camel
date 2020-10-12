@@ -113,8 +113,8 @@ public class BoxFoldersManager {
      */
     public Collection<BoxItem.Info> getFolderItems(String folderId, Long offset, Long limit, String... fields) {
         try {
-            LOG.debug("Getting folder items in folder(id=" + folderId + ") at offset=" + offset + " and limit=" + limit
-                      + " with fields=" + Arrays.toString(fields));
+            LOG.debug("Getting folder items in folder(id={}) at offset={} and limit={} with fields={}",
+                    folderId, offset, limit, Arrays.toString(fields));
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -153,12 +153,12 @@ public class BoxFoldersManager {
      */
     public BoxFolder createFolder(String parentFolderId, String folderName) {
         try {
-            LOG.debug("Creating folder with name '" + folderName + "' in parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Creating folder with name '{}' in parent_folder(id={})", folderName, parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
             if (folderName == null) {
-                throw new IllegalArgumentException("Paramerer 'folderName' can not be null");
+                throw new IllegalArgumentException("Parameter 'folderName' can not be null");
             }
             BoxFolder parentFolder = new BoxFolder(boxConnection, parentFolderId);
             return parentFolder.createFolder(folderName).getResource();
@@ -178,7 +178,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder createFolder(String parentFolderId, String... path) {
         try {
-            LOG.debug("Creating folder with path '" + Arrays.toString(path) + "' in parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Creating folder with path '{}' in parent_folder(id={})", Arrays.toString(path), parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
@@ -213,8 +213,8 @@ public class BoxFoldersManager {
      */
     public BoxFolder copyFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Copying folder(id=" + folderId + ") to destination_folder(id=" + destinationFolderId + ")"
-                      + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Copying folder(id={}) to destination_folder(id={}) {}",
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -245,8 +245,8 @@ public class BoxFoldersManager {
      */
     public BoxFolder moveFolder(String folderId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Moving folder(id=" + folderId + ") to destination_folder(id=" + destinationFolderId + ")"
-                      + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Moving folder(id={}) to destination_folder(id={}) {}",
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -275,7 +275,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder renameFolder(String folderId, String newFolderName) {
         try {
-            LOG.debug("Renaming folder(id=" + folderId + ") to '" + newFolderName + "'");
+            LOG.debug("Renaming folder(id={}}) to '{}'", folderId, newFolderName);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -377,11 +377,11 @@ public class BoxFoldersManager {
             String folderId, BoxSharedLink.Access access, Date unshareDate,
             BoxSharedLink.Permissions permissions) {
         try {
-            LOG.debug("Creating shared link for folder(id=" + folderId + ") with access=" + access
-                      + (unshareDate == null
-                              ? ""
-                              : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                                + " permissions=" + permissions));
+            LOG.debug("Creating shared link for folder(id={}) with access={} {}",
+                    folderId, access, unshareDate == null
+                            ? ""
+                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
+                              + " permissions=" + permissions);
 
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
