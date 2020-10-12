@@ -83,7 +83,7 @@ public class BoxTasksManager {
      */
     public BoxTask addFileTask(String fileId, BoxTask.Action action, Date dueAt, String message) {
         try {
-            LOG.debug("Adding task to file(id=" + fileId + ") to '" + message + "'");
+            LOG.debug("Adding task to file(id={}) to '{}'", fileId, message);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -210,7 +210,7 @@ public class BoxTasksManager {
             if (assignTo == null) {
                 throw new IllegalArgumentException("Parameter 'assignTo' can not be null");
             }
-            LOG.debug("Assigning task(id=" + taskId + ") to user(id=" + assignTo.getID() + ")");
+            LOG.debug("Assigning task(id={}) to user(id={})", taskId, assignTo.getID());
 
             BoxTask task = new BoxTask(boxConnection, taskId);
             task.addAssignment(assignTo);
