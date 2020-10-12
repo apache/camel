@@ -20,7 +20,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(37);
+        Set<String> props = new HashSet<>(38);
         props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("synchronous");
@@ -32,6 +32,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
         props.add("runLoggingLevel");
         props.add("backoffErrorThreshold");
         props.add("amazonKinesisClient");
+        props.add("cborEnabled");
         props.add("greedy");
         props.add("shardClosed");
         props.add("scheduledExecutorService");

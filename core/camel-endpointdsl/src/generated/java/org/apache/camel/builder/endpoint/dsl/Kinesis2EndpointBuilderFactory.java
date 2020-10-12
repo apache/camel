@@ -106,6 +106,30 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointConsumerBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointConsumerBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1023,6 +1047,30 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointProducerBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointProducerBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1325,6 +1373,30 @@ public interface Kinesis2EndpointBuilderFactory {
         default Kinesis2EndpointBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
+            return this;
+        }
+        /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointBuilder cborEnabled(boolean cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
+            return this;
+        }
+        /**
+         * This option will set the CBOR_ENABLED property during the execution.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default Kinesis2EndpointBuilder cborEnabled(String cborEnabled) {
+            doSetProperty("cborEnabled", cborEnabled);
             return this;
         }
         /**

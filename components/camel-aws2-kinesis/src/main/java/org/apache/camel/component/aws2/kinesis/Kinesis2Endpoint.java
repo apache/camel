@@ -63,7 +63,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
         if (!configuration.isCborEnabled()) {
-        	System.setProperty(CBOR_ENABLED.property(), "false");
+            System.setProperty(CBOR_ENABLED.property(), "false");
         }
         kinesisClient = configuration.getAmazonKinesisClient() != null
                 ? configuration.getAmazonKinesisClient() : createKinesisClient();
@@ -84,7 +84,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
             }
         }
         if (!configuration.isCborEnabled()) {
-        	System.clearProperty(CBOR_ENABLED.property());
+            System.clearProperty(CBOR_ENABLED.property());
         }
         super.doStop();
     }
