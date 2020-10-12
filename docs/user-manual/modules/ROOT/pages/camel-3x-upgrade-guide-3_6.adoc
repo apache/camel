@@ -172,6 +172,11 @@ You will see an exception about `camel-core-catalog` not found on classpath othe
 The API in `org.apache.camel.spi.SendDynamicAware` has changed and any custom implementations must be updated accordingly.
 There is a new abstract `org.apache.camel.support.component.SendDynamicAwareSupport` class which can be used as base for custom implementations.
 
+=== Stream Caching
+
+If stream caching is enabled and an exception is thrown while converting the message payload to `StreamCache` then the error handler
+can now handle this exception (eg onException). The exception is regard as non-recoverable and redelivery is not in use.
+
 === Camel Caffeine
 
 To configure the component to use a pre-configured cache, it is not more required to use the now removed `cache` option as the component perorm a look-up from the registry based on the `cacheName` URI param.

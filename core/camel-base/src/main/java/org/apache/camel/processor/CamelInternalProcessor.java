@@ -35,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
+import org.apache.camel.StreamCacheException;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
@@ -798,11 +799,25 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 return sc;
             }
             // cache the body and if we could do that replace it as the new body
-            StreamCache sc = strategy.cache(exchange);
-            if (sc != null) {
-                exchange.getIn().setBody(sc);
+            boolean failed = exchange.getException(StreamCacheException.class) != null
+                    || exchange.getProperty(Exchange.EXCEPTION_CAUGHT, StreamCacheException.class) != null;
+            if (!failed) {
+                try {
+                    StreamCache sc = strategy.cache(exchange);
+                    if (sc != null) {
+                        exchange.getIn().setBody(sc);
+                    }
+                    return sc;
+                } catch (Exception e) {
+                    // lets allow Camels error handler to deal with stream cache failures
+                    StreamCacheException tce = new StreamCacheException(exchange.getMessage().getBody(), e);
+                    exchange.setException(tce);
+                    // because this is stream caching error then we cannot use redelivery as the message body is corrupt
+                    // so mark as redelivery exhausted
+                    exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(true);
+                }
             }
-            return sc;
+            return null;
         }
 
         @Override
