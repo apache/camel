@@ -25,7 +25,6 @@ import org.apache.camel.component.sql.SqlEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SqlTest extends ContextTestSupport {
