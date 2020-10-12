@@ -195,7 +195,7 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Sets whether routes should be shutdown in reverse or the same order as they where started.
+     * Sets whether routes should be shutdown in reverse or the same order as they were started.
      */
     public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
         this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
