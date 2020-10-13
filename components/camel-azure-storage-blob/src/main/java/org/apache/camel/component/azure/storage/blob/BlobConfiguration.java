@@ -160,7 +160,8 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
-     * The blob name, required for consumer. However on producer, is only required for the operations on the blob level
+     * The blob name, to consume specific blob from a container. However on producer, is only required for the
+     * operations on the blob level
      */
     public String getBlobName() {
         return blobName;

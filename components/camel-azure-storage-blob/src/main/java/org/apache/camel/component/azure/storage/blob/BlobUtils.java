@@ -30,7 +30,7 @@ public final class BlobUtils {
     }
 
     public static Message getInMessage(final Exchange exchange) {
-        return exchange.getIn();
+        return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn();
     }
 
     public static Long getInputStreamLength(final InputStream inputStream) throws IOException {
