@@ -228,3 +228,7 @@ Set to -1 to disable setting a maximum decompressed size.
 === Camel RabbitMQ
 
 The `camel-rabbitmq` server component properties have been changed. Properties prefix `rabbitmq.` are replaced by `CamelRabbitmq`.
+
+=== Camel-Slack
+
+The options username, iconUrl and iconEmoji have been deprecated and they will be removed in 3.7.0
