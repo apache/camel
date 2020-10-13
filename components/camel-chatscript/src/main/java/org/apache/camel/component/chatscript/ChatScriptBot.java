@@ -83,7 +83,7 @@ public class ChatScriptBot {
     public String init(ChatScriptMessage input) throws Exception {
         ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
         String response = doMessage(g);
-        LOG.info("Conversation started between the bot " + this.botName + " and " + input.getUserName());
+        LOG.info("Conversation started between the bot {} and {}", this.botName, input.getUserName());
         initialized = true;
         return response;
     }

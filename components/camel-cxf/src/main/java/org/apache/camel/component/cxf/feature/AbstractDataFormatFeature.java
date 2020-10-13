@@ -62,10 +62,10 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
                 if (!outside) {
                     // To support the old API
                     if (needToBeKept == null) {
-                        getLogger().info("removing the interceptor " + p);
+                        getLogger().info("removing the interceptor {}", p);
                         interceptors.remove(p);
                     } else if (!needToBeKept.contains(p.getClass().getName())) {
-                        getLogger().info("removing the interceptor " + p);
+                        getLogger().info("removing the interceptor {}", p);
                         interceptors.remove(p);
                     }
                 }
@@ -78,7 +78,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
             Collection<Class<?>> toBeRemovedInterceptors) {
         for (Interceptor<? extends Message> interceptor : interceptors) {
             if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
-                getLogger().info("removing the interceptor " + interceptor);
+                getLogger().info("removing the interceptor {}", interceptor);
                 interceptors.remove(interceptor);
             }
         }

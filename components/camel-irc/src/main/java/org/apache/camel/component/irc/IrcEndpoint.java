@@ -181,7 +181,7 @@ public class IrcEndpoint extends DefaultEndpoint {
         if (nick.endsWith("----")) {
             LOG.error("Unable to set nick: {} disconnecting", nick);
         } else {
-            LOG.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
+            LOG.warn("Unable to set nick: {} Retrying with {} -", nick, nick);
             connection.doNick(nick);
             // if the nick failure was doing startup channels weren't joined. So join
             // the channels now. It's a no-op if the channels are already joined.

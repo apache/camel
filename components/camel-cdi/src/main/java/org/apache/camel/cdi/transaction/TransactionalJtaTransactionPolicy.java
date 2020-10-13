@@ -74,14 +74,11 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
         for (String jndiName : TRANSACTION_MANAGER_JNDI_NAMES) {
             try {
                 tm = InitialContext.doLookup(jndiName);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("JTA TransactionManager found at JNDI location [" + jndiName + "]");
-                }
+                LOG.debug("JTA TransactionManager found at JNDI location [{}]", jndiName);
+
                 return tm;
             } catch (NamingException ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No JTA TransactionManager found at JNDI location [" + jndiName + "]", ex);
-                }
+                LOG.debug("No JTA TransactionManager found at JNDI location [{}]", jndiName, ex);
             }
         }
         LOG.warn("Could not find the transaction manager through any of following locations: {}",

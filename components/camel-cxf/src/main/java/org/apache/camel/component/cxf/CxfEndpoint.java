@@ -639,8 +639,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     void checkName(Object value, String name) {
         if (ObjectHelper.isEmpty(value)) {
-            LOG.warn("The " + name + " of " + this.getEndpointUri()
-                     + " is empty, cxf will try to load the first one in wsdl for you.");
+            LOG.warn("The {} of {} is empty, cxf will try to load the first one in wsdl for you.", name,
+                    this.getEndpointUri());
         }
     }
 

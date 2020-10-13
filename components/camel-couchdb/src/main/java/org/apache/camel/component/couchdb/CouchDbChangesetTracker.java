@@ -128,11 +128,8 @@ public class CouchDbChangesetTracker implements Runnable {
                 problems = false;
 
             } catch (Exception e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: "
-                              + repeatDbErrorCount,
-                            e);
-                }
+                LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: {}",
+                        repeatDbErrorCount, e);
             }
         }
         return true;

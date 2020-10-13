@@ -98,10 +98,10 @@ public class DnsActivation {
                     String id = attribute.getID();
                     String value = (String) attribute.get();
                     if (resolvesTo.contains(value)) {
-                        LOG.debug(id + " = " + value + " matched. Identifying as active.");
+                        LOG.debug("{} = {} matched. Identifying as active.", id, value);
                         return true;
                     }
-                    LOG.debug(id + " = " + value);
+                    LOG.debug("{} = {}", id, value);
                     if (id.equals("CNAME") && !resolved.contains(value)) {
                         hostnames.add(value);
                     }

@@ -199,9 +199,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         // pointing to by example classpath:webapp
         if (endpoint.getBaseResource() != null) {
             String[] resources = endpoint.getBaseResource().split(":");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
-            }
+            LOG.debug(">>> Protocol found: {}, and resource: {}", resources[0], resources[1]);
 
             if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));

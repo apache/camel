@@ -290,7 +290,7 @@ public class CMISProducer extends DefaultProducer {
             }
 
             try {
-                LOG.info("Moving document from " + sourceFolder.getName() + " to " + targetFolder.getName());
+                LOG.info("Moving document from {} to {}", sourceFolder.getName(), targetFolder.getName());
                 return document.move(sourceFolder, targetFolder);
             } catch (Exception e) {
                 throw new CamelCmisException(

@@ -82,26 +82,23 @@ public class GoogleBigQueryConnectionFactory {
         GoogleCredential credential = null;
 
         if (!Strings.isNullOrEmpty(serviceAccount) && !Strings.isNullOrEmpty(serviceAccountKey)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Service Account and Key have been set explicitly. Initialising BigQuery using Service Account "
-                             + serviceAccount);
-            }
+            logger.debug("Service Account and Key have been set explicitly. Initialising BigQuery using Service Account {}",
+                    serviceAccount);
+
             credential = createFromAccountKeyPair(httpTransport);
         }
 
         if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File "
-                             + credentialsFileLocation);
-            }
+            logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
+                    credentialsFileLocation);
+
             credential = createFromFile();
         }
 
         if (credential == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "No explicit Service Account or Key File Name have been provided. Initialising BigQuery using defaults ");
-            }
+            logger.debug(
+                    "No explicit Service Account or Key File Name have been provided. Initialising BigQuery using defaults");
+
             credential = createDefault();
         }
 

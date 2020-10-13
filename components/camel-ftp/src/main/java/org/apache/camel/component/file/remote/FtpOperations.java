@@ -618,8 +618,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 IOHelper.close(os, "retrieve: " + name, log);
                 boolean deleted = FileUtil.deleteFile(temp);
                 if (!deleted) {
-                    log.warn("Error occurred during retrieving file: " + name
-                             + " to local directory. Cannot delete local work file: " + temp);
+                    log.warn("Error occurred during retrieving file: {} to local directory. Cannot delete local work file: {}",
+                            temp, name);
                 }
             }
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
