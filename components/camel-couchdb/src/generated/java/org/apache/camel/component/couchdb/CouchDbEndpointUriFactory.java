@@ -60,7 +60,7 @@ public class CouchDbEndpointUriFactory extends org.apache.camel.support.componen
 
         uri = buildPathParameter(syntax, uri, "protocol", null, true, copy);
         uri = buildPathParameter(syntax, uri, "hostname", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", "5984", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 5984, false, copy);
         uri = buildPathParameter(syntax, uri, "database", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;

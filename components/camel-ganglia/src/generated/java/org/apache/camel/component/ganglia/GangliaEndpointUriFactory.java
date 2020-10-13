@@ -55,7 +55,7 @@ public class GangliaEndpointUriFactory extends org.apache.camel.support.componen
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", "239.2.11.71", false, copy);
-        uri = buildPathParameter(syntax, uri, "port", "8649", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 8649, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
     }

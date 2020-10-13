@@ -88,7 +88,7 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "hostName", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", "8020", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 8020, false, copy);
         uri = buildPathParameter(syntax, uri, "path", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
