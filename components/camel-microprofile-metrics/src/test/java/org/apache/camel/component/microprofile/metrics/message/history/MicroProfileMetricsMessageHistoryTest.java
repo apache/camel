@@ -114,7 +114,6 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         factory = new MicroProfileMetricsMessageHistoryFactory();
-        factory.setMetricRegistry(metricRegistry);
 
         CamelContext context = super.createCamelContext();
         context.setMessageHistoryFactory(factory);
