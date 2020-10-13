@@ -62,6 +62,8 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
 
     private final List<Handler<RoutingContext>> handlers;
     private final String fileNameExtWhitelist;
+    private Set<Method> methods;
+    private String path;
 
     private Route route;
 
@@ -82,24 +84,28 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
     }
 
     @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
+        path = configureEndpointPath(getEndpoint());
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
         final VertxPlatformHttpRouter router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext());
-        final PlatformHttpEndpoint endpoint = getEndpoint();
-        final String path = configureEndpointPath(endpoint);
         final Route newRoute = router.route(path);
 
-        final Set<Method> methods = Method.parseList(endpoint.getHttpMethodRestrict());
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
 
-        if (endpoint.getConsumes() != null) {
-            newRoute.consumes(endpoint.getConsumes());
+        if (getEndpoint().getConsumes() != null) {
+            newRoute.consumes(getEndpoint().getConsumes());
         }
-        if (endpoint.getProduces() != null) {
-            newRoute.produces(endpoint.getProduces());
+        if (getEndpoint().getProduces() != null) {
+            newRoute.produces(getEndpoint().getProduces());
         }
 
         newRoute.handler(router.bodyHandler());
