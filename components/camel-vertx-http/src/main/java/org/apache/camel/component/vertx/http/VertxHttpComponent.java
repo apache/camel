@@ -200,6 +200,30 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (vertx == null) {
+            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
+            if (vertxes.size() == 1) {
+                vertx = vertxes.iterator().next();
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (vertx == null) {
+            if (vertxOptions != null) {
+                vertx = Vertx.vertx(vertxOptions);
+            } else {
+                vertx = Vertx.vertx();
+            }
+            managedVertx = true;
+        }
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 
@@ -210,22 +234,6 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
     }
 
     public Vertx getVertx() {
-        if (vertx == null) {
-            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
-            if (vertxes.size() == 1) {
-                vertx = vertxes.iterator().next();
-            }
-        }
-
-        if (vertx == null) {
-            if (vertxOptions != null) {
-                vertx = Vertx.vertx(vertxOptions);
-            } else {
-                vertx = Vertx.vertx();
-            }
-            managedVertx = true;
-        }
-
         return vertx;
     }
 
