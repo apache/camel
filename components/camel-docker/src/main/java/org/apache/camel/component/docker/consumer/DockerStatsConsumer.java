@@ -76,7 +76,7 @@ public class DockerStatsConsumer extends DefaultConsumer {
 
         @Override
         public void onNext(Statistics statistics) {
-            LOGGER.debug("Received Docker Statistics Event: " + statistics);
+            LOGGER.debug("Received Docker Statistics Event: {}", statistics);
 
             final Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();

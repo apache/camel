@@ -181,9 +181,9 @@ public class BoxFilesManager {
                         long elapsed = (end - init) / 1000;
                         if (elapsed > delayLimit) {
                             LOG.warn(
-                                    "The upload operation, checks if the file exists by using the Box list folder, however it took "
-                                     + elapsed
-                                     + " seconds to verify, try to reduce the size of the folder items for faster results.");
+                                    "The upload operation, checks if the file exists by using the Box list folder, however it took {}"
+                                     + " seconds to verify, try to reduce the size of the folder items for faster results.",
+                                    elapsed);
                         }
                         if (exists) {
                             boxFile = uploadNewFileVersion(existingFile.getID(), content, modified, size, listener);

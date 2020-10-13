@@ -300,7 +300,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
             reporter = createReporter();
         }
 
-        log.info(this + " expecting " + getExpectedCount() + " messages");
+        log.info("{} expecting {} messages", this, getExpectedCount());
     }
 
 }

@@ -40,9 +40,8 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
                     rfc.forceDisconnect();
                 } catch (Throwable t) {
                     // ignore the exception
-                    log.debug("Error occurred during force disconnecting from: " + rfc.remoteServer()
-                              + ". This exception will be ignored.",
-                            t);
+                    log.debug("Error occurred during force disconnecting from: {}. This exception will be ignored.",
+                            rfc.remoteServer(), t);
                 }
             }
         }

@@ -362,13 +362,13 @@ public class DisruptorReference {
     }
 
     public synchronized void addEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Adding Endpoint: " + disruptorEndpoint);
+        LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
         endpoints.add(disruptorEndpoint);
         LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
     }
 
     public synchronized void removeEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Removing Endpoint: " + disruptorEndpoint);
+        LOGGER.debug("Removing Endpoint: {}", disruptorEndpoint);
         if (getEndpointCount() == 1) {
             LOGGER.debug("Last Endpoint removed, shutdown disruptor");
             //Shutdown our disruptor

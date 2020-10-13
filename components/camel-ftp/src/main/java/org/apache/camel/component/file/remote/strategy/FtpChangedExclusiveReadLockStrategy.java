@@ -123,8 +123,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
                 }
             }
 
-            LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
-            LOG.trace("Previous length: " + length + ", new length: " + newLength);
+            LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
+            LOG.trace("Previous length: {}, new length: {}", length, newLength);
             long newOlderThan = startTime + watch.taken() - minAge;
             LOG.trace("New older than threshold: {}", newOlderThan);
 

@@ -536,11 +536,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // process using the custom processor
             processor.process(exchange);
         } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(endpoint + " error custom processing: " + file + " due to: " + e.getMessage()
-                          + ". This exception will be ignored.",
-                        e);
-            }
+            LOG.debug("{} error custom processing: {} due to: {}. This exception will be ignored.",
+                    endpoint, file, e.getMessage(), e);
+
             handleException(e);
         } finally {
             // always remove file from the in progress list as its no longer in
