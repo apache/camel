@@ -68,8 +68,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Storage
- * Service <a href="http://aws.amazon.com/s3/">AWS S3</a>
+ * A Producer which sends messages to the Amazon Web Service Simple Storage Service
+ * <a href="http://aws.amazon.com/s3/">AWS S3</a>
+ *
+ * @author Kiril Nugmanov
  */
 public class AWS2S3Producer extends DefaultProducer {
 
@@ -197,10 +199,14 @@ public class AWS2S3Producer extends DefaultProducer {
                     .partNumber(part).build();
 
                 LOG.trace("Uploading part [{}] for {}", part, keyName);
-                String etag = getEndpoint().getS3Client().uploadPart(uploadRequest, RequestBody.fromFile(filePayload)).eTag();
-                CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
-                completedParts.add(partUpload);
-                filePosition += partSize;
+                try (InputStream fileInputStream = new FileInputStream(filePayload)) {
+                    fileInputStream.skip(filePosition);
+
+                    String etag = getEndpoint().getS3Client().uploadPart(uploadRequest, RequestBody.fromInputStream(fileInputStream, partSize)).eTag();
+                    CompletedPart partUpload = CompletedPart.builder().partNumber(part).eTag(etag).build();
+                    completedParts.add(partUpload);
+                    filePosition += partSize;
+                }
             }
             CompletedMultipartUpload completeMultipartUpload = CompletedMultipartUpload.builder().parts(completedParts).build();
             CompleteMultipartUploadRequest compRequest = CompleteMultipartUploadRequest.builder().multipartUpload(completeMultipartUpload)
