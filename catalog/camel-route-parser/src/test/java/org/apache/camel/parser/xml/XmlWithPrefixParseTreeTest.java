@@ -65,11 +65,11 @@ public class XmlWithPrefixParseTreeTest {
 
     @Test
     void testXmlTreeWithEmptyRoute() throws Exception {
-        String textTotest = "<camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\">\r\n" +
-                            "    <route id=\"a route\">\r\n" +
-                            "    </route>\r\n" +
-                            "</camelContext>\n";
-        File camelFile = new File(tempDir, "testXmlTreeWithEmptyRoute.xml");
+        String textTotest = "<camel:camelContext id=\"camel\" xmlns=\"http://camel.apache.org/schema/spring\" xmlns:camel=\"http://camel.apache.org/schema/spring\">\r\n" +
+                            "    <camel:route id=\"a route\">\r\n" +
+                            "    </camel:route>\r\n" +
+                            "</camel:camelContext>\n";
+        File camelFile = new File(tempDir, "testXmlTreeWithEmptyRoute-withNamespacePrefix.xml");
         Files.copy(new ByteArrayInputStream(textTotest.getBytes()), camelFile.toPath());
         List<CamelNodeDetails> list = XmlRouteParser.parseXmlRouteTree(new ByteArrayInputStream(textTotest.getBytes()), "",
                 camelFile.getAbsolutePath());
