@@ -55,12 +55,11 @@ public class BoxEventsManager {
      */
     public void listen(EventListener listener, Long startingPosition) {
         try {
-            LOG.debug("Listening for events with listener=" + listener + " at startingPosition=" + startingPosition);
-
             if (listener == null) {
                 LOG.debug("Parameter 'listener' is null: will not listen for events");
                 return;
             }
+            LOG.debug("Listening for events with listener={} at startingPosition={}", listener, startingPosition);
 
             if (startingPosition != null) {
                 eventStream = new EventStream(boxConnection, startingPosition);

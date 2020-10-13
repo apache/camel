@@ -54,7 +54,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option is a: <code>float</code> type.
          * 
-         * Default: 14
+         * Default: 14.0
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(float fontSize) {
@@ -66,7 +66,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>float</code> type.
          * 
-         * Default: 14
+         * Default: 14.0
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(String fontSize) {

@@ -86,6 +86,15 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
     }
 
     @Override
+    protected void doInit() throws Exception {
+        // we can only optimize to lookup existing vertx instance at init phase
+        vertx = lookupVertx();
+        if (vertx != null) {
+            LOGGER.info("Found Vert.x instance in registry: {}", vertx);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         initializeServer();
         startServer();
@@ -128,8 +137,6 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                 LOGGER.info("Creating new Vert.x instance");
                 vertx = createVertxInstance();
                 localVertx = true;
-            } else {
-                LOGGER.info("Found Vert.x instance in registry: {}", vertx);
             }
         }
 

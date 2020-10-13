@@ -21,6 +21,7 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         map.put("streamName", java.lang.String.class);
         map.put("amazonKinesisClient", software.amazon.awssdk.services.kinesis.KinesisClient.class);
         map.put("autoDiscoverClient", boolean.class);
+        map.put("cborEnabled", boolean.class);
         map.put("proxyHost", java.lang.String.class);
         map.put("proxyPort", java.lang.Integer.class);
         map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
@@ -78,6 +79,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "cborenabled":
+        case "cborEnabled": target.getConfiguration().setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
@@ -158,6 +161,8 @@ public class Kinesis2EndpointConfigurer extends PropertyConfigurerSupport implem
         case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "cborenabled":
+        case "cborEnabled": return target.getConfiguration().isCborEnabled();
         case "delay": return target.getDelay();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();

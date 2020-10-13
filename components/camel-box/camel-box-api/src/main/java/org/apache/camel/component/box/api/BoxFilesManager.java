@@ -128,15 +128,15 @@ public class BoxFilesManager {
             String parentFolderId, InputStream content, String fileName, Date created, Date modified,
             Long size, Boolean check, ProgressListener listener) {
         try {
-            LOG.debug("Uploading file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Uploading file with name '{}}' to parent_folder(id={}})", fileName, parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }
             if (content == null) {
-                throw new IllegalArgumentException("Paramerer 'content' can not be null");
+                throw new IllegalArgumentException("Parameter 'content' can not be null");
             }
             if (fileName == null) {
-                throw new IllegalArgumentException("Paramerer 'fileName' can not be null");
+                throw new IllegalArgumentException("Parameter 'fileName' can not be null");
             }
             BoxFile boxFile = null;
             boolean uploadNewFile = true;
@@ -241,7 +241,7 @@ public class BoxFilesManager {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
             if (fileContent == null) {
-                throw new IllegalArgumentException("Paramerer 'fileContent' can not be null");
+                throw new IllegalArgumentException("Parameter 'fileContent' can not be null");
             }
 
             BoxFile file = new BoxFile(boxConnection, fileId);
@@ -347,7 +347,7 @@ public class BoxFilesManager {
             String fileId, Integer version, OutputStream output,
             ProgressListener listener) {
         try {
-            LOG.debug("Downloading file(id=" + fileId + ", version=" + version + ")");
+            LOG.debug("Downloading file(id={}, version={})", fileId, version);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -384,7 +384,7 @@ public class BoxFilesManager {
      */
     public BoxFileVersion promoteFileVersion(String fileId, Integer version) {
         try {
-            LOG.debug("Promoting file(id=" + fileId + ", version=" + version + ")");
+            LOG.debug("Promoting file(id={}, version={})", fileId, version);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -415,8 +415,9 @@ public class BoxFilesManager {
      */
     public BoxFile copyFile(String fileId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Copying file(id=" + fileId + ") to destination_folder(id=" + destinationFolderId + ")"
-                      + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Copying file(id={}) to destination_folder(id={}) {}",
+                    fileId, destinationFolderId,
+                    newName == null ? "" : " with new name '" + newName + "'");
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -447,8 +448,9 @@ public class BoxFilesManager {
      */
     public BoxFile moveFile(String fileId, String destinationFolderId, String newName) {
         try {
-            LOG.debug("Moving file(id=" + fileId + ") to destination_folder(id=" + destinationFolderId + ")"
-                      + (newName == null ? "" : " with new name '" + newName + "'"));
+            LOG.debug("Moving file(id={}) to destination_folder(id={}) {}",
+                    fileId, destinationFolderId,
+                    newName == null ? "" : " with new name '" + newName + "'");
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -477,7 +479,7 @@ public class BoxFilesManager {
      */
     public BoxFile renameFile(String fileId, String newFileName) {
         try {
-            LOG.debug("Renaming file(id=" + fileId + ") to '" + newFileName + "'");
+            LOG.debug("Renaming file(id={}) to '{}'", fileId, newFileName);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -521,7 +523,7 @@ public class BoxFilesManager {
      */
     public void deleteFileVersion(String fileId, Integer version) {
         try {
-            LOG.debug("Deleting file(id=" + fileId + ", version=" + version + ")");
+            LOG.debug("Deleting file(id={}, version={})", fileId, version);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -555,11 +557,11 @@ public class BoxFilesManager {
             String fileId, BoxSharedLink.Access access, Date unshareDate,
             BoxSharedLink.Permissions permissions) {
         try {
-            LOG.debug("Creating shared link for file(id=" + fileId + ") with access=" + access
-                      + (unshareDate == null
-                              ? ""
-                              : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
-                                + " permissions=" + permissions));
+            LOG.debug("Creating shared link for file(id={}) with access={} {}",
+                    fileId, access, unshareDate == null
+                            ? ""
+                            : " unsharedDate=" + DateFormat.getDateTimeInstance().format(unshareDate)
+                              + " permissions=" + permissions);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -640,8 +642,8 @@ public class BoxFilesManager {
             String fileId, BoxFile.ThumbnailFileType fileType, Integer minWidth,
             Integer minHeight, Integer maxWidth, Integer maxHeight) {
         try {
-            LOG.debug("Getting thumbnail for file(id=" + fileId + ") fileType=" + fileType + " minWidth=" + minWidth
-                      + " minHeight=" + minHeight + " maxWidth=" + maxWidth + " maxHeight=" + maxHeight);
+            LOG.debug("Getting thumbnail for file(id={}) fileType={} minWidth={} minHeight={} maxWidth={} maxHeight={}",
+                    fileId, fileType, minWidth, minHeight, maxWidth, maxHeight);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -787,7 +789,7 @@ public class BoxFilesManager {
      */
     public void checkUpload(String fileName, String parentFolderId, Long size) {
         try {
-            LOG.debug("Preflight check file with name '" + fileName + "' to parent_folder(id=" + parentFolderId + ")");
+            LOG.debug("Preflight check file with name '{}' to parent_folder(id={})", fileName, parentFolderId);
             if (parentFolderId == null) {
                 throw new IllegalArgumentException("Parameter 'parentFolderId' can not be null");
             }

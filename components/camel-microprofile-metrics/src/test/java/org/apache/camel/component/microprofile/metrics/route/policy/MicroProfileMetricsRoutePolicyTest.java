@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import io.smallrye.metrics.TagsUtils;
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
@@ -100,6 +101,14 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
         assertEquals(6, countRouteMetrics("bar"));
     }
 
+    @Test
+    public void adviceWithTest() throws Exception {
+        AdviceWithRouteBuilder.adviceWith(context, "foo", advisor -> {
+            advisor.replaceFromWith("direct:replaced");
+        });
+        assertEquals(6, countRouteMetrics("foo"));
+    }
+
     private long countRouteMetrics(String routeId) {
         return metricRegistry.getMetricIDs()
                 .stream()
@@ -166,11 +175,8 @@ public class MicroProfileMetricsRoutePolicyTest extends MicroProfileMetricsTestS
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsRoutePolicyFactory factory = new MicroProfileMetricsRoutePolicyFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addRoutePolicyFactory(factory);
+        camelContext.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
         return camelContext;
     }
 }

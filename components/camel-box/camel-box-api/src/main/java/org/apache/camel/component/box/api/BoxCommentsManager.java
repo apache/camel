@@ -55,7 +55,7 @@ public class BoxCommentsManager {
      */
     public BoxFile addFileComment(String fileId, String message) {
         try {
-            LOG.debug("Adding comment to file(id=" + fileId + ") to '" + message + "'");
+            LOG.debug("Adding comment to file(id={}) to '{}'", fileId, message);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -126,7 +126,7 @@ public class BoxCommentsManager {
      */
     public BoxComment replyToComment(String commentId, String message) {
         try {
-            LOG.debug("Replying to comment(id=" + commentId + ") with message=" + message);
+            LOG.debug("Replying to comment(id={}) with message={}", commentId, message);
             if (commentId == null) {
                 throw new IllegalArgumentException("Parameter 'commentId' can not be null");
             }
@@ -150,7 +150,7 @@ public class BoxCommentsManager {
      */
     public BoxComment changeCommentMessage(String commentId, String message) {
         try {
-            LOG.debug("Changing comment(id=" + commentId + ") message=" + message);
+            LOG.debug("Changing comment(id={}) message={}", commentId, message);
             if (commentId == null) {
                 throw new IllegalArgumentException("Parameter 'commentId' can not be null");
             }

@@ -87,11 +87,8 @@ public class MicroProfileMetricsExceptionInRouteMessageHistoryTest extends Micro
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsMessageHistoryFactory factory = new MicroProfileMetricsMessageHistoryFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext context = super.createCamelContext();
-        context.setMessageHistoryFactory(factory);
+        context.setMessageHistoryFactory(new MicroProfileMetricsMessageHistoryFactory());
         return context;
     }
 }

@@ -79,7 +79,7 @@ public class SshEndpointUriFactory extends org.apache.camel.support.component.En
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", "22", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 22, false, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;
     }

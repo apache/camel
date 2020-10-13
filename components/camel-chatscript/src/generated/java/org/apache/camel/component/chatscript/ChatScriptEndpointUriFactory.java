@@ -46,7 +46,7 @@ public class ChatScriptEndpointUriFactory extends org.apache.camel.support.compo
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "port", "1024", false, copy);
+        uri = buildPathParameter(syntax, uri, "port", 1024, false, copy);
         uri = buildPathParameter(syntax, uri, "botName", null, true, copy);
         uri = buildQueryParameters(uri, copy);
         return uri;

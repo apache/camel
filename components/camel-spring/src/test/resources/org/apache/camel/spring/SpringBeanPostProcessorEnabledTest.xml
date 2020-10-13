@@ -19,37 +19,18 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-    
-    <bean id="httpEndpoint" class="org.apache.camel.component.http.HttpEndpoint">
-        <property name="httpUri" value="http://localhost:${HttpTestServer.Port}/"/>
-        <property name="clientBuilder" ref="clientBuilder"/>
-        <property name="clientConnectionManager" ref="myManager"/>
-    </bean>
-    
-    <bean id="myManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager"/>
+    <bean id="myFoo" class="org.apache.camel.spring.SpringBeanPostProcessorDisabledTest$MyFoo"/>
 
-    <!-- You can set the client configuration by setting up the builder class -->
-    <bean id="clientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" />
-    
-    
-    <!-- END SNIPPET: e1 -->
-
-    <!-- START SNIPPET: e2 -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
+    <camelContext beanPostProcessorEnabled="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="httpEndpoint"/>
-            <to uri="mock:result"/>
+            <bean ref="myFoo" method="somewhere"/>
         </route>
     </camelContext>
-    <!-- END SNIPPET: e2 -->
 
 </beans>

@@ -25,7 +25,6 @@ import org.apache.camel.component.sql.SqlEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SqlTest extends ContextTestSupport {
@@ -70,6 +69,52 @@ public class SqlTest extends ContextTestSupport {
             public void configure() throws Exception {
                 SqlEndpointBuilderFactory.SqlEndpointBuilder builder
                         = sql("SELECT * FROM FOO").dataSource("#myDS");
+                Endpoint endpoint = builder.resolve(context);
+                assertNotNull(endpoint);
+                SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
+                assertEquals("SELECT * FROM FOO", se.getQuery());
+                assertSame(ds, se.getDataSource());
+            }
+        });
+
+        context.stop();
+    }
+
+    @Test
+    public void testSqlDataSourceRefBeanSyntax() throws Exception {
+        context.start();
+
+        final DataSource ds = new SimpleDriverDataSource();
+        context.getRegistry().bind("myDS", ds);
+
+        context.addRoutes(new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
+                        = sql("SELECT * FROM FOO").dataSource("#bean:myDS");
+                Endpoint endpoint = builder.resolve(context);
+                assertNotNull(endpoint);
+                SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);
+                assertEquals("SELECT * FROM FOO", se.getQuery());
+                assertSame(ds, se.getDataSource());
+            }
+        });
+
+        context.stop();
+    }
+
+    @Test
+    public void testSqlDataSourceType() throws Exception {
+        context.start();
+
+        final DataSource ds = new SimpleDriverDataSource();
+        context.getRegistry().bind("myDS", ds);
+
+        context.addRoutes(new EndpointRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                SqlEndpointBuilderFactory.SqlEndpointBuilder builder
+                        = sql("SELECT * FROM FOO").dataSource("#type:javax.sql.DataSource");
                 Endpoint endpoint = builder.resolve(context);
                 assertNotNull(endpoint);
                 SqlEndpoint se = assertIsInstanceOf(SqlEndpoint.class, endpoint);

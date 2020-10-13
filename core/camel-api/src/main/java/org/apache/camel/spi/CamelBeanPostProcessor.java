@@ -51,4 +51,24 @@ public interface CamelBeanPostProcessor {
         return bean;
     }
 
+    /**
+     * Can be used to turn off bean post processing.
+     *
+     * Be careful to turn this off, as this means that beans that use Camel annotations such as
+     * {@link org.apache.camel.EndpointInject}, {@link org.apache.camel.ProducerTemplate},
+     * {@link org.apache.camel.Produce}, {@link org.apache.camel.Consume} etc will not be injected and in use.
+     *
+     * Turning this off should only be done if you are sure you do not use any of these Camel features.
+     */
+    default void setEnabled(boolean enabled) {
+        // noop
+    }
+
+    /**
+     * @see #setEnabled(boolean)
+     */
+    default boolean isEnabled() {
+        return true;
+    }
+
 }

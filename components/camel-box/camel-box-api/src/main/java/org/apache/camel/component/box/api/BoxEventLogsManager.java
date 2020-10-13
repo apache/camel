@@ -63,10 +63,10 @@ public class BoxEventLogsManager {
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {
         try {
-            LOG.debug("Getting all enterprise events occuring between "
-                      + (after == null ? after : DateFormat.getDateTimeInstance().format(after)) + " and "
-                      + (before == null ? before : DateFormat.getDateTimeInstance().format(before))
-                      + (position == null ? position : (" starting at " + position)));
+            LOG.debug("Getting all enterprise events occurring between {} and {} {}",
+                    after == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(after),
+                    before == null ? "unspecified date" : DateFormat.getDateTimeInstance().format(before),
+                    position == null ? "" : (" starting at " + position));
 
             if (after == null) {
                 throw new IllegalArgumentException("Parameter 'after' can not be null");

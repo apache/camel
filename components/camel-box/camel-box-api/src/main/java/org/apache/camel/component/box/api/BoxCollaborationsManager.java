@@ -87,8 +87,7 @@ public class BoxCollaborationsManager {
             if (collaborator == null) {
                 throw new IllegalArgumentException("Parameter 'collaborator' can not be null");
             }
-            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator("
-                      + collaborator.getID() + ")");
+            LOG.debug("Creating  collaborations for folder(id={}) with collaborator({})", folderId, collaborator.getID());
             if (role == null) {
                 throw new IllegalArgumentException("Parameter 'role' can not be null");
             }
@@ -113,7 +112,7 @@ public class BoxCollaborationsManager {
      */
     public BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, BoxCollaboration.Role role) {
         try {
-            LOG.debug("Creating  collaborations for folder(id=" + folderId + ") with collaborator(" + email + ")");
+            LOG.debug("Creating  collaborations for folder(id={}) with collaborator({})", folderId, email);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }

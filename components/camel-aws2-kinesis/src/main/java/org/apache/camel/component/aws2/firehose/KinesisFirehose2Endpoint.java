@@ -37,6 +37,8 @@ import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.FirehoseClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
 
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
+
 /**
  * Produce data to AWS Kinesis Firehose streams using AWS SDK version 2.x.
  */
@@ -70,6 +72,9 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (!configuration.isCborEnabled()) {
+            System.setProperty(CBOR_ENABLED.property(), "false");
+        }
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
                 ? configuration.getAmazonKinesisFirehoseClient() : createKinesisFirehoseClient();
 
@@ -81,6 +86,9 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint {
             if (kinesisFirehoseClient != null) {
                 kinesisFirehoseClient.close();
             }
+        }
+        if (!configuration.isCborEnabled()) {
+            System.clearProperty(CBOR_ENABLED.property());
         }
         super.doStop();
     }

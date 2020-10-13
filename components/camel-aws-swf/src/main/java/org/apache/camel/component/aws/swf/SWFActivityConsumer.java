@@ -41,7 +41,7 @@ public class SWFActivityConsumer extends DefaultConsumer {
     }
 
     public Object processActivity(Object[] inputParameters, String taskToken) throws Exception {
-        LOGGER.debug("Processing activity task: " + Arrays.toString(inputParameters));
+        LOGGER.debug("Processing activity task: {}", Arrays.toString(inputParameters));
 
         Exchange exchange = endpoint.createExchange(inputParameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.TASK_TOKEN, taskToken);

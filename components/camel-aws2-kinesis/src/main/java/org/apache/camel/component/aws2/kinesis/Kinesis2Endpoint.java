@@ -40,6 +40,8 @@ import software.amazon.awssdk.services.kinesis.model.Record;
 import software.amazon.awssdk.services.kinesis.model.ShardIteratorType;
 import software.amazon.awssdk.utils.AttributeMap;
 
+import static software.amazon.awssdk.core.SdkSystemSetting.CBOR_ENABLED;
+
 /**
  * Consume and produce records from and to AWS Kinesis Streams using AWS SDK version 2.x.
  */
@@ -60,6 +62,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (!configuration.isCborEnabled()) {
+            System.setProperty(CBOR_ENABLED.property(), "false");
+        }
         kinesisClient = configuration.getAmazonKinesisClient() != null
                 ? configuration.getAmazonKinesisClient() : createKinesisClient();
 
@@ -77,6 +82,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint {
             if (kinesisClient != null) {
                 kinesisClient.close();
             }
+        }
+        if (!configuration.isCborEnabled()) {
+            System.clearProperty(CBOR_ENABLED.property());
         }
         super.doStop();
     }

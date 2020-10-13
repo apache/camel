@@ -89,6 +89,7 @@ public final class DefaultConfigurationConfigurer {
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
         ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ecc.getBeanPostProcessor().setEnabled(config.isBeanPostProcessorEnabled());
         ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
             ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());

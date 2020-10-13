@@ -274,7 +274,7 @@
 |camel-pgevent| | |
 |camel-pg-replication-slot| | |
 |camel-platform-http|DONE| |
-|camel-platform-http-vertx| | |
+|camel-platform-http-vertx|DONE | |
 |camel-printer| | |
 |camel-properties| | |
 |camel-protobuf| | |

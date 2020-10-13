@@ -62,7 +62,7 @@ public class AS2ServerManager {
         try {
             as2ServerConnection.listen(requestUriPattern, handler);
         } catch (IOException e) {
-            LOG.error("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
+            LOG.error("Failed to listen for '{}' requests: {}", requestUriPattern, e.getMessage(), e);
             throw new RuntimeException("Failed to listen for '" + requestUriPattern + "' requests: " + e.getMessage(), e);
         }
 
