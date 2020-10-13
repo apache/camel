@@ -38,6 +38,7 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.ex
 public class VertxWebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
     private final Map<VertxWebsocketHostKey, VertxWebsocketHost> vertxHostRegistry = new ConcurrentHashMap<>();
+    private boolean managedVertx;
 
     @Metadata(label = "advanced")
     private Vertx vertx;
@@ -47,7 +48,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private Router router;
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    private boolean managedVertx;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -64,6 +64,30 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         }
 
         return endpoint;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (vertx == null) {
+            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
+            if (vertxes.size() == 1) {
+                vertx = vertxes.iterator().next();
+            }
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (vertx == null) {
+            if (vertxOptions != null) {
+                vertx = Vertx.vertx(vertxOptions);
+            } else {
+                vertx = Vertx.vertx();
+            }
+            managedVertx = true;
+        }
     }
 
     @Override
@@ -126,22 +150,6 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     }
 
     public Vertx getVertx() {
-        if (vertx == null) {
-            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
-            if (vertxes.size() == 1) {
-                vertx = vertxes.iterator().next();
-            }
-        }
-
-        if (vertx == null) {
-            if (vertxOptions != null) {
-                vertx = Vertx.vertx(vertxOptions);
-            } else {
-                vertx = Vertx.vertx();
-            }
-            managedVertx = true;
-        }
-
         return vertx;
     }
 

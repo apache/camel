@@ -385,7 +385,7 @@
 |camel-velocity| | |
 |camel-vertx| | |
 |camel-vertx-http| | |
-|camel-vertx-websocket| | |
+|camel-vertx-websocket|DONE | |
 |camel-vm| | |
 |camel-weather| | |
 |camel-web3j| | |
