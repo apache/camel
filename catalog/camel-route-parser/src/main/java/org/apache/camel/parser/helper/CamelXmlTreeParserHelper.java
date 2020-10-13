@@ -73,6 +73,11 @@ public final class CamelXmlTreeParserHelper {
         CamelNodeDetails newNode = null;
 
         String name = node.getNodeName();
+        // clip namespace prefix if in use, eg camel:from => from
+        String prefix = node.getPrefix();
+        if (prefix != null && name.startsWith(prefix + ":")) {
+            name = name.substring(prefix.length() + 1);
+        }
 
         boolean isRoute = "route".equals(name) || "from".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
