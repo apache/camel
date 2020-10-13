@@ -705,6 +705,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * Group: producer
          */
+        @Deprecated
         default SlackEndpointProducerBuilder iconEmoji(String iconEmoji) {
             doSetProperty("iconEmoji", iconEmoji);
             return this;
@@ -717,6 +718,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * Group: producer
          */
+        @Deprecated
         default SlackEndpointProducerBuilder iconUrl(String iconUrl) {
             doSetProperty("iconUrl", iconUrl);
             return this;
@@ -771,6 +773,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * Group: producer
          */
+        @Deprecated
         default SlackEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
             return this;
