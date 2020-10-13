@@ -184,8 +184,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage()
-                     + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                    remoteServer(), e.getMessage());
         }
     }
 
@@ -201,8 +201,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             getOperations().forceDisconnect();
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            LOG.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage()
-                     + ". This exception will be ignored.");
+            LOG.warn("Error occurred while disconnecting from {} due: {} This exception will be ignored.",
+                    remoteServer(), e.getMessage());
         }
     }
 
