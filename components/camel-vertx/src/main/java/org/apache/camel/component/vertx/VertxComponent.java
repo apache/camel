@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -138,6 +139,18 @@ public class VertxComponent extends DefaultComponent {
         VertxEndpoint endpoint = new VertxEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (vertx == null) {
+            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
+            if (vertxes.size() == 1) {
+                vertx = vertxes.iterator().next();
+            }
+        }
     }
 
     @Override

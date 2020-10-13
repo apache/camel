@@ -383,8 +383,8 @@
 |camel-urlrewrite| | |
 |camel-validator| | |
 |camel-velocity| | |
-|camel-vertx| | |
-|camel-vertx-http| | |
+|camel-vertx|DONE | |
+|camel-vertx-http|DONE | |
 |camel-vertx-websocket|DONE | |
 |camel-vm| | |
 |camel-weather| | |
@@ -401,9 +401,9 @@
 |camel-xmlrpc| | |
 |camel-xmlsecurity| | |
 |camel-xmpp| | |
-|camel-xpath| | |
+|camel-xpath|DONE | |
 |camel-xslt|DONE| |
-|camel-xslt-saxon| | |
+|camel-xslt-saxon|DONE | |
 |camel-xstream| | |
 |camel-yammer| | |
 |camel-zendesk| | |
